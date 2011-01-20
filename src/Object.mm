@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-#include "Level.h"
+#include "Game.h"
 
 using namespace Dojo;
 

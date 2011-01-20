@@ -11,7 +11,6 @@
 
 #include "Viewport.h"
 
-using namespace Ninja;
 using namespace Dojo;
 
 Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameSet* set, float timePerFrame )

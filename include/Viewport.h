@@ -16,7 +16,7 @@
 #include "Color.h"
 #include "Object.h"
 #include "Model.h"
-#include "Level.h"
+#include "Sprite.h"
 #include "Texture.h"
 
 namespace Dojo {

@@ -14,6 +14,7 @@
 
 #include "Particle.h"
 #include "Viewport.h"
+#include "Game.h"
 
 namespace Dojo 
 {		

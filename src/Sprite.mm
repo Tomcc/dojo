@@ -11,8 +11,6 @@
 
 #include "Viewport.h"
 
-#include "Level.h"
-
 using namespace Dojo;
 
 Sprite::Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName, float tpf ) :
