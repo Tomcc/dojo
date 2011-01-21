@@ -15,7 +15,7 @@
 #include <string>
 
 #include "Array.h"
-#include "Math.h"
+#include "dojomath.h"
 #include "Texture.h"
 
 namespace Dojo 

@@ -6,7 +6,7 @@
 #include "Array.h"
 #include "SoundBuffer.h"
 
-#include "Math.h"
+#include "dojomath.h"
 
 namespace Dojo
 {
