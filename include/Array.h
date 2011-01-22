@@ -108,7 +108,7 @@ namespace Dojo
 			*/
 			FV_INLINE void removeElement(uint index)
 			{
-				DOJO_ASSERT( size() > index );
+				DEBUG_ASSERT( size() > index );
 				
 				if(index < size()-1)
 				{
@@ -141,7 +141,7 @@ namespace Dojo
 			///Rimuove e restituisce l'elemento in coda del vettore
 			FV_INLINE T popElement()
 			{
-				DOJO_ASSERT( size() );
+				DEBUG_ASSERT( size() );
 				
 				T* elem = vectorArray+elements-1;
 				elements--;
@@ -206,14 +206,14 @@ namespace Dojo
 			///restituisce l'elemento all'indice richiesto
 			FV_INLINE T& operator[] (const size_t index) const
 			{
-				DOJO_ASSERT( index < size() );
+				DEBUG_ASSERT( index < size() );
 				
 				return vectorArray[ index ];
 			}
 			///Metodo identico a [] utile se si ha un pointer al vettore
 			FV_INLINE T& at( const size_t index) const
 			{
-				DOJO_ASSERT( index < size() );
+				DEBUG_ASSERT( index < size() );
 				
 				return vectorArray[ index ];
 			}

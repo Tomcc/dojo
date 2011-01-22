@@ -39,7 +39,7 @@ namespace Dojo
 
 		inline SoundBuffer* getBuffer( int i )
 		{
-			DOJO_ASSERT( buffers.size() > i );
+			DEBUG_ASSERT( buffers.size() > i );
 			
 			return buffers.at(i);
 		}
@@ -50,7 +50,7 @@ namespace Dojo
 
 		inline void addBuffer( SoundBuffer* b )
 		{
-			DOJO_ASSERT( b );
+			DEBUG_ASSERT( b );
 			
 			buffers.addElement( b );
 		}

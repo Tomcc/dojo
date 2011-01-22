@@ -27,7 +27,7 @@ freq(0),
 buffer( AL_NONE ),
 uses(0)
 {
-	DOJO_ASSERT( creator );
+	DEBUG_ASSERT( creator );
 }
 
 SoundBuffer::~SoundBuffer()
@@ -81,7 +81,7 @@ bool SoundBuffer::load()
 
 	alGenBuffers(1,&buffer);
 	
-	DOJO_ASSERT( buffer );
+	DEBUG_ASSERT( buffer );
 
 	ALenum error = alGetError();
 	

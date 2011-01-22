@@ -35,7 +35,7 @@ namespace Dojo {
 		dispose( false ),
 		absoluteTimeSpeed( false )
 		{
-			DOJO_ASSERT( parentLevel );
+			DEBUG_ASSERT( parentLevel );
 			
 			setSize( bbSize );
 		}
@@ -53,7 +53,7 @@ namespace Dojo {
 		
 		inline void setSize( float x, float y )
 		{						
-			DOJO_ASSERT( x >= 0 && y >= 0 );
+			DEBUG_ASSERT( x >= 0 && y >= 0 );
 						
 			size.x = x;
 			size.y = y;
@@ -63,7 +63,7 @@ namespace Dojo {
 		
 		inline void setSize( const Vector& bbSize )
 		{
-			DOJO_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 );
+			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 );
 			
 			size = bbSize;
 			halfSize.x = size.x * 0.5f;
@@ -96,9 +96,9 @@ namespace Dojo {
 		
 		inline bool collidesWith( const Vector& BBPos, const Vector& BBSize )
 		{			
-			DOJO_ASSERT( BBSize.x > 0 );
-			DOJO_ASSERT( BBSize.y > 0 );
-			DOJO_ASSERT( BBSize.z > 0 );
+			DEBUG_ASSERT( BBSize.x > 0 );
+			DEBUG_ASSERT( BBSize.y > 0 );
+			DEBUG_ASSERT( BBSize.z > 0 );
 			
 			float cx = position.x + halfSize.x - BBPos.x + BBSize.x*0.5;
 			float cy = position.y + halfSize.y - BBPos.y + BBSize.y*0.5;
@@ -108,7 +108,7 @@ namespace Dojo {
 		
 		inline bool collidesWith( Object * t )
 		{			
-			DOJO_ASSERT( t );
+			DEBUG_ASSERT( t );
 			
 			float cx = position.x + halfSize.x - t->position.x + t->halfSize.x;
 			float cy = position.y + halfSize.y - t->position.y + t->halfSize.y;

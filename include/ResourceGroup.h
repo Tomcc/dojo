@@ -58,21 +58,21 @@ namespace Dojo {
 		inline void addFrameSet( FrameSet* set, const std::string& name )
 		{
 			//HACK
-			//DOJO_ASSERT( !isFrameSetLoaded( name ) );
+			//DEBUG_ASSERT( !isFrameSetLoaded( name ) );
 			
 			frameSets[name] = set;
 		}
 		
 		inline void addFont( Font* f, const std::string& name )
 		{
-			DOJO_ASSERT( !isFontLoaded( name ) );
+			DEBUG_ASSERT( !isFontLoaded( name ) );
 			
 			fonts[name] = f;
 		}
 		
 		inline void addMesh( Mesh* m, const std::string& name )
 		{
-			DOJO_ASSERT( !isMeshLoaded( name ) );
+			DEBUG_ASSERT( !isMeshLoaded( name ) );
 			
 			meshes[ name ] = m;
 		}		

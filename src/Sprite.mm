@@ -36,8 +36,8 @@ uint Sprite::registerAnimation( const std::string& base, float timePerFrame )
 {
 	FrameSet* s = gameState->getFrameSet( base );
 	
-	DOJO_ASSERT( s );
-	DOJO_ASSERT( timePerFrame >= 0 );
+	DEBUG_ASSERT( s );
+	DEBUG_ASSERT( timePerFrame >= 0 );
 	
 	return registerAnimation( s, timePerFrame );	
 }

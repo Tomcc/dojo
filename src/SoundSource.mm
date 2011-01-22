@@ -17,7 +17,7 @@ positionChanged( true )
 	{
 		alGenSources( 1, &source );
 		
-		DOJO_ASSERT( source );
+		DEBUG_ASSERT( source );
 	}		
 }
 
@@ -50,7 +50,7 @@ SoundSource::~SoundSource()
 
 void SoundSource::setVolume( float v )
 {	
-	DOJO_ASSERT( v >= 0 );
+	DEBUG_ASSERT( v >= 0 );
 	
 	volume = v * mgr->getMasterVolume();
 	

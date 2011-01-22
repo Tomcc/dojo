@@ -127,7 +127,7 @@ namespace Dojo
 			///metodo per assegnare un buffer
 			void _setup( SoundBuffer* b )
 			{
-				DOJO_ASSERT( b );
+				DEBUG_ASSERT( b );
 				
 				buffer = b;
 

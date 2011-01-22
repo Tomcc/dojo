@@ -53,7 +53,7 @@ namespace Dojo
 		
 		virtual void unload() //delete all of the content
 		{
-			DOJO_ASSERT( loaded );
+			DEBUG_ASSERT( loaded );
 			
 			for( uint i = 0; i < frames.size(); ++i )
 			{
@@ -67,7 +67,7 @@ namespace Dojo
 		///just binds the first frame!
 		virtual void bind()
 		{
-			DOJO_ASSERT( frames.at(0) );
+			DEBUG_ASSERT( frames.at(0) );
 			
 			if( loaded )
 				frames.at(0)->bind();
@@ -76,9 +76,9 @@ namespace Dojo
 		///adds a texture to this frame set, specifying if this frameset is the only owner
 		inline void addTexture( Texture* t, bool owner = false )
 		{
-			DOJO_ASSERT( t );
-			DOJO_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL) );
-			DOJO_ASSERT( !isLoaded() || (t->isLoaded() && isLoaded()) );
+			DEBUG_ASSERT( t );
+			DEBUG_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL) );
+			DEBUG_ASSERT( !isLoaded() || (t->isLoaded() && isLoaded()) );
 			
 			if( owner )
 				t->_notifyOwnerFrameSet( this );

@@ -16,7 +16,7 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#define DOJO_ASSERT( T ) assert( T )
+#define DEBUG_ASSERT( T ) assert( T )
 
 #ifdef DEBUG
 #define DEBUG_OUT( T ) std::cout << T << ' '

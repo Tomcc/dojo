@@ -133,8 +133,8 @@ namespace Dojo
 		
 		inline void _notifyOwnerFrameSet( FrameSet* s )
 		{
-			DOJO_ASSERT( ownerFrameSet == NULL );
-			DOJO_ASSERT( s );
+			DEBUG_ASSERT( ownerFrameSet == NULL );
+			DEBUG_ASSERT( s );
 			
 			ownerFrameSet = s;
 		}

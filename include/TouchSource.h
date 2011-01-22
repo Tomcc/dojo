@@ -71,7 +71,7 @@ namespace Dojo {
 		
 		inline void addTouchListener( Listener* l )
 		{
-			DOJO_ASSERT( l );
+			DEBUG_ASSERT( l );
 			
 			if( l->getSource() == NULL )
 			{
@@ -82,7 +82,7 @@ namespace Dojo {
 		
 		inline void removeTouchListener( Listener* l )
 		{
-			DOJO_ASSERT( l );
+			DEBUG_ASSERT( l );
 			
 			if( l->getSource() == this )
 			{

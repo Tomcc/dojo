@@ -28,7 +28,7 @@ autoAdvancement( true )
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );
 	
-	DOJO_ASSERT( mesh );
+	DEBUG_ASSERT( mesh );
 	
 	animation = new Animation( NULL, 0 );
 	
@@ -50,7 +50,7 @@ void AnimatedQuad::reset()
 
 void AnimatedQuad::immediateAnimation( const std::string& name, float timePerFrame )
 {
-	DOJO_ASSERT( name.size() );
+	DEBUG_ASSERT( name.size() );
 	
 	immediateAnimation( gameState->getFrameSet( name ), timePerFrame );
 }
@@ -85,7 +85,7 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 
 void AnimatedQuad::_updateScreenSize()
 {
-	DOJO_ASSERT( texture );
+	DEBUG_ASSERT( texture );
 	
 	gameState->getViewport()->makeScreenSize( screenSize, texture );
 	screenSize.x *= pixelScale.x;

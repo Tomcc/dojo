@@ -82,7 +82,7 @@ namespace Dojo
 		
 		inline void startFade( const Color& start, const Color& end, float duration )
 		{			
-			DOJO_ASSERT( duration > 0 );
+			DEBUG_ASSERT( duration > 0 );
 			
 			fadeStartColor = start;
 			fadeEndColor = end;			
@@ -100,8 +100,8 @@ namespace Dojo
 		
 		inline void startFade( float startAlpha, float endAlpha, float duration )
 		{
-			DOJO_ASSERT( startAlpha <= 1.0f && startAlpha >= 0.f );
-			DOJO_ASSERT( endAlpha <= 1.0f && endAlpha >= 0.f );
+			DEBUG_ASSERT( startAlpha <= 1.0f && startAlpha >= 0.f );
+			DEBUG_ASSERT( endAlpha <= 1.0f && endAlpha >= 0.f );
 			
 			color.a = startAlpha;
 			

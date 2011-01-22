@@ -49,7 +49,7 @@ currentFadeTime(0)
 	// Initialization
 	device = alcOpenDevice(NULL); // select the "preferred device"
 	
-	DOJO_ASSERT( device );
+	DEBUG_ASSERT( device );
 	
 	if (device) 
 	{

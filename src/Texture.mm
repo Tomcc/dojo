@@ -16,11 +16,11 @@ using namespace Dojo;
 
 bool Texture::load()
 {
-	DOJO_ASSERT( !loaded );
+	DEBUG_ASSERT( !loaded );
 		
 	glGenTextures(1, &glhandle );
 	
-	DOJO_ASSERT( glhandle );
+	DEBUG_ASSERT( glhandle );
 	
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 		
@@ -58,9 +58,9 @@ bool Texture::load()
 
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 {
-	DOJO_ASSERT( tex );
-	DOJO_ASSERT( tex->isLoaded() );
-	DOJO_ASSERT( !isLoaded() );	
+	DEBUG_ASSERT( tex );
+	DEBUG_ASSERT( tex->isLoaded() );
+	DEBUG_ASSERT( !isLoaded() );	
 			
 	loaded = true;			
 	textureType = "atlas";
@@ -71,7 +71,7 @@ bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 	internalWidth = tex->internalWidth;
 	internalHeight = tex->internalHeight;
 	
-	DOJO_ASSERT( sx && sy && internalWidth && internalHeight );
+	DEBUG_ASSERT( sx && sy && internalWidth && internalHeight );
 	
 	//bigger tiles have alpha disabled by default
 	requiresAlpha = sx < 128 || sy < 128;			
@@ -92,7 +92,7 @@ bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 
 void Texture::unload()
 {		
-	DOJO_ASSERT( loaded );
+	DEBUG_ASSERT( loaded );
 	
 	if( OBB )
 	{
@@ -104,7 +104,7 @@ void Texture::unload()
 	
 	if( !parentAtlas ) //don't unload parent texture!
 	{
-		DOJO_ASSERT( glhandle );
+		DEBUG_ASSERT( glhandle );
 		glDeleteTextures(1, &glhandle );
 		
 		glhandle = 0;

@@ -31,7 +31,7 @@ namespace Dojo {
 		targetSize( targetX, targetY ),
 		background( NULL )
 		{
-			DOJO_ASSERT( targetX > 0 && targetY > 0 );
+			DEBUG_ASSERT( targetX > 0 && targetY > 0 );
 			
 			//create the fader object			
 			fadeObject = new Model( level, position, "texturedQuad", "" );
@@ -59,7 +59,7 @@ namespace Dojo {
 		
 		inline void setBackgroundSprite( const std::string& name )
 		{			
-			DOJO_ASSERT( name.size() );
+			DEBUG_ASSERT( name.size() );
 			
 			if( background )
 			{

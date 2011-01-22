@@ -34,7 +34,7 @@ namespace Dojo
 			
 			inline void setup( FrameSet* set, float tpf )
 			{
-				DOJO_ASSERT( tpf >= 0 );
+				DEBUG_ASSERT( tpf >= 0 );
 				
 				animationTime = 0;
 				timePerFrame = tpf;			
@@ -68,15 +68,15 @@ namespace Dojo
 			
 			inline void setFrame( uint i )
 			{
-				DOJO_ASSERT( frames );
-				DOJO_ASSERT( frames->getFrameNumber() > i );
+				DEBUG_ASSERT( frames );
+				DEBUG_ASSERT( frames->getFrameNumber() > i );
 				
 				currentFrame = frames->getFrame( i );	
 			}
 			
 			inline void setAnimationTime( float t )
 			{				
-				DOJO_ASSERT( frames );
+				DEBUG_ASSERT( frames );
 				
 				if( timePerFrame == 0 )
 					return;
@@ -125,7 +125,7 @@ namespace Dojo
 		///forces an animation with the given frameSet
 		inline void immediateAnimation( FrameSet* s, float timePerFrame )
 		{
-			DOJO_ASSERT( s );
+			DEBUG_ASSERT( s );
 			
 			animation->setup( s, timePerFrame );
 			
@@ -144,15 +144,15 @@ namespace Dojo
 		
 		inline FrameSet* getFrameSet()
 		{
-			DOJO_ASSERT( animation );
+			DEBUG_ASSERT( animation );
 			
 			return animation->frames;
 		}
 		
 		inline void setAnimationTime( float t )
 		{
-			DOJO_ASSERT( t >= 0 );
-			DOJO_ASSERT( animation );
+			DEBUG_ASSERT( t >= 0 );
+			DEBUG_ASSERT( animation );
 			
 			animation->setAnimationTime( t );
 			
@@ -161,20 +161,20 @@ namespace Dojo
 		
 		inline void setAnimationPercent( float t )
 		{
-			DOJO_ASSERT( animation );
+			DEBUG_ASSERT( animation );
 			
 			setAnimationTime( t * animation->getTotalTime() );
 		}
 						
 		inline void advanceAnim( float dt )		
 		{				
-			DOJO_ASSERT( animation );
+			DEBUG_ASSERT( animation );
 			
 			//active animation?
 			if( animation->getTimePerFrame() > 0 )		
 			{			
-				DOJO_ASSERT( animation->frames ); 
-				DOJO_ASSERT( animation->frames->getFrameNumber() );
+				DEBUG_ASSERT( animation->frames ); 
+				DEBUG_ASSERT( animation->frames->getFrameNumber() );
 				
 				//update the renderState using the animation
 				animation->advance(dt);				
@@ -185,8 +185,8 @@ namespace Dojo
 		
 		inline void setFrame( uint i )
 		{
-			DOJO_ASSERT( animation );
-			DOJO_ASSERT( animation->frames );
+			DEBUG_ASSERT( animation );
+			DEBUG_ASSERT( animation->frames );
 			
 			animation->setFrame( i );
 			

@@ -22,14 +22,14 @@ namespace Dojo {
 		
 		static uint toNumericVersion( const std::string& versionString )
 		{
-			DOJO_ASSERT( versionString.size() );
+			DEBUG_ASSERT( versionString.size() );
 			char c;
 			uint numericVersion = 0;
 			for( uint i = 0; i < versionString.size(); ++i )
 			{
 				c = versionString[i];
 				
-				DOJO_ASSERT( isNumber( c ) || c == '.' );
+				DEBUG_ASSERT( isNumber( c ) || c == '.' );
 				
 				if( c == '.' )
 					numericVersion *= 10;
@@ -73,7 +73,7 @@ namespace Dojo {
 		
 		static std::string toSTDString( NSString* s )
 		{
-			DOJO_ASSERT( s );
+			DEBUG_ASSERT( s );
 			
 			std::string str;
 			
@@ -148,7 +148,7 @@ namespace Dojo {
 		
 		inline static void skipWhiteSpace( char*& buf, const char* eof )
 		{
-			DOJO_ASSERT( buf && eof );
+			DEBUG_ASSERT( buf && eof );
 			
 			while( isWhiteSpace( *buf ) && buf < eof )
 				++buf;
@@ -156,7 +156,7 @@ namespace Dojo {
 		
 		inline static void skipToken( char*& buf, const char* eof )
 		{
-			DOJO_ASSERT( buf && eof );
+			DEBUG_ASSERT( buf && eof );
 			
 			while( !isWhiteSpace(*buf) && buf < eof )
 				++buf;
@@ -165,7 +165,7 @@ namespace Dojo {
 		///extracts an uint from a stream until a delimiter is found
 		static uint toInt( char*& buf, const char* eof )
 		{		
-			DOJO_ASSERT( buf && eof );
+			DEBUG_ASSERT( buf && eof );
 			
 			skipWhiteSpace( buf, eof );
 			
@@ -186,7 +186,7 @@ namespace Dojo {
 		///extracts a float from a stream
 		static float toFloat( char*& buf, const char* eof )
 		{
-			DOJO_ASSERT( buf && eof );
+			DEBUG_ASSERT( buf && eof );
 			
 			enum ParseState
 			{
@@ -270,7 +270,7 @@ namespace Dojo {
 		
 		static std::string toString( char*& buf, const char* eof )
 		{
-			DOJO_ASSERT( buf && eof );
+			DEBUG_ASSERT( buf && eof );
 			
 			skipWhiteSpace( buf, eof );
 			
@@ -283,7 +283,7 @@ namespace Dojo {
 		
 		static char* findFirstLineEnd( char* c, const char* eof )
 		{		
-			DOJO_ASSERT( c && eof );
+			DEBUG_ASSERT( c && eof );
 			
 			for( ; *c != '\n' && c < eof; ++c )
 			{
@@ -295,7 +295,7 @@ namespace Dojo {
 		
 		static uint streamsEqual( const char* s1, const char* s2 )
 		{
-			DOJO_ASSERT( s1 && s2 );
+			DEBUG_ASSERT( s1 && s2 );
 			
 			uint matches = 0;
 			
@@ -308,7 +308,7 @@ namespace Dojo {
 		//checks if the string starting at "buf" contains "str"
 		static bool tokenEquals( const char* buf, const char* str )
 		{			
-			DOJO_ASSERT( buf && str );
+			DEBUG_ASSERT( buf && str );
 			
 			for( uint i = 0; str[i] != '\0'; ++i )
 			{				

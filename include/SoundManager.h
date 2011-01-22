@@ -52,7 +52,7 @@ namespace Dojo {
 			///metodo statico per convertire la classe vector in vettore C-style.
 			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
 			{
-				DOJO_ASSERT( ALpos );
+				DEBUG_ASSERT( ALpos );
 				
 				*ALpos++ = vector.x/m;
 				*ALpos++ = vector.y/m;
@@ -114,7 +114,7 @@ namespace Dojo {
 
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
 			{
-				DOJO_ASSERT( set );
+				DEBUG_ASSERT( set );
 				
 				SoundSource* s = getSoundSource( set );
 				s->setPosition( pos );
@@ -130,7 +130,7 @@ namespace Dojo {
 
 			inline SoundSource* playSound( SoundSet* set )
 			{
-				DOJO_ASSERT( set );
+				DEBUG_ASSERT( set );
 				
 				SoundSource* s = getSoundSource( set );
 				s->play();
@@ -146,7 +146,7 @@ namespace Dojo {
 
 			inline SoundSource* playSound( const Vector& pos, SoundSet* set )
 			{
-				DOJO_ASSERT( set );
+				DEBUG_ASSERT( set );
 				
 				SoundSource* s = getSoundSource( pos, set );
 				s->play();
@@ -196,7 +196,7 @@ namespace Dojo {
 
 			inline void setMusicVolume( float volume )			
 			{	
-				DOJO_ASSERT( volume >= 0 );
+				DEBUG_ASSERT( volume >= 0 );
 				
 				musicVolume = volume;	
 
@@ -206,7 +206,7 @@ namespace Dojo {
 			
 			inline void setMasterVolume( float volume )	
 			{	
-				DOJO_ASSERT( volume >= 0 );
+				DEBUG_ASSERT( volume >= 0 );
 				
 				masterVolume = volume;		
 			}
@@ -261,7 +261,7 @@ namespace Dojo {
 			///Aggiunge manualmente un set di suoni, utile per gruppi che non sono nel filesystem
 			inline void addSoundSet( SoundSet* s )
 			{
-				DOJO_ASSERT( s );
+				DEBUG_ASSERT( s );
 				
 				if( !isSoundLoaded( s->getName()) )
 					soundDataMap[ s->getName() ] = s;
@@ -303,7 +303,7 @@ namespace Dojo {
 			///-metodo interno- mantiene il numero di buffers caricati minore del massimo
 			bool _reserveBufferSlot( SoundBuffer* newbuf )
 			{
-				DOJO_ASSERT( newbuf );
+				DEBUG_ASSERT( newbuf );
 				
 				if( loadedBufferList.size() >= maxBuffers )
 				{

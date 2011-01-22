@@ -46,7 +46,7 @@ namespace Dojo
 		///returns the "weight" of the changes needed to pass from "this" to "s"
 		inline uint getDistance( RenderState* s )
 		{
-			DOJO_ASSERT( s );
+			DEBUG_ASSERT( s );
 			
 			uint dist = 0;
 			

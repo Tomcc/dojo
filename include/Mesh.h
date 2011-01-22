@@ -126,7 +126,7 @@ namespace Dojo
 		inline void begin( int extimatedVerts = 0 )
 		{			
 			//be sure that we aren't already building
-			DOJO_ASSERT( !isEditing() );
+			DEBUG_ASSERT( !isEditing() );
 			
 			currentVertex = NULL;
 			vertexCount = 0;
@@ -145,9 +145,9 @@ namespace Dojo
 		*/
 		inline void vertex()
 		{		
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
-			DOJO_ASSERT( currentVertex < vertices + vertexMaxCount );
+			DEBUG_ASSERT( currentVertex < vertices + vertexMaxCount );
 			
 			if( !currentVertex )
 				currentVertex = vertices;
@@ -160,7 +160,7 @@ namespace Dojo
 		///adds a vertex at the given position
 		inline void vertex( float x, float y )
 		{				
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			//grow the buffer to the needed size			
 			if( !vertices || vertexCount >= vertexMaxCount )
@@ -182,7 +182,7 @@ namespace Dojo
 		///adds a vertex at the given position
 		inline void vertex( float x, float y, float z )
 		{			
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			if( !vertices || vertexCount >= vertexMaxCount )
 				setVertexCap( vertexCount );
@@ -200,7 +200,7 @@ namespace Dojo
 		///sets the uv of the last set vertex				
 		inline void uv( float u, float v )
 		{			
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV ] );
 			*ptr++ = u;
@@ -210,7 +210,7 @@ namespace Dojo
 		//sets the color of the last set vertex		
 		inline void color( float r, float g, float b, float a  )
 		{		
-			DOJO_ASSERT( isEditing() );	
+			DEBUG_ASSERT( isEditing() );	
 			
 			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
 			*ptr++ = (GLubyte)r*255;
@@ -222,7 +222,7 @@ namespace Dojo
 		///adds a vertex at the given position
 		inline void normal( float x, float y, float z )
 		{		
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_NORMAL ] );
 			
@@ -234,7 +234,7 @@ namespace Dojo
 		///adds one index
 		inline void index( uint idx )
 		{		
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			_growIndices();
 			
@@ -248,7 +248,7 @@ namespace Dojo
 		*/
 		bool end()
 		{			
-			DOJO_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing() );
 			
 			if( !dynamic && isLoaded() ) //already loaded and not dynamic?
 				return false;
@@ -256,7 +256,7 @@ namespace Dojo
 			if( !vertexHandle )
 				glGenBuffers(1, &vertexHandle );		
 			
-			DOJO_ASSERT( vertexHandle );
+			DEBUG_ASSERT( vertexHandle );
 			
 			uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 			
@@ -268,7 +268,7 @@ namespace Dojo
 				if( !indexHandle )
 					glGenBuffers(1, &indexHandle );
 				
-				DOJO_ASSERT( indexHandle );
+				DEBUG_ASSERT( indexHandle );
 								
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof( uint ) * indexCount, indices, usage);							
@@ -308,7 +308,7 @@ namespace Dojo
 		///binds all the pointers for the needed client states
 		virtual void bind()
 		{		
-			DOJO_ASSERT( !isEditing() );
+			DEBUG_ASSERT( !isEditing() );
 			
 			glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 						
@@ -388,7 +388,7 @@ namespace Dojo
 		
 		inline float* _getVertex( uint i )
 		{			
-			DOJO_ASSERT( i < vertexCount );
+			DEBUG_ASSERT( i < vertexCount );
 			
 			return (float*)(vertices + vertexSize * i);
 		}

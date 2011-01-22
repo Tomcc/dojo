@@ -134,7 +134,7 @@ namespace Dojo
 				DEBUG_OUT( charWidth[i] );
 			}
 				
-			DOJO_ASSERT( i == 256 );
+			DEBUG_ASSERT( i == 256 );
 			
 			_createPage( 0 );			
 						

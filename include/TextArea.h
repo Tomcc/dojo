@@ -48,9 +48,9 @@ namespace Dojo
 						
 			font = gameState->getFont( fontName );
 			
-			DOJO_ASSERT( font );
-			DOJO_ASSERT( font->getFrameSet() );
-			DOJO_ASSERT( font->getFrameSet()->getFrameNumber() );
+			DEBUG_ASSERT( font );
+			DEBUG_ASSERT( font->getFrameSet() );
+			DEBUG_ASSERT( font->getFrameSet()->getFrameNumber() );
 			
 			texture = font->getFrameSet()->getFrame(0);
 			

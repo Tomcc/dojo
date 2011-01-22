@@ -21,7 +21,7 @@ bool RenderState::isAlphaRequired()
 
 void RenderState::commitChanges( RenderState* pastState )
 {			
-	DOJO_ASSERT( pastState );
+	DEBUG_ASSERT( pastState );
 	
 	//bind the new texture or nothing
 	if( texture && texture != pastState->texture )

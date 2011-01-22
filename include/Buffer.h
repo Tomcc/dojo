@@ -50,7 +50,7 @@ namespace Dojo
 		
 		inline uint getByteSize()
 		{
-			DOJO_ASSERT( size );
+			DEBUG_ASSERT( size );
 			
 			return size;
 		}

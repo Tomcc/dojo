@@ -46,7 +46,7 @@ namespace Dojo
 		
 		inline void release( Particle* p )
 		{
-			DOJO_ASSERT( p );
+			DEBUG_ASSERT( p );
 			
 			if( firstIdleIdx == 0 || p->isActive() == false )
 				return;
@@ -83,7 +83,7 @@ namespace Dojo
 		inline GameState* getGameState()				{	return gameState;		}
 		inline Particle* getParticle( uint i )			
 		{	
-			DOJO_ASSERT( pool.size() > i );
+			DEBUG_ASSERT( pool.size() > i );
 			return pool.at( i );	
 		}
 		inline uint getActiveParticleNumber()			{	return firstIdleIdx;	}
