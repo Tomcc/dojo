@@ -9,7 +9,7 @@
 #ifndef Vector_h__
 #define Vector_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 namespace Dojo	
 {

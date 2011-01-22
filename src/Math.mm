@@ -7,7 +7,7 @@
  *
  */
 
-#include "Math.h"
+#include "dojomath.h"
 
 #include <cstdlib>
 

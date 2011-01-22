@@ -10,9 +10,7 @@
 #ifndef Font_h__
 #define Font_h__
 
-#include "dojo_config.h"
-
-#include <iostream>
+#include "dojo_common_header.h"
 
 #include "Vector.h"
 #include "Texture.h"
@@ -20,8 +18,9 @@
 
 #include "Utils.h"
 
-namespace Dojo {
-	class Font
+namespace Dojo 
+{
+	class Font : public BaseObject
 	{
 	public:
 		

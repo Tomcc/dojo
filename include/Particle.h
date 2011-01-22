@@ -10,7 +10,7 @@
 #ifndef Particle_h__
 #define Particle_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Sprite.h"
 #include "GameState.h"

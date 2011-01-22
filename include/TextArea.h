@@ -10,11 +10,7 @@
 #ifndef TextArea_h__
 #define TextArea_h__
 
-#include "dojo_config.h"
-
-#import <UIKit/UIWindow.h>
-#import <UIKit/UIApplication.h>
-#import <UIKit/UIView.h>
+#include "dojo_common_header.h"
 
 #include <string>
 

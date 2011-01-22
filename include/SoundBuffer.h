@@ -1,11 +1,9 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
-#include <OpenAL/al.h>
-
-#include <string>
+#include "BaseObject.h"
 
 namespace Dojo 
 {
@@ -15,7 +13,7 @@ namespace Dojo
 	/**
 	Non dovrebbe essere utilizzato all'esterno di SoundManager.
 	*/
-	class SoundBuffer
+	class SoundBuffer : public BaseObject
 	{
 	public:
 

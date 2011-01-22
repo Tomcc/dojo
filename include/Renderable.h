@@ -10,7 +10,7 @@
 #ifndef Renderable_h__
 #define Renderable_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Object.h"
 #include "color.h"

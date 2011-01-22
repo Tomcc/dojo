@@ -10,7 +10,7 @@
 #ifndef Math_h__
 #define Math_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Vector.h"
 

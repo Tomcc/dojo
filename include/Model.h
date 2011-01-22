@@ -10,7 +10,7 @@
 #ifndef Model_h__
 #define Model_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Renderable.h"
 #include "GameState.h"

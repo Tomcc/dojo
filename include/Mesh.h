@@ -10,9 +10,7 @@
 #ifndef Mesh_h__
 #define Mesh_h__
 
-#include "dojo_config.h"
-
-#include <OpenGLES/ES1/gl.h>
+#include "dojo_common_header.h"
 
 #include "Buffer.h"
 #include "Vector.h"

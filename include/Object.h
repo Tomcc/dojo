@@ -10,15 +10,16 @@
 #ifndef Object_h__
 #define Object_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Vector.h"
+#include "BaseObject.h"
 
 namespace Dojo {
 	
 	class GameState;
 	
-	class Object
+	class Object : public BaseObject
 	{
 	public:
 		

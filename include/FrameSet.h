@@ -10,9 +10,7 @@
 #ifndef FrameSet_h__
 #define FrameSet_h__
 
-#include "dojo_config.h"
-
-#include <string>
+#include "dojo_common_header.h"
 
 #include "Array.h"
 #include "dojomath.h"

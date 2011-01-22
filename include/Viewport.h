@@ -10,7 +10,7 @@
 #ifndef Viewport_h__
 #define Viewport_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Vector.h"
 #include "Color.h"

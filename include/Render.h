@@ -8,21 +8,13 @@
 #ifndef Render_h__
 #define Render_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/EAGLDrawable.h>
-#import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
-
-
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
 #include "Array.h"
-
 #include "Color.h"
 #include "Vector.h"
 #include "RenderState.h"
+#include "BaseObject.h"
 
 namespace Dojo {
 	
@@ -31,7 +23,7 @@ namespace Dojo {
 	class Viewport;
 	class Mesh;
 	
-	class Render
+	class Render : public BaseObject
 	{	
 	public:				
 		

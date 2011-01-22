@@ -3,12 +3,14 @@
 
 #define FV_INLINE inline
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
+
+#include "BaseObject.h"
 
 namespace Dojo
 {
 		template <typename T>
-		class Array
+	class Array : public BaseObject
 		{
 		public:
 

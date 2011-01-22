@@ -10,9 +10,7 @@
 #ifndef WrapperUtils_h__
 #define WrapperUtils_h__
 
-#include "dojo_config.h"
-
-#import <Foundation/NSString.h>
+#include "dojo_common_header.h"
 
 #include "Color.h"
 

@@ -10,12 +10,10 @@
 #ifndef Texture_h__
 #define Texture_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include <string>
 
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
 
 #include "Utils.h"
 #include "Vector.h"

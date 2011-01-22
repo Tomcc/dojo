@@ -10,15 +10,16 @@
 #ifndef Buffer_h__
 #define Buffer_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
-#include <string>
+
+#include "BaseObject.h"
 
 namespace Dojo 
 {
 	class ResourceGroup;
 	
-	class Buffer
+	class Buffer : public BaseObject
 	{
 	public:
 		

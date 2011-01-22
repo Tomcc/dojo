@@ -1,13 +1,7 @@
 #ifndef SOUNDMANAGER_H_
 #define SOUNDMANAGER_H_
 
-#include "dojo_config.h"
-
-#include <string>
-#include <map>
-
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#include "dojo_common_header.h"
 
 #include "Array.h"
 #include "Vector.h"
@@ -15,6 +9,7 @@
 #include "SoundBuffer.h"
 #include "SoundSet.h"
 #include "SoundSource.h"
+#include "BaseObject.h"
 
 namespace Dojo {
 
@@ -22,7 +17,7 @@ namespace Dojo {
 		class SoundSource;
 
 		///Classe che gestisce il sistema Audio di eVolve.
-		class SoundManager
+		class SoundManager : public BaseObject
 		{
 		protected:
 

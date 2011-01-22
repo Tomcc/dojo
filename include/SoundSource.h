@@ -1,15 +1,12 @@
 #ifndef SoundSource_h__
 #define SoundSource_h__
 
-#include "dojo_config.h"
-
-#include <string>
-
-#include <OpenAL/al.h>
+#include "dojo_common_header.h"
 
 #include "Vector.h"
 
 #include "SoundBuffer.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {
@@ -23,7 +20,7 @@ namespace Dojo
 		SoundManager implementa un sistema automatico di gestione dei buffer e delle sources, e anche 
 		un Garbage Collector che fa pulizia dei suoni non piu' utilizzati.
 		*/
-		class SoundSource
+		class SoundSource : public BaseObject
 		{				
 		public:
 

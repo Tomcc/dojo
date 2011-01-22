@@ -1,17 +1,18 @@
 #ifndef SoundData_h__
 #define SoundData_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Array.h"
 #include "SoundBuffer.h"
 
 #include "dojomath.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {
 	
-	class SoundSet
+	class SoundSet : public BaseObject
 	{
 	public:
 

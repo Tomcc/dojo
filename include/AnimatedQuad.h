@@ -10,7 +10,7 @@
 #ifndef AnimatedQuad_h__
 #define AnimatedQuad_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Renderable.h"
 

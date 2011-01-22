@@ -10,7 +10,7 @@
 #ifndef TouchListener_h__
 #define TouchListener_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Array.h"
 

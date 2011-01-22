@@ -16,10 +16,6 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#include <assert.h>
-
-#include <iostream>
-
 #define DOJO_ASSERT( T ) assert( T )
 
 #ifdef DEBUG

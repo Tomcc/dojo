@@ -9,7 +9,7 @@
 #ifndef Game_h__
 #define Game_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 #include "Array.h"
 
@@ -24,7 +24,7 @@ namespace Dojo {
 	class GameState;
 	class Object;
 	
-	class Game : public TouchSource
+	class Game : public BaseObject, public TouchSource
 	{
 	public:
 		

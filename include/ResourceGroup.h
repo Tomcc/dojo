@@ -10,9 +10,8 @@
 #ifndef ResourceGroup_h__
 #define ResourceGroup_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
-#include <map>
 #include <string>
 
 #include "Font.h"
@@ -21,7 +20,7 @@
 
 namespace Dojo {
 	
-	class ResourceGroup
+	class ResourceGroup : public BaseObject
 	{			
 	public:		
 		

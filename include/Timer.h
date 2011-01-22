@@ -10,7 +10,7 @@
 #ifndef Timer_h__
 #define Timer_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 namespace Dojo {
 	

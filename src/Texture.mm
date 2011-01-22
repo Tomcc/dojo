@@ -8,7 +8,7 @@
 
 #include "Texture.h"
 
-#include "Math.h"
+#include "dojomath.h"
 
 #import <OpenGLES/ES1/glext.h>
 

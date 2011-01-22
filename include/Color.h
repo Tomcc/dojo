@@ -10,7 +10,7 @@
 #ifndef Color_h__
 #define Color_h__
 
-#include "dojo_config.h"
+#include "dojo_common_header.h"
 
 namespace Dojo
 {

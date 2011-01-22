@@ -10,11 +10,11 @@
 #ifndef RenderState_h__
 #define RenderState_h__
 
-#include "dojo_config.h"
-
-#include <OpenGLES/ES1/gl.h>
+#include "dojo_common_header.h"
 
 #include "Color.h"
+#include "BaseObject.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {
@@ -22,7 +22,7 @@ namespace Dojo
 	class Mesh;
 	
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
-	class RenderState
+	class RenderState : public BaseObject
 	{
 	public:
 				
