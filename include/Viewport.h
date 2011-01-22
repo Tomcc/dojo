@@ -73,8 +73,8 @@ namespace Dojo {
 			background->_updateScreenSize();
 			
 			Vector ss = background->getScreenSize();
-			background->scale.x = size.x / ss.x;
-			background->scale.y = size.y / ss.y;			
+			background->pixelScale.x = size.x / ss.x;
+			background->pixelScale.y = size.y / ss.y;			
 			
 			gameState->addObject(background, 0, false);
 		}

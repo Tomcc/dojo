@@ -41,6 +41,11 @@ interfaceRotation( 90 )
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
 	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
 	
+	//get default screen size	
+	//HACK width and height are inverted for horizontal screens!
+	setWindowSize( [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width );
+	
+	
 	//gles settings
 	glEnable( GL_TEXTURE_2D );
 	glEnable( GL_BLEND );	

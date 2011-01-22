@@ -51,9 +51,14 @@ currentFadeTime(0)
 	
 	DEBUG_ASSERT( device );
 	
+	int error = alCheckError();
+	
 	if (device) 
 	{
 		context=alcCreateContext(device,NULL);
+		
+		error = alCheckError();
+		
 		alcMakeContextCurrent(context);
 	}
     // Clear Error Code
