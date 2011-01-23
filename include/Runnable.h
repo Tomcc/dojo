@@ -9,7 +9,12 @@ namespace Dojo
 	{
 	public:
 		
-		virtual void run();
+		Runnable()
+		{
+			
+		}
+		
+		virtual void run()=0;
 		
 	protected:
 	};
