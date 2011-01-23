@@ -92,6 +92,11 @@ using namespace Dojo;
 {	
 	CAEAGLLayer* layer = (CAEAGLLayer*)self.layer;
 	
+	// Set the scale factor to be the same as the main screen
+	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
+		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
+	}
+		
 	//set the needed render size	
 	renderImpl->resizeFromLayer( layer );
 	

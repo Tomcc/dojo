@@ -72,9 +72,10 @@ namespace Dojo {
 			//force the proportions to fill screen
 			background->_updateScreenSize();
 			
+			//the background image must not be stretched on different aspect ratios
+			//so we just pick the pixel size for the horizontal			
 			Vector ss = background->getScreenSize();
-			background->pixelScale.x = size.x / ss.x;
-			background->pixelScale.y = size.y / ss.y;			
+			background->pixelScale.x = background->pixelScale.y = size.x / ss.x;		
 			
 			gameState->addObject(background, 0, false);
 		}

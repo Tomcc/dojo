@@ -43,8 +43,9 @@ interfaceRotation( 90 )
 	
 	//get default screen size	
 	//HACK width and height are inverted for horizontal screens!
-	setWindowSize( [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width );
-	
+	devicePixelScale = [UIScreen mainScreen].scale;
+	width = [UIScreen mainScreen].bounds.size.height * devicePixelScale;
+	height = [UIScreen mainScreen].bounds.size.width * devicePixelScale;	
 	
 	//gles settings
 	glEnable( GL_TEXTURE_2D );
@@ -95,15 +96,17 @@ Render::~Render()
 
 bool Render::resizeFromLayer(CAEAGLLayer * layer)
 {
-	_bindColorBuffer();
+	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+	
+	[context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
 	
 	int w, h;
 	
-	[context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
 	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &w);
 	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &h);
 	
-	setWindowSize( h, w );
+	width = h;
+	height = w;
 	
 	if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
 	{
@@ -176,7 +179,8 @@ void Render::startFrame()
 	// This application only creates a single default framebuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple framebuffers.
 	glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
-	glViewport(0, 0, height, width);
+	
+	glViewport( 0, 0, height, width );
 	
 	//clear the viewport
 	glClearColor( 

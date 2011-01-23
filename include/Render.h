@@ -96,11 +96,6 @@ namespace Dojo {
 		
 		
 		inline bool isValid()						{	return valid;		}
-
-		inline void _bindColorBuffer()
-		{			
-			glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
-		}
 						
 		void startFrame();
 		
@@ -137,6 +132,7 @@ namespace Dojo {
 		// The pixel dimensions of the CAEAGLLayer
 		float width;
 		float height;
+		float devicePixelScale;
 		
 		float interfaceRotation;		
 		InterfaceOrientation interfaceOrientation;
