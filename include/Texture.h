@@ -43,7 +43,6 @@ namespace Dojo
 		glhandle( 0 ),
 		npot( false ),
 		parentAtlas( NULL ),
-		requiresAlpha( true ),
 		OBB( NULL ),
 		ownerFrameSet( NULL )
 		{
@@ -64,11 +63,7 @@ namespace Dojo
 		
 		void unload();
 		
-		void setRequiresAlpha( bool a )	{	requiresAlpha = a;	}
-		
 		bool isLoaded()			{	return loaded;			}
-		
-		bool isAlphaRequired()	{	return requiresAlpha;	}
 						
 		virtual void bind()
 		{
@@ -141,7 +136,7 @@ namespace Dojo
 				
 	protected:
 				
-		bool npot, requiresAlpha;
+		bool npot;
 		uint width, height, internalWidth, internalHeight;
 		float xRatio, yRatio;
 		float xOffset, yOffset;

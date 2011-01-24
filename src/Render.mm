@@ -43,9 +43,10 @@ interfaceRotation( 90 )
 	
 	//get default screen size	
 	//HACK width and height are inverted for horizontal screens!
-	devicePixelScale = [UIScreen mainScreen].scale;
-	width = [UIScreen mainScreen].bounds.size.height * devicePixelScale;
-	height = [UIScreen mainScreen].bounds.size.width * devicePixelScale;	
+	
+	setContentScaleMultiplier( 1 );
+	width = [UIScreen mainScreen].bounds.size.height;
+	height = [UIScreen mainScreen].bounds.size.width;
 	
 	//gles settings
 	glEnable( GL_TEXTURE_2D );
@@ -229,7 +230,8 @@ void Render::startFrame()
 		viewportPixelRatio.y = viewport->getSize().x / height;
 	}
 	
-	viewportPixelRatio *= devicePixelScale;
+	//HACK - uncomment to get proportional pixel scale across resolutions
+	//viewportPixelRatio *= devicePixelScale;
 	
 	frameStarted = true;
 	

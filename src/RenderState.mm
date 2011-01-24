@@ -16,7 +16,7 @@ using namespace Dojo;
 
 bool RenderState::isAlphaRequired()
 {
-	return alphaRequired || !texture || ( texture && texture->isAlphaRequired() );
+	return alphaRequired || !texture;
 }
 
 void RenderState::commitChanges( RenderState* pastState )

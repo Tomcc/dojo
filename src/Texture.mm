@@ -39,16 +39,7 @@ bool Texture::load()
 		unload();
 	
 	//force disable filtering and alpha on too big textures
-	if( width > 128 || height > 128 )
-	{
-		requiresAlpha = false;
-		
-		disableBilinearFiltering();
-	}
-	else
-	{		
-		enableBilinearFiltering();
-	}
+	enableBilinearFiltering();
 	
 	//compute size
 	size = internalWidth * internalHeight * sizeof( float ) * 2;
@@ -72,10 +63,7 @@ bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 	internalHeight = tex->internalHeight;
 	
 	DEBUG_ASSERT( sx && sy && internalWidth && internalHeight );
-	
-	//bigger tiles have alpha disabled by default
-	requiresAlpha = sx < 128 || sy < 128;			
-	
+		
 	//copy bind handle
 	glhandle = tex->glhandle;
 	
@@ -275,9 +263,7 @@ bool Texture::_loadPVRTCToBoundTexture( NSString* path )
 		
 		width = CFSwapInt32LittleToHost(header->width);
 		height = CFSwapInt32LittleToHost(header->height);
-		
-		requiresAlpha = CFSwapInt32LittleToHost(header->bitmaskAlpha);
-		
+				
 		dataLength = CFSwapInt32LittleToHost(header->dataLength);
 		
 		bytes = (char *)[data bytes] + sizeof(PVRTexHeader);

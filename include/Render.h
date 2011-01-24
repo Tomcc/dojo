@@ -58,11 +58,12 @@ namespace Dojo {
 			for( uint i = 0; i < positiveLayers.size(); ++i )
 				positiveLayers.at(i)->clear();
 		}
-	
-		inline void setWindowSize(int w, int h) 
+		
+		inline void setContentScaleMultiplier( float mult )
 		{
-			width = (float)w;
-			height = (float)h;
+			DEBUG_ASSERT( mult > 0 );
+			
+			devicePixelScale = [UIScreen mainScreen].scale * mult;
 		}
 		
 		void setViewport( Viewport* v );
