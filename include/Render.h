@@ -65,7 +65,8 @@ namespace Dojo {
 			height = (float)h;
 		}
 		
-		inline void setViewport( Viewport* v )		{	viewport = v;		}		
+		void setViewport( Viewport* v );
+		
 		inline void setCullingEnabled( bool state )	{	cullingEnabled = state;	}
 				
 		inline void setInterfaceOrientation( InterfaceOrientation o )		
@@ -81,6 +82,7 @@ namespace Dojo {
 		
 		inline float getWidth()						{	return width;		}
 		inline float getHeight()					{	return height;		}
+		inline float getContentScale()				{	return devicePixelScale;	}
 		
 		inline Viewport* getViewport()				{	return viewport;	}
 				

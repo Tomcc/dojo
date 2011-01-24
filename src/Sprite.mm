@@ -15,11 +15,7 @@ using namespace Dojo;
 
 Sprite::Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName, float tpf ) :
 AnimatedQuad( level, pos )
-{			
-	//do not use immediate animation
-	delete animation;
-	animation = NULL;
-	
+{				
 	if( defaultAnimName.size() )
 	{		
 		FrameSet* s = level->getFrameSet( defaultAnimName );

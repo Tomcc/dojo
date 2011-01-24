@@ -24,7 +24,7 @@ animation( NULL ),
 animationTime( 0 ),
 pixelScale( 1,1,1 ),
 autoAdvancement( true )
-{		
+{
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );
 	

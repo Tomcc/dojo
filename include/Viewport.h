@@ -21,6 +21,8 @@
 
 namespace Dojo {
 	
+	class Render;
+	
 	class Viewport : public Object
 	{
 	public:
@@ -75,9 +77,9 @@ namespace Dojo {
 			//the background image must not be stretched on different aspect ratios
 			//so we just pick the pixel size for the horizontal			
 			Vector ss = background->getScreenSize();
-			background->pixelScale.x = background->pixelScale.y = size.x / ss.x;		
 			
-			gameState->addObject(background, 0, false);
+			background->pixelScale.x = size.x / ss.x;
+			background->pixelScale.y = background->pixelScale.x;	
 		}
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
@@ -98,11 +100,7 @@ namespace Dojo {
 						  getMaxY() - (y / targetSize.y) * size.y );
 		}
 						
-		inline void makeScreenSize( Vector& dest, int w, int h )
-		{
-			dest.x = (float)w/targetSize.x * size.x;
-			dest.y = (float)h/targetSize.y * size.y;
-		}
+		void makeScreenSize( Vector& dest, int w, int h );
 		
 		inline void makeScreenSize( Vector& dest, Texture* tex )
 		{
@@ -124,7 +122,7 @@ namespace Dojo {
 				background->position.x = position.x;
 				background->position.y = position.y;
 			}		
-		}
+		}	
 				
 	protected:
 		

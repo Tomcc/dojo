@@ -169,10 +169,17 @@ void Render::removeRenderable( Renderable* s )
 	s->_notifyRenderInfo( NULL, 0, 0 );
 }
 
+void Render::setViewport( Viewport* v )		
+{	
+	DEBUG_ASSERT( v );
+	
+	viewport = v;
+}	
+
 void Render::startFrame()
 {	
-	if( frameStarted || !viewport )
-		return;
+	DEBUG_ASSERT( !frameStarted );
+	DEBUG_ASSERT( viewport );
 			
 	[EAGLContext setCurrentContext:context];
 				
@@ -221,14 +228,24 @@ void Render::startFrame()
 		viewportPixelRatio.x = viewport->getSize().y / width;
 		viewportPixelRatio.y = viewport->getSize().x / height;
 	}
-		
+	
+	viewportPixelRatio *= devicePixelScale;
+	
 	frameStarted = true;
+	
+	//render the background if needed
+	Renderable* bg = viewport->getBackgroundSprite();
+	
+	if( bg )
+	{		
+		renderElement( bg );
+	}
 }
 
 void Render::renderElement( Renderable* s )
 {
-	if( !frameStarted || !s )
-		return;
+	DEBUG_ASSERT( frameStarted );
+	DEBUG_ASSERT( viewport );
 	
 	s->prepare( viewportPixelRatio );
 	
@@ -275,8 +292,7 @@ void Render::endFrame()
 {			
 	// This application only creates a single color renderbuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple renderbuffers.
-	if( !frameStarted )
-		return;
+	DEBUG_ASSERT( frameStarted );
 	
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
 	
