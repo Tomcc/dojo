@@ -63,10 +63,6 @@ using namespace Dojo;
 
 - (void) dealloc
 {	
-#ifdef OPENFEINT_ENABLED
-	[OpenFeint shutdown];
-#endif
-	
 	delete renderImpl;
 	delete game;	
 	
@@ -161,26 +157,7 @@ using namespace Dojo;
 		return;
 	}
 	
-	touchSource = game;	
-	
-#ifdef OPENFEINT_ENABLED	
-	//initialise openfeint	
-	NSDictionary* settings = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight], OpenFeintSettingDashboardOrientation,
-							  @"NinjaTraining", OpenFeintSettingShortDisplayName, 
-							  [NSNumber numberWithBool:YES], OpenFeintSettingEnablePushNotifications,
-							  [NSNumber numberWithBool:YES], OpenFeintSettingGameCenterEnabled,
-							  nil];
-	
-	OFDelegatesContainer* cont = [OFDelegatesContainer containerWithOpenFeintDelegate:self]; 
-	
-	[OpenFeint initializeWithProductKey:@"OzK4qmcKPAHM9e8qxNCXfA"
-							  andSecret:@"liYC2ASMQ3ffXB5s27QN336loVN1UHex9BbLzx5MUVY"
-						 andDisplayName:@"Ninja Training"
-							andSettings:settings
-						   andDelegates:cont];
-#endif
-
+	touchSource = game;
 	
 	//animate
 	[self startAnimation];
@@ -228,12 +205,7 @@ using namespace Dojo;
 			[animationTimer invalidate];
 			animationTimer = nil;
 		}
-		
-		//notify openfeint
-#ifdef OPENFEINT_ENABLED
-		[OpenFeint applicationWillResignActive];
-#endif
-		
+				
 		game->onApplicationFocusLost();
 		
 		animating = FALSE;
