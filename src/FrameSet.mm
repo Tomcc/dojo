@@ -10,6 +10,7 @@
 #include "FrameSet.h"
 
 #include "ResourceGroup.h"
+#include "Platform.h"
 
 using namespace Dojo;
 
@@ -41,14 +42,14 @@ bool FrameSet::loadAtlas( const std::string& infoFile, Texture* atlas )
 	if( !creator && !atlas )
 		return NULL;
 	
-	NSString* NSPath = Utils::toNSString( infoFile );
-	NSData* data = [[NSData alloc] initWithContentsOfFile:NSPath ];
+	char* data; 
+	uint size = Platform::loadFileContent( data, infoFile );
 	
 	if( !data )
 		return NULL;
 	
-	char* buf = (char*)[data bytes];
-	char* end = buf + [data length];
+	char* buf = data;
+	char* end = data + size;
 		
 	//retrieve the correctly named texture
 	if( !atlas )
@@ -81,8 +82,7 @@ bool FrameSet::loadAtlas( const std::string& infoFile, Texture* atlas )
 	//loaded at least one?
 	loaded = frames.size() > 0;
 	
-	//HACK
-	//[data release];
+	free( data );
 	
 	return true;
 }

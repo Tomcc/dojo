@@ -10,6 +10,7 @@
 #include "Mesh.h"
 
 #include "Utils.h"
+#include "Platform.h"
 
 using namespace Dojo;
 
@@ -22,12 +23,14 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 
 bool Mesh::load()
 {
-	NSString* path = Utils::toNSString( filePath );
+	char* file;
+	uint size = Platform::loadFileContent( file, filePath );
 	
-	NSData* fileBuffer = [[NSData alloc] initWithContentsOfFile:path];
+	if( !file )
+		return false;
 	
-	char* buf = (char*)[fileBuffer bytes];
-	char* end = buf + [fileBuffer length];
+	char* buf = file;
+	char* end = file + size;
 
 	//begin load
 	begin();
@@ -124,9 +127,7 @@ bool Mesh::load()
 	//push to device
 	this->end();
 	
-	//HACK
-	/*[fileBuffer release];
-	[path release];*/
+	free( file );
 	
 	return true;
 }

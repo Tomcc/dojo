@@ -8,6 +8,8 @@
 
 #include "ResourceGroup.h"
 
+#include "Platform.h"
+
 using namespace Dojo;
 
 ResourceGroup::ResourceGroup()
@@ -47,26 +49,20 @@ ResourceGroup::~ResourceGroup()
 void ResourceGroup::loadSets( const std::string& subdirectory )
 {
 	//load all the sets in the given folder
-	NSString* dir = nil;
 	
-	if( subdirectory.size() > 0 )
-		dir = Utils::toNSString( subdirectory );
+	DEBUG_ASSERT( subdirectory.size() );
 	
-	NSArray* pathsPNG = [[NSBundle mainBundle] pathsForResourcesOfType: @"png" inDirectory: dir ];
-	NSArray* pathsPVR = [[NSBundle mainBundle] pathsForResourcesOfType: @"pvrtc" inDirectory: dir ];
+	std::vector< std::string > paths;
+	std::string name, lastName;
 	
-	NSArray* paths = [pathsPNG arrayByAddingObjectsFromArray:pathsPVR];
-	
-	NSString* NSpath;
-	std::string path, name, lastName;
 	FrameSet* currentSet = NULL;
 	
-	for( uint i = 0; i < [paths count]; ++i )
-	{
-		NSpath = (NSString*)[paths objectAtIndex:i];
+	Platform::getFilePathsForType( "png", subdirectory, paths );
+	Platform::getFilePathsForType( "pvrtc", subdirectory, paths );
 		
-		path = Utils::toSTDString( NSpath );		
-		name = Utils::getFileName( path ); 
+	for( uint i = 0; i < paths.size(); ++i )
+	{
+		name = Utils::getFileName( paths[i] ); 
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
@@ -83,7 +79,7 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 		}
 		
 		//create and load a new buffer
-		Texture* t = new Texture( this, path );
+		Texture* t = new Texture( this, paths[i] );
 		currentSet->addTexture( t, true );
 		
 		lastName = name;
@@ -93,88 +89,63 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 	if( currentSet )
 		currentSet->load();
 	
-	NSArray* pathsAtlases = [[NSBundle mainBundle] pathsForResourcesOfType: @"atlasinfo" inDirectory: dir ];
+	paths.clear();
+
+	Platform::getFilePathsForType( "atlasinfo", subdirectory, paths );
 	
 	//now load atlases!		
-	for(uint  i = 0; i < [pathsAtlases count]; ++i)
+	for(uint  i = 0; i < paths.size(); ++i)
 	{
-		NSpath = (NSString*)[pathsAtlases objectAtIndex:i];
-			
-		path = Utils::toSTDString( NSpath );		
-		name = Utils::getFileName( path ); 
+		name = Utils::getFileName( paths[i] ); 
 			
 		currentSet = new FrameSet( this, name );
-		if( currentSet->loadAtlas( path ) )
+		if( currentSet->loadAtlas( paths[i] ) )
 			addFrameSet( currentSet, name );
 	}
-	
-	//HACK
-	/*[pathsPNG release];
-	[pathsPVR release];
-	[paths release];
-	[dir release];*/
 }
 
 void ResourceGroup::loadFonts( const std::string& subdirectory )
 {
 	//load all the sets in the given folder
-	NSString* dir = nil;
+	DEBUG_ASSERT( subdirectory.size() );
 	
-	if( subdirectory.size() > 0 )
-		dir = Utils::toNSString( subdirectory );
-	
-	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType: @"font" inDirectory: dir ];
-		
-	NSString* NSpath;
-	std::string path, name;
+	std::string name;
 	Font* font = NULL;
 	
-	for( uint i = 0; i < [paths count]; ++i )
+	std::vector<std::string> paths;
+	
+	Platform::getFilePathsForType( "font", subdirectory, paths );
+	
+	for( uint i = 0; i < paths.size(); ++i )
 	{
-		NSpath = (NSString*)[paths objectAtIndex:i];
-		
-		path = Utils::toSTDString( NSpath );
-		
-		name = Utils::getFileName( path ); 
+		name = Utils::getFileName( paths[i] ); 
 		
 		///use the frameset with the same name
 		if( isFrameSetLoaded( name ) )
 		{
-			font = new Font( path, getFrameSet( name ) );
+			font = new Font( paths[i], getFrameSet( name ) );
 			
 			if( font->load() )			
 				addFont( font, name );
 		}	
-	}		
-	
-	//HACK
-	//[paths release];
-	//[dir release];
+	}
 }
 
-void ResourceGroup::loadMeshes( const std::string& folder )
+void ResourceGroup::loadMeshes( const std::string& subdirectory )
 {
-	NSString* dir = Utils::toNSString( folder );
-	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType: @"dms" inDirectory:dir ];
+	std::vector<std::string> paths;
+	std::string name;
 	
-	NSString* path;
-	std::string name, filePath;
+	Platform::getFilePathsForType( "dms", subdirectory, paths );
 	
-	for( uint i = 0; i < [paths count]; ++i )
+	for( uint i = 0; i < paths.size(); ++i )
 	{
-		path = (NSString*)[paths objectAtIndex:i];
+		name = Utils::getFileName( paths[i] );
 		
-		filePath = Utils::toSTDString( path );
-		name = Utils::getFileName( filePath );
-		
-		Mesh* mesh = new Mesh( this, filePath );
+		Mesh* mesh = new Mesh( this, paths[i] );
 		if( mesh->load() )
 			addMesh( mesh, name );
 	}
-	
-	//HACK
-	//[paths release];
-	//[dir release];
 }
 
 void ResourceGroup::unloadSets()
