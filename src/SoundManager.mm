@@ -1,10 +1,12 @@
+#include "stdafx.h"
+
 #include "SoundManager.h"
 #include "SoundSource.h"
 #include "SoundBuffer.h"
 
-#include "Utils.h"
+#include "Platform.h"
 
-#include <AudioToolbox/AudioToolbox.h>
+#include "Utils.h"
 
 using namespace Dojo;
 
@@ -87,18 +89,18 @@ SoundManager::~SoundManager()
 
 void SoundManager::_createMainBundleBuffers()
 {
+	//TODO move sounds to resourcegroup!
+
 	//ask all the sound files to the main bundle
-	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType: @"caf" inDirectory: @"data" ];
-	NSString* NSpath;
-	std::string name, lastName, path;
+	std::vector< std::string > paths;
+
 	SoundSet* currentSet = NULL;
+
+	Platform::getFilePathsForType( "caf", "data", paths );
 	
-	for( uint i = 0; i < [paths count]; ++i )
+	for( uint i = 0; i < paths.size(); ++i )
 	{
-		NSpath = (NSString*)[paths objectAtIndex:i];
-		
-		path = Utils::toSTDString( NSpath ); 
-		name = Utils::getFileName( path );
+		name = Utils::getFileName( paths[i] );
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
@@ -111,7 +113,7 @@ void SoundManager::_createMainBundleBuffers()
 		}
 			
 		//create and load a new buffer
-		SoundBuffer* b = new SoundBuffer( this, path );
+		SoundBuffer* b = new SoundBuffer( this, paths[i] );
 		b->load();
 		
 		//TODO: Multiple Sound-in-set Support

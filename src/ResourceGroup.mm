@@ -1,10 +1,4 @@
-//
-//  ResourceManager.mm
-//  NinjaTraining
-//
-//  Created by Tommaso Checchi on 4/27/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
-//
+#include "stdafx.h"
 
 #include "ResourceGroup.h"
 

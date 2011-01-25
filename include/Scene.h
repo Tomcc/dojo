@@ -12,6 +12,8 @@
 
 #include "dojo_config.h"
 
+#include "Array.h"
+
 namespace Dojo
 {
 	

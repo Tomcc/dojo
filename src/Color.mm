@@ -1,11 +1,4 @@
-/*
- *  Color.mm
- *  SplattoPuzzle
- *
- *  Created by Tommaso Checchi on 9/26/10.
- *  Copyright 2010 none. All rights reserved.
- *
- */
+#include "stdafx.h"
 
 #include "Color.h"
 

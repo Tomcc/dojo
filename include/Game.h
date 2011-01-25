@@ -17,7 +17,7 @@
 #include "TouchSource.h"
 #include "SoundManager.h"
 
-#import "Application.h"
+#include "Application.h"
 
 namespace Dojo {
 	
@@ -29,16 +29,6 @@ namespace Dojo {
 	public:
 		
 		static const float UPDATE_INTERVAL_CAP = 1.f/60.f;
-		
-		inline static uint getCurrentHour()
-		{			
-			NSDate* today = [NSDate date];
-			NSCalendar* gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-			
-			NSDateComponents* components = [gregorian components:NSHourCalendarUnit fromDate:today];
-			
-			return [components hour];	
-		}
 				
 		Game( Application* app, Render* r, SoundManager* s );
 		

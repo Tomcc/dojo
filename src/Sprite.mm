@@ -1,11 +1,4 @@
-/*
- *  Sprite.mm
- *  Dojo Training
- *
- *  Created by Tommaso Checchi on 5/23/10.
- *  Copyright 2010 __MyCompanyName__. All rights reserved.
- *
- */
+#include "stdafx.h"
 
 #include "Sprite.h"
 

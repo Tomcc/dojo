@@ -20,9 +20,8 @@ namespace Dojo
 	{	
 	public:
 		
-		static const float PI = 3.14159265f;
-		
-		static const float EULER_TO_RADIANS = 0.001768388256577f;
+		static const float PI;
+		static const float EULER_TO_RADIANS;
 		
 		//seeds the random either using the given seed, or current time if omitted
 		static void seedRandom( uint seed = 0 );

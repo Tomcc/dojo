@@ -19,7 +19,8 @@ namespace Dojo {
 	class Utils
 	{
 	public:
-		
+
+#ifndef WIN32	
 		static uint toNumericVersion( const std::string& versionString )
 		{
 			DEBUG_ASSERT( versionString.size() );
@@ -91,6 +92,7 @@ namespace Dojo {
 		{
 			return [UIColor colorWithRed:c.r green:c.g blue:c.b alpha:c.a];
 		}
+#endif
 		
 		static int getLastOf( const std::string& str, char c )
 		{			

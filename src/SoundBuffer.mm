@@ -1,9 +1,9 @@
+#include "stdafx.h"
+
 #include "SoundBuffer.h"
 #include "SoundManager.h"
 
 #include "Utils.h"
-
-#include <AudioToolbox/AudioToolbox.h>
 
 using namespace Dojo;
 using namespace std;
@@ -37,6 +37,9 @@ SoundBuffer::~SoundBuffer()
 
 void SoundBuffer::_loadCAFBuffer()
 {	
+#ifdef WIN32
+	DEBUG_TODO;
+#else
 	NSString* filePath = Utils::toNSString(name);
 	
 	// first, open the file	
@@ -70,6 +73,7 @@ void SoundBuffer::_loadCAFBuffer()
 	alBufferData( buffer, AL_FORMAT_STEREO16, outData, fileSize, freq/32); 
 	
 	free( outData );
+#endif
 }
 
 bool SoundBuffer::load()

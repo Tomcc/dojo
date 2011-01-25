@@ -1,12 +1,4 @@
-/*
- *  Renderable.cpp
- *  Dojo Training
- *
- *  Created by Tommaso Checchi on 7/14/10.
- *  Copyright 2010 none. All rights reserved.
- *
- */
-
+#include "stdafx.h"
 
 #include "AnimatedQuad.h"
 

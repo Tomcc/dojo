@@ -59,13 +59,6 @@ namespace Dojo {
 				positiveLayers.at(i)->clear();
 		}
 		
-		inline void setContentScaleMultiplier( float mult )
-		{
-			DEBUG_ASSERT( mult > 0 );
-			
-			devicePixelScale = [UIScreen mainScreen].scale * mult;
-		}
-		
 		void setViewport( Viewport* v );
 		
 		inline void setCullingEnabled( bool state )	{	cullingEnabled = state;	}

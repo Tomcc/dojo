@@ -1,10 +1,4 @@
-//
-//  Render.m
-//  NinjaTraining
-//
-//  Created by Tommaso Checchi on 4/23/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
-//
+#include "stdafx.h"
 
 #include "Render.h"
 
@@ -44,7 +38,7 @@ interfaceRotation( 90 )
 	//get default screen size	
 	//HACK width and height are inverted for horizontal screens!
 	
-	setContentScaleMultiplier( 1 );
+	devicePixelScale = [UIScreen mainScreen].scale;
 	width = [UIScreen mainScreen].bounds.size.height;
 	height = [UIScreen mainScreen].bounds.size.width;
 	
