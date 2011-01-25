@@ -19,6 +19,7 @@ bool Texture::load()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 		
+#ifndef WIN32
 	NSString *path = Utils::toNSString( filePath );
 	
 	if( textureType == "png" )
@@ -26,7 +27,10 @@ bool Texture::load()
 	
 	else if( textureType == "pvrtc" )
 		loaded = _loadPVRTCToBoundTexture( path );
-	
+#else
+	DEBUG_TODO
+#endif
+
 	if( !loaded )
 		unload();
 	
@@ -92,6 +96,37 @@ void Texture::unload()
 			
 	loaded = false;
 }
+
+
+void Texture::_buildOptimalBillboard()
+{
+	OBB = new Mesh();
+	
+	OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D, true );
+	OBB->setVertexFieldEnabled( Mesh::VF_UV, true );
+	
+	OBB->begin( 4 );
+	
+	OBB->vertex( -0.5, -0.5 );		
+	OBB->uv( _getXTextureOffset(), 
+			 _getYTextureOffset() + _getYTextureUVRatio() );
+	
+	OBB->vertex( 0.5, -0.5 );		
+	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
+			 _getYTextureOffset() + _getYTextureUVRatio() );
+	
+	OBB->vertex( -0.5, 0.5 );		
+	OBB->uv( _getXTextureOffset(), 
+			 _getYTextureOffset() );
+	
+	OBB->vertex( 0.5, 0.5 );
+	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
+			 _getYTextureOffset() );
+	
+	OBB->end();			
+}
+
+#ifndef WIN32
 
 bool Texture::_loadPNGToBoundTexture( NSString* path )
 {
@@ -160,34 +195,6 @@ bool Texture::_loadPNGToBoundTexture( NSString* path )
 	[texData release];*/
 	
 	return true;
-}
-
-void Texture::_buildOptimalBillboard()
-{
-	OBB = new Mesh();
-	
-	OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D, true );
-	OBB->setVertexFieldEnabled( Mesh::VF_UV, true );
-	
-	OBB->begin( 4 );
-	
-	OBB->vertex( -0.5, -0.5 );		
-	OBB->uv( _getXTextureOffset(), 
-			 _getYTextureOffset() + _getYTextureUVRatio() );
-	
-	OBB->vertex( 0.5, -0.5 );		
-	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
-			 _getYTextureOffset() + _getYTextureUVRatio() );
-	
-	OBB->vertex( -0.5, 0.5 );		
-	OBB->uv( _getXTextureOffset(), 
-			 _getYTextureOffset() );
-	
-	OBB->vertex( 0.5, 0.5 );
-	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
-			 _getYTextureOffset() );
-	
-	OBB->end();			
 }
 
 struct PVRTexHeader
@@ -290,6 +297,8 @@ bool Texture::_loadPVRTCToBoundTexture( NSString* path )
 	
 	return false;	
 }
+
+#endif
 
 
 

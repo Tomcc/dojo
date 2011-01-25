@@ -2,13 +2,14 @@
 #define dojo_common_header
 
 #include "dojo_config.h"
-#include "dojo_config.h"
 
-#include <string>
-#include <map>
+#include <math.h>
 #include <assert.h>
-#include <ctime>
-#include <cstdlib>
+
+#include <map>
+#include <string>
+#include <vector>
+#include <iostream>
 
 #ifdef PLATFORM_WIN32
 

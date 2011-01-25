@@ -10,6 +10,11 @@
 
 using namespace Dojo;
 
+const float SoundManager::m = 100;
+						
+const uint SoundManager::maxBuffers = 32;
+const uint SoundManager::maxSources = 64;
+
 bool SoundManager::alCheckError()
 {
 	bool foundError = false;
@@ -43,7 +48,7 @@ currentFadeTime(0)
 #ifdef HARDWARE_SOUND
 	UInt32 sessionCategory = kAudioSessionCategory_SoloAmbientSound;    // 1
 #else
-	UInt32 sessionCategory = kAudioSessionCategory_AmbientSound;
+	uint sessionCategory = kAudioSessionCategory_AmbientSound;
 #endif
 	AudioSessionSetProperty (kAudioSessionProperty_AudioCategory, sizeof (sessionCategory), &sessionCategory);
 	AudioSessionSetActive (true);	
@@ -93,6 +98,7 @@ void SoundManager::_createMainBundleBuffers()
 
 	//ask all the sound files to the main bundle
 	std::vector< std::string > paths;
+	std::string name, lastName;
 
 	SoundSet* currentSet = NULL;
 
@@ -126,11 +132,15 @@ void SoundManager::_createMainBundleBuffers()
 
 bool SoundManager::isSystemSoundInUse()
 {
+#ifdef PLATFORM_IOS
 	UInt32 otherAudioIsPlaying;
 	UInt32 size = sizeof(otherAudioIsPlaying);
 	AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &otherAudioIsPlaying);
 	
 	return otherAudioIsPlaying;
+#else
+	return false;
+#endif
 }
 
 

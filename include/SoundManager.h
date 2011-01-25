@@ -41,10 +41,10 @@ namespace Dojo {
 
 		public:
 
-			static const float m = 100;
+			static const float m;
 						
-			static const uint maxBuffers = 32;
-			static const uint maxSources = 64;
+			static const uint maxBuffers;
+			static const uint maxSources;
 
 			typedef Array<SoundSource*> SoundList;
 			typedef std::map<std::string, SoundSet*> SoundDataMap;

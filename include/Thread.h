@@ -15,7 +15,7 @@ namespace Dojo
 		
 		Thread( Runnable* r ) :
 		runnable( r ),
-		pthread( 0 )
+		nativeThread( NULL )
 		{
 			DEBUG_ASSERT( runnable );
 		}
@@ -26,7 +26,7 @@ namespace Dojo
 		
 		Runnable* runnable;
 		
-		pthread_t pthread;
+		unsigned long nativeThread;
 		
 		static void* threadStarter( void* main );
 	};

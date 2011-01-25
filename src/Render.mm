@@ -29,11 +29,11 @@ interfaceRotation( 90 )
     }
 	
 	// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
-	glGenFramebuffersOES(1, &defaultFramebuffer);
-	glGenRenderbuffersOES(1, &colorRenderbuffer);
-	glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
-	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
+	glGenFramebuffers(1, &defaultFramebuffer);
+	glGenRenderbuffers(1, &colorRenderbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
 	//get default screen size	
 	//HACK width and height are inverted for horizontal screens!
@@ -71,13 +71,13 @@ Render::~Render()
 	// Tear down GL
 	if (defaultFramebuffer)
 	{
-		glDeleteFramebuffersOES(1, &defaultFramebuffer);
+		glDeleteFramebuffers(1, &defaultFramebuffer);
 		defaultFramebuffer = 0;
 	}
 	
 	if (colorRenderbuffer)
 	{
-		glDeleteRenderbuffersOES(1, &colorRenderbuffer);
+		glDeleteRenderbuffers(1, &colorRenderbuffer);
 		colorRenderbuffer = 0;
 	}
 		
@@ -91,21 +91,21 @@ Render::~Render()
 
 bool Render::resizeFromLayer(CAEAGLLayer * layer)
 {
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	[context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:layer];
+	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 	
 	int w, h;
 	
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &w);
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &h);
+	glGetRenderbufferParameterivOES(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &w);
+	glGetRenderbufferParameterivOES(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &h);
 	
 	width = h;
 	height = w;
 	
-	if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
+	if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 		return false;
 	}
 	
@@ -180,7 +180,7 @@ void Render::startFrame()
 				
 	// This application only creates a single default framebuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple framebuffers.
-	glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	
 	glViewport( 0, 0, height, width );
 	
@@ -290,9 +290,9 @@ void Render::endFrame()
 	// This call is redundant, but needed if dealing with multiple renderbuffers.
 	DEBUG_ASSERT( frameStarted );
 	
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	[context presentRenderbuffer:GL_RENDERBUFFER_OES];
+	[context presentRenderbuffer:GL_RENDERBUFFER];
 	
 	frameStarted = false;
 }
