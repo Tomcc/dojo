@@ -17,6 +17,56 @@ namespace Dojo
 			DEBUG_ASSERT( name.size() );
 		}
 		
+		///legge la tabella dal formato standard su stringa
+		Table( std::stringstream& buf )
+		{			
+			DEBUG_ASSERT( buf );
+			
+			std::string token = "<TABLE>", value;
+			int numvalue;
+			
+			while( token == "<TABLE>" )
+				  buf >> token;
+				  
+			name = token;
+			
+			int state = 0;
+			
+			while( 1 )
+			{
+				buf >> token;				
+				
+				if( token == "<NUMBERS>" )
+					state = 0;
+				else if( token == "<STRINGS>" )
+					state = 1;
+				else if( token == "<TABLES>" )
+					state = 2;
+				else if( token == "<END>" )
+					break;
+				else 
+				{					
+					//numbers
+					if( state == 0 )
+					{
+						buf >> numvalue;
+						
+						setNumber( token, numvalue );
+					}					
+					//strings
+					else if( state == 1 )
+					{
+						buf >> value;
+						setString( token, value );
+					}
+					else if( state == 2 )
+					{						
+						setTable( new Table( buf ) );
+					}
+				}
+			}
+		}		
+		
 		~Table()
 		{
 			clear();
@@ -124,18 +174,48 @@ namespace Dojo
 		{
 			return existsAsNumber(name) || existsAsString( name ) || existsAsTable( name );
 		}
-			   
+		
+		///scrive la tabella in un formato standard su stringa che inizia a pos
+		inline void serialize( std::stringstream& buf)
+		{			
+			buf << "<TABLE> " << name << std::endl;
+			
+			std::map< std::string, float >::iterator ni = numbers.begin();
+			std::map< std::string, std::string >::iterator si = strings.begin();
+			std::map< std::string, Table* >::iterator ti = tables.begin();
+			
+			buf << "<NUMBERS>" << std::endl;
+			
+			for( ; ni != numbers.end(); ++ni )	
+				buf << ni->first << ' ' << ni->second << std::endl;
+			
+			buf << "<STRINGS>" << std::endl;
+			
+			for( ; si != strings.end(); ++si )	
+				buf << si->first << ' ' << si->second << std::endl;
+			
+			buf << "<TABLES>" << std::endl;
+			
+			for( ; ti != tables.end(); ++ti )	
+				 ti->second->serialize( buf );
+						
+			buf << "<END>" << std::endl;
+		}
+				
 	protected:
 		
 		std::string name;
 		
 		std::map< std::string, float > numbers;
 		std::map< std::string, std::string > strings;
-		std::map< std::string, Table* > tables;		
+		std::map< std::string, Table* > tables;	
+		
 	};
 }
 
-#endif/*
+#endif
+
+/*
  *  Table.h
  *  Drafted
  *

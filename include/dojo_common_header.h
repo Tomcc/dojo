@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 #ifdef PLATFORM_WIN32
 
