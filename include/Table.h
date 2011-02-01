@@ -19,9 +19,7 @@ namespace Dojo
 		
 		///legge la tabella dal formato standard su stringa
 		Table( std::stringstream& buf )
-		{			
-			DEBUG_ASSERT( buf );
-			
+		{						
 			std::string token = "<TABLE>", value;
 			int numvalue;
 			
@@ -151,21 +149,21 @@ namespace Dojo
 		
 		inline bool existsAsNumber( const std::string& name )
 		{
-			DEBUG_ASSERT( key.size() );
+			DEBUG_ASSERT( name.size() );
 			
 			return numbers.find( name ) != numbers.end();
 		}
 		
 		inline bool existsAsString( const std::string& name )
 		{
-			DEBUG_ASSERT( key.size() );
+			DEBUG_ASSERT( name.size() );
 			
 			return numbers.find( name ) != numbers.end();
 		}
 		
 		inline bool existsAsTable( const std::string& name )
 		{
-			DEBUG_ASSERT( key.size() );
+			DEBUG_ASSERT( name.size() );
 			
 			return numbers.find( name ) != numbers.end();
 		}

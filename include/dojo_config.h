@@ -25,7 +25,7 @@
 	#endif
 #endif
 
-#ifndef DEBUG
+#ifndef _DEBUG
 #define NDEBUG  //to be sure!
 #endif
 
