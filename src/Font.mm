@@ -2,6 +2,8 @@
 
 #include "Font.h"
 
+#include "Platform.h"
+
 using namespace Dojo;
 
 bool Font::load()

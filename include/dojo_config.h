@@ -40,7 +40,7 @@
 
 	#define DEBUG_ASSERT( T )
 	#define DEBUG_TODO
-	#define DEBUG_OUT( S, V ) 
+	#define DEBUG_OUT( T ) 
 	#define DEBUG_MESSAGE( T )
 
 #endif

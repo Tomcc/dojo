@@ -31,7 +31,7 @@ void Thread::start()
 
 #else
 	int error = pthread_create( 
-				   &nativeThread,
+				   (pthread_t*)&nativeThread,
 				   NULL, 
 				   Thread::threadStarter, 
 				   (void*)runnable );

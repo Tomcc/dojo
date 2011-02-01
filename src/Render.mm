@@ -105,7 +105,6 @@ bool Render::resizeFromLayer(CAEAGLLayer * layer)
 	
 	if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 		return false;
 	}
 	
