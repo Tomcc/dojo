@@ -155,13 +155,7 @@ namespace Dojo
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _buildOptimalBillboard();
 
-#ifndef WIN32
-
-		bool _loadPNGToBoundTexture( NSString* path );
-
-		bool _loadPVRTCToBoundTexture( NSString* path );
-
-#endif	
+		bool _loadPNGToBoundTexture();
 	};
 }
 
