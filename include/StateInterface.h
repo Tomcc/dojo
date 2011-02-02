@@ -67,12 +67,12 @@ namespace Dojo
 		virtual void onStateLoop( float dt )=0;		
 		virtual void onStateEnd()=0;
 		
+	protected:
+		int currentState;		
+		StateInterface* currentStatePtr;
+		
 	private:
 		
-		int currentState;
-		int previousState;
-		
-		StateInterface* currentStatePtr;
 		
 		inline void _stateEnd()
 		{
