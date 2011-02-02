@@ -48,19 +48,19 @@ namespace Dojo {
 						
 		inline void addClickable( Renderable* s )
 		{
-			clickables.addElement( s );
+			clickables.add( s );
 		}
 		
 		inline void addObject( Object* o )
 		{
-			objects.addElement( o );
+			objects.add( o );
 		}
 				
 		void addObject( Renderable* s, int layer, bool clickable = false );
 		
 		inline void removeObject( Object* o )
 		{
-			objects.removeElement( o );
+			objects.remove( o );
 		}
 		
 		inline void removeClickableSprite( Renderable* s );

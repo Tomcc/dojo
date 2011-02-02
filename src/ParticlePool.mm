@@ -13,7 +13,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	if( !p ) //no idle
 	{
 		p = new Particle( this, gameState, pool.size() );
-		pool.addElement( p );
+		pool.add( p );
 		
 		_registerParticle( p );
 	}

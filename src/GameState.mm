@@ -58,7 +58,7 @@ void GameState::removeSprite( Renderable* s )
 
 void GameState::removeClickableSprite( Renderable* s )
 {
-	clickables.removeElement( s );
+	clickables.remove( s );
 	s->clickListener = NULL;
 }
 
@@ -116,7 +116,7 @@ void GameState::updateObjects( float dt )
 			{
 				delete o;
 				
-				objects.removeElement( i );
+				objects.remove( i );
 				
 				--i;
 			}

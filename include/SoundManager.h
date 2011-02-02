@@ -70,7 +70,7 @@ namespace Dojo {
 			{
 				for( uint i = 0; i < busySoundPool.size(); ++i )
 				{
-					SoundSource* s = busySoundPool.popElement();
+					SoundSource* s = busySoundPool.pop();
 					s->stop();
 					delete s;
 				}
@@ -90,8 +90,8 @@ namespace Dojo {
 			{
 				if( idleSoundPool.size() > 0 && set )
 				{
-					SoundSource* s = idleSoundPool.popElement();
-					busySoundPool.addElement(s);
+					SoundSource* s = idleSoundPool.pop();
+					busySoundPool.add(s);
 
 					s->_setup( set->getBuffer() );
 
@@ -313,7 +313,7 @@ namespace Dojo {
 					{
 						if( loadedBufferList.at(i)->getUses() == 0 )
 						{
-							loadedBufferList.removeElement( i );
+							loadedBufferList.remove( i );
 
 							removed = true;
 							break;
@@ -325,7 +325,7 @@ namespace Dojo {
 						return false;
 				}
 
-				loadedBufferList.addElement( newbuf );			
+				loadedBufferList.add( newbuf );			
 				return true;
 			}
 

@@ -49,7 +49,7 @@ namespace Dojo
 			}
 			
 			///Aggiunge un elemento al termine del vettore
-			FV_INLINE void addElement(const T& element)
+			FV_INLINE void add(const T& element)
 			{
 				//se nel vettore non entra un'altra pagina di memoria
 				if(elements >= arraySize) _allocatePage();
@@ -63,14 +63,14 @@ namespace Dojo
 			\param index Indirizzo del nuovo elemento
 
 			Tutti gli elementi successivi saranno spostati di 1 per fare spazio al nuovo.
-			\remark E' sensibilmente piu' lento di addElement(). Se index e' fuori del vettore
+			\remark E' sensibilmente piu' lento di add(). Se index e' fuori del vettore
 			l'elemento sara' aggiunto alla fine.
 			*/
-			FV_INLINE void addElement(const T& element, const size_t& index)
+			FV_INLINE void add(const T& element, const size_t& index)
 			{
 				//se l'index e' fuori dei limiti aggiungilo alla fine
 				if(index > size())
-					addElement(element);
+					add(element);
 				else
 				{
 					//se nel vettore non entra un'altro elemento
@@ -106,7 +106,7 @@ namespace Dojo
 			/**
 			Non chiama delete in caso di pointers.
 			*/
-			FV_INLINE void removeElement(uint index)
+			FV_INLINE void remove(uint index)
 			{
 				DEBUG_ASSERT( size() > index );
 				
@@ -124,22 +124,22 @@ namespace Dojo
 			}
 			///Rimuove un elemento dal vettore.
 			/**
-			Chiama semplicemente getElementIndex seguito da removeElement(unsigned int).
+			Chiama semplicemente getElementIndex seguito da remove(unsigned int).
 			Non chiama delte in caso di pointers.
 			*/
-			FV_INLINE bool removeElement( T& e)
+			FV_INLINE bool remove( T& e)
 			{
 				int i = getElementIndex(e);
 				if(i != -1)
 				{
-					removeElement(i);
+					remove(i);
 					return true;
 				}
 				else return false;
 			}
 
 			///Rimuove e restituisce l'elemento in coda del vettore
-			FV_INLINE T popElement()
+			FV_INLINE T pop()
 			{
 				DEBUG_ASSERT( size() );
 				
@@ -149,20 +149,20 @@ namespace Dojo
 			}
 
 			///Rimuove e restituisce un elemento qualsiasi del vettore
-			FV_INLINE T popElement( unsigned int index )
+			FV_INLINE T pop( unsigned int index )
 			{
 				T elem = at( index );
-				removeElement( index );
+				remove( index );
 
 				return elem;
 			}
 
 			///Rimuove e restituisce un elemento qualsiasi del vettore
-			FV_INLINE T popElement( T& elem )
+			FV_INLINE T pop( T& elem )
 			{
 				int i = getElementIndex(elem);
 
-				return popElement( i );
+				return pop( i );
 			}
 
 			///Rimuove qualsiasi elemento dal vettore

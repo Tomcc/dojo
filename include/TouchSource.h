@@ -80,7 +80,7 @@ namespace Dojo
 			
 			if( l->getSource() == NULL )
 			{
-				listeners.addElement( l );				
+				listeners.add( l );				
 				l->_notifySource( this );
 			}
 		}
@@ -91,7 +91,7 @@ namespace Dojo
 			
 			if( l->getSource() == this )
 			{
-				listeners.removeElement( l );
+				listeners.remove( l );
 				l->_notifySource(NULL);
 			}
 		}

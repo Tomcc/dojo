@@ -73,7 +73,7 @@ currentFadeTime(0)
 
 	//preload sounds
 	for( unsigned int i = 0; i < maxSources; ++i )
-		idleSoundPool.addElement( new SoundSource( this ) );
+		idleSoundPool.add( new SoundSource( this ) );
 
 	//crea il suono inutile
 	dummySound = new SoundDummy( this );
@@ -175,8 +175,8 @@ void SoundManager::update( float dt )
 		//resetta i suoni finiti
 		if( current->_isWaitingForDelete() )
 		{
-			busySoundPool.popElement( i );
-			idleSoundPool.addElement( current );
+			busySoundPool.pop( i );
+			idleSoundPool.add( current );
 
 			current->_reset();
 

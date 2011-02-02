@@ -83,7 +83,7 @@ namespace Dojo
 			if( owner )
 				t->_notifyOwnerFrameSet( this );
 			
-			frames.addElement( t );
+			frames.add( t );
 		}
 		
 		//return the looped frame

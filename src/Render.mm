@@ -122,7 +122,7 @@ Render::RenderableList* Render::getLayer( int layerID )
 	
 	//allocate the needed layers if layerID > layer size
 	while( layerList->size() <= layerID )
-		layerList->addElement( new RenderableList() );	
+		layerList->add( new RenderableList() );	
 	
 	//get the needed layer	
 	return layerList->at( layerID );
@@ -153,12 +153,12 @@ void Render::addRenderable( Renderable* s, int layerID )
 		
 	s->_notifyRenderInfo( this, layerID, bestIndex );
 		
-	layer->addElement( s, bestIndex );
+	layer->add( s, bestIndex );
 }
 
 void Render::removeRenderable( Renderable* s )
 {	
-	getLayer( s->getLayer() )->removeElement( s );
+	getLayer( s->getLayer() )->remove( s );
 	
 	s->_notifyRenderInfo( NULL, 0, 0 );
 }

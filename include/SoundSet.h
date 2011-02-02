@@ -52,7 +52,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( b );
 			
-			buffers.addElement( b );
+			buffers.add( b );
 		}
 
 	protected:

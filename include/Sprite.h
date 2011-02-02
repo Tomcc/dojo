@@ -51,7 +51,7 @@ namespace Dojo
 			
 			Animation* a = new Animation( set, timePerFrame );
 		
-			animations.addElement( a );		
+			animations.add( a );		
 			
 			return animations.size()-1;
 		}
