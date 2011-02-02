@@ -25,7 +25,8 @@ namespace Dojo {
 		
 		bool dispose, absoluteTimeSpeed;
 		
-		Vector position, speed;
+		Vector position, speed;		
+		float spriteRotation, rotationSpeed;	
 				
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
@@ -33,7 +34,9 @@ namespace Dojo {
 		speed(0,0),
 		active( true ),
 		dispose( false ),
-		absoluteTimeSpeed( false )
+		absoluteTimeSpeed( false ),
+		spriteRotation( 0 ),
+		rotationSpeed( 0 )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
@@ -49,6 +52,9 @@ namespace Dojo {
 		{
 			active = true;
 			speed.x = speed.y = 0;
+			
+			spriteRotation = 0;			
+			rotationSpeed = 0;
 		}
 		
 		inline void setSize( float x, float y )

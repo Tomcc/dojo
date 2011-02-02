@@ -22,12 +22,23 @@ namespace Dojo
 		
 		static const float PI;
 		static const float EULER_TO_RADIANS;
+		static const float RADIANS_TO_EULER;
 		
 		//seeds the random either using the given seed, or current time if omitted
 		static void seedRandom( uint seed = 0 );
 		
 		static float random();
 		static float rangeRandom( float min, float max );
+		
+		static inline float toRadian( float euler )
+		{
+			return euler * EULER_TO_RADIANS;
+		}
+		
+		static inline float toEuler( float radian )
+		{
+			return radian * RADIANS_TO_EULER;
+		}
 		
 		static inline float sign( float f )
 		{

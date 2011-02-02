@@ -13,4 +13,6 @@ void Object::action( float dt )
 		
 	position.x += speed.x * dt;
 	position.y += speed.y * dt;
+	
+	spriteRotation += rotationSpeed * dt;
 }

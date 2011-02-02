@@ -28,7 +28,6 @@ namespace Dojo
 		
 		TouchSource::Listener* clickListener;
 		
-		float spriteRotation, rotationSpeed;		
 		
 		Vector scale;		
 		Vector uvOffset;
@@ -55,9 +54,7 @@ namespace Dojo
 			Object::reset();
 			
 			visible = true;
-			spriteRotation = 0;
 			
-			rotationSpeed = 0;
 			color.r = color.g = color.b = color.a = 1.f;
 			fading = false;
 			scale.x = scale.y = 1;

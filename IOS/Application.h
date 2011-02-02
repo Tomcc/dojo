@@ -17,6 +17,7 @@
 #include "Render.h"
 #include "SoundManager.h"
 #include "TouchSource.h"
+#include "Timer.h"
 
 namespace Dojo {
 	class Game;
@@ -36,6 +37,7 @@ namespace Dojo {
 	Dojo::Game* game;	
 	Dojo::TouchSource* touchSource;
 	Dojo::SoundManager* soundImpl;
+	Dojo::Timer frameTimer;
 	
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;
