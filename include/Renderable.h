@@ -18,29 +18,15 @@
 #include "FrameSet.h"
 #include "Render.h"
 #include "RenderState.h"
+#include "TouchSource.h"
 
 namespace Dojo 
 {
 	class Renderable : public Object, public RenderState
 	{				
-	public:		
-				
-		class ClickListener
-		{
-		public:
-			
-			ClickListener()
-			{
-				
-			}
-			
-			virtual void onButtonPressed( Renderable* s ) = 0;			
-			virtual void onButtonReleased( Renderable* s ) = 0;
-			
-		protected:
-		};		
+	public:	
 		
-		ClickListener* clickListener;
+		TouchSource::Listener* clickListener;
 		
 		float spriteRotation, rotationSpeed;		
 		
@@ -53,8 +39,7 @@ namespace Dojo
 		renderingOrder(0),
 		visible( true ),
 		rendered( false ),
-		currentFadeTime(0),
-		clickListener( NULL )
+		currentFadeTime(0)
 		{
 			reset();
 		}

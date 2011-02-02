@@ -16,7 +16,9 @@
 
 #include "Vector.h"
 
-namespace Dojo {
+namespace Dojo 
+{
+	class Renderable;
 	
 	class TouchSource
 	{
@@ -43,6 +45,9 @@ namespace Dojo {
 			virtual void onTouchBegan( const Vector& point )=0;
 			virtual void onTouchMove( const Vector& point, const Vector& trans )=0;
 			virtual void onTouchEnd( const Vector& point )=0;		
+						
+			virtual void onButtonPressed( Renderable* s ) = 0;			
+			virtual void onButtonReleased( Renderable* s ) = 0;
 			
 			virtual void onShake()
 			{

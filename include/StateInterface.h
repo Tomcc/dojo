@@ -20,36 +20,49 @@ namespace Dojo
 		
 		StateInterface() :
 		currentState(-1),
-		previousState(-1)
+		currentStatePtr( NULL )
 		{
 			
 		}
 		
+		virtual ~StateInterface()
+		{			
+			delete currentStatePtr;
+		}
+		
 		inline void setState( uint newState )		
 		{
-			if( newState != currentState )
-			{
-				onStateEnd();
+			_stateEnd();
 				
-				previousState = currentState;				
-				currentState = newState;
+			currentState = newState;
+			currentStatePtr = NULL;
 				
-				onStateBegin();
-			}
+			_stateBegin();
 		}
 		
-		//increments state by one - utility method
-		inline void nextState()
+		inline void setState( StateInterface* child )
 		{
-			setState( currentState+1 );
+			DEBUG_ASSERT( child );
+			
+			_stateEnd();
+			
+			currentState = -1;
+			currentStatePtr = child;
+			
+			_stateBegin();			
 		}
 		
-		inline uint getCurrentState()				{	return currentState;			}
-		inline uint getPreviousState()				{	return previousState;			}
+		inline uint getCurrentState()					{	return currentState;	}
+		inline StateInterface* getCurrentStatePtr()		{	return currentStatePtr;	}
 		
-		inline bool isCurrentState( uint state )	{	return currentState == state;	}
-		inline bool isPreviousState( uint state )	{	return previousState == state;	}
+		inline bool isCurrentState( uint state )		{	return currentState;	}
 		
+		//------ eventi dello stato
+		virtual void onBegin()=0;
+		virtual void onLoop( float dt )=0;
+		virtual void onEnd()=0;
+		
+		//----- eventi per i sottostati immediati
 		virtual void onStateBegin()=0;		
 		virtual void onStateLoop( float dt )=0;		
 		virtual void onStateEnd()=0;
@@ -58,6 +71,28 @@ namespace Dojo
 		
 		int currentState;
 		int previousState;
+		
+		StateInterface* currentStatePtr;
+		
+		inline void _stateEnd()
+		{
+			if( currentStatePtr )
+			{				
+				currentStatePtr->onEnd();
+				delete currentStatePtr;
+			}
+			else {
+				onStateEnd();
+			}		
+		}
+		
+		inline void _stateBegin()
+		{
+			if( currentStatePtr )
+				currentStatePtr->onBegin();
+			else
+				onStateBegin();
+		}
 	};
 }
 

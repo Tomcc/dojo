@@ -15,7 +15,7 @@ game( parentGame ),
 timeElapsed(0),
 camera(NULL)
 {
-	game->addTouchListener( this );
+	
 }
 
 GameState::~GameState()

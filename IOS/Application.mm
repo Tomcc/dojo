@@ -76,7 +76,7 @@ using namespace Dojo;
 		if( displayVisible )
 		{
 			//update the game and render game objects
-			game->update( Game::UPDATE_INTERVAL_CAP );
+			game->onLoop( Game::UPDATE_INTERVAL_CAP );
 			
 			renderImpl->render();
 			soundImpl->update( Game::UPDATE_INTERVAL_CAP );
@@ -146,8 +146,7 @@ using namespace Dojo;
 		return;
 	}	
 		
-	soundImpl = new SoundManager();
-	
+	soundImpl = new SoundManager();	
 	touchSource = new TouchSource();
 	
 	//call user setup method to create a game istance
@@ -156,9 +155,7 @@ using namespace Dojo;
 		[self release];
 		return;
 	}
-	
-	touchSource = game;
-	
+		
 	//animate
 	[self startAnimation];
 }
@@ -332,7 +329,7 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 
 - (void)userLoggedIn:(NSString*)userId
 {
-	game->onOpenFeintLogin();
+	
 }
 
 @end

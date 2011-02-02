@@ -16,60 +16,46 @@
 #include "Render.h"
 #include "TouchSource.h"
 #include "SoundManager.h"
+#include "TouchSource.h"
+#include "StateInterface.h"
 
 #include "Application.h"
 
-namespace Dojo {
-	
-	class GameState;
-	class Object;
-	
-	class Game : public BaseObject, public TouchSource
+namespace Dojo 
+{
+	class Game : public BaseObject, public StateInterface
 	{
 	public:
 		
 		static const float UPDATE_INTERVAL_CAP = 1.f/60.f;
 				
-		Game( Application* app, Render* r, SoundManager* s );
+		Game( Application* app, Render* r, SoundManager* s, TouchSource* t );
 		
 		virtual ~Game();
 		
 		inline Render* getRender()				{	return render;			}
 		inline SoundManager* getSoundManager()	{	return soundManager;	}
+		inline TouchSource* getTouchSource()	{	return touchSource;		}
+		
 		inline Application* getApplicationWrapper()
 		{
 			return application;
 		}
 		
-		void setCurrentState( GameState* state );
-				
-		virtual void update( float dt );		
+		virtual void onBegin()=0;
+		virtual void onLoop( float dt )=0;
+		virtual void onEnd()=0;
 		
-		virtual void onApplicationFocus()=0;
-		
+		virtual void onApplicationFocus()=0;		
 		virtual void onApplicationFocusLost()=0;
-				
-		virtual void onOpenFeintLogin()
-		{
-			//do nothing
-		}
-		
-		///game works as inputManager, so it resends the callbacks it receives from iPhoneOS		
-		virtual void _fireTouchBeginEvent( const Vector& point );		
-		
-		virtual void _fireTouchMoveEvent( const Vector& point );
-		
-		virtual void _fireTouchEndEvent( const Vector& point );		
 		
 	protected:
 		
 		Application* application;
 				
-		Render* render;	
-		
-		GameState* currentState;
-		
+		Render* render;				
 		SoundManager* soundManager;
+		TouchSource* touchSource;
 		
 		bool focus;
 	};

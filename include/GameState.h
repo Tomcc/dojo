@@ -36,10 +36,7 @@ namespace Dojo {
 		GameState( Game* parentGame );
 		
 		virtual ~GameState();
-		
-		///initialise from cleared state
-		virtual void initialise()=0;
-		
+				
 		///clear and prepare for a new initialise
 		virtual void clear();
 		
@@ -74,11 +71,6 @@ namespace Dojo {
 		Renderable* getClickableAtPoint( const Vector& point );
 		
 		void updateObjects( float dt );
-		
-		virtual void onButtonClicked( Renderable* button )=0;		
-		virtual void onButtonReleased( Renderable* button )=0;
-		
-		virtual void update( float dt )=0;
 		
 	protected:
 		
