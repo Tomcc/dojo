@@ -12,6 +12,10 @@
 #include <iostream>
 #include <sstream>
 
+#include <Poco/Mutex.h>
+#include <Poco/Thread.h>
+#include <Poco/Runnable.h>
+
 #ifdef PLATFORM_WIN32
 
 	#include <GL/glew.h>

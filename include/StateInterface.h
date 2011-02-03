@@ -58,9 +58,18 @@ namespace Dojo
 		inline bool isCurrentState( uint state )		{	return currentState;	}
 		
 		//------ eventi dello stato
-		virtual void onBegin()=0;
-		virtual void onLoop( float dt )=0;
-		virtual void onEnd()=0;
+		virtual void onBegin()
+		{
+			
+		}
+		virtual void onLoop( float dt )
+		{
+			
+		}
+		virtual void onEnd()
+		{
+			
+		}
 		
 		//----- eventi per i sottostati immediati
 		virtual void onStateBegin()=0;		
