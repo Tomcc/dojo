@@ -22,6 +22,7 @@ namespace Dojo {
 	class Texture;
 	class Viewport;
 	class Mesh;
+	class Platform;
 	
 	class Render : public BaseObject
 	{	
@@ -40,11 +41,11 @@ namespace Dojo {
 		typedef Array<Renderable*> RenderableList;
 		typedef Array<RenderableList*> LayerList;
 		
-		Render();		
+		Render( Platform* p, uint width, uint height, uint devicePixelScale );		
 		
 		~Render();		
 				
-		bool resizeFromLayer( CAEAGLLayer* layer );
+		bool onResize();
 		
 		void addRenderable( Renderable* s, int layer );
 				
@@ -122,12 +123,12 @@ namespace Dojo {
 				
 	protected:	
 		
-		EAGLContext *context;	
+		Platform* platform;
+
 		bool valid;
 						
 		// The pixel dimensions of the CAEAGLLayer
-		float width;
-		float height;
+		uint width, height;
 		float devicePixelScale;
 		
 		float interfaceRotation;		

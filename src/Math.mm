@@ -2,8 +2,6 @@
 
 #include "dojomath.h"
 
-#include <cstdlib>
-
 using namespace Dojo;
 
 void Math::seedRandom( uint seed )

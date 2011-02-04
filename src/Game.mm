@@ -4,24 +4,21 @@
 
 #include "Object.h"
 #include "GameState.h"
-#include "Menu.h"
 #include "Sprite.h"
 #include "Math.h"
 
 using namespace Dojo;
 
-Game::Game( Application* app, Render* r, SoundManager* s, TouchSource* t  ) :
-render( r ),
-soundManager( s ),
-touchSource( t ),
-focus( false ),
-application( app )
+const float Game::UPDATE_INTERVAL_CAP = 1.f/60.f;
+
+Game::Game( Platform* p ) :
+platform( p ),
+focus( false )
 {
-	DEBUG_ASSERT( r && s && t );
+	DEBUG_ASSERT( platform );
 	
 	Math::seedRandom();
 }
-
 	
 Game::~Game()
 {

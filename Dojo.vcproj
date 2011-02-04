@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;"
+				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalLibraryDirectories="&quot;C:\SDK\poco-1.4.1\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -105,7 +106,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;"
+				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -124,6 +125,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalLibraryDirectories="&quot;C:\SDK\poco-1.4.1\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -211,14 +213,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\Runnable.mm"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Scene.mm"
-				>
-			</File>
-			<File
 				RelativePath=".\src\SoundBuffer.mm"
 				>
 			</File>
@@ -235,15 +229,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Table.mm"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Texture.mm"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Thread.mm"
+				RelativePath=".\src\TouchSource.mm"
 				>
 			</File>
 			<File
 				RelativePath=".\src\Vector.mm"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Viewport.mm"
 				>
 			</File>
 		</Filter>
@@ -345,11 +347,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\Runnable.h"
+				RelativePath=".\include\Scene.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Scene.h"
+				RelativePath=".\include\Serializable.h"
 				>
 			</File>
 			<File
@@ -377,15 +379,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\Table.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\TextArea.h"
 				>
 			</File>
 			<File
 				RelativePath=".\include\Texture.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\Thread.h"
 				>
 			</File>
 			<File
@@ -409,26 +411,26 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\stdafx.cpp"
+		<Filter
+			Name="Win32"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
+			<File
+				RelativePath=".\Win32\Platform.cpp"
 				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
+			</File>
+			<File
+				RelativePath=".\Win32\stdafx.cpp"
 				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-		</File>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\stdafx.h"
 			>

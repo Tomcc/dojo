@@ -5,6 +5,47 @@
 
 using namespace Dojo;
 
+void Platform::initialise()
+{
+	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+	
+    if (!context || ![EAGLContext setCurrentContext:context])
+	{
+		valid = false;
+		return;
+    }
+	
+	uint devicePixelScale = [UIScreen mainScreen].scale;
+	uint width = [UIScreen mainScreen].bounds.size.height;
+	uint height = [UIScreen mainScreen].bounds.size.width;
+	
+	render = new Render( this, width, height, devicePixelScale );
+}
+
+void Platform::shutdown()
+{
+	if( render )
+	{
+		delete render;
+		
+		// Tear down context
+		if ([EAGLContext currentContext] == context)
+			[EAGLContext setCurrentContext:nil];
+		
+		[context release];	
+	}
+}
+
+void Platform::acquireContext()
+{
+	[EAGLContext setCurrentContext:context];
+}
+
+void Platform::present()
+{
+	[context presentRenderbuffer:GL_RENDERBUFFER];
+}
+
 std::string Platform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
 	NSString* NSName = Utils::toNSString( name );

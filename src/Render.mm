@@ -4,7 +4,7 @@
 
 #include "Renderable.h"
 #include "TextArea.h"
-
+#include "Platform.h"
 #include "Viewport.h"
 
 #include "Mesh.h"
@@ -12,36 +12,27 @@
 
 using namespace Dojo;
 
-Render::Render() :
+Render::Render( Platform* p, uint w, uint h, uint dps ) :
 frameStarted( false ),
 viewport( NULL ),
 valid( true ),
 cullingEnabled( true ),
 interfaceOrientation( IO_LANDSCAPE_LEFT ),
-interfaceRotation( 90 )
-{		
-	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-	
-    if (!context || ![EAGLContext setCurrentContext:context])
-	{
-		valid = false;
-		return;
-    }
-	
+interfaceRotation( 90 ),
+width( w ),
+height( h ),
+devicePixelScale( dps ),
+platform( p )
+{	
+	DEBUG_ASSERT( p );
+
 	// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 	glGenFramebuffers(1, &defaultFramebuffer);
 	glGenRenderbuffers(1, &colorRenderbuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
-	
-	//get default screen size	
-	//HACK width and height are inverted for horizontal screens!
-	
-	devicePixelScale = [UIScreen mainScreen].scale;
-	width = [UIScreen mainScreen].bounds.size.height;
-	height = [UIScreen mainScreen].bounds.size.width;
-	
+		
 	//gles settings
 	glEnable( GL_TEXTURE_2D );
 	glEnable( GL_BLEND );	
@@ -80,35 +71,17 @@ Render::~Render()
 		glDeleteRenderbuffers(1, &colorRenderbuffer);
 		colorRenderbuffer = 0;
 	}
-		
-	// Tear down context
-	if ([EAGLContext currentContext] == context)
-        [EAGLContext setCurrentContext:nil];
-		
-	[context release];	
 }
 
 
-bool Render::resizeFromLayer(CAEAGLLayer * layer)
+bool Render::onResize()
 {
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
 	
-	int w, h;
-	
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &w);
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &h);
-	
-	width = h;
-	height = w;
-	
-	if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		return false;
-	}
-	
-	return true;
+	return (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE);
 }
 
 Render::RenderableList* Render::getLayer( int layerID )
@@ -174,8 +147,8 @@ void Render::startFrame()
 {	
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
-			
-	[EAGLContext setCurrentContext:context];
+	
+	platform->acquireContext();
 				
 	// This application only creates a single default framebuffer which is already bound at this point.
 	// This call is redundant, but needed if dealing with multiple framebuffers.
@@ -291,7 +264,7 @@ void Render::endFrame()
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
-	[context presentRenderbuffer:GL_RENDERBUFFER];
+	platform->present();
 	
 	frameStarted = false;
 }

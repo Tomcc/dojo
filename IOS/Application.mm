@@ -92,9 +92,14 @@ using namespace Dojo;
 	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
 		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 	}
+	
+	//imposta il renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+		
+	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 		
 	//set the needed render size	
-	renderImpl->resizeFromLayer( layer );
+	renderImpl->onResize();
 	
     [self drawView:nil];
 }

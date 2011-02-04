@@ -19,7 +19,7 @@
 #include "TouchSource.h"
 #include "StateInterface.h"
 
-#include "Application.h"
+#include "Platform.h"
 
 namespace Dojo 
 {
@@ -27,19 +27,19 @@ namespace Dojo
 	{
 	public:
 		
-		static const float UPDATE_INTERVAL_CAP = 1.f/60.f;
+		static const float UPDATE_INTERVAL_CAP;
 				
-		Game( Application* app, Render* r, SoundManager* s, TouchSource* t );
+		Game( Platform* app );
 		
 		virtual ~Game();
 		
-		inline Render* getRender()				{	return render;			}
-		inline SoundManager* getSoundManager()	{	return soundManager;	}
-		inline TouchSource* getTouchSource()	{	return touchSource;		}
+		inline Render* getRender()				{	return platform->getRender();		}
+		inline SoundManager* getSoundManager()	{	return platform->getSoundManager();	}
+		inline TouchSource* getTouchSource()	{	return platform->getInput();		}
 		
-		inline Application* getApplicationWrapper()
+		inline Platform* getPlatform()
 		{
-			return application;
+			return platform;
 		}
 		
 		virtual void onBegin()=0;
@@ -51,7 +51,7 @@ namespace Dojo
 		
 	protected:
 		
-		Application* application;
+		Platform* platform;
 				
 		Render* render;				
 		SoundManager* soundManager;
