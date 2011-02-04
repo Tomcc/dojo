@@ -231,8 +231,6 @@ namespace Dojo
 		std::map< std::string, Table* > tables;	
 		
 	};
-
-	const std::string Table::UNDEFINED_STRING = "";
 }
 
 
