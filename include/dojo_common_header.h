@@ -81,6 +81,8 @@
 	#define glDeleteFramebuffers		glDeleteFramebuffersEXT
 	#define glBindRenderbuffer			glBindRenderbufferEXT
 	#define glBindFramebuffer			glBindFramebufferEXT
+	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivEXT
+	#define glCheckFramebufferStatus	glCheckFramebufferStatusEXT
 
 	#define GL_RENDERBUFFER			GL_RENDERBUFFER_EXT
 	#define GL_FRAMEBUFFER			GL_FRAMEBUFFER_EXT

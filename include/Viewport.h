@@ -30,7 +30,7 @@ namespace Dojo {
 		Viewport( GameState* level, const Vector& pos, const Vector& size, const Color& clear, uint targetX, uint targetY ) :
 		Object( level, pos, size ),
 		clearColor( clear ),
-		targetSize( targetX, targetY ),
+		targetSize( (float)targetX, (float)targetY ),
 		background( NULL )
 		{
 			DEBUG_ASSERT( targetX > 0 && targetY > 0 );
@@ -90,7 +90,7 @@ namespace Dojo {
 		
 		inline Vector makeWorldCoordinates( const Vector& screenPoint )
 		{
-			return makeWorldCoordinates( screenPoint.x, screenPoint.y );
+			return makeWorldCoordinates( (int)screenPoint.x, (int)screenPoint.y );
 		}
 		
 		inline Vector makeWorldCoordinates( int x, int y )

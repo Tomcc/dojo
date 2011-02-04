@@ -20,6 +20,28 @@ void Platform::initialise()
 	uint height = [UIScreen mainScreen].bounds.size.width;
 	
 	render = new Render( this, width, height, devicePixelScale );
+	
+	
+//SOUND MANAGER
+
+	AudioSessionInitialize ( NULL, NULL, 
+							NULL, // may want interruption callback here
+							NULL );
+	
+	//if using mp3 playback, it is needed to exclude other applications' sounds
+#ifdef HARDWARE_SOUND
+	UInt32 sessionCategory = kAudioSessionCategory_SoloAmbientSound;    // 1
+#else
+	uint sessionCategory = kAudioSessionCategory_AmbientSound;
+#endif
+	AudioSessionSetProperty (kAudioSessionProperty_AudioCategory, sizeof (sessionCategory), &sessionCategory);
+	AudioSessionSetActive (true);	
+	
+	sound = new SoundManager();
+	
+//INPUT MANAGER
+
+	input = new TouchSource();
 }
 
 void Platform::shutdown()

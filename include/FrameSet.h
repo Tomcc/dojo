@@ -95,7 +95,7 @@ namespace Dojo
 		//return a random frame
 		inline Texture* getRandomFrame()
 		{
-			return frames.at( Math::rangeRandom(0, frames.size() ) );
+			return frames.at( (int)Math::rangeRandom(0, (float)frames.size() ) );
 		}
 		
 		uint getFrameNumber()				{	return frames.size();	}

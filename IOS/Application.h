@@ -10,14 +10,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ApplicationSetupDelegate.h"
 
-#ifdef OPENFEINT_ENABLED
-	#import "OpenFeint.h"
-#endif
-
 #include "Render.h"
 #include "SoundManager.h"
 #include "TouchSource.h"
 #include "Timer.h"
+#include "Platform.h"
 
 namespace Dojo {
 	class Game;
@@ -38,6 +35,8 @@ namespace Dojo {
 	Dojo::TouchSource* touchSource;
 	Dojo::SoundManager* soundImpl;
 	Dojo::Timer frameTimer;
+	
+	Dojo::Platform* platform;
 	
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;

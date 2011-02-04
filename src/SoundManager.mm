@@ -38,21 +38,7 @@ fadeState( FS_NONE ),
 musicVolume( 1 ),
 masterVolume( 1 ),
 currentFadeTime(0)
-{	
-	//set audio context on the iphone device
-	AudioSessionInitialize ( NULL, NULL, 
-							NULL, // may want interruption callback here
-							NULL );
-	
-	//if using mp3 playback, it is needed to exclude other applications' sounds
-#ifdef HARDWARE_SOUND
-	UInt32 sessionCategory = kAudioSessionCategory_SoloAmbientSound;    // 1
-#else
-	uint sessionCategory = kAudioSessionCategory_AmbientSound;
-#endif
-	AudioSessionSetProperty (kAudioSessionProperty_AudioCategory, sizeof (sessionCategory), &sessionCategory);
-	AudioSessionSetActive (true);	
-	
+{		
 	// Initialization
 	device = alcOpenDevice(NULL); // select the "preferred device"
 	
@@ -62,7 +48,7 @@ currentFadeTime(0)
 	
 	if (device) 
 	{
-		context=alcCreateContext(device,NULL);
+		context = alcCreateContext(device,NULL);
 		
 		error = alCheckError();
 		

@@ -143,16 +143,11 @@ using namespace Dojo;
 	lastAccelerationX = lastAccelerationY = lastRoll = 0;
 			
 	//create C++ system
-	renderImpl = new Render();
-		
-	if ( !renderImpl->isValid() )
-	{
-		[self release];
-		return;
-	}	
-		
-	soundImpl = new SoundManager();	
-	touchSource = new TouchSource();
+	platform = new Platform(); //TODO creare una sottoclasse per IOS?
+	
+	renderImpl = platform->getRender();
+	soundImpl = platform->getSound();
+	touchSource = platform->getInput();
 	
 	//call user setup method to create a game istance
 	if( ![self setup] )

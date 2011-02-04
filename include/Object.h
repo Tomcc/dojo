@@ -106,8 +106,8 @@ namespace Dojo {
 			DEBUG_ASSERT( BBSize.y > 0 );
 			DEBUG_ASSERT( BBSize.z > 0 );
 			
-			float cx = position.x + halfSize.x - BBPos.x + BBSize.x*0.5;
-			float cy = position.y + halfSize.y - BBPos.y + BBSize.y*0.5;
+			float cx = position.x + halfSize.x - BBPos.x + BBSize.x*0.5f;
+			float cy = position.y + halfSize.y - BBPos.y + BBSize.y*0.5f;
 			
 			return !(cx > size.x + BBSize.x || cx < 0) && !(cy > size.y + BBSize.y || cy < 0);		
 		}

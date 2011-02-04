@@ -32,7 +32,7 @@ namespace Dojo
 				return buffers[0];
 			else
 			{
-				float i = Math::rangeRandom( 0, buffers.size() );
+				float i = Math::rangeRandom( 0, (float)buffers.size() );
 				return buffers.at( (int)i ); 
 			}
 		}

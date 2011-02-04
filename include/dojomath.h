@@ -78,8 +78,8 @@ namespace Dojo
 		
 		static inline bool AABBCollides( const Vector& centerA, const Vector& sizeA, const Vector& centerB, const Vector& sizeB )
 		{
-			float cx = centerA.x + sizeA.x*0.5f - centerB.x + sizeB.x*0.5;
-			float cy = centerA.y + sizeA.y*0.5f - centerB.y + sizeB.y*0.5;
+			float cx = centerA.x + sizeA.x*0.5f - centerB.x + sizeB.x*0.5f;
+			float cy = centerA.y + sizeA.y*0.5f - centerB.y + sizeB.y*0.5f;
 			
 			return !(cx > sizeA.x + sizeB.x || cx < 0) && !(cy > sizeA.y + sizeB.y || cy < 0);		
 		}

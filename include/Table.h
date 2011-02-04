@@ -10,6 +10,8 @@ namespace Dojo
 	class Table : public BaseObject 
 	{
 	public:
+
+		static const std::string UNDEFINED_STRING;
 		
 		Table( const std::string& tablename ) :
 		name( tablename )
@@ -85,6 +87,16 @@ namespace Dojo
 			
 			numbers[key] = value;
 		}
+
+		inline void setNumber( const std::string& key, int value )
+		{
+			setNumber( key, (int)value );
+		}
+
+		inline void setBoolean( const std::string& key, bool value )
+		{
+			setNumber( key, (int)value );
+		}
 		
 		inline void setString( const std::string& key, const std::string& value )
 		{
@@ -130,13 +142,23 @@ namespace Dojo
 			else
 				return 0;
 		}
+
+		inline int getInt( const std::string& key )
+		{
+			return (int)getNumber(key);
+		}
+
+		inline bool getBool( const std::string& key )
+		{
+			return getNumber(key) > 0.f;
+		}
 		
 		inline const std::string& getString( const std::string& key )
-		{			
+		{
 			if( existsAsString(key) )
 			   return strings[key];
 			else
-			   return "";
+			   return UNDEFINED_STRING;
 		}
 		
 		inline Table* getTable( const std::string& key )
@@ -209,7 +231,10 @@ namespace Dojo
 		std::map< std::string, Table* > tables;	
 		
 	};
+
+	const std::string Table::UNDEFINED_STRING = "";
 }
+
 
 #endif
 
