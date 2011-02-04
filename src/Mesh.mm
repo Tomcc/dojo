@@ -17,7 +17,7 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 bool Mesh::load()
 {
 	char* file;
-	uint size = Platform::loadFileContent( file, filePath );
+	uint size = Platform::getSingleton()->loadFileContent( file, filePath );
 	
 	if( !file )
 		return false;

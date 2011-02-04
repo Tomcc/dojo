@@ -36,7 +36,7 @@ bool FrameSet::loadAtlas( const std::string& infoFile, Texture* atlas )
 		return NULL;
 	
 	char* data; 
-	uint size = Platform::loadFileContent( data, infoFile );
+	uint size = Platform::getSingleton()->loadFileContent( data, infoFile );
 	
 	if( !data )
 		return NULL;

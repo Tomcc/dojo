@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="bin/$(ConfigurationName)"
+			OutputDirectory="lib"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;"
+				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;;C:\SDK\ois\includes"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalLibraryDirectories="&quot;C:\SDK\poco-1.4.1\lib&quot;"
+				AdditionalDependencies="OpenGL32.lib glew32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)_d.lib"
+				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -81,7 +83,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="bin/$(ConfigurationName)"
+			OutputDirectory="lib"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
@@ -106,7 +108,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;"
+				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;;C:\SDK\ois\includes"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -125,7 +127,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalLibraryDirectories="&quot;C:\SDK\poco-1.4.1\lib&quot;"
+				AdditionalDependencies="OpenGL32.lib glew32.lib"
+				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -194,6 +197,10 @@
 			</File>
 			<File
 				RelativePath=".\src\ParticlePool.mm"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Platform.mm"
 				>
 			</File>
 			<File
@@ -415,10 +422,6 @@
 			Name="Win32"
 			>
 			<File
-				RelativePath=".\Win32\Platform.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Win32\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -429,6 +432,14 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Win32\Win32Platform.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32\Win32Platform.h"
+				>
 			</File>
 		</Filter>
 		<File

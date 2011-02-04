@@ -7,7 +7,7 @@ using namespace Dojo;
 void Math::seedRandom( uint seed )
 {
 	if( !seed )
-		seed = time( NULL );
+		seed = (uint)time( NULL );
 	
 	srand( seed );
 }

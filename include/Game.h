@@ -29,19 +29,14 @@ namespace Dojo
 		
 		static const float UPDATE_INTERVAL_CAP;
 				
-		Game( Platform* app );
+		Game();
 		
 		virtual ~Game();
 		
 		inline Render* getRender()				{	return platform->getRender();		}
 		inline SoundManager* getSoundManager()	{	return platform->getSoundManager();	}
 		inline TouchSource* getTouchSource()	{	return platform->getInput();		}
-		
-		inline Platform* getPlatform()
-		{
-			return platform;
-		}
-		
+				
 		virtual void onBegin()=0;
 		virtual void onLoop( float dt )=0;
 		virtual void onEnd()=0;
@@ -52,10 +47,6 @@ namespace Dojo
 	protected:
 		
 		Platform* platform;
-				
-		Render* render;				
-		SoundManager* soundManager;
-		TouchSource* touchSource;
 		
 		bool focus;
 	};

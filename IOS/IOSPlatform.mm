@@ -5,7 +5,7 @@
 
 using namespace Dojo;
 
-void Platform::initialise()
+void IOSPlatform::initialise()
 {
 	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 	
@@ -44,7 +44,7 @@ void Platform::initialise()
 	input = new TouchSource();
 }
 
-void Platform::shutdown()
+void IOSPlatform::shutdown()
 {
 	if( render )
 	{
@@ -58,17 +58,17 @@ void Platform::shutdown()
 	}
 }
 
-void Platform::acquireContext()
+void IOSPlatform::acquireContext()
 {
 	[EAGLContext setCurrentContext:context];
 }
 
-void Platform::present()
+void IOSPlatform::present()
 {
 	[context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
-std::string Platform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
+std::string IOSPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
 	NSString* NSName = Utils::toNSString( name );
 	NSString* NSType = Utils::toNSString( type );
@@ -82,7 +82,7 @@ std::string Platform::getCompleteFilePath( const std::string& name, const std::s
 		return "";
 }
 
-void Platform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
+void IOSPlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
 {
 	DEBUG_ASSERT( type.size() );
 	DEBUG_ASSERT( path.size() );
@@ -97,7 +97,7 @@ void Platform::getFilePathsForType( const std::string& type, const std::string& 
 								  
 }
 
-uint Platform::loadFileContent( char*& bufptr, const std::string& path )
+uint IOSPlatform::loadFileContent( char*& bufptr, const std::string& path )
 {
 	bufptr = NULL;
 	
@@ -121,7 +121,7 @@ uint Platform::loadFileContent( char*& bufptr, const std::string& path )
 	return size;
 }
 
-void Platform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
+void IOSPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
 {
 	width = height = 0;
 	imageData = NULL;

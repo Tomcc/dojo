@@ -11,12 +11,9 @@ using namespace Dojo;
 
 const float Game::UPDATE_INTERVAL_CAP = 1.f/60.f;
 
-Game::Game( Platform* p ) :
-platform( p ),
+Game::Game() :
 focus( false )
-{
-	DEBUG_ASSERT( platform );
-	
+{	
 	Math::seedRandom();
 }
 	

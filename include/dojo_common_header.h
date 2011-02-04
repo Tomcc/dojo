@@ -27,6 +27,8 @@
 	#include <al.h>
 	#include <alc.h>
 
+	#include <OIS.h>
+
 #else
 
 	#include "TargetConditionals.h"
@@ -71,27 +73,6 @@
 	#define GL_RENDERBUFFER_HEIGHT	GL_RENDERBUFFER_HEIGHT_OES
 	#define GL_RENDERBUFFER_WIDTH	GL_RENDERBUFFER_WIDTH_OES
 	#define GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_OES
-
-#else  //mac and win share OGL2.1
-
-	#define glGenRenderbuffers			glGenRenderbuffersEXT
-	#define glGenFramebuffers			glGenFramebuffersEXT
-	#define glFramebufferRenderbuffer	glFramebufferRenderbufferEXT
-	#define glDeleteRenderbuffers		glDeleteRenderbuffersEXT
-	#define glDeleteFramebuffers		glDeleteFramebuffersEXT
-	#define glBindRenderbuffer			glBindRenderbufferEXT
-	#define glBindFramebuffer			glBindFramebufferEXT
-	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivEXT
-	#define glCheckFramebufferStatus	glCheckFramebufferStatusEXT
-
-	#define GL_RENDERBUFFER			GL_RENDERBUFFER_EXT
-	#define GL_FRAMEBUFFER			GL_FRAMEBUFFER_EXT
-	#define GL_COLOR_ATTACHMENT0	GL_COLOR_ATTACHMENT0_EXT
-	#define GL_RENDERBUFFER_HEIGHT	GL_RENDERBUFFER_HEIGHT_EXT
-	#define GL_RENDERBUFFER_WIDTH	GL_RENDERBUFFER_WIDTH_EXT
-	#define GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_EXT
-
-
 #endif
 
 #endif // dojo_common_headers_h__

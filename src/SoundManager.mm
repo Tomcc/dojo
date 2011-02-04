@@ -88,7 +88,7 @@ void SoundManager::_createMainBundleBuffers()
 
 	SoundSet* currentSet = NULL;
 
-	Platform::getFilePathsForType( "caf", "data", paths );
+	Platform::getSingleton()->getFilePathsForType( "caf", "data", paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{

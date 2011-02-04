@@ -121,7 +121,7 @@ bool Texture::_loadPNGToBoundTexture()
 {
 	void* imageData;
 	
-	Platform::loadPNGContent( imageData, filePath, width, height );
+	Platform::getSingleton()->loadPNGContent( imageData, filePath, width, height );
 		
 	internalWidth = Math::nextPowerOfTwo( width );
 	internalHeight = Math::nextPowerOfTwo( height );	

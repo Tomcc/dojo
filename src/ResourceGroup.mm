@@ -51,8 +51,8 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 	
 	FrameSet* currentSet = NULL;
 	
-	Platform::getFilePathsForType( "png", subdirectory, paths );
-	Platform::getFilePathsForType( "pvrtc", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "pvrtc", subdirectory, paths );
 		
 	for( uint i = 0; i < paths.size(); ++i )
 	{
@@ -85,7 +85,7 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 	
 	paths.clear();
 
-	Platform::getFilePathsForType( "atlasinfo", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "atlasinfo", subdirectory, paths );
 	
 	//now load atlases!		
 	for(uint  i = 0; i < paths.size(); ++i)
@@ -108,7 +108,7 @@ void ResourceGroup::loadFonts( const std::string& subdirectory )
 	
 	std::vector<std::string> paths;
 	
-	Platform::getFilePathsForType( "font", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{
@@ -130,7 +130,7 @@ void ResourceGroup::loadMeshes( const std::string& subdirectory )
 	std::vector<std::string> paths;
 	std::string name;
 	
-	Platform::getFilePathsForType( "dms", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "dms", subdirectory, paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{

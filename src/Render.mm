@@ -21,7 +21,7 @@ interfaceOrientation( IO_LANDSCAPE_LEFT ),
 interfaceRotation( 90 ),
 width( w ),
 height( h ),
-devicePixelScale( dps ),
+devicePixelScale( (float)dps ),
 platform( p )
 {	
 	DEBUG_ASSERT( p );

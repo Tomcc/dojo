@@ -10,6 +10,7 @@ namespace Dojo
 	class SoundManager;
 	class Render;
 	class TouchSource;
+	class Game;
 
 #ifdef PLATFORM_IOS
 	class EAGLContext;
@@ -19,15 +20,17 @@ namespace Dojo
 	{
 	public:
 
-		static std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
+		static Platform* createNativePlatform();
 
-		static void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
+		inline static  Platform* getSingleton()
+		{
+			DEBUG_ASSERT( singleton );
 
-		static uint loadFileContent( char*& bufptr, const std::string& path );
-
-		static void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
-		
+			return singleton;
+		}
+	
 		Platform() :
+		game( NULL ),
 		render( NULL ),
 		sound( NULL ),
 		input( NULL )
@@ -35,40 +38,37 @@ namespace Dojo
 
 		}
 
-		void initialise();
+		inline SoundManager* getSoundManager()	{	return sound;	}
+		inline Render* getRender()				{	return render;	}
+		inline TouchSource* getInput()			{	return input;	}
 
-		void shutdown();
+		inline void setGame( Game* g )
+		{
+			DEBUG_ASSERT( g );
+			game = g;
+		}
 
-		void acquireContext();
+		virtual void initialise()=0;
+		virtual void shutdown()=0;
 
-		void present();
+		virtual void acquireContext()=0;
+		virtual void present()=0;
+
+		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )=0;
+		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
+		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )=0;
 		
-		inline SoundManager* getSoundManager()
-		{
-			return sound;
-		}
-
-		inline Render* getRender()
-		{
-			return render;
-		}
-
-		inline TouchSource* getInput()
-		{
-			return input;
-		}
 
 	protected:
+
+		static Platform* singleton;
+
+		Game* game;
 
 		SoundManager* sound;
 		Render* render;
 		TouchSource* input;
-
-#ifdef PLATFORM_IOS
-		EAGLContext *context;
-#else
-
-#endif
 	};
 }
 
