@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include <Poco/Mutex.h>
 #include <Poco/Thread.h>
@@ -26,8 +27,6 @@
 
 	#include <al.h>
 	#include <alc.h>
-
-	#include <OIS.h>
 
 #else
 
