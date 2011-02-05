@@ -33,7 +33,8 @@ namespace Dojo
 		game( NULL ),
 		render( NULL ),
 		sound( NULL ),
-		input( NULL )
+		input( NULL ),
+		running( true )
 		{
 
 		}
@@ -41,6 +42,8 @@ namespace Dojo
 		inline SoundManager* getSoundManager()	{	return sound;	}
 		inline Render* getRender()				{	return render;	}
 		inline TouchSource* getInput()			{	return input;	}
+
+		inline bool isRunning()					{	return running;}
 
 		inline void setGame( Game* g )
 		{
@@ -54,7 +57,7 @@ namespace Dojo
 		virtual void acquireContext()=0;
 		virtual void present()=0;
 
-		virtual void loop()=0;
+		virtual void step()=0;
 
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )=0;
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
@@ -65,6 +68,8 @@ namespace Dojo
 	protected:
 
 		static Platform* singleton;
+
+		bool running;
 
 		Game* game;
 

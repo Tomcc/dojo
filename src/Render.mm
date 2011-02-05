@@ -12,19 +12,20 @@
 
 using namespace Dojo;
 
-Render::Render( Platform* p, uint w, uint h, uint dps ) :
+Render::Render( uint w, uint h, uint dps, RenderOrientation deviceOr ) :
 frameStarted( false ),
 viewport( NULL ),
 valid( true ),
 cullingEnabled( true ),
-interfaceOrientation( IO_LANDSCAPE_LEFT ),
-interfaceRotation( 90 ),
 width( w ),
 height( h ),
 devicePixelScale( (float)dps ),
-platform( p )
+renderOrientation( RO_LANDSCAPE_LEFT ),
+deviceOrientation( deviceOr )
 {	
-	DEBUG_ASSERT( p );
+	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_LEFT );
+
+	platform = Platform::getSingleton();
 
 	// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
 	//HACK - IOS renderizza in un RenderBuffer, mentre Windows renderizza diretto
@@ -56,6 +57,8 @@ platform( p )
 	//glEnableClientState(GL_NORMAL_ARRAY);
 		
 	currentRenderState = firstRenderState = new RenderState();
+
+	setInterfaceOrientation( RO_LANDSCAPE_LEFT );
 }
 
 Render::~Render()
@@ -83,6 +86,8 @@ bool Render::onResize()
 	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
+
+	_updateGLViewportDimensions();
 	
 	return (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE);
 }
@@ -146,6 +151,29 @@ void Render::setViewport( Viewport* v )
 	viewport = v;
 }	
 
+void Render::setInterfaceOrientation( RenderOrientation o )		
+{	
+	renderOrientation = o;
+	
+	static float orientations[] = 	{ 0, 180, -90, 90 };
+	
+	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
+
+	_updateGLViewportDimensions();
+}
+
+void Render::_updateGLViewportDimensions()
+{
+	viewportWidth = width;
+	viewportHeight = height;
+
+	if( renderOrientation == 90.f || renderOrientation == -90.f )
+	{
+		viewportWidth = height;
+		viewportHeight = width;
+	}
+}
+
 void Render::startFrame()
 {	
 	DEBUG_ASSERT( !frameStarted );
@@ -157,7 +185,7 @@ void Render::startFrame()
 	// This call is redundant, but needed if dealing with multiple framebuffers.
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	
-	glViewport( 0, 0, height, width );
+	glViewport( 0, 0, viewportWidth, viewportHeight );
 	
 	//clear the viewport
 	glClearColor( 
@@ -173,7 +201,7 @@ void Render::startFrame()
 	glLoadIdentity();					
 	
 	//rotate to balance interface orientation
-	glRotatef( interfaceRotation, 0, 0, -1 );
+	glRotatef( renderRotation, 0, 0, -1 );
 	
 	//scale with area and window ratio
 	glScalef( 
@@ -187,7 +215,7 @@ void Render::startFrame()
 				 -viewport->position.y, 
 				 0.f );		
 	
-	if( interfaceOrientation == IO_LANDSCAPE_LEFT || interfaceOrientation == IO_LANDSCAPE_RIGHT )
+	if( renderOrientation == RO_LANDSCAPE_LEFT || renderOrientation == RO_LANDSCAPE_RIGHT )
 	{
 		viewportPixelRatio.x = viewport->getSize().x / width;
 		viewportPixelRatio.y = viewport->getSize().y / height;

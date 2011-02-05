@@ -148,7 +148,7 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 
 	hglrc = wglCreateContext( hdc );
 
-	return wglMakeCurrent( hdc, hglrc );
+	return wglMakeCurrent( hdc, hglrc )>0;
 }
 
 void Win32Platform::initialise()
@@ -160,7 +160,7 @@ void Win32Platform::initialise()
 
 	glewInit();
 
-	render = new Render( this, width, height, 1 );
+	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
 
@@ -186,12 +186,15 @@ void Win32Platform::present()
 	SwapBuffers( hdc );
 }
 
-void Win32Platform::loop()
+void Win32Platform::step()
 {
+	DEBUG_ASSERT( running );
+
 	if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 	{
 		if( msg.message == WM_QUIT )
 		{
+			running = false;
 			return;
 		}
 

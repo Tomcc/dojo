@@ -19,7 +19,7 @@ namespace Dojo
 		virtual void acquireContext();
 		virtual void present();
 
-		virtual void loop();
+		virtual void step();
 
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );

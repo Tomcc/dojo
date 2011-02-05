@@ -28,12 +28,12 @@ namespace Dojo {
 	{	
 	public:				
 		
-		enum InterfaceOrientation
+		enum RenderOrientation
 		{
-			IO_PORTRAIT,
-			IO_PORTRAIT_REVERSE,
-			IO_LANDSCAPE_LEFT,
-			IO_LANDSCAPE_RIGHT
+			RO_PORTRAIT,
+			RO_PORTRAIT_REVERSE,
+			RO_LANDSCAPE_LEFT,
+			RO_LANDSCAPE_RIGHT
 		};
 				
 		const static uint layerNumber = 10;
@@ -41,7 +41,7 @@ namespace Dojo {
 		typedef Array<Renderable*> RenderableList;
 		typedef Array<RenderableList*> LayerList;
 		
-		Render( Platform* p, uint width, uint height, uint devicePixelScale );		
+		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
 		
 		~Render();		
 				
@@ -64,14 +64,7 @@ namespace Dojo {
 		
 		inline void setCullingEnabled( bool state )	{	cullingEnabled = state;	}
 				
-		inline void setInterfaceOrientation( InterfaceOrientation o )		
-		{	
-			interfaceOrientation = o;
-			
-			static float orientations[] = 	{ 0, 180, -90, 90 };
-			
-			interfaceRotation = orientations[ (uint)interfaceOrientation ];
-		}
+		void setInterfaceOrientation( RenderOrientation o );
 		
 		RenderableList* getLayer( int layerID );
 		
@@ -80,17 +73,6 @@ namespace Dojo {
 		inline float getContentScale()				{	return devicePixelScale;	}
 		
 		inline Viewport* getViewport()				{	return viewport;	}
-				
-		inline InterfaceOrientation getInterfaceOrientation()					
-		{	
-			return interfaceOrientation;	
-		}
-		
-		inline float getInterfaceRotation()				
-		{	
-			return interfaceRotation;		
-		}
-		
 		
 		inline bool isValid()						{	return valid;		}
 						
@@ -122,17 +104,18 @@ namespace Dojo {
 		}
 				
 	protected:	
-		
-		Platform* platform;
 
+		Platform* platform;
+		
 		bool valid;
 						
 		// The pixel dimensions of the CAEAGLLayer
 		int width, height;
+		uint viewportWidth, viewportHeight;
 		float devicePixelScale;
 		
-		float interfaceRotation;		
-		InterfaceOrientation interfaceOrientation;
+		float renderRotation;
+		RenderOrientation renderOrientation, deviceOrientation;
 		
 		// The OpenGL names for the framebuffer and renderbuffer used to render to this view
 		GLuint defaultFramebuffer, colorRenderbuffer;
@@ -147,6 +130,8 @@ namespace Dojo {
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;
+
+		void _updateGLViewportDimensions();
 	};		
 }
 
