@@ -155,7 +155,7 @@ void Win32Platform::initialise()
 {
 	DEBUG_ASSERT( game );
 
-	if( !_initialiseWindow( "Roflcopter", 1024, 768 ) )
+	if( !_initialiseWindow( game->getName(), 480, 320 ) )
 		return;
 
 	glewInit();
@@ -270,6 +270,7 @@ uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
 		return 0;
 
 	uint size = file.tellg();
+	file.seekg(0);
 
 	bufptr = (char*)malloc( size );
 

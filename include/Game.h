@@ -29,19 +29,22 @@ namespace Dojo
 		
 		static const float UPDATE_INTERVAL_CAP;
 				
-		Game();
+		Game( const std::string& name );
 		
 		virtual ~Game();
-						
-		virtual void onBegin()=0;
-		virtual void onLoop( float dt )=0;
-		virtual void onEnd()=0;
-		
+
+		inline const std::string& getName()
+		{
+			return name;	
+		}
+								
 		virtual void onApplicationFocus()=0;		
 		virtual void onApplicationFocusLost()=0;
 		
 	protected:		
 		bool focus;
+
+		std::string name;
 	};
 }
 

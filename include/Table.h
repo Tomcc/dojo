@@ -88,7 +88,7 @@ namespace Dojo
 			numbers[key] = value;
 		}
 
-		inline void setNumber( const std::string& key, int value )
+		inline void setInteger( const std::string& key, int value )
 		{
 			setNumber( key, (int)value );
 		}

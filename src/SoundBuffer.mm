@@ -38,7 +38,7 @@ SoundBuffer::~SoundBuffer()
 void SoundBuffer::_loadCAFBuffer()
 {	
 #ifdef WIN32
-	DEBUG_TODO;
+	//DEBUG_TODO;
 #else
 	NSString* filePath = Utils::toNSString(name);
 	

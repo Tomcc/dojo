@@ -57,8 +57,7 @@ namespace Dojo {
 		
 		inline void addFrameSet( FrameSet* set, const std::string& name )
 		{
-			//HACK
-			//DEBUG_ASSERT( !isFrameSetLoaded( name ) );
+			DEBUG_ASSERT( !isFrameSetLoaded( name ) );
 			
 			frameSets[name] = set;
 		}
