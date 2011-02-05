@@ -2,14 +2,18 @@
 
 #include "Win32Platform.h"
 
+#include <Windows.h>
 #include <Poco/DirectoryIterator.h>
-
 #include <Freeimage.h>
-
 #include <OIS.h>
+
+#include <gl/glu.h>
 
 #include "Render.h"
 #include "Game.h"
+
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
 
@@ -62,12 +66,9 @@ Platform()
 
 }
 
-void Win32Platform::_initialiseWindow()
+bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w, uint h )
 {
-	std::string windowCaption = "lolcopter";
-
-	HWND consoleWindow = GetConsoleWindow();
-	hInstance = (HINSTANCE)GetWindowLong( consoleWindow, GWL_HINSTANCE );
+	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
 	WNDCLASS wc;
 	wc.cbClsExtra = 0; 
@@ -85,14 +86,13 @@ void Win32Platform::_initialiseWindow()
 	RegisterClass(&wc);
 
 	RECT rect;
-	SetRect( &rect, 50,  // left
-		50,  // top
-		850, // right
-		650 ); // bottom
+	rect.top = 50;
+	rect.left = 50;
+	rect.bottom = rect.top + h;
+	rect.right = rect.left + w;
 
-	// Save width and height off.
-	width = rect.right - rect.left;
-	height = rect.bottom - rect.top;
+	width = w;
+	height = h;
 
 	AdjustWindowRect( &rect, WS_OVERLAPPEDWINDOW, false);
 
@@ -106,7 +106,7 @@ void Win32Platform::_initialiseWindow()
 	// that adjusted RECT structure to
 	// specify the width and height of the window.
 	hwnd = CreateWindowA("DojoOpenGLWindow",
-		(LPCSTR)windowCaption.c_str(),
+		windowCaption.c_str(),
 		WS_OVERLAPPEDWINDOW,
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -115,7 +115,7 @@ void Win32Platform::_initialiseWindow()
 
 	// check to see that the window was created successfully!
 	if( hwnd == NULL )
-		FatalAppExit( NULL, TEXT("CreateWindow() failed!") );
+		return false;
 
 	// and show.
 	ShowWindow( hwnd, SW_SHOWNORMAL );
@@ -141,20 +141,33 @@ void Win32Platform::_initialiseWindow()
 	int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
 
 	if( chosenPixelFormat == 0 )
-		return;
+		return false;
 
 	if ( !SetPixelFormat( hdc, chosenPixelFormat, &pfd ) )
-		return;
+		return false;
 
 	hglrc = wglCreateContext( hdc );
-	wglMakeCurrent( hdc, hglrc );
+
+	return wglMakeCurrent( hdc, hglrc );
 }
 
 void Win32Platform::initialise()
 {
-	_initialiseWindow();
+	DEBUG_ASSERT( game );
+
+	if( !_initialiseWindow( "Roflcopter", 1024, 768 ) )
+		return;
+
+	glewInit();
 
 	render = new Render( this, width, height, 1 );
+
+	sound = new SoundManager();
+
+	input = new TouchSource();
+
+	//start the game
+	game->onBegin();
 }
 
 void Win32Platform::shutdown()
@@ -165,7 +178,7 @@ void Win32Platform::shutdown()
 
 void Win32Platform::acquireContext()
 {
-
+	wglMakeCurrent( hdc, hglrc );
 }
 
 void Win32Platform::present()
@@ -192,10 +205,27 @@ void Win32Platform::loop()
 	//sound->update( Game::UPDATE_INTERVAL_CAP );
 }
 
+std::string Win32Platform::_toNormalPath( const std::string& input )
+{
+	std::string path = input;
+
+	for( uint i = 0; i < path.size(); ++i )
+	{
+		if( path[i] == '\\' )
+			path[i] = '/';
+	}
+
+	//remove ending /
+	if( path[path.size()-1] == '/')
+		path.resize( path.size()-1 );
+
+	return path;
+}
+
 std::string Win32Platform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
 	//semplicemente il path relativo all'exe
-	return path + "/" + name + "." + type; 
+	return _toNormalPath( path ) + "/" + name + "." + type; 
 }
 
 bool Win32Platform::_hasExtension( const std::string& ext, const std::string& nameOrPath )
@@ -205,19 +235,26 @@ bool Win32Platform::_hasExtension( const std::string& ext, const std::string& na
 
 void Win32Platform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
 {
-	Poco::DirectoryIterator itr( path );
-
-	std::string extension = "." + type;
-
-	while( itr.name().size() )
+	try
 	{
-		const std::string& name = itr.name();
+		Poco::DirectoryIterator itr( path );
 
-		if( _hasExtension( extension, name ) )
-			out.push_back( itr->path() );
+		std::string extension = "." + type;
 
-		++itr;
+		while( itr.name().size() )
+		{
+			const std::string& name = itr.name();
+
+			if( _hasExtension( extension, name ) )
+				out.push_back( _toNormalPath( itr->path() ) );
+
+			++itr;
+		}
 	}
+	catch (...)
+	{
+		
+	}	
 }
 
 uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
@@ -240,11 +277,13 @@ uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
 	return size;
 }
 
-void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )
+void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
 	if( !_hasExtension( ".png", path ) )
 		return;
+
+	void* data;
 
 	//image format
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
@@ -268,8 +307,32 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 		return;
 
 	//retrieve the image data
-	bufptr = (void*)FreeImage_GetBits(dib);
+	data = (void*)FreeImage_GetBits(dib);
 	//get the image width and height, and size per pixel
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
+
+	uint realWidth = (POT) ? Math::nextPowerOfTwo( width ) : width;
+	uint realHeight = (POT) ? Math::nextPowerOfTwo( height ) : height;
+	uint pixelSize = 4;
+	uint realSize = realWidth * realHeight * pixelSize;
+
+	bufptr = malloc( realSize );
+	memset( bufptr, 0, realSize );
+
+	//converti a 4 canali e scambia R e B
+	byte* out = (byte*)bufptr;
+	byte* in = (byte*)data;
+	byte* end = in + width*height*3;
+	while( in < end )
+	{
+		*out++ = in[2];
+		*out++ = in[1];
+		*out++ = in[0];
+		++out;
+
+		in += 3;
+	}
+
+	FreeImage_Unload( dib );
 }

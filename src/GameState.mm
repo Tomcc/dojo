@@ -40,7 +40,7 @@ void GameState::clear()
 
 void GameState::addObject( Renderable* s, int layer, bool clickable )		
 {
-	game->getRender()->addRenderable( s, layer );
+	Platform::getSingleton()->getRender()->addRenderable( s, layer );
 	
 	addObject( s );
 	
@@ -53,7 +53,7 @@ void GameState::removeSprite( Renderable* s )
 	removeObject( s );
 	removeClickableSprite( s );
 	
-	game->getRender()->removeRenderable( s );
+	Platform::getSingleton()->getRender()->removeRenderable( s );
 }
 
 void GameState::removeClickableSprite( Renderable* s )
@@ -70,12 +70,6 @@ void GameState::removeAll()
 	
 	clickables.clear();
 	objects.clear();
-}
-
-
-SoundManager* GameState::getSoundManager()
-{	
-	return game->getSoundManager();	
 }
 
 Renderable* GameState::getClickableAtPoint( const Vector& point )

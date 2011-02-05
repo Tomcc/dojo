@@ -27,11 +27,14 @@ platform( p )
 	DEBUG_ASSERT( p );
 
 	// Create default framebuffer object. The backing will be allocated for the current layer in -resizeFromLayer
+	//HACK - IOS renderizza in un RenderBuffer, mentre Windows renderizza diretto
+#ifdef PLATFORM_IOS
 	glGenFramebuffers(1, &defaultFramebuffer);
 	glGenRenderbuffers(1, &colorRenderbuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+#endif
 		
 	//gles settings
 	glEnable( GL_TEXTURE_2D );

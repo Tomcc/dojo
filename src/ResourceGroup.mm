@@ -52,7 +52,6 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 	FrameSet* currentSet = NULL;
 	
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
-	Platform::getSingleton()->getFilePathsForType( "pvrtc", subdirectory, paths );
 		
 	for( uint i = 0; i < paths.size(); ++i )
 	{

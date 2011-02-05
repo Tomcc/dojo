@@ -144,12 +144,12 @@ namespace Dojo
 		inline void _registerParticle( Particle* p )
 		{
 			//register the particle to updates and manually to the render system
-			gameState->getGame()->getRender()->addRenderable( p, destLayer );
+			Platform::getSingleton()->getRender()->addRenderable( p, destLayer );
 		}
 									
 		inline void _unregisterParticle( Particle* p )
 		{
-			gameState->getGame()->getRender()->removeRenderable( p );
+			Platform::getSingleton()->getRender()->removeRenderable( p );
 		}
 									
 		inline Particle* _getUnused()

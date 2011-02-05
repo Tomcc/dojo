@@ -24,7 +24,7 @@ namespace Dojo
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
 		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT );
 
 	protected:
 
@@ -38,8 +38,9 @@ namespace Dojo
 		int width, height;      // the desired width and
 
 		bool _hasExtension( const std::string& type, const std::string& nameOrPath );
+		std::string _toNormalPath( const std::string& path );
 
-		void _initialiseWindow();
+		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 
 	private:
 	};

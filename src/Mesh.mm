@@ -7,6 +7,48 @@
 
 using namespace Dojo;
 
+bool Mesh::end()
+{			
+	DEBUG_ASSERT( isEditing() );
+	
+	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
+		return false;
+	
+	if( !vertexHandle )
+		glGenBuffers(1, &vertexHandle );		
+	
+	DEBUG_ASSERT( vertexHandle );
+	
+	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
+							
+	if( isIndexed() ) //we support unindexed meshes
+	{				
+		if( !indexHandle )
+			glGenBuffers(1, &indexHandle );
+		
+		DEBUG_ASSERT( indexHandle );
+						
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof( uint ) * indexCount, indices, usage);							
+	}
+	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0 );
+	
+	if( !dynamic ) //won't be updated ever again
+		_destroyBuffers();
+	
+	loaded = glGetError() == GL_NO_ERROR;
+	
+	currentVertex = NULL;
+	editing = false;
+				
+	return loaded;
+}
+
 const uint Mesh::VERTEX_FIELD_SIZES[] = { 
 	2 * sizeof( GLfloat ),
 	3 * sizeof( GLfloat ),

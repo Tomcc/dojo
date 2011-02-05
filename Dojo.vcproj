@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="OpenGL32.lib glew32.lib FreeImage.lib"
+				AdditionalDependencies="OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_d.lib"
-				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist"
+				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist;&quot;C:\SDK\OpenAL 1.1 SDK\libs\Win32&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -127,8 +127,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="OpenGL32.lib glew32.lib FreeImage.lib"
-				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist"
+				AdditionalDependencies="OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib"
+				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist;&quot;C:\SDK\OpenAL 1.1 SDK\libs\Win32&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

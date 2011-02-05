@@ -32,11 +32,7 @@ namespace Dojo
 		Game();
 		
 		virtual ~Game();
-		
-		inline Render* getRender()				{	return platform->getRender();		}
-		inline SoundManager* getSoundManager()	{	return platform->getSoundManager();	}
-		inline TouchSource* getTouchSource()	{	return platform->getInput();		}
-				
+						
 		virtual void onBegin()=0;
 		virtual void onLoop( float dt )=0;
 		virtual void onEnd()=0;
@@ -44,10 +40,7 @@ namespace Dojo
 		virtual void onApplicationFocus()=0;		
 		virtual void onApplicationFocusLost()=0;
 		
-	protected:
-		
-		Platform* platform;
-		
+	protected:		
 		bool focus;
 	};
 }

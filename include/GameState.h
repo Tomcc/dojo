@@ -43,8 +43,7 @@ namespace Dojo {
 		inline Game* getGame()				{	return game;			}
 				
 		inline float getCurrentTime()		{	return timeElapsed;		}		
-		inline Viewport* getViewport()		{	return camera;			}		
-		SoundManager* getSoundManager();
+		inline Viewport* getViewport()		{	return camera;			}
 						
 		inline void addClickable( Renderable* s )
 		{

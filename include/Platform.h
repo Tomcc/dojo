@@ -59,7 +59,7 @@ namespace Dojo
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )=0;
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
 		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )=0;
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )=0;
 		
 
 	protected:
