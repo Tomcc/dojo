@@ -371,6 +371,11 @@ namespace Dojo {
 			
 			return str;
 		}
+
+		inline static bool hasExtension( const std::string& ext, const std::string& nameOrPath )
+		{
+			return (nameOrPath.size() > ext.size()) && (ext == nameOrPath.substr( nameOrPath.size() - ext.size() ));
+		}
 		
 		inline static int getTagIdx( const std::string& str )
 		{			

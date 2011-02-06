@@ -24,10 +24,6 @@ positionChanged( true )
 
 void SoundSource::_reset()
 {
-	//libera una reference dal buffer
-	if( buffer )
-		buffer->_notifyReleased();
-
 	state = SS_INITIALISING;
 	
 	pos = Vector::ZERO;
@@ -45,8 +41,7 @@ void SoundSource::_reset()
 
 SoundSource::~SoundSource()
 {
-	if( buffer )
-		buffer->_notifyReleased();
+
 }
 
 void SoundSource::setVolume( float v )
@@ -83,8 +78,6 @@ void SoundSource::play( float volume )
 			alSourcef (source, AL_REFERENCE_DISTANCE,    1.0f );
 
 			alSourcei (source, AL_BUFFER,   buffer->_getOpenALBuffer()  );
-
-			buffer->_notifyUsed(); //notify sound gc
 		}
 		else
 			state = SS_FINISHED;

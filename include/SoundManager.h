@@ -19,35 +19,12 @@ namespace Dojo {
 		///Classe che gestisce il sistema Audio di eVolve.
 		class SoundManager : public BaseObject
 		{
-		protected:
-
-			class SoundDummy : public SoundSource
-			{
-
-			public:
-				
-				SoundDummy( SoundManager* mgr ) :
-				SoundSource( mgr )
-				{
-					
-				}
-
-				bool isValid()
-				{
-					return false;
-				}
-			};
-
-
 		public:
+			static const uint SoundManager::maxSources;
+
+			typedef Array< SoundSource* > SoundList;
 
 			static const float m;
-						
-			static const uint maxBuffers;
-			static const uint maxSources;
-
-			typedef Array<SoundSource*> SoundList;
-			typedef std::map<std::string, SoundSet*> SoundDataMap;
 
 			///metodo statico per convertire la classe vector in vettore C-style.
 			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
@@ -79,37 +56,21 @@ namespace Dojo {
 				fadeState = FS_NONE;
 			}
 
-			//restituisce un suono che non fa nulla
-			inline SoundSource* getDummySound()
-			{
-				return dummySound;
-			}
-
 			///restituisce una fonte sonora con il suono dato
-			inline SoundSource* getSoundSource( SoundSet* set )
+			inline SoundSource* getSoundSource( SoundSet* set, int i = -1 )
 			{
+				DEBUG_ASSERT( set );
+
 				if( idleSoundPool.size() > 0 && set )
 				{
 					SoundSource* s = idleSoundPool.pop();
 					busySoundPool.add(s);
 
-					s->_setup( set->getBuffer() );
+					s->_setup( set->getBuffer( i ) );
 
 					return s;
 				}
-
-				return dummySound;
-			}
-
-			///restituisce una fonte sonora con il suono dato
-			inline SoundSource* getSoundSource(const std::string& bufferName)
-			{
-				SoundSet* s = getSoundSet( bufferName );
-				if( s )
-					return getSoundSource( s );
-
-				//suono non trovato!
-				return dummySound;
+				return NULL;
 			}
 
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
@@ -117,13 +78,6 @@ namespace Dojo {
 				DEBUG_ASSERT( set );
 				
 				SoundSource* s = getSoundSource( set );
-				s->setPosition( pos );
-				return s;
-			}
-
-			inline SoundSource* getSoundSource( const Vector& pos, const std::string& bufferName)
-			{
-				SoundSource* s = getSoundSource( bufferName );
 				s->setPosition( pos );
 				return s;
 			}
@@ -137,13 +91,6 @@ namespace Dojo {
 				return s;
 			}
 
-			inline SoundSource* playSound(const std::string& bufferName)
-			{
-				SoundSource* s = getSoundSource( bufferName );
-				s->play();
-				return s;
-			}
-
 			inline SoundSource* playSound( const Vector& pos, SoundSet* set )
 			{
 				DEBUG_ASSERT( set );
@@ -152,19 +99,12 @@ namespace Dojo {
 				s->play();
 				return s;
 			}
-
-			inline SoundSource* playSound( const Vector& pos, const std::string& bufferName )
-			{
-				SoundSource* s = getSoundSource( pos, bufferName );
-				s->play();
-				return s;
-			}
 			
 			///tells whether the system is already playing its sound (iTunes, calls, VOIP, etc)
 			bool isSystemSoundInUse();
 			
 			///setta la musica facendo un fade lineare in fadeTime rispetto alla track precedente
-			void playMusic( const std::string& name, float trackFadeTime = 0 );
+			void playMusic( SoundSet* music, float trackFadeTime = 0 );
 			
 			inline void pauseMusic()
 			{
@@ -251,32 +191,6 @@ namespace Dojo {
 			
 			//c'e' gia' un fade in corso?
 			inline bool isMusicFading()		{	return fadeState != FS_NONE;	}
-
-			///Dice se esiste un buffer creato dal file specificato.
-			inline bool isSoundLoaded(const std::string& name)
-			{
-				return soundDataMap.find( name ) != soundDataMap.end();
-			}
-
-			///Aggiunge manualmente un set di suoni, utile per gruppi che non sono nel filesystem
-			inline void addSoundSet( SoundSet* s )
-			{
-				DEBUG_ASSERT( s );
-				
-				if( !isSoundLoaded( s->getName()) )
-					soundDataMap[ s->getName() ] = s;
-			}
-
-			inline SoundSet* getSoundSet( const std::string& name )
-			{
-				//esiste un set col nome dato?
-				SoundDataMap::iterator itr = soundDataMap.find( name );
-
-				if( itr != soundDataMap.end() )
-					return itr->second;
-
-				return NULL;
-			}
 			
 			inline void setListenerPosition( const Vector& pos )
 			{				
@@ -300,35 +214,6 @@ namespace Dojo {
 			///ereditato da Manager
 			void update( float dt );
 
-			///-metodo interno- mantiene il numero di buffers caricati minore del massimo
-			bool _reserveBufferSlot( SoundBuffer* newbuf )
-			{
-				DEBUG_ASSERT( newbuf );
-				
-				if( loadedBufferList.size() >= maxBuffers )
-				{
-					bool removed = false;
-					//rimuovi un buffer senza referenze
-					for( unsigned int i = 0; i < loadedBufferList.size(); ++i )
-					{
-						if( loadedBufferList.at(i)->getUses() == 0 )
-						{
-							loadedBufferList.remove( i );
-
-							removed = true;
-							break;
-						}
-					}
-
-					//non ce ne sono...
-					if( !removed )
-						return false;
-				}
-
-				loadedBufferList.add( newbuf );			
-				return true;
-			}
-
 		protected:
 
 			enum FadeState
@@ -345,7 +230,6 @@ namespace Dojo {
 			ALfloat orientation[6];
 
 			//pool di suoni
-			SoundSource* dummySound;
 			SoundList idleSoundPool;
 			SoundList busySoundPool;
 
@@ -356,11 +240,6 @@ namespace Dojo {
 
 			float musicVolume;
 			float masterVolume;
-
-			//mappa di liste di buffers per i set
-			SoundDataMap soundDataMap;
-
-			Array<SoundBuffer*> loadedBufferList; 
 
 			void _createMainBundleBuffers();		
 			

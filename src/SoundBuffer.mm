@@ -5,27 +5,19 @@
 
 #include "Utils.h"
 
+
 using namespace Dojo;
 using namespace std;
 
 #define OGG_ENDIAN 0
 
-#ifdef LINUX
-#define FALSE 0
-#define DWORD int
-#define BYTE char
-#define TRUE 1
-#endif
-
 ///////////////////////////////////////
 
-SoundBuffer::SoundBuffer( SoundManager* creator, const string& soundName ) :
-mgr( creator ),
-name(soundName),
+SoundBuffer::SoundBuffer( ResourceGroup* creator, const string& path ) :
+Buffer( creator, path ),
 size(0),
 freq(0),
-buffer( AL_NONE ),
-uses(0)
+buffer( AL_NONE )
 {
 	DEBUG_ASSERT( creator );
 }
@@ -38,9 +30,9 @@ SoundBuffer::~SoundBuffer()
 void SoundBuffer::_loadCAFBuffer()
 {	
 #ifdef WIN32
-	//DEBUG_TODO;
+	DEBUG_TODO;
 #else
-	NSString* filePath = Utils::toNSString(name);
+	NSString* filePath = Utils::toNSString(filePath);
 	
 	// first, open the file	
 	AudioFileID fileID;
@@ -76,12 +68,26 @@ void SoundBuffer::_loadCAFBuffer()
 #endif
 }
 
+#ifndef PLATFORM_IOS
+#include <AL/alut.h>
+#endif
+
+void SoundBuffer::_loadWAVBuffer()
+{		
+	ALvoid* data;
+	ALboolean loop;
+	ALenum format;
+
+	alutLoadWAVFile( (ALbyte*)filePath.c_str(), &format, &data, &size, &freq, &loop );
+
+	alBufferData(buffer,format,data,size,freq);
+
+	alutUnloadWAV(format,data,size,freq);
+}
+
 bool SoundBuffer::load()
 {
 	if( isLoaded() )	return false;
-
-	if( !mgr->_reserveBufferSlot( this ) )	
-		return false;
 
 	alGenBuffers(1,&buffer);
 	
@@ -89,7 +95,10 @@ bool SoundBuffer::load()
 
 	ALenum error = alGetError();
 	
-	_loadCAFBuffer();
+	if(  Utils::hasExtension( "caf", filePath ) )
+		_loadCAFBuffer();
+	else if(  Utils::hasExtension( "wav", filePath ) )
+		_loadWAVBuffer();
 		
 	//error check
 	if( error == AL_NO_ERROR )

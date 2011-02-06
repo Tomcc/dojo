@@ -17,6 +17,7 @@
 #include "Font.h"
 #include "FrameSet.h"
 #include "Mesh.h"
+#include "SoundSet.h"
 
 namespace Dojo {
 	
@@ -27,6 +28,7 @@ namespace Dojo {
 		typedef std::map<std::string, FrameSet*> FrameSetMap;
 		typedef std::map<std::string, Font*> FontMap;
 		typedef std::map<std::string, Mesh*> MeshMap;
+		typedef std::map<std::string, SoundSet*> SoundMap;
 			
 		ResourceGroup();
 		
@@ -45,6 +47,11 @@ namespace Dojo {
 		inline bool isMeshLoaded( const std::string& name )
 		{
 			return meshes.find( name ) != meshes.end();
+		}
+
+		inline bool isSoundLoaded( const std::string& name )
+		{
+			return sounds.find( name ) != sounds.end();
 		}
 		
 		inline FrameSet* getFrameSet( const std::string& name )
@@ -76,6 +83,14 @@ namespace Dojo {
 			meshes[ name ] = m;
 		}		
 		
+		inline void addSound( SoundSet* sb, const std::string& name )
+		{
+			DEBUG_ASSERT( !isSoundLoaded( name ) );
+
+			sounds[ name ] = sb;
+		}
+
+
 		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
 		
 		inline Font* getFont( const std::string& name )
@@ -93,20 +108,39 @@ namespace Dojo {
 			
 			return NULL;
 		}
+
+		inline SoundSet* getSound( const std::string& name )
+		{
+			if( isSoundLoaded( name ) )
+				return sounds[ name ];
+
+			return NULL;
+		}
 						
-		void loadSets( const std::string& folder = "" );		
-		void loadFonts( const std::string& subdirectory = "" );
-		void loadMeshes( const std::string& folder = "" );
+		void loadSets( const std::string& folder );		
+		void loadFonts( const std::string& folder );
+		void loadMeshes( const std::string& folder );
+		void loadSounds( const std::string& folder );
+
+		void loadResources( const std::string& folder )
+		{
+			loadSets( folder );
+			loadFonts( folder );
+			loadMeshes( folder );
+			loadSounds( folder );
+		}
 				
 		void unloadSets();
 		void unloadFonts();
 		void unloadMeshes();
+		void unloadSounds();
 		
 		void unloadAll()
 		{
 			unloadSets();
 			unloadFonts();
 			unloadMeshes();
+			unloadSounds();
 		}
 		
 	protected:
@@ -116,6 +150,7 @@ namespace Dojo {
 		FrameSetMap frameSets;
 		FontMap fonts;
 		MeshMap meshes;
+		SoundMap sounds;
 	};
 }
 

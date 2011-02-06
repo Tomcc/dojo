@@ -141,6 +141,41 @@ void ResourceGroup::loadMeshes( const std::string& subdirectory )
 	}
 }
 
+void ResourceGroup::loadSounds( const std::string& subdirectory )
+{
+	//ask all the sound files to the main bundle
+	std::vector< std::string > paths;
+	std::string name, lastName;
+
+	SoundSet* currentSet = NULL;
+
+	Platform::getSingleton()->getFilePathsForType( "caf", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "wav", subdirectory, paths );
+	
+	for( uint i = 0; i < paths.size(); ++i )
+	{
+		name = Utils::getFileName( paths[i] );
+		
+		if( !Utils::areStringsNearInSequence( lastName, name ) )
+		{
+			std::string setPrefix = Utils::removeTag( name );
+			
+			//create a new set
+			currentSet = new SoundSet( setPrefix );
+			
+			addSound( currentSet, setPrefix );
+		}
+			
+		//create and load a new buffer
+		SoundBuffer* b = new SoundBuffer( this, paths[i] );
+		b->load();
+		
+		currentSet->addBuffer( b );
+		
+		lastName = name;
+	}
+}
+
 void ResourceGroup::unloadSets()
 {	
 	FrameSetMap::iterator itr = frameSets.begin();
@@ -170,3 +205,14 @@ void ResourceGroup::unloadMeshes()
 	
 	meshes.clear();
 }
+
+void ResourceGroup::unloadSounds()
+{
+	SoundMap::iterator itr = sounds.begin();
+	
+	for( ; itr != sounds.end(); ++itr )
+		delete itr->second;	
+	
+	sounds.clear();
+}
+

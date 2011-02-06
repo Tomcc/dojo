@@ -23,24 +23,15 @@ namespace Dojo
 			
 		}
 
-		///restituisce un buffer casuale
-		inline SoundBuffer* getBuffer()
+		///restituisce un buffer casuale o quello numero "i"
+		inline SoundBuffer* getBuffer( int i = -1 )
 		{
-			if( buffers.size() == 0 )
-				return NULL;
-			else if( buffers.size() == 1 )
-				return buffers[0];
-			else
-			{
-				float i = Math::rangeRandom( 0, (float)buffers.size() );
-				return buffers.at( (int)i ); 
-			}
-		}
-
-		inline SoundBuffer* getBuffer( int i )
-		{
+			DEBUG_ASSERT( buffers.size() );
 			DEBUG_ASSERT( buffers.size() > i );
-			
+
+			if( i < 0 )
+				i = (int)Math::rangeRandom( 0, (float)buffers.size() );
+
 			return buffers.at(i);
 		}
 

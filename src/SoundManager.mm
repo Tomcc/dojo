@@ -12,7 +12,6 @@ using namespace Dojo;
 
 const float SoundManager::m = 100;
 						
-const uint SoundManager::maxBuffers = 32;
 const uint SoundManager::maxSources = 64;
 
 bool SoundManager::alCheckError()
@@ -60,12 +59,6 @@ currentFadeTime(0)
 	//preload sounds
 	for( unsigned int i = 0; i < maxSources; ++i )
 		idleSoundPool.add( new SoundSource( this ) );
-
-	//crea il suono inutile
-	dummySound = new SoundDummy( this );
-		
-	//look for all the sounds in the bundle
-	_createMainBundleBuffers();
 }
 
 SoundManager::~SoundManager()
@@ -76,44 +69,6 @@ SoundManager::~SoundManager()
 	
 	for( unsigned int i = 0; i < idleSoundPool.size(); ++i )
 		delete idleSoundPool.at(i);
-}
-
-void SoundManager::_createMainBundleBuffers()
-{
-	//TODO move sounds to resourcegroup!
-
-	//ask all the sound files to the main bundle
-	std::vector< std::string > paths;
-	std::string name, lastName;
-
-	SoundSet* currentSet = NULL;
-
-	Platform::getSingleton()->getFilePathsForType( "caf", "data", paths );
-	
-	for( uint i = 0; i < paths.size(); ++i )
-	{
-		name = Utils::getFileName( paths[i] );
-		
-		if( !Utils::areStringsNearInSequence( lastName, name ) )
-		{
-			std::string setPrefix = Utils::removeTag( name );
-			
-			//create a new set
-			currentSet = new SoundSet( setPrefix );
-			
-			soundDataMap[ setPrefix ] = currentSet;
-		}
-			
-		//create and load a new buffer
-		SoundBuffer* b = new SoundBuffer( this, paths[i] );
-		b->load();
-		
-		//TODO: Multiple Sound-in-set Support
-		currentSet->addBuffer( b );
-		
-		lastName = name;
-	}
-	
 }
 
 bool SoundManager::isSystemSoundInUse()
@@ -130,23 +85,20 @@ bool SoundManager::isSystemSoundInUse()
 }
 
 
-void SoundManager::playMusic( const std::string& name, float trackFadeTime /* = 0 */ )
+void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 {
+	DEBUG_ASSERT( next );
+
 	//override music activation if the system sound is in use
 	if( isMusicFading() || isSystemSoundInUse() )
 		return;
 
-	SoundSource* next = getSoundSource(name);
+	nextMusicTrack = getSoundSource( next );
 
-	if( next )
-	{
-		nextMusicTrack = next;
-
-		halfFadeTime = trackFadeTime*0.5f;
-		currentFadeTime = 0;
+	halfFadeTime = trackFadeTime*0.5f;
+	currentFadeTime = 0;
 		
-		fadeState = FS_FADE_OUT;
-	}
+	fadeState = FS_FADE_OUT;
 }
 
 void SoundManager::update( float dt )

@@ -130,8 +130,6 @@ namespace Dojo
 				DEBUG_ASSERT( b );
 				
 				buffer = b;
-
-				buffer->_notifyUsed();
 			}
 
 			///metodo interno per riportare il SoundSource allo stato iniziale
