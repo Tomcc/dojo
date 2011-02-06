@@ -3,6 +3,7 @@
 #include "Win32Platform.h"
 
 #include <Windows.h>
+#include <ShellAPI.h>
 #include <Poco/DirectoryIterator.h>
 #include <Freeimage.h>
 
@@ -440,4 +441,9 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	}
 
 	FreeImage_Unload( dib );
+}
+
+void Win32Platform::openWebPage( const std::string& site )
+{
+	ShellExecuteA(hwnd, "open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }

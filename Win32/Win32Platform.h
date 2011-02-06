@@ -32,6 +32,8 @@ namespace Dojo
 		virtual uint loadFileContent( char*& bufptr, const std::string& path );
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT );
 
+		virtual void openWebPage( const std::string& site );
+
 		virtual bool mouseMoved( const OIS::MouseEvent& arg );
 		virtual bool mousePressed( const OIS::MouseEvent& arg, OIS::MouseButtonID id );
 		virtual bool mouseReleased(	const OIS::MouseEvent& arg, OIS::MouseButtonID id );

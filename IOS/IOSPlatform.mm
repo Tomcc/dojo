@@ -174,3 +174,10 @@ void IOSPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	}
 	
 }
+
+void IOSPlatform::openWebPage( const std::string& site )
+{
+	NSString* url = Utils::toNSString( site );
+	
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
