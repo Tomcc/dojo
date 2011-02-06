@@ -4,6 +4,7 @@
 #include "dojo_common_header.h"
 
 #include "BaseObject.h"
+#include "Vector.h"
 
 namespace Dojo
 {
@@ -62,6 +63,13 @@ namespace Dojo
 			
 			strings[ key ] = value;
 		}
+
+		inline void setVector( const std::string& key, const Dojo::Vector& value )
+		{
+			DEBUG_ASSERT( key.size() );
+
+			vectors[ key ] = value;
+		}
 		
 		inline void setTable( Table* value )
 		{
@@ -78,6 +86,7 @@ namespace Dojo
 		{
 			numbers.clear();
 			strings.clear();
+			vectors.clear();
 						
 			//cancella tutte le tabelle figlie
 			std::map< std::string, Table* >::iterator itr;
@@ -91,6 +100,34 @@ namespace Dojo
 		inline const std::string& getName()
 		{
 			return name;
+		}
+
+		inline bool existsAsNumber( const std::string& name )
+		{
+			DEBUG_ASSERT( name.size() );
+
+			return numbers.find( name ) != numbers.end();
+		}
+
+		inline bool existsAsString( const std::string& name )
+		{
+			DEBUG_ASSERT( name.size() );
+
+			return strings.find( name ) != strings.end();
+		}
+
+		inline bool existsAsTable( const std::string& name )
+		{
+			DEBUG_ASSERT( name.size() );
+
+			return numbers.find( name ) != numbers.end();
+		}
+
+		inline bool existsAsVector( const std::string& name )
+		{
+			DEBUG_ASSERT( name.size() );
+
+			return vectors.find( name ) != vectors.end();
 		}
 		
 		inline float getNumber( const std::string& key )
@@ -118,6 +155,14 @@ namespace Dojo
 			else
 			   return UNDEFINED_STRING;
 		}
+
+		inline const Dojo::Vector& getVector( const std::string& key )
+		{
+			if( existsAsVector( key ) )
+				return vectors[key];
+			else
+				return Vector::ZERO;
+		}
 		
 		inline Table* getTable( const std::string& key )
 		{			
@@ -127,63 +172,52 @@ namespace Dojo
 			   return NULL;
 		}
 		
-		inline bool existsAsNumber( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return numbers.find( name ) != numbers.end();
-		}
-		
-		inline bool existsAsString( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return numbers.find( name ) != numbers.end();
-		}
-		
-		inline bool existsAsTable( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return numbers.find( name ) != numbers.end();
-		}
-		
-		inline bool exists( const std::string& name )
-		{
-			return existsAsNumber(name) || existsAsString( name ) || existsAsTable( name );
-		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
 		inline void serialize( std::ostream& buf)
 		{			
-			buf << "<TABLE> " << name << std::endl;
+			using namespace std;
 			
-			std::map< std::string, float >::iterator ni = numbers.begin();
-			std::map< std::string, std::string >::iterator si = strings.begin();
-			std::map< std::string, Table* >::iterator ti = tables.begin();
+			buf << "<TABLE> " << name << endl;
 			
-			buf << "<NUMBERS>" << std::endl;
+			map< string, float >::iterator ni = numbers.begin();
+			map< string, string >::iterator si = strings.begin();
+			map< string, Vector >::iterator vi = vectors.begin();
+			map< string, Table* >::iterator ti = tables.begin();
+			
+			if( numbers.size() )
+				buf << "<NUMBERS>" << endl;
 			
 			for( ; ni != numbers.end(); ++ni )	
-				buf << ni->first << ' ' << ni->second << std::endl;
+				buf << ni->first << '=' << ni->second << endl;
 			
-			buf << "<STRINGS>" << std::endl;
+			if( strings.size() )
+				buf << "<STRINGS>" << endl;
 			
 			for( ; si != strings.end(); ++si )	
-				buf << si->first << ' ' << si->second << std::endl;
+				buf << si->first << '=' << si->second << endl;
+
+			if( vectors.size() )
+				buf << "<VECTORS>" << endl;
 			
-			buf << "<TABLES>" << std::endl;
+			for( ; vi != vectors.end(); ++vi )
+				buf << vi->first << '=' << vi->second.x << ' ' << vi->second.y << ' ' << vi->second.z << endl;
+			
+			if( tables.size() )
+				buf << "<TABLES>" << endl;
 			
 			for( ; ti != tables.end(); ++ti )	
 				 ti->second->serialize( buf );
 						
-			buf << "<END>" << std::endl;
+			buf << "<END>" << endl;
 		}
 
 		void deserialize( std::istream& buf )
 		{
 			std::string token = "<TABLE>", value;
 			int numvalue;
+
+			char line[ 200 ];
 
 			while( token == "<TABLE>" && !buf.eof() )
 				buf >> token;
@@ -194,14 +228,17 @@ namespace Dojo
 
 			while( !buf.eof() )
 			{
-				buf >> token;				
+				_getLine( buf, line, 200, '=' );
+				token.assign( line );
 
 				if( token == "<NUMBERS>" )
 					state = 0;
 				else if( token == "<STRINGS>" )
 					state = 1;
-				else if( token == "<TABLES>" )
+				else if( token == "<VECTORS>" )
 					state = 2;
+				else if( token == "<TABLES>" )
+					state = 3;
 				else if( token == "<END>" )
 					break;
 				else 
@@ -216,8 +253,18 @@ namespace Dojo
 					//strings
 					else if( state == 1 )
 					{
-						buf >> value;
+						buf.getline( line, 200 );
+						value.assign( line );
 						setString( token, value );
+					}
+					else if( state == 2 )
+					{
+						Vector v;
+						buf >> v.x;
+						buf >> v.y;
+						buf >> v.z;
+
+						setVector( token, v );
 					}
 					else if( state == 2 )
 					{						
@@ -233,8 +280,30 @@ namespace Dojo
 		
 		std::map< std::string, float > numbers;
 		std::map< std::string, std::string > strings;
+		std::map< std::string, Vector > vectors;
 		std::map< std::string, Table* > tables;	
-		
+
+		void _getLine( std::istream& in, char* buf, uint max, char delim )
+		{
+			char c='\n';
+			uint i=0;
+
+			while( c == '\n' )
+				in.read( &c, 1 );
+
+			while( !in.eof() && i < max )
+			{
+				if( c == delim || c == '\n' )
+				{
+					buf[i] = 0;
+					return;
+				}
+				else
+					buf[ i++ ] = c;
+
+				in.read( &c, 1 );
+			}
+		}
 	};
 }
 

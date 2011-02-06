@@ -71,6 +71,7 @@ namespace Dojo
 		std::string _getUserDirectory();
 
 		bool _initialiseWindow( const std::string& caption, uint w, uint h );
+		void _initialiseOIS();
 
 	private:
 	};

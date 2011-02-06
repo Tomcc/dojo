@@ -157,26 +157,10 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	return wglMakeCurrent( hdc, hglrc )>0;
 }
 
-void Win32Platform::initialise()
+void Win32Platform::_initialiseOIS()
 {
-	DEBUG_ASSERT( game );
 
-//crea la directory utente se non esiste
-	std::string userDir = _getUserDirectory() + "/" + game->getName();
-
-	CreateDirectoryA( userDir.c_str(), NULL );
-
-	if( !_initialiseWindow( game->getName(), 480, 320 ) )
-		return;
-
-	glewInit();
-
-	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
-
-	sound = new SoundManager();
-
-//inizializza OIS per emulare il touch
-//evita il grab del cursore
+	//evita il grab del cursore
 	OIS::ParamList params;
 	params.insert( std::make_pair( "WINDOW", Utils::toString( (uint)hwnd ) ) );
 	params.insert( std::make_pair( "w32_mouse", "DISCL_FOREGROUND" ) );
@@ -197,6 +181,28 @@ void Win32Platform::initialise()
 		mouse->getMouseState().width = width;
 		mouse->getMouseState().height = height;
 	}
+}
+
+void Win32Platform::initialise()
+{
+	DEBUG_ASSERT( game );
+
+	//crea la directory utente se non esiste
+	std::string userDir = _getUserDirectory() + "/" + game->getName();
+
+	CreateDirectoryA( userDir.c_str(), NULL );
+
+	if( !_initialiseWindow( game->getName(), 480, 320 ) )
+		return;
+
+	glewInit();
+
+	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
+
+	sound = new SoundManager();
+
+	//inizializza OIS per emulare il touch
+	_initialiseOIS();
 
 	input = new TouchSource();
 
