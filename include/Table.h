@@ -20,19 +20,19 @@ namespace Dojo
 		}
 		
 		///legge la tabella dal formato standard su stringa
-		Table( std::stringstream& buf )
+		Table( std::istream& buf )
 		{						
 			std::string token = "<TABLE>", value;
 			int numvalue;
 			
-			while( token == "<TABLE>" )
+			while( token == "<TABLE>" && !buf.eof() )
 				  buf >> token;
 				  
 			name = token;
 			
 			int state = 0;
 			
-			while( 1 )
+			while( !buf.eof() )
 			{
 				buf >> token;				
 				
@@ -196,7 +196,7 @@ namespace Dojo
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
-		inline void serialize( std::stringstream& buf)
+		inline void serialize( std::ostream& buf)
 		{			
 			buf << "<TABLE> " << name << std::endl;
 			

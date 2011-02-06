@@ -31,6 +31,9 @@ namespace Dojo
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
 		virtual uint loadFileContent( char*& bufptr, const std::string& path );
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT );
+		
+		virtual Table* load( const std::string& tableName );
+		virtual void save( Table* table );
 
 		virtual void openWebPage( const std::string& site );
 
@@ -64,6 +67,8 @@ namespace Dojo
 
 		bool _hasExtension( const std::string& type, const std::string& nameOrPath );
 		std::string _toNormalPath( const std::string& path );
+
+		std::string _getUserDirectory();
 
 		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 

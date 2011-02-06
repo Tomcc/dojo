@@ -53,15 +53,7 @@ namespace Dojo {
 		{
 			return sounds.find( name ) != sounds.end();
 		}
-		
-		inline FrameSet* getFrameSet( const std::string& name )
-		{
-			if( isFrameSetLoaded( name ) )
-				return frameSets[name];
-			
-			return NULL;
-		}
-		
+				
 		inline void addFrameSet( FrameSet* set, const std::string& name )
 		{
 			DEBUG_ASSERT( !isFrameSetLoaded( name ) );
@@ -90,8 +82,15 @@ namespace Dojo {
 			sounds[ name ] = sb;
 		}
 
-
 		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
+
+		inline FrameSet* getFrameSet( const std::string& name )
+		{
+			if( isFrameSetLoaded( name ) )
+				return frameSets[name];
+
+			return NULL;
+		}
 		
 		inline Font* getFont( const std::string& name )
 		{

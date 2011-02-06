@@ -4,6 +4,8 @@
 
 #include <Windows.h>
 #include <ShellAPI.h>
+#include <ShlObj.h>
+
 #include <Poco/DirectoryIterator.h>
 #include <Freeimage.h>
 
@@ -12,6 +14,7 @@
 #include "Render.h"
 #include "Game.h"
 #include "Utils.h"
+#include "Table.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -157,6 +160,11 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 void Win32Platform::initialise()
 {
 	DEBUG_ASSERT( game );
+
+//crea la directory utente se non esiste
+	std::string userDir = _getUserDirectory() + "/" + game->getName();
+
+	CreateDirectoryA( userDir.c_str(), NULL );
 
 	if( !_initialiseWindow( game->getName(), 480, 320 ) )
 		return;
@@ -441,6 +449,57 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	}
 
 	FreeImage_Unload( dib );
+}
+
+std::string Win32Platform::_getUserDirectory()
+{
+	char szPath[MAX_PATH];
+
+	SHGetFolderPathA(
+		hwnd, 
+		CSIDL_LOCAL_APPDATA|CSIDL_FLAG_CREATE, 
+		NULL, 
+		0, 
+		szPath);
+
+	std::string dir( szPath );
+
+	return _toNormalPath( dir );
+}
+
+Table* Win32Platform::load( const std::string& tableName )
+{
+	using namespace std;
+	
+	//cerca tra le user prefs un file con lo stesso nome
+	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + tableName + ".txt";
+
+	fstream file( fileName.c_str(), ios_base::in );
+
+	if( !file.is_open() )
+		return new Table( tableName ); //tavola vuota
+
+	Table* res = new Table( file );
+
+	file.close();
+
+	return res;
+}
+
+void Win32Platform::save( Table* table )
+{
+	using namespace std;
+	
+	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + table->getName() + ".txt";
+
+	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc );
+
+	if( !file.is_open() )
+		return;
+
+	table->serialize( file );
+
+	file.close();
 }
 
 void Win32Platform::openWebPage( const std::string& site )
