@@ -21,50 +21,8 @@ namespace Dojo
 		
 		///legge la tabella dal formato standard su stringa
 		Table( std::istream& buf )
-		{						
-			std::string token = "<TABLE>", value;
-			int numvalue;
-			
-			while( token == "<TABLE>" && !buf.eof() )
-				  buf >> token;
-				  
-			name = token;
-			
-			int state = 0;
-			
-			while( !buf.eof() )
-			{
-				buf >> token;				
-				
-				if( token == "<NUMBERS>" )
-					state = 0;
-				else if( token == "<STRINGS>" )
-					state = 1;
-				else if( token == "<TABLES>" )
-					state = 2;
-				else if( token == "<END>" )
-					break;
-				else 
-				{					
-					//numbers
-					if( state == 0 )
-					{
-						buf >> numvalue;
-						
-						setNumber( token, numvalue );
-					}					
-					//strings
-					else if( state == 1 )
-					{
-						buf >> value;
-						setString( token, value );
-					}
-					else if( state == 2 )
-					{						
-						setTable( new Table( buf ) );
-					}
-				}
-			}
+		{	
+			deserialize( buf );
 		}		
 		
 		~Table()
@@ -220,6 +178,53 @@ namespace Dojo
 				 ti->second->serialize( buf );
 						
 			buf << "<END>" << std::endl;
+		}
+
+		void deserialize( std::istream& buf )
+		{
+			std::string token = "<TABLE>", value;
+			int numvalue;
+
+			while( token == "<TABLE>" && !buf.eof() )
+				buf >> token;
+
+			name = token;
+
+			int state = 0;
+
+			while( !buf.eof() )
+			{
+				buf >> token;				
+
+				if( token == "<NUMBERS>" )
+					state = 0;
+				else if( token == "<STRINGS>" )
+					state = 1;
+				else if( token == "<TABLES>" )
+					state = 2;
+				else if( token == "<END>" )
+					break;
+				else 
+				{					
+					//numbers
+					if( state == 0 )
+					{
+						buf >> numvalue;
+
+						setNumber( token, numvalue );
+					}					
+					//strings
+					else if( state == 1 )
+					{
+						buf >> value;
+						setString( token, value );
+					}
+					else if( state == 2 )
+					{						
+						setTable( new Table( buf ) );
+					}
+				}
+			}
 		}
 				
 	protected:

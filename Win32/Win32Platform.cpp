@@ -467,27 +467,29 @@ std::string Win32Platform::_getUserDirectory()
 	return _toNormalPath( dir );
 }
 
-Table* Win32Platform::load( const std::string& tableName )
+void Win32Platform::load( Table* dest )
 {
+	DEBUG_ASSERT( dest );
+
 	using namespace std;
 	
 	//cerca tra le user prefs un file con lo stesso nome
-	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + tableName + ".txt";
+	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
 
 	fstream file( fileName.c_str(), ios_base::in );
 
 	if( !file.is_open() )
-		return new Table( tableName ); //tavola vuota
+		return;
 
-	Table* res = new Table( file );
+	dest->deserialize( file );
 
 	file.close();
-
-	return res;
 }
 
 void Win32Platform::save( Table* table )
 {
+	DEBUG_ASSERT( table );
+
 	using namespace std;
 	
 	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + table->getName() + ".txt";

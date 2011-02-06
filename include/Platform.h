@@ -66,7 +66,7 @@ namespace Dojo
 		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )=0;
 		
-		virtual Table* load( const std::string& tableName )=0;
+		virtual void load( Table* dest )=0;
 		virtual void save( Table* table )=0;
 
 		virtual void openWebPage( const std::string& site )=0;
