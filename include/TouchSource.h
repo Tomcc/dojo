@@ -44,10 +44,7 @@ namespace Dojo
 			
 			virtual void onTouchBegan( const Vector& point )=0;
 			virtual void onTouchMove( const Vector& point, const Vector& trans )=0;
-			virtual void onTouchEnd( const Vector& point )=0;		
-						
-			virtual void onButtonPressed( Renderable* s ) = 0;			
-			virtual void onButtonReleased( Renderable* s ) = 0;
+			virtual void onTouchEnd( const Vector& point )=0;	
 			
 			virtual void onShake()
 			{
@@ -58,7 +55,17 @@ namespace Dojo
 			{
 				
 			}
-			
+
+			virtual void onKeyPressed( uint ID )
+			{
+
+			}	
+
+			virtual void onKeyReleased( uint ID )
+			{
+
+			}
+
 			inline void _notifySource( TouchSource* src )	{	source = src;	}
 			
 		protected:
@@ -151,9 +158,25 @@ namespace Dojo
 					listeners.at(i)->onAcceleration( x,y,z,roll );
 			}
 		}
-		
-		
-		
+
+		virtual void _fireKeyPressedEvent( uint ID )
+		{
+			if( enabled )
+			{				
+				for( uint i = 0; i < listeners.size(); ++i )
+					listeners.at(i)->onKeyPressed( ID );
+			}
+		}
+
+		virtual void _fireKeyReleasedEvent( uint ID )
+		{
+			if( enabled )
+			{				
+				for( uint i = 0; i < listeners.size(); ++i )
+					listeners.at(i)->onKeyReleased( ID );
+			}
+		}
+	
 	protected:
 		
 		bool enabled;

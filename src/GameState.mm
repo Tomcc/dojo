@@ -117,3 +117,24 @@ void GameState::updateObjects( float dt )
 		}
 	}			
 }	
+
+
+void GameState::onTouchBegan( const Vector& point )
+{
+	Renderable* click = getClickableAtPoint( point );
+
+	if( click && click->clickListener )
+		click->clickListener->onButtonPressed( click , point );
+	else
+		onButtonPressed( click, point ); //puo anche essere null!
+}
+
+void GameState::onTouchEnd(const Dojo::Vector &point)
+{
+	Renderable* click = getClickableAtPoint( point );
+
+	if( click && click->clickListener )
+		click->clickListener->onButtonReleased( click , point );
+	else
+		onButtonReleased( click, point ); //puo anche essere null!
+}

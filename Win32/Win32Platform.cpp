@@ -63,7 +63,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 
 Win32Platform::Win32Platform() :
 Platform(),
-dragging( false )
+dragging( false ),
+cursorPos( 0,0 )
 {
 
 }
@@ -88,8 +89,8 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	RegisterClass(&wc);
 
 	RECT rect;
-	rect.top = 50;
-	rect.left = 50;
+	rect.top = 200;
+	rect.left = 200;
 	rect.bottom = rect.top + h;
 	rect.right = rect.left + w;
 
@@ -184,6 +185,8 @@ void Win32Platform::initialise()
 	{
 		mouse = (Mouse*)inputManager->createInputObject( OISMouse, true );
 		mouse->setEventCallback( this );
+		mouse->getMouseState().width = width;
+		mouse->getMouseState().height = height;
 	}
 
 	input = new TouchSource();
@@ -216,8 +219,6 @@ void Win32Platform::step( float dt )
 	//cattura l'input prima del gameplay
 	keys->capture();
 	mouse->capture();
-
-	//ShowCursor( true );
 
 	game->onLoop( dt);
 
@@ -252,17 +253,18 @@ void Win32Platform::loop( float frameTime )
 			step( dt );
 		}
 	}
+
+	shutdown();
 }
 
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 {
 	dragging = true;
 
-	Vector pos( arg.state.X.abs, arg.state.Y.abs );
+	cursorPos.x = arg.state.X.abs;
+	cursorPos.y = arg.state.Y.abs;
 
-	input->_fireTouchBeginEvent( pos );
-
-	std::cout << "pressed at " << pos.x << "," << pos.y << std::endl;
+	input->_fireTouchBeginEvent( cursorPos );
 
 	return true;
 }
@@ -271,11 +273,10 @@ bool Win32Platform::mouseMoved( const MouseEvent& arg )
 {
 	if( dragging )
 	{
-		Vector pos( arg.state.X.abs, arg.state.Y.abs );
+		cursorPos.x = arg.state.X.abs;
+		cursorPos.y = arg.state.Y.abs;
 
-		input->_fireTouchMoveEvent( pos );
-
-		std::cout << "drag at " << pos.x << "," << pos.y << std::endl;
+		input->_fireTouchMoveEvent( cursorPos );
 	}
 	return true;
 }
@@ -284,22 +285,25 @@ bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
 {
 	dragging = false;
 
-	Vector pos( arg.state.X.abs, arg.state.Y.abs );
+	cursorPos.x = arg.state.X.abs;
+	cursorPos.y = arg.state.Y.abs;
 
-	input->_fireTouchEndEvent( pos );
-
-	std::cout << "released at " << pos.x << "," << pos.y << std::endl;
+	input->_fireTouchEndEvent( cursorPos );
 
 	return true;
 }
 
 bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
 {
+	input->_fireKeyPressedEvent( (uint)arg.key );
+
 	return true;
 }
 
 bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 {
+	input->_fireKeyReleasedEvent( (uint)arg.key );
+
 	return true;
 }
 

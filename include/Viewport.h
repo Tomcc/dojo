@@ -70,6 +70,7 @@ namespace Dojo {
 			}
 			
 			background = new Sprite( gameState, position, name );
+			background->setRequiresAlpha( false );
 									
 			//force the proportions to fill screen
 			background->_updateScreenSize();

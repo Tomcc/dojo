@@ -17,6 +17,7 @@
 #include "ResourceGroup.h"
 #include "TouchSource.h"
 #include "StateInterface.h"
+#include "Renderable.h"
 
 namespace Dojo {
 	
@@ -26,7 +27,7 @@ namespace Dojo {
 	class Object;
 	class Game;
 	
-	class GameState : public ResourceGroup, public TouchSource::Listener, public StateInterface
+	class GameState : public ResourceGroup, public TouchSource::Listener, public Renderable::Listener, public StateInterface
 	{
 	public:
 		
@@ -68,8 +69,12 @@ namespace Dojo {
 		void removeAll();
 		
 		Renderable* getClickableAtPoint( const Vector& point );
-		
+
 		void updateObjects( float dt );
+
+		//metodi finalizzati qui perche' gamestate vede solo "clickables"
+		void onTouchBegan( const Vector& point );
+		void onTouchEnd( const Vector& point );
 		
 	protected:
 		

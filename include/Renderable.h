@@ -25,8 +25,19 @@ namespace Dojo
 	class Renderable : public Object, public RenderState
 	{				
 	public:	
+
+		class Listener
+		{
+		public:
+
+			virtual void onButtonPressed( Renderable* r, const Vector& point )=0;
+			virtual void onButtonReleased( Renderable* r, const Vector& point )=0;
+
+		protected:
+		private:
+		};	
 		
-		TouchSource::Listener* clickListener;
+		Listener* clickListener;
 		
 		
 		Vector scale;		
@@ -38,7 +49,8 @@ namespace Dojo
 		renderingOrder(0),
 		visible( true ),
 		rendered( false ),
-		currentFadeTime(0)
+		currentFadeTime(0),
+		clickListener( NULL )
 		{
 			reset();
 		}

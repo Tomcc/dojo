@@ -6,6 +6,7 @@
 #include <OIS.h>
 
 #include "Platform.h"
+#include "Vector.h"
 
 #include "Timer.h"
 
@@ -54,6 +55,8 @@ namespace Dojo
 		OIS::InputManager* inputManager;
 		OIS::Mouse* mouse;
 		OIS::Keyboard* keys;
+
+		Vector cursorPos;
 
 		bool dragging;
 

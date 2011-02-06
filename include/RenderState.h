@@ -29,7 +29,7 @@ namespace Dojo
 		Color color;
 		
 		RenderState() :
-		alphaRequired( false ),
+		alphaRequired( true ),
 		mesh( NULL ),
 		texture( NULL )
 		{

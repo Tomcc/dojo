@@ -56,9 +56,7 @@ namespace Dojo {
 		}
 		
 		inline void setTimedEvent( EventListener* l, float lifeTime )
-		{
-			DEBUG_ASSERT( l );
-			
+		{			
 			eventTime = lifeTime;
 			listener = l;
 		}
