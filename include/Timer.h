@@ -1,74 +1,112 @@
-/*
- *  Timer.h
- *  Dojo Training
- *
- *  Created by Tommaso Checchi on 5/31/10.
- *  Copyright 2010 __MyCompanyName__. All rights reserved.
- *
- */
-
 #ifndef Timer_h__
 #define Timer_h__
 
 #include "dojo_common_header.h"
 
-namespace Dojo {
-	
-	class Timer
+#include "BaseObject.h"
+
+namespace Dojo
+{
+	class Timer : public BaseObject
 	{
 	public:
-			
-		
-		Timer() :
-		looping( false )
+		Timer( double period = 0 )
 		{
+			//start from now
 			reset();
+
+			setLoop(period);
 		}
-		
+
 		inline void reset()
 		{
-			timeElapsed = 0;
-			eventTime = 0;
+			eventTime = currentTime();
+		}
+
+		inline void disable()
+		{
+			eventTime = -1;
 		}
 		
-		inline void advance( float dt )
+		double currentTime()
 		{
-			timeElapsed += dt;
+			double d;
+#ifdef WIN32
+			__int64 freq, gTime;
+			QueryPerformanceCounter((LARGE_INTEGER *)&gTime);  // Get current count
+			QueryPerformanceFrequency((LARGE_INTEGER *)&freq); // Get processor freq
+			d = (double)(gTime)/(double)freq;
+#else
+			struct timeval tv;
+			gettimeofday(&tv, NULL);
+			d = tv.tv_usec/1000000.f	+ tv.tv_sec;
+#endif
+			return d;
 		}
-		
-		inline void setCountdown( float t, bool loop = false )
+
+		inline void setLoop( float period )
 		{
+			mPeriod = (period > 0) ? period : 0;
+		}
+
+		inline void setLoopFPS( float FPS )
+		{
+			mPeriod = (FPS > 0) ? 1.f/FPS : 0;
+		}
+
+		inline void disableLoop()
+		{
+			mPeriod = 0;
+		}
+
+		///get the time from the last "reset event"
+		inline double getElapsedTime()
+		{
+			return (eventTime > 0) ? currentTime() - eventTime : 0;
+		}
+
+		inline bool isEnabled()
+		{
+			return eventTime > 0;
+		}
+
+		///gets the time from the last reset and then resets the timer
+		inline double deltaTime()
+		{
+			double t = getElapsedTime();
 			reset();
-			eventTime = t;
-			
-			looping = loop;
+			return t;
 		}
-		
-		inline float getTimeElapsed()		{	return timeElapsed;		}
-		inline float getCountdownLenght()	{	return eventTime;		}
-		
-		inline bool countdownElapsed()
+
+		///method that returns > 0 each "period" seconds
+		/**
+		\return
+		When the method is called and period has passed, it returns the real cycle time
+		\remark If loop is disabled, this method always returns true.
+		*/
+		inline bool loopElapsed( float* actualPeriod = NULL )
 		{
-			if( eventTime && timeElapsed > eventTime )
-			{
+			float t = getElapsedTime();
+			if( t >= mPeriod)
 				reset();
-				
-				if( looping ) //reschedule
-					setCountdown( eventTime, true );
-				
-				return true;
-			}
-			
-			return false;
+
+			//send actual period to the user if needed
+			if( actualPeriod )
+				*actualPeriod = t;
+
+			return t >= mPeriod;
+
 		}
-		
+
+		inline bool isLooping()
+		{
+			return mPeriod != 0;
+		}
+
 	protected:
-		
-		float timeElapsed;
-		float eventTime;
-		
-		bool looping;		
+		double eventTime, mPeriod;
+
 	};
 }
 
-#endif
+#endif // Timer_h__

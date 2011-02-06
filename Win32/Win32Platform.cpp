@@ -5,17 +5,18 @@
 #include <Windows.h>
 #include <Poco/DirectoryIterator.h>
 #include <Freeimage.h>
-#include <OIS.h>
 
 #include <gl/glu.h>
 
 #include "Render.h"
 #include "Game.h"
+#include "Utils.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
+using namespace OIS;
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
@@ -61,7 +62,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 
 
 Win32Platform::Win32Platform() :
-Platform()
+Platform(),
+dragging( false )
 {
 
 }
@@ -113,7 +115,6 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 		NULL, NULL,
 		hInstance, NULL);
 
-	// check to see that the window was created successfully!
 	if( hwnd == NULL )
 		return false;
 
@@ -164,11 +165,33 @@ void Win32Platform::initialise()
 
 	sound = new SoundManager();
 
+//inizializza OIS per emulare il touch
+//evita il grab del cursore
+	OIS::ParamList params;
+	params.insert( std::make_pair( "WINDOW", Utils::toString( (uint)hwnd ) ) );
+	params.insert( std::make_pair( "w32_mouse", "DISCL_FOREGROUND" ) );
+	params.insert( std::make_pair( "w32_mouse", "DISCL_NONEXCLUSIVE" ) );
+
+	inputManager = InputManager::createInputSystem( params );
+
+	if( inputManager->getNumberOfDevices( OISKeyboard ) > 0)
+	{
+		keys = (Keyboard*)inputManager->createInputObject( OISKeyboard, true );
+		keys->setEventCallback( this );
+	}
+
+	if( inputManager->getNumberOfDevices( OISMouse ) > 0 )
+	{
+		mouse = (Mouse*)inputManager->createInputObject( OISMouse, true );
+		mouse->setEventCallback( this );
+	}
+
 	input = new TouchSource();
 
 	//start the game
 	game->onBegin();
 }
+
 
 void Win32Platform::shutdown()
 {
@@ -186,26 +209,98 @@ void Win32Platform::present()
 	SwapBuffers( hdc );
 }
 
-void Win32Platform::step()
+void Win32Platform::step( float dt )
 {
 	DEBUG_ASSERT( running );
 
-	if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
-	{
-		if( msg.message == WM_QUIT )
-		{
-			running = false;
-			return;
-		}
+	//cattura l'input prima del gameplay
+	keys->capture();
+	mouse->capture();
 
-		TranslateMessage( &msg );
-		DispatchMessage( &msg );
-	}
+	//ShowCursor( true );
 
-	game->onLoop( Game::UPDATE_INTERVAL_CAP );
+	game->onLoop( dt);
 
 	render->render();
-	//sound->update( Game::UPDATE_INTERVAL_CAP );
+	
+	sound->update( dt );
+
+}
+
+void Win32Platform::loop( float frameTime )
+{
+	frameTimer.reset();
+
+	float dt;
+	while( running )
+	{
+		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
+		{
+			if( msg.message == WM_QUIT )
+				running = false;
+
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
+		}
+
+		dt = frameTimer.getElapsedTime();
+
+		if( dt > frameTime )
+		{
+			frameTimer.reset();
+
+			step( dt );
+		}
+	}
+}
+
+bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
+{
+	dragging = true;
+
+	Vector pos( arg.state.X.abs, arg.state.Y.abs );
+
+	input->_fireTouchBeginEvent( pos );
+
+	std::cout << "pressed at " << pos.x << "," << pos.y << std::endl;
+
+	return true;
+}
+
+bool Win32Platform::mouseMoved( const MouseEvent& arg )
+{
+	if( dragging )
+	{
+		Vector pos( arg.state.X.abs, arg.state.Y.abs );
+
+		input->_fireTouchMoveEvent( pos );
+
+		std::cout << "drag at " << pos.x << "," << pos.y << std::endl;
+	}
+	return true;
+}
+
+bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
+{
+	dragging = false;
+
+	Vector pos( arg.state.X.abs, arg.state.Y.abs );
+
+	input->_fireTouchEndEvent( pos );
+
+	std::cout << "released at " << pos.x << "," << pos.y << std::endl;
+
+	return true;
+}
+
+bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
+{
+	return true;
+}
+
+bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
+{
+	return true;
 }
 
 std::string Win32Platform::_toNormalPath( const std::string& input )
@@ -318,24 +413,26 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 
 	uint realWidth = (POT) ? Math::nextPowerOfTwo( width ) : width;
 	uint realHeight = (POT) ? Math::nextPowerOfTwo( height ) : height;
-	uint pixelSize = 4;
-	uint realSize = realWidth * realHeight * pixelSize;
+	uint pixelSize = FreeImage_GetBPP(dib)/8;
+	uint realSize = realWidth * realHeight * 4;
 
 	bufptr = malloc( realSize );
 	memset( bufptr, 0, realSize );
 
 	//converti a 4 canali e scambia R e B
-	byte* out = (byte*)bufptr;
 	byte* in = (byte*)data;
-	byte* end = in + width*height*3;
-	while( in < end )
+	byte* out = (byte*)bufptr;
+	for( int i = height-1; i >= 0; --i )
 	{
-		*out++ = in[2];
-		*out++ = in[1];
-		*out++ = in[0];
-		++out;
+		for( uint j = 0; j < width*4; j += 4 )
+		{
+			out[ j + i*realWidth*4 + 3 ] = in[3];
+ 			out[ j + i*realWidth*4 + 2 ] = in[0];
+			out[ j + i*realWidth*4 + 1 ] = in[1];
+			out[ j + i*realWidth*4 + 0 ] = in[2];
 
-		in += 3;
+			in += pixelSize;
+		}
 	}
 
 	FreeImage_Unload( dib );
