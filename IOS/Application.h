@@ -8,16 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "ApplicationSetupDelegate.h"
 
 #include "Render.h"
 #include "SoundManager.h"
 #include "TouchSource.h"
 #include "Timer.h"
-#include "Platform.h"
 
 namespace Dojo {
 	class Game;
+	class IOSPlatform;
 }
 
 // This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
@@ -26,17 +25,14 @@ namespace Dojo {
 //#ifdef OPENFEINT_ENABLED
 //@interface Application : UIView < UIAccelerometerDelegate, ApplicationSetupDelegate, OpenFeintDelegate >
 //#elseif
-@interface Application : UIView < UIAccelerometerDelegate, ApplicationSetupDelegate >
+@interface Application : UIView < UIAccelerometerDelegate >
 //#endif
 {    
-@protected
-	Dojo::Render* renderImpl;	
-	Dojo::Game* game;	
-	Dojo::TouchSource* touchSource;
-	Dojo::SoundManager* soundImpl;
-	Dojo::Timer frameTimer;
+@protected	
+	Dojo::IOSPlatform* platform;
 	
-	Dojo::Platform* platform;
+	Dojo::Render* renderImpl;
+	Dojo::TouchSource* touchSource;
 	
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;

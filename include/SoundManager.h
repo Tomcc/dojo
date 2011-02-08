@@ -11,6 +11,8 @@
 #include "SoundSource.h"
 #include "BaseObject.h"
 
+#include "Platform.h"
+
 namespace Dojo {
 
 		class SoundListener;
@@ -97,10 +99,7 @@ namespace Dojo {
 				s->play();
 				return s;
 			}
-			
-			///tells whether the system is already playing its sound (iTunes, calls, VOIP, etc)
-			bool isSystemSoundInUse();
-			
+						
 			///setta la musica facendo un fade lineare in fadeTime rispetto alla track precedente
 			void playMusic( SoundSet* music, float trackFadeTime = 0 );
 			
@@ -113,7 +112,7 @@ namespace Dojo {
 			inline void resumeMusic()
 			{
 				//resume music, but only if the user didn't enable itunes meanwhile!
-				if( musicTrack && !isSystemSoundInUse() )
+				if( musicTrack && !Platform::getSingleton()->isSystemSoundInUse() )
 					musicTrack->play();
 			}
 

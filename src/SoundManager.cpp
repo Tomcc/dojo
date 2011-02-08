@@ -54,23 +54,9 @@ currentFadeTime(0)
     // Clear Error Code
     alCheckError();
 
-	//trova il numero di sources massimo
-	ALCint size;
-	alcGetIntegerv( device, ALC_ATTRIBUTES_SIZE, 1, &size);
-	std::vector<ALCint> attrs(size);
-	alcGetIntegerv( device, ALC_ALL_ATTRIBUTES, size, &attrs[0] );
-	for(int i=0; i<attrs.size(); ++i)
-	{
-	   if( attrs[i] == ALC_MONO_SOURCES )
-	   {
-		   maxSources = attrs[ i+1 ];
-		   break;
-	   }
-	}
-
 	ALuint sources[32]; //non gestiamo piu' di 32 sources
-	if( maxSources > 32 )
-		maxSources = 32;
+
+	maxSources = 32;
 
 	alGenSources( maxSources, sources );
 
@@ -92,26 +78,12 @@ SoundManager::~SoundManager()
 		delete idleSoundPool.at(i);
 }
 
-bool SoundManager::isSystemSoundInUse()
-{
-#ifdef PLATFORM_IOS
-	UInt32 otherAudioIsPlaying;
-	UInt32 size = sizeof(otherAudioIsPlaying);
-	AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &otherAudioIsPlaying);
-	
-	return otherAudioIsPlaying;
-#else
-	return false;
-#endif
-}
-
-
 void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 {
 	DEBUG_ASSERT( next );
 
 	//override music activation if the system sound is in use
-	if( isMusicFading() || isSystemSoundInUse() )
+	if( isMusicFading() || Platform::getSingleton()->isSystemSoundInUse() )
 		return;
 
 	nextMusicTrack = getSoundSource( next );

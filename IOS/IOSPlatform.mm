@@ -1,25 +1,43 @@
-#include "Platform.h"
+#include "IOSPlatform.h"
+
+#include "TargetConditionals.h"
+
+#import <Foundation/NSString.h>
+#import <QuartzCore/QuartzCore.h>
+#import <AudioToolbox/AudioToolbox.h>	
+#import <UIKit/UIKit.h>
 
 #include "Utils.h"
 #include "dojomath.h"
+
+#include "Render.h"
+#include "SoundManager.h"
+#include "TouchSource.h"
+#include "Game.h"
 
 using namespace Dojo;
 
 void IOSPlatform::initialise()
 {
-	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-	
-    if (!context || ![EAGLContext setCurrentContext:context])
-	{
-		valid = false;
-		return;
-    }
-	
 	uint devicePixelScale = [UIScreen mainScreen].scale;
 	uint width = [UIScreen mainScreen].bounds.size.height;
 	uint height = [UIScreen mainScreen].bounds.size.width;
+		
+//RENDER
+	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 	
-	render = new Render( this, width, height, devicePixelScale );
+    if (!context || ![EAGLContext setCurrentContext:context] )
+		return;
+	
+//on IOS the default target is always a separate renderbuffer
+		
+	glGenFramebuffers(1, &defaultFramebuffer);
+	glGenRenderbuffers(1, &colorRenderbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+		
+	render = new Render( width, height, devicePixelScale, Render::RO_PORTRAIT );
 	
 	
 //SOUND MANAGER
@@ -42,6 +60,18 @@ void IOSPlatform::initialise()
 //INPUT MANAGER
 
 	input = new TouchSource();
+	
+	game->onBegin();
+}
+		
+void IOSPlatform::bindColorBufferToContext( void* CAEAGLLayer )
+{
+	CAEAGLLayer* layer = (CAEAGLLayer*)CAEAGLLayer;
+	
+	//imposta il renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+	
+	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
 }
 
 void IOSPlatform::shutdown()
@@ -66,6 +96,22 @@ void IOSPlatform::acquireContext()
 void IOSPlatform::present()
 {
 	[context presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+void IOSPlatform::step( float dt )
+{	
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
+
+	game->onLoop( dt );
+	
+	render->render();
+	
+	sound->update( dt );
+}
+
+void IOSPlatform::loop( float minstep )
+{
+	DEBUG_ASSERT( !"DO NOT USE loop() ON IPHONE" );
 }
 
 std::string IOSPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
@@ -124,7 +170,6 @@ uint IOSPlatform::loadFileContent( char*& bufptr, const std::string& path )
 void IOSPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
 {
 	width = height = 0;
-	imageData = NULL;
 	
 	NSString* imgPath = Utils::toNSString( path );
 	//magic OBJC code
@@ -175,9 +220,70 @@ void IOSPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	
 }
 
+uint IOSPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path )
+{
+	//only load caf files on iphone
+	DEBUG_ASSERT( Utils::hasExtension( "caf", path ) );
+	
+	NSString* filePath = Utils::toNSString( path );
+	
+	// first, open the file	
+	AudioFileID fileID;
+	// use the NSURl instead of a cfurlref cuz it is easier
+	NSURL * afUrl = [NSURL fileURLWithPath:filePath];
+	
+	OSStatus result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
+	
+	UInt64 outDataSize; 
+	UInt32 propertySize, writable;
+	
+	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &writable );
+	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &outDataSize);
+	UInt32 fileSize = (UInt32)outDataSize;
+	
+	UInt32 freq;
+	
+	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyBitRate, &propertySize, &writable );
+	AudioFileGetProperty( fileID, kAudioFilePropertyBitRate, &propertySize, &freq );
+	
+	// this is where the audio data will live for the moment
+	void* outData = malloc(fileSize);
+	
+	// this where we actually get the bytes from the file and put them
+	// into the data buffer
+	result = AudioFileReadBytes(fileID, false, 0, &fileSize, outData);
+	AudioFileClose(fileID); //close the file
+	
+	// jam the audio data into the new buffer
+	alBufferData( buffer, AL_FORMAT_STEREO16, outData, fileSize, freq/32); 
+	
+	free( outData );
+	
+	return fileSize;
+}
+
+void IOSPlatform::load( Dojo::Table * table )
+{
+	
+}
+
+void IOSPlatform::save( Dojo::Table* table )
+{
+	
+}
+
 void IOSPlatform::openWebPage( const std::string& site )
 {
 	NSString* url = Utils::toNSString( site );
 	
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
+
+bool IOSPlatform::isSystemSoundInUse()
+{
+	UInt32 otherAudioIsPlaying;
+	UInt32 size = sizeof(otherAudioIsPlaying);
+	AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &otherAudioIsPlaying);
+	
+	return otherAudioIsPlaying;
 }

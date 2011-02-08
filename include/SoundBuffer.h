@@ -34,8 +34,6 @@ namespace Dojo
 
 		///Ottieni la dimensione in memoria di questo buffer.
 		inline int getSize()					{	return size;	}
-		///Ottieni la frequenza di questo buffer.
-		inline int getFrequency()				{	return freq;	}
 
 		inline bool isLoaded()					{	return buffer != AL_NONE;	}
 
@@ -49,12 +47,9 @@ namespace Dojo
 
 		SoundManager* mgr;
 		
-		ALsizei		size, freq;
+		ALsizei	size;
 
 		ALuint buffer;
-		
-		void _loadCAFBuffer();
-		void _loadWAVBuffer();
 	};
 }
 

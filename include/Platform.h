@@ -13,10 +13,6 @@ namespace Dojo
 	class Game;
 	class Table;
 
-#ifdef PLATFORM_IOS
-	class EAGLContext;
-#endif
-
 	class Platform : public BaseObject
 	{
 	public:
@@ -64,10 +60,18 @@ namespace Dojo
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )=0;
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
 		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )=0;
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )=0;
+		
+		///loads the given file in a buffer - WARNING not every format is supported on every platform
+		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path )=0;
 
 		virtual void load( Table* dest )=0;
 		virtual void save( Table* table )=0;
+		
+		virtual bool isSystemSoundInUse()
+		{
+			return false;
+		}
 
 		virtual void openWebPage( const std::string& site )=0;
 

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
 #ifndef WIN32
 #include <sys/time.h>
 #endif
@@ -22,6 +23,7 @@
 #include <Poco/Mutex.h>
 #include <Poco/Thread.h>
 #include <Poco/Runnable.h>
+#include <Poco/Semaphore.h>
 
 #ifndef PLATFORM_IOS
 
@@ -35,8 +37,6 @@
 
 #else
 
-	#import <OpenGLES/EAGL.h>
-	#import <OpenGLES/EAGLDrawable.h>
 	#include <OpenGLES/ES1/gl.h>
 	#include <OpenGLES/ES1/glext.h>
 

@@ -3,59 +3,67 @@
 
 #include "dojo_common_header.h"
 
+#include "Platform.h"
+#include "Utils.h"
+
+#ifdef __OBJC__
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/EAGLDrawable.h>
+
+#endif
+
 namespace Dojo
 {
 	class IOSPlatform : public Platform
 	{
-		static std::string getIOSVersionString()
+	public:
+		
+		inline void* getNativeApplication()
 		{
-			return toSTDString( [[UIDevice currentDevice] systemVersion ] );
-		}
-				
-		static uint getIOSVersion()
-		{
-			return toNumericVersion( getIOSVersionString() );
+			DEBUG_ASSERT( app );
+			
+			return app;
 		}
 		
-		static bool isIOSVersionAtLeast( const std::string& ver )
-		{			
-			return  getIOSVersion() >= toNumericVersion( ver );
-		}
+		void bindColorBufferToContext( void* layer );
 		
-		static NSString* toNSString( const std::string& str )
-		{			
-			uint sz = str.size();
-			unichar* unic = (unichar*)malloc( sz * sizeof( unichar ) );
-			for( uint i = 0; i < sz; ++i )
-				unic[i] = (unichar)( str.at(i) );
-						
-			NSString* nstring = [[NSString alloc] initWithCharacters:(const unichar*)unic length:(NSUInteger)sz];
-						
-			free( unic );
-			
-			return nstring;			
-		}
+		virtual void initialise();
+		virtual void shutdown();
+
+		virtual void acquireContext();
+		virtual void present();
+
+		virtual void step( float dt );
+		virtual void loop( float frameTime );
+
+		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
+		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
+		virtual uint loadFileContent( char*& bufptr, const std::string& path );
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
 		
-		static std::string toSTDString( NSString* s )
+		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
+		
+		virtual void load( Table* dest );
+		virtual void save( Table* table );
+
+		virtual void openWebPage( const std::string& site );
+		
+		virtual bool isSystemSoundInUse();
+		
+		void _notifyNativeApp( void* application )
 		{
-			DEBUG_ASSERT( s );
-			
-			std::string str;
-			
-			unichar c;
-			for( uint i = 0; i < [s length]; ++i )
-			{
-				c = [s characterAtIndex:i];
-				str += (char)c;
-			}
-			
-			return str;
+			app = application;
 		}
 		
-		inline static UIColor* toUIColor( const Color& c )
-		{
-			return [UIColor colorWithRed:c.r green:c.g blue:c.b alpha:c.a];
-		}
+	protected:
+			
+#ifdef __OBJC__
+		EAGLContext* context;
+#endif
+		
+		GLuint defaultFramebuffer, colorRenderbuffer;
+		
+		void* app;
 	};
 }
 

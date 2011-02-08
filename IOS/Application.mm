@@ -9,6 +9,7 @@
 #import "Application.h"
 
 #include "Game.h"
+#include "IOSPlatform.h"
 
 using namespace Dojo;
 
@@ -36,12 +37,7 @@ using namespace Dojo;
                                         [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 				
 		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-		
-		game = NULL;
-		renderImpl = NULL;
-		touchSource = NULL;
-		soundImpl = NULL;
-		
+				
 		displayVisible = TRUE;
 		
 		animating = FALSE;
@@ -62,26 +58,13 @@ using namespace Dojo;
 }
 
 - (void) dealloc
-{	
-	delete renderImpl;
-	delete game;	
-	
+{		
     [super dealloc];
 } 
 
 - (void) drawView:(id)sender
 {		
-	if( game ) //initialised?
-	{	
-		if( displayVisible )
-		{
-			//update the game and render game objects
-			game->onLoop( Game::UPDATE_INTERVAL_CAP );
-			
-			renderImpl->render();
-			soundImpl->update( Game::UPDATE_INTERVAL_CAP );
-		}
-	}
+	platform->step( Game::UPDATE_INTERVAL_CAP ); //one step
 }
 
 - (void) layoutSubviews
@@ -93,14 +76,8 @@ using namespace Dojo;
 		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 	}
 	
-	//imposta il renderbuffer
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-		
-	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
-		
-	//set the needed render size	
-	renderImpl->onResize();
-	
+	platform->bindColorBufferToContext( layer );
+			
     [self drawView:nil];
 }
 
@@ -129,12 +106,6 @@ using namespace Dojo;
 	}
 }
 
-- (BOOL) setup
-{
-	return false;
-}
-
-
 - (void) initialise
 {
 	//initialise accelerometer
@@ -142,22 +113,15 @@ using namespace Dojo;
 	accelerometer.delegate = self;
 	lastAccelerationX = lastAccelerationY = lastRoll = 0;
 			
-	//create C++ system
-	platform = new Platform(); //TODO creare una sottoclasse per IOS?
+	//get C++ system
+	platform = (IOSPlatform*)Platform::getSingleton();
+	
+	platform->_notifyNativeApp( self );
+	
+	platform->initialise();
 	
 	renderImpl = platform->getRender();
-	soundImpl = platform->getSound();
-	touchSource = platform->getInput();
-	
-	//call user setup method to create a game istance
-	if( ![self setup] )
-	{
-		[self release];
-		return;
-	}
-		
-	//animate
-	[self startAnimation];
+	touchSource = platform->getInput();	
 }
 
 - (void) startAnimation
@@ -178,12 +142,7 @@ using namespace Dojo;
 		}
 		else
 			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)( Game::UPDATE_INTERVAL_CAP ) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
-		
-		//notify openfeint
-		//[OpenFeint applicationDidBecomeActive];
-		
-		game->onApplicationFocus();
-		
+					
 		animating = TRUE;
 	}
 }
@@ -202,8 +161,6 @@ using namespace Dojo;
 			[animationTimer invalidate];
 			animationTimer = nil;
 		}
-				
-		game->onApplicationFocusLost();
 		
 		animating = FALSE;
 	}
@@ -223,16 +180,16 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	
 	switch( r->getInterfaceOrientation() )
 	{
-		case Render::IO_PORTRAIT:
+		case Render::RO_PORTRAIT:
 			return Vector( x, y );
 			
-		case Render::IO_PORTRAIT_REVERSE:
+		case Render::RO_PORTRAIT_REVERSE:
 			return Vector( x, sy - y );
 			
-		case Render::IO_LANDSCAPE_RIGHT:		
+		case Render::RO_LANDSCAPE_RIGHT:		
 			return Vector( y, sy - x );
 			
-		case Render::IO_LANDSCAPE_LEFT:			
+		case Render::RO_LANDSCAPE_LEFT:			
 			return Vector( y, x );
 	}
 	return Vector::ZERO;
@@ -306,25 +263,22 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 
 - (void)dashboardWillAppear
 {
-	game->onApplicationFocusLost();
+
 }
 
 - (void)dashboardDidAppear
 {	
 	displayVisible = false;
-	soundImpl->pauseAll();
 }
 
 - (void)dashboardWillDisappear
 {	
 	displayVisible = true;
-	
-	soundImpl->resumeAll();
 }
 
 - (void)dashboardDidDisappear
 {	
-	game->onApplicationFocus();
+	
 }
 
 - (void)userLoggedIn:(NSString*)userId

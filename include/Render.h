@@ -66,6 +66,11 @@ namespace Dojo {
 				
 		void setInterfaceOrientation( RenderOrientation o );
 		
+		inline RenderOrientation getInterfaceOrientation()
+		{
+			return renderOrientation;
+		}
+		
 		RenderableList* getLayer( int layerID );
 		
 		inline int getWidth()						{	return width;		}
