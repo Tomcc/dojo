@@ -19,7 +19,7 @@
 #include <Poco/Thread.h>
 #include <Poco/Runnable.h>
 
-#ifdef PLATFORM_WIN32
+#ifndef PLATFORM_IOS
 
 	#include <GL/glew.h>
 	#include <GL/glext.h>
@@ -27,14 +27,9 @@
 
 	#include <al.h>
 	#include <alc.h>
+	#include <AL/alut.h>
 
 #else
-
-	#include "TargetConditionals.h"
-
-	#import <Foundation/NSString.h>
-
-	#import <QuartzCore/QuartzCore.h>
 
 	#import <OpenGLES/EAGL.h>
 	#import <OpenGLES/EAGLDrawable.h>
@@ -43,18 +38,6 @@
 
 	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
-
-	#ifdef PLATFORM_IOS
-
-		#include <AudioToolbox/AudioToolbox.h>	
-		#import <UIKit/UIKit.h>
-
-	#endif
-
-#endif
-
-//redefine opengl extension functions
-#ifdef PLATFORM_IOS
 
 	#define glGenRenderbuffers			glGenRenderbuffersOES
 	#define glGenFramebuffers			glGenFramebuffersOES
@@ -72,6 +55,7 @@
 	#define GL_RENDERBUFFER_HEIGHT	GL_RENDERBUFFER_HEIGHT_OES
 	#define GL_RENDERBUFFER_WIDTH	GL_RENDERBUFFER_WIDTH_OES
 	#define GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_OES
+
 #endif
 
 #endif // dojo_common_headers_h__

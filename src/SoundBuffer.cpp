@@ -29,7 +29,7 @@ SoundBuffer::~SoundBuffer()
 
 void SoundBuffer::_loadCAFBuffer()
 {	
-#ifdef WIN32
+#ifndef PLATFORM_IOS
 	DEBUG_TODO;
 #else
 	NSString* filePath = Utils::toNSString(filePath);
@@ -68,12 +68,11 @@ void SoundBuffer::_loadCAFBuffer()
 #endif
 }
 
-#ifndef PLATFORM_IOS
-#include <AL/alut.h>
-#endif
-
 void SoundBuffer::_loadWAVBuffer()
 {		
+#ifdef PLATFORM_IOS
+	DEBUG_TODO;
+#else
 	ALvoid* data;
 	ALboolean loop;
 	ALenum format;
@@ -83,6 +82,7 @@ void SoundBuffer::_loadWAVBuffer()
 	alBufferData(buffer,format,data,size,freq);
 
 	alutUnloadWAV(format,data,size,freq);
+#endif
 }
 
 bool SoundBuffer::load()

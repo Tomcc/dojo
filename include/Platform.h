@@ -65,7 +65,7 @@ namespace Dojo
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
 		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )=0;
-		
+
 		virtual void load( Table* dest )=0;
 		virtual void save( Table* table )=0;
 
