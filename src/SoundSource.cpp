@@ -5,21 +5,14 @@
 
 using namespace Dojo;
 
-SoundSource::SoundSource( SoundManager* manager ) :
+SoundSource::SoundSource( SoundManager* manager, ALuint src ) :
 buffer( NULL ),
+source( src ),
 mgr( manager ),
 pos(0,0),
 positionChanged( true )
 {	
 	_reset();
-
-	//preload source
-	if( isValid() )
-	{
-		alGenSources( 1, &source );
-		
-		DEBUG_ASSERT( source );
-	}		
 }
 
 void SoundSource::_reset()
@@ -64,15 +57,12 @@ float SoundSource::getVolume()
 void SoundSource::play( float volume )
 {
 	//il suono e' abilitato a suonare?
-	if( !isValid() && mgr->getMasterVolume() > 0 )
+	if( !isValid() && buffer->isLoaded() && mgr->getMasterVolume() > 0 )
 		return;
 
 	if(state == SS_INITIALISING)
 	{
-		///carica se non e' gia' caricato
-		buffer->load();
-
-		if(source && buffer && buffer->isLoaded() )
+		if(source && buffer )
 		{
 			//set global parameters
 			alSourcef (source, AL_REFERENCE_DISTANCE,    1.0f );

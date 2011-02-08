@@ -11,8 +11,6 @@
 using namespace Dojo;
 
 const float SoundManager::m = 100;
-						
-const uint SoundManager::maxSources = 64;
 
 bool SoundManager::alCheckError()
 {
@@ -56,9 +54,32 @@ currentFadeTime(0)
     // Clear Error Code
     alCheckError();
 
+	//trova il numero di sources massimo
+	ALCint size;
+	alcGetIntegerv( device, ALC_ATTRIBUTES_SIZE, 1, &size);
+	std::vector<ALCint> attrs(size);
+	alcGetIntegerv( device, ALC_ALL_ATTRIBUTES, size, &attrs[0] );
+	for(int i=0; i<attrs.size(); ++i)
+	{
+	   if( attrs[i] == ALC_MONO_SOURCES )
+	   {
+		   maxSources = attrs[ i+1 ];
+		   break;
+	   }
+	}
+
+	ALuint sources[32]; //non gestiamo piu' di 32 sources
+	if( maxSources > 32 )
+		maxSources = 32;
+
+	alGenSources( maxSources, sources );
+
 	//preload sounds
 	for( unsigned int i = 0; i < maxSources; ++i )
-		idleSoundPool.add( new SoundSource( this ) );
+		idleSoundPool.add( new SoundSource( this, sources[i] ) );
+
+	setListenerPosition( Vector::ZERO );
+	setListenerOrientation( 0,0,1,0,1,0 );
 }
 
 SoundManager::~SoundManager()
