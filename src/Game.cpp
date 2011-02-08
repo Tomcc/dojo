@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "GameState.h"
 #include "Sprite.h"
-#include "Math.h"
+#include "math.h"
 
 using namespace Dojo;
 

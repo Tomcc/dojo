@@ -55,7 +55,9 @@
 
 namespace Dojo
 {
-	typedef unsigned int uint;
+#ifndef LINUX
+    typedef unsigned int uint;
+#endif
 	typedef unsigned char byte;
 	typedef unsigned short unichar;
 }

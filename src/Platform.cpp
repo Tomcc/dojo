@@ -6,9 +6,13 @@
 #include "dojomath.h"
 
 #ifdef PLATFORM_IOS
-#include "IOSPlatform.h"
+	#include "IOSPlatform.h"
 #else
-#include "Win32Platform.h"
+	#ifdef PLATFORM_WIN32
+		#include "Win32Platform.h"
+	#else
+		#include "LinuxPlatform.h"
+	#endif
 #endif
 
 using namespace Dojo;
@@ -23,6 +27,10 @@ Platform* Platform::createNativePlatform()
 
 #ifdef PLATFORM_WIN32
 	singleton = new Win32Platform();
+#endif
+
+#ifdef PLATFORM_LINUX
+	singleton = new LinuxPlatform();
 #endif
 	return singleton;
 }
