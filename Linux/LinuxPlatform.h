@@ -4,6 +4,10 @@
 
 #include <OIS.h>
 
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+#include <GL/glu.h>
+
 #include "Platform.h"
 #include "Vector.h"
 
@@ -47,7 +51,7 @@ namespace Dojo
 
 		Display                 *dpy;
 		Window                  root;
-		GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+		static const GLint      att[];
 		XVisualInfo             *vi;
 		Colormap                cmap;
 		XSetWindowAttributes    swa;
