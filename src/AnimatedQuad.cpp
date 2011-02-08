@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "Viewport.h"
 #include "Mesh.h"
-#include "Math.h"
+#include "math.h"
 
 using namespace Dojo;
 

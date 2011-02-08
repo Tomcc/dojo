@@ -18,10 +18,18 @@
 //are we on mac?
 //TODO
 
+
+//are we on GNU/Linux?
+#ifdef LINUX
+#define PLATFORM_LINUX
+#endif
+
 //set at least one platform; PLATFORM_IOS is default
 #ifndef PLATFORM_WIN32
 	#ifndef PLATFORM_OSX
-		#define PLATFORM_IOS
+		#ifndef PLATFORM_LINUX
+			#define PLATFORM_IOS
+		#endif
 	#endif
 #endif
 

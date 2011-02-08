@@ -13,7 +13,7 @@
 #include "dojo_common_header.h"
 
 #include "Object.h"
-#include "color.h"
+#include "Color.h"
 
 #include "FrameSet.h"
 #include "Render.h"
