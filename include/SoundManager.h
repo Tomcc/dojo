@@ -20,8 +20,6 @@ namespace Dojo {
 		class SoundManager : public BaseObject
 		{
 		public:
-			static const uint SoundManager::maxSources;
-
 			typedef Array< SoundSource* > SoundList;
 
 			static const float m;
@@ -228,6 +226,8 @@ namespace Dojo {
 
 			ALfloat listenerPos[3];					
 			ALfloat orientation[6];
+
+			uint maxSources;
 
 			//pool di suoni
 			SoundList idleSoundPool;

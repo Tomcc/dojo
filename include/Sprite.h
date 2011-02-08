@@ -44,6 +44,14 @@ namespace Dojo
 			//frames have to be relased manually from the group!
 		}		
 
+		virtual void reset()
+		{
+			AnimatedQuad::reset();
+
+			if( animations.size() )
+				setAnimation(0);
+		}
+
 		///registers the given animation and returns its handle
 		inline uint registerAnimation( FrameSet* set, float timePerFrame )
 		{

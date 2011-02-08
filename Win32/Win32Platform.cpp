@@ -81,12 +81,12 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	wc.cbClsExtra = 0; 
 	wc.cbWndExtra = 0; 
 	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wc.hCursor = LoadCursor( NULL, IDC_ARROW );         
-	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );     
+	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
 	wc.hInstance = hInstance;         
 	wc.lpfnWndProc = WndProc;         
 	wc.lpszClassName = TEXT( "DojoOpenGLWindow" );
-	wc.lpszMenuName = 0; 
+	wc.lpszMenuName = 0;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
 	// Register that class with the Windows O/S..
@@ -95,13 +95,15 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	RECT rect;
 	rect.top = 200;
 	rect.left = 200;
-	rect.bottom = rect.top + h;
+	rect.bottom = rect.top + h + 7;
 	rect.right = rect.left + w;
 
 	width = w;
 	height = h;
 
-	AdjustWindowRect( &rect, WS_OVERLAPPEDWINDOW, false);
+	DWORD dwstyle = WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU;
+	
+	AdjustWindowRect( &rect, dwstyle, true);
 
 	// AdjustWindowRect() expands the RECT
 	// so that the CLIENT AREA (drawable region)
@@ -112,9 +114,10 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	// NOW we call CreateWindow, using
 	// that adjusted RECT structure to
 	// specify the width and height of the window.
+
 	hwnd = CreateWindowA("DojoOpenGLWindow",
 		windowCaption.c_str(),
-		WS_OVERLAPPEDWINDOW,
+		dwstyle,  //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
 		NULL, NULL,

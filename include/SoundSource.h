@@ -33,7 +33,7 @@ namespace Dojo
 			};
 		
 			///Costruttore privato - usare SoundManager::getSound!
-			SoundSource( SoundManager* manager );
+			SoundSource( SoundManager* manager, ALuint source );
 
 			///distruttore
 			virtual ~SoundSource();

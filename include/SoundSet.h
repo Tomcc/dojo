@@ -27,10 +27,15 @@ namespace Dojo
 		inline SoundBuffer* getBuffer( int i = -1 )
 		{
 			DEBUG_ASSERT( buffers.size() );
-			DEBUG_ASSERT( buffers.size() > i );
+			DEBUG_ASSERT( (int)buffers.size() > i );
 
 			if( i < 0 )
-				i = (int)Math::rangeRandom( 0, (float)buffers.size() );
+			{
+				if( buffers.size() > 1 )
+					i = (int)Math::rangeRandom( 0, (float)buffers.size() );
+				else 
+					i = 0;
+			}
 
 			return buffers.at(i);
 		}

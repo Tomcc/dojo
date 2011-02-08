@@ -333,8 +333,11 @@ namespace Dojo {
 			
 			if( i == 0 )
 			{
-				for( uint p = 0; p < 9; ++p )
-					res += paddingChar;
+				if( paddingChar )
+				{
+					for( uint p = 0; p < 9; ++p )
+						res += paddingChar;
+				}
 				
 				return res + '0';
 			}			

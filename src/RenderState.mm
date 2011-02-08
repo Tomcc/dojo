@@ -16,6 +16,9 @@ void RenderState::commitChanges( RenderState* pastState )
 {			
 	DEBUG_ASSERT( pastState );
 	
+	//always bind color as it is just not expensive
+	glColor4f( color.r, color.g, color.b, color.a );
+	
 	//bind the new texture or nothing
 	if( texture && texture != pastState->texture )
 		texture->bind();
@@ -39,6 +42,4 @@ void RenderState::commitChanges( RenderState* pastState )
 		glDisable(GL_BLEND);
 	}
 	
-	//always bind color as it is just not expensive
-	glColor4f( color.r, color.g, color.b, color.a );
 }

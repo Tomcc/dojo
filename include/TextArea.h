@@ -172,7 +172,7 @@ namespace Dojo
 			//stay in the digit budget?
 			if( paddingChar != 0 )
 			{				
-				//forget most significative numbers
+				//forget most significative digits
 				if( number.size() > digits )
 					number = number.substr( number.size() - digits );
 				
@@ -185,14 +185,6 @@ namespace Dojo
 						padding += paddingChar;
 					
 					number = padding + number;
-				}				
-				
-				//HACK
-				if( n == 0 )
-				{
-					number.clear();
-					for( uint i = 0; i < digits; ++i )
-						number += "0";
 				}
 			}
 			
