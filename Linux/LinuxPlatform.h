@@ -45,12 +45,16 @@ namespace Dojo
 
 	protected:
 
-//		HINSTANCE hInstance;    // window app instance
-//		HWND hwnd;      // handle for the window
-//		HDC   hdc;      // handle to device context
-//		HGLRC hglrc;    // handle to OpenGL rendering context
-
-//		MSG msg;
+		Display                 *dpy;
+		Window                  root;
+		GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+		XVisualInfo             *vi;
+		Colormap                cmap;
+		XSetWindowAttributes    swa;
+		Window                  win;
+		GLXContext              glc;
+		XWindowAttributes       gwa;
+		XEvent                  xev;
 
 		int width, height;
 

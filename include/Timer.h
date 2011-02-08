@@ -5,10 +5,6 @@
 
 #include "BaseObject.h"
 
-#ifdef LINUX
-#include <sys/time.h>
-#endif
-
 namespace Dojo
 {
 	class Timer : public BaseObject

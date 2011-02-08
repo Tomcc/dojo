@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#ifndef WIN32
+#include <sys/time.h>
+#endif
 
 #include <map>
 #include <string>
