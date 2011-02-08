@@ -15,6 +15,7 @@
 using namespace Dojo;
 using namespace OIS;
 
+const GLint LinuxPlatform::att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 
 LinuxPlatform::LinuxPlatform() :
 Platform(),
