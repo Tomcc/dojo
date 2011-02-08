@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 
-#include <OIS.h>
+#include <OIS/OIS.h>
 
 #include "Platform.h"
 #include "Vector.h"
