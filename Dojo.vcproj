@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Dojo"
+	Name="Dojo_vc2008"
 	ProjectGUID="{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}"
 	RootNamespace="Dojo"
 	Keyword="Win32Proj"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;;C:\SDK\ois\includes;C:\SDK\FreeImage\Dist"
+				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,8 +62,8 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="alut.lib OIS_d.lib OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)_d.lib"
-				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist;&quot;C:\SDK\OpenAL 1.1 SDK\libs\Win32&quot;"
+				OutputFile="$(OutDir)\dojo_d.lib"
+				AdditionalLibraryDirectories="dependencies\lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -108,7 +108,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;include;Win32;&quot;C:\SDK\OpenAL 1.1 SDK\include&quot;;&quot;C:\SDK\poco-1.4.1\Foundation\include&quot;;C:\SDK\ois\includes;C:\SDK\FreeImage\Dist"
+				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -128,7 +128,8 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="alut.lib OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib OIS.lib"
-				AdditionalLibraryDirectories="lib;C:\SDK\ois\dll;&quot;C:\SDK\poco-1.4.1\lib&quot;;C:\SDK\FreeImage\Dist;&quot;C:\SDK\OpenAL 1.1 SDK\libs\Win32&quot;"
+				OutputFile="$(OutDir)\dojo.lib"
+				AdditionalLibraryDirectories="dependencies\lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -156,103 +157,103 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\AnimatedQuad.mm"
+				RelativePath=".\src\AnimatedQuad.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Color.mm"
+				RelativePath=".\src\Color.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\dojomath.mm"
+				RelativePath=".\src\dojomath.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Font.mm"
+				RelativePath=".\src\Font.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\FrameSet.mm"
+				RelativePath=".\src\FrameSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Game.mm"
+				RelativePath=".\src\Game.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\GameState.mm"
+				RelativePath=".\src\GameState.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Math.mm"
+				RelativePath=".\src\Math.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Mesh.mm"
+				RelativePath=".\src\Mesh.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Object.mm"
+				RelativePath=".\src\Object.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\ParticlePool.mm"
+				RelativePath=".\src\ParticlePool.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Platform.mm"
+				RelativePath=".\src\Platform.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Render.mm"
+				RelativePath=".\src\Render.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Renderable.mm"
+				RelativePath=".\src\Renderable.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\RenderState.mm"
+				RelativePath=".\src\RenderState.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\ResourceGroup.mm"
+				RelativePath=".\src\ResourceGroup.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\SoundBuffer.mm"
+				RelativePath=".\src\SoundBuffer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\SoundManager.mm"
+				RelativePath=".\src\SoundManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\SoundSource.mm"
+				RelativePath=".\src\SoundSource.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Sprite.mm"
+				RelativePath=".\src\Sprite.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Table.mm"
+				RelativePath=".\src\Table.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Texture.mm"
+				RelativePath=".\src\Texture.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\TouchSource.mm"
+				RelativePath=".\src\TouchSource.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Vector.mm"
+				RelativePath=".\src\Vector.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Viewport.mm"
+				RelativePath=".\src\Viewport.cpp"
 				>
 			</File>
 		</Filter>
