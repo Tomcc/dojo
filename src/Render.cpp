@@ -54,32 +54,6 @@ deviceOrientation( deviceOr )
 Render::~Render()
 {
 	delete firstRenderState;
-	
-	// Tear down GL
-	if (defaultFramebuffer)
-	{
-		glDeleteFramebuffers(1, &defaultFramebuffer);
-		defaultFramebuffer = 0;
-	}
-	
-	if (colorRenderbuffer)
-	{
-		glDeleteRenderbuffers(1, &colorRenderbuffer);
-		colorRenderbuffer = 0;
-	}
-}
-
-
-bool Render::onResize()
-{
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-	
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
-
-	_updateGLViewportDimensions();
-	
-	return (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE);
 }
 
 Render::RenderableList* Render::getLayer( int layerID )
@@ -157,7 +131,7 @@ void Render::_updateGLViewportDimensions()
 	viewportWidth = width;
 	viewportHeight = height;
 
-	if( renderOrientation == 90.f || renderOrientation == -90.f )
+	if( renderRotation == 90.f || renderRotation == -90.f )
 	{
 		viewportWidth = height;
 		viewportHeight = width;
@@ -170,11 +144,7 @@ void Render::startFrame()
 	DEBUG_ASSERT( viewport );
 	
 	platform->acquireContext();
-				
-	// This application only creates a single default framebuffer which is already bound at this point.
-	// This call is redundant, but needed if dealing with multiple framebuffers.
-	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
-	
+					
 	glViewport( 0, 0, viewportWidth, viewportHeight );
 	
 	//clear the viewport
@@ -279,11 +249,7 @@ void Render::renderElement( Renderable* s )
 
 void Render::endFrame()
 {			
-	// This application only creates a single color renderbuffer which is already bound at this point.
-	// This call is redundant, but needed if dealing with multiple renderbuffers.
 	DEBUG_ASSERT( frameStarted );
-	
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
 	platform->present();
 	

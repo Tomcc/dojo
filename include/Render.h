@@ -44,9 +44,7 @@ namespace Dojo {
 		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
 		
 		~Render();		
-				
-		bool onResize();
-		
+						
 		void addRenderable( Renderable* s, int layer );
 				
 		void removeRenderable( Renderable* s );
@@ -121,10 +119,7 @@ namespace Dojo {
 		
 		float renderRotation;
 		RenderOrientation renderOrientation, deviceOrientation;
-		
-		// The OpenGL names for the framebuffer and renderbuffer used to render to this view
-		GLuint defaultFramebuffer, colorRenderbuffer;
-				
+						
 		Viewport* viewport;	
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
 		

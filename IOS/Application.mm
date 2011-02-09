@@ -68,17 +68,11 @@ using namespace Dojo;
 }
 
 - (void) layoutSubviews
-{	
-	CAEAGLLayer* layer = (CAEAGLLayer*)self.layer;
-	
+{		
 	// Set the scale factor to be the same as the main screen
 	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
 		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 	}
-	
-	platform->bindColorBufferToContext( layer );
-			
-    [self drawView:nil];
 }
 
 - (NSInteger) animationFrameInterval

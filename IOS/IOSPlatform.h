@@ -7,9 +7,12 @@
 #include "Utils.h"
 
 #ifdef __OBJC__
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/EAGLDrawable.h>
+	#import <UIKit/UIKit.h>
 
+	#import <OpenGLES/EAGL.h>
+	#import <OpenGLES/EAGLDrawable.h>
+
+	#import "Application.h"
 #endif
 
 namespace Dojo
@@ -18,15 +21,10 @@ namespace Dojo
 	{
 	public:
 		
-		inline void* getNativeApplication()
-		{
-			DEBUG_ASSERT( app );
-			
-			return app;
-		}
+		IOSPlatform();
 		
-		void bindColorBufferToContext( void* layer );
-		
+		virtual ~IOSPlatform();
+				
 		virtual void initialise();
 		virtual void shutdown();
 
@@ -50,20 +48,32 @@ namespace Dojo
 		
 		virtual bool isSystemSoundInUse();
 		
-		void _notifyNativeApp( void* application )
+#ifdef __OBJC__
+		void _notifyNativeApp( Application* application )
 		{
+			DEBUG_ASSERT( application );
+			
 			app = application;
 		}
+		
+		inline Application* getNativeApplication()
+		{			
+			return app;
+		}
+#endif
 		
 	protected:
 			
 #ifdef __OBJC__
+		NSAutoreleasePool * pool;
+		
 		EAGLContext* context;
-#endif
+		
+		Application* app;		
 		
 		GLuint defaultFramebuffer, colorRenderbuffer;
+#endif
 		
-		void* app;
 	};
 }
 
