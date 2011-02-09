@@ -38,8 +38,9 @@ namespace Dojo
 			d = (double)(gTime)/(double)freq;
 #else
 			struct timeval tv;
-			gettimeofday(&tv, NULL);
-			d = tv.tv_usec/1000000.f	+ tv.tv_sec;
+			struct timezone tz;
+			gettimeofday(&tv, &tz );
+			d = (double)tv.tv_usec/1000000 + (double)tv.tv_sec;
 #endif
 			return d;
 		}

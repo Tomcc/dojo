@@ -44,9 +44,7 @@ namespace Dojo {
 		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
 		
 		~Render();		
-				
-		bool onResize();
-		
+						
 		void addRenderable( Renderable* s, int layer );
 				
 		void removeRenderable( Renderable* s );
@@ -73,8 +71,19 @@ namespace Dojo {
 		
 		RenderableList* getLayer( int layerID );
 		
-		inline int getWidth()						{	return width;		}
-		inline int getHeight()						{	return height;		}
+		inline int getScreenWidth()						{	return width;		}
+		inline int getScreenHeight()					{	return height;		}
+		
+		inline int getWidth()
+		{
+			return viewportWidth;
+		}
+		
+		inline int getHeight()
+		{
+			return viewportHeight;
+		}
+		
 		inline float getContentScale()				{	return devicePixelScale;	}
 		
 		inline Viewport* getViewport()				{	return viewport;	}
@@ -115,16 +124,12 @@ namespace Dojo {
 		bool valid;
 						
 		// The pixel dimensions of the CAEAGLLayer
-		int width, height;
-		uint viewportWidth, viewportHeight;
+		int width, height, viewportWidth, viewportHeight;
 		float devicePixelScale;
 		
 		float renderRotation;
 		RenderOrientation renderOrientation, deviceOrientation;
-		
-		// The OpenGL names for the framebuffer and renderbuffer used to render to this view
-		GLuint defaultFramebuffer, colorRenderbuffer;
-				
+						
 		Viewport* viewport;	
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
 		
@@ -135,8 +140,6 @@ namespace Dojo {
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;
-
-		void _updateGLViewportDimensions();
 	};		
 }
 

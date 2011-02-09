@@ -68,17 +68,11 @@ using namespace Dojo;
 }
 
 - (void) layoutSubviews
-{	
-	CAEAGLLayer* layer = (CAEAGLLayer*)self.layer;
-	
+{		
 	// Set the scale factor to be the same as the main screen
 	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
 		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 	}
-	
-	platform->bindColorBufferToContext( layer );
-			
-    [self drawView:nil];
 }
 
 - (NSInteger) animationFrameInterval
@@ -176,7 +170,8 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	x *= r->getContentScale();
 	y *= r->getContentScale();
 	
-	int sy = r->getHeight();
+	int sx = r->getScreenWidth();
+	int sy = r->getScreenHeight();
 	
 	switch( r->getInterfaceOrientation() )
 	{
@@ -184,13 +179,13 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 			return Vector( x, y );
 			
 		case Render::RO_PORTRAIT_REVERSE:
-			return Vector( x, sy - y );
+			return Vector( sx - x, sy - y );
 			
 		case Render::RO_LANDSCAPE_RIGHT:		
-			return Vector( y, sy - x );
+			return Vector( y, sx - x );
 			
 		case Render::RO_LANDSCAPE_LEFT:			
-			return Vector( y, x );
+			return Vector( sy - y, x );
 	}
 	return Vector::ZERO;
 }

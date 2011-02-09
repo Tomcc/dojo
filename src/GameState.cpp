@@ -116,7 +116,7 @@ void GameState::updateObjects( float dt )
 			}
 		}
 	}			
-}	
+}
 
 
 void GameState::onTouchBegan( const Vector& point )

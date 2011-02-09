@@ -20,10 +20,10 @@ cullingEnabled( true ),
 width( w ),
 height( h ),
 devicePixelScale( (float)dps ),
-renderOrientation( RO_LANDSCAPE_LEFT ),
+renderOrientation( RO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr )
 {	
-	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_LEFT );
+	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
 	platform = Platform::getSingleton();
 		
@@ -48,38 +48,12 @@ deviceOrientation( deviceOr )
 		
 	currentRenderState = firstRenderState = new RenderState();
 
-	setInterfaceOrientation( RO_LANDSCAPE_LEFT );
+	setInterfaceOrientation( renderOrientation );
 }
 
 Render::~Render()
 {
 	delete firstRenderState;
-	
-	// Tear down GL
-	if (defaultFramebuffer)
-	{
-		glDeleteFramebuffers(1, &defaultFramebuffer);
-		defaultFramebuffer = 0;
-	}
-	
-	if (colorRenderbuffer)
-	{
-		glDeleteRenderbuffers(1, &colorRenderbuffer);
-		colorRenderbuffer = 0;
-	}
-}
-
-
-bool Render::onResize()
-{
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-	
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
-
-	_updateGLViewportDimensions();
-	
-	return (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE);
 }
 
 Render::RenderableList* Render::getLayer( int layerID )
@@ -145,23 +119,22 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 {	
 	renderOrientation = o;
 	
-	static float orientations[] = 	{ 0, 180, -90, 90 };
+	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
-
-	_updateGLViewportDimensions();
-}
-
-void Render::_updateGLViewportDimensions()
-{
-	viewportWidth = width;
-	viewportHeight = height;
-
-	if( renderOrientation == 90.f || renderOrientation == -90.f )
+	
+	//swap height and width values used in-game if the render has been rotated
+	if( renderRotation == 0 || renderRotation == 180 )
+	{
+		viewportWidth = width;
+		viewportHeight = height;
+	}
+	else 
 	{
 		viewportWidth = height;
 		viewportHeight = width;
 	}
+
 }
 
 void Render::startFrame()
@@ -170,12 +143,8 @@ void Render::startFrame()
 	DEBUG_ASSERT( viewport );
 	
 	platform->acquireContext();
-				
-	// This application only creates a single default framebuffer which is already bound at this point.
-	// This call is redundant, but needed if dealing with multiple framebuffers.
-	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
-	
-	glViewport( 0, 0, viewportWidth, viewportHeight );
+					
+	glViewport( 0, 0, width, height );
 	
 	//clear the viewport
 	glClearColor( 
@@ -191,7 +160,7 @@ void Render::startFrame()
 	glLoadIdentity();					
 	
 	//rotate to balance interface orientation
-	glRotatef( renderRotation, 0, 0, -1 );
+	glRotatef( renderRotation, 0, 0, 1 );
 	
 	//scale with area and window ratio
 	glScalef( 
@@ -205,7 +174,7 @@ void Render::startFrame()
 				 -viewport->position.y, 
 				 0.f );		
 	
-	if( renderOrientation == RO_LANDSCAPE_LEFT || renderOrientation == RO_LANDSCAPE_RIGHT )
+	if( renderRotation == 0 || renderRotation == 180 )
 	{
 		viewportPixelRatio.x = viewport->getSize().x / width;
 		viewportPixelRatio.y = viewport->getSize().y / height;
@@ -279,11 +248,7 @@ void Render::renderElement( Renderable* s )
 
 void Render::endFrame()
 {			
-	// This application only creates a single color renderbuffer which is already bound at this point.
-	// This call is redundant, but needed if dealing with multiple renderbuffers.
 	DEBUG_ASSERT( frameStarted );
-	
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
 	platform->present();
 	
