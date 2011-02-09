@@ -14,6 +14,7 @@
 #include "SoundManager.h"
 #include "TouchSource.h"
 #include "Game.h"
+#include "Table.h"
 
 using namespace Dojo;
 
@@ -264,12 +265,43 @@ uint IOSPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path 
 
 void IOSPlatform::load( Dojo::Table * table )
 {
+	DEBUG_ASSERT( table );
+			
+	NSString* key = Utils::toNSString( table->getName() );
 	
+	NSData* data = [ [NSUserDefaults standardUserDefaults] dataForKey:key ];
+	
+	if( !data )
+		return;
+																	   
+	std::stringstream str;
+	
+	str.write( (char*)[data bytes], [data length] );
+	
+	table->deserialize( str );
 }
 
 void IOSPlatform::save( Dojo::Table* table )
 {
+	DEBUG_ASSERT( table );
 	
+	std::stringstream str;
+	
+	table->serialize( str );
+	
+	uint size = str.str().size(); //nullchar
+	
+	str.seekg(0);
+	char* chars = (char*)malloc( size );
+	
+	str.read( chars, size );
+	
+	NSData* data = [NSData dataWithBytesNoCopy: chars length: size ];
+	NSString* name = Utils::toNSString( table->getName() );
+			
+	[[NSUserDefaults standardUserDefaults] setObject: data forKey: name ];
+	
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 void IOSPlatform::openWebPage( const std::string& site )
