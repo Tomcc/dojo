@@ -71,8 +71,19 @@ namespace Dojo {
 		
 		RenderableList* getLayer( int layerID );
 		
-		inline int getWidth()						{	return width;		}
-		inline int getHeight()						{	return height;		}
+		inline int getScreenWidth()						{	return width;		}
+		inline int getScreenHeight()					{	return height;		}
+		
+		inline int getWidth()
+		{
+			return viewportWidth;
+		}
+		
+		inline int getHeight()
+		{
+			return viewportHeight;
+		}
+		
 		inline float getContentScale()				{	return devicePixelScale;	}
 		
 		inline Viewport* getViewport()				{	return viewport;	}
@@ -113,7 +124,7 @@ namespace Dojo {
 		bool valid;
 						
 		// The pixel dimensions of the CAEAGLLayer
-		int width, height;
+		int width, height, viewportWidth, viewportHeight;
 		float devicePixelScale;
 		
 		float renderRotation;

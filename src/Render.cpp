@@ -20,10 +20,10 @@ cullingEnabled( true ),
 width( w ),
 height( h ),
 devicePixelScale( (float)dps ),
-renderOrientation( RO_LANDSCAPE_LEFT ),
+renderOrientation( RO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr )
 {	
-	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_LEFT );
+	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
 	platform = Platform::getSingleton();
 		
@@ -48,7 +48,7 @@ deviceOrientation( deviceOr )
 		
 	currentRenderState = firstRenderState = new RenderState();
 
-	setInterfaceOrientation( RO_LANDSCAPE_LEFT );
+	setInterfaceOrientation( renderOrientation );
 }
 
 Render::~Render()
@@ -119,9 +119,22 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 {	
 	renderOrientation = o;
 	
-	static float orientations[] = 	{ 0, 180, -90, 90 };
+	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
+	
+	//swap height and width values used in-game if the render has been rotated
+	if( renderRotation == 0 || renderRotation == 180 )
+	{
+		viewportWidth = width;
+		viewportHeight = height;
+	}
+	else 
+	{
+		viewportWidth = height;
+		viewportHeight = width;
+	}
+
 }
 
 void Render::startFrame()
@@ -147,7 +160,7 @@ void Render::startFrame()
 	glLoadIdentity();					
 	
 	//rotate to balance interface orientation
-	glRotatef( renderRotation, 0, 0, -1 );
+	glRotatef( renderRotation, 0, 0, 1 );
 	
 	//scale with area and window ratio
 	glScalef( 
