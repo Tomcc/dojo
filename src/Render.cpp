@@ -122,20 +122,6 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 	static float orientations[] = 	{ 0, 180, -90, 90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
-
-	_updateGLViewportDimensions();
-}
-
-void Render::_updateGLViewportDimensions()
-{
-	viewportWidth = width;
-	viewportHeight = height;
-
-	if( renderRotation == 90.f || renderRotation == -90.f )
-	{
-		viewportWidth = height;
-		viewportHeight = width;
-	}
 }
 
 void Render::startFrame()
@@ -145,7 +131,7 @@ void Render::startFrame()
 	
 	platform->acquireContext();
 					
-	glViewport( 0, 0, viewportWidth, viewportHeight );
+	glViewport( 0, 0, width, height );
 	
 	//clear the viewport
 	glClearColor( 
@@ -175,7 +161,7 @@ void Render::startFrame()
 				 -viewport->position.y, 
 				 0.f );		
 	
-	if( renderOrientation == RO_LANDSCAPE_LEFT || renderOrientation == RO_LANDSCAPE_RIGHT )
+	if( renderRotation == 0 || renderRotation == 180 )
 	{
 		viewportPixelRatio.x = viewport->getSize().x / width;
 		viewportPixelRatio.y = viewport->getSize().y / height;

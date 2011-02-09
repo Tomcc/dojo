@@ -114,7 +114,6 @@ namespace Dojo {
 						
 		// The pixel dimensions of the CAEAGLLayer
 		int width, height;
-		uint viewportWidth, viewportHeight;
 		float devicePixelScale;
 		
 		float renderRotation;
@@ -130,8 +129,6 @@ namespace Dojo {
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;
-
-		void _updateGLViewportDimensions();
 	};		
 }
 
