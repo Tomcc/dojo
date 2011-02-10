@@ -86,7 +86,7 @@ namespace Dojo {
 		}
 		
 		inline float getContentScale()				{	return devicePixelScale;	}
-		
+		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
 		inline Viewport* getViewport()				{	return viewport;	}
 		
 		inline bool isValid()						{	return valid;		}
@@ -131,8 +131,7 @@ namespace Dojo {
 		float renderRotation;
 		RenderOrientation renderOrientation, deviceOrientation;
 		
-		float nativeToScreenWidthRatio;
-		float nativeToScreenHeightRatio;
+		float nativeToScreenRatio;
 						
 		Viewport* viewport;	
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;

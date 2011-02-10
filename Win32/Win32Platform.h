@@ -30,7 +30,8 @@ namespace Dojo
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
 		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT );
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
+		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
 		
 		virtual void load(  Table* dest );
 		virtual void save( Table* table );

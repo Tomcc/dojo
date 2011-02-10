@@ -52,8 +52,7 @@ deviceOrientation( deviceOr )
 
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
-	nativeToScreenWidthRatio = platform->getGame()->getNativeWidth() / viewportWidth;
-	nativeToScreenHeightRatio = platform->getGame()->getNativeHeight() / viewportHeight;
+	nativeToScreenRatio = (float)viewportHeight / (float)platform->getGame()->getNativeHeight();
 }
 
 Render::~Render()
@@ -169,8 +168,8 @@ void Render::startFrame()
 	
 	//scale with area and window ratio
 	glScalef( 
-			 2.f / viewport->getSize().x * nativeToScreenWidthRatio, 
-			 2.f / viewport->getSize().y * nativeToScreenHeightRatio, 
+			 2.f / viewport->getSize().x, 
+			 2.f / viewport->getSize().y, 
 			 1.f);
 		
 	//translate
@@ -190,6 +189,8 @@ void Render::startFrame()
 		viewportPixelRatio.x = viewport->getSize().y / width;
 		viewportPixelRatio.y = viewport->getSize().x / height;
 	}
+
+	viewportPixelRatio *= nativeToScreenRatio;
 	
 	//HACK - uncomment to get proportional pixel scale across resolutions
 	//viewportPixelRatio *= devicePixelScale;

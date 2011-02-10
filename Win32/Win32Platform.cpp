@@ -8,7 +8,7 @@
 
 #include <Poco/DirectoryIterator.h>
 #include <Freeimage.h>
-
+#include <al/alut.h>
 #include <gl/glu.h>
 
 #include "Render.h"
@@ -195,7 +195,7 @@ void Win32Platform::initialise()
 
 	CreateDirectoryA( userDir.c_str(), NULL );
 
-	if( !_initialiseWindow( game->getName(), 480, 320 ) )
+	if( !_initialiseWindow( game->getName(), 960, 640 ) )
 		return;
 
 	glewInit();
@@ -398,7 +398,7 @@ uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
 	return size;
 }
 
-void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT )
+void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
 	if( !_hasExtension( ".png", path ) )
@@ -433,8 +433,9 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 
-	uint realWidth = (POT) ? Math::nextPowerOfTwo( width ) : width;
-	uint realHeight = (POT) ? Math::nextPowerOfTwo( height ) : height;
+	uint realWidth = Math::nextPowerOfTwo( width );
+	uint realHeight = Math::nextPowerOfTwo( height );
+
 	uint pixelSize = FreeImage_GetBPP(dib)/8;
 	uint realSize = realWidth * realHeight * 4;
 
@@ -458,6 +459,22 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	}
 
 	FreeImage_Unload( dib );
+}
+
+uint Win32Platform::loadAudioFileContent( ALuint& buffer, const std::string& filePath )
+{
+	ALvoid* data;
+	ALboolean loop;
+	ALenum format;
+	ALsizei size, freq;
+
+	alutLoadWAVFile( (ALbyte*)filePath.c_str(), &format, &data, &size, &freq, &loop );
+
+	alBufferData(buffer,format,data,size,freq);
+
+	alutUnloadWAV(format,data,size,freq);
+
+	return size;
 }
 
 std::string Win32Platform::_getUserDirectory()

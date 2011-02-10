@@ -18,6 +18,7 @@
 #include "Model.h"
 #include "Sprite.h"
 #include "Texture.h"
+#include "Platform.h"
 
 namespace Dojo {
 	
@@ -34,6 +35,8 @@ namespace Dojo {
 		background( NULL )
 		{
 			DEBUG_ASSERT( targetX > 0 && targetY > 0 );
+
+			nativeToScreenRatio = Platform::getSingleton()->getRender()->getNativeToScreenRatio();
 			
 			//create the fader object			
 			fadeObject = new Model( level, position, "texturedQuad", "" );
@@ -133,6 +136,8 @@ namespace Dojo {
 		Model* fadeObject;
 				
 		Color clearColor;
+
+		float nativeToScreenRatio;
 	};
 }
 

@@ -68,4 +68,7 @@
 
 #endif
 
+#undef max
+#undef min
+
 #endif // dojo_common_headers_h__

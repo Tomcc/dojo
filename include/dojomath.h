@@ -49,7 +49,24 @@ namespace Dojo
 			else
 				return 0;
 		}
-				
+
+		static inline float min( float a, float b )
+		{
+			return (a < b) ? a : b;
+		}
+
+		static inline float max( float a, float b )
+		{
+			return (a > b) ? a : b;
+		}
+
+		static inline float clamp( float n, float max, float min )
+		{
+			if( n > max )	return max;
+			if( n < min )	return min;
+			return n;
+		}
+
 		static inline uint nextPowerOfTwo( uint val )
 		{
 			--val;

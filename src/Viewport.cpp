@@ -8,8 +8,8 @@ using namespace Dojo;
 
 void Viewport::makeScreenSize( Vector& dest, int w, int h )
 {	
-	dest.x = (float)w/targetSize.x * size.x;
-	dest.y = (float)h/targetSize.y * size.y;
+	dest.x = (float)w/targetSize.x * size.x * nativeToScreenRatio;
+	dest.y = (float)h/targetSize.y * size.y * nativeToScreenRatio;
 }
 
 /*
