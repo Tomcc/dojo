@@ -2,7 +2,7 @@
 
 #include "dojo_common_header.h"
 
-#include <OIS.h>
+#include <OIS/OIS.h>
 
 #include <X11/Xlib.h>
 #include <GL/glx.h>
@@ -30,10 +30,11 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
-		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height, bool POT );
+		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path);
+		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out);
+		virtual uint loadFileContent( char*& bufptr, const std::string& path);
+        virtual uint loadAudioFileContent(ALuint& i, const std::string& name);
+		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height);
 		
 		virtual void load(  Table* dest );
 		virtual void save( Table* table );
@@ -45,7 +46,7 @@ namespace Dojo
 		virtual bool mouseReleased(	const OIS::MouseEvent& arg, OIS::MouseButtonID id );
 
 		virtual bool keyPressed(const OIS::KeyEvent &arg);
-		virtual bool keyReleased(const OIS::KeyEvent &arg);	
+		virtual bool keyReleased(const OIS::KeyEvent &arg);
 
 	protected:
 

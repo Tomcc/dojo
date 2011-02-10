@@ -3,9 +3,9 @@
 #include "LinuxPlatform.h"
 
 #include <Poco/DirectoryIterator.h>
-#include <Freeimage.h>
+#include <FreeImage.h>
 
-#include <glu.h>
+#include <GL/glu.h>
 
 #include "Render.h"
 #include "Game.h"

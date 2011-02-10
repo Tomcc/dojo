@@ -31,9 +31,15 @@
 	#include <GL/glext.h>
 	#include <GL/gl.h>
 
+#ifndef LINUX
 	#include <al.h>
 	#include <alc.h>
 	#include <AL/alut.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+    #include <AL/alut.h>
+#endif
 
 #else
 
