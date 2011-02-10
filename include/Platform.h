@@ -34,6 +34,17 @@ namespace Dojo
 		running( true )
 		{
 
+		}		
+		
+		inline void setGame( Game* g )
+		{
+			DEBUG_ASSERT( g );
+			game = g;
+		}		
+		
+		inline Game* getGame()
+		{
+			return game;
 		}
 
 		inline SoundManager* getSoundManager()	{	return sound;	}
@@ -41,12 +52,6 @@ namespace Dojo
 		inline TouchSource* getInput()			{	return input;	}
 
 		inline bool isRunning()					{	return running;}
-
-		inline void setGame( Game* g )
-		{
-			DEBUG_ASSERT( g );
-			game = g;
-		}
 
 		virtual void initialise()=0;
 		virtual void shutdown()=0;

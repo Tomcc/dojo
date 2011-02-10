@@ -23,6 +23,7 @@ namespace Dojo {
 	class Viewport;
 	class Mesh;
 	class Platform;
+	class Game;
 	
 	class Render : public BaseObject
 	{	
@@ -129,6 +130,9 @@ namespace Dojo {
 		
 		float renderRotation;
 		RenderOrientation renderOrientation, deviceOrientation;
+		
+		float nativeToScreenWidthRatio;
+		float nativeToScreenHeightRatio;
 						
 		Viewport* viewport;	
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;

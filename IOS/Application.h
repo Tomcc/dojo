@@ -68,11 +68,4 @@ namespace Dojo {
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
 
-- (void)dashboardWillAppear;
-- (void)dashboardDidAppear;
-- (void)dashboardWillDisappear;
-- (void)dashboardDidDisappear;
-
-- (void)userLoggedIn:(NSString*)userId;
-
 @end

@@ -21,6 +21,8 @@
 
 #include "Platform.h"
 
+#include "Render.h"
+
 namespace Dojo 
 {
 	class Game : public BaseObject, public StateInterface
@@ -29,7 +31,7 @@ namespace Dojo
 		
 		static const float UPDATE_INTERVAL_CAP;
 				
-		Game( const std::string& name );
+		Game( const std::string& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation );
 		
 		virtual ~Game();
 
@@ -37,12 +39,31 @@ namespace Dojo
 		{
 			return name;	
 		}
+		
+		inline uint getNativeWidth()
+		{
+			return nativeWidth;
+		}
+		
+		inline uint getNativeHeight()
+		{
+			return nativeHeight;
+		}
+		
+		inline Render::RenderOrientation getNativeOrientation()
+		{
+			return nativeOrientation;
+		}
 								
 		virtual void onApplicationFocus()=0;		
 		virtual void onApplicationFocusLost()=0;
 		
 	protected:		
 		bool focus;
+		
+		uint nativeWidth, nativeHeight;
+		
+		Render::RenderOrientation nativeOrientation;
 
 		std::string name;
 	};

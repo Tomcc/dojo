@@ -256,29 +256,4 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 										relativeRoll);
 }
 
-- (void)dashboardWillAppear
-{
-
-}
-
-- (void)dashboardDidAppear
-{	
-	displayVisible = false;
-}
-
-- (void)dashboardWillDisappear
-{	
-	displayVisible = true;
-}
-
-- (void)dashboardDidDisappear
-{	
-	
-}
-
-- (void)userLoggedIn:(NSString*)userId
-{
-	
-}
-
 @end

@@ -10,6 +10,8 @@
 #include "Mesh.h"
 #include "Model.h"
 
+#include "Game.h"
+
 using namespace Dojo;
 
 Render::Render( uint w, uint h, uint dps, RenderOrientation deviceOr ) :
@@ -26,7 +28,7 @@ deviceOrientation( deviceOr )
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
 	platform = Platform::getSingleton();
-		
+			
 	//gles settings
 	glEnable( GL_TEXTURE_2D );
 	glEnable( GL_BLEND );	
@@ -48,7 +50,10 @@ deviceOrientation( deviceOr )
 		
 	currentRenderState = firstRenderState = new RenderState();
 
-	setInterfaceOrientation( renderOrientation );
+	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
+	
+	nativeToScreenWidthRatio = platform->getGame()->getNativeWidth() / viewportWidth;
+	nativeToScreenHeightRatio = platform->getGame()->getNativeHeight() / viewportHeight;
 }
 
 Render::~Render()
@@ -164,8 +169,8 @@ void Render::startFrame()
 	
 	//scale with area and window ratio
 	glScalef( 
-			 2.f / viewport->getSize().x, 
-			 2.f / viewport->getSize().y, 
+			 2.f / viewport->getSize().x * nativeToScreenWidthRatio, 
+			 2.f / viewport->getSize().y * nativeToScreenHeightRatio, 
 			 1.f);
 		
 	//translate
