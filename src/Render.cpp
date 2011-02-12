@@ -41,13 +41,10 @@ deviceOrientation( deviceOr )
 	//projection is always the same
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();		
-					
-	//setup object data	
-	glEnableClientState(GL_VERTEX_ARRAY);			
-	//glEnableClientState(GL_COLOR_ARRAY);			
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);			
-	//glEnableClientState(GL_NORMAL_ARRAY);
-		
+
+	//always active!
+	glEnableClientState(GL_VERTEX_ARRAY);
+
 	currentRenderState = firstRenderState = new RenderState();
 
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
@@ -237,16 +234,10 @@ void Render::renderElement( Renderable* s )
 			 s->scale.z );
 	
 	Mesh* m = currentRenderState->getMesh();
-	switch( m->getTriangleMode() )
-	{
-		case Mesh::TM_STRIP:
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, m->getVertexCount());
-			break;
-			
-		case Mesh::TM_LIST:
-			glDrawArrays(GL_TRIANGLES, 0, m->getVertexCount());
-			break;
-	}	
+
+	GLenum mode = (m->getTriangleMode() == Mesh::TM_STRIP) ? GL_TRIANGLE_STRIP : GL_TRIANGLES;
+
+	glDrawArrays( mode, 0, m->getVertexCount());
 	
 	//reset original view on the top of the stack
 	glPopMatrix();

@@ -98,6 +98,7 @@ namespace Dojo
 			if( !vertices )
 			{					
 				vertices = (byte*)malloc( vertexSize * vertexMaxCount );
+				memset( vertices, 0, vertexMaxCount * vertexSize );
 				
 				_buildFieldOffsets();	//build the offsets for each field	
 			}			
@@ -175,7 +176,7 @@ namespace Dojo
 			
 			//grow the buffer to the needed size			
 			if( !vertices || vertexCount >= vertexMaxCount )
-				setVertexCap( vertexCount );
+				setVertexCap( vertexCount+1 );
 			
 			if( !currentVertex )
 				currentVertex = vertices;
@@ -183,9 +184,9 @@ namespace Dojo
 				currentVertex += vertexSize; //get to the next vertex
 			
 			float* ptr = (float*)currentVertex;
-			
-			*ptr++ = x;
-			*ptr = y;
+
+			ptr[0] = x;
+			ptr[1] = y;
 
 			DEBUG_MESSAGE( "available space " << this << " " << (int)( vertices + vertexSize * vertexMaxCount - currentVertex ) );
 			
@@ -197,17 +198,7 @@ namespace Dojo
 		{			
 			DEBUG_ASSERT( isEditing() );
 			
-			if( !vertices || vertexCount >= vertexMaxCount )
-				setVertexCap( vertexCount );
-			
-			float* ptr = (float*)currentVertex;
-			
-			*ptr++ = x;
-			*ptr++ = y;
-			*ptr = z;
-			
-			currentVertex += vertexSize;
-			++vertexCount;
+			DEBUG_TODO;
 		}
 				
 		///sets the uv of the last set vertex				
@@ -226,10 +217,10 @@ namespace Dojo
 			DEBUG_ASSERT( isEditing() );	
 			
 			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
-			*ptr++ = (GLubyte)r*255;
-			*ptr++ = (GLubyte)g*255;
-			*ptr++ = (GLubyte)b*255;
-			*ptr = (GLubyte)a*255;
+			*ptr++ = (GLubyte)(r*255);
+			*ptr++ = (GLubyte)(g*255);
+			*ptr++ = (GLubyte)(b*255);
+			*ptr = (GLubyte)(a*255);
 		}
 		
 		///adds a vertex at the given position
@@ -254,6 +245,13 @@ namespace Dojo
 			indices[ indexCount++ ] = idx;			
 		}
 		
+		inline void triangle( uint i1, uint i2, uint i3 )
+		{
+			index(i1);
+			index(i2);
+			index(i3);
+		}
+
 		///loads the data on the device
 		/**
 		-will discard all the data if the buffer is static
@@ -282,41 +280,7 @@ namespace Dojo
 		}
 				
 		///binds all the pointers for the needed client states
-		virtual void bind()
-		{		
-			DEBUG_ASSERT( !isEditing() );
-			
-			glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
-						
-			if( vertexFields[ VF_POSITION2D ] )
-				glVertexPointer(2, GL_FLOAT, vertexSize, 0 );
-				
-			else if( vertexFields[ VF_POSITION3D ] )
-				glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
-			
-			if( vertexFields[ VF_COLOR ] )
-				glColorPointer(
-							   4, 
-							   GL_UNSIGNED_BYTE, 
-							   vertexSize, 
-							   (void*)vertexFieldOffset[ VF_COLOR ] );
-			
-			if( vertexFields[ VF_UV ] )
-				glTexCoordPointer(
-								  2, 
-							   GL_FLOAT, 
-							   vertexSize, 
-							   (void*)vertexFieldOffset[ VF_UV ] );
-					
-			if( vertexFields[ VF_NORMAL ] )
-				glNormalPointer(
-							   GL_FLOAT, 
-							   vertexSize, 
-								(void*)vertexFieldOffset[ VF_NORMAL ] );
-						
-			if( isIndexed() )			
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
-		}
+		virtual void bind();
 				
 		inline bool isIndexed()
 		{

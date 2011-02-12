@@ -49,6 +49,60 @@ bool Mesh::end()
 	return loaded;
 }
 
+void Mesh::bind()
+{		
+	DEBUG_ASSERT( !isEditing() );
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+
+	if( vertexFields[ VF_POSITION2D ] )
+		glVertexPointer(2, GL_FLOAT, vertexSize, 0 );
+
+	else if( vertexFields[ VF_POSITION3D ] )
+		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
+
+	if( vertexFields[ VF_COLOR ] )
+	{
+		glColorPointer(
+			4, 
+			GL_UNSIGNED_BYTE, 
+			vertexSize, 
+			(void*)vertexFieldOffset[ VF_COLOR ] );
+
+		glEnableClientState(GL_COLOR_ARRAY);
+	}
+	else
+		glDisableClientState( GL_COLOR_ARRAY );
+
+	if( vertexFields[ VF_UV ] )
+	{
+		glTexCoordPointer(
+			2, 
+			GL_FLOAT, 
+			vertexSize, 
+			(void*)vertexFieldOffset[ VF_UV ] );
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
+	}
+	else
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+
+	if( vertexFields[ VF_NORMAL ] )
+	{
+		glNormalPointer(
+			GL_FLOAT, 
+			vertexSize, 
+			(void*)vertexFieldOffset[ VF_NORMAL ] );
+
+		glEnableClientState(GL_NORMAL_ARRAY);
+	}
+	else
+		glDisableClientState( GL_NORMAL_ARRAY );
+
+	if( isIndexed() )			
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
+}
+
 const uint Mesh::VERTEX_FIELD_SIZES[] = { 
 	2 * sizeof( GLfloat ),
 	3 * sizeof( GLfloat ),
