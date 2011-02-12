@@ -99,10 +99,11 @@ namespace Dojo
 			{					
 				vertices = (byte*)malloc( vertexSize * vertexMaxCount );
 				
-				_buildFieldOffsets();	//build the offsets for each field		
+				_buildFieldOffsets();	//build the offsets for each field	
 			}			
-			else if( count >= vertexMaxCount )
-			{				
+			else
+			{	
+				//TODO MAKE THIS ACTUALLY WORK
 				vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
 			}
 		}	
@@ -137,6 +138,16 @@ namespace Dojo
 			//the buffer is too small for extimated vertex count?
 			if( extimatedVerts > vertexMaxCount )
 				setVertexCap( extimatedVerts );
+		}
+
+		///starts the update after the last added vertex - useful for sequential updates
+		inline void append()
+		{
+			DEBUG_ASSERT( !isEditing() );
+
+			currentVertex = vertices + vertexSize * vertexCount;
+
+			editing = true;
 		}
 				
 		///just skips the current vertex leaving it's position unchanged
@@ -175,6 +186,8 @@ namespace Dojo
 			
 			*ptr++ = x;
 			*ptr = y;
+
+			DEBUG_MESSAGE( "available space " << this << " " << (int)( vertices + vertexSize * vertexMaxCount - currentVertex ) );
 			
 			++vertexCount;
 		}
@@ -258,6 +271,9 @@ namespace Dojo
 			{
 				glDeleteBuffers( 1, &vertexHandle );
 				glDeleteBuffers( 1, &indexHandle );
+
+
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				
 				vertexHandle = indexHandle = 0;
 				
@@ -373,7 +389,7 @@ namespace Dojo
 		bool editing;
 				
 		void _buildFieldOffsets()
-		{			
+		{
 			uint offset = 0;
 			for( uint i = 0; i < FIELDS_NUMBER; ++i )
 			{

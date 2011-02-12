@@ -165,6 +165,13 @@ namespace Dojo
 				return pop( i );
 			}
 
+			FV_INLINE T& top()
+			{
+				DEBUG_ASSERT( size() );
+
+				return vectorArray[ elements-1 ];
+			}
+
 			///Rimuove qualsiasi elemento dal vettore
 			/**
 			Non chiama delete.

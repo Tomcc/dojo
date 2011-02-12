@@ -96,12 +96,12 @@ namespace Dojo
 			return *this;
 		}	
 		
-		inline float distance( const Vector& v )
+		inline float distance( const Vector& v ) const 
 		{
 			return sqrt( (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z) );
 		}
 		
-		inline float distanceSquared( const Vector& v )
+		inline float distanceSquared( const Vector& v ) const
 		{
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
 		}

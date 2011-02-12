@@ -190,12 +190,13 @@ void Win32Platform::initialise()
 {
 	DEBUG_ASSERT( game );
 
-	//crea la directory utente se non esiste
+	//create user dir if not existing
 	std::string userDir = _getUserDirectory() + "/" + game->getName();
 
 	CreateDirectoryA( userDir.c_str(), NULL );
 
-	if( !_initialiseWindow( game->getName(), 960, 640 ) )
+	//just use the game's preferred settings
+	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
 		return;
 
 	glewInit();
@@ -204,7 +205,7 @@ void Win32Platform::initialise()
 
 	sound = new SoundManager();
 
-	//inizializza OIS per emulare il touch
+	//initialize OIS to emulate the touch
 	_initialiseOIS();
 
 	input = new TouchSource();
