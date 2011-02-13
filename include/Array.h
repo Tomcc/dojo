@@ -97,7 +97,7 @@ namespace Dojo
 				pageSize = fv.getPageSize();
 
 				//rialloca la memoria necessaria
-				vectorArray = malloc( sizeof(T) * arraySize );
+				vectorArray = (T*)malloc( sizeof(T) * arraySize );
 				//e poi copiala
 				memcpy( vectorArray, fv._getArrayPointer(), sizeof(T) * elements);
 			}
