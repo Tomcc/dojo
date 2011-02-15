@@ -14,7 +14,6 @@
 
 #include "Color.h"
 #include "BaseObject.h"
-#include "BaseObject.h"
 
 namespace Dojo
 {
@@ -36,6 +35,20 @@ namespace Dojo
 			
 		}
 		
+		inline void setMesh( Mesh* m )
+		{
+			DEBUG_ASSERT( m );
+			
+			mesh = m;
+		}
+
+		void setTexture( Texture* tex )
+		{
+			DEBUG_ASSERT( tex );
+
+			texture = tex;
+		}
+
 		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}
 				
 		inline Texture* getTexture()			{	return texture;			}

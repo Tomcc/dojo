@@ -22,7 +22,7 @@
 
 namespace Dojo 
 {
-	class Renderable : public Object, public RenderState
+	class Renderable : public RenderState, public Object
 	{				
 	public:	
 

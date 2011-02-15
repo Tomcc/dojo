@@ -125,20 +125,20 @@ namespace Dojo
 			return editing;
 		}
 					
-		inline void begin( int extimatedVerts = 0 )
+		inline void begin( uint extimatedVerts = 1 )
 		{			
 			//be sure that we aren't already building
+			DEBUG_ASSERT( extimatedVerts > 0 );
 			DEBUG_ASSERT( !isEditing() );
+
+			//the buffer is too small for extimated vertex count?
+			setVertexCap( extimatedVerts );
 			
 			currentVertex = NULL;
 			vertexCount = 0;
 			indexCount = 0;
 			
-			editing = true;
-			
-			//the buffer is too small for extimated vertex count?
-			if( extimatedVerts > vertexMaxCount )
-				setVertexCap( extimatedVerts );
+			editing = true;			
 		}
 
 		///starts the update after the last added vertex - useful for sequential updates
@@ -146,27 +146,9 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( !isEditing() );
 
-			currentVertex = vertices + vertexSize * vertexCount;
+			currentVertex = vertices + vertexSize * (vertexCount-1);
 
 			editing = true;
-		}
-				
-		///just skips the current vertex leaving it's position unchanged
-		/**
-		DO NOT CALL if the vertex has still to be created! Use only when updating.
-		*/
-		inline void vertex()
-		{		
-			DEBUG_ASSERT( isEditing() );
-			
-			DEBUG_ASSERT( currentVertex < vertices + vertexMaxCount );
-			
-			if( !currentVertex )
-				currentVertex = vertices;
-			else
-				currentVertex += vertexSize; //get to the next vertex
-			
-			++vertexCount;
 		}
 					
 		///adds a vertex at the given position
@@ -175,21 +157,19 @@ namespace Dojo
 			DEBUG_ASSERT( isEditing() );
 			
 			//grow the buffer to the needed size			
-			if( !vertices || vertexCount >= vertexMaxCount )
+			if( vertexCount >= vertexMaxCount )
 				setVertexCap( vertexCount+1 );
-			
+
 			if( !currentVertex )
 				currentVertex = vertices;
 			else
-				currentVertex += vertexSize; //get to the next vertex
-			
+				currentVertex += vertexSize; //get to the current vertex
+
 			float* ptr = (float*)currentVertex;
 
 			ptr[0] = x;
 			ptr[1] = y;
 
-			DEBUG_MESSAGE( "available space " << this << " " << (int)( vertices + vertexSize * vertexMaxCount - currentVertex ) );
-			
 			++vertexCount;
 		}
 		

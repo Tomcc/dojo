@@ -15,7 +15,7 @@ bool Mesh::end()
 		return false;
 	
 	if( !vertexHandle )
-		glGenBuffers(1, &vertexHandle );		
+		glGenBuffers(1, &vertexHandle );	
 	
 	DEBUG_ASSERT( vertexHandle );
 	

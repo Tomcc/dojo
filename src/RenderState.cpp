@@ -4,6 +4,7 @@
 
 #include "Texture.h"
 #include "Mesh.h"
+#include "FrameSet.h"
 
 using namespace Dojo;
 

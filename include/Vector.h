@@ -85,6 +85,26 @@ namespace Dojo
 		{
 			return Vector( x + v.x, y + v.y, z + v.z );
 		}
+
+		inline Vector operator - ( const Vector& v ) const 
+		{
+			return Vector( x - v.x, y - v.y, z - v.z );
+		}
+
+		inline float operator * ( const Vector& v ) const 
+		{
+			return x*v.x + y*v.y + z*v.z;
+		}
+
+		inline float lenght()
+		{
+			return sqrt( x*x + y*y + z*z );
+		}
+
+		inline float lenghtSquared()
+		{
+			return x*x + y*y + z*z;
+		}
 		
 		inline const Vector& normalize()
 		{

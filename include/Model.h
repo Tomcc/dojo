@@ -25,20 +25,18 @@ namespace Dojo
 		Renderable( gamestate, pos )
 		{			
 			if( !meshName.empty() )
-				setMesh( meshName );
+				setMeshName( meshName );
 			
 			if( !setName.empty() )
-				setTexture( setName );
+				setTextureName( setName );
 		}
 		
-		inline void setMesh( Mesh* m )
+		void setMeshName( const std::string& meshName )
 		{
-			DEBUG_ASSERT( m );
-			
-			mesh = m;
+			RenderState::setMesh( gameState->getMesh( meshName ) );
 		}
-		
-		inline void setTexture( FrameSet* set )
+
+		void setTexture( FrameSet* set )
 		{			
 			if( set )			
 				texture = set->getRandomFrame();
@@ -46,14 +44,9 @@ namespace Dojo
 				texture = NULL;
 		}
 		
-		inline void setMesh( const std::string& meshName )
+		inline void setTextureName( const std::string& name )
 		{
-			setMesh( gameState->getMesh( meshName ) );
-		}
-		
-		inline void setTexture( const std::string& setName )
-		{
-			setTexture( gameState->getFrameSet( setName ) );
+			setTexture( gameState->getFrameSet( name ) );
 		}
 				
 	protected:

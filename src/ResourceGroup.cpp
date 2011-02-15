@@ -12,6 +12,7 @@ ResourceGroup::ResourceGroup()
 	
 	//create an empty texturedQuad
 	Mesh* m = new Mesh( this );
+	m->setTriangleMode( Mesh::TM_STRIP );
 	m->setVertexFieldEnabled( Mesh::VF_POSITION2D, true );
 	m->setVertexFieldEnabled( Mesh::VF_UV, true );
 	
