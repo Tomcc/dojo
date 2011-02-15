@@ -102,14 +102,41 @@ namespace Dojo
 				memcpy( vectorArray, fv._getArrayPointer(), sizeof(T) * elements);
 			}
 			
-			///Rimuove un elemento dal vettore all'indirizzo dato
+			///removes an element at the given index
 			/**
-			Non chiama delete in caso di pointers.
+			WARNING - DEFAULT BEHAVIOUR IS "REMOVE UNORDERED"
+			Use removeOrdered() if you need to keep relative ordering between elements
 			*/
 			FV_INLINE void remove(uint index)
 			{
 				DEBUG_ASSERT( size() > index );
-				
+
+				--elements;
+
+				if( index != elements )
+					vectorArray[ index ] = vectorArray[ elements ];					
+			}
+
+			///Rimuove un elemento dal vettore.
+			/**
+			Chiama semplicemente getElementIndex seguito da remove(unsigned int).
+			Non chiama delte in caso di pointers.
+			*/
+			FV_INLINE bool remove( const T& e)
+			{
+				int i = getElementIndex(e);
+				if(i != -1)
+				{
+					remove(i);
+					return true;
+				}
+				else return false;
+			}
+
+			FV_INLINE void removeOrdered( uint index )
+			{
+				DEBUG_ASSERT( size() > index );
+
 				if(index < size()-1)
 				{
 					//we have already the index
@@ -122,17 +149,13 @@ namespace Dojo
 				else if( index == size()-1 )
 					elements--;
 			}
-			///Rimuove un elemento dal vettore.
-			/**
-			Chiama semplicemente getElementIndex seguito da remove(unsigned int).
-			Non chiama delte in caso di pointers.
-			*/
-			FV_INLINE bool remove( T& e)
+
+			FV_INLINE void removeOrdered( const T& e )
 			{
 				int i = getElementIndex(e);
 				if(i != -1)
 				{
-					remove(i);
+					removeOrdered(i);
 					return true;
 				}
 				else return false;
