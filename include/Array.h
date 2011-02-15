@@ -171,23 +171,6 @@ namespace Dojo
 				return *elem;
 			}
 
-			///Rimuove e restituisce un elemento qualsiasi del vettore
-			FV_INLINE T pop( unsigned int index )
-			{
-				T elem = at( index );
-				remove( index );
-
-				return elem;
-			}
-
-			///Rimuove e restituisce un elemento qualsiasi del vettore
-			FV_INLINE T pop( T& elem )
-			{
-				int i = getElementIndex(elem);
-
-				return pop( i );
-			}
-
 			FV_INLINE T& top()
 			{
 				DEBUG_ASSERT( size() );

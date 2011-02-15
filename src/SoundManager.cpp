@@ -106,7 +106,7 @@ void SoundManager::update( float dt )
 		//resetta i suoni finiti
 		if( current->_isWaitingForDelete() )
 		{
-			busySoundPool.pop( i );
+			busySoundPool.remove( i );
 			idleSoundPool.add( current );
 
 			current->_reset();
