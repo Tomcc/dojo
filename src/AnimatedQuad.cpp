@@ -10,12 +10,13 @@
 
 using namespace Dojo;
 
-AnimatedQuad::AnimatedQuad( GameState* level, const Vector& pos ) :
+AnimatedQuad::AnimatedQuad( GameState* level, const Vector& pos, bool pp ) :
 Renderable( level, pos ),
 animation( NULL ),
 animationTime( 0 ),
 pixelScale( 1,1,1 ),
-autoAdvancement( true )
+autoAdvancement( true ),
+pixelPerfect( pp )
 {
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );
@@ -60,7 +61,7 @@ void AnimatedQuad::action( float dt )
 
 void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
-	if( texture )
+	if( texture && pixelPerfect )
 	{		
 		//compute the pixel occupied by this texture on the screen				
 		scale.x = texture->getWidth() * viewportPixelRatio.x * pixelScale.x;
@@ -68,7 +69,7 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 	}
 	else  //no texture
 	{
-		scale.x = scale.y = 1;
+		scale = size;
 	}
 	
 	screenSize.x = scale.x;

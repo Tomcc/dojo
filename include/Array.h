@@ -18,18 +18,19 @@ namespace Dojo
 			/**
 			E' opzionale specificare la grandezza delle pagine di memoria.
 			*/
-			Array(size_t firstPageSize = 0, const size_t newPageSize = 0)
+			Array(uint firstPageSize = 0, uint newPageSize = 0, uint validElements = 0)
 			{
+				DEBUG_ASSERT( validElements*sizeof(T) <= firstPageSize );
+
 				pageSize = (newPageSize == 0) ? 64 : newPageSize;
 				firstPageSize = ( firstPageSize == 0) ? pageSize : firstPageSize;
 
-				elements = 0;
+				elements = validElements;
 				arraySize = firstPageSize;
 
 				//allocate the first memory page
 				vectorArray = (T*)malloc( sizeof(T) * arraySize );
 			}
-			
 
 			///Costruttore copia - permette di evitare l'allocazione dovuta al costruttore.
 			Array( const Array<T>& fv ) :

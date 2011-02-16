@@ -5,12 +5,15 @@
 
 #include "BaseObject.h"
 #include "Vector.h"
+#include "Array.h"
 
 namespace Dojo
 {
 	class Table : public BaseObject 
 	{
 	public:
+
+		typedef Array<byte> Data;
 
 		static const std::string UNDEFINED_STRING;
 		
@@ -70,6 +73,14 @@ namespace Dojo
 
 			vectors[ key ] = value;
 		}
+
+		///WARNING - Table DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
+		inline void setData( const std::string& key, Data* value )
+		{
+			DEBUG_ASSERT( value );
+
+			data[ key ] = value;
+		}
 		
 		inline void setTable( Table* value )
 		{
@@ -81,6 +92,8 @@ namespace Dojo
 			
 			tables[ value->getName() ] = value;
 		}
+
+		
 		
 		void clear()
 		{
@@ -129,6 +142,13 @@ namespace Dojo
 
 			return vectors.find( name ) != vectors.end();
 		}
+
+		inline bool existsAsData( const std::string& name )
+		{
+			DEBUG_ASSERT( name.size() );
+
+			return data.find( name ) != data.end();
+		}
 		
 		inline float getNumber( const std::string& key )
 		{			
@@ -171,7 +191,14 @@ namespace Dojo
 		   else
 			   return NULL;
 		}
-		
+
+		inline Data* getData( const std::string& key )
+		{
+			if( existsAsData( key ) )
+				return data[ key ];
+			else
+				return NULL;
+		}		
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
 		inline void serialize( std::ostream& buf)
@@ -183,31 +210,48 @@ namespace Dojo
 			map< string, float >::iterator ni = numbers.begin();
 			map< string, string >::iterator si = strings.begin();
 			map< string, Vector >::iterator vi = vectors.begin();
+			map< string, Data* >::iterator di = data.begin();
 			map< string, Table* >::iterator ti = tables.begin();
 			
 			if( numbers.size() )
-				buf << "<NUMBERS>" << endl;
-			
-			for( ; ni != numbers.end(); ++ni )	
-				buf << ni->first << '=' << ni->second << endl;
+			{
+				buf << "<NUMBERS>" << endl;			
+				for( ; ni != numbers.end(); ++ni )	
+					buf << ni->first << '=' << ni->second << endl;
+			}
 			
 			if( strings.size() )
-				buf << "<STRINGS>" << endl;
-			
-			for( ; si != strings.end(); ++si )	
-				buf << si->first << '=' << si->second << endl;
+			{
+				buf << "<STRINGS>" << endl;			
+				for( ; si != strings.end(); ++si )	
+					buf << si->first << '=' << si->second << endl;
+			}
 
 			if( vectors.size() )
-				buf << "<VECTORS>" << endl;
+			{
+				buf << "<VECTORS>" << endl;			
+				for( ; vi != vectors.end(); ++vi )
+					buf << vi->first << '=' << vi->second.x << ' ' << vi->second.y << ' ' << vi->second.z << endl;
+			}
 			
-			for( ; vi != vectors.end(); ++vi )
-				buf << vi->first << '=' << vi->second.x << ' ' << vi->second.y << ' ' << vi->second.z << endl;
-			
+			if( data.size() )
+			{
+				buf << "<DATA>" << endl;
+				for( ; di != data.end(); ++di )
+				{
+					buf << di->first << '=' << di->second->size() << ' ';
+					buf.write( (const char*)di->second->_getArrayPointer(), di->second->size() );
+					buf << endl;
+				}					
+			}
+
 			if( tables.size() )
+			{
 				buf << "<TABLES>" << endl;
 			
-			for( ; ti != tables.end(); ++ti )	
-				 ti->second->serialize( buf );
+				for( ; ti != tables.end(); ++ti )	
+					 ti->second->serialize( buf );
+			}
 						
 			buf << "<END>" << endl;
 		}
@@ -224,40 +268,47 @@ namespace Dojo
 
 			name = token;
 
-			int state = 0;
+			enum ParseState
+			{
+				PS_NONE,
+				PS_NUMBERS,
+				PS_STRINGS,
+				PS_VECTORS,
+				PS_DATA,
+				PS_TABLES,
+				PS_END,
+			};
 
-			while( !buf.eof() )
+			ParseState state = PS_NONE;
+
+			while( !buf.eof() && state != PS_END )
 			{
 				_getLine( buf, line, 200, '=' );
 				token.assign( line );
 
-				if( token == "<NUMBERS>" )
-					state = 0;
-				else if( token == "<STRINGS>" )
-					state = 1;
-				else if( token == "<VECTORS>" )
-					state = 2;
-				else if( token == "<TABLES>" )
-					state = 3;
-				else if( token == "<END>" )
-					break;
+				if( token == "<NUMBERS>" )		state = PS_NUMBERS;
+				else if( token == "<STRINGS>" )	state = PS_STRINGS;
+				else if( token == "<VECTORS>" )	state = PS_VECTORS;
+				else if( token == "<DATA>" )	state = PS_DATA;
+				else if( token == "<TABLES>" )	state = PS_TABLES;
+				else if( token == "<END>" )		state = PS_END;
 				else 
 				{					
 					//numbers
-					if( state == 0 )
+					if( state == PS_NUMBERS )
 					{
 						buf >> numvalue;
 
 						setNumber( token, numvalue );
 					}					
 					//strings
-					else if( state == 1 )
+					else if( state == PS_STRINGS )
 					{
 						buf.getline( line, 200 );
 						value.assign( line );
 						setString( token, value );
 					}
-					else if( state == 2 )
+					else if( state == PS_VECTORS )
 					{
 						Vector v;
 						buf >> v.x;
@@ -266,7 +317,20 @@ namespace Dojo
 
 						setVector( token, v );
 					}
-					else if( state == 2 )
+					else if ( state == PS_DATA )
+					{
+						uint size;
+
+						buf >> size;
+
+						buf.ignore(); //skip the space
+
+						Data* d = new Data( size, 0, size );
+						buf.read( (char*)d->_getArrayPointer(), size );
+
+						setData( token, d );
+					}
+					else if( state == PS_TABLES )
 					{						
 						setTable( new Table( buf ) );
 					}
@@ -282,6 +346,7 @@ namespace Dojo
 		std::map< std::string, std::string > strings;
 		std::map< std::string, Vector > vectors;
 		std::map< std::string, Table* > tables;	
+		std::map< std::string, Data* > data;
 
 		void _getLine( std::istream& in, char* buf, uint max, char delim )
 		{

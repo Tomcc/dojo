@@ -111,8 +111,9 @@ namespace Dojo
 	public:
 		
 		Vector pixelScale;
+		bool pixelPerfect;
 		
-		AnimatedQuad( GameState* level, const Vector& pos );
+		AnimatedQuad( GameState* level, const Vector& pos, bool pixelPerfect = true );
 		
 		virtual ~AnimatedQuad()
 		{

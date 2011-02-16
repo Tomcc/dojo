@@ -6,8 +6,8 @@
 
 using namespace Dojo;
 
-Sprite::Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName, float tpf ) :
-AnimatedQuad( level, pos )
+Sprite::Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName, float tpf, bool pp ) :
+AnimatedQuad( level, pos, pp )
 {				
 	if( defaultAnimName.size() )
 	{		

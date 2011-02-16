@@ -503,7 +503,7 @@ void Win32Platform::load( Table* dest )
 	//cerca tra le user prefs un file con lo stesso nome
 	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
 
-	fstream file( fileName.c_str(), ios_base::in );
+	fstream file( fileName.c_str(), ios_base::in | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
@@ -521,7 +521,7 @@ void Win32Platform::save( Table* table )
 	
 	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + table->getName() + ".txt";
 
-	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc );
+	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 
 	if( !file.is_open() )
 		return;

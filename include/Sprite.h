@@ -32,7 +32,7 @@ namespace Dojo
 				
 		typedef Array<Animation*> AnimationList;
 														
-		Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName = "", float timePerFrame = 1 );
+		Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName = "", float timePerFrame = 1, bool pixelPerfect = true );
 				
 		virtual ~Sprite()
 		{
