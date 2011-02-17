@@ -23,7 +23,7 @@ namespace Dojo {
 	{
 	public:
 		
-		bool dispose, absoluteTimeSpeed;
+		bool absoluteTimeSpeed;
 		
 		Vector position, speed;		
 		float spriteRotation, rotationSpeed;	
@@ -33,7 +33,6 @@ namespace Dojo {
 		gameState( parentLevel ),
 		speed(0,0),
 		active( true ),
-		dispose( false ),
 		absoluteTimeSpeed( false ),
 		spriteRotation( 0 ),
 		rotationSpeed( 0 )

@@ -6,6 +6,7 @@
 #include "BaseObject.h"
 #include "Vector.h"
 #include "Array.h"
+#include "Utils.h"
 
 namespace Dojo
 {
@@ -13,7 +14,25 @@ namespace Dojo
 	{
 	public:
 
-		typedef Array<byte> Data;
+		struct Data
+		{
+			void* ptr;
+			uint size;
+
+			Data() :
+			ptr( NULL ),
+			size( 0 )
+			{
+
+			}
+
+			Data( void* p, uint s ) :
+			ptr( p ),
+			size( s )
+			{
+
+			}
+		};
 
 		static const std::string UNDEFINED_STRING;
 		
@@ -75,11 +94,12 @@ namespace Dojo
 		}
 
 		///WARNING - Table DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
-		inline void setData( const std::string& key, Data* value )
+		inline void setData( const std::string& key, void* value, uint size )
 		{
 			DEBUG_ASSERT( value );
+			DEBUG_ASSERT( size );
 
-			data[ key ] = value;
+			data[ key ] = Data( value, size );
 		}
 		
 		inline void setTable( Table* value )
@@ -133,7 +153,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( name.size() );
 
-			return numbers.find( name ) != numbers.end();
+			return tables.find( name ) != tables.end();
 		}
 
 		inline bool existsAsVector( const std::string& name )
@@ -192,12 +212,12 @@ namespace Dojo
 			   return NULL;
 		}
 
-		inline Data* getData( const std::string& key )
+		inline const Data& getData( const std::string& key )
 		{
 			if( existsAsData( key ) )
 				return data[ key ];
 			else
-				return NULL;
+				return Data(0,0);
 		}		
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
@@ -210,7 +230,7 @@ namespace Dojo
 			map< string, float >::iterator ni = numbers.begin();
 			map< string, string >::iterator si = strings.begin();
 			map< string, Vector >::iterator vi = vectors.begin();
-			map< string, Data* >::iterator di = data.begin();
+			map< string, Data >::iterator di = data.begin();
 			map< string, Table* >::iterator ti = tables.begin();
 			
 			if( numbers.size() )
@@ -239,8 +259,8 @@ namespace Dojo
 				buf << "<DATA>" << endl;
 				for( ; di != data.end(); ++di )
 				{
-					buf << di->first << '=' << di->second->size() << ' ';
-					buf.write( (const char*)di->second->_getArrayPointer(), di->second->size() );
+					buf << di->first << '=' << di->second.size << ' ';
+					buf.write( (const char*)di->second.ptr, di->second.size );
 					buf << endl;
 				}					
 			}
@@ -259,14 +279,9 @@ namespace Dojo
 		void deserialize( std::istream& buf )
 		{
 			std::string token = "<TABLE>", value;
-			int numvalue;
+			float numvalue;
 
 			char line[ 200 ];
-
-			while( token == "<TABLE>" && !buf.eof() )
-				buf >> token;
-
-			name = token;
 
 			enum ParseState
 			{
@@ -325,14 +340,16 @@ namespace Dojo
 
 						buf.ignore(); //skip the space
 
-						Data* d = new Data( size, 0, size );
-						buf.read( (char*)d->_getArrayPointer(), size );
+						void* data = malloc( size );
+						buf.read( (char*)data, size );
 
-						setData( token, d );
+						setData( token, data, size );
 					}
 					else if( state == PS_TABLES )
 					{						
-						setTable( new Table( buf ) );
+						token = token.substr( 8 );
+						Table* t = createTable( token );
+						t->deserialize( buf );
 					}
 				}
 			}
@@ -345,8 +362,8 @@ namespace Dojo
 		std::map< std::string, float > numbers;
 		std::map< std::string, std::string > strings;
 		std::map< std::string, Vector > vectors;
+		std::map< std::string, Data > data;
 		std::map< std::string, Table* > tables;	
-		std::map< std::string, Data* > data;
 
 		void _getLine( std::istream& in, char* buf, uint max, char delim )
 		{
