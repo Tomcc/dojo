@@ -32,6 +32,22 @@ namespace Dojo
 				vectorArray = (T*)malloc( sizeof(T) * arraySize );
 			}
 
+			///assigment constructor - the memory is assigned to this vector
+			/**
+			WARNING - buffer has to be created with malloc()
+			*/
+			Array( T* buffer, uint size ) :
+			vectorArray( buffer ),
+			arraySize( size )
+			{
+				DEBUG_ASSERT( elements );
+				DEBUG_ASSERT( size );
+
+				elements = arraySize / sizeof( T );
+
+				pageSize = 64;
+			}
+
 			///Costruttore copia - permette di evitare l'allocazione dovuta al costruttore.
 			Array( const Array<T>& fv ) :
 			elements( fv.elements ),
