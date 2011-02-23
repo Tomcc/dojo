@@ -66,14 +66,15 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 		//compute the pixel occupied by this texture on the screen				
 		scale.x = texture->getWidth() * viewportPixelRatio.x * pixelScale.x;
 		scale.y = texture->getHeight() * viewportPixelRatio.y * pixelScale.y;	
+
+		screenSize.x = scale.x;
+		screenSize.y = scale.y;	
 	}
-	else  //no texture
+	else
 	{
-		scale = size;
+		screenSize.x = mesh->getDimensions().x * scale.x;
+		screenSize.y = mesh->getDimensions().y * scale.y;
 	}
-	
-	screenSize.x = scale.x;
-	screenSize.y = scale.y;			
 }
 
 void AnimatedQuad::_updateScreenSize()

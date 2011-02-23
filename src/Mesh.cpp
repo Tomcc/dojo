@@ -7,6 +7,33 @@
 
 using namespace Dojo;
 
+void Mesh::vertex( float x, float y )
+{				
+	DEBUG_ASSERT( isEditing() );
+
+	//grow the buffer to the needed size			
+	if( vertexCount >= vertexMaxCount )
+		setVertexCap( vertexCount+1 );
+
+	if( !currentVertex )
+		currentVertex = vertices;
+	else
+		currentVertex += vertexSize; //get to the current vertex
+
+	float* ptr = (float*)currentVertex;
+
+	ptr[0] = x;
+	ptr[1] = y;
+
+	if( x > max.x )	max.x = x;
+	else if( x < min.x ) min.x = x;
+
+	if( y > max.y ) max.y = y;
+	else if( y < min.y ) min.y = y;
+
+	++vertexCount;
+}
+
 bool Mesh::end()
 {			
 	DEBUG_ASSERT( isEditing() );

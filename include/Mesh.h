@@ -118,6 +118,21 @@ namespace Dojo
 		inline void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
 		
 		inline TriangleMode getTriangleMode()	{	return triangleMode;	}
+
+		inline const Vector& getMax()
+		{
+			return max;
+		}
+
+		inline const Vector& getMin()
+		{
+			return min;
+		}
+
+		inline Vector getDimensions()
+		{
+			return max - min;
+		}
 		
 		///tells if begin() has been called not followed by an end()
 		inline bool isEditing()
@@ -137,6 +152,9 @@ namespace Dojo
 			currentVertex = NULL;
 			vertexCount = 0;
 			indexCount = 0;
+
+			max.x = max.y = -0xfffffff;
+			min.x = min.y = 0xfffffff;
 			
 			editing = true;			
 		}
@@ -152,26 +170,7 @@ namespace Dojo
 		}
 					
 		///adds a vertex at the given position
-		inline void vertex( float x, float y )
-		{				
-			DEBUG_ASSERT( isEditing() );
-			
-			//grow the buffer to the needed size			
-			if( vertexCount >= vertexMaxCount )
-				setVertexCap( vertexCount+1 );
-
-			if( !currentVertex )
-				currentVertex = vertices;
-			else
-				currentVertex += vertexSize; //get to the current vertex
-
-			float* ptr = (float*)currentVertex;
-
-			ptr[0] = x;
-			ptr[1] = y;
-
-			++vertexCount;
-		}
+		void vertex( float x, float y );
 		
 		///adds a vertex at the given position
 		inline void vertex( float x, float y, float z )
@@ -314,6 +313,8 @@ namespace Dojo
 		}
 				
 	protected:
+
+		Vector max, min;
 				
 		uint vertexSize, vertexCount, vertexMaxCount;
 		byte* currentVertex;
