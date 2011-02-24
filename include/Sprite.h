@@ -25,8 +25,7 @@
 namespace Dojo
 {	
 	class Sprite : public AnimatedQuad
-	{
-		
+	{	
 		
 	public:		
 				

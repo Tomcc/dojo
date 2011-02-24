@@ -171,8 +171,8 @@ void Render::startFrame()
 		
 	//translate
 	glTranslatef( 
-				 -viewport->position.x,
-				 -viewport->position.y, 
+				 -viewport->getWorldPosition().x,
+				 -viewport->getWorldPosition().y, 
 				 0.f );		
 	
 	if( renderRotation == 0 || renderRotation == 180 )
@@ -220,12 +220,12 @@ void Render::renderElement( Renderable* s )
 	
 	//move
 	glTranslatef( 
-				 s->position.x,
-				 s->position.y,
-				 s->position.z );
+				 s->getWorldPosition().x,
+				 s->getWorldPosition().y,
+				 s->getWorldPosition().z );
 	
 	//rotate
-	glRotatef( s->spriteRotation, 0, 0, 1 );
+	glRotatef( s->getWorldRotation(), 0, 0, 1 );
 	
 	//and then scale with the pixel size
 	glScalef( 

@@ -19,6 +19,7 @@
 #include "Sprite.h"
 #include "Texture.h"
 #include "Platform.h"
+#include "Renderable.h"
 
 namespace Dojo {
 	
@@ -46,8 +47,8 @@ namespace Dojo {
 			fadeObject->scale.y = size.y;
 			
 			fadeObject->setVisible( false );
-			
-			level->addObject( fadeObject, 8 );		
+
+			addChild( fadeObject, 8, false );
 		}		
 						
 		virtual ~Viewport()
@@ -84,6 +85,8 @@ namespace Dojo {
 			
 			background->pixelScale.x = size.x / ss.x;
 			background->pixelScale.y = background->pixelScale.x;	
+
+			addChild( background );
 		}
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
@@ -113,19 +116,7 @@ namespace Dojo {
 		
 		virtual void action( float dt )
 		{
-			Object::action( dt );
-			
-			if( fadeObject->isVisible() )
-			{
-				fadeObject->position.x = position.x;
-				fadeObject->position.y = position.y;
-			}
-			
-			if( background )
-			{				
-				background->position.x = position.x;
-				background->position.y = position.y;
-			}		
+			Object::action( dt );	
 		}	
 				
 	protected:

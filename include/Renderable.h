@@ -111,7 +111,8 @@ namespace Dojo
 		inline bool isVisible()								{	return visible;			}
 		inline bool isFading()								{	return fading;			}
 		inline bool isRendered()							{	return rendered;		}
-		
+
+
 		virtual void prepare( const Vector& viewportPixelSize )
 		{
 			
@@ -157,6 +158,7 @@ namespace Dojo
 		
 		bool visible;
 		bool rendered;
+		bool viewspace;
 		
 		Render* render;
 		int layer;

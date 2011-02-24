@@ -14,14 +14,18 @@
 
 #include "Vector.h"
 #include "BaseObject.h"
+#include "Array.h"
 
 namespace Dojo {
 	
 	class GameState;
+	class Renderable;
 	
 	class Object : public BaseObject
 	{
 	public:
+		
+		typedef Dojo::Array< Object* > ChildList;
 		
 		bool absoluteTimeSpeed;
 		
@@ -35,7 +39,9 @@ namespace Dojo {
 		active( true ),
 		absoluteTimeSpeed( false ),
 		spriteRotation( 0 ),
-		rotationSpeed( 0 )
+		rotationSpeed( 0 ),
+		childs( NULL ),
+		parent( NULL )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
@@ -86,6 +92,16 @@ namespace Dojo {
 		inline const Vector& getHalfSize()	{	return halfSize;}	
 		
 		inline GameState* getGameState()	{	return gameState;	}
+
+		inline const Vector& getWorldPosition()
+		{
+			return worldPosition;
+		}
+
+		inline float getWorldRotation()
+		{
+			return worldRotation;
+		}
 						
 		inline bool isActive()				{	return active;	}
 		
@@ -94,9 +110,16 @@ namespace Dojo {
 		inline float getMinY()				{	return position.y - halfSize.y;	}
 		inline float getMaxY()				{	return position.y + halfSize.y;	}
 		
+		void addChild( Object* o );
+		void addChild( Renderable* o, uint layer, bool clickable );
+
 		inline bool contains( const Vector& p )
 		{
-			return p.x < getMaxX() && p.x > getMinX() && p.y < getMaxY() && p.y > getMinY();
+			return 
+				p.x < worldPosition.x + halfSize.x && 
+				p.x > worldPosition.x - halfSize.x && 
+				p.y < worldPosition.y + halfSize.y && 
+				p.y > worldPosition.y - halfSize.y;
 		}
 		
 		inline bool collidesWith( const Vector& BBPos, const Vector& BBSize )
@@ -122,14 +145,28 @@ namespace Dojo {
 		}
 		
 		virtual void action( float dt );
+
+		void _notifyParent( Object* p )
+		{
+			DEBUG_ASSERT( p );
+			DEBUG_ASSERT( !parent );
+
+			parent = p;
+		}
 		
 	protected:		
 		
 		GameState* gameState;
 		
 		Vector size, halfSize;
+		
+		Vector worldPosition;
+		float worldRotation;
 				
 		bool active;
+
+		Object* parent;
+		ChildList* childs;
 	};
 }
 
