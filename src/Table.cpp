@@ -104,7 +104,7 @@ void Table::deserialize( std::istream& buf )
 			//strings
 			else if( state == PS_STRINGS )
 			{
-				buf.getline( line, 200 );
+				_getLine( buf, line, 200, '\n' );
 				value.assign( line );
 				setString( token, value );
 			}

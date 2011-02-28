@@ -34,6 +34,12 @@ namespace Dojo
 			}
 		};
 
+		typedef std::map< std::string, float > NumberMap;
+		typedef std::map< std::string, std::string > StringMap;
+		typedef std::map< std::string, Vector > VectorMap;
+		typedef std::map< std::string, Data > DataMap;
+		typedef std::map< std::string, Table* > TableMap;
+
 		static const std::string UNDEFINED_STRING;
 		
 		Table( const std::string& tablename ) :
@@ -224,28 +230,33 @@ namespace Dojo
 		void serialize( std::ostream& buf);
 
 		void deserialize( std::istream& buf );
+
+		inline const TableMap& _getTables()
+		{
+			return tables;
+		}
 				
 	protected:
 		
 		std::string name;
 		
-		std::map< std::string, float > numbers;
-		std::map< std::string, std::string > strings;
-		std::map< std::string, Vector > vectors;
-		std::map< std::string, Data > data;
-		std::map< std::string, Table* > tables;	
+		NumberMap numbers;
+		StringMap strings;
+		VectorMap vectors;
+		DataMap data;
+		TableMap tables;	
 
 		void _getLine( std::istream& in, char* buf, uint max, char delim )
 		{
 			char c='\n';
 			uint i=0;
 
-			while( c == '\n' )
+			while( c == '\n' || c == '\r' )
 				in.read( &c, 1 );
 
 			while( !in.eof() && i < max )
 			{
-				if( c == delim || c == '\n' )
+				if( c == delim || c == '\n' || c == '\r' )
 				{
 					buf[i] = 0;
 					return;
@@ -255,6 +266,9 @@ namespace Dojo
 
 				in.read( &c, 1 );
 			}
+
+			if( i < max )
+				buf[i] = 0;
 		}
 	};
 }
