@@ -14,7 +14,7 @@ AnimatedQuad::AnimatedQuad( GameState* level, const Vector& pos, bool pp ) :
 Renderable( level, pos ),
 animation( NULL ),
 animationTime( 0 ),
-pixelScale( 1,1,1 ),
+pixelScale( 1,1 ),
 autoAdvancement( true ),
 pixelPerfect( pp )
 {
@@ -87,7 +87,11 @@ void AnimatedQuad::_updateScreenSize()
 }
 bool AnimatedQuad::_canBeRenderedBy( Viewport* v )
 {
-	return rendered = Math::AABBCollides( position, screenSize, v->position, v->getSize());
+	return rendered = Math::AABBCollides( 
+		worldPosition + mesh->getCenter(), 
+		screenSize , 
+		v->getWorldPosition(), 
+		v->getSize());
 }
 
 

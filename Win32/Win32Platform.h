@@ -33,8 +33,8 @@ namespace Dojo
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
 		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
 		
-		virtual void load(  Table* dest );
-		virtual void save( Table* table );
+		virtual void load(  Table* dest, const std::string& relPath = "" );
+		virtual void save( Table* table, const std::string& relPath = "" );
 
 		virtual void openWebPage( const std::string& site );
 

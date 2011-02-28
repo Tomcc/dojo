@@ -14,6 +14,7 @@
 
 #include "Color.h"
 #include "BaseObject.h"
+#include "Vector.h"
 
 namespace Dojo
 {
@@ -26,11 +27,17 @@ namespace Dojo
 	public:
 				
 		Color color;
-		
+
+		Vector textureOffset, textureScale;
+		float textureRotation;
+
 		RenderState() :
 		alphaRequired( true ),
 		mesh( NULL ),
-		texture( NULL )
+		texture( NULL ),
+		textureRotation( 0 ),
+		textureTransform( false ),
+		textureScale( 1,1 )
 		{
 			
 		}
@@ -50,6 +57,10 @@ namespace Dojo
 		}
 
 		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}
+		inline void setRequiresTextureTransform( bool req )
+		{
+			textureTransform = req;
+		}
 				
 		inline Texture* getTexture()			{	return texture;			}
 		inline Mesh* getMesh()					{	return mesh;			}		
@@ -80,6 +91,7 @@ namespace Dojo
 	protected:
 			
 		bool alphaRequired;
+		bool textureTransform;
 		
 		Texture* texture;
 		Mesh* mesh;

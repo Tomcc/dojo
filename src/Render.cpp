@@ -212,6 +212,7 @@ void Render::renderElement( Renderable* s )
 	
 	//change the renderstate
 	s->commitChanges( currentRenderState );
+
 	currentRenderState = s;
 	
 	//clone the view matrix on the top of the stack		
@@ -222,7 +223,7 @@ void Render::renderElement( Renderable* s )
 	glTranslatef( 
 				 s->getWorldPosition().x,
 				 s->getWorldPosition().y,
-				 s->getWorldPosition().z );
+				 0 );
 	
 	//rotate
 	glRotatef( s->getWorldRotation(), 0, 0, 1 );
@@ -231,7 +232,7 @@ void Render::renderElement( Renderable* s )
 	glScalef( 
 			 s->scale.x,
 			 s->scale.y, 
-			 s->scale.z );
+			 1 );
 	
 	Mesh* m = currentRenderState->getMesh();
 

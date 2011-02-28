@@ -129,9 +129,14 @@ namespace Dojo
 			return min;
 		}
 
-		inline Vector getDimensions()
+		inline const Vector& getDimensions()
 		{
-			return max - min;
+			return dimensions;
+		}
+
+		inline const Vector& getCenter()
+		{
+			return center;
 		}
 		
 		///tells if begin() has been called not followed by an end()
@@ -314,7 +319,7 @@ namespace Dojo
 				
 	protected:
 
-		Vector max, min;
+		Vector max, min, center, dimensions;
 				
 		uint vertexSize, vertexCount, vertexMaxCount;
 		byte* currentVertex;

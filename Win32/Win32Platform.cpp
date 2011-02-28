@@ -494,14 +494,18 @@ std::string Win32Platform::_getUserDirectory()
 	return _toNormalPath( dir );
 }
 
-void Win32Platform::load( Table* dest )
+void Win32Platform::load( Table* dest, const std::string& relPath )
 {
 	DEBUG_ASSERT( dest );
 
 	using namespace std;
 	
 	//cerca tra le user prefs un file con lo stesso nome
-	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
+	string fileName;	
+	if( relPath.size() == 0 )
+		fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
+	else
+		fileName = relPath + "/" + dest->getName() + ".txt";
 
 	fstream file( fileName.c_str(), ios_base::in | ios_base::binary );
 
@@ -513,20 +517,24 @@ void Win32Platform::load( Table* dest )
 	file.close();
 }
 
-void Win32Platform::save( Table* table )
+void Win32Platform::save( Table* src, const std::string& relPath )
 {
-	DEBUG_ASSERT( table );
+	DEBUG_ASSERT( src );
 
 	using namespace std;
-	
-	string fileName = _getUserDirectory() + "/" + game->getName() + "/" + table->getName() + ".txt";
+
+	std::string fileName;
+	if( relPath.size() == 0 )
+		fileName = _getUserDirectory() + "/" + game->getName() + "/" + src->getName() + ".txt";
+	else
+		fileName = relPath + "/" + src->getName() + ".txt";
 
 	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
 
-	table->serialize( file );
+	src->serialize( file );
 
 	file.close();
 }

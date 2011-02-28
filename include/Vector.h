@@ -22,25 +22,23 @@ namespace Dojo
 		static const Vector UNIT_Y;
 		static const Vector ONE;
 		
-		float x, y, z;
+		float x, y;
 		
 		Vector() 
 		{
-			x = y = z = 0;
+			x = y = 0;
 		}
 		
-		Vector( float X, float Y, float Z = 0 ) 
+		Vector( float X, float Y ) 
 		{
 			x = X;
 			y = Y;
-			z = Z;
 		}	
 		
 		inline const Vector& operator = ( const Vector& v )
 		{
 			x = v.x;
 			y = v.y;
-			z = v.z;
 			
 			return *this;
 		}
@@ -49,7 +47,6 @@ namespace Dojo
 		{
 			x += v.x;
 			y += v.y;
-			z += v.z;
 			
 			return *this;
 		}
@@ -58,7 +55,6 @@ namespace Dojo
 		{
 			x -= v.x;
 			y -= v.y;
-			z -= v.z;
 			
 			return *this;
 		}
@@ -67,7 +63,6 @@ namespace Dojo
 		{
 			x *= s;
 			y *= s;
-			z *= s;
 			
 			return *this;
 		}
@@ -76,54 +71,57 @@ namespace Dojo
 		{
 			x /= s;
 			y /= s;
-			z /= s;
 			
 			return *this;
 		}
 		
 		inline Vector operator + ( const Vector& v ) const 
 		{
-			return Vector( x + v.x, y + v.y, z + v.z );
+			return Vector( x + v.x, y + v.y );
 		}
 
 		inline Vector operator - ( const Vector& v ) const 
 		{
-			return Vector( x - v.x, y - v.y, z - v.z );
+			return Vector( x - v.x, y - v.y );
+		}
+
+		inline Vector operator * ( float s ) const 
+		{
+			return Vector( x*s, y*s );
 		}
 
 		inline float operator * ( const Vector& v ) const 
 		{
-			return x*v.x + y*v.y + z*v.z;
+			return x*v.x + y*v.y;
 		}
 
 		inline float lenght()
 		{
-			return sqrt( x*x + y*y + z*z );
+			return sqrt( x*x + y*y );
 		}
 
 		inline float lenghtSquared()
 		{
-			return x*x + y*y + z*z;
+			return x*x + y*y;
 		}
 		
 		inline const Vector& normalize()
 		{
-			float s = 1.f / sqrt( x*x + y*y + z*z );
+			float s = 1.f / sqrt( x*x + y*y );
 			x *= s;
 			y *= s;
-			z *= s;
 			
 			return *this;
 		}	
 		
 		inline float distance( const Vector& v ) const 
 		{
-			return sqrt( (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z) );
+			return sqrt( (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) );
 		}
 		
 		inline float distanceSquared( const Vector& v ) const
 		{
-			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
+			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y);
 		}
 		
 		inline bool isNear( const Vector& v, float threshold = 0.1 )

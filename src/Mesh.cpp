@@ -31,6 +31,11 @@ void Mesh::vertex( float x, float y )
 	if( y > max.y ) max.y = y;
 	else if( y < min.y ) min.y = y;
 
+	center.x = (max.x + min.x)*0.5f;
+	center.y = (max.y + min.y)*0.5f;
+
+	dimensions = max - min;
+
 	++vertexCount;
 }
 

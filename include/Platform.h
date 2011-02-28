@@ -70,8 +70,8 @@ namespace Dojo
 		///loads the given file in a buffer - WARNING not every format is supported on every platform
 		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path )=0;
 
-		virtual void load( Table* dest )=0;
-		virtual void save( Table* table )=0;
+		virtual void load( Table* dest, const std::string& relPath = "" )=0;
+		virtual void save( Table* table, const std::string& relPath = "" )=0;
 		
 		virtual bool isSystemSoundInUse()
 		{
