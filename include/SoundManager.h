@@ -79,6 +79,7 @@ namespace Dojo {
 				
 				SoundSource* s = getSoundSource( set );
 				s->setPosition( pos );
+
 				return s;
 			}
 

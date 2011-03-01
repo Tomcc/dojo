@@ -41,6 +41,7 @@ namespace Dojo
 		typedef std::map< std::string, Table* > TableMap;
 
 		static const std::string UNDEFINED_STRING;
+		static Table EMPTY_TABLE;
 		
 		Table( const std::string& tablename ) :
 		name( tablename )
@@ -112,9 +113,9 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( value );
 			
-			Table* old = getTable( value->getName() );
-			if( old )
-				delete old;  //evita mem leaks
+			//avoid mem leaks
+			if( existsAsTable( value->getName() ) )
+				delete tables[ value->getName() ];
 			
 			tables[ value->getName() ] = value;
 		}
@@ -215,7 +216,7 @@ namespace Dojo
 			if( existsAsTable(key) )
 			   return tables[key];
 		   else
-			   return NULL;
+			   return &EMPTY_TABLE;
 		}
 
 		inline const Data& getData( const std::string& key )
@@ -225,6 +226,11 @@ namespace Dojo
 			else
 				return Data(0,0);
 		}		
+
+		inline bool isEmpty()
+		{
+			return (numbers.size() + strings.size() + vectors.size() + data.size() + tables.size() ) == 0;
+		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
 		void serialize( std::ostream& buf);

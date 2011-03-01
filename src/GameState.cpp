@@ -102,7 +102,18 @@ void GameState::updateObjects( float dt )
 	{
 		o = objects.at(i);
 		
-		if( o->isActive()	)
+		if( o->dispose )
+		{
+			o->onDestruction();
+
+			removeObject( o );
+
+			delete o;
+
+			--i;
+		}
+
+		else if( o->isActive() )
 			o->action( dt );
 	}			
 }

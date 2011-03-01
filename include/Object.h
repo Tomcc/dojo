@@ -28,6 +28,8 @@ namespace Dojo {
 		typedef Dojo::Array< Object* > ChildList;
 		
 		bool absoluteTimeSpeed;
+
+		bool dispose;
 		
 		Vector position, speed;		
 		float spriteRotation, rotationSpeed;	
@@ -41,7 +43,8 @@ namespace Dojo {
 		spriteRotation( 0 ),
 		rotationSpeed( 0 ),
 		childs( NULL ),
-		parent( NULL )
+		parent( NULL ),
+		dispose( false )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
@@ -144,6 +147,11 @@ namespace Dojo {
 		}
 		
 		virtual void action( float dt );
+
+		virtual void onDestruction()
+		{
+
+		}
 
 		void _notifyParent( Object* p )
 		{

@@ -93,8 +93,8 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	RegisterClass(&wc);
 
 	RECT rect;
-	rect.top = 200;
-	rect.left = 200;
+	rect.top = 100;
+	rect.left = 100;
 	rect.bottom = rect.top + h + 7;
 	rect.right = rect.left + w;
 
