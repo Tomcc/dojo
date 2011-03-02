@@ -101,9 +101,9 @@ namespace Dojo
 			float getVolume();	
 			
 			///Metodo che dice se il suono e' valido, cioe' play() avra' un effetto
-			virtual bool isValid()
+			bool isValid()
 			{
-				return true;
+				return source != 0;
 			}
 
 			///-uso interno-

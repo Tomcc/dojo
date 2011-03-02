@@ -60,9 +60,7 @@ namespace Dojo {
 		}
 		
 		void setViewport( Viewport* v );
-		
-		inline void setCullingEnabled( bool state )	{	cullingEnabled = state;	}
-				
+						
 		void setInterfaceOrientation( RenderOrientation o );
 		
 		inline RenderOrientation getInterfaceOrientation()
@@ -137,9 +135,7 @@ namespace Dojo {
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
 		
 		RenderState* currentRenderState, *firstRenderState;
-		
-		bool cullingEnabled;		
-		
+				
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;

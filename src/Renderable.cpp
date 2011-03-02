@@ -13,12 +13,9 @@ void Renderable::action( float dt )
 	
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP ;
+
+	worldUpperBound = worldPosition + mesh->getMax() - mesh->getCenter();
+	worldLowerBound = worldPosition + mesh->getMin() - mesh->getCenter();
 	
 	advanceFade(dt);
 }
-
-bool Renderable::_canBeRenderedBy( Viewport* v )
-{
-	return rendered = collidesWith( v );
-}
-

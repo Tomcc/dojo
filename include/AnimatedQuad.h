@@ -205,9 +205,6 @@ namespace Dojo
 		
 		void _updateScreenSize();
 		
-		///Animatedquads have to be rendered using their screensize as a reference
-		virtual bool _canBeRenderedBy( Viewport* v );
-		
 	protected:
 		
 		bool autoAdvancement;
@@ -222,8 +219,10 @@ namespace Dojo
 				
 		inline void _setTexture( Texture* t )
 		{			
-			texture = t;				
-			mesh = texture->getOptimalBillboard();
+			texture = t;
+
+			if( texture->isNonPowerOfTwo() )
+				mesh = texture->getOptimalBillboard();
 		}		
 	};
 }

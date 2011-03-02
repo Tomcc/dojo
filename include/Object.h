@@ -15,6 +15,7 @@
 #include "Vector.h"
 #include "BaseObject.h"
 #include "Array.h"
+#include "dojomath.h"
 
 namespace Dojo {
 	
@@ -77,11 +78,7 @@ namespace Dojo {
 		
 		inline void setSize( const Vector& bbSize )
 		{
-			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 );
-			
-			size = bbSize;
-			halfSize.x = size.x * 0.5f;
-			halfSize.y = size.y * 0.5f;
+			setSize( bbSize.x, bbSize.y );
 		}
 				
 		inline void setActive( bool a )		{	active = a;	}
@@ -108,11 +105,10 @@ namespace Dojo {
 						
 		inline bool isActive()				{	return active;	}
 		
-		inline float getMinX()				{	return position.x - halfSize.x;	}
-		inline float getMaxX()				{	return position.x + halfSize.x;	}
-		inline float getMinY()				{	return position.y - halfSize.y;	}
-		inline float getMaxY()				{	return position.y + halfSize.y;	}
-		
+		//TODO use real transforms
+		inline const Vector& getWorldMax()				{	return max;	}
+		inline const Vector& getWorldMin()				{	return min;	}
+
 		void addChild( Object* o );
 		void addChild( Renderable* o, uint layer, bool clickable );
 
@@ -125,25 +121,16 @@ namespace Dojo {
 				p.y > worldPosition.y - halfSize.y;
 		}
 		
-		inline bool collidesWith( const Vector& BBPos, const Vector& BBSize )
+		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			
-			DEBUG_ASSERT( BBSize.x > 0 );
-			DEBUG_ASSERT( BBSize.y > 0 );
-			
-			float cx = position.x + halfSize.x - BBPos.x + BBSize.x*0.5f;
-			float cy = position.y + halfSize.y - BBPos.y + BBSize.y*0.5f;
-			
-			return !(cx > size.x + BBSize.x || cx < 0) && !(cy > size.y + BBSize.y || cy < 0);		
+			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
 		}
 		
 		inline bool collidesWith( Object * t )
 		{			
 			DEBUG_ASSERT( t );
-			
-			float cx = position.x + halfSize.x - t->position.x + t->halfSize.x;
-			float cy = position.y + halfSize.y - t->position.y + t->halfSize.y;
-			
-			return !(cx > size.x + t->size.x || cx < 0) && !(cy > size.y + t->size.y || cy < 0);
+
+			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}
 		
 		virtual void action( float dt );
@@ -165,7 +152,7 @@ namespace Dojo {
 		
 		GameState* gameState;
 		
-		Vector size, halfSize;
+		Vector size, halfSize, max, min;
 		
 		Vector worldPosition;
 		float worldRotation;

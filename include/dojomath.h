@@ -93,12 +93,14 @@ namespace Dojo
 			return ( a >= 0 ) ? a : -a;
 		}
 		
-		static inline bool AABBCollides( const Vector& centerA, const Vector& sizeA, const Vector& centerB, const Vector& sizeB )
+		static inline bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
 		{
-			float cx = centerA.x + sizeA.x*0.5f - centerB.x + sizeB.x*0.5f;
-			float cy = centerA.y + sizeA.y*0.5f - centerB.y + sizeB.y*0.5f;
-			
-			return !(cx > sizeA.x + sizeB.x || cx < 0) && !(cy > sizeA.y + sizeB.y || cy < 0);		
+			float cx = maxA.x - minB.x;
+			float cy = maxA.y - minB.y;
+
+			return 
+				!(cx > (maxA.x - minA.x) + (maxB.x - minB.x) || cx < 0) &&
+				!(cy > (maxA.y - minA.y) + (maxB.y - minB.y) || cy < 0);	
 		}
 	};
 }

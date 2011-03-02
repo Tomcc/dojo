@@ -18,7 +18,6 @@ Render::Render( uint w, uint h, uint dps, RenderOrientation deviceOr ) :
 frameStarted( false ),
 viewport( NULL ),
 valid( true ),
-cullingEnabled( true ),
 width( w ),
 height( h ),
 devicePixelScale( (float)dps ),
@@ -261,7 +260,7 @@ void Render::renderLayer( RenderableList* list )
 	{
 		s = list->at(i);
 		
-		if( s->isVisible() && (!cullingEnabled || s->_canBeRenderedBy( viewport ) ) )
+		if( viewport->isSeeing(s) )
 			renderElement( s );
 	}
 }

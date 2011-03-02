@@ -57,7 +57,7 @@ float SoundSource::getVolume()
 void SoundSource::play( float volume )
 {
 	//il suono e' abilitato a suonare?
-	if( !isValid() && buffer->isLoaded() && mgr->getMasterVolume() > 0 )
+	if( !isValid() && buffer && buffer->isLoaded() && mgr->getMasterVolume() > 0 )
 		return;
 
 	if(state == SS_INITIALISING)

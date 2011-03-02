@@ -61,6 +61,8 @@ void AnimatedQuad::action( float dt )
 
 void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
+	Renderable::prepare(viewportPixelRatio);
+
 	if( texture && pixelPerfect )
 	{		
 		//compute the pixel occupied by this texture on the screen				
@@ -84,14 +86,6 @@ void AnimatedQuad::_updateScreenSize()
 	gameState->getViewport()->makeScreenSize( screenSize, texture );
 	screenSize.x *= pixelScale.x;
 	screenSize.y *= pixelScale.y;
-}
-bool AnimatedQuad::_canBeRenderedBy( Viewport* v )
-{
-	return rendered = Math::AABBCollides( 
-		worldPosition + mesh->getCenter(), 
-		screenSize , 
-		v->getWorldPosition(), 
-		v->getSize());
 }
 
 

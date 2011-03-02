@@ -33,6 +33,7 @@ namespace Dojo {
 		Object( level, pos, size ),
 		clearColor( clear ),
 		targetSize( (float)targetX, (float)targetY ),
+		cullingEnabled( true ),
 		background( NULL )
 		{
 			DEBUG_ASSERT( targetX > 0 && targetY > 0 );
@@ -90,10 +91,26 @@ namespace Dojo {
 		}
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
+
+		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 				
 		inline const Color& getClearColor()				{	return clearColor;	}
 		inline AnimatedQuad* getBackgroundSprite()		{	return background;	}
 		inline Model* getFader()						{	return fadeObject;	}
+
+		inline bool isSeeing( Renderable* s )
+		{
+			DEBUG_ASSERT( s );
+
+			return cullingEnabled && s->isVisible() && contains( s );
+		}
+
+		inline bool contains( Renderable* r )
+		{
+			DEBUG_ASSERT( r );
+
+			return Math::AABBsCollide( r->getAABBMax(), r->getAABBMin(), getWorldMax(), getWorldMin() );
+		}
 		
 		inline Vector makeWorldCoordinates( const Vector& screenPoint )
 		{
@@ -103,8 +120,8 @@ namespace Dojo {
 		inline Vector makeWorldCoordinates( int x, int y )
 		{
 			return Vector(
-						  getMinX() + (x / targetSize.x) * size.x,
-						  getMaxY() - (y / targetSize.y) * size.y );
+						  getWorldMin().x + (x / targetSize.x) * size.x,
+						  getWorldMax().y - (y / targetSize.y) * size.y );
 		}
 						
 		void makeScreenSize( Vector& dest, int w, int h );
@@ -122,6 +139,8 @@ namespace Dojo {
 	protected:
 		
 		Vector targetSize;
+
+		bool cullingEnabled;	
 		
 		AnimatedQuad* background;
 		Model* fadeObject;

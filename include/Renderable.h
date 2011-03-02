@@ -48,7 +48,6 @@ namespace Dojo
 		layer(0),
 		renderingOrder(0),
 		visible( true ),
-		rendered( false ),
 		currentFadeTime(0),
 		clickListener( NULL )
 		{
@@ -105,17 +104,18 @@ namespace Dojo
 			startFade(color, end, duration);
 		}
 		
-		inline int getLayer()								{	return layer;			}
-		inline uint getRenderingOrder()						{	return renderingOrder;	}
-		
-		inline bool isVisible()								{	return visible;			}
-		inline bool isFading()								{	return fading;			}
-		inline bool isRendered()							{	return rendered;		}
+		inline int getLayer()				{	return layer;			}
+		inline uint getRenderingOrder()		{	return renderingOrder;	}
 
+		inline const Vector& getAABBMax()	{	return worldUpperBound;	}
+		inline const Vector& getAABBMin()	{	return worldLowerBound;	}
+		
+		inline bool isVisible()				{	return visible;			}
+		inline bool isFading()				{	return fading;			}
 
 		virtual void prepare( const Vector& viewportPixelSize )
 		{
-			
+
 		}
 			
 		inline void advanceFade( float dt )		
@@ -149,16 +149,12 @@ namespace Dojo
 			layer = layerID;
 			renderingOrder = renderIdx;
 		}
-		
-		///this tells if the given viewport contains any pixel at all of this renderable
-		/** by default this checks against collision with Object's size */
-		virtual bool _canBeRenderedBy( Viewport* v );
-		
+				
 	protected:
 		
 		bool visible;
-		bool rendered;
-		bool viewspace;
+
+		Vector worldUpperBound, worldLowerBound;
 		
 		Render* render;
 		int layer;

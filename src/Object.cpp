@@ -53,6 +53,10 @@ void Object::action( float dt )
 		worldRotation = spriteRotation;
 	}	
 
+	//update max and min TODO - real transforms
+	max = worldPosition + halfSize;
+	min = worldPosition - halfSize;
+
 	if( childs )
 	{
 		for( uint i = 0; i < childs->size(); ++i )

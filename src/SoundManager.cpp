@@ -54,15 +54,14 @@ currentFadeTime(0)
     // Clear Error Code
     alCheckError();
 
-	ALuint sources[32]; //non gestiamo piu' di 32 sources
-
-	maxSources = 32;
-
-	alGenSources( maxSources, sources );
+	alGenSources( MAX_SOURCES, sources );
 
 	//preload sounds
-	for( unsigned int i = 0; i < maxSources; ++i )
+	for( unsigned int i = 0; i < MAX_SOURCES; ++i )
 		idleSoundPool.add( new SoundSource( this, sources[i] ) );
+
+	//dummy source to manage source shortage
+	fakeSource = new SoundSource( this, NULL );
 
 	setListenerPosition( Vector::ZERO );
 	setListenerOrientation( 0,0,1,0,1,0 );
@@ -76,6 +75,10 @@ SoundManager::~SoundManager()
 	
 	for( unsigned int i = 0; i < idleSoundPool.size(); ++i )
 		delete idleSoundPool.at(i);
+
+	delete fakeSource;
+
+	alDeleteSources( MAX_SOURCES, sources );
 }
 
 void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )

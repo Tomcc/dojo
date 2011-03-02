@@ -13,6 +13,8 @@
 
 #include "Platform.h"
 
+#define MAX_SOURCES 32
+
 namespace Dojo {
 
 		class SoundListener;
@@ -70,7 +72,7 @@ namespace Dojo {
 
 					return s;
 				}
-				return NULL;
+				return fakeSource;
 			}
 
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
@@ -227,11 +229,13 @@ namespace Dojo {
 			ALfloat listenerPos[3];					
 			ALfloat orientation[6];
 
-			uint maxSources;
+			ALuint sources[ MAX_SOURCES ];
 
 			//pool di suoni
 			SoundList idleSoundPool;
 			SoundList busySoundPool;
+
+			SoundSource* fakeSource;
 
 			SoundSource *musicTrack, *nextMusicTrack;
 			float halfFadeTime;
