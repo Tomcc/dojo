@@ -111,26 +111,7 @@ namespace Dojo
 			
 			//update active particles			
 			for( uint i = 0; i < firstIdleIdx; ++i )
-			{
-				p = (Particle*)pool.at(i);
-				
-				p->advanceAnim( dt );
-				p->advanceFade( dt );
-				
-				p->position.x += p->speed.x * dt;
-				p->position.y += p->speed.y * dt;	
-				
-				p->spriteRotation += p->rotationSpeed * dt;
-				
-				p->pixelScale.x += p->spriteSizeScaleSpeed * dt;
-				p->pixelScale.y += p->spriteSizeScaleSpeed * dt;
-				
-				if( p->launchTimedEvent() )
-				{
-					p->getListener()->onTimedEvent( p );
-					p->removeTimedEvent();
-				}
-			}
+				pool.at(i)->move( dt );
 		}
 									
 	protected:		
@@ -158,7 +139,12 @@ namespace Dojo
 				return pool.at( firstIdleIdx );
 			
 			return NULL;
-		}											
+		}
+
+		virtual Particle* _getParticleImpl()
+		{
+			return new Particle( this, gameState, pool.size() );
+		}
 	};
 }
 

@@ -12,7 +12,8 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	
 	if( !p ) //no idle
 	{
-		p = new Particle( this, gameState, pool.size() );
+		p = _getParticleImpl();
+
 		pool.add( p );
 		
 		_registerParticle( p );
@@ -20,7 +21,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	else
 	{				
 		//wake up
-		p->reset();
+		p->onReset();
 	}
 	
 	++firstIdleIdx;		
@@ -28,7 +29,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	p->setActive( true );
 	p->setVisible( true );
 	
-	p->position = pos;			
+	p->worldPosition = pos;			
 	p->lifeTime = timeToLive;
 	
 	//default time per frame

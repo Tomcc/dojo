@@ -17,15 +17,19 @@
 
 #include "Renderable.h"
 
-namespace Dojo {
-	
+namespace Dojo 
+{
 	class ParticlePool;
-	
-	//class tightly coupled to ParticlePool needed to create fast appearing/disappearing effects
+
+
+	///class tightly coupled to ParticlePool needed to create fast appearing/disappearing effects
 	class Particle : public AnimatedQuad 
 	{
 	public:	
-		
+
+		//HACK
+		friend class ParticlePool;
+
 		class EventListener
 		{
 		public:
@@ -35,6 +39,8 @@ namespace Dojo {
 				
 		float lifeTime;		
 		float spriteSizeScaleSpeed;
+
+		Vector acceleration;
 		
 		Particle( ParticlePool* p, GameState* level, uint i ) :
 		AnimatedQuad( level, Vector::ZERO ),
@@ -42,17 +48,24 @@ namespace Dojo {
 		index( i ),
 		lifeTime( 1 )
 		{
-			reset();
+			onReset();
 			
 			setVisible( false );
 		}		
 		
-		virtual void reset()
+		virtual void onReset()
 		{
 			AnimatedQuad::reset();
+
+			acceleration.x = 0;
+			acceleration.y = 0;
 			
 			spriteSizeScaleSpeed = 0;
 			listener = NULL;
+
+			worldPosition.x = 0;
+			worldPosition.y = 0;
+			worldRotation = 0;
 		}
 		
 		inline void setTimedEvent( EventListener* l, float lifeTime )
@@ -74,13 +87,35 @@ namespace Dojo {
 			return listener && lifeTime < eventTime;
 		}
 		
-		bool onMove( float dt )				{	return false;		}
+		void move( float dt )
+		{
+			advanceAnim( dt );
+			advanceFade( dt );
+
+			worldPosition.x += speed.x * dt;
+			worldPosition.y += speed.y * dt;	
+
+			speed.x += acceleration.x * dt;
+			speed.y += acceleration.y * dt; 
+
+			worldRotation += rotationSpeed * dt;
+
+			pixelScale.x += spriteSizeScaleSpeed * dt;
+			pixelScale.y += spriteSizeScaleSpeed * dt;
+
+			if( launchTimedEvent() )
+			{
+				getListener()->onTimedEvent( this );
+				removeTimedEvent();
+			}
+		}
 		
 		inline void _setPoolIdx( uint i )	{	index = i;			}
 		inline uint _getPoolIdx()			{	return index;		}
 		
 	protected:
 		
+
 		uint index;
 		
 		ParticlePool* pool;

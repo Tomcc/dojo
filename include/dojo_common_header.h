@@ -18,6 +18,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <limits>
 #include <fstream>
 
 #include <Poco/Mutex.h>

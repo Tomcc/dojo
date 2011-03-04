@@ -158,8 +158,8 @@ namespace Dojo
 			vertexCount = 0;
 			indexCount = 0;
 
-			max.x = max.y = -0xfffffff;
-			min.x = min.y = 0xfffffff;
+			max.x = max.y = -FLT_MAX;
+			min.x = min.y = FLT_MAX;
 			
 			editing = true;			
 		}

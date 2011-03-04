@@ -95,7 +95,7 @@ namespace Dojo
 			return x*v.x + y*v.y;
 		}
 
-		inline float lenght()
+		inline float lenght() const 
 		{
 			return sqrt( x*x + y*y );
 		}
@@ -113,6 +113,15 @@ namespace Dojo
 			
 			return *this;
 		}	
+
+		inline const Vector& reflect( const Dojo::Vector& normal )
+		{
+			float dot = 2.f * (x*normal.x + y*normal.y);
+			x -= dot * normal.x;
+			y -= dot * normal.y;
+
+			return *this;
+		}
 		
 		inline float distance( const Vector& v ) const 
 		{
