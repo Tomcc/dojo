@@ -142,7 +142,7 @@ void Render::startFrame()
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
 	
-	platform->acquireContext();
+	//platform->acquireContext();
 					
 	glViewport( 0, 0, width, height );
 	

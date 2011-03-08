@@ -45,6 +45,8 @@ namespace Dojo
 		virtual bool keyPressed(const OIS::KeyEvent &arg);
 		virtual bool keyReleased(const OIS::KeyEvent &arg);	
 
+		void _callbackThread( float frameLength );
+
 	protected:
 
 		HINSTANCE hInstance;    // window app instance
@@ -57,6 +59,8 @@ namespace Dojo
 		int width, height;
 
 		Timer frameTimer;
+
+		Poco::Semaphore frameStart;
 
 		OIS::InputManager* inputManager;
 		OIS::Mouse* mouse;
@@ -73,6 +77,7 @@ namespace Dojo
 
 		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 		void _initialiseOIS();
+
 
 	private:
 	};

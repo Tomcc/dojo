@@ -68,9 +68,10 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 Win32Platform::Win32Platform() :
 Platform(),
 dragging( false ),
-cursorPos( 0,0 )
+cursorPos( 0,0 ),
+frameStart( 1 )
 {
-
+	frameStart.wait();
 }
 
 bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w, uint h )
@@ -233,8 +234,6 @@ void Win32Platform::present()
 
 void Win32Platform::step( float dt )
 {
-	DEBUG_ASSERT( running );
-
 	//cattura l'input prima del gameplay
 	keys->capture();
 	mouse->capture();
@@ -247,14 +246,46 @@ void Win32Platform::step( float dt )
 
 }
 
+void stepCallback( void* platform )
+{
+	Win32Platform* self = (Win32Platform*)platform;
+
+	self->_callbackThread( 1.f/60.f );
+
+	//return 0;
+}
+
+void Win32Platform::_callbackThread( float frameLength )
+{
+	while( running )
+	{
+		try
+		{
+			frameStart.set();
+		}
+		catch( Poco::SystemException e )
+		{
+
+		}
+
+		Poco::Thread::sleep( frameLength * 1000 );
+	}
+}
+
 void Win32Platform::loop( float frameTime )
 {
 	frameTimer.reset();
 
+	//start timer thread
+	Poco::Thread t;
+	t.start( stepCallback, this );
+
 	float dt;
 	while( running )
 	{
-		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
+		frameStart.wait();
+
+		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
 			if( msg.message == WM_QUIT )
 				running = false;
@@ -263,17 +294,12 @@ void Win32Platform::loop( float frameTime )
 			DispatchMessage( &msg );
 		}
 
-		dt = frameTimer.getElapsedTime();
-
-		if( dt > frameTime )
-		{
-			frameTimer.reset();
-
-			step( dt );
-		}
+		step( 1.f/60.f );
 	}
 
 	shutdown();
+
+	t.join();
 }
 
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )

@@ -3,24 +3,56 @@
 
 #include "dojo_common_header.h"
 
+#include "Table.h"
+
 namespace Dojo
 {
-	class Table;
-	
+		
 	class Serializable
 	{
 	public:
 		
-		Serializable()
+		Serializable( uint uniqueID = 0 ) : 
+		ID( uniqueID )
 		{
 			
 		}
-		
-		virtual void onSerialize( Table* dest )=0;
-		
-		virtual void onDeserialize( Table* src )=0;
-		
+
+		inline void serialize( Table* t )
+		{
+			DEBUG_ASSERT( t );
+
+			if( ID )
+				t->setInteger( "ID", ID );
+
+			onSerialize( t );
+		}
+
+		inline void deserialize( Table* t )
+		{
+			DEBUG_ASSERT( t );
+
+			ID = t->getInt( "ID" );
+
+			onDeserialize( t );
+		}
+
+		inline void setUniqueID( uint uniqueID )
+		{
+			ID = uniqueID;
+		}
+				
+		inline uint getUniqueID()
+		{
+			return ID;
+		}
+
 	protected:
+
+		virtual void onSerialize( Table* dest )=0;
+		virtual void onDeserialize( Table* src )=0;
+
+		uint ID;
 	};
 }
 
