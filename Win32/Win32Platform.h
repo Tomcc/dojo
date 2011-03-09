@@ -80,6 +80,9 @@ namespace Dojo
 
 
 	private:
+
+		//hack needed because of OIS's bug
+		uint lastPressedText;
 	};
 }
 

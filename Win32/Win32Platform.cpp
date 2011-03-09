@@ -27,7 +27,6 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	switch( message )
 	{
 	case WM_CREATE:
-		Beep( 50, 10 );
 		return 0;
 		break;
 
@@ -176,6 +175,8 @@ void Win32Platform::_initialiseOIS()
 	{
 		keys = (Keyboard*)inputManager->createInputObject( OISKeyboard, true );
 		keys->setEventCallback( this );
+
+		keys->setTextTranslation( OIS::Keyboard::Unicode );
 	}
 
 	if( inputManager->getNumberOfDevices( OISMouse ) > 0 )
@@ -340,14 +341,16 @@ bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
 
 bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
 {
-	input->_fireKeyPressedEvent( (uint)arg.key );
+	lastPressedText = arg.text; 
+	
+	input->_fireKeyPressedEvent( arg.text );
 
 	return true;
 }
 
 bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 {
-	input->_fireKeyReleasedEvent( (uint)arg.key );
+	input->_fireKeyReleasedEvent( lastPressedText );
 
 	return true;
 }

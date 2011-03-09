@@ -37,8 +37,7 @@ namespace Dojo
 		private:
 		};	
 		
-		Listener* clickListener;
-		
+		Listener* clickListener;		
 		
 		Vector scale;		
 		Vector uvOffset;

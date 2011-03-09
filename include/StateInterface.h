@@ -53,9 +53,12 @@ namespace Dojo
 		}
 		
 		inline uint getCurrentState()					{	return currentState;	}
-		inline StateInterface* getCurrentStatePtr()		{	return currentStatePtr;	}
+		inline StateInterface* getChildState()		{	return currentStatePtr;	}
 		
 		inline bool isCurrentState( uint state )		{	return currentState == state;	}
+		inline bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
+
+		inline bool hasChildState()						{	return currentStatePtr != NULL;	}
 		
 		//------ eventi dello stato
 		virtual void onBegin()
