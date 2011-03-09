@@ -241,6 +241,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\TextArea.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Texture.cpp"
 				>
 			</File>

@@ -95,6 +95,8 @@ namespace Dojo
 			
 			//reset characters
 			memset( characters, 0, maxChars * sizeof( void* ) );
+
+			content.clear();
 						
 			cursorPosition = Vector::ZERO;
 			
@@ -105,7 +107,9 @@ namespace Dojo
 							
 		///async text update
 		void addText( const std::string& text, bool autoLineFeed = false )		
-		{							
+		{				
+			content += text;
+
 			//parse and setup characters
 			for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
 			{
@@ -121,6 +125,8 @@ namespace Dojo
 		
 		void addLineFeededText( const std::string& text )
 		{
+			content += text;
+
 			uint currentLineLenght = 0;
 			
 			uint lastSpace = 0;
@@ -200,93 +206,11 @@ namespace Dojo
 		
 		inline Font* getFont()					{	return font;			}		
 		inline uint getLenght()					{	return currentCharIdx;	}
+		inline const std::string& getContent()	{	return content;			}
 				
-		inline const Vector& getScreenSize()		{	return screenSize;		}	
+		inline const Vector& getScreenSize()	{	return screenSize;		}	
 		
-		void prepare( const Vector& viewportPixelRatio )
-		{
-			if( !changed )
-				return;
-			
-			//get screen size
-			screenSize.x = scale.x = font->getFontWidth() * viewportPixelRatio.x * pixelScale.x;
-			screenSize.y = scale.y = font->getFontHeight() * viewportPixelRatio.y * pixelScale.x;
-			
-			Font::Character* rep;
-			Vector newSize(0,0);
-			
-			uint lastLineVertexID = 0;
-			
-			//preallocate vertices
-			mesh->begin( currentCharIdx * 6 );
-			for( uint i = 0; i < currentCharIdx; ++i )
-			{
-				rep = characters[i];
-								
-				//avoid special chars
-				if( rep == NULL )
-				{									
-					//if centered move every character of this line along x of 1/2 size
-					if( centered )
-						_centerLastLine( lastLineVertexID, cursorPosition.x );
-					
-					cursorPosition.y -= 1.f + interline;
-					cursorPosition.x = 0;
-					
-					lastLineVertexID = mesh->getVertexCount();
-				}
-				else if( rep->character == '\t' )
-					cursorPosition.y += spaceWidth*4;
-				
-				else if( rep->character == ' ' )
-					cursorPosition.x += spaceWidth;
-				
-				else	//real character
-				{										
-					//assign vertex positions					
-					//and uv coordinates
-					mesh->vertex( cursorPosition.x, cursorPosition.y );
-					mesh->uv( rep->uvPos.x, rep->uvPos.y + font->getFontUVSize().y );
-					
-					mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y );
-					mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + font->getFontUVSize().y);
-					
-					mesh->vertex( cursorPosition.x, cursorPosition.y + 1 );
-					mesh->uv( rep->uvPos.x, rep->uvPos.y );
-					
-					mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y );
-					mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + font->getFontUVSize().y );
-					
-					mesh->vertex( cursorPosition.x, cursorPosition.y + 1 );
-					mesh->uv( rep->uvPos.x, rep->uvPos.y );
-										
-					mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y + 1 );
-					mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
-										
-					//now move to the next character
-					cursorPosition.x += rep->width + charSpacing;
-				}	
-				
-				//update size to contain cursorPos to the longest line
-				if( cursorPosition.x > newSize.x )
-					newSize.x = cursorPosition.x;		
-			}
-					
-			
-			//if centered move every character of this line along x of 1/2 size
-			if( centered )
-				_centerLastLine( lastLineVertexID, cursorPosition.x );
-						
-			//set new size
-			newSize.x *= screenSize.x;
-			newSize.y = -cursorPosition.y * screenSize.y * 1.5f;
-			setSize(newSize);	
-			
-			//push the mesh on the GPU
-			mesh->end();
-		
-			changed = false;
-		}
+		void prepare( const Vector& viewportPixelRatio );
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{
@@ -306,6 +230,8 @@ namespace Dojo
 			for( uint i = startingAt; i < mesh->getVertexCount(); ++i )
 				*(mesh->_getVertex( i )) -= halfWidth;		
 		}
+
+		std::string content;
 		
 		std::string fontName;
 		float spaceWidth, interline, charSpacing;

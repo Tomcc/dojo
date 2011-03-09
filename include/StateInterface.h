@@ -91,7 +91,6 @@ namespace Dojo
 			if( currentStatePtr )
 			{				
 				currentStatePtr->onEnd();
-				delete currentStatePtr;
 			}
 			else {
 				onStateEnd();
