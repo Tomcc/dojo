@@ -31,6 +31,19 @@ void Object::addChild( Renderable* o, uint layer, bool clickable )
 		gameState->addClickable( o );
 }
 
+void Object::removeChild( Object* o )
+{
+	DEBUG_ASSERT( o );
+
+	o->_notifyParent( NULL );
+
+	childs->remove( o );
+
+	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)o ); //if existing
+
+	gameState->removeClickableSprite( (Renderable*)o ); //if existing
+}
+
 void Object::action( float dt )
 {
 	if( absoluteTimeSpeed )  //correct time speed

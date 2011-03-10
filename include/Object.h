@@ -112,14 +112,7 @@ namespace Dojo {
 		void addChild( Object* o );
 		void addChild( Renderable* o, uint layer, bool clickable );
 
-		inline bool contains( const Vector& p )
-		{
-			return 
-				p.x < worldPosition.x + halfSize.x && 
-				p.x > worldPosition.x - halfSize.x && 
-				p.y < worldPosition.y + halfSize.y && 
-				p.y > worldPosition.y - halfSize.y;
-		}
+		void removeChild( Object* o );
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			
@@ -142,8 +135,7 @@ namespace Dojo {
 
 		void _notifyParent( Object* p )
 		{
-			DEBUG_ASSERT( p );
-			DEBUG_ASSERT( !parent );
+			DEBUG_ASSERT( p != parent );
 
 			parent = p;
 		}

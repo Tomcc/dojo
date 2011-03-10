@@ -112,6 +112,16 @@ namespace Dojo
 		inline bool isVisible()				{	return visible;			}
 		inline bool isFading()				{	return fading;			}
 
+
+		inline bool contains( const Vector& p )
+		{
+			return 
+				p.x < worldUpperBound.x && 
+				p.x > worldLowerBound.x && 
+				p.y < worldUpperBound.y && 
+				p.y > worldLowerBound.y;
+		}
+
 		virtual void prepare( const Vector& viewportPixelSize )
 		{
 

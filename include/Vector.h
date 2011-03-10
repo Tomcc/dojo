@@ -90,9 +90,20 @@ namespace Dojo
 			return Vector( x*s, y*s );
 		}
 
+		inline Vector operator / ( float s ) const 
+		{
+			float inv = 1.f/s;
+			return Vector( x*inv, y*inv );
+		}
+
 		inline float operator * ( const Vector& v ) const 
 		{
 			return x*v.x + y*v.y;
+		}
+
+		inline bool operator == ( const Vector& v ) const
+		{
+			return x == v.x && y == v.y;
 		}
 
 		inline float lenght() const 

@@ -127,9 +127,10 @@ namespace Dojo
 			numbers.clear();
 			strings.clear();
 			vectors.clear();
+			data.clear();
 						
 			//cancella tutte le tabelle figlie
-			std::map< std::string, Table* >::iterator itr;
+			TableMap::iterator itr;
 			for( itr = tables.begin(); itr != tables.end(); ++itr )
 				delete itr->second;
 			

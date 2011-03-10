@@ -56,12 +56,12 @@ namespace Dojo
 				
 			}
 
-			virtual void onKeyPressed( uint ID )
+			virtual void onKeyPressed( uint character, uint keyID )
 			{
 
 			}	
 
-			virtual void onKeyReleased( uint ID )
+			virtual void onKeyReleased( uint character, uint keyID )
 			{
 
 			}
@@ -159,21 +159,21 @@ namespace Dojo
 			}
 		}
 
-		virtual void _fireKeyPressedEvent( uint ID )
+		virtual void _fireKeyPressedEvent(Dojo::uint character, Dojo::uint keyID )
 		{
 			if( enabled )
 			{				
 				for( uint i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onKeyPressed( ID );
+					listeners.at(i)->onKeyPressed( character, keyID );
 			}
 		}
 
-		virtual void _fireKeyReleasedEvent( uint ID )
+		virtual void _fireKeyReleasedEvent(Dojo::uint character, Dojo::uint keyID )
 		{
 			if( enabled )
 			{				
 				for( uint i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onKeyReleased( ID );
+					listeners.at(i)->onKeyReleased( character, keyID );
 			}
 		}
 	

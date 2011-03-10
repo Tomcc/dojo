@@ -19,6 +19,7 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 	uint lastLineVertexID = 0;
 
 	cursorPosition.x = 0;
+	cursorPosition.y = 0;
 
 	//preallocate vertices
 	mesh->begin( currentCharIdx * 6 );
@@ -39,7 +40,7 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 			lastLineVertexID = mesh->getVertexCount();
 		}
 		else if( rep->character == '\t' )
-			cursorPosition.y += spaceWidth*4;
+			cursorPosition.x += spaceWidth*4;
 
 		else if( rep->character == ' ' )
 			cursorPosition.x += spaceWidth;
@@ -82,7 +83,7 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 
 	//set new size
 	newSize.x *= screenSize.x;
-	newSize.y = -cursorPosition.y * screenSize.y * 1.5f;
+	newSize.y = -cursorPosition.y+1 * screenSize.y * 1.5f;
 	setSize(newSize);	
 
 	//push the mesh on the GPU
