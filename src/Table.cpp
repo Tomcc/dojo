@@ -37,7 +37,11 @@ void Table::serialize( std::ostream& buf)
 	{
 		buf << "<VECTORS>" << endl;			
 		for( ; vi != vectors.end(); ++vi )
-			buf << vi->first << '=' << vi->second.x << ' ' << vi->second.y << endl;
+		{
+			buf << vi->first << '=';
+			vi->second.writeToStream( buf );
+			buf << endl;
+		}
 	}
 
 	if( data.size() )
@@ -112,8 +116,8 @@ void Table::deserialize( std::istream& buf )
 			else if( state == PS_VECTORS )
 			{
 				Vector v;
-				buf >> v.x;
-				buf >> v.y;
+
+				v.readFromStream( buf );
 
 				setVector( token, v );
 			}

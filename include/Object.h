@@ -33,7 +33,9 @@ namespace Dojo {
 		bool dispose;
 		
 		Vector position, speed;		
-		float spriteRotation, rotationSpeed;	
+		float spriteRotation, rotationSpeed;
+
+		Vector axis;
 				
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
@@ -45,7 +47,8 @@ namespace Dojo {
 		rotationSpeed( 0 ),
 		childs( NULL ),
 		parent( NULL ),
-		dispose( false )
+		dispose( false ),
+		axis( Vector::UNIT_Z )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
