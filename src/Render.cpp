@@ -160,7 +160,7 @@ void Render::startFrame()
 	glLoadIdentity();					
 	
 	//rotate to balance interface orientation
-	glRotatef( renderRotation, 0, 0, 1 );
+	glRotatef( renderRotation, viewport->axis.x, viewport->axis.y, viewport->axis.z );
 	
 	//scale with area and window ratio
 	glScalef( 
@@ -172,7 +172,7 @@ void Render::startFrame()
 	glTranslatef( 
 				 -viewport->getWorldPosition().x,
 				 -viewport->getWorldPosition().y, 
-				 0.f );		
+				 -viewport->getWorldPosition().z );		
 	
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -222,16 +222,19 @@ void Render::renderElement( Renderable* s )
 	glTranslatef( 
 				 s->getWorldPosition().x,
 				 s->getWorldPosition().y,
-				 0 );
+				 s->getWorldPosition().z );
 	
 	//rotate
-	glRotatef( s->getWorldRotation(), 0, 0, 1 );
+	glRotatef(	s->getWorldRotation(), 
+				s->axis.x,
+				s->axis.y,
+				s->axis.z );
 	
 	//and then scale with the pixel size
 	glScalef( 
 			 s->scale.x,
 			 s->scale.y, 
-			 1 );
+			 s->scale.z );
 	
 	Mesh* m = currentRenderState->getMesh();
 

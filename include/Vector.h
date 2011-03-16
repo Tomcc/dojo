@@ -162,7 +162,7 @@ namespace Dojo
 
 		inline std::ostream& writeToStream( std::ostream& str )
 		{
-			str << x << ' ' << y << ' ' << z << ' ';
+			str << x << ' ' << y << ' ' << z;
 
 			return str;
 		}
