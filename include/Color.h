@@ -46,6 +46,13 @@ namespace Dojo
 			this->b = (float)b/255.f;
 			this->a = (float)a/255.f;
 		}
+
+		///scales the color
+		/** ALPHA IS UNAFFECTED */
+		inline Color operator * ( float s ) const 
+		{			
+			return Color( r * s, g * s, b * s, a );
+		}
 				
 	protected:
 	};

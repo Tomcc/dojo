@@ -219,10 +219,10 @@ namespace Dojo
 				
 		inline void _setTexture( Texture* t )
 		{			
-			texture = t;
+			setTexture( t );
 
-			if( texture->isNonPowerOfTwo() )
-				mesh = texture->getOptimalBillboard();
+			if( t->isNonPowerOfTwo() )
+				mesh = t->getOptimalBillboard();
 		}		
 	};
 }

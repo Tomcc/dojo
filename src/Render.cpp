@@ -30,13 +30,30 @@ currentLayer( NULL )
 	platform = Platform::getSingleton();
 			
 	//gles settings
-	glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE0 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE1 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE2 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE3 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE4 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE5 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE6 );		glEnable( GL_TEXTURE_2D );
+	glActiveTexture( GL_TEXTURE7 );		glEnable( GL_TEXTURE_2D );
+
 	glEnable( GL_BLEND );	
+
+	glEnable( GL_LIGHTING );
+	glEnable( GL_DEPTH_TEST );
+	glShadeModel( GL_SMOOTH );
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+	glEnable( GL_COLOR_MATERIAL );
+
+	glColorMaterial( GL_FRONT, GL_DIFFUSE );
+
+	float black[4] = {0,0,0,1};
+	glMaterialfv( GL_FRONT, GL_AMBIENT, black );
 		
-	glDisable( GL_LIGHTING );
-	glDisable( GL_DEPTH_TEST );
 		
 	//projection is always the same
 	glMatrixMode(GL_PROJECTION);
@@ -139,10 +156,6 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 		viewportHeight = width;
 	}
 
-	//compute frustum
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
-	gluPerspective( 70, width/height, 0.1, 100 );
 
 	//put a fresh identity matrix over it
 	glPushMatrix();
@@ -165,7 +178,7 @@ void Render::startFrame()
 				 viewport->getClearColor().b, 
 				 viewport->getClearColor().a );
 	
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		
 	//load view matrix on top
 	glMatrixMode(GL_MODELVIEW);
@@ -173,18 +186,12 @@ void Render::startFrame()
 	
 	//rotate to balance interface orientation
 	glRotatef( renderRotation, viewport->axis.x, viewport->axis.y, viewport->axis.z );
-	
-	//scale with area and window ratio
-	glScalef( 
-			 2.f / viewport->getSize().x, 
-			 2.f / viewport->getSize().y, 
-			 1.f);
-		
+			
 	//translate
 	glTranslatef( 
 				 -viewport->getWorldPosition().x,
 				 -viewport->getWorldPosition().y, 
-				 -viewport->getWorldPosition().z );		
+				 -viewport->getWorldPosition().z );	
 	
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -250,13 +257,18 @@ void Render::renderElement( Renderable* s )
 			 s->scale.x,
 			 s->scale.y, 
 			 s->scale.z );
+
+	glEnable( GL_DEPTH_TEST );
 	
 	Mesh* m = currentRenderState->getMesh();
 
 	GLenum mode = (m->getTriangleMode() == Mesh::TM_STRIP) ? GL_TRIANGLE_STRIP : GL_TRIANGLES;
 
-	glDrawArrays( mode, 0, m->getVertexCount());
-	
+	if( !m->isIndexed() )
+		glDrawArrays( mode, 0, m->getVertexCount() );
+	else
+		glDrawElements( mode, m->getIndexCount(), GL_UNSIGNED_INT, 0 );
+
 	//reset original view on the top of the stack
 	glPopMatrix();
 }
@@ -278,29 +290,51 @@ void Render::renderLayer( Layer* list )
 	Renderable* s;
 
 	//make state changes
-	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
-	else					glDisable( GL_DEPTH_TEST );
+	if( list->depthCheck )	
+	{
+		glEnable( GL_DEPTH_TEST );
+		glEnable( GL_CULL_FACE );
+	}
+	else		
+	{
+		glDisable( GL_DEPTH_TEST );
+		glDisable( GL_CULL_FACE );
+	}
 
 	//we don't want different layers to be depth-checked together
 	glClear( GL_DEPTH_BUFFER_BIT );
 
-	if( list->lightingOn )	glEnable( GL_LIGHTING );
-	else					glDisable( GL_LIGHTING );
+	if( list->lightingOn )	
+		glEnable( GL_LIGHTING );
+	else
+		glDisable( GL_LIGHTING );
 
 	if( list->projectionOff != currentLayer->projectionOff )
 	{
 		if( list->projectionOff )
 		{
-			//was on, hide the frustum matrix
+			//was off, recover the frustum matrix
 			glMatrixMode( GL_PROJECTION );
-			glPushMatrix();
-			glLoadIdentity();  
+			glLoadIdentity();
+			glScalef( 
+				2.f / viewport->getSize().x, 
+				2.f / viewport->getSize().y, 
+				1.f);
+			/*glOrtho( 
+				-viewport->getHalfSize().x, 
+				viewport->getHalfSize().x,
+				-viewport->getHalfSize().y,
+				viewport->getHalfSize().y,
+				0,
+				1000 );*/
 		}
 		else
 		{
-			//was off, recover the frustum matrix
+			//TODO precompute
+			//compute frustum
 			glMatrixMode( GL_PROJECTION );
-			glPopMatrix();
+			glLoadIdentity();
+			gluPerspective( 70, 4.f/3.f, 0.1, 1000 );
 		}
 	}
 
@@ -310,7 +344,7 @@ void Render::renderLayer( Layer* list )
 	{
 		s = list->at(i);
 		
-		if( viewport->isSeeing(s) )
+		//if( viewport->isSeeing(s) )
 			renderElement( s );
 	}
 }

@@ -7,8 +7,8 @@
 
 using namespace Dojo;
 
-void Mesh::vertex( float x, float y )
-{				
+void Mesh::_prepareVertex( float x, float y, float z )
+{
 	DEBUG_ASSERT( isEditing() );
 
 	//grow the buffer to the needed size			
@@ -20,23 +20,45 @@ void Mesh::vertex( float x, float y )
 	else
 		currentVertex += vertexSize; //get to the current vertex
 
-	float* ptr = (float*)currentVertex;
-
-	ptr[0] = x;
-	ptr[1] = y;
-
 	if( x > max.x )	max.x = x;
 	else if( x < min.x ) min.x = x;
 
 	if( y > max.y ) max.y = y;
 	else if( y < min.y ) min.y = y;
 
+	if( z > max.z ) max.z = z;
+	else if( z < min.z ) min.z = z;
+
 	center.x = (max.x + min.x)*0.5f;
 	center.y = (max.y + min.y)*0.5f;
+	center.z = (max.z + min.z)*0.5f;
 
 	dimensions = max - min;
 
 	++vertexCount;
+
+	currentUVSet = 0;
+}
+
+void Mesh::vertex( float x, float y )
+{				
+	_prepareVertex(x,y,0);
+
+	float* ptr = (float*)currentVertex;
+
+	ptr[0] = x;
+	ptr[1] = y;
+}
+
+void Mesh::vertex( float x, float y, float z )
+{				
+	_prepareVertex(x,y,z);
+
+	float* ptr = (float*)currentVertex;
+
+	ptr[0] = x;
+	ptr[1] = y;
+	ptr[2] = z;
 }
 
 bool Mesh::end()
@@ -88,7 +110,7 @@ void Mesh::bind()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
 	if( vertexFields[ VF_POSITION2D ] )
-		glVertexPointer(2, GL_FLOAT, vertexSize, 0 );
+		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
 
 	else if( vertexFields[ VF_POSITION3D ] )
 		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
@@ -106,18 +128,27 @@ void Mesh::bind()
 	else
 		glDisableClientState( GL_COLOR_ARRAY );
 
-	if( vertexFields[ VF_UV ] )
+	for( uint i = 0; i < 8; ++i )
 	{
-		glTexCoordPointer(
-			2, 
-			GL_FLOAT, 
-			vertexSize, 
-			(void*)vertexFieldOffset[ VF_UV ] );
 
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
+		if( vertexFields[ VF_UV + i ] )
+		{
+			glClientActiveTexture( GL_TEXTURE0 + i );
+
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
+			glTexCoordPointer(
+				2, 
+				GL_FLOAT, 
+				vertexSize, 
+				(void*)vertexFieldOffset[ VF_UV + i ] );
+
+		}
+		else
+		{
+			glClientActiveTexture( GL_TEXTURE0 + i );
+			glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
 	}
-	else
-		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 
 	if( vertexFields[ VF_NORMAL ] )
 	{
@@ -133,14 +164,24 @@ void Mesh::bind()
 
 	if( isIndexed() )			
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
+	else
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL );
 }
 
 const uint Mesh::VERTEX_FIELD_SIZES[] = { 
 	2 * sizeof( GLfloat ),
 	3 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),  //uv0
+	2 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),
+	2 * sizeof( GLfloat ),
 	2 * sizeof( GLfloat ),
 	4 * sizeof( GLubyte ),
-	3 * sizeof( GLfloat ) };
+	3 * sizeof( GLfloat )
+};
 
 bool Mesh::load()
 {
@@ -169,11 +210,11 @@ bool Mesh::load()
 		if( state == PS_INIT )
 		{
 			//fields
-			if( Utils::tokenEquals( buf, "position_2D" ) )				setVertexFieldEnabled( VF_POSITION2D, true );			
-			else if( Utils::tokenEquals( buf, "position_3D" ) )			setVertexFieldEnabled( VF_POSITION3D, true );			
-			else if( Utils::tokenEquals( buf, "color" ) )				setVertexFieldEnabled( VF_COLOR, true );			
-			else if( Utils::tokenEquals( buf, "uv" ) )					setVertexFieldEnabled( VF_UV, true );			
-			else if( Utils::tokenEquals( buf, "normal" ) )				setVertexFieldEnabled( VF_NORMAL, true );
+			if( Utils::tokenEquals( buf, "position_2D" ) )				setVertexFieldEnabled( VF_POSITION2D );			
+			else if( Utils::tokenEquals( buf, "position_3D" ) )			setVertexFieldEnabled( VF_POSITION3D );			
+			else if( Utils::tokenEquals( buf, "color" ) )				setVertexFieldEnabled( VF_COLOR );			
+			else if( Utils::tokenEquals( buf, "uv" ) )					setVertexFieldEnabled( VF_UV );			
+			else if( Utils::tokenEquals( buf, "normal" ) )				setVertexFieldEnabled( VF_NORMAL );
 			
 			//attributes
 			else if( Utils::tokenEquals( buf, "dynamic" ) ) 			dynamic = true;
@@ -210,6 +251,7 @@ bool Mesh::load()
 					z = Utils::toFloat( buf, end );
 					vertex( x,y,z );
 				}
+
 				if( isVertexFieldEnabled( VF_UV ) )
 				{
 					x = Utils::toFloat( buf, end );

@@ -37,7 +37,7 @@ void AnimatedQuad::reset()
 	
 	animation->setup(NULL, 0);
 	
-	texture = NULL;
+	setTexture( NULL );
 	mesh = gameState->getMesh( "texturedQuad" );
 }
 
@@ -63,11 +63,11 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
 	Renderable::prepare(viewportPixelRatio);
 
-	if( texture && pixelPerfect )
+	if( getTextureNumber() && pixelPerfect )
 	{		
 		//compute the pixel occupied by this texture on the screen				
-		scale.x = texture->getWidth() * viewportPixelRatio.x * pixelScale.x;
-		scale.y = texture->getHeight() * viewportPixelRatio.y * pixelScale.y;	
+		scale.x = getTexture()->getWidth() * viewportPixelRatio.x * pixelScale.x;
+		scale.y = getTexture()->getHeight() * viewportPixelRatio.y * pixelScale.y;	
 
 		screenSize.x = scale.x;
 		screenSize.y = scale.y;	
@@ -81,9 +81,9 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 
 void AnimatedQuad::_updateScreenSize()
 {
-	DEBUG_ASSERT( texture );
+	DEBUG_ASSERT( getTextureNumber() );
 	
-	gameState->getViewport()->makeScreenSize( screenSize, texture );
+	gameState->getViewport()->makeScreenSize( screenSize, getTexture() );
 	screenSize.x *= pixelScale.x;
 	screenSize.y *= pixelScale.y;
 }

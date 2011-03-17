@@ -41,7 +41,10 @@ namespace Dojo
 		virtual bool load()=0;
 		virtual void unload()=0;
 		
-		virtual void bind()=0;
+		virtual void bind( uint index )
+		{
+			DEBUG_TODO;
+		}
 		
 		inline bool isLoaded()
 		{

@@ -22,7 +22,7 @@ namespace Dojo
 	{
 	public:
 				
-		static const uint FIELDS_NUMBER = 5;	
+		static const uint FIELDS_NUMBER = 12;	
 		static const uint VERTEX_PAGE_SIZE = 32;
 		static const uint INDEX_PAGE_SIZE = 32;
 		
@@ -33,8 +33,15 @@ namespace Dojo
 			VF_POSITION2D,
 			VF_POSITION3D,
 			VF_UV,
+			VF_UV_1,
+			VF_UV_2,
+			VF_UV_3,
+			VF_UV_4,
+			VF_UV_5,
+			VF_UV_6,
+			VF_UV_7,
 			VF_COLOR,
-			VF_NORMAL
+			VF_NORMAL,
 		};
 		
 		enum TriangleMode
@@ -57,7 +64,8 @@ namespace Dojo
 		editing( false ),
 		triangleMode( TM_STRIP ),
 		vertexHandle(0),
-		indexHandle(0)
+		indexHandle(0),
+		currentUVSet(0)
 		{
 			//set all fields to zero
 			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
@@ -73,17 +81,13 @@ namespace Dojo
 			unload();
 		}
 		
-		void setVertexFieldEnabled( VertexField f, bool enable )
+		void setVertexFieldEnabled( VertexField f )
 		{			
 			if( !vertices ) //if the memory has not been created
 			{				
-				vertexFields[f] = enable;
+				vertexFields[f] = true;
 				
-				//adjust vertex size
-				if( enable )
-					vertexSize += VERTEX_FIELD_SIZES[ f ];
-				else
-					vertexSize -= VERTEX_FIELD_SIZES[ f ];
+				vertexSize += VERTEX_FIELD_SIZES[ f ];
 			}
 		}
 		
@@ -108,6 +112,25 @@ namespace Dojo
 				vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
 			}
 		}	
+
+		inline void setIndexCap( uint count )
+		{
+			if( count < indexMaxCount ) //no need to grow the buffer
+				return;
+
+			vertexMaxCount = (count/VERTEX_PAGE_SIZE + 1 ) * VERTEX_PAGE_SIZE;
+
+			if( !vertices )
+			{					
+				indices = (GLint*)malloc( sizeof(GLint) * vertexMaxCount );
+				memset( indices, 0, sizeof(GLint) * vertexMaxCount );
+			}			
+			else
+			{	
+				//TODO MAKE THIS ACTUALLY WORK
+				indices = (GLint*)realloc( indices, sizeof(GLint) * vertexMaxCount );
+			}
+		}
 		
 		///A dynamic mesh won't clear its CPU cache when loaded, and allows to call load() more than one time!
 		inline void setDynamic( bool d )
@@ -178,11 +201,11 @@ namespace Dojo
 		void vertex( float x, float y );
 		
 		///adds a vertex at the given position
-		inline void vertex( float x, float y, float z )
-		{			
-			DEBUG_ASSERT( isEditing() );
-			
-			DEBUG_TODO;
+		void vertex( float x, float y, float z );
+
+		inline void vertex( const Vector& v )
+		{
+			vertex( v.x, v.y, v.z );
 		}
 				
 		///sets the uv of the last set vertex				
@@ -190,9 +213,11 @@ namespace Dojo
 		{			
 			DEBUG_ASSERT( isEditing() );
 			
-			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV ] );
+			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV + currentUVSet ] );
 			*ptr++ = u;
 			*ptr = v;
+
+			++currentUVSet;
 		}
 		
 		//sets the color of the last set vertex		
@@ -205,6 +230,11 @@ namespace Dojo
 			*ptr++ = (GLubyte)(g*255);
 			*ptr++ = (GLubyte)(b*255);
 			*ptr = (GLubyte)(a*255);
+		}
+
+		inline void color( const Color& c )
+		{
+			color( c.r, c.g, c.b, c.a );
 		}
 		
 		///adds a vertex at the given position
@@ -219,13 +249,18 @@ namespace Dojo
 			*ptr = z;
 		}
 		
+		inline void normal( const Vector& n )
+		{
+			normal( n.x, n.y, n.z );
+		}
+
 		///adds one index
 		inline void index( uint idx )
 		{		
 			DEBUG_ASSERT( isEditing() );
 			
-			_growIndices();
-			
+			setIndexCap( indexCount + 1 );
+
 			indices[ indexCount++ ] = idx;			
 		}
 		
@@ -302,7 +337,7 @@ namespace Dojo
 			copy->indexCount = indexCount;			
 			
 			copy->setVertexCap( copy->vertexCount );
-			copy->_growIndices();
+			copy->setIndexCap( copy->indexCount );
 			
 			memcpy( copy->vertices, vertices, vertexSize * vertexMaxCount );
 			memcpy( copy->indices, indices, sizeof( uint ) * indexCount );
@@ -326,7 +361,9 @@ namespace Dojo
 		byte* vertices;
 		
 		uint indexCount, indexMaxCount;
-		uint* indices;		
+		GLint* indices;		
+
+		uint currentUVSet;
 		
 		bool vertexFields[ FIELDS_NUMBER ];		
 		uint vertexFieldOffset[ FIELDS_NUMBER ];
@@ -351,17 +388,6 @@ namespace Dojo
 			}			
 		}
 				
-		void _growIndices()
-		{			
-			indexMaxCount = (indexCount/INDEX_PAGE_SIZE + 1 ) * INDEX_PAGE_SIZE;
-			
-			if( !indices )
-				indices = (uint*)malloc( sizeof( uint ) * indexMaxCount );
-			
-			else if( indexCount >= indexMaxCount )
-				indices = (uint*)realloc( indices, sizeof( uint ) * indexMaxCount );
-		}
-		
 		void _destroyBuffers()
 		{
 			if( vertices )
@@ -376,6 +402,8 @@ namespace Dojo
 				indices = NULL;
 			}
 		}
+
+		void _prepareVertex( float x, float y, float z );
 	};
 }
 

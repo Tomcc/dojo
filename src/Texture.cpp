@@ -8,6 +8,15 @@
 
 using namespace Dojo;
 
+void Texture::bind( uint index )
+{
+	DEBUG_ASSERT( index < 8 );
+
+	glActiveTexture( GL_TEXTURE0 + index );
+
+	glBindTexture( GL_TEXTURE_2D, glhandle );
+}
+
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );
@@ -93,8 +102,8 @@ void Texture::_buildOptimalBillboard()
 {
 	OBB = new Mesh();
 	
-	OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D, true );
-	OBB->setVertexFieldEnabled( Mesh::VF_UV, true );
+	OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+	OBB->setVertexFieldEnabled( Mesh::VF_UV );
 	
 	OBB->begin( 4 );
 	

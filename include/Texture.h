@@ -65,10 +65,7 @@ namespace Dojo
 		
 		bool isLoaded()			{	return loaded;			}
 						
-		virtual void bind()
-		{
-			glBindTexture( GL_TEXTURE_2D, glhandle );
-		}
+		virtual void bind( uint index );
 		
 		inline void enableBilinearFiltering()
 		{					

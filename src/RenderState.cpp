@@ -10,7 +10,7 @@ using namespace Dojo;
 
 bool RenderState::isAlphaRequired()
 {
-	return alphaRequired || !texture;
+	return alphaRequired || getTextureNumber() == 0;
 }
 
 void RenderState::commitChanges( RenderState* pastState )
@@ -18,18 +18,17 @@ void RenderState::commitChanges( RenderState* pastState )
 	DEBUG_ASSERT( pastState );
 		
 	//bind the new texture or nothing
-	if( texture )
+	for( int i = 0; i < getTextureNumber(); ++i )
 	{
-		if( texture != pastState->texture )
-			texture->bind();
-
-		//apply transform?
-		//past state had texture transform, but we dont' need it
-
+		if( getTexture(i) != pastState->getTexture(i) )
+			getTexture(i)->bind(i);
 	}
-	else
+	
+	if(  !getTextureNumber() )
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+	//apply transform?
+	//past state had texture transform, but we dont' need it
 	if( textureTransform != pastState->textureTransform )
 	{
 		glMatrixMode( GL_TEXTURE );

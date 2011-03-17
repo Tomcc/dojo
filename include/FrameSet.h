@@ -64,15 +64,6 @@ namespace Dojo
 			loaded = false;
 		}
 		
-		///just binds the first frame!
-		virtual void bind()
-		{
-			DEBUG_ASSERT( frames.at(0) );
-			
-			if( loaded )
-				frames.at(0)->bind();
-		}
-		
 		///adds a texture to this frame set, specifying if this frameset is the only owner
 		inline void addTexture( Texture* t, bool owner = false )
 		{

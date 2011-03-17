@@ -36,17 +36,9 @@ namespace Dojo
 			RenderState::setMesh( gameState->getMesh( meshName ) );
 		}
 
-		void setTexture( FrameSet* set )
-		{			
-			if( set )			
-				texture = set->getRandomFrame();
-			else 
-				texture = NULL;
-		}
-		
 		inline void setTextureName( const std::string& name )
 		{
-			setTexture( gameState->getFrameSet( name ) );
+			setTexture( gameState->getFrameSet( name )->getRandomFrame() );
 		}
 				
 	protected:

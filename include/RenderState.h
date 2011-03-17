@@ -15,6 +15,7 @@
 #include "Color.h"
 #include "BaseObject.h"
 #include "Vector.h"
+#include "Array.h"
 
 namespace Dojo
 {
@@ -25,6 +26,8 @@ namespace Dojo
 	class RenderState : public BaseObject
 	{
 	public:
+
+		typedef Array<Texture*> TextureList;
 				
 		Color color;
 
@@ -34,7 +37,6 @@ namespace Dojo
 		RenderState() :
 		alphaRequired( true ),
 		mesh( NULL ),
-		texture( NULL ),
 		textureRotation( 0 ),
 		textureTransform( false ),
 		textureScale( 1,1 )
@@ -49,11 +51,15 @@ namespace Dojo
 			mesh = m;
 		}
 
-		void setTexture( Texture* tex )
+		void setTexture( Texture* tex, uint ID = 0 )
 		{
 			DEBUG_ASSERT( tex );
+			DEBUG_ASSERT( ID <= getTextureNumber() );
 
-			texture = tex;
+			if( ID == getTextureNumber() ) //push new
+				textures.add( tex );
+			else
+				textures.at( ID ) = tex;
 		}
 
 		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}
@@ -62,8 +68,15 @@ namespace Dojo
 			textureTransform = req;
 		}
 				
-		inline Texture* getTexture()			{	return texture;			}
-		inline Mesh* getMesh()					{	return mesh;			}		
+		inline Texture* getTexture( uint ID = 0 )			
+		{	
+			return (getTextureNumber()) ? textures.at(ID) : NULL;	
+		}
+		inline Mesh* getMesh()								{	return mesh;			}
+		inline uint getTextureNumber()
+		{
+			return textures.size();
+		}
 		
 		bool isAlphaRequired();
 		
@@ -77,7 +90,10 @@ namespace Dojo
 			if( s->mesh != mesh )
 				dist += 3;
 			
-			if( s->texture != texture )
+			if( s->getTextureNumber() != s->getTextureNumber() )
+				dist += 2;
+
+			else if( s->getTexture() != getTexture() )
 				dist += 2;
 			
 			if( s->isAlphaRequired() != isAlphaRequired() )
@@ -93,7 +109,8 @@ namespace Dojo
 		bool alphaRequired;
 		bool textureTransform;
 		
-		Texture* texture;
+		TextureList textures;
+
 		Mesh* mesh;
 	};
 }

@@ -52,7 +52,7 @@ namespace Dojo
 			DEBUG_ASSERT( font->getFrameSet() );
 			DEBUG_ASSERT( font->getFrameSet()->getFrameNumber() );
 			
-			texture = font->getFrameSet()->getFrame(0);
+			setTexture( font->getFrameSet()->getFrame(0) );
 			
 			spaceWidth = font->getCharacter(' ')->width;
 			
@@ -63,8 +63,8 @@ namespace Dojo
 			mesh = new Mesh();
 			mesh->setDynamic( true );
 			mesh->setTriangleMode( Mesh::TM_LIST );
-			mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D, true);
-			mesh->setVertexFieldEnabled( Mesh::VF_UV, true);
+			mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+			mesh->setVertexFieldEnabled( Mesh::VF_UV );
 						
 			characters = (Font::Character**)malloc( sizeof( void* ) * maxChars );
 						

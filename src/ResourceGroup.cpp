@@ -13,10 +13,11 @@ ResourceGroup::ResourceGroup()
 	//create an empty texturedQuad
 	Mesh* m = new Mesh( this );
 	m->setTriangleMode( Mesh::TM_STRIP );
-	m->setVertexFieldEnabled( Mesh::VF_POSITION2D, true );
-	m->setVertexFieldEnabled( Mesh::VF_UV, true );
+	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+	m->setVertexFieldEnabled( Mesh::VF_UV );
 	
 	m->begin(4);	
+
 	m->vertex( -0.5, -0.5 );		
 	m->uv( 0,1 );
 	

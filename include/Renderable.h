@@ -48,7 +48,8 @@ namespace Dojo
 		renderingOrder(0),
 		visible( true ),
 		currentFadeTime(0),
-		clickListener( NULL )
+		clickListener( NULL ),
+		scale(1,1,1)
 		{
 			reset();
 		}
