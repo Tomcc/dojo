@@ -22,7 +22,8 @@ width( w ),
 height( h ),
 devicePixelScale( (float)dps ),
 renderOrientation( RO_LANDSCAPE_RIGHT ),
-deviceOrientation( deviceOr )
+deviceOrientation( deviceOr ),
+currentLayer( NULL )
 {	
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
@@ -56,7 +57,7 @@ Render::~Render()
 	delete firstRenderState;
 }
 
-Render::RenderableList* Render::getLayer( int layerID )
+Render::Layer* Render::getLayer( int layerID )
 {	
 	LayerList* layerList = &positiveLayers;
 	if( layerID < 0 )
@@ -67,8 +68,11 @@ Render::RenderableList* Render::getLayer( int layerID )
 	
 	//allocate the needed layers if layerID > layer size
 	while( layerList->size() <= layerID )
-		layerList->add( new RenderableList() );	
-	
+		layerList->add( new Layer() );	
+
+	if( !currentLayer ) //first layer!
+		currentLayer = layerList->at( layerID );
+
 	//get the needed layer	
 	return layerList->at( layerID );
 }
@@ -76,7 +80,7 @@ Render::RenderableList* Render::getLayer( int layerID )
 void Render::addRenderable( Renderable* s, int layerID )
 {				
 	//get the needed layer	
-	RenderableList* layer = getLayer( layerID );
+	Layer* layer = getLayer( layerID );
 
 	//insert this object in the place where the distances from its neighbours are a minimum.	
 	uint bestIndex = 0;
@@ -153,7 +157,7 @@ void Render::startFrame()
 				 viewport->getClearColor().b, 
 				 viewport->getClearColor().a );
 	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear( GL_COLOR_BUFFER_BIT );
 		
 	//load view matrix on top
 	glMatrixMode(GL_MODELVIEW);
@@ -198,6 +202,9 @@ void Render::startFrame()
 	
 	if( bg )
 	{		
+		glDisable( GL_DEPTH_TEST );
+		glDisable( GL_LIGHTING );
+
 		renderElement( bg );
 	}
 }
@@ -255,9 +262,30 @@ void Render::endFrame()
 	frameStarted = false;
 }
 
-void Render::renderLayer( RenderableList* list )
+void Render::renderLayer( Layer* list )
 {
 	Renderable* s;
+
+	//make state changes
+	if( list->depthCheck )	glEnable( GL_DEPTH );
+	else					glDisable( GL_DEPTH );
+
+	//we don't want different layers to be depth-checked together
+	glClear( GL_DEPTH_BUFFER_BIT );
+
+	if( list->lightingOn )	glEnable( GL_LIGHTING );
+	else					glDisable( GL_LIGHTING );
+
+	glMatrixMode( GL_MODELVIEW );
+	glPushMatrix();
+
+	if( list->FOV != currentLayer->FOV )
+	{
+		//apply the new perspective to the top of the stack
+
+
+
+	}
 
 	for( uint i = 0; i < list->size(); ++i )
 	{
@@ -266,5 +294,7 @@ void Render::renderLayer( RenderableList* list )
 		if( viewport->isSeeing(s) )
 			renderElement( s );
 	}
+
+	glPopMatrix(); //drop the projection matrix of this layer
 }
 

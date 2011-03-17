@@ -27,7 +27,23 @@ namespace Dojo {
 	
 	class Render : public BaseObject
 	{	
-	public:				
+	public:		
+
+		class Layer : public Dojo::Array< Renderable* >
+		{
+		public:
+			bool depthCheck, lightingOn;
+
+			float FOV;
+
+			Layer() :
+			FOV( 0 ),
+			depthCheck( false ),
+			lightingOn( false )
+			{
+
+			}
+		};
 		
 		enum RenderOrientation
 		{
@@ -36,11 +52,8 @@ namespace Dojo {
 			RO_LANDSCAPE_LEFT,
 			RO_LANDSCAPE_RIGHT
 		};
-				
-		const static uint layerNumber = 10;
-		
-		typedef Array<Renderable*> RenderableList;
-		typedef Array<RenderableList*> LayerList;
+						
+		typedef Array< Layer* > LayerList;
 		
 		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
 		
@@ -68,7 +81,12 @@ namespace Dojo {
 			return renderOrientation;
 		}
 		
-		RenderableList* getLayer( int layerID );
+		Layer* getLayer( int layerID );
+
+		uint getLayerNumber()
+		{
+			return positiveLayers.size() + negativeLayers.size();
+		}
 		
 		inline int getScreenWidth()						{	return width;		}
 		inline int getScreenHeight()					{	return height;		}
@@ -93,7 +111,7 @@ namespace Dojo {
 		
 		void renderElement( Renderable* r );
 		
-		void renderLayer( RenderableList* list );
+		void renderLayer( Layer* list );
 		
 		void endFrame();
 		
@@ -135,6 +153,7 @@ namespace Dojo {
 		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
 		
 		RenderState* currentRenderState, *firstRenderState;
+		Layer* currentLayer;
 				
 		bool frameStarted;
 		
