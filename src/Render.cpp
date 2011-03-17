@@ -139,6 +139,14 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 		viewportHeight = width;
 	}
 
+	//compute frustum
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	gluPerspective( 70, width/height, 0.1, 100 );
+
+	//put a fresh identity matrix over it
+	glPushMatrix();
+	glLoadIdentity();
 }
 
 void Render::startFrame()
@@ -264,11 +272,14 @@ void Render::endFrame()
 
 void Render::renderLayer( Layer* list )
 {
+	if( !list->size() )
+		return;
+
 	Renderable* s;
 
 	//make state changes
-	if( list->depthCheck )	glEnable( GL_DEPTH );
-	else					glDisable( GL_DEPTH );
+	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
+	else					glDisable( GL_DEPTH_TEST );
 
 	//we don't want different layers to be depth-checked together
 	glClear( GL_DEPTH_BUFFER_BIT );
@@ -276,16 +287,24 @@ void Render::renderLayer( Layer* list )
 	if( list->lightingOn )	glEnable( GL_LIGHTING );
 	else					glDisable( GL_LIGHTING );
 
-	glMatrixMode( GL_MODELVIEW );
-	glPushMatrix();
-
-	if( list->FOV != currentLayer->FOV )
+	if( list->projectionOff != currentLayer->projectionOff )
 	{
-		//apply the new perspective to the top of the stack
-
-
-
+		if( list->projectionOff )
+		{
+			//was on, hide the frustum matrix
+			glMatrixMode( GL_PROJECTION );
+			glPushMatrix();
+			glLoadIdentity();  
+		}
+		else
+		{
+			//was off, recover the frustum matrix
+			glMatrixMode( GL_PROJECTION );
+			glPopMatrix();
+		}
 	}
+
+	currentLayer = list;
 
 	for( uint i = 0; i < list->size(); ++i )
 	{
@@ -294,7 +313,5 @@ void Render::renderLayer( Layer* list )
 		if( viewport->isSeeing(s) )
 			renderElement( s );
 	}
-
-	glPopMatrix(); //drop the projection matrix of this layer
 }
 

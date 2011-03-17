@@ -130,11 +130,6 @@ namespace Dojo {
 		{
 			makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
 		}
-		
-		virtual void action( float dt )
-		{
-			Object::action( dt );	
-		}	
 				
 	protected:
 		

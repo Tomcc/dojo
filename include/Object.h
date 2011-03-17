@@ -40,7 +40,7 @@ namespace Dojo {
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
 		gameState( parentLevel ),
-		speed(0,0),
+		speed(0,0,0),
 		active( true ),
 		absoluteTimeSpeed( false ),
 		spriteRotation( 0 ),

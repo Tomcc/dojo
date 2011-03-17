@@ -32,12 +32,10 @@ namespace Dojo {
 		class Layer : public Dojo::Array< Renderable* >
 		{
 		public:
-			bool depthCheck, lightingOn;
-
-			float FOV;
+			bool depthCheck, lightingOn, projectionOff;
 
 			Layer() :
-			FOV( 0 ),
+			projectionOff( true ),
 			depthCheck( false ),
 			lightingOn( false )
 			{
