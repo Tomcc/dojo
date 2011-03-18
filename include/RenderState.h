@@ -53,7 +53,6 @@ namespace Dojo
 
 		void setTexture( Texture* tex, uint ID = 0 )
 		{
-			DEBUG_ASSERT( tex );
 			DEBUG_ASSERT( ID <= getTextureNumber() );
 
 			if( ID == getTextureNumber() ) //push new

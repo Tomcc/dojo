@@ -53,6 +53,16 @@ namespace Dojo
 		{			
 			return Color( r * s, g * s, b * s, a );
 		}
+
+		inline Color lerp( float s, const Color& c ) const
+		{
+			float invs = 1.f-s;
+			return Color( 
+				r*invs + c.r*s, 
+				g*invs + c.g*s, 
+				b*invs + c.b*s, 
+				a*invs + c.a*s );
+		}
 				
 	protected:
 	};

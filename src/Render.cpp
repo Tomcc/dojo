@@ -42,18 +42,15 @@ currentLayer( NULL )
 	glEnable( GL_BLEND );	
 
 	glEnable( GL_LIGHTING );
+	glEnable( GL_RESCALE_NORMAL );
+	glEnable( GL_NORMALIZE );
 	glEnable( GL_DEPTH_TEST );
 	glShadeModel( GL_SMOOTH );
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	glEnable( GL_COLOR_MATERIAL );
-
 	glColorMaterial( GL_FRONT, GL_DIFFUSE );
-
-	float black[4] = {0,0,0,1};
-	glMaterialfv( GL_FRONT, GL_AMBIENT, black );
-		
 		
 	//projection is always the same
 	glMatrixMode(GL_PROJECTION);
@@ -334,7 +331,7 @@ void Render::renderLayer( Layer* list )
 			//compute frustum
 			glMatrixMode( GL_PROJECTION );
 			glLoadIdentity();
-			gluPerspective( 70, 4.f/3.f, 0.1, 1000 );
+			gluPerspective( 70, 4.f/3.f, 0.1, 100000 );
 		}
 	}
 

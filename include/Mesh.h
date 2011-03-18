@@ -23,8 +23,8 @@ namespace Dojo
 	public:
 				
 		static const uint FIELDS_NUMBER = 12;	
-		static const uint VERTEX_PAGE_SIZE = 32;
-		static const uint INDEX_PAGE_SIZE = 32;
+		static const uint VERTEX_PAGE_SIZE = 256;
+		static const uint INDEX_PAGE_SIZE = 256;
 		
 		static const uint VERTEX_FIELD_SIZES[];
 		
