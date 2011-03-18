@@ -45,6 +45,7 @@ currentLayer( NULL )
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_MULTISAMPLE );
 	glShadeModel( GL_SMOOTH );
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -332,6 +333,7 @@ void Render::renderLayer( Layer* list )
 			glMatrixMode( GL_PROJECTION );
 			glLoadIdentity();
 			gluPerspective( 70, 4.f/3.f, 0.1, 100000 );
+			glRotatef( viewport->getWorldRotation(), viewport->axis.x, viewport->axis.y, viewport->axis.z );
 		}
 	}
 
@@ -341,7 +343,8 @@ void Render::renderLayer( Layer* list )
 	{
 		s = list->at(i);
 		
-		//if( viewport->isSeeing(s) )
+		//HACK
+		if( s->isVisible() )//viewport->isSeeing(s) )
 			renderElement( s );
 	}
 }

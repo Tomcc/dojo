@@ -49,7 +49,7 @@ namespace Dojo {
 			
 			fadeObject->setVisible( false );
 
-			addChild( fadeObject, 8, false );
+			gameState->addObject( fadeObject, 8, false );
 		}		
 						
 		virtual ~Viewport()
@@ -87,7 +87,7 @@ namespace Dojo {
 			background->pixelScale.x = size.x / ss.x;
 			background->pixelScale.y = background->pixelScale.x;	
 
-			addChild( background );
+			gameState->addObject( background );
 		}
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
@@ -129,6 +129,16 @@ namespace Dojo {
 		inline void makeScreenSize( Vector& dest, Texture* tex )
 		{
 			makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
+		}
+
+		virtual void action( float dt )
+		{
+			Object::action(dt);
+
+			if( background )
+				background->position = position;
+
+			fadeObject->position = position;
 		}
 				
 	protected:

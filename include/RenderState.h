@@ -45,9 +45,7 @@ namespace Dojo
 		}
 		
 		inline void setMesh( Mesh* m )
-		{
-			DEBUG_ASSERT( m );
-			
+		{			
 			mesh = m;
 		}
 

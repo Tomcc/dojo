@@ -16,6 +16,7 @@ bool RenderState::isAlphaRequired()
 void RenderState::commitChanges( RenderState* pastState )
 {			
 	DEBUG_ASSERT( pastState );
+	DEBUG_ASSERT( mesh );
 		
 	//bind the new texture or nothing
 	for( int i = 0; i < getTextureNumber(); ++i )
