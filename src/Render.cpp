@@ -183,7 +183,7 @@ void Render::startFrame()
 	glLoadIdentity();					
 	
 	//rotate to balance interface orientation
-	glRotatef( renderRotation, viewport->axis.x, viewport->axis.y, viewport->axis.z );
+	glRotatef( renderRotation, 0,0,1 );
 			
 	//translate
 	glTranslatef( 
@@ -245,12 +245,11 @@ void Render::renderElement( Renderable* s )
 				 s->getWorldPosition().z );
 	
 	//rotate
-	glRotatef(	s->getWorldRotation(), 
-				s->axis.x,
-				s->axis.y,
-				s->axis.z );
+	glRotatef( s->getWorldRotation().x, 1,0,0 );
+	glRotatef( s->getWorldRotation().y, 0,1,0 );
+	glRotatef( s->getWorldRotation().z, 0,0,1 );
 	
-	//and then scale with the pixel size
+	//and then scale
 	glScalef( 
 			 s->scale.x,
 			 s->scale.y, 
@@ -333,7 +332,10 @@ void Render::renderLayer( Layer* list )
 			glMatrixMode( GL_PROJECTION );
 			glLoadIdentity();
 			gluPerspective( 70, 4.f/3.f, 0.1, 100000 );
-			glRotatef( viewport->getWorldRotation(), viewport->axis.x, viewport->axis.y, viewport->axis.z );
+
+			glRotatef( viewport->getWorldRotation().x, 1,0,0 );
+			glRotatef( viewport->getWorldRotation().y, 0,1,0 );
+			glRotatef( viewport->getWorldRotation().z, 0,0,1 );
 		}
 	}
 

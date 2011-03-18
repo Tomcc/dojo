@@ -48,23 +48,20 @@ void Object::action( float dt )
 {
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP;
-		
-	position.x += speed.x * dt;
-	position.y += speed.y * dt;
-	position.z += speed.z * dt;
 	
-	spriteRotation += rotationSpeed * dt;
+	position += speed * dt;	
+	angle += rotationSpeed * dt;
 
 	if( parent )  //add parent world transform
 	{
 		worldPosition = parent->worldPosition + position;
 		//TODO use rotation
-		worldRotation = parent->worldRotation + spriteRotation;
+		worldRotation = parent->worldRotation + angle;
 	}
 	else 
 	{
 		worldPosition = position;
-		worldRotation = spriteRotation;
+		worldRotation = angle;
 	}	
 
 	//update max and min TODO - real transforms

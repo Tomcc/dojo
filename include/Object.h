@@ -32,10 +32,7 @@ namespace Dojo {
 
 		bool dispose;
 		
-		Vector position, speed;		
-		float spriteRotation, rotationSpeed;
-
-		Vector axis;
+		Vector position, speed, angle, rotationSpeed;
 				
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
@@ -43,12 +40,11 @@ namespace Dojo {
 		speed(0,0,0),
 		active( true ),
 		absoluteTimeSpeed( false ),
-		spriteRotation( 0 ),
-		rotationSpeed( 0 ),
+		angle( 0,0,0 ),
+		rotationSpeed( 0,0,0 ),
 		childs( NULL ),
 		parent( NULL ),
-		dispose( false ),
-		axis( Vector::UNIT_Z )
+		dispose( false )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
@@ -65,8 +61,8 @@ namespace Dojo {
 			active = true;
 			speed.x = speed.y = 0;
 			
-			spriteRotation = 0;			
-			rotationSpeed = 0;
+			angle = Vector::ZERO;			
+			rotationSpeed = Vector::ZERO;
 		}
 		
 		inline void setSize( float x, float y )
@@ -85,12 +81,7 @@ namespace Dojo {
 		}
 				
 		inline void setActive( bool a )		{	active = a;	}
-		
-		inline void scale( float f )		
-		{
-			setSize( size.x * f, size.y * f );
-		}
-		
+				
 		inline const Vector& getSize()		{	return size;	}			
 		inline const Vector& getHalfSize()	{	return halfSize;}	
 		
@@ -101,9 +92,17 @@ namespace Dojo {
 			return worldPosition;
 		}
 
-		inline float getWorldRotation()
+		inline const Vector& getWorldRotation()
 		{
 			return worldRotation;
+		}
+
+		inline Vector getWorldDirection()
+		{
+			return Vector( 
+				sin(worldRotation.y * Math::EULER_TO_RADIANS) * cos( worldRotation.x * Math::EULER_TO_RADIANS ),
+				sin(-worldRotation.x * Math::EULER_TO_RADIANS),
+				-cos(worldRotation.x * Math::EULER_TO_RADIANS) * cos(worldRotation.y * Math::EULER_TO_RADIANS));
 		}
 						
 		inline bool isActive()				{	return active;	}
@@ -150,7 +149,7 @@ namespace Dojo {
 		Vector size, halfSize, max, min;
 		
 		Vector worldPosition;
-		float worldRotation;
+		Vector worldRotation;
 				
 		bool active;
 

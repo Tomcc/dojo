@@ -63,9 +63,8 @@ namespace Dojo
 			spriteSizeScaleSpeed = 0;
 			listener = NULL;
 
-			worldPosition.x = 0;
-			worldPosition.y = 0;
-			worldRotation = 0;
+			worldPosition = Vector::ZERO;
+			worldRotation = Vector::ZERO;
 		}
 		
 		inline void setTimedEvent( EventListener* l, float lifeTime )
