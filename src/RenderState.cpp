@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "FrameSet.h"
+#include "Timer.h"
 
 using namespace Dojo;
 
@@ -14,18 +15,22 @@ bool RenderState::isAlphaRequired()
 }
 
 void RenderState::commitChanges( RenderState* pastState )
-{			
+{
+
 	DEBUG_ASSERT( pastState );
 	DEBUG_ASSERT( mesh );
 		
 	//bind the new texture or nothing
-	for( int i = 0; i < getTextureNumber(); ++i )
+	int i = 0;
+	for( ; i < getTextureNumber() && i < pastState->getTextureNumber(); ++i )
 	{
 		if( getTexture(i) != pastState->getTexture(i) )
 			getTexture(i)->bind(i);
 	}
+	for( ; i < getTextureNumber(); ++i )
+		getTexture(i)->bind(i);
 	
-	if(  !getTextureNumber() )
+	if(  i == 0 )
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 	//apply transform?
@@ -61,5 +66,5 @@ void RenderState::commitChanges( RenderState* pastState )
 	}
 
 	//always bind color as it is just not expensive
-	glColor4f( color.r, color.g, color.b, color.a );	
+	glColor4f( color.r, color.g, color.b, color.a );
 }

@@ -54,9 +54,13 @@ void Object::action( float dt )
 
 	if( parent )  //add parent world transform
 	{
-		worldPosition = parent->worldPosition + position;
 		//TODO use rotation
-		worldRotation = parent->worldRotation + angle;
+		worldPosition = parent->worldPosition + position;
+
+		worldRotation = angle;
+
+		if( inheritAngle )
+			worldRotation += angle;
 	}
 	else 
 	{

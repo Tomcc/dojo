@@ -331,7 +331,7 @@ void Render::renderLayer( Layer* list )
 			//compute frustum
 			glMatrixMode( GL_PROJECTION );
 			glLoadIdentity();
-			gluPerspective( 70, 4.f/3.f, 0.1, 100000 );
+			gluPerspective( 70, 4.f/3.f, 0.1, 1000 );
 
 			glRotatef( viewport->getWorldRotation().x, 1,0,0 );
 			glRotatef( viewport->getWorldRotation().y, 0,1,0 );

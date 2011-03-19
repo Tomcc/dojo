@@ -14,8 +14,11 @@ void Renderable::action( float dt )
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP ;
 
-	worldUpperBound = worldPosition + mesh->getMax();
-	worldLowerBound = worldPosition + mesh->getMin();
+	if( mesh )
+	{
+		worldUpperBound = worldPosition + mesh->getMax();
+		worldLowerBound = worldPosition + mesh->getMin();
+	}
 	
 	advanceFade(dt);
 }

@@ -271,6 +271,12 @@ namespace Dojo
 			index(i3);
 		}
 
+		inline void quad(uint i11, uint i12, uint i21, uint i22 )
+		{
+			triangle(i11,i21,i12);
+			triangle(i21,i22,i12);
+		}
+
 		///loads the data on the device
 		/**
 		-will discard all the data if the buffer is static

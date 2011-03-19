@@ -48,15 +48,15 @@ namespace Dojo {
 			fadeObject->scale.y = size.y;
 			
 			fadeObject->setVisible( false );
+			fadeObject->inheritAngle = false;
 
-			gameState->addObject( fadeObject, 8, false );
+			addChild( fadeObject, 8, false );
 		}		
 						
 		virtual ~Viewport()
 		{
 			if( background )
 			{
-				gameState->removeSprite( background );
 				delete background;
 			}			
 			
@@ -70,12 +70,13 @@ namespace Dojo {
 			
 			if( background )
 			{
-				gameState->removeSprite( background );
+				removeChild( background );
 				delete background;
 			}
 			
 			background = new Sprite( gameState, position, name );
 			background->setRequiresAlpha( false );
+			background->inheritAngle = false;
 									
 			//force the proportions to fill screen
 			background->_updateScreenSize();
@@ -87,7 +88,7 @@ namespace Dojo {
 			background->pixelScale.x = size.x / ss.x;
 			background->pixelScale.y = background->pixelScale.x;	
 
-			gameState->addObject( background );
+			addChild( background );
 		}
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
@@ -134,11 +135,6 @@ namespace Dojo {
 		virtual void action( float dt )
 		{
 			Object::action(dt);
-
-			if( background )
-				background->position = position;
-
-			fadeObject->position = position;
 		}
 				
 	protected:

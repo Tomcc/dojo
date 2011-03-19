@@ -33,6 +33,120 @@ ResourceGroup::ResourceGroup()
 	m->end();
 	
 	addMesh( m, "texturedQuad" );
+
+	//create a texturedCube
+#define l 0.5f
+	
+	Mesh* cube = new Mesh( this );
+
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+
+	cube->begin( 24 );
+
+	cube->vertex( l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( l, -l, l );	cube->normal( 0,0,1 );  cube->uv(0,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,0);
+	cube->vertex( -l, -l, l );	cube->normal( 0,0,1 );	cube->uv(0,0);
+
+	cube->quad(0,1,2,3);
+
+	cube->vertex( l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
+	cube->vertex( -l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
+
+	cube->quad(4,5,6,7);
+
+	cube->vertex( l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
+	cube->vertex( l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
+	cube->vertex( l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
+
+	cube->quad(8,9,10,11);
+
+	cube->vertex( -l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
+	cube->vertex( -l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
+	cube->vertex( -l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
+
+	cube->quad(12,13,14,15);
+
+	cube->vertex( l, l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,1,0 );  cube->uv(0,1);
+	cube->vertex( l, l, -l );	cube->normal( 0,1,0 );	cube->uv(1,0);
+	cube->vertex( -l, l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
+
+	cube->quad(16,17,18,19);
+
+	cube->vertex( l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,1);
+	cube->vertex( -l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
+
+	cube->quad(20,21,22,23);
+
+	cube->end();
+
+	addMesh( cube, "texturedCube" );
+
+	//create an inverted cube (for skyboxes)
+	cube = new Mesh( this );
+
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+
+	cube->begin( 24 );
+
+	cube->vertex( l, l, l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
+	cube->vertex( l, -l, l );	cube->normal( 0,0,-1 );  cube->uv(0,1);
+	cube->vertex( -l, -l, l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
+
+	cube->quad(0,1,2,3);
+
+	cube->vertex( l, l, -l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(1,0);
+	cube->vertex( -l, l, -l );	cube->normal( 0,0,1 );	cube->uv(0,1);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(0,0);
+
+	cube->quad(4,5,6,7);
+
+	cube->vertex( l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
+	cube->vertex( l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
+	cube->vertex( l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
+
+	cube->quad(8,9,10,11);
+
+	cube->vertex( -l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	cube->vertex( -l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
+	cube->vertex( -l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
+
+	cube->quad(12,13,14,15);
+
+	cube->vertex( l, l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
+	cube->vertex( l, l, -l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
+	cube->vertex( -l, l, l );	cube->normal( 0,-1,0 );  cube->uv(0,1);
+	cube->vertex( -l, l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
+
+	cube->quad(16,17,18,19);
+
+	cube->vertex( l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( -l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,0);
+	cube->vertex( l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,1);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
+
+	cube->quad(20,21,22,23);
+
+	cube->end();
+
+	addMesh( cube, "reverseTexturedCube" );
 }
  
 ResourceGroup::~ResourceGroup()

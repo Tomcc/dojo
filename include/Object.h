@@ -31,6 +31,8 @@ namespace Dojo {
 		bool absoluteTimeSpeed;
 
 		bool dispose;
+
+		bool inheritAngle;
 		
 		Vector position, speed, angle, rotationSpeed;
 				
@@ -44,7 +46,8 @@ namespace Dojo {
 		rotationSpeed( 0,0,0 ),
 		childs( NULL ),
 		parent( NULL ),
-		dispose( false )
+		dispose( false ),
+		inheritAngle( true )
 		{
 			DEBUG_ASSERT( parentLevel );
 			
@@ -99,10 +102,7 @@ namespace Dojo {
 
 		inline Vector getWorldDirection()
 		{
-			return Vector( 
-				sin(worldRotation.y * Math::EULER_TO_RADIANS) * cos( worldRotation.x * Math::EULER_TO_RADIANS ),
-				sin(-worldRotation.x * Math::EULER_TO_RADIANS),
-				-cos(worldRotation.x * Math::EULER_TO_RADIANS) * cos(worldRotation.y * Math::EULER_TO_RADIANS));
+			return worldRotation.directionFromAngle();
 		}
 						
 		inline bool isActive()				{	return active;	}

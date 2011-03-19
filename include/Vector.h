@@ -122,7 +122,7 @@ namespace Dojo
 
 		inline float lenghtSquared() const 
 		{
-			return (*this)*(*this);
+			return x*x+y*y+z*z;
 		}
 		
 		inline const Vector& normalize()
@@ -158,6 +158,15 @@ namespace Dojo
 		inline bool isNear( const Vector& v, float threshold = 0.1 )
 		{
 			return distanceSquared( v ) < threshold*threshold;
+		}
+
+		///uses the current vector as three euler angles and returns their direction
+		inline Vector directionFromAngle()
+		{
+			return Vector( 
+				sin(y * 0.0174f) * cos( x * 0.0174f ),
+				sin(-x * 0.0174f),
+				-cos(x * 0.0174f) * cos(y * 0.0174f));
 		}
 
 		inline std::ostream& writeToStream( std::ostream& str )
