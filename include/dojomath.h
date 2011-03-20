@@ -16,6 +16,7 @@
 
 namespace Dojo 
 {
+
 	class Math
 	{	
 	public:
@@ -29,6 +30,12 @@ namespace Dojo
 		
 		static float random();
 		static float rangeRandom( float min, float max );
+		static Vector randomVector( const Vector& min, const Vector& max );
+
+		static Vector randomVector( float min, float max )
+		{
+			return randomVector( Vector(min,min,min), Vector(max,max,max) );
+		}
 		
 		static inline float toRadian( float euler )
 		{

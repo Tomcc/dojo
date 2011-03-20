@@ -178,14 +178,12 @@ namespace Dojo
 				else return false;
 			}
 
-			///Rimuove e restituisce l'elemento in coda del vettore
-			FV_INLINE T pop()
+			///Rimuove l'elemento in coda del vettore
+			FV_INLINE void pop()
 			{
 				DEBUG_ASSERT( size() );
-				
-				T* elem = vectorArray+elements-1;
+
 				elements--;
-				return *elem;
 			}
 
 			FV_INLINE T& top()

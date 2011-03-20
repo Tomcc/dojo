@@ -99,6 +99,10 @@ bool Mesh::end()
 	
 	currentVertex = NULL;
 	editing = false;
+
+	//guess triangle count
+	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();
+	triangleCount = (triangleMode == TM_LIST) ? elemCount / 3 : elemCount-2;
 				
 	return loaded;
 }

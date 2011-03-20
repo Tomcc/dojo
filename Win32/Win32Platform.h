@@ -47,6 +47,26 @@ namespace Dojo
 
 		void _callbackThread( float frameLength );
 
+		void setVSync(int interval=1)
+		{
+			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
+			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
+
+			char *extensions = (char*)glGetString( GL_EXTENSIONS );
+
+			GLenum error = glGetError();
+
+			if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+				return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
+			else
+			{
+				wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+
+				if( wglSwapIntervalEXT )
+					wglSwapIntervalEXT(interval);
+			}
+		}
+
 	protected:
 
 		HINSTANCE hInstance;    // window app instance
@@ -77,7 +97,6 @@ namespace Dojo
 
 		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 		void _initialiseOIS();
-
 
 	private:
 

@@ -16,7 +16,6 @@ bool RenderState::isAlphaRequired()
 
 void RenderState::commitChanges( RenderState* pastState )
 {
-
 	DEBUG_ASSERT( pastState );
 	DEBUG_ASSERT( mesh );
 		
@@ -28,10 +27,15 @@ void RenderState::commitChanges( RenderState* pastState )
 			getTexture(i)->bind(i);
 	}
 	for( ; i < getTextureNumber(); ++i )
+	{
 		getTexture(i)->bind(i);
-	
-	if(  i == 0 )
-		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	for( ; i < pastState->getTextureNumber(); ++i )
+	{
+		//bind nothing
+		glActiveTexture( GL_TEXTURE0 + i );
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	}
 
 	//apply transform?
 	//past state had texture transform, but we dont' need it

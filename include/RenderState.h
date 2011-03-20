@@ -51,7 +51,7 @@ namespace Dojo
 			mesh = m;
 		}
 
-		void setTexture( Texture* tex, uint ID = 0 )
+		inline void setTexture( Texture* tex, uint ID = 0 )
 		{
 			DEBUG_ASSERT( ID <= getTextureNumber() );
 
@@ -59,6 +59,11 @@ namespace Dojo
 				textures.add( tex );
 			else
 				textures.at( ID ) = tex;
+		}
+
+		inline void popTexture()
+		{
+			textures.pop();
 		}
 
 		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}

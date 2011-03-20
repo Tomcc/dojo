@@ -58,6 +58,7 @@ namespace Dojo
 		currentVertex( NULL ),
 		vertices( NULL ),
 		indexCount( 0 ),
+		triangleCount(0),
 		indexMaxCount( 0 ),
 		indices( NULL ),
 		dynamic( false ),
@@ -326,6 +327,11 @@ namespace Dojo
 		{
 			return indexCount;
 		}
+
+		inline uint getTriangleCount()
+		{
+			return triangleCount;
+		}
 		
 		///obtains a copy of this mesh
 		/**
@@ -368,6 +374,8 @@ namespace Dojo
 		
 		uint indexCount, indexMaxCount;
 		GLint* indices;		
+
+		uint triangleCount;
 
 		uint currentUVSet;
 		

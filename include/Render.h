@@ -103,6 +103,10 @@ namespace Dojo {
 		inline float getContentScale()				{	return devicePixelScale;	}
 		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
 		inline Viewport* getViewport()				{	return viewport;	}
+
+		inline uint getLastFrameVertexCount()		{	return frameVertexCount;	}
+		inline uint getLastFrameTriCount()			{	return frameTriCount;		}
+		inline uint getLastFrameBatchCount()		{	return frameBatchCount;		}
 		
 		inline bool isValid()						{	return valid;		}
 						
@@ -153,6 +157,8 @@ namespace Dojo {
 		
 		RenderState* currentRenderState, *firstRenderState;
 		Layer* currentLayer;
+
+		uint frameVertexCount, frameTriCount, frameBatchCount;
 				
 		bool frameStarted;
 		

@@ -6,7 +6,7 @@ using namespace Dojo;
 
 void TextArea::prepare( const Vector& viewportPixelRatio )
 {
-	if( !changed )
+	if( !changed || !currentCharIdx )
 		return;
 
 	//get screen size

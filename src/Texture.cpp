@@ -25,10 +25,7 @@ bool Texture::load()
 	
 	DEBUG_ASSERT( glhandle );
 	
-	glBindTexture( GL_TEXTURE_2D, glhandle );
-		
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	enableTiling();
 		
 	DEBUG_ASSERT( textureType == "png" );
 	

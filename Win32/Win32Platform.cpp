@@ -11,6 +11,8 @@
 #include <al/alut.h>
 #include <gl/glu.h>
 
+#include <gl/wglext.h>
+
 #include "Render.h"
 #include "Game.h"
 #include "Utils.h"
@@ -279,12 +281,14 @@ void Win32Platform::loop( float frameTime )
 
 	//start timer thread
 	Poco::Thread t;
-	t.start( stepCallback, this );
+	if( frameTime )
+		t.start( stepCallback, this );
 
-	float dt;
+	Timer timer;
 	while( running )
 	{
-		frameStart.wait();
+		if( frameTime > 0 )
+			frameStart.wait();
 
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
@@ -295,12 +299,13 @@ void Win32Platform::loop( float frameTime )
 			DispatchMessage( &msg );
 		}
 
-		step( 1.f/60.f );
+		step( timer.deltaTime() );
 	}
 
 	shutdown();
 
-	t.join();
+	if( frameTime )
+		t.join();
 }
 
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )

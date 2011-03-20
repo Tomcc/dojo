@@ -23,7 +23,10 @@ height( h ),
 devicePixelScale( (float)dps ),
 renderOrientation( RO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr ),
-currentLayer( NULL )
+currentLayer( NULL ),
+frameVertexCount(0),
+frameTriCount(0),
+frameBatchCount(0)
 {	
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
@@ -164,6 +167,8 @@ void Render::startFrame()
 {	
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
+
+	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	
 	//platform->acquireContext();
 					
@@ -226,6 +231,11 @@ void Render::renderElement( Renderable* s )
 {
 	DEBUG_ASSERT( frameStarted );
 	DEBUG_ASSERT( viewport );
+
+	frameVertexCount += s->getMesh()->getVertexCount();
+	frameTriCount += s->getMesh()->getTriangleCount();
+	//each renderable is a single batch
+	++frameBatchCount;
 	
 	s->prepare( viewportPixelRatio );
 	

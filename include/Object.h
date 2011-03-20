@@ -112,7 +112,7 @@ namespace Dojo {
 		inline const Vector& getWorldMin()				{	return min;	}
 
 		void addChild( Object* o );
-		void addChild( Renderable* o, uint layer, bool clickable );
+		void addChild( Renderable* o, uint layer, bool clickable = false );
 
 		void removeChild( Object* o );
 		

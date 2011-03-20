@@ -49,7 +49,8 @@ namespace Dojo {
 			{
 				for( uint i = 0; i < busySoundPool.size(); ++i )
 				{
-					SoundSource* s = busySoundPool.pop();
+					SoundSource* s = busySoundPool.top();
+					busySoundPool.pop();
 					s->stop();
 					delete s;
 				}
@@ -65,7 +66,8 @@ namespace Dojo {
 
 				if( idleSoundPool.size() > 0 && set )
 				{
-					SoundSource* s = idleSoundPool.pop();
+					SoundSource* s = idleSoundPool.top();
+					idleSoundPool.pop();
 					busySoundPool.add(s);
 
 					s->_setup( set->getBuffer( i ) );
