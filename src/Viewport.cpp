@@ -29,13 +29,10 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right
-	float screenRatio = (float)targetSize.x/(float)targetSize.y;
-	float HFOV = VFOV * screenRatio;
-
-	Vector offset( 
-		zFar * tan( Math::toRadian( HFOV*0.5 ) ),
-		zFar * tan( Math::toRadian( VFOV*0.5 ) ),
-		zFar );
+	Vector offset;
+	offset.z = zFar;
+	offset.y = zFar * tan( Math::toRadian( VFOV*0.5 ) );
+	offset.x = ((float)targetSize.x/(float)targetSize.y) * offset.y;
 
 	localFrustumVertices[0] = Vector( offset.x, offset.y, offset.z );
 	localFrustumVertices[1] = Vector( offset.x, -offset.y, offset.z );
