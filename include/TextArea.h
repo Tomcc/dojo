@@ -45,6 +45,8 @@ namespace Dojo
 		pixelScale( 1,1 )
 		{		
 			setSize( bounds );
+
+			inheritAngle = false;
 						
 			font = gameState->getFont( fontName );
 			

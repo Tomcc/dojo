@@ -34,7 +34,7 @@ namespace Dojo {
 
 		bool inheritAngle;
 		
-		Vector position, speed, angle, rotationSpeed;
+		Vector position, speed, angle, rotationSpeed, scale;
 				
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
@@ -44,6 +44,7 @@ namespace Dojo {
 		absoluteTimeSpeed( false ),
 		angle( 0,0,0 ),
 		rotationSpeed( 0,0,0 ),
+		scale( 1,1,1 ),
 		childs( NULL ),
 		parent( NULL ),
 		dispose( false ),
@@ -93,6 +94,17 @@ namespace Dojo {
 		inline const Vector& getWorldPosition()
 		{
 			return worldPosition;
+		}
+
+		///returns the world position of the given local point
+		inline Vector getWorldPosition( const Vector& localPos )
+		{
+			Vector worldPos = localPos;
+
+			worldPos.scale( scale );
+			worldPos.rotate( worldRotation );
+
+			return worldPos + worldPosition;
 		}
 
 		inline const Vector& getWorldRotation()

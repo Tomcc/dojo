@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Trail.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Vector.cpp"
 				>
 			</File>
@@ -408,6 +412,10 @@
 			</File>
 			<File
 				RelativePath=".\include\TouchSource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\Trail.h"
 				>
 			</File>
 			<File

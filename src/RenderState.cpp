@@ -69,6 +69,27 @@ void RenderState::commitChanges( RenderState* pastState )
 		glDisable(GL_BLEND);
 	}
 
+	if( cullMode != pastState->cullMode )
+	{
+		switch( cullMode )
+		{
+		case CM_DISABLED:
+			glDisable( GL_CULL_FACE );
+			break;
+
+		case CM_BACK:
+			glEnable( GL_CULL_FACE );
+			glCullFace( GL_BACK );
+			break;
+
+		case CM_FRONT:
+			glEnable( GL_CULL_FACE );
+			glCullFace( GL_FRONT );
+		}
+	}
+
 	//always bind color as it is just not expensive
 	glColor4f( color.r, color.g, color.b, color.a );
+
+	
 }

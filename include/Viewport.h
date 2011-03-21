@@ -21,25 +21,52 @@
 #include "Platform.h"
 #include "Renderable.h"
 
-namespace Dojo {
-	
+namespace Dojo 
+{	
 	class Render;
 	
 	class Viewport : public Object
 	{
 	public:
+
+		struct Plane
+		{
+			Vector n;
+			float d;
+
+			Plane() :
+			d( 0 )
+			{
+
+			}
+
+			void setup( const Vector& center, const Vector& A, const Vector& B );
+		};
 						
-		Viewport( GameState* level, const Vector& pos, const Vector& size, const Color& clear, uint targetX, uint targetY ) :
+		Viewport( 
+			GameState* level, 
+			const Vector& pos,
+			const Vector& size, 
+			const Color& clear, 
+			float _VFOV = 0, 
+			float _zNear = 0,
+			float _zFar = 0 ) :
 		Object( level, pos, size ),
 		clearColor( clear ),
-		targetSize( (float)targetX, (float)targetY ),
 		cullingEnabled( true ),
-		background( NULL )
+		background( NULL ),
+		VFOV( 70 ),
+		zNear( 0.1 ),
+		zFar( 1000 ),
+		frustumCullingEnabled( false )
 		{
-			DEBUG_ASSERT( targetX > 0 && targetY > 0 );
+			Render* render = Platform::getSingleton()->getRender();
 
-			nativeToScreenRatio = Platform::getSingleton()->getRender()->getNativeToScreenRatio();
+			nativeToScreenRatio = render->getNativeToScreenRatio();
 			
+			targetSize.x = render->getWidth();
+			targetSize.y = render->getHeight();
+
 			//create the fader object			
 			fadeObject = new Model( level, position, "texturedQuad", "" );
 			fadeObject->color = Color( 0, 0, 0, 0 );
@@ -51,6 +78,9 @@ namespace Dojo {
 			fadeObject->inheritAngle = false;
 
 			addChild( fadeObject, 8, false );
+
+			if( VFOV > 0 )
+				enableFrustum( _VFOV, _zNear, _zFar );
 		}		
 						
 		virtual ~Viewport()
@@ -62,7 +92,11 @@ namespace Dojo {
 			
 			gameState->removeSprite( fadeObject );
 			delete fadeObject;
-		}		
+		}	
+
+
+		///enable this viewport for frustum culling, setting the frustum values
+		void enableFrustum( float VFOV, float zNear, float zFar );
 		
 		inline void setBackgroundSprite( const std::string& name )
 		{			
@@ -94,10 +128,15 @@ namespace Dojo {
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
 
 		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
-				
+		
 		inline const Color& getClearColor()				{	return clearColor;	}
 		inline AnimatedQuad* getBackgroundSprite()		{	return background;	}
 		inline Model* getFader()						{	return fadeObject;	}
+		inline float getVFOV()							{	return VFOV;		}
+		inline float getZFar()							{	return zFar;		}
+		inline float getZNear()							{	return zNear;		}
+		inline const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
+		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 
 		inline bool isSeeing( Renderable* s )
 		{
@@ -135,6 +174,10 @@ namespace Dojo {
 		virtual void action( float dt )
 		{
 			Object::action(dt);
+
+			//do not call if not explicitly required
+			if( frustumCullingEnabled )
+				_updateFrustum();
 		}
 				
 	protected:
@@ -149,6 +192,18 @@ namespace Dojo {
 		Color clearColor;
 
 		float nativeToScreenRatio;
+
+		//frustum data
+		bool frustumCullingEnabled;
+
+		Vector localFrustumVertices[4];
+		Vector worldFrustumVertices[4];
+
+		Plane worldFrustumPlanes[5];
+
+		float VFOV, zNear, zFar;
+
+		void _updateFrustum();
 	};
 }
 

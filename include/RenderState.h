@@ -27,6 +27,13 @@ namespace Dojo
 	{
 	public:
 
+		enum CullMode
+		{
+			CM_FRONT,
+			CM_BACK,
+			CM_DISABLED
+		};
+
 		typedef Array<Texture*> TextureList;
 				
 		Color color;
@@ -34,12 +41,15 @@ namespace Dojo
 		Vector textureOffset, textureScale;
 		float textureRotation;
 
+		CullMode cullMode;
+
 		RenderState() :
 		alphaRequired( true ),
 		mesh( NULL ),
 		textureRotation( 0 ),
 		textureTransform( false ),
-		textureScale( 1,1 )
+		textureScale( 1,1 ),
+		cullMode( CM_BACK )
 		{
 			
 		}

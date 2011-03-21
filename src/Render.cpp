@@ -48,7 +48,10 @@ frameBatchCount(0)
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_MULTISAMPLE );
+	glEnable( GL_CULL_FACE );
+
+	glCullFace( GL_BACK );
+	
 	glShadeModel( GL_SMOOTH );
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -297,16 +300,8 @@ void Render::renderLayer( Layer* list )
 	Renderable* s;
 
 	//make state changes
-	if( list->depthCheck )	
-	{
-		glEnable( GL_DEPTH_TEST );
-		glEnable( GL_CULL_FACE );
-	}
-	else		
-	{
-		glDisable( GL_DEPTH_TEST );
-		glDisable( GL_CULL_FACE );
-	}
+	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
+	else					glDisable( GL_DEPTH_TEST );
 
 	//we don't want different layers to be depth-checked together
 	glClear( GL_DEPTH_BUFFER_BIT );
@@ -341,7 +336,11 @@ void Render::renderLayer( Layer* list )
 			//compute frustum
 			glMatrixMode( GL_PROJECTION );
 			glLoadIdentity();
-			gluPerspective( 70, 4.f/3.f, 0.1, 1000 );
+			gluPerspective( 
+				viewport->getVFOV(), 
+				(float)width/(float)height, 
+				viewport->getZNear(), 
+				viewport->getZFar() );
 
 			glRotatef( viewport->getWorldRotation().x, 1,0,0 );
 			glRotatef( viewport->getWorldRotation().y, 0,1,0 );

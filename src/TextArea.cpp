@@ -61,11 +61,12 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 			mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y );
 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + font->getFontUVSize().y );
 
+			mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y + 1 );
+			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
+
 			mesh->vertex( cursorPosition.x, cursorPosition.y + 1 );
 			mesh->uv( rep->uvPos.x, rep->uvPos.y );
 
-			mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y + 1 );
-			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
 
 			//now move to the next character
 			cursorPosition.x += rep->width + charSpacing;

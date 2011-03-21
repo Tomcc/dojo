@@ -38,8 +38,7 @@ namespace Dojo
 		};	
 		
 		Listener* clickListener;		
-		
-		Vector scale;		
+			
 		Vector uvOffset;
 				
 		Renderable( GameState* level, const Vector& pos ) :
@@ -48,8 +47,7 @@ namespace Dojo
 		renderingOrder(0),
 		visible( true ),
 		currentFadeTime(0),
-		clickListener( NULL ),
-		scale(1,1,1)
+		clickListener( NULL )
 		{
 			reset();
 		}
@@ -110,7 +108,8 @@ namespace Dojo
 		inline const Vector& getAABBMax()	{	return worldUpperBound;	}
 		inline const Vector& getAABBMin()	{	return worldLowerBound;	}
 		
-		inline bool isVisible()				{	return visible;			}
+		///tells if the object is either visible or has a mesh
+		inline bool isVisible()				{	return visible && mesh;	}
 		inline bool isFading()				{	return fading;			}
 
 
