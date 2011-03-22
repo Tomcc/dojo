@@ -55,6 +55,33 @@ void Viewport::_updateFrustum()
 	worldFrustumPlanes[0].setup( worldFrustumVertices[1], worldFrustumVertices[2], worldFrustumVertices[0] );
 }
 
+bool Viewport::isContainedInFrustum( Renderable* r )
+{
+	DEBUG_ASSERT( r );
+
+	//for each plane, check where the AABB is placed
+	for( uint i = 0; i < 5; ++i )
+	{
+		Vector bounds = r->getWorldMax() - r->getWorldMin();
+
+		if( worldFrustumPlanes[i].getSide( r->getWorldPosition(), bounds * 0.5f ) == -1 )
+			return false;
+	}
+
+	return true;
+}
+
+Vector Viewport::getScreenPosition( const Vector& pos )
+{
+	Vector localPos = getLocalPosition( pos );
+
+	return Vector(
+		(localPos.x - localFrustumVertices[2].x)/(localFrustumVertices[0].x-localFrustumVertices[2].x)*targetSize.x,
+		(localPos.y - localFrustumVertices[2].y)/(localFrustumVertices[0].y-localFrustumVertices[2].y)*targetSize.y,
+		0
+		);
+}
+
 void Viewport::makeScreenSize( Vector& dest, int w, int h )
 {	
 	dest.x = (float)w/targetSize.x * size.x * nativeToScreenRatio;

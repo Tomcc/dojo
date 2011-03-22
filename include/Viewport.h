@@ -41,6 +41,21 @@ namespace Dojo
 			}
 
 			void setup( const Vector& center, const Vector& A, const Vector& B );
+
+			///tells which side of this plane the AABB lies in. -1 is negative, 0 is both, 1 is positive
+			inline int getSide( const Vector& center, const Vector& halfsize )
+			{
+				float dist = center.distanceFromPlane( n, d );
+
+				float maxAbsDist = n.absDot( halfsize );
+
+				if (dist < -maxAbsDist)			
+					return -1;
+				else if (dist > +maxAbsDist)	
+					return 1;
+				else							
+					return 0;
+			}
 		};
 						
 		Viewport( 
@@ -137,6 +152,10 @@ namespace Dojo
 		inline float getZNear()							{	return zNear;		}
 		inline const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
+
+		Vector getScreenPosition( const Vector& pos );
+
+		bool isContainedInFrustum( Renderable* r );
 
 		inline bool isSeeing( Renderable* s )
 		{

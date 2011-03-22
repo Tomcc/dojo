@@ -350,13 +350,29 @@ void Render::renderLayer( Layer* list )
 
 	currentLayer = list;
 
-	for( uint i = 0; i < list->size(); ++i )
+	//2D layer
+	if( list->projectionOff )
 	{
-		s = list->at(i);
-		
-		//HACK
-		if( s->isVisible() )//viewport->isSeeing(s) )
-			renderElement( s );
+		for( uint i = 0; i < list->size(); ++i )
+		{
+			s = list->at(i);
+			
+			//HACK
+			if( s->isVisible() )
+				renderElement( s );
+		}
+	}
+
+	//3D layer
+	else
+	{
+		for( uint i = 0; i < list->size(); ++i )
+		{
+			s = list->at(i);
+
+			if( s->isVisible() && viewport->isContainedInFrustum( s ) )
+				renderElement( s );
+		}
 	}
 }
 

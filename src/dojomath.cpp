@@ -8,6 +8,24 @@ const float Math::PI = 3.14159265f;
 const float Math::EULER_TO_RADIANS = 0.01745329251994329f;
 const float Math::RADIANS_TO_EULER = 57.295779513082325f;
 
+void Math::seedRandom( uint seed )
+{
+	if( !seed )
+		seed = (uint)time( NULL );
+
+	srand( seed );
+}
+
+float Math::random()
+{
+	return (float)rand()/(float)RAND_MAX;
+}
+
+float Math::rangeRandom( float min, float max )
+{
+	return ((float)rand()/(float)RAND_MAX)*(max-min) + min;
+}
+
 Vector Math::randomVector( const Vector& min, const Vector& max )
 {
 	DEBUG_ASSERT( min.x < max.x );
