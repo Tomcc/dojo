@@ -47,6 +47,11 @@ namespace Dojo
 
 		void _callbackThread( float frameLength );
 
+		inline float getFrameInterval()
+		{
+			return frameInterval;
+		}
+
 		void setVSync(int interval=1)
 		{
 			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
@@ -102,6 +107,8 @@ namespace Dojo
 
 		//hack needed because of OIS's bug
 		uint lastPressedText;
+
+		float frameInterval;
 	};
 }
 

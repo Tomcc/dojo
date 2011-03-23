@@ -70,9 +70,9 @@ namespace Dojo
 		clearColor( clear ),
 		cullingEnabled( true ),
 		background( NULL ),
-		VFOV( 70 ),
-		zNear( 0.1 ),
-		zFar( 1000 ),
+		VFOV( 0 ),
+		zNear( 0 ),
+		zFar( 0 ),
 		frustumCullingEnabled( false )
 		{
 			Render* render = Platform::getSingleton()->getRender();

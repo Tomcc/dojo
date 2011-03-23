@@ -332,31 +332,7 @@ namespace Dojo
 		{
 			return triangleCount;
 		}
-		
-		///obtains a copy of this mesh
-		/**
-		It has to be loaded by hand!
-		*/
-		inline Mesh* getCopy()
-		{
-			Mesh* copy = new Mesh( creator, filePath );
-			
-			copy->dynamic = dynamic;
-			copy->vertexSize = vertexSize;			
-			memcpy( copy->vertexFields, vertexFields, sizeof( bool ) * FIELDS_NUMBER );
-			
-			copy->vertexCount = vertexCount;						
-			copy->indexCount = indexCount;			
-			
-			copy->setVertexCap( copy->vertexCount );
-			copy->setIndexCap( copy->indexCount );
-			
-			memcpy( copy->vertices, vertices, vertexSize * vertexMaxCount );
-			memcpy( copy->indices, indices, sizeof( uint ) * indexCount );
-			
-			return copy;
-		}
-		
+				
 		inline float* _getVertex( uint i )
 		{			
 			DEBUG_ASSERT( i < vertexCount );

@@ -109,9 +109,10 @@ namespace Dojo {
 
 		inline Vector getLocalPosition( const Vector& worldPos )
 		{
-			Vector localPos = worldPos - worldPosition;
+			Vector localPos = worldPos;
 
 			localPos.rotate( worldRotation*-1 );
+			localPos -= worldPosition;
 			localPos.scale( Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
 
 			return localPos;

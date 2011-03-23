@@ -63,9 +63,9 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
 	Renderable::prepare(viewportPixelRatio);
 
-	if( getTextureNumber() && pixelPerfect )
+	if( getTexture(0) && pixelPerfect )
 	{		
-		//compute the pixel occupied by this texture on the screen				
+		//compute the pixel occupied by the first texture on the screen				
 		scale.x = getTexture()->getWidth() * viewportPixelRatio.x * pixelScale.x;
 		scale.y = getTexture()->getHeight() * viewportPixelRatio.y * pixelScale.y;	
 

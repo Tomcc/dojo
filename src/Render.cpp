@@ -47,7 +47,7 @@ frameBatchCount(0)
 	glEnable( GL_LIGHTING );
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
-	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_VERTEX_ARRAY );
 	glEnable( GL_CULL_FACE );
 
 	glCullFace( GL_BACK );
@@ -267,8 +267,6 @@ void Render::renderElement( Renderable* s )
 			 s->scale.x,
 			 s->scale.y, 
 			 s->scale.z );
-
-	glEnable( GL_DEPTH_TEST );
 	
 	Mesh* m = currentRenderState->getMesh();
 
@@ -292,63 +290,61 @@ void Render::endFrame()
 	frameStarted = false;
 }
 
+void Render::_setOrthoProjection()
+{	
+	DEBUG_ASSERT( viewport );
+
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	glOrtho( 
+		-viewport->getHalfSize().x, 
+		viewport->getHalfSize().x,
+		-viewport->getHalfSize().y,
+		viewport->getHalfSize().y,
+		-1000,
+		1000 );
+}
+
+void Render::_setFrustumProjection()
+{
+	DEBUG_ASSERT( viewport );
+
+	//compute frustum
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	gluPerspective( 
+		viewport->getVFOV(), 
+		(float)width/(float)height, 
+		viewport->getZNear(), 
+		viewport->getZFar() );
+
+	glRotatef( viewport->getWorldRotation().x, 1,0,0 );
+	glRotatef( viewport->getWorldRotation().y, 0,1,0 );
+	glRotatef( viewport->getWorldRotation().z, 0,0,1 );
+}
+
 void Render::renderLayer( Layer* list )
 {
 	if( !list->size() )
 		return;
 
-	Renderable* s;
-
 	//make state changes
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
+
+	if( list->lightingOn )	glEnable( GL_LIGHTING );
+	else					glDisable( GL_LIGHTING );
+
+	if( list->projectionOff )	_setOrthoProjection();
+	else						_setFrustumProjection();
+
 	//we don't want different layers to be depth-checked together
 	glClear( GL_DEPTH_BUFFER_BIT );
 
-	if( list->lightingOn )	
-		glEnable( GL_LIGHTING );
-	else
-		glDisable( GL_LIGHTING );
-
-	if( list->projectionOff != currentLayer->projectionOff )
-	{
-		if( list->projectionOff )
-		{
-			//was off, recover the frustum matrix
-			glMatrixMode( GL_PROJECTION );
-			glLoadIdentity();
-			glScalef( 
-				2.f / viewport->getSize().x, 
-				2.f / viewport->getSize().y, 
-				1.f);
-			/*glOrtho( 
-				-viewport->getHalfSize().x, 
-				viewport->getHalfSize().x,
-				-viewport->getHalfSize().y,
-				viewport->getHalfSize().y,
-				0,
-				1000 );*/
-		}
-		else
-		{
-			//TODO precompute
-			//compute frustum
-			glMatrixMode( GL_PROJECTION );
-			glLoadIdentity();
-			gluPerspective( 
-				viewport->getVFOV(), 
-				(float)width/(float)height, 
-				viewport->getZNear(), 
-				viewport->getZFar() );
-
-			glRotatef( viewport->getWorldRotation().x, 1,0,0 );
-			glRotatef( viewport->getWorldRotation().y, 0,1,0 );
-			glRotatef( viewport->getWorldRotation().z, 0,0,1 );
-		}
-	}
-
 	currentLayer = list;
+
+	Renderable* s;
 
 	//2D layer
 	if( list->projectionOff )
@@ -357,7 +353,7 @@ void Render::renderLayer( Layer* list )
 		{
 			s = list->at(i);
 			
-			//HACK
+			//HACK use some 2D culling
 			if( s->isVisible() )
 				renderElement( s );
 		}

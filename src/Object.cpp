@@ -58,7 +58,7 @@ void Object::action( float dt )
 		{		
 			worldPosition = parent->getWorldPosition( position );
 
-			//todo also rotate angle
+			//TODO also rotate angle
 			worldRotation = angle;
 		}
 		else

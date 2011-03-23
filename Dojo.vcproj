@@ -233,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Win32\stdafx.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Table.cpp"
 				>
 			</File>
@@ -258,6 +262,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Viewport.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32\Win32Platform.cpp"
 				>
 			</File>
 		</Filter>
@@ -426,43 +434,15 @@
 				RelativePath=".\include\Viewport.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Win32"
-			>
-			<File
-				RelativePath=".\Win32\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Win32\Win32Platform.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\Win32\Win32Platform.h"
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\stdafx.h"
+		<Filter
+			Name="Win32"
 			>
-		</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

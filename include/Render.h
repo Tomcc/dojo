@@ -163,6 +163,9 @@ namespace Dojo {
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;
+
+		void _setOrthoProjection();
+		void _setFrustumProjection();
 	};		
 }
 

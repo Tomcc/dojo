@@ -14,28 +14,36 @@ bool RenderState::isAlphaRequired()
 	return alphaRequired || getTextureNumber() == 0;
 }
 
-void RenderState::commitChanges( RenderState* pastState )
+void RenderState::_bindTextureSlot( int i )
 {
-	DEBUG_ASSERT( pastState );
-	DEBUG_ASSERT( mesh );
-		
-	//bind the new texture or nothing
-	int i = 0;
-	for( ; i < getTextureNumber() && i < pastState->getTextureNumber(); ++i )
-	{
-		if( getTexture(i) != pastState->getTexture(i) )
-			getTexture(i)->bind(i);
-	}
-	for( ; i < getTextureNumber(); ++i )
-	{
+	if( getTexture(i) )
 		getTexture(i)->bind(i);
-	}
-	for( ; i < pastState->getTextureNumber(); ++i )
+	else
 	{
 		//bind nothing
 		glActiveTexture( GL_TEXTURE0 + i );
 		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
+}
+
+void RenderState::commitChanges( RenderState* pastState )
+{
+	DEBUG_ASSERT( pastState );
+	DEBUG_ASSERT( mesh );
+		
+	//bind the new textures
+	int i = 0;
+	for( ; i < getTextureNumber() && i < pastState->getTextureNumber(); ++i )
+	{
+		if( getTexture(i) != pastState->getTexture(i) )
+			_bindTextureSlot( i );
+	}
+	//bind remaining slots
+	for( ; i < getTextureNumber(); ++i )
+		_bindTextureSlot(i);
+
+	if( !getTextureNumber() )
+		_bindTextureSlot(0);
 
 	//apply transform?
 	//past state had texture transform, but we dont' need it
@@ -90,6 +98,4 @@ void RenderState::commitChanges( RenderState* pastState )
 
 	//always bind color as it is just not expensive
 	glColor4f( color.r, color.g, color.b, color.a );
-
-	
 }

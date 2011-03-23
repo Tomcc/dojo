@@ -70,7 +70,8 @@ Win32Platform::Win32Platform() :
 Platform(),
 dragging( false ),
 cursorPos( 0,0 ),
-frameStart( 1 )
+frameStart( 1 ),
+frameInterval(0)
 {
 	frameStart.wait();
 }
@@ -253,7 +254,7 @@ void stepCallback( void* platform )
 {
 	Win32Platform* self = (Win32Platform*)platform;
 
-	self->_callbackThread( 1.f/60.f );
+	self->_callbackThread( self->getFrameInterval() );
 
 	//return 0;
 }
@@ -271,23 +272,25 @@ void Win32Platform::_callbackThread( float frameLength )
 
 		}
 
-		Poco::Thread::sleep( frameLength * 1000 );
+		Poco::Thread::sleep( frameLength * 1000.f );
 	}
 }
 
 void Win32Platform::loop( float frameTime )
 {
+	frameInterval = frameTime;
+
 	frameTimer.reset();
 
 	//start timer thread
 	Poco::Thread t;
-	if( frameTime )
+	if( frameInterval )
 		t.start( stepCallback, this );
 
 	Timer timer;
 	while( running )
 	{
-		if( frameTime > 0 )
+		if( frameInterval > 0 )
 			frameStart.wait();
 
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )

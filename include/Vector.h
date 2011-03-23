@@ -220,7 +220,7 @@ namespace Dojo
 			pitch( angles.x );
 			yaw( angles.y );
 			roll( angles.z );
-			x*=-1;
+			//x*=-1;
 			z*=-1;
 
 			return *this;

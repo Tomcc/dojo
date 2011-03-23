@@ -109,7 +109,7 @@ bool Mesh::end()
 
 void Mesh::bind()
 {		
-	DEBUG_ASSERT( !isEditing() );
+	DEBUG_ASSERT( vertexHandle );
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
@@ -134,7 +134,6 @@ void Mesh::bind()
 
 	for( uint i = 0; i < 8; ++i )
 	{
-
 		if( vertexFields[ VF_UV + i ] )
 		{
 			glClientActiveTexture( GL_TEXTURE0 + i );

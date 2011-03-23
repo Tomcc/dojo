@@ -61,19 +61,17 @@ namespace Dojo
 			mesh = m;
 		}
 
+		///Sets a texture in the required slot.
+		/**
+		It can be NULL, which means that the slot is disabled.
+		*/
 		inline void setTexture( Texture* tex, uint ID = 0 )
 		{
-			DEBUG_ASSERT( ID <= getTextureNumber() );
+			//create missing textures for this renderstate
+			for( int i = textures.size(); i <= ID; ++i )
+				textures.add( NULL );
 
-			if( ID == getTextureNumber() ) //push new
-				textures.add( tex );
-			else
-				textures.at( ID ) = tex;
-		}
-
-		inline void popTexture()
-		{
-			textures.pop();
+			textures.at( ID ) = tex;
 		}
 
 		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}
@@ -126,6 +124,8 @@ namespace Dojo
 		TextureList textures;
 
 		Mesh* mesh;
+
+		void _bindTextureSlot( int i );
 	};
 }
 
