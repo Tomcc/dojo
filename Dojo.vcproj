@@ -233,10 +233,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Win32\stdafx.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\Table.cpp"
 				>
 			</File>
@@ -262,10 +258,6 @@
 			</File>
 			<File
 				RelativePath=".\src\Viewport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Win32\Win32Platform.cpp"
 				>
 			</File>
 		</Filter>
@@ -434,14 +426,22 @@
 				RelativePath=".\include\Viewport.h"
 				>
 			</File>
-			<File
-				RelativePath=".\Win32\Win32Platform.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Win32"
 			>
+			<File
+				RelativePath=".\Win32\stdafx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32\Win32Platform.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32\Win32Platform.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -80,6 +80,14 @@ void Object::action( float dt )
 	if( childs )
 	{
 		for( uint i = 0; i < childs->size(); ++i )
-			childs->at(i)->action(dt);
+		{
+			if( childs->at(i)->dispose )
+			{
+				removeChild( childs->at(i) );
+				gameState->removeObject( childs->at(i) );
+			}
+			else
+				childs->at(i)->action(dt);
+		}
 	}
 }

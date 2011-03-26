@@ -184,20 +184,25 @@ void Render::startFrame()
 				 viewport->getClearColor().b, 
 				 viewport->getClearColor().a );
 	
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT );
 		
 	//load view matrix on top
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();					
-	
-	//rotate to balance interface orientation
-	glRotatef( renderRotation, 0,0,1 );
-			
-	//translate
-	glTranslatef( 
-				 -viewport->getWorldPosition().x,
-				 -viewport->getWorldPosition().y, 
-				 -viewport->getWorldPosition().z );	
+
+	Vector center = viewport->getWorldPosition( Vector::UNIT_Z );
+	Vector up = viewport->getWorldPosition( Vector::UNIT_Y ) - viewport->getWorldPosition();
+
+	gluLookAt( 
+		viewport->getWorldPosition().x, 
+		viewport->getWorldPosition().y, 
+		viewport->getWorldPosition().z,
+		center.x,
+		center.y,
+		center.z,
+		up.x,
+		up.y,
+		up.z );
 	
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -301,8 +306,8 @@ void Render::_setOrthoProjection()
 		viewport->getHalfSize().x,
 		-viewport->getHalfSize().y,
 		viewport->getHalfSize().y,
-		-1000,
-		1000 );
+		-viewport->getZFar(),
+		viewport->getZFar() );
 }
 
 void Render::_setFrustumProjection()
@@ -318,9 +323,6 @@ void Render::_setFrustumProjection()
 		viewport->getZNear(), 
 		viewport->getZFar() );
 
-	glRotatef( viewport->getWorldRotation().x, 1,0,0 );
-	glRotatef( viewport->getWorldRotation().y, 0,1,0 );
-	glRotatef( viewport->getWorldRotation().z, 0,0,1 );
 }
 
 void Render::renderLayer( Layer* list )

@@ -171,7 +171,7 @@ namespace Dojo
 			return *this;
 		}
 
-		///rotate the vector around X axis
+		///rotate the vector around side axis
 		/**
 		http://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 		*/
@@ -183,12 +183,11 @@ namespace Dojo
 			
 			//x is not varied
 			set( x, y*c - z*s, z*c + y*s);
-			z*=-1;
-
+			
 			return *this;
 		}
 
-		//rotate the vector around Y axis
+		//rotate the vector around up axis
 		inline const Vector& yaw( float angle )
 		{
 			float c = cos( angle * 0.0174f );
@@ -196,11 +195,11 @@ namespace Dojo
 			//vector cross( z, 0, -x )
 
 			set( x*c + z*s, y, z*c - x*s );
-			z*=-1;
-
+			
 			return *this;
 		}
 
+		///rotation along the forward axis
 		inline const Vector& roll( float angle )
 		{
 			float c = cos( angle * 0.0174f );
@@ -214,14 +213,20 @@ namespace Dojo
 		
 		//HACK THIS DOESN'T EVEN - 
 		inline const Vector& rotate( const Vector& angles )
-		{
-			//roll( angles.z );
-			
+		{	
+			/*float c1 = cos( angles.x * 0.0174f );
+			float s1 = sin( angles.x * 0.0174f ); 
+
+			float c2 = cos( angles.y * 0.0174f );
+			float s2 = sin( angles.y * 0.0174f ); 
+
+			set( 
+				x			+ x*c2 + z*s2, 
+				y*c1 - z*s1 + y, 
+				z*c1 + y*s1 + z*c2 - x*s2	);*/
+
 			pitch( angles.x );
 			yaw( angles.y );
-			roll( angles.z );
-			//x*=-1;
-			z*=-1;
 
 			return *this;
 		}
@@ -231,9 +236,7 @@ namespace Dojo
 		{
 			Vector forward( 0,0,1 );
 
-			forward.rotate( *this );
-
-			return forward;
+			return forward.rotate( *this );
 		}
 
 		inline float distance( const Vector& v ) const 

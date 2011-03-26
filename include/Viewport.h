@@ -94,7 +94,7 @@ namespace Dojo
 
 			addChild( fadeObject, 8, false );
 
-			if( VFOV > 0 )
+			if( _VFOV > 0 )
 				enableFrustum( _VFOV, _zNear, _zFar );
 		}		
 						

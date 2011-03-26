@@ -74,6 +74,11 @@ namespace Dojo {
 		void setViewport( Viewport* v );
 						
 		void setInterfaceOrientation( RenderOrientation o );
+
+		inline void setWireframe( bool wireframe )
+		{
+			glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
+		}
 		
 		inline RenderOrientation getInterfaceOrientation()
 		{
