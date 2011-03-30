@@ -112,7 +112,9 @@ namespace Dojo {
 			Vector localPos = worldPos;
 
 			localPos -= worldPosition;
-			localPos.rotate( worldRotation*-1 );
+			localPos.roll( -worldRotation.z );
+			localPos.yaw( -worldRotation.y );
+			localPos.pitch( -worldRotation.x );
 			localPos.scale( Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
 
 			return localPos;

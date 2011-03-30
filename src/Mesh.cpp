@@ -114,7 +114,7 @@ void Mesh::bind()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
 	if( vertexFields[ VF_POSITION2D ] )
-		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
+		glVertexPointer( 2, GL_FLOAT, vertexSize, 0 );
 
 	else if( vertexFields[ VF_POSITION3D ] )
 		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );

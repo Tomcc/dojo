@@ -29,15 +29,14 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right
-	Vector offset;
-	offset.z = zFar;
-	offset.y = zFar * tan( Math::toRadian( VFOV*0.5 ) );
-	offset.x = ((float)targetSize.x/(float)targetSize.y) * offset.y;
+	farPlaneSide.z = zFar;
+	farPlaneSide.y = zFar * tan( Math::toRadian( VFOV*0.5 ) );
+	farPlaneSide.x = ((float)targetSize.x/(float)targetSize.y) * farPlaneSide.y;
 
-	localFrustumVertices[0] = Vector( offset.x, offset.y, offset.z );
-	localFrustumVertices[1] = Vector( offset.x, -offset.y, offset.z );
-	localFrustumVertices[2] = Vector( -offset.x, -offset.y, offset.z );
-	localFrustumVertices[3] = Vector( -offset.x, offset.y, offset.z );
+	localFrustumVertices[0] = Vector( farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
+	localFrustumVertices[1] = Vector( farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
+	localFrustumVertices[2] = Vector( -farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
+	localFrustumVertices[3] = Vector( -farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
 }
 
 void Viewport::_updateFrustum()
@@ -73,13 +72,19 @@ bool Viewport::isContainedInFrustum( Renderable* r )
 
 Vector Viewport::getScreenPosition( const Vector& pos )
 {
-	Vector localPos = getLocalPosition( pos );
+	//get local position
+	Vector local = getLocalPosition( pos );
 
-	return Vector(
-		(localPos.x - localFrustumVertices[2].x)/(localFrustumVertices[0].x-localFrustumVertices[2].x)*targetSize.x,
-		(localPos.y - localFrustumVertices[2].y)/(localFrustumVertices[0].y-localFrustumVertices[2].y)*targetSize.y,
-		0
-		);
+	//project local on the local far plane
+	float f = (zFar/local.z);
+	local.x *= f;
+	local.y *= f;
+
+	//bring in screen space
+	local.x = (local.x / farPlaneSide.x) * halfSize.x;
+	local.y = (local.y / farPlaneSide.y) * halfSize.y;
+
+	return local;
 }
 
 void Viewport::makeScreenSize( Vector& dest, int w, int h )

@@ -221,6 +221,7 @@ namespace Dojo
 		Plane worldFrustumPlanes[5];
 
 		float VFOV, zNear, zFar;
+		Vector farPlaneSide;
 
 		void _updateFrustum();
 	};
