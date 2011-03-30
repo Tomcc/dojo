@@ -33,12 +33,13 @@ namespace Dojo {
 		class Layer : public Dojo::Array< Renderable* >
 		{
 		public:
-			bool depthCheck, lightingOn, projectionOff;
+			bool depthCheck, lightingOn, projectionOff, depthClear;
 
 			Layer() :
 			projectionOff( true ),
 			depthCheck( false ),
-			lightingOn( false )
+			lightingOn( false ),
+			depthClear( true )
 			{
 
 			}
@@ -169,8 +170,11 @@ namespace Dojo {
 		
 		LayerList negativeLayers, positiveLayers;
 
-		void _setOrthoProjection();
-		void _setFrustumProjection();
+		//precomputed matrices
+		float orthoProj[16], orthoView[16], frustumProj[16], frustumView[16];
+
+		void _setupOrthoProjection();
+		void _setupFrustumProjection();
 	};		
 }
 

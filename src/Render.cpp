@@ -185,25 +185,10 @@ void Render::startFrame()
 				 viewport->getClearColor().a );
 	
 	glClear( GL_COLOR_BUFFER_BIT );
-		
-	//load view matrix on top
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();					
 
-	Vector center = viewport->getWorldPosition( Vector::UNIT_Z );
-	Vector up = viewport->getWorldPosition( Vector::UNIT_Y ) - viewport->getWorldPosition();
-
-	gluLookAt( 
-		viewport->getWorldPosition().x, 
-		viewport->getWorldPosition().y, 
-		viewport->getWorldPosition().z,
-		center.x,
-		center.y,
-		center.z,
-		up.x,
-		up.y,
-		up.z );
-	
+	_setupOrthoProjection();
+	_setupFrustumProjection();
+			
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
 		viewportPixelRatio.x = viewport->getSize().x / width;
@@ -222,17 +207,6 @@ void Render::startFrame()
 	//viewportPixelRatio *= devicePixelScale;
 	
 	frameStarted = true;
-	
-	//render the background if needed
-	Renderable* bg = viewport->getBackgroundSprite();
-	
-	if( bg )
-	{		
-		glDisable( GL_DEPTH_TEST );
-		glDisable( GL_LIGHTING );
-
-		renderElement( bg );
-	}
 }
 
 void Render::renderElement( Renderable* s )
@@ -295,10 +269,11 @@ void Render::endFrame()
 	frameStarted = false;
 }
 
-void Render::_setOrthoProjection()
+void Render::_setupOrthoProjection()
 {	
 	DEBUG_ASSERT( viewport );
 
+	//setup ortho projection
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	glOrtho( 
@@ -308,9 +283,22 @@ void Render::_setOrthoProjection()
 		viewport->getHalfSize().y,
 		-viewport->getZFar(),
 		viewport->getZFar() );
+
+	//setup ortho view
+	glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity();
+
+	//move
+	glTranslatef(
+		-viewport->getWorldPosition().x,
+		-viewport->getWorldPosition().y,
+		0 );
+
+	glGetFloatv( GL_MODELVIEW_MATRIX, orthoView );
+	glGetFloatv( GL_PROJECTION_MATRIX, orthoProj );
 }
 
-void Render::_setFrustumProjection()
+void Render::_setupFrustumProjection()
 {
 	DEBUG_ASSERT( viewport );
 
@@ -323,6 +311,27 @@ void Render::_setFrustumProjection()
 		viewport->getZNear(), 
 		viewport->getZFar() );
 
+
+	//add camera orientation to the modelview
+	glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity();
+
+	Vector center = viewport->getWorldPosition( Vector::UNIT_Z );
+	Vector up = viewport->getWorldPosition( Vector::UNIT_Y ) - viewport->getWorldPosition();
+
+	gluLookAt( 
+		viewport->getWorldPosition().x, 
+		viewport->getWorldPosition().y, 
+		viewport->getWorldPosition().z,
+		center.x,
+		center.y,
+		center.z,
+		up.x,
+		up.y,
+		up.z );
+
+	glGetFloatv( GL_MODELVIEW_MATRIX, frustumView );
+	glGetFloatv( GL_PROJECTION_MATRIX, frustumProj );
 }
 
 void Render::renderLayer( Layer* list )
@@ -338,11 +347,23 @@ void Render::renderLayer( Layer* list )
 	if( list->lightingOn )	glEnable( GL_LIGHTING );
 	else					glDisable( GL_LIGHTING );
 
-	if( list->projectionOff )	_setOrthoProjection();
-	else						_setFrustumProjection();
-
-	//we don't want different layers to be depth-checked together
-	glClear( GL_DEPTH_BUFFER_BIT );
+	if( list->projectionOff )	
+	{
+		glMatrixMode( GL_MODELVIEW );
+		glLoadMatrixf( orthoView );
+		glMatrixMode( GL_PROJECTION );
+		glLoadMatrixf( orthoProj );
+	}
+	else
+	{
+		glMatrixMode( GL_MODELVIEW );
+		glLoadMatrixf( frustumView );
+		glMatrixMode( GL_PROJECTION );
+		glLoadMatrixf( frustumProj );
+	}
+	//we don't want different layers to be depth-checked together?
+	if( list->depthClear )
+		glClear( GL_DEPTH_BUFFER_BIT );
 
 	currentLayer = list;
 

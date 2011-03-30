@@ -81,7 +81,7 @@ Vector Viewport::getScreenPosition( const Vector& pos )
 	local.y *= f;
 
 	//bring in screen space
-	local.x = (local.x / farPlaneSide.x) * halfSize.x;
+	local.x = -(local.x / farPlaneSide.x) * halfSize.x;
 	local.y = (local.y / farPlaneSide.y) * halfSize.y;
 
 	return local;
