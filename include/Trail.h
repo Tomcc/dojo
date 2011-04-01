@@ -18,6 +18,8 @@ namespace Dojo
 	{
 	public:
 
+		bool autoUpdate;
+
 		Trail( GameState* l, const Vector& pos, const std::string& texName = "" );
 
 		inline void setMaxSegments( uint segs )
@@ -40,6 +42,11 @@ namespace Dojo
 			offset = trailOffset;
 		}
 
+		///adds the two ends of a segment to the trail, IN WORLD SPACE!
+		void addSegment( const Vector& end1, const Vector& end2 );
+
+		void retesselate( const Vector& startpoint );
+
 		virtual void action( float dt );
 
 	protected:
@@ -48,7 +55,9 @@ namespace Dojo
 		Vector offset;
 		uint maxSegments;
 
-		std::queue<Vector> points;
+		Dojo::Vector realWorldPos, realWorldRot;
+
+		Dojo::Array<Vector> points;
 
 		float elapsedTime;
 

@@ -103,6 +103,8 @@ namespace Dojo
 			cursorPosition = Vector::ZERO;
 			
 			setSize(0,0);
+
+			setVisible( false );
 			
 			changed = true;
 		}
@@ -110,6 +112,8 @@ namespace Dojo
 		///async text update
 		void addText( const std::string& text, bool autoLineFeed = false )		
 		{				
+			setVisible( true );
+
 			content += text;
 
 			//parse and setup characters
@@ -127,6 +131,8 @@ namespace Dojo
 		
 		void addLineFeededText( const std::string& text )
 		{
+			setVisible( true );
+
 			content += text;
 
 			uint currentLineLenght = 0;
