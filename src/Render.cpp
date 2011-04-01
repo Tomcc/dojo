@@ -76,6 +76,13 @@ frameBatchCount(0)
 Render::~Render()
 {
 	delete firstRenderState;
+
+	//delete layers
+	for(int i = 0; i < negativeLayers.size(); ++i )
+		delete negativeLayers.at(i);
+
+	for(int i = 0; i < positiveLayers.size(); ++i )
+		delete positiveLayers.at(i);
 }
 
 Render::Layer* Render::getLayer( int layerID )
@@ -237,9 +244,9 @@ void Render::renderElement( Renderable* s )
 				 s->getWorldPosition().z );
 	
 	//rotate
-	glRotatef( s->getWorldRotation().x, 1,0,0 );
-	glRotatef( s->getWorldRotation().y, 0,1,0 );
 	glRotatef( s->getWorldRotation().z, 0,0,1 );
+	glRotatef( s->getWorldRotation().y, 0,1,0 );
+	glRotatef( s->getWorldRotation().x, 1,0,0 );
 	
 	//and then scale
 	glScalef( 

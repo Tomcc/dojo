@@ -101,12 +101,7 @@ namespace Dojo
 		virtual ~Viewport()
 		{
 			if( background )
-			{
 				delete background;
-			}			
-			
-			gameState->removeSprite( fadeObject );
-			delete fadeObject;
 		}	
 
 

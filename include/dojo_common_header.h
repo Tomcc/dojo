@@ -9,7 +9,7 @@
 #include <time.h>
 #include <string.h>
 
-#ifndef WIN32
+#ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #endif
 
@@ -32,10 +32,23 @@
 	#include <GL/glext.h>
 	#include <GL/gl.h>
 
-#ifndef LINUX
+#ifdef PLATFORM_WIN32
+
+	#include <crtdbg.h>
+
 	#include <al.h>
 	#include <alc.h>
 	#include <AL/alut.h>
+
+//this cant be in config.h as it breaks successive system includes
+	#ifdef _DEBUG
+
+		#define _CRTDBG_MAP_ALLOC
+		#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+		#define new DEBUG_NEW
+
+	#endif
+
 #else
     #include <AL/al.h>
     #include <AL/alc.h>

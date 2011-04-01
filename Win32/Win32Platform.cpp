@@ -63,9 +63,6 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	return DefWindowProc( hwnd, message, wparam, lparam );
 }
 
-
-
-
 Win32Platform::Win32Platform() :
 Platform(),
 dragging( false ),
@@ -73,7 +70,19 @@ cursorPos( 0,0 ),
 frameStart( 1 ),
 frameInterval(0)
 {
+#ifdef _DEBUG
+
+	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
+	_CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
+#endif
+
 	frameStart.wait();
+}
+
+Win32Platform::~Win32Platform()
+{
+
 }
 
 bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w, uint h )
@@ -222,6 +231,23 @@ void Win32Platform::initialise()
 
 void Win32Platform::shutdown()
 {
+	//destroy game
+	game->onEnd();
+
+	delete game;
+
+	//destroy managers
+	
+	delete render;
+	delete sound;
+	delete input;
+
+	//clean OIS
+	inputManager->destroyInputObject( mouse );
+	inputManager->destroyInputObject( keys );
+
+	OIS::InputManager::destroyInputSystem( inputManager );
+
 	// and a cheesy fade exit
 	AnimateWindow( hwnd, 200, AW_HIDE | AW_BLEND );
 }

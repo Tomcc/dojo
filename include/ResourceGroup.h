@@ -136,8 +136,9 @@ namespace Dojo {
 		
 		void unloadAll()
 		{
-			unloadSets();
+			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
 			unloadFonts();
+			unloadSets();
 			unloadMeshes();
 			unloadSounds();
 		}

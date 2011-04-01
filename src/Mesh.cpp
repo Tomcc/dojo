@@ -7,6 +7,52 @@
 
 using namespace Dojo;
 
+///Tells the buffer to allocate at least "vertices" vertices
+void Mesh::setVertexCap( uint count )
+{		
+	if( count < vertexMaxCount ) //no need to grow the buffer
+		return;
+
+	vertexMaxCount = (count/VERTEX_PAGE_SIZE + 1 ) * VERTEX_PAGE_SIZE;
+
+	if( !vertices )
+	{					
+		vertices = (byte*)malloc( vertexSize * vertexMaxCount );
+
+		_buildFieldOffsets();	//build the offsets for each field	
+	}			
+	else
+	{	
+		//TODO MAKE THIS ACTUALLY WORK
+		vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
+	}
+}	
+
+void Mesh::setIndexCap( uint count )
+{
+	if( count < indexMaxCount ) //no need to grow the buffer
+		return;
+
+	indexMaxCount = (count/INDEX_PAGE_SIZE + 1 ) * INDEX_PAGE_SIZE;
+
+	if( !indices )
+	{					
+		indices = (GLint*)malloc( sizeof(GLint) * indexMaxCount );
+	}
+	else
+	{	
+		//TODO MAKE THIS ACTUALLY WORK
+		indices = (GLint*)realloc( indices, sizeof(GLint) * indexMaxCount );
+
+		/*GLint* temp = (GLint*)malloc( sizeof(GLint) * indexMaxCount );
+		memcpy( temp, indices, sizeof( GLint ) * indexCount );
+		free( indices );
+
+		indices = temp;*/
+	}
+}
+
+
 void Mesh::_prepareVertex( float x, float y, float z )
 {
 	DEBUG_ASSERT( isEditing() );
@@ -15,10 +61,7 @@ void Mesh::_prepareVertex( float x, float y, float z )
 	if( vertexCount >= vertexMaxCount )
 		setVertexCap( vertexCount+1 );
 
-	if( !currentVertex )
-		currentVertex = vertices;
-	else
-		currentVertex += vertexSize; //get to the current vertex
+	currentVertex = vertices + vertexCount * vertexSize;
 
 	if( x > max.x )	max.x = x;
 	else if( x < min.x ) min.x = x;

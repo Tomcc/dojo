@@ -211,20 +211,8 @@ namespace Dojo
 			return *this;
 		}
 		
-		//HACK THIS DOESN'T EVEN - 
 		inline const Vector& rotate( const Vector& angles )
-		{	
-			/*float c1 = cos( angles.x * 0.0174f );
-			float s1 = sin( angles.x * 0.0174f ); 
-
-			float c2 = cos( angles.y * 0.0174f );
-			float s2 = sin( angles.y * 0.0174f ); 
-
-			set( 
-				x			+ x*c2 + z*s2, 
-				y*c1 - z*s1 + y, 
-				z*c1 + y*s1 + z*c2 - x*s2	);*/
-
+		{
 			pitch( angles.x );
 			yaw( angles.y );
 
@@ -237,6 +225,18 @@ namespace Dojo
 			Vector forward( 0,0,1 );
 
 			return forward.rotate( *this );
+		}
+
+		///uses the current vector to return three (two, really) euler angles that give its rotation
+		/**
+		Rotation is relative to the "forward" vector (0,0,1)
+		*/
+		inline Vector angleFromDirection()
+		{
+			return Vector(
+					57.47f * atan2(x, y),
+					57.47f * atan2(z, sqrt((x*x) + (y*y)) ),
+					0 );
 		}
 
 		inline float distance( const Vector& v ) const 

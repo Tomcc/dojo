@@ -23,6 +23,7 @@ maxSegments(10)
 	mesh->setDynamic(true);
 	mesh->setVertexCap(100);
 	mesh->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	mesh->setVertexFieldEnabled( Mesh::VF_COLOR );
 	mesh->setTriangleMode( Mesh::TM_STRIP );
 
 	cullMode = CM_DISABLED;
@@ -37,7 +38,11 @@ void Trail::addSegment( const Vector& end1, const Vector& end2 )
 		//remove the older couple from the head
 		points.pop();
 		points.pop();
+
+		DEBUG_MESSAGE( this << " pop" );
 	}
+	else
+		DEBUG_MESSAGE( this << " add" );
 
 	//get the current position, create a point couple and push it
 	points.add( end1 );
@@ -50,11 +55,12 @@ void Trail::retesselate( const Vector& startpoint )
 
 	mesh->begin();
 
-	mesh->vertex(startpoint);
+	mesh->vertex(Vector::ZERO);
 
 	for( int i = 0; i < points.size(); ++i )
 	{
 		mesh->vertex( points.at(i) );
+		mesh->color( Color::WHITE );
 	}
 
 	mesh->end();
@@ -62,16 +68,7 @@ void Trail::retesselate( const Vector& startpoint )
 
 void Trail::action( float dt )
 {
-if( isVisible() )
-{
-	worldPosition = realWorldPos;
-	worldRotation = realWorldRot;
-}
-
 	Renderable::action(dt);
-
-	realWorldPos = worldPosition;
-	realWorldRot = worldRotation;
 
 	if( autoUpdate )
 	{
@@ -93,6 +90,10 @@ if( isVisible() )
 
 	//force world position
 	worldPosition = worldRotation = Vector::ZERO;
+
+	/*scale.x = 1.f/parent->scale.x;
+	scale.y = 1.f/parent->scale.y;
+	scale.z = 1.f/parent->scale.z;*/
 
 	elapsedTime += dt;
 }

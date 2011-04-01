@@ -83,8 +83,9 @@ void Object::action( float dt )
 		{
 			if( childs->at(i)->dispose )
 			{
-				removeChild( childs->at(i) );
 				gameState->removeObject( childs->at(i) );
+				removeChild( childs->at(i) );
+				--i;
 			}
 			else
 				childs->at(i)->action(dt);

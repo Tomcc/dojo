@@ -25,14 +25,9 @@ GameState::~GameState()
 
 void GameState::clear()
 {	
-	delete camera;
-	
 	//unregister objects
-	removeAll();
-	
-	for( uint i = 0; i < objects.size(); ++i )
-		delete objects.at(i);	
-	
+	destroyAll();
+		
 	//flush resources
 	unloadAll();
 }

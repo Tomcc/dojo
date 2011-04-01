@@ -42,7 +42,7 @@ namespace Dojo
 			character(0)
 			{
 				
-			}			
+			}
 		};
 		
 		struct Page
@@ -61,6 +61,11 @@ namespace Dojo
 				for( uint i = 0; i < 256; ++i )
 					chars[i].page = texture;
 			}
+
+			virtual ~Page()
+			{
+				delete chars;
+			}
 		};
 		
 		Font( const std::string& path, FrameSet* set ) :
@@ -69,12 +74,13 @@ namespace Dojo
 		{			
 			//allocate page pointers (but not pages)
 			pages = (Page**)malloc( sizeof( void* ) * fontSet->getFrameNumber() );
+			memset( pages, 0, sizeof( void* ) * fontSet->getFrameNumber() );
 			
 			//allocate char widths
 			charWidth = (uint*)malloc( sizeof( uint ) * fontSet->getFrameNumber() * 256 );
 		}
 		
-		~Font()
+		virtual ~Font()
 		{
 			unload();
 		}
@@ -98,16 +104,25 @@ namespace Dojo
 		
 		void unload()
 		{
-			if( fontSet && pages && charWidth )
+			DEBUG_ASSERT( pages );
+			DEBUG_ASSERT( fontSet );
+
+			//delete every loaded page
+			for( int i = 0; i < fontSet->getFrameNumber(); ++i )
 			{
-				free( pages );
+				if( pages[i] )
+					delete pages[i];
+			}
+
+			free( pages );
+
+			if( charWidth )
 				free( charWidth );
 				
-				pages = NULL;
-				charWidth = NULL;
+			pages = NULL;
+			charWidth = NULL;
 				
-				fontSet = NULL;
-			}
+			fontSet = NULL;
 		}
 		
 	protected:

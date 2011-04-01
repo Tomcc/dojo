@@ -83,6 +83,8 @@ namespace Dojo
 				mesh->unload();				
 				delete mesh;
 			}
+
+			free( characters );
 		}
 				
 		inline void setMaxLineLenght( uint l )	{	maxLineLenght = l;	}

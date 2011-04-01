@@ -35,16 +35,6 @@ namespace Dojo
 		{
 			if( loaded )
 				unload();
-			
-			//release all the textures
-			//HACK
-			/*for( uint i = 0; i < frames.size(); ++i )
-			{
-				Texture* frame = frames.at(i);
-				
-				if( frame->getOwnerFrameSet() == this )
-					delete frame;
-			}			*/	
 		}
 		
 		virtual bool load();
@@ -57,8 +47,8 @@ namespace Dojo
 			
 			for( uint i = 0; i < frames.size(); ++i )
 			{
-				if( frames.at(i)->getOwnerFrameSet() == this && frames.at(i)->isLoaded() )
-					frames.at(i)->unload();
+				if( frames.at(i)->getOwnerFrameSet() == this )
+					delete frames.at(i);
 			}				
 			
 			loaded = false;

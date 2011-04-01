@@ -27,7 +27,8 @@ namespace Dojo
 		
 		virtual ~StateInterface()
 		{			
-			delete currentStatePtr;
+			if( currentStatePtr )
+				delete currentStatePtr;
 		}
 		
 		inline void setState( uint newState )		

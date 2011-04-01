@@ -93,45 +93,9 @@ namespace Dojo
 		}
 		
 		///Tells the buffer to allocate at least "vertices" vertices
-		inline void setVertexCap( uint count )
-		{		
-			if( count < vertexMaxCount ) //no need to grow the buffer
-				return;
-			
-			vertexMaxCount = (count/VERTEX_PAGE_SIZE + 1 ) * VERTEX_PAGE_SIZE;
-			
-			if( !vertices )
-			{					
-				vertices = (byte*)malloc( vertexSize * vertexMaxCount );
-				memset( vertices, 0, vertexMaxCount * vertexSize );
-				
-				_buildFieldOffsets();	//build the offsets for each field	
-			}			
-			else
-			{	
-				//TODO MAKE THIS ACTUALLY WORK
-				vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
-			}
-		}	
+		void setVertexCap( uint count );
 
-		inline void setIndexCap( uint count )
-		{
-			if( count < indexMaxCount ) //no need to grow the buffer
-				return;
-
-			vertexMaxCount = (count/VERTEX_PAGE_SIZE + 1 ) * VERTEX_PAGE_SIZE;
-
-			if( !vertices )
-			{					
-				indices = (GLint*)malloc( sizeof(GLint) * vertexMaxCount );
-				memset( indices, 0, sizeof(GLint) * vertexMaxCount );
-			}			
-			else
-			{	
-				//TODO MAKE THIS ACTUALLY WORK
-				indices = (GLint*)realloc( indices, sizeof(GLint) * vertexMaxCount );
-			}
-		}
+		void setIndexCap( uint count );
 		
 		///A dynamic mesh won't clear its CPU cache when loaded, and allows to call load() more than one time!
 		inline void setDynamic( bool d )
@@ -182,8 +146,8 @@ namespace Dojo
 			vertexCount = 0;
 			indexCount = 0;
 
-			max.x = max.y = -FLT_MAX;
-			min.x = min.y = FLT_MAX;
+			max.x = max.y = max.z = -FLT_MAX;
+			min.x = min.y = min.z = FLT_MAX;
 			
 			editing = true;			
 		}
@@ -260,7 +224,8 @@ namespace Dojo
 		{		
 			DEBUG_ASSERT( isEditing() );
 			
-			setIndexCap( indexCount + 1 );
+			if( indexCount >= indexMaxCount )
+				setIndexCap( indexCount + 1 );
 
 			indices[ indexCount++ ] = idx;			
 		}

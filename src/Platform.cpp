@@ -34,3 +34,13 @@ Platform* Platform::createNativePlatform()
 #endif
 	return singleton;
 }
+
+void Platform::shutdownPlatform()
+{
+	DEBUG_ASSERT( singleton );
+
+	singleton->shutdown();
+
+	delete singleton;
+	singleton = NULL;
+}

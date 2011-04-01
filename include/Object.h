@@ -57,7 +57,8 @@ namespace Dojo {
 		
 		virtual ~Object()
 		{
-			
+			if(childs)
+				destroyAllChilds();
 		}
 		
 		virtual void reset()
@@ -140,6 +141,20 @@ namespace Dojo {
 		void addChild( Renderable* o, uint layer, bool clickable = false );
 
 		void removeChild( Object* o );
+
+		///completely destroys all the childs of this object
+		void destroyAllChilds()
+		{
+			if( !childs )
+				return;
+
+			for( uint i = 0; i < childs->size(); ++ i )
+				delete childs->at(i);
+
+			delete childs;
+
+			childs = NULL;
+		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			

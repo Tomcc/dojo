@@ -19,6 +19,8 @@ namespace Dojo
 
 		static Platform* createNativePlatform();
 
+		static void shutdownPlatform();
+
 		inline static  Platform* getSingleton()
 		{
 			DEBUG_ASSERT( singleton );

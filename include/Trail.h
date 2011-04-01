@@ -22,6 +22,11 @@ namespace Dojo
 
 		Trail( GameState* l, const Vector& pos, const std::string& texName = "" );
 
+		virtual ~Trail()
+		{
+			delete mesh;
+		}
+
 		inline void setMaxSegments( uint segs )
 		{
 			DEBUG_ASSERT( segs > 0 );
@@ -54,8 +59,6 @@ namespace Dojo
 		float updateInterval;
 		Vector offset;
 		uint maxSegments;
-
-		Dojo::Vector realWorldPos, realWorldRot;
 
 		Dojo::Array<Vector> points;
 

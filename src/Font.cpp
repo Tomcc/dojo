@@ -42,6 +42,8 @@ bool Font::load()
 	{
 		charWidth[i] = Utils::toInt( buf, end );
 	}
+
+	free( file );
 		
 	DEBUG_ASSERT( i == 256 );
 	

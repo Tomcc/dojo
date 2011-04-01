@@ -17,6 +17,7 @@ namespace Dojo
 	public:
 
 		Win32Platform();
+		virtual ~Win32Platform();
 
 		virtual void initialise();
 		virtual void shutdown();
