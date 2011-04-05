@@ -6,6 +6,7 @@ using namespace Dojo;
 
 const std::string Table::UNDEFINED_STRING = "";
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
+const Table::Data Table::EMPTY_DATA = Data(0,0);
 
 void Table::serialize( std::ostream& buf)
 {			

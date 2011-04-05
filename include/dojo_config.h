@@ -53,6 +53,32 @@
 
 #endif
 
+
+//opengl rebindings!
+#ifndef PLATFORM_IOS
+
+	#define glOrthof glOrtho
+#else
+	//IOS platform - OpenglES
+
+	#define glGenRenderbuffers			glGenRenderbuffersOES
+	#define glGenFramebuffers			glGenFramebuffersOES
+	#define glFramebufferRenderbuffer	glFramebufferRenderbufferOES
+	#define glDeleteRenderbuffers		glDeleteRenderbuffersOES
+	#define glDeleteFramebuffers		glDeleteFramebuffersOES
+	#define glBindRenderbuffer			glBindRenderbufferOES
+	#define glBindFramebuffer			glBindFramebufferOES
+	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
+	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
+
+	#define GL_RENDERBUFFER			GL_RENDERBUFFER_OES
+	#define GL_FRAMEBUFFER			GL_FRAMEBUFFER_OES
+	#define GL_COLOR_ATTACHMENT0	GL_COLOR_ATTACHMENT0_OES
+	#define GL_RENDERBUFFER_HEIGHT	GL_RENDERBUFFER_HEIGHT_OES
+	#define GL_RENDERBUFFER_WIDTH	GL_RENDERBUFFER_WIDTH_OES
+	#define GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_OES
+#endif
+
 namespace Dojo
 {
 #ifndef LINUX

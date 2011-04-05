@@ -78,7 +78,11 @@ namespace Dojo {
 
 		inline void setWireframe( bool wireframe )
 		{
+#ifdef glPolygonMode
 			glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
+#else
+			DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );
+#endif
 		}
 		
 		inline RenderOrientation getInterfaceOrientation()
@@ -176,6 +180,11 @@ namespace Dojo {
 
 		void _setupOrthoProjection();
 		void _setupFrustumProjection();
+		
+		void _gluPerspectiveClone( float fovy, float aspect, float zNear, float zFar);
+		void _gluLookAtClone(float eyex, float eyey, float eyez,							 
+							 float centerx, float centery, float centerz,							 
+							 float upx, float upy, float upz);
 	};		
 }
 

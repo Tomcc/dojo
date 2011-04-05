@@ -294,9 +294,12 @@ uint IOSPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path 
 	return fileSize;
 }
 
-void IOSPlatform::load( Dojo::Table * table )
+void IOSPlatform::load( Dojo::Table * table, const std::string& relPath )
 {
 	DEBUG_ASSERT( table );
+	
+	if( relPath.size() )
+		DEBUG_TODO;
 			
 	NSString* key = Utils::toNSString( table->getName() );
 	
@@ -312,9 +315,12 @@ void IOSPlatform::load( Dojo::Table * table )
 	table->deserialize( str );
 }
 
-void IOSPlatform::save( Dojo::Table* table )
+void IOSPlatform::save( Dojo::Table* table, const std::string& relPath )
 {
 	DEBUG_ASSERT( table );
+	
+	if( relPath.size() )
+		DEBUG_TODO;
 	
 	std::stringstream str;
 	

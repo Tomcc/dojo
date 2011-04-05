@@ -42,6 +42,7 @@ namespace Dojo
 
 		static const std::string UNDEFINED_STRING;
 		static Table EMPTY_TABLE;
+		static const Data EMPTY_DATA;
 		
 		Table( const std::string& tablename ) :
 		name( tablename )
@@ -225,7 +226,7 @@ namespace Dojo
 			if( existsAsData( key ) )
 				return data[ key ];
 			else
-				return Data(0,0);
+				return EMPTY_DATA;
 		}		
 
 		inline bool isEmpty()

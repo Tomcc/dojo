@@ -223,6 +223,7 @@ namespace Dojo
 		inline void index( uint idx )
 		{		
 			DEBUG_ASSERT( isEditing() );
+			DEBUG_ASSERT( indexCount < 65536 ); //indices are GL_SHORTs
 			
 			if( indexCount >= indexMaxCount )
 				setIndexCap( indexCount + 1 );
