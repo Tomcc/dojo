@@ -169,6 +169,7 @@ namespace Dojo {
 		bool frameStarted;
 		
 		LayerList negativeLayers, positiveLayers;
+		Layer* backLayer;
 
 		//precomputed matrices
 		float orthoProj[16], orthoView[16], frustumProj[16], frustumView[16];

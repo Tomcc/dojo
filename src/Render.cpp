@@ -26,7 +26,8 @@ deviceOrientation( deviceOr ),
 currentLayer( NULL ),
 frameVertexCount(0),
 frameTriCount(0),
-frameBatchCount(0)
+frameBatchCount(0),
+backLayer( NULL )
 {	
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
@@ -68,6 +69,10 @@ frameBatchCount(0)
 
 	currentRenderState = firstRenderState = new RenderState();
 
+	///create the back layer
+	backLayer = new Layer();
+	backLayer->add( NULL ); //add a dummy element
+
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
 	nativeToScreenRatio = (float)viewportHeight / (float)platform->getGame()->getNativeHeight();
@@ -76,6 +81,7 @@ frameBatchCount(0)
 Render::~Render()
 {
 	delete firstRenderState;
+	delete backLayer;
 
 	//delete layers
 	for(int i = 0; i < negativeLayers.size(); ++i )
@@ -212,8 +218,17 @@ void Render::startFrame()
 	
 	//HACK - uncomment to get proportional pixel scale across resolutions
 	//viewportPixelRatio *= devicePixelScale;
-	
+
 	frameStarted = true;
+
+	//draw the backdrop
+	Renderable* backdrop = viewport->getBackgroundSprite();
+	if( backdrop )
+	{
+		backLayer->at(0) = backdrop;
+		renderLayer( backLayer );
+	}
+	
 }
 
 void Render::renderElement( Renderable* s )
@@ -291,6 +306,8 @@ void Render::_setupOrthoProjection()
 		-viewport->getZFar(),
 		viewport->getZFar() );
 
+	glGetFloatv( GL_PROJECTION_MATRIX, orthoProj );
+
 	//setup ortho view
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
@@ -302,7 +319,6 @@ void Render::_setupOrthoProjection()
 		0 );
 
 	glGetFloatv( GL_MODELVIEW_MATRIX, orthoView );
-	glGetFloatv( GL_PROJECTION_MATRIX, orthoProj );
 }
 
 void Render::_setupFrustumProjection()
@@ -318,6 +334,7 @@ void Render::_setupFrustumProjection()
 		viewport->getZNear(), 
 		viewport->getZFar() );
 
+	glGetFloatv( GL_PROJECTION_MATRIX, frustumProj );
 
 	//add camera orientation to the modelview
 	glMatrixMode( GL_MODELVIEW );
@@ -338,7 +355,6 @@ void Render::_setupFrustumProjection()
 		up.z );
 
 	glGetFloatv( GL_MODELVIEW_MATRIX, frustumView );
-	glGetFloatv( GL_PROJECTION_MATRIX, frustumProj );
 }
 
 void Render::renderLayer( Layer* list )
