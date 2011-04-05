@@ -22,10 +22,7 @@ namespace Dojo
 
 		Trail( GameState* l, const Vector& pos, const std::string& texName = "" );
 
-		virtual ~Trail()
-		{
-			delete mesh;
-		}
+		virtual ~Trail();
 
 		inline void setMaxSegments( uint segs )
 		{

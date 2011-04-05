@@ -331,8 +331,6 @@ void Win32Platform::loop( float frameTime )
 		step( timer.deltaTime() );
 	}
 
-	shutdown();
-
 	if( frameTime )
 		t.join();
 }

@@ -18,17 +18,23 @@ maxSegments(10)
 	if( !texName.empty() )
 		setTexture( l->getFrameSet(texName)->getFrame(0) );
 
-	mesh = new Mesh(NULL);
+	/*mesh = new Mesh(NULL);
 
 	mesh->setDynamic(true);
 	mesh->setVertexCap(100);
 	mesh->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	mesh->setVertexFieldEnabled( Mesh::VF_COLOR );
-	mesh->setTriangleMode( Mesh::TM_STRIP );
+	mesh->setTriangleMode( Mesh::TM_STRIP );*/
 
 	cullMode = CM_DISABLED;
+
+	mesh = l->getMesh( "texturedQuad" );
 }
 
+Trail::~Trail()
+{
+	//delete mesh;
+}
 
 void Trail::addSegment( const Vector& end1, const Vector& end2 )
 {
@@ -72,20 +78,20 @@ void Trail::action( float dt )
 
 	if( autoUpdate )
 	{
-		if( elapsedTime >= updateInterval )
+		/*if( elapsedTime >= updateInterval )
 		{
 			addSegment( 
 					getWorldPosition( offset ),
 					getWorldPosition( offset*-1 ) );
 
 			elapsedTime = 0;
-		}
+		}/*
 
 		//show?
 		setVisible( points.size() > 0 );
 
-		if( isVisible() )
-			retesselate( getWorldPosition() );
+		/*if( isVisible() )
+			retesselate( getWorldPosition() );*/
 	}
 
 	//force world position
