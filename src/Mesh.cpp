@@ -9,7 +9,9 @@ using namespace Dojo;
 
 ///Tells the buffer to allocate at least "vertices" vertices
 void Mesh::setVertexCap( uint count )
-{		
+{
+	DEBUG_ASSERT( vertexCount < INDEX_MAX_VALUE ); //check indexability
+
 	if( count < vertexMaxCount ) //no need to grow the buffer
 		return;
 
@@ -37,12 +39,12 @@ void Mesh::setIndexCap( uint count )
 
 	if( !indices )
 	{					
-		indices = (GLint*)malloc( sizeof(GLint) * indexMaxCount );
+		indices = (index_t*)malloc( sizeof(index_t) * indexMaxCount );
 	}
 	else
 	{	
 		//TODO MAKE THIS ACTUALLY WORK
-		indices = (GLint*)realloc( indices, sizeof(GLint) * indexMaxCount );
+		indices = (index_t*)realloc( indices, sizeof(index_t) * indexMaxCount );
 
 		/*GLint* temp = (GLint*)malloc( sizeof(GLint) * indexMaxCount );
 		memcpy( temp, indices, sizeof( GLint ) * indexCount );
@@ -129,7 +131,7 @@ bool Mesh::end()
 		DEBUG_ASSERT( indexHandle );
 						
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof( uint ) * indexCount, indices, usage);							
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof( index_t ) * indexCount, indices, usage);							
 	}
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

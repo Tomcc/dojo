@@ -21,6 +21,16 @@ namespace Dojo
 	class Mesh : public Buffer 
 	{
 	public:
+
+#if MESH_32BIT_INDICES == 1
+		static const GLenum INDEX_TYPE = GL_UNSIGNED_INT;
+		static const uint INDEX_MAX_VALUE = 0xffffffff;
+		typedef unsigned int index_t;		
+#else
+		static const GLenum INDEX_TYPE = GL_UNSIGNED_SHORT;
+		static const uint INDEX_MAX_VALUE = 0xffff;
+		typedef unsigned short index_t;
+#endif
 				
 		static const uint FIELDS_NUMBER = 12;	
 		static const uint VERTEX_PAGE_SIZE = 256;
@@ -220,10 +230,9 @@ namespace Dojo
 		}
 
 		///adds one index
-		inline void index( uint idx )
+		inline void index( index_t idx )
 		{		
 			DEBUG_ASSERT( isEditing() );
-			DEBUG_ASSERT( indexCount < 65536 ); //indices are GL_SHORTs
 			
 			if( indexCount >= indexMaxCount )
 				setIndexCap( indexCount + 1 );
@@ -231,14 +240,14 @@ namespace Dojo
 			indices[ indexCount++ ] = idx;			
 		}
 		
-		inline void triangle( uint i1, uint i2, uint i3 )
+		inline void triangle( index_t i1, index_t i2, index_t i3 )
 		{
 			index(i1);
 			index(i2);
 			index(i3);
 		}
 
-		inline void quad(uint i11, uint i12, uint i21, uint i22 )
+		inline void quad( index_t i11, index_t i12, index_t i21, index_t i22 )
 		{
 			triangle(i11,i21,i12);
 			triangle(i21,i22,i12);
@@ -254,14 +263,12 @@ namespace Dojo
 		///loads the whole file passed in the constructor
 		virtual bool load();
 		
-		
 		virtual void unload()
 		{
 			if( loaded )
 			{
 				glDeleteBuffers( 1, &vertexHandle );
 				glDeleteBuffers( 1, &indexHandle );
-
 
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				
@@ -284,7 +291,7 @@ namespace Dojo
 			return vertexFields[f];
 		}
 		
-		inline uint getVertexCount()
+		inline index_t getVertexCount()
 		{
 			return vertexCount;
 		}
@@ -315,7 +322,7 @@ namespace Dojo
 		byte* vertices;
 		
 		uint indexCount, indexMaxCount;
-		GLint* indices;		
+		index_t* indices;		
 
 		uint triangleCount;
 
