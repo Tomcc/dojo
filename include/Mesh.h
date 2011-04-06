@@ -21,16 +21,6 @@ namespace Dojo
 	class Mesh : public Buffer 
 	{
 	public:
-
-#if MESH_32BIT_INDICES == 1
-		static const GLenum INDEX_TYPE = GL_UNSIGNED_INT;
-		static const uint INDEX_MAX_VALUE = 0xffffffff;
-		typedef unsigned int index_t;		
-#else
-		static const GLenum INDEX_TYPE = GL_UNSIGNED_SHORT;
-		static const uint INDEX_MAX_VALUE = 0xffff;
-		typedef unsigned short index_t;
-#endif
 				
 		static const uint FIELDS_NUMBER = 12;	
 		static const uint VERTEX_PAGE_SIZE = 256;
@@ -76,11 +66,17 @@ namespace Dojo
 		triangleMode( TM_STRIP ),
 		vertexHandle(0),
 		indexHandle(0),
-		currentUVSet(0)
+		currentUVSet(0),
+		indexGLType(0),
+		indexMaxValue(0),
+		indexByteSize(0)
 		{
 			//set all fields to zero
 			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
 			memset( vertexFieldOffset, 0, sizeof(uint) * FIELDS_NUMBER );
+
+			//default index size is 16
+			setIndexByteSize( sizeof(GLushort) );
 		}		
 		
 		virtual ~Mesh()
@@ -91,6 +87,37 @@ namespace Dojo
 			//and GPU mem
 			unload();
 		}
+
+		///sets the dimension of a single index in this mesh
+		/**
+			MUST be called only before the first begin ever!
+		*/
+		inline void setIndexByteSize( byte bytenumber )
+		{
+			DEBUG_ASSERT( !indices );
+			DEBUG_ASSERT( 
+				bytenumber == 1 || 
+				bytenumber == 2 || 
+				bytenumber == 4 );
+
+			indexByteSize = bytenumber;
+
+			if( indexByteSize == 1 )
+			{
+				indexGLType = GL_UNSIGNED_BYTE;
+				indexMaxValue = 0xff;
+			}
+			else if( indexByteSize == 2 )
+			{
+				indexGLType = GL_UNSIGNED_SHORT;
+				indexMaxValue = 0xffff;
+			}
+			else if( indexByteSize == 4 )
+			{
+				indexGLType = GL_UNSIGNED_INT;
+				indexMaxValue = 0xffffffff;
+			}
+		}		
 		
 		void setVertexFieldEnabled( VertexField f )
 		{			
@@ -230,24 +257,38 @@ namespace Dojo
 		}
 
 		///adds one index
-		inline void index( index_t idx )
+		inline void index( uint idx )
 		{		
 			DEBUG_ASSERT( isEditing() );
+			DEBUG_ASSERT( idx <= indexMaxValue );
 			
 			if( indexCount >= indexMaxCount )
 				setIndexCap( indexCount + 1 );
 
-			indices[ indexCount++ ] = idx;			
+			switch( indexByteSize )
+			{
+			case 1:
+				indices[ indexCount ] = idx;
+				break;
+			case 2:
+				((unsigned short*)indices)[ indexCount ] = idx;
+				break;
+			case 4:
+				((uint*)indices)[ indexCount ] = idx;
+				break;
+			}
+
+			++indexCount;
 		}
 		
-		inline void triangle( index_t i1, index_t i2, index_t i3 )
+		inline void triangle( uint i1, uint i2, uint i3 )
 		{
 			index(i1);
 			index(i2);
 			index(i3);
 		}
 
-		inline void quad( index_t i11, index_t i12, index_t i21, index_t i22 )
+		inline void quad( uint i11, uint i12, uint i21, uint i22 )
 		{
 			triangle(i11,i21,i12);
 			triangle(i21,i22,i12);
@@ -285,13 +326,18 @@ namespace Dojo
 		{
 			return indices || indexHandle;
 		}
+
+		inline GLenum getIndexGLType()
+		{
+			return indexGLType;
+		}
 		
 		inline bool isVertexFieldEnabled( VertexField f )
 		{
 			return vertexFields[f];
 		}
 		
-		inline index_t getVertexCount()
+		inline uint getVertexCount()
 		{
 			return vertexCount;
 		}
@@ -322,7 +368,10 @@ namespace Dojo
 		byte* vertices;
 		
 		uint indexCount, indexMaxCount;
-		index_t* indices;		
+		byte indexByteSize;
+		uint indexMaxValue;
+		GLenum indexGLType;
+		byte* indices;//indices have varying size
 
 		uint triangleCount;
 

@@ -39,6 +39,7 @@ ResourceGroup::ResourceGroup()
 	
 	Mesh* cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -96,6 +97,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -115,6 +117,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -134,6 +137,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -153,6 +157,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -172,6 +177,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
@@ -191,6 +197,7 @@ ResourceGroup::ResourceGroup()
 
 	cube = new Mesh( this );
 
+	cube->setIndexByteSize( 1 ); //byte indices
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
