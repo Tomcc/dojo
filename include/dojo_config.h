@@ -10,6 +10,9 @@
 #ifndef DojoConfig_h__
 #define DojoConfig_h__
 
+//general configurations
+#define MESH_32BIT_INDICES 0
+
 //are we on windows?
 #ifdef WIN32
 #define PLATFORM_WIN32
@@ -58,6 +61,7 @@
 #ifndef PLATFORM_IOS
 
 	#define glOrthof glOrtho
+	#define glFrustumf glFrustum
 #else
 	//IOS platform - OpenglES
 

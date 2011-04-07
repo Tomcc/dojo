@@ -66,11 +66,17 @@ namespace Dojo
 		triangleMode( TM_STRIP ),
 		vertexHandle(0),
 		indexHandle(0),
-		currentUVSet(0)
+		currentUVSet(0),
+		indexGLType(0),
+		indexMaxValue(0),
+		indexByteSize(0)
 		{
 			//set all fields to zero
 			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
 			memset( vertexFieldOffset, 0, sizeof(uint) * FIELDS_NUMBER );
+
+			//default index size is 16
+			setIndexByteSize( sizeof(GLushort) );
 		}		
 		
 		virtual ~Mesh()
@@ -81,6 +87,37 @@ namespace Dojo
 			//and GPU mem
 			unload();
 		}
+
+		///sets the dimension of a single index in this mesh
+		/**
+			MUST be called only before the first begin ever!
+		*/
+		inline void setIndexByteSize( byte bytenumber )
+		{
+			DEBUG_ASSERT( !indices );
+			DEBUG_ASSERT( 
+				bytenumber == 1 || 
+				bytenumber == 2 || 
+				bytenumber == 4 );
+
+			indexByteSize = bytenumber;
+
+			if( indexByteSize == 1 )
+			{
+				indexGLType = GL_UNSIGNED_BYTE;
+				indexMaxValue = 0xff;
+			}
+			else if( indexByteSize == 2 )
+			{
+				indexGLType = GL_UNSIGNED_SHORT;
+				indexMaxValue = 0xffff;
+			}
+			else if( indexByteSize == 4 )
+			{
+				indexGLType = GL_UNSIGNED_INT;
+				indexMaxValue = 0xffffffff;
+			}
+		}		
 		
 		void setVertexFieldEnabled( VertexField f )
 		{			
@@ -223,12 +260,25 @@ namespace Dojo
 		inline void index( uint idx )
 		{		
 			DEBUG_ASSERT( isEditing() );
-			DEBUG_ASSERT( indexCount < 65536 ); //indices are GL_SHORTs
+			DEBUG_ASSERT( idx <= indexMaxValue );
 			
 			if( indexCount >= indexMaxCount )
 				setIndexCap( indexCount + 1 );
 
-			indices[ indexCount++ ] = idx;			
+			switch( indexByteSize )
+			{
+			case 1:
+				indices[ indexCount ] = idx;
+				break;
+			case 2:
+				((unsigned short*)indices)[ indexCount ] = idx;
+				break;
+			case 4:
+				((uint*)indices)[ indexCount ] = idx;
+				break;
+			}
+
+			++indexCount;
 		}
 		
 		inline void triangle( uint i1, uint i2, uint i3 )
@@ -238,7 +288,7 @@ namespace Dojo
 			index(i3);
 		}
 
-		inline void quad(uint i11, uint i12, uint i21, uint i22 )
+		inline void quad( uint i11, uint i12, uint i21, uint i22 )
 		{
 			triangle(i11,i21,i12);
 			triangle(i21,i22,i12);
@@ -254,14 +304,12 @@ namespace Dojo
 		///loads the whole file passed in the constructor
 		virtual bool load();
 		
-		
 		virtual void unload()
 		{
 			if( loaded )
 			{
 				glDeleteBuffers( 1, &vertexHandle );
 				glDeleteBuffers( 1, &indexHandle );
-
 
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				
@@ -277,6 +325,11 @@ namespace Dojo
 		inline bool isIndexed()
 		{
 			return indices || indexHandle;
+		}
+
+		inline GLenum getIndexGLType()
+		{
+			return indexGLType;
 		}
 		
 		inline bool isVertexFieldEnabled( VertexField f )
@@ -315,7 +368,10 @@ namespace Dojo
 		byte* vertices;
 		
 		uint indexCount, indexMaxCount;
-		GLint* indices;		
+		byte indexByteSize;
+		uint indexMaxValue;
+		GLenum indexGLType;
+		byte* indices;//indices have varying size
 
 		uint triangleCount;
 
