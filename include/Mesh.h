@@ -114,8 +114,12 @@ namespace Dojo
 			}
 			else if( indexByteSize == 4 )
 			{
+#ifndef PLATFORM_IOS
 				indexGLType = GL_UNSIGNED_INT;
 				indexMaxValue = 0xffffffff;
+#else
+				DEBUG_ASSERT( !"32 BIT INDICES NOT SUPPORTED ON OES" );
+#endif
 			}
 		}		
 		
