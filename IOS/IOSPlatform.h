@@ -21,7 +21,7 @@ namespace Dojo
 	{
 	public:
 		
-		IOSPlatform();
+		IOSPlatform( );
 		
 		virtual ~IOSPlatform();
 				

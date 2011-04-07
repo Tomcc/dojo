@@ -32,17 +32,7 @@ backLayer( NULL )
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
 	platform = Platform::getSingleton();
-			
-	//gles settings
-	glActiveTexture( GL_TEXTURE0 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE1 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE2 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE3 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE4 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE5 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE6 );		glEnable( GL_TEXTURE_2D );
-	glActiveTexture( GL_TEXTURE7 );		glEnable( GL_TEXTURE_2D );
-
+	
 	glEnable( GL_BLEND );	
 
 	glEnable( GL_LIGHTING );

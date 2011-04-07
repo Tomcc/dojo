@@ -13,6 +13,7 @@ void Texture::bind( uint index )
 	DEBUG_ASSERT( index < 8 );
 
 	glActiveTexture( GL_TEXTURE0 + index );
+	glEnable( GL_TEXTURE_2D );
 
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 }
@@ -20,6 +21,7 @@ void Texture::bind( uint index )
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );
+	DEBUG_ASSERT( textureType == "png" );
 		
 	glGenTextures(1, &glhandle );
 	
@@ -27,7 +29,6 @@ bool Texture::load()
 	
 	enableTiling();
 		
-	DEBUG_ASSERT( textureType == "png" );
 	
 	loaded = _loadPNGToBoundTexture();
 

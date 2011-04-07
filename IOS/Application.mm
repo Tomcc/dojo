@@ -113,7 +113,7 @@ using namespace Dojo;
 	platform->_notifyNativeApp( self );
 	
 	platform->initialise();
-	
+		
 	renderImpl = platform->getRender();
 	touchSource = platform->getInput();	
 }

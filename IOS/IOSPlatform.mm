@@ -143,7 +143,7 @@ void IOSPlatform::step( float dt )
 
 void IOSPlatform::loop( float minstep )
 {
-	DEBUG_ASSERT( !"DO NOT USE loop() ON IPHONE" );
+	
 }
 
 std::string IOSPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )

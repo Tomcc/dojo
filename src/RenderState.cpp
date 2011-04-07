@@ -22,7 +22,8 @@ void RenderState::_bindTextureSlot( int i )
 	{
 		//bind nothing
 		glActiveTexture( GL_TEXTURE0 + i );
-		glBindTexture( GL_TEXTURE_2D, 0 );
+		glBindTexture( GL_TEXTURE_2D, NULL );
+		glDisable( GL_TEXTURE_2D );
 	}
 }
 

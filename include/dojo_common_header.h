@@ -21,11 +21,6 @@
 #include <float.h>
 #include <fstream>
 
-#include <Poco/Mutex.h>
-#include <Poco/Thread.h>
-#include <Poco/Runnable.h>
-#include <Poco/Semaphore.h>
-
 #ifndef PLATFORM_IOS
 
 	#include <GL/glew.h>
