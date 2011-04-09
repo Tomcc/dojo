@@ -3,6 +3,9 @@
 
 #include "dojo_common_header.h"
 
+#include <Poco/Thread.h>
+#include <Poco/Mutex.h>
+#include <Poco/Semaphore.h>
 #include <OIS/OIS.h>
 
 #include "Platform.h"
