@@ -270,7 +270,7 @@ void Render::renderElement( Renderable* s )
 	if( !m->isIndexed() )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else
-		glDrawElements( mode, m->getIndexCount(), GL_UNSIGNED_SHORT, 0 );  //on OpenGLES, we have max 65536 indices!!!
+		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
 
 	//reset original view on the top of the stack
 	glPopMatrix();

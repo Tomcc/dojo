@@ -35,6 +35,8 @@
 	#include <alc.h>
 	#include <AL/alut.h>
 
+	#include <Windows.h>
+
 //this cant be in config.h as it breaks successive system includes
 	#ifdef _DEBUG
 
@@ -44,7 +46,7 @@
 
 	#endif
 
-#else
+#else //OSX
     #include <AL/al.h>
     #include <AL/alc.h>
     #include <AL/alut.h>
