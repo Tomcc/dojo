@@ -16,8 +16,13 @@ void Renderable::action( float dt )
 
 	if( mesh )
 	{
-		worldUpperBound = worldPosition + mesh->getMax();
-		worldLowerBound = worldPosition + mesh->getMin();
+		worldUpperBound.x = worldPosition.x + mesh->getMax().x * scale.x;
+		worldUpperBound.y = worldPosition.y + mesh->getMax().y * scale.y;
+		worldUpperBound.z = worldPosition.z + mesh->getMax().z * scale.z;
+				
+		worldLowerBound.x = worldPosition.x + mesh->getMin().x * scale.x;
+		worldLowerBound.y = worldPosition.y + mesh->getMin().y * scale.y;
+		worldLowerBound.z = worldPosition.z + mesh->getMin().z * scale.z;
 	}
 	
 	advanceFade(dt);

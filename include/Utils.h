@@ -390,10 +390,10 @@ namespace Dojo
 		inline static bool areStringsNearInSequence( const std::string& first, const std::string& second )
 		{
 			//get number postfixes
-			uint t1 = getTag( first );
-			uint t2 = getTag( second );
+			int t1 = getTag( first );
+			int t2 = getTag( second );
 			
-			return t1 > 0 && t1+1 == t2;
+			return t1 >= 0 && t2 >= 0 && t1+1 == t2;
 		}
 	};	
 }

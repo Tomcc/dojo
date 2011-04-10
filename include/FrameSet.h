@@ -81,6 +81,11 @@ namespace Dojo
 		
 		uint getFrameNumber()				{	return frames.size();	}
 		
+		int getFrameIndex( Texture* frame )
+		{
+			return frames.getElementIndex( frame );
+		}
+		
 		
 	protected:
 		TextureList frames;

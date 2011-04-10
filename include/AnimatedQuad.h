@@ -49,12 +49,16 @@ namespace Dojo
 				}
 				else
 					totalTime = 1;
-				
 			}
 			
 			inline Texture* getCurrentFrame()
 			{					
 				return currentFrame;
+			}			
+			
+			inline int getCurrentFrameNumber()
+			{
+				return frames->getFrameIndex( currentFrame );
 			}
 			
 			inline float getTimePerFrame()
@@ -148,6 +152,12 @@ namespace Dojo
 			DEBUG_ASSERT( animation );
 			
 			return animation->frames;
+		}
+		
+		
+		inline int getCurrentFrameNumber()
+		{
+			return animation->getCurrentFrameNumber();
 		}
 		
 		inline void setAnimationTime( float t )

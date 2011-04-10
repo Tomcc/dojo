@@ -76,7 +76,7 @@ Renderable* GameState::getClickableAtPoint( const Vector& point )
 	//find the pointer position in viewport space
 	Vector pointer = camera->makeWorldCoordinates( point );
 	
-	for( uint i = 0; i < clickables.size() && !clickable; ++i )
+	for( uint i = 0; i < clickables.size(); ++i )
 	{
 		c = clickables.at(i);
 		if( c->isVisible() && c->isActive() && c->contains( pointer ) )
