@@ -63,7 +63,8 @@ namespace Dojo {
 			objects.remove( o );
 		}
 		
-		inline void removeClickableSprite( Renderable* s );
+		void removeClickableSprite( Renderable* s );
+        
 		void removeSprite( Renderable* s );
 		
 		void removeAll();

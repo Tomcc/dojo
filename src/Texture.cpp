@@ -126,7 +126,7 @@ void Texture::_buildOptimalBillboard()
 
 bool Texture::_loadPNGToBoundTexture()
 {
-	void* imageData, *buf;
+	void* imageData;
 	
 	Platform::getSingleton()->loadPNGContent( imageData, filePath, width, height );
 		
