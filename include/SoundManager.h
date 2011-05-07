@@ -55,7 +55,7 @@ namespace Dojo {
 					delete s;
 				}
 				
-				musicTrack = false;
+				musicTrack = NULL;
 				fadeState = FS_NONE;
 			}
 

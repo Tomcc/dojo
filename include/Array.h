@@ -171,11 +171,7 @@ namespace Dojo
 			{
 				int i = getElementIndex(e);
 				if(i != -1)
-				{
 					removeOrdered(i);
-					return true;
-				}
-				else return false;
 			}
 
 			///Rimuove l'elemento in coda del vettore
@@ -199,7 +195,7 @@ namespace Dojo
 			\param newPageSize la nuova grandezza della page per il vettore. Lasciare a 0 per non 
 			modificare.
 			*/
-			FV_INLINE void clear(const size_t newPageSize = 0)
+			FV_INLINE void clear( uint newPageSize = 0)
 			{
 				elements = 0;
 
@@ -254,22 +250,22 @@ namespace Dojo
 			FV_INLINE int getElementIndex(const T& element)
 			{
 				//find the element index
-				for(size_t i = 0; i < size(); ++i)
+				for(uint i = 0; i < size(); ++i)
 				{
 					if(vectorArray[i] == element)
-						return i;
+						return (uint)i;
 				}
 				return -1;
 			}
 
 			///Numero di elementi
-			FV_INLINE size_t size() const	{	return elements;	}
+			FV_INLINE uint size() const	{	return elements;	}
 			///Numero di bytes
-			FV_INLINE size_t byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
+			FV_INLINE uint byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
 			///Numero massimo di elementi prima di un nuovo realloc
-			FV_INLINE size_t getArraySize()	const {	return arraySize;	}
+			FV_INLINE uint getArraySize()	const {	return arraySize;	}
 			///Ottieni il numero massimo di elementi accettabili prima di riallocare
-			FV_INLINE size_t getPageSize()	const {	return pageSize;	}
+			FV_INLINE uint getPageSize()	const {	return pageSize;	}
 
 
 			///Posizione del vettore in memoria -uso avanzato-
@@ -277,7 +273,7 @@ namespace Dojo
 
 		protected:
 
-			size_t elements, arraySize, pageSize;
+			uint elements, arraySize, pageSize;
 
 			//puntatore C-style alla memoria che contiene gli elementi.
 			T* vectorArray;

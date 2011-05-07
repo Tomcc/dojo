@@ -40,7 +40,7 @@ namespace Dojo
 			return buffers.at(i);
 		}
 
-		inline int getBufferNb()	{	return buffers.size();	 }
+		inline uint getBufferNb()	{	return buffers.size();	 }
 
 		inline const std::string& getName()	{	return name;	}
 

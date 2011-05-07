@@ -68,7 +68,7 @@ namespace Dojo
 		inline void setTexture( Texture* tex, uint ID = 0 )
 		{
 			//create missing textures for this renderstate
-			for( int i = textures.size(); i <= ID; ++i )
+			for( uint i = textures.size(); i <= ID; ++i )
 				textures.add( NULL );
 
 			textures.at( ID ) = tex;

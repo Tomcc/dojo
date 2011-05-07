@@ -14,27 +14,23 @@
 #define MESH_32BIT_INDICES 0
 
 //are we on windows?
-#ifdef WIN32
-#define PLATFORM_WIN32
-#endif
+#if defined ( WIN32 )
+    #define PLATFORM_WIN32
 
 //are we on mac?
-//TODO
-
+#elif defined( __APPLE__ ) && defined( __MACH__ )
+    #define PLATFORM_OSX
 
 //are we on GNU/Linux?
-#ifdef LINUX
-#define PLATFORM_LINUX
+#elif defined( LINUX )
+    #define PLATFORM_LINUX
+
+//default is IOS
+#else 
+    #define PLATFORM_IOS
+
 #endif
 
-//set at least one platform; PLATFORM_IOS is default
-#ifndef PLATFORM_WIN32
-	#ifndef PLATFORM_OSX
-		#ifndef PLATFORM_LINUX
-			#define PLATFORM_IOS
-		#endif
-	#endif
-#endif
 
 #ifndef _DEBUG
 #define NDEBUG  //to be sure!
@@ -43,14 +39,14 @@
 #ifdef _DEBUG
 
 	#define DEBUG_ASSERT( T ) assert(T)
-	#define DEBUG_TODO assert( !"METHOD NOT IMPLEMENTED" )
+	#define DEBUG_TODO assert( !"METHOD NOT IMPLEMENTED" ), 0
 	#define DEBUG_OUT( T ) std::cout << T << ' '
 	#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
 
 #else
 
 	#define DEBUG_ASSERT( T )
-	#define DEBUG_TODO
+	#define DEBUG_TODO 0
 	#define DEBUG_OUT( T ) 
 	#define DEBUG_MESSAGE( T )
 
