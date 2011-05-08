@@ -16,6 +16,7 @@
 //are we on windows?
 #if defined ( WIN32 )
     #define PLATFORM_WIN32
+	#define NOMINMAX  //Y U NO LEAVE STL ALONE
 
 //are we on mac?
 #elif defined( __APPLE__ ) && defined( __MACH__ )
@@ -81,9 +82,7 @@
 
 namespace Dojo
 {
-#ifndef LINUX
     typedef unsigned int uint;
-#endif
 	typedef unsigned char byte;
 	typedef unsigned short unichar;
 }
