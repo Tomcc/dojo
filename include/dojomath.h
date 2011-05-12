@@ -16,7 +16,6 @@
 
 namespace Dojo 
 {
-
 	class Math
 	{	
 	public:

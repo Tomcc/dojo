@@ -78,7 +78,7 @@ namespace Dojo {
 
 		inline void setWireframe( bool wireframe )
 		{
-#ifdef glPolygonMode
+#ifndef PLATFORM_IOS
 			glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
 #else
 			DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );

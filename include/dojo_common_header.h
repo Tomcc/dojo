@@ -30,16 +30,13 @@
     #include <GL/glext.h>
     #include <GL/gl.h>
 
-    #include <crtdbg.h>
-
     #include <Windows.h>
 
     //this cant be in config.h as it breaks successive system includes
     #ifdef _DEBUG
 
-        #define _CRTDBG_MAP_ALLOC
-        #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-        #define new DEBUG_NEW
+		#define _CRTDBG_MAP_ALLOC
+		#include <crtdbg.h>
 
     #endif
 
@@ -47,7 +44,6 @@
     #include <OpenAL/al.h>
     #include <OpenAL/alc.h>
 
-    //#include <OpenGL/glew.h>
     #include <OpenGL/gl.h>
     #include <OpenGL/glext.h>
 
