@@ -8,6 +8,8 @@
 
 #include "OSXPlatform.h"
 
+#include <OIS/OIS.h>
+
 using namespace Dojo;
 
 
