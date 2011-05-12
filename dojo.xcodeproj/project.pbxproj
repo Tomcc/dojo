@@ -10,45 +10,6 @@
 		4374A64D137C7D6E003F7907 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A64C137C7D6E003F7907 /* Cocoa.framework */; };
 		4374A65F137C7E50003F7907 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A65E137C7E50003F7907 /* OpenAL.framework */; };
 		4374A661137C7E55003F7907 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A660137C7E55003F7907 /* OpenGL.framework */; };
-		4374A6AA137C7E9C003F7907 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A663137C7E9C003F7907 /* AnimatedQuad.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6AB137C7E9C003F7907 /* Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A664137C7E9C003F7907 /* Array.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6AC137C7E9C003F7907 /* BaseObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A665137C7E9C003F7907 /* BaseObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6AD137C7E9C003F7907 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A666137C7E9C003F7907 /* Buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6AE137C7E9C003F7907 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A667137C7E9C003F7907 /* Color.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6AF137C7E9C003F7907 /* dojo_common_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A668137C7E9C003F7907 /* dojo_common_header.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B0137C7E9C003F7907 /* dojo_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A669137C7E9C003F7907 /* dojo_config.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B1137C7E9C003F7907 /* dojomath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66A137C7E9C003F7907 /* dojomath.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B2137C7E9C003F7907 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66B137C7E9C003F7907 /* Font.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B3137C7E9C003F7907 /* FrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66C137C7E9C003F7907 /* FrameSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B4137C7E9C003F7907 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66D137C7E9C003F7907 /* Game.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B5137C7E9C003F7907 /* GameState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66E137C7E9C003F7907 /* GameState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B6137C7E9C003F7907 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A66F137C7E9C003F7907 /* Mesh.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B7137C7E9C003F7907 /* Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A670137C7E9C003F7907 /* Model.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B8137C7E9C003F7907 /* Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A671137C7E9C003F7907 /* Object.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6B9137C7E9C003F7907 /* Particle.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A672137C7E9C003F7907 /* Particle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BA137C7E9C003F7907 /* ParticlePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A673137C7E9C003F7907 /* ParticlePool.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BB137C7E9C003F7907 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A674137C7E9C003F7907 /* Platform.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BC137C7E9C003F7907 /* Render.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A675137C7E9C003F7907 /* Render.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BD137C7E9C003F7907 /* Renderable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A676137C7E9C003F7907 /* Renderable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BE137C7E9C003F7907 /* RenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A677137C7E9C003F7907 /* RenderState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6BF137C7E9C003F7907 /* ResourceGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A678137C7E9C003F7907 /* ResourceGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C0137C7E9C003F7907 /* Serializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A679137C7E9C003F7907 /* Serializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C1137C7E9C003F7907 /* SoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67A137C7E9C003F7907 /* SoundBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C2137C7E9C003F7907 /* SoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67B137C7E9C003F7907 /* SoundManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C3137C7E9C003F7907 /* SoundSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67C137C7E9C003F7907 /* SoundSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C4137C7E9C003F7907 /* SoundSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67D137C7E9C003F7907 /* SoundSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C5137C7E9C003F7907 /* Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67E137C7E9C003F7907 /* Sprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C6137C7E9C003F7907 /* StateInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A67F137C7E9C003F7907 /* StateInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C7137C7E9C003F7907 /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A680137C7E9C003F7907 /* stdafx.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C8137C7E9C003F7907 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A681137C7E9C003F7907 /* Table.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6C9137C7E9C003F7907 /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A682137C7E9C003F7907 /* TextArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CA137C7E9C003F7907 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A683137C7E9C003F7907 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CB137C7E9C003F7907 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A684137C7E9C003F7907 /* Timer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CC137C7E9C003F7907 /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A685137C7E9C003F7907 /* TouchSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CD137C7E9C003F7907 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A686137C7E9C003F7907 /* Trail.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CE137C7E9C003F7907 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A687137C7E9C003F7907 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6CF137C7E9C003F7907 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A688137C7E9C003F7907 /* Vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A6D0137C7E9C003F7907 /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A689137C7E9C003F7907 /* Viewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A6D1137C7E9C003F7907 /* Dojo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4374A68B137C7E9C003F7907 /* Dojo-Info.plist */; };
 		4374A6D2137C7E9C003F7907 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */; settings = {ATTRIBUTES = (); }; };
 		4374A6D3137C7E9C003F7907 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A68D137C7E9C003F7907 /* OSXPlatform.h */; settings = {ATTRIBUTES = (); }; };
@@ -79,6 +40,45 @@
 		4374A6EC137C7E9C003F7907 /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A6A7137C7E9C003F7907 /* Trail.cpp */; };
 		4374A6ED137C7E9C003F7907 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A6A8137C7E9C003F7907 /* Vector.cpp */; };
 		4374A6EE137C7E9C003F7907 /* Viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A6A9137C7E9C003F7907 /* Viewport.cpp */; };
+		4374A726137C8132003F7907 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A6FF137C8132003F7907 /* AnimatedQuad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A727137C8132003F7907 /* Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A700137C8132003F7907 /* Array.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A728137C8132003F7907 /* BaseObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A701137C8132003F7907 /* BaseObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A729137C8132003F7907 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A702137C8132003F7907 /* Buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72A137C8132003F7907 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A703137C8132003F7907 /* Color.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72B137C8132003F7907 /* dojo_common_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A704137C8132003F7907 /* dojo_common_header.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72C137C8132003F7907 /* dojo_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A705137C8132003F7907 /* dojo_config.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72D137C8132003F7907 /* dojomath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A706137C8132003F7907 /* dojomath.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72E137C8132003F7907 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A707137C8132003F7907 /* Font.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A72F137C8132003F7907 /* FrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A708137C8132003F7907 /* FrameSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A730137C8132003F7907 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A709137C8132003F7907 /* Game.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A731137C8132003F7907 /* GameState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70A137C8132003F7907 /* GameState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A732137C8132003F7907 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70B137C8132003F7907 /* Mesh.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A733137C8132003F7907 /* Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70C137C8132003F7907 /* Model.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A734137C8132003F7907 /* Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70D137C8132003F7907 /* Object.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A735137C8132003F7907 /* Particle.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70E137C8132003F7907 /* Particle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A736137C8132003F7907 /* ParticlePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A70F137C8132003F7907 /* ParticlePool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A737137C8132003F7907 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A710137C8132003F7907 /* Platform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A738137C8132003F7907 /* Render.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A711137C8132003F7907 /* Render.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A739137C8132003F7907 /* Renderable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A712137C8132003F7907 /* Renderable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73A137C8132003F7907 /* RenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A713137C8132003F7907 /* RenderState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73B137C8132003F7907 /* ResourceGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A714137C8132003F7907 /* ResourceGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73C137C8132003F7907 /* Serializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A715137C8132003F7907 /* Serializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73D137C8132003F7907 /* SoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A716137C8132003F7907 /* SoundBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73E137C8132003F7907 /* SoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A717137C8132003F7907 /* SoundManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A73F137C8132003F7907 /* SoundSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A718137C8132003F7907 /* SoundSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A740137C8132003F7907 /* SoundSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A719137C8132003F7907 /* SoundSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A741137C8132003F7907 /* Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71A137C8132003F7907 /* Sprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A742137C8132003F7907 /* StateInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71B137C8132003F7907 /* StateInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A743137C8132003F7907 /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71C137C8132003F7907 /* stdafx.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A744137C8132003F7907 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71D137C8132003F7907 /* Table.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A745137C8132003F7907 /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71E137C8132003F7907 /* TextArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A746137C8132003F7907 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71F137C8132003F7907 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A747137C8132003F7907 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A720137C8132003F7907 /* Timer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A748137C8132003F7907 /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A721137C8132003F7907 /* TouchSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A749137C8132003F7907 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A722137C8132003F7907 /* Trail.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A74A137C8132003F7907 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A723137C8132003F7907 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A74B137C8132003F7907 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A724137C8132003F7907 /* Vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A74C137C8132003F7907 /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A725137C8132003F7907 /* Viewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,45 +89,6 @@
 		4374A651137C7D6E003F7907 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4374A65E137C7E50003F7907 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4374A660137C7E55003F7907 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		4374A663137C7E9C003F7907 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedQuad.h; sourceTree = "<group>"; };
-		4374A664137C7E9C003F7907 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
-		4374A665137C7E9C003F7907 /* BaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseObject.h; sourceTree = "<group>"; };
-		4374A666137C7E9C003F7907 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
-		4374A667137C7E9C003F7907 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
-		4374A668137C7E9C003F7907 /* dojo_common_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojo_common_header.h; sourceTree = "<group>"; };
-		4374A669137C7E9C003F7907 /* dojo_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojo_config.h; sourceTree = "<group>"; };
-		4374A66A137C7E9C003F7907 /* dojomath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojomath.h; sourceTree = "<group>"; };
-		4374A66B137C7E9C003F7907 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
-		4374A66C137C7E9C003F7907 /* FrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSet.h; sourceTree = "<group>"; };
-		4374A66D137C7E9C003F7907 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
-		4374A66E137C7E9C003F7907 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameState.h; sourceTree = "<group>"; };
-		4374A66F137C7E9C003F7907 /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
-		4374A670137C7E9C003F7907 /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Model.h; sourceTree = "<group>"; };
-		4374A671137C7E9C003F7907 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
-		4374A672137C7E9C003F7907 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Particle.h; sourceTree = "<group>"; };
-		4374A673137C7E9C003F7907 /* ParticlePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticlePool.h; sourceTree = "<group>"; };
-		4374A674137C7E9C003F7907 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
-		4374A675137C7E9C003F7907 /* Render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Render.h; sourceTree = "<group>"; };
-		4374A676137C7E9C003F7907 /* Renderable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderable.h; sourceTree = "<group>"; };
-		4374A677137C7E9C003F7907 /* RenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderState.h; sourceTree = "<group>"; };
-		4374A678137C7E9C003F7907 /* ResourceGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceGroup.h; sourceTree = "<group>"; };
-		4374A679137C7E9C003F7907 /* Serializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Serializable.h; sourceTree = "<group>"; };
-		4374A67A137C7E9C003F7907 /* SoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundBuffer.h; sourceTree = "<group>"; };
-		4374A67B137C7E9C003F7907 /* SoundManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundManager.h; sourceTree = "<group>"; };
-		4374A67C137C7E9C003F7907 /* SoundSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundSet.h; sourceTree = "<group>"; };
-		4374A67D137C7E9C003F7907 /* SoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundSource.h; sourceTree = "<group>"; };
-		4374A67E137C7E9C003F7907 /* Sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprite.h; sourceTree = "<group>"; };
-		4374A67F137C7E9C003F7907 /* StateInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateInterface.h; sourceTree = "<group>"; };
-		4374A680137C7E9C003F7907 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
-		4374A681137C7E9C003F7907 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Table.h; sourceTree = "<group>"; };
-		4374A682137C7E9C003F7907 /* TextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextArea.h; sourceTree = "<group>"; };
-		4374A683137C7E9C003F7907 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
-		4374A684137C7E9C003F7907 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
-		4374A685137C7E9C003F7907 /* TouchSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchSource.h; sourceTree = "<group>"; };
-		4374A686137C7E9C003F7907 /* Trail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trail.h; sourceTree = "<group>"; };
-		4374A687137C7E9C003F7907 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
-		4374A688137C7E9C003F7907 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
-		4374A689137C7E9C003F7907 /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Viewport.h; sourceTree = "<group>"; };
 		4374A68B137C7E9C003F7907 /* Dojo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Dojo-Info.plist"; sourceTree = "<group>"; };
 		4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
 		4374A68D137C7E9C003F7907 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
@@ -158,6 +119,45 @@
 		4374A6A7137C7E9C003F7907 /* Trail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trail.cpp; sourceTree = "<group>"; };
 		4374A6A8137C7E9C003F7907 /* Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector.cpp; sourceTree = "<group>"; };
 		4374A6A9137C7E9C003F7907 /* Viewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewport.cpp; sourceTree = "<group>"; };
+		4374A6FF137C8132003F7907 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimatedQuad.h; path = dojo/AnimatedQuad.h; sourceTree = "<group>"; };
+		4374A700137C8132003F7907 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Array.h; path = dojo/Array.h; sourceTree = "<group>"; };
+		4374A701137C8132003F7907 /* BaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseObject.h; path = dojo/BaseObject.h; sourceTree = "<group>"; };
+		4374A702137C8132003F7907 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Buffer.h; path = dojo/Buffer.h; sourceTree = "<group>"; };
+		4374A703137C8132003F7907 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Color.h; path = dojo/Color.h; sourceTree = "<group>"; };
+		4374A704137C8132003F7907 /* dojo_common_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dojo_common_header.h; path = dojo/dojo_common_header.h; sourceTree = "<group>"; };
+		4374A705137C8132003F7907 /* dojo_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dojo_config.h; path = dojo/dojo_config.h; sourceTree = "<group>"; };
+		4374A706137C8132003F7907 /* dojomath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dojomath.h; path = dojo/dojomath.h; sourceTree = "<group>"; };
+		4374A707137C8132003F7907 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Font.h; path = dojo/Font.h; sourceTree = "<group>"; };
+		4374A708137C8132003F7907 /* FrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameSet.h; path = dojo/FrameSet.h; sourceTree = "<group>"; };
+		4374A709137C8132003F7907 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = dojo/Game.h; sourceTree = "<group>"; };
+		4374A70A137C8132003F7907 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = dojo/GameState.h; sourceTree = "<group>"; };
+		4374A70B137C8132003F7907 /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mesh.h; path = dojo/Mesh.h; sourceTree = "<group>"; };
+		4374A70C137C8132003F7907 /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Model.h; path = dojo/Model.h; sourceTree = "<group>"; };
+		4374A70D137C8132003F7907 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = dojo/Object.h; sourceTree = "<group>"; };
+		4374A70E137C8132003F7907 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = dojo/Particle.h; sourceTree = "<group>"; };
+		4374A70F137C8132003F7907 /* ParticlePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticlePool.h; path = dojo/ParticlePool.h; sourceTree = "<group>"; };
+		4374A710137C8132003F7907 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = dojo/Platform.h; sourceTree = "<group>"; };
+		4374A711137C8132003F7907 /* Render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Render.h; path = dojo/Render.h; sourceTree = "<group>"; };
+		4374A712137C8132003F7907 /* Renderable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderable.h; path = dojo/Renderable.h; sourceTree = "<group>"; };
+		4374A713137C8132003F7907 /* RenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderState.h; path = dojo/RenderState.h; sourceTree = "<group>"; };
+		4374A714137C8132003F7907 /* ResourceGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceGroup.h; path = dojo/ResourceGroup.h; sourceTree = "<group>"; };
+		4374A715137C8132003F7907 /* Serializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Serializable.h; path = dojo/Serializable.h; sourceTree = "<group>"; };
+		4374A716137C8132003F7907 /* SoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundBuffer.h; path = dojo/SoundBuffer.h; sourceTree = "<group>"; };
+		4374A717137C8132003F7907 /* SoundManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundManager.h; path = dojo/SoundManager.h; sourceTree = "<group>"; };
+		4374A718137C8132003F7907 /* SoundSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundSet.h; path = dojo/SoundSet.h; sourceTree = "<group>"; };
+		4374A719137C8132003F7907 /* SoundSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundSource.h; path = dojo/SoundSource.h; sourceTree = "<group>"; };
+		4374A71A137C8132003F7907 /* Sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sprite.h; path = dojo/Sprite.h; sourceTree = "<group>"; };
+		4374A71B137C8132003F7907 /* StateInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateInterface.h; path = dojo/StateInterface.h; sourceTree = "<group>"; };
+		4374A71C137C8132003F7907 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = dojo/stdafx.h; sourceTree = "<group>"; };
+		4374A71D137C8132003F7907 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = dojo/Table.h; sourceTree = "<group>"; };
+		4374A71E137C8132003F7907 /* TextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextArea.h; path = dojo/TextArea.h; sourceTree = "<group>"; };
+		4374A71F137C8132003F7907 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = dojo/Texture.h; sourceTree = "<group>"; };
+		4374A720137C8132003F7907 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timer.h; path = dojo/Timer.h; sourceTree = "<group>"; };
+		4374A721137C8132003F7907 /* TouchSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchSource.h; path = dojo/TouchSource.h; sourceTree = "<group>"; };
+		4374A722137C8132003F7907 /* Trail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Trail.h; path = dojo/Trail.h; sourceTree = "<group>"; };
+		4374A723137C8132003F7907 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = dojo/Utils.h; sourceTree = "<group>"; };
+		4374A724137C8132003F7907 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector.h; path = dojo/Vector.h; sourceTree = "<group>"; };
+		4374A725137C8132003F7907 /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viewport.h; path = dojo/Viewport.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,45 +209,45 @@
 		4374A662137C7E9C003F7907 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				4374A663137C7E9C003F7907 /* AnimatedQuad.h */,
-				4374A664137C7E9C003F7907 /* Array.h */,
-				4374A665137C7E9C003F7907 /* BaseObject.h */,
-				4374A666137C7E9C003F7907 /* Buffer.h */,
-				4374A667137C7E9C003F7907 /* Color.h */,
-				4374A668137C7E9C003F7907 /* dojo_common_header.h */,
-				4374A669137C7E9C003F7907 /* dojo_config.h */,
-				4374A66A137C7E9C003F7907 /* dojomath.h */,
-				4374A66B137C7E9C003F7907 /* Font.h */,
-				4374A66C137C7E9C003F7907 /* FrameSet.h */,
-				4374A66D137C7E9C003F7907 /* Game.h */,
-				4374A66E137C7E9C003F7907 /* GameState.h */,
-				4374A66F137C7E9C003F7907 /* Mesh.h */,
-				4374A670137C7E9C003F7907 /* Model.h */,
-				4374A671137C7E9C003F7907 /* Object.h */,
-				4374A672137C7E9C003F7907 /* Particle.h */,
-				4374A673137C7E9C003F7907 /* ParticlePool.h */,
-				4374A674137C7E9C003F7907 /* Platform.h */,
-				4374A675137C7E9C003F7907 /* Render.h */,
-				4374A676137C7E9C003F7907 /* Renderable.h */,
-				4374A677137C7E9C003F7907 /* RenderState.h */,
-				4374A678137C7E9C003F7907 /* ResourceGroup.h */,
-				4374A679137C7E9C003F7907 /* Serializable.h */,
-				4374A67A137C7E9C003F7907 /* SoundBuffer.h */,
-				4374A67B137C7E9C003F7907 /* SoundManager.h */,
-				4374A67C137C7E9C003F7907 /* SoundSet.h */,
-				4374A67D137C7E9C003F7907 /* SoundSource.h */,
-				4374A67E137C7E9C003F7907 /* Sprite.h */,
-				4374A67F137C7E9C003F7907 /* StateInterface.h */,
-				4374A680137C7E9C003F7907 /* stdafx.h */,
-				4374A681137C7E9C003F7907 /* Table.h */,
-				4374A682137C7E9C003F7907 /* TextArea.h */,
-				4374A683137C7E9C003F7907 /* Texture.h */,
-				4374A684137C7E9C003F7907 /* Timer.h */,
-				4374A685137C7E9C003F7907 /* TouchSource.h */,
-				4374A686137C7E9C003F7907 /* Trail.h */,
-				4374A687137C7E9C003F7907 /* Utils.h */,
-				4374A688137C7E9C003F7907 /* Vector.h */,
-				4374A689137C7E9C003F7907 /* Viewport.h */,
+				4374A6FF137C8132003F7907 /* AnimatedQuad.h */,
+				4374A700137C8132003F7907 /* Array.h */,
+				4374A701137C8132003F7907 /* BaseObject.h */,
+				4374A702137C8132003F7907 /* Buffer.h */,
+				4374A703137C8132003F7907 /* Color.h */,
+				4374A704137C8132003F7907 /* dojo_common_header.h */,
+				4374A705137C8132003F7907 /* dojo_config.h */,
+				4374A706137C8132003F7907 /* dojomath.h */,
+				4374A707137C8132003F7907 /* Font.h */,
+				4374A708137C8132003F7907 /* FrameSet.h */,
+				4374A709137C8132003F7907 /* Game.h */,
+				4374A70A137C8132003F7907 /* GameState.h */,
+				4374A70B137C8132003F7907 /* Mesh.h */,
+				4374A70C137C8132003F7907 /* Model.h */,
+				4374A70D137C8132003F7907 /* Object.h */,
+				4374A70E137C8132003F7907 /* Particle.h */,
+				4374A70F137C8132003F7907 /* ParticlePool.h */,
+				4374A710137C8132003F7907 /* Platform.h */,
+				4374A711137C8132003F7907 /* Render.h */,
+				4374A712137C8132003F7907 /* Renderable.h */,
+				4374A713137C8132003F7907 /* RenderState.h */,
+				4374A714137C8132003F7907 /* ResourceGroup.h */,
+				4374A715137C8132003F7907 /* Serializable.h */,
+				4374A716137C8132003F7907 /* SoundBuffer.h */,
+				4374A717137C8132003F7907 /* SoundManager.h */,
+				4374A718137C8132003F7907 /* SoundSet.h */,
+				4374A719137C8132003F7907 /* SoundSource.h */,
+				4374A71A137C8132003F7907 /* Sprite.h */,
+				4374A71B137C8132003F7907 /* StateInterface.h */,
+				4374A71C137C8132003F7907 /* stdafx.h */,
+				4374A71D137C8132003F7907 /* Table.h */,
+				4374A71E137C8132003F7907 /* TextArea.h */,
+				4374A71F137C8132003F7907 /* Texture.h */,
+				4374A720137C8132003F7907 /* Timer.h */,
+				4374A721137C8132003F7907 /* TouchSource.h */,
+				4374A722137C8132003F7907 /* Trail.h */,
+				4374A723137C8132003F7907 /* Utils.h */,
+				4374A724137C8132003F7907 /* Vector.h */,
+				4374A725137C8132003F7907 /* Viewport.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -303,45 +303,45 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4374A6AA137C7E9C003F7907 /* AnimatedQuad.h in Headers */,
-				4374A6AB137C7E9C003F7907 /* Array.h in Headers */,
-				4374A6AC137C7E9C003F7907 /* BaseObject.h in Headers */,
-				4374A6AD137C7E9C003F7907 /* Buffer.h in Headers */,
-				4374A6AE137C7E9C003F7907 /* Color.h in Headers */,
-				4374A6AF137C7E9C003F7907 /* dojo_common_header.h in Headers */,
-				4374A6B0137C7E9C003F7907 /* dojo_config.h in Headers */,
-				4374A6B1137C7E9C003F7907 /* dojomath.h in Headers */,
-				4374A6B2137C7E9C003F7907 /* Font.h in Headers */,
-				4374A6B3137C7E9C003F7907 /* FrameSet.h in Headers */,
-				4374A6B4137C7E9C003F7907 /* Game.h in Headers */,
-				4374A6B5137C7E9C003F7907 /* GameState.h in Headers */,
-				4374A6B6137C7E9C003F7907 /* Mesh.h in Headers */,
-				4374A6B7137C7E9C003F7907 /* Model.h in Headers */,
-				4374A6B8137C7E9C003F7907 /* Object.h in Headers */,
-				4374A6B9137C7E9C003F7907 /* Particle.h in Headers */,
-				4374A6BA137C7E9C003F7907 /* ParticlePool.h in Headers */,
-				4374A6BB137C7E9C003F7907 /* Platform.h in Headers */,
-				4374A6BC137C7E9C003F7907 /* Render.h in Headers */,
-				4374A6BD137C7E9C003F7907 /* Renderable.h in Headers */,
-				4374A6BE137C7E9C003F7907 /* RenderState.h in Headers */,
-				4374A6BF137C7E9C003F7907 /* ResourceGroup.h in Headers */,
-				4374A6C0137C7E9C003F7907 /* Serializable.h in Headers */,
-				4374A6C1137C7E9C003F7907 /* SoundBuffer.h in Headers */,
-				4374A6C2137C7E9C003F7907 /* SoundManager.h in Headers */,
-				4374A6C3137C7E9C003F7907 /* SoundSet.h in Headers */,
-				4374A6C4137C7E9C003F7907 /* SoundSource.h in Headers */,
-				4374A6C5137C7E9C003F7907 /* Sprite.h in Headers */,
-				4374A6C6137C7E9C003F7907 /* StateInterface.h in Headers */,
-				4374A6C7137C7E9C003F7907 /* stdafx.h in Headers */,
-				4374A6C8137C7E9C003F7907 /* Table.h in Headers */,
-				4374A6C9137C7E9C003F7907 /* TextArea.h in Headers */,
-				4374A6CA137C7E9C003F7907 /* Texture.h in Headers */,
-				4374A6CB137C7E9C003F7907 /* Timer.h in Headers */,
-				4374A6CC137C7E9C003F7907 /* TouchSource.h in Headers */,
-				4374A6CD137C7E9C003F7907 /* Trail.h in Headers */,
-				4374A6CE137C7E9C003F7907 /* Utils.h in Headers */,
-				4374A6CF137C7E9C003F7907 /* Vector.h in Headers */,
-				4374A6D0137C7E9C003F7907 /* Viewport.h in Headers */,
+				4374A726137C8132003F7907 /* AnimatedQuad.h in Headers */,
+				4374A727137C8132003F7907 /* Array.h in Headers */,
+				4374A728137C8132003F7907 /* BaseObject.h in Headers */,
+				4374A729137C8132003F7907 /* Buffer.h in Headers */,
+				4374A72A137C8132003F7907 /* Color.h in Headers */,
+				4374A72B137C8132003F7907 /* dojo_common_header.h in Headers */,
+				4374A72C137C8132003F7907 /* dojo_config.h in Headers */,
+				4374A72D137C8132003F7907 /* dojomath.h in Headers */,
+				4374A72E137C8132003F7907 /* Font.h in Headers */,
+				4374A72F137C8132003F7907 /* FrameSet.h in Headers */,
+				4374A730137C8132003F7907 /* Game.h in Headers */,
+				4374A731137C8132003F7907 /* GameState.h in Headers */,
+				4374A732137C8132003F7907 /* Mesh.h in Headers */,
+				4374A733137C8132003F7907 /* Model.h in Headers */,
+				4374A734137C8132003F7907 /* Object.h in Headers */,
+				4374A735137C8132003F7907 /* Particle.h in Headers */,
+				4374A736137C8132003F7907 /* ParticlePool.h in Headers */,
+				4374A737137C8132003F7907 /* Platform.h in Headers */,
+				4374A738137C8132003F7907 /* Render.h in Headers */,
+				4374A739137C8132003F7907 /* Renderable.h in Headers */,
+				4374A73A137C8132003F7907 /* RenderState.h in Headers */,
+				4374A73B137C8132003F7907 /* ResourceGroup.h in Headers */,
+				4374A73C137C8132003F7907 /* Serializable.h in Headers */,
+				4374A73D137C8132003F7907 /* SoundBuffer.h in Headers */,
+				4374A73E137C8132003F7907 /* SoundManager.h in Headers */,
+				4374A73F137C8132003F7907 /* SoundSet.h in Headers */,
+				4374A740137C8132003F7907 /* SoundSource.h in Headers */,
+				4374A741137C8132003F7907 /* Sprite.h in Headers */,
+				4374A742137C8132003F7907 /* StateInterface.h in Headers */,
+				4374A743137C8132003F7907 /* stdafx.h in Headers */,
+				4374A744137C8132003F7907 /* Table.h in Headers */,
+				4374A745137C8132003F7907 /* TextArea.h in Headers */,
+				4374A746137C8132003F7907 /* Texture.h in Headers */,
+				4374A747137C8132003F7907 /* Timer.h in Headers */,
+				4374A748137C8132003F7907 /* TouchSource.h in Headers */,
+				4374A749137C8132003F7907 /* Trail.h in Headers */,
+				4374A74A137C8132003F7907 /* Utils.h in Headers */,
+				4374A74B137C8132003F7907 /* Vector.h in Headers */,
+				4374A74C137C8132003F7907 /* Viewport.h in Headers */,
 				4374A6D2137C7E9C003F7907 /* Dojo-Prefix.pch in Headers */,
 				4374A6D3137C7E9C003F7907 /* OSXPlatform.h in Headers */,
 			);
@@ -529,6 +529,7 @@
 				4374A65D137C7D6E003F7907 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
