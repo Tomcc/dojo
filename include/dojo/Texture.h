@@ -67,37 +67,13 @@ namespace Dojo
 						
 		virtual void bind( uint index );
 		
-		inline void enableBilinearFiltering()
-		{					
-			glBindTexture( GL_TEXTURE_2D, glhandle );
-			
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	
-		}
+		void enableBilinearFiltering();
 		
-		inline void disableBilinearFiltering()
-		{						
-			glBindTexture( GL_TEXTURE_2D, glhandle );
-			
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST ); 
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST );		
-		}
+		void disableBilinearFiltering();
 
-		inline void enableTiling()
-		{
-			glBindTexture( GL_TEXTURE_2D, glhandle );
+		void enableTiling();
 
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-		}
-
-		inline void disableTiling()
-		{
-			glBindTexture( GL_TEXTURE_2D, glhandle );
-
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-		}
+		void disableTiling();
 		
 		inline bool isNonPowerOfTwo()			{	return npot;		}
 		

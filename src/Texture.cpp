@@ -18,6 +18,38 @@ void Texture::bind( uint index )
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 }
 
+void Texture::enableBilinearFiltering()
+{					
+    glBindTexture( GL_TEXTURE_2D, glhandle );
+    
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	
+}
+
+void Texture::disableBilinearFiltering()
+{						
+    glBindTexture( GL_TEXTURE_2D, glhandle );
+    
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST ); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST );		
+}
+
+void Texture::enableTiling()
+{
+    glBindTexture( GL_TEXTURE_2D, glhandle );
+    
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+}
+
+void Texture::disableTiling()
+{
+    glBindTexture( GL_TEXTURE_2D, glhandle );
+    
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+}
+
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );

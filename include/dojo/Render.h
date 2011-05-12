@@ -76,14 +76,7 @@ namespace Dojo {
 						
 		void setInterfaceOrientation( RenderOrientation o );
 
-		inline void setWireframe( bool wireframe )
-		{
-#ifndef PLATFORM_IOS
-			glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
-#else
-			DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );
-#endif
-		}
+		void setWireframe( bool wireframe );
 		
 		inline RenderOrientation getInterfaceOrientation()
 		{
