@@ -10,12 +10,52 @@
 
 #include <OIS/OIS.h>
 
+#include "Game.h"
+
 using namespace Dojo;
 
 
 void OSXPlatform::initialise()
 {
-    DEBUG_TODO;
+    DEBUG_ASSERT( game );
+    
+    //create the application
+    [NSApplication sharedApplication];
+    
+    
+    NSRect frame;
+    frame.origin.x = 100;
+    frame.origin.y = 100;
+    frame.size.width = game->getNativeWidth();
+    frame.size.height = game->getNativeHeight();
+        
+    NSOpenGLPixelFormatAttribute attributes [] = {
+        NSOpenGLPFAWindow,
+        NSOpenGLPFADoubleBuffer,	// double buffered
+        NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
+        (NSOpenGLPixelFormatAttribute)nil
+    };
+    
+    //create the window
+    window = [[NSWindow alloc]
+              initWithContentRect: frame
+              styleMask: (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask)
+              backing: NSBackingStoreBuffered
+              defer: YES];
+    
+    NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
+    
+    view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ];    
+    
+    [window setContentView: view];
+    
+    [window makeKeyAndOrderFront:nil];
+    
+    //do magic and run the dispatcher on the main thread
+    [NSApp
+     performSelectorOnMainThread:@selector(run)
+     withObject:nil
+     waitUntilDone:NO];
 }
 
 void OSXPlatform::shutdown()
@@ -25,26 +65,26 @@ void OSXPlatform::shutdown()
 
 void OSXPlatform::acquireContext()
 {    
-    DEBUG_TODO;
+    [[view openGLContext] makeCurrentContext];
 }
 void OSXPlatform::present()
 {    
-    DEBUG_TODO;
+    [[view openGLContext] flushBuffer];
 }
 
 void OSXPlatform::step( float dt )
-{
-    
+{    
     DEBUG_TODO;
 }
 
 
 void OSXPlatform::loop( float frameTime )
 {
-    DEBUG_TODO;
+    while(1)
+    {
+        
+    }
 }
-
-
 
 std::string OSXPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {

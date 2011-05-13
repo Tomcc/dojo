@@ -11,6 +11,11 @@
 
 #include "Platform.h"
 
+#ifdef __OBJC__
+    #import <AppKit/NSOpenGLView.h>
+    #import <AppKit/NSWindow.h>
+#endif
+
 namespace Dojo
 {
     class OSXPlatform : public Platform
@@ -45,6 +50,11 @@ namespace Dojo
 		virtual void openWebPage( const std::string& site );
         
     protected:
+        
+#ifdef __OBJC__
+        NSOpenGLView* view;
+        NSWindow* window;
+#endif
     };
 }
 
