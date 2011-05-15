@@ -13,6 +13,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <AppKit/NSImage.h>
 #import <Foundation/NSTimer.h>
+#import <Foundation/NSURL.h>
 
 #include "Game.h"
 #include "Utils.h"
@@ -264,5 +265,11 @@ void OSXPlatform::save( Table* table, const std::string& relPath )
 
 void OSXPlatform::openWebPage( const std::string& site )
 {
-    DEBUG_TODO;
+	NSString* nssite = Utils::toNSString(site);
+	NSURL* url = [NSURL URLWithString:nssite];
+	
+	[[NSWorkspace sharedWorkspace] openURL: url ];
+	
+	[nssite release];
+	[url release];
 }
