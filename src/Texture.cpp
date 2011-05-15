@@ -158,7 +158,7 @@ void Texture::_buildOptimalBillboard()
 
 bool Texture::_loadPNGToBoundTexture()
 {
-	void* imageData;
+	void* imageData = NULL;
 	
 	Platform::getSingleton()->loadPNGContent( imageData, filePath, width, height );
 		
@@ -170,7 +170,7 @@ bool Texture::_loadPNGToBoundTexture()
 	xRatio = (float)width/(float)internalWidth;
 	yRatio = (float)height/(float)internalHeight;
 
-	size = internalWidth * internalHeight * sizeof( float ) * 2;
+	size = internalWidth * internalHeight * 4;
 							 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, internalWidth, internalHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 		

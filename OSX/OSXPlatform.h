@@ -10,19 +10,33 @@
 #define __OSXPlatform_h
 
 #include "Platform.h"
+#include "Timer.h"
 
 #ifdef __OBJC__
+	#import <Foundation/NSAutoreleasePool.h>
     #import <AppKit/NSOpenGLView.h>
     #import <AppKit/NSWindow.h>
+
+	#import <StepCallback.h>
 #endif
 
 namespace Dojo
 {
+	
+#ifndef __OBJC__
+	class NSOpenGLView;
+	class NSWindow;
+	class NSAutoreleasePool;
+	class StepCallback;
+#endif
+
+	
     class OSXPlatform : public Platform
     {
     public:
-    
-        OSXPlatform()
+     
+        OSXPlatform() :
+        running( false )
         {
             
         }
@@ -51,10 +65,15 @@ namespace Dojo
         
     protected:
         
-#ifdef __OBJC__
+        Timer timer;
+        bool running;
+        
+		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
         NSOpenGLView* view;
         NSWindow* window;
-#endif
+		NSAutoreleasePool* pool;
+		
+		StepCallback* callback;
     };
 }
 

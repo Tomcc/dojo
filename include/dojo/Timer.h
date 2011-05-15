@@ -31,7 +31,7 @@ namespace Dojo
 		double currentTime()
 		{
 			double d;
-#ifdef WIN32
+#ifdef PLATFORM_WIN32
 			__int64 freq, gTime;
 			QueryPerformanceCounter((LARGE_INTEGER *)&gTime);  // Get current count
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq); // Get processor freq

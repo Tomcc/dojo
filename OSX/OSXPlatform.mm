@@ -10,22 +10,27 @@
 
 #include <OIS/OIS.h>
 
+#import<ApplicationServices/ApplicationServices.h>
+#import <AppKit/NSImage.h>
+#import <Foundation/NSTimer.h>
+
 #include "Game.h"
+#include "Utils.h"
+
 
 using namespace Dojo;
-
 
 void OSXPlatform::initialise()
 {
     DEBUG_ASSERT( game );
-    
-    //create the application
-    [NSApplication sharedApplication];
-    
-    
+	
+	[NSApplication sharedApplication];
+	
+    pool = [[NSAutoreleasePool alloc] init];
+	    	    
     NSRect frame;
-    frame.origin.x = 100;
-    frame.origin.y = 100;
+    frame.origin.x = 10;
+    frame.origin.y = 10;
     frame.size.width = game->getNativeWidth();
     frame.size.height = game->getNativeHeight();
         
@@ -35,32 +40,47 @@ void OSXPlatform::initialise()
         NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
         (NSOpenGLPixelFormatAttribute)nil
     };
-    
+	
     //create the window
-    window = [[NSWindow alloc]
+	window = [[NSWindow alloc]
               initWithContentRect: frame
               styleMask: (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask)
               backing: NSBackingStoreBuffered
               defer: YES];
+	
+	[window setReleasedWhenClosed:false];
+	
     
-    NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-    
-    view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ];    
-    
+	NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
+    	
+    view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
+    	
     [window setContentView: view];
+	
+	[window makeKeyAndOrderFront:nil];
+	        
+    //create render
+    render = new Render( frame.size.width, frame.size.height, 1, Render::RO_LANDSCAPE_LEFT );
     
-    [window makeKeyAndOrderFront:nil];
+    //create soundmanager
+    sound = new SoundManager();
     
-    //do magic and run the dispatcher on the main thread
-    [NSApp
-     performSelectorOnMainThread:@selector(run)
-     withObject:nil
-     waitUntilDone:NO];
+    //create input
+    input = new TouchSource();
+    
+    //launch the game
+    game->onBegin();
 }
 
 void OSXPlatform::shutdown()
 {
-    DEBUG_TODO;    
+	[callback release];
+    
+    game->onEnd();
+    
+    delete render;
+    delete sound;
+    delete input;  
 }
 
 void OSXPlatform::acquireContext()
@@ -74,41 +94,135 @@ void OSXPlatform::present()
 
 void OSXPlatform::step( float dt )
 {    
-    DEBUG_TODO;
+    game->onLoop(dt);
+    
+    render->render();
+    sound->update(dt);
 }
-
 
 void OSXPlatform::loop( float frameTime )
 {
-    while(1)
-    {
-        
-    }
+	callback = [[StepCallback alloc] initWithPlatform:this];
+	
+	// start animation timer
+	NSTimer* timer = [NSTimer 	timerWithTimeInterval:(1.0f/60.0f) 
+								target:callback 
+								selector:@selector(stepCallback:) 
+								userInfo:nil 
+								repeats:YES];
+	
+	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSEventTrackingRunLoopMode]; // ensure timer fires during resize
+		
+	//start event dispatching loop and give control to Cocoa
+	[[NSApplication sharedApplication] run];
 }
 
 std::string OSXPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
-    DEBUG_TODO;
-    
-    return "";
+	NSString* NSName = Utils::toNSString( name );
+	NSString* NSType = Utils::toNSString( type );
+	NSString* NSPath = Utils::toNSString( path );
+	
+	NSString* res = [[NSBundle mainBundle] pathForResource:NSName ofType:NSType inDirectory:NSPath ];
+	
+	[NSName release];
+	[NSType release];
+	[NSPath release];
+	
+	if( res )
+		return Utils::toSTDString( res );
+	else
+		return "";
 }
 
 
 void OSXPlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
-{
-    DEBUG_TODO;
+{	
+	DEBUG_ASSERT( type.size() );
+	DEBUG_ASSERT( path.size() );
+	
+    NSString* nstype = Utils::toNSString( type );
+	NSString* nspath = Utils::toNSString( path );
+	
+	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType:nstype inDirectory:nspath];
+	
+	//convert array
+	for( int i = 0; i < [paths count]; ++i )
+		out.push_back( Utils::toSTDString( [paths objectAtIndex:i] ) );
+	
+	[paths release];
+	[nspath release];
+	[nstype release];
 }
 
 
 uint OSXPlatform::OSXPlatform::loadFileContent( char*& bufptr, const std::string& path )
 {
-    return DEBUG_TODO;
+    bufptr = NULL;
+	
+	DEBUG_ASSERT( path.size() );
+	
+	NSString* NSPath = Utils::toNSString( path );
+	
+	NSData* data = [[NSData alloc] initWithContentsOfFile: NSPath ];
+	
+	if( !data )
+		return false;
+	
+	uint size = (uint)[data length];
+	
+	//alloc the new buffer
+	bufptr = (char*)malloc( size );
+	memcpy( bufptr, [data bytes], size );
+	
+	[data release];
+	
+	return size;
 }
 
 
-void OSXPlatform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )
+void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
 {
-    DEBUG_TODO;
+	width = height = 0;
+	
+	NSString* imgPath = Utils::toNSString( path );
+	//magic OBJC code
+	NSData *texData = [[NSData alloc] initWithContentsOfFile: imgPath ];
+	
+	CGDataProviderRef prov = CGDataProviderCreateWithData( 
+														   NULL, 
+														   [texData bytes], 
+														   [texData length], 
+														   NULL );
+	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, false, kCGRenderingIntentDefault );	
+	
+	width = (int)CGImageGetWidth(CGImage);
+	height = (int)CGImageGetHeight(CGImage);	
+	
+	uint internalWidth = Math::nextPowerOfTwo( width );
+	uint internalHeight = Math::nextPowerOfTwo( height );
+	
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	imageData = malloc( internalWidth * internalHeight * 4 );
+	
+	memset( imageData, 0, internalWidth * internalHeight * 4 );
+	
+	CGContextRef context = CGBitmapContextCreate(imageData, 
+												 internalWidth, 
+												 internalHeight, 
+												 8, 
+												 4 * internalWidth, 
+												 colorSpace, 
+												 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+	
+	CGContextClearRect( context, CGRectMake( 0, 0, internalWidth, internalHeight ) );
+	CGContextTranslateCTM( context, 0, internalHeight - height );
+	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
+	
+	CGContextRelease(context);	
+	CGColorSpaceRelease( colorSpace );
+	CGImageRelease( CGImage );
 }
 
 

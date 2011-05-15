@@ -33,6 +33,9 @@ backLayer( NULL )
 
 	platform = Platform::getSingleton();
 	
+	//clean errors
+	glGetError();
+	
 	glEnable( GL_BLEND );	
 
 	glEnable( GL_LIGHTING );
@@ -187,6 +190,8 @@ void Render::startFrame()
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
 
+	platform->acquireContext();
+	
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	
 	//platform->acquireContext();

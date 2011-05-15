@@ -27,9 +27,9 @@ namespace Dojo
 #ifdef __OBJC__
 		static NSString* toNSString( const std::string& str )
 		{			
-			uint sz = str.size();
+			size_t sz = str.size();
 			unichar* unic = (unichar*)malloc( sz * sizeof( unichar ) );
-			for( uint i = 0; i < sz; ++i )
+			for( size_t i = 0; i < sz; ++i )
 				unic[i] = (unichar)( str.at(i) );
 			
 			NSString* nstring = [[NSString alloc] initWithCharacters:(const unichar*)unic length:(NSUInteger)sz];
@@ -55,15 +55,15 @@ namespace Dojo
 			return str;
 		}
 		
-		static inline UIColor* toUIColor( const Color& c )
+		/*static inline UIColor* toUIColor( const Color& c )
 		{
 			return [UIColor colorWithRed:c.r green:c.g blue:c.b alpha:c.a];
-		}
+		}*/
 #endif
 		
 		static int getLastOf( const std::string& str, char c )
 		{			
-			for( int i = str.size()-1; i >= 0; --i )
+			for( int i = (int)str.size()-1; i >= 0; --i )
 			{
 				if( str.at(i) == c )
 					return i;
@@ -75,14 +75,14 @@ namespace Dojo
 		///leaves only the filename in the string
 		static std::string getFileName( const std::string& str )
 		{			
-			int end = getLastOf( str, '.' );
-			int start = getLastOf( str, '/' )+1;
+			size_t end = getLastOf( str, '.' );
+			size_t start = getLastOf( str, '/' )+1;
 			
 			if( end < start ) //there isn't a file execption
 				end = str.size();
 			
 			std::string res;
-			for( uint i = start; i < end; ++i )
+			for( size_t i = start; i < end; ++i )
 				res += str.at(i);
 			
 			return res;
@@ -349,7 +349,7 @@ namespace Dojo
 		
 		inline static int getTagIdx( const std::string& str )
 		{			
-			int tagIdx = str.size()-1;
+			int tagIdx = (int)str.size()-1;
 			char c;
 			for( ; tagIdx >= 0; --tagIdx )
 			{
