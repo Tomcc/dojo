@@ -86,12 +86,12 @@ void Trail::action( float dt )
 					getWorldPosition( offset*-1 ) );
 
 			elapsedTime = 0;
-		}/*
+		}
 
 		//show?
 		setVisible( points.size() > 0 );
 
-		/*if( isVisible() )
+		if( isVisible() )
 			retesselate( getWorldPosition() );*/
 	}
 

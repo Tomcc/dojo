@@ -31,7 +31,7 @@ namespace Dojo
 			{
 				setup( set, timePerFrame );
 			}
-			
+						
 			inline void setup( FrameSet* set, float tpf )
 			{
 				DEBUG_ASSERT( tpf >= 0 );
@@ -121,8 +121,7 @@ namespace Dojo
 		
 		virtual ~AnimatedQuad()
 		{
-			if( animation )
-				delete animation;
+			delete animation;
 		}
 		
 		virtual void reset();

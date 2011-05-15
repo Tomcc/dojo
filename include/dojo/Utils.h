@@ -119,7 +119,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( buf && eof );
 			
-			while( isWhiteSpace( *buf ) && buf < eof )
+			while( buf < eof && isWhiteSpace( *buf ) )
 				++buf;
 		}
 		

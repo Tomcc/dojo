@@ -28,6 +28,8 @@ pixelPerfect( pp )
 	reset();
 }
 
+
+
 void AnimatedQuad::reset()
 {
 	Renderable::reset();

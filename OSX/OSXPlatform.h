@@ -17,7 +17,7 @@
     #import <AppKit/NSOpenGLView.h>
     #import <AppKit/NSWindow.h>
 
-	#import <StepCallback.h>
+	#import "GenericListener.h"
 #endif
 
 namespace Dojo
@@ -27,7 +27,7 @@ namespace Dojo
 	class NSOpenGLView;
 	class NSWindow;
 	class NSAutoreleasePool;
-	class StepCallback;
+	class GenericListener;
 #endif
 
 	
@@ -40,6 +40,8 @@ namespace Dojo
         {
             
         }
+		
+		virtual ~OSXPlatform();
         
         virtual void initialise();
 		virtual void shutdown();
@@ -73,7 +75,7 @@ namespace Dojo
         NSWindow* window;
 		NSAutoreleasePool* pool;
 		
-		StepCallback* callback;
+		GenericListener* callback;
     };
 }
 

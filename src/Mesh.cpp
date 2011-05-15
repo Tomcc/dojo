@@ -113,9 +113,11 @@ bool Mesh::end()
 	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
 		return false;
 	
+	glGetError();
 	if( !vertexHandle )
 		glGenBuffers(1, &vertexHandle );	
-	
+		
+	int error = glGetError();
 	DEBUG_ASSERT( vertexHandle );
 	
 	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;

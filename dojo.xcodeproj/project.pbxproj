@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		43710D9D138034FA00647E41 /* StepCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 43710D9B138034FA00647E41 /* StepCallback.h */; };
-		43710D9E138034FA00647E41 /* StepCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43710D9C138034FA00647E41 /* StepCallback.mm */; };
+		43710D9D138034FA00647E41 /* GenericListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 43710D9B138034FA00647E41 /* GenericListener.h */; };
+		43710D9E138034FA00647E41 /* GenericListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43710D9C138034FA00647E41 /* GenericListener.mm */; };
 		4374A64D137C7D6E003F7907 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A64C137C7D6E003F7907 /* Cocoa.framework */; };
 		4374A65F137C7E50003F7907 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A65E137C7E50003F7907 /* OpenAL.framework */; };
 		4374A661137C7E55003F7907 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A660137C7E55003F7907 /* OpenGL.framework */; };
@@ -85,8 +85,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		43710D9B138034FA00647E41 /* StepCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepCallback.h; sourceTree = "<group>"; };
-		43710D9C138034FA00647E41 /* StepCallback.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StepCallback.mm; sourceTree = "<group>"; };
+		43710D9B138034FA00647E41 /* GenericListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericListener.h; sourceTree = "<group>"; };
+		43710D9C138034FA00647E41 /* GenericListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericListener.mm; sourceTree = "<group>"; };
 		4374A649137C7D6E003F7907 /* dojo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = dojo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4374A64C137C7D6E003F7907 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4374A64F137C7D6E003F7907 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -267,8 +267,8 @@
 				4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */,
 				4374A68D137C7E9C003F7907 /* OSXPlatform.h */,
 				4374A68E137C7E9C003F7907 /* OSXPlatform.mm */,
-				43710D9B138034FA00647E41 /* StepCallback.h */,
-				43710D9C138034FA00647E41 /* StepCallback.mm */,
+				43710D9B138034FA00647E41 /* GenericListener.h */,
+				43710D9C138034FA00647E41 /* GenericListener.mm */,
 			);
 			path = OSX;
 			sourceTree = "<group>";
@@ -354,7 +354,7 @@
 				4374A74C137C8132003F7907 /* Viewport.h in Headers */,
 				4374A6D2137C7E9C003F7907 /* Dojo-Prefix.pch in Headers */,
 				4374A6D3137C7E9C003F7907 /* OSXPlatform.h in Headers */,
-				43710D9D138034FA00647E41 /* StepCallback.h in Headers */,
+				43710D9D138034FA00647E41 /* GenericListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,7 +447,7 @@
 				4374A6EC137C7E9C003F7907 /* Trail.cpp in Sources */,
 				4374A6ED137C7E9C003F7907 /* Vector.cpp in Sources */,
 				4374A6EE137C7E9C003F7907 /* Viewport.cpp in Sources */,
-				43710D9E138034FA00647E41 /* StepCallback.mm in Sources */,
+				43710D9E138034FA00647E41 /* GenericListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

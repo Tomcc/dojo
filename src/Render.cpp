@@ -190,12 +190,10 @@ void Render::startFrame()
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
 
-	platform->acquireContext();
+	//platform->acquireContext();
 	
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
-	
-	//platform->acquireContext();
-					
+						
 	glViewport( 0, 0, width, height );
 	
 	//clear the viewport

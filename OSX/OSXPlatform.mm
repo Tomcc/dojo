@@ -10,7 +10,7 @@
 
 #include <OIS/OIS.h>
 
-#import<ApplicationServices/ApplicationServices.h>
+#import <ApplicationServices/ApplicationServices.h>
 #import <AppKit/NSImage.h>
 #import <Foundation/NSTimer.h>
 
@@ -21,19 +21,23 @@
 using namespace Dojo;
 
 void OSXPlatform::initialise()
-{
-    DEBUG_ASSERT( game );
+{	
+	DEBUG_ASSERT( game );
 	
 	[NSApplication sharedApplication];
 	
     pool = [[NSAutoreleasePool alloc] init];
-	    	    
+	
+	//show menu bar
+	NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
+	 [[NSApplication sharedApplication] setMenu:menu];
+	
     NSRect frame;
     frame.origin.x = 10;
     frame.origin.y = 10;
     frame.size.width = game->getNativeWidth();
     frame.size.height = game->getNativeHeight();
-        
+	
     NSOpenGLPixelFormatAttribute attributes [] = {
         NSOpenGLPFAWindow,
         NSOpenGLPFADoubleBuffer,	// double buffered
@@ -49,16 +53,15 @@ void OSXPlatform::initialise()
               defer: YES];
 	
 	[window setReleasedWhenClosed:false];
-	
-    
+	    
 	NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-    	
+	
     view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
-    	
+	
     [window setContentView: view];
 	
 	[window makeKeyAndOrderFront:nil];
-	        
+	
     //create render
     render = new Render( frame.size.width, frame.size.height, 1, Render::RO_LANDSCAPE_LEFT );
     
@@ -72,15 +75,22 @@ void OSXPlatform::initialise()
     game->onBegin();
 }
 
+OSXPlatform::~OSXPlatform()
+{
+	[pool release];
+}
+
 void OSXPlatform::shutdown()
 {
 	[callback release];
     
-    game->onEnd();
-    
+	game->onEnd();
+	
+	delete game;
+	
     delete render;
     delete sound;
-    delete input;  
+    delete input;
 }
 
 void OSXPlatform::acquireContext()
@@ -101,11 +111,12 @@ void OSXPlatform::step( float dt )
 }
 
 void OSXPlatform::loop( float frameTime )
-{
-	callback = [[StepCallback alloc] initWithPlatform:this];
-	
+{	
+	//listen the window
+	callback = [[GenericListener alloc] initWithPlatform:this];
+		
 	// start animation timer
-	NSTimer* timer = [NSTimer 	timerWithTimeInterval:(1.0f/60.0f) 
+	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( frameTime ) 
 								target:callback 
 								selector:@selector(stepCallback:) 
 								userInfo:nil 
@@ -113,7 +124,10 @@ void OSXPlatform::loop( float frameTime )
 	
 	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSEventTrackingRunLoopMode]; // ensure timer fires during resize
-		
+	
+	//listen the window
+	[window setDelegate:callback];
+	
 	//start event dispatching loop and give control to Cocoa
 	[[NSApplication sharedApplication] run];
 }
@@ -220,9 +234,12 @@ void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	CGContextTranslateCTM( context, 0, internalHeight - height );
 	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
 	
+	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
 	CGImageRelease( CGImage );
+	CGDataProviderRelease( prov );
+	[texData release];
 }
 
 

@@ -37,9 +37,7 @@ namespace Dojo
 		{
 			for( uint i = 0; i < animations.size(); ++i )
 				delete animations.at(i);
-			
-			animation = NULL;
-			
+						
 			//frames have to be relased manually from the group!
 		}		
 

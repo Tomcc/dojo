@@ -64,7 +64,7 @@ namespace Dojo
 
 			virtual ~Page()
 			{
-				delete chars;
+				delete [] chars;
 			}
 		};
 		
