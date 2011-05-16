@@ -208,7 +208,7 @@ namespace Dojo
 			autoAdvancement = a;
 		}
 		
-		virtual void action( float dt );
+		virtual void onAction( float dt );
 		
 		virtual void prepare( const Vector& viewportPixelRatio );
 		

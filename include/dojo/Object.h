@@ -168,7 +168,7 @@ namespace Dojo {
 			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}
 		
-		virtual void action( float dt );
+		virtual void onAction( float dt );
 
 		virtual void onDestruction()
 		{

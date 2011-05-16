@@ -1,5 +1,6 @@
 ===LICENSE===
-incoming...
+
+MIT License. But tell me if you do something cool with Dojo ;)
 
 ===BUILDING===
 
@@ -14,108 +15,123 @@ Just add to your project any file from
 
 folders, as IOS won't support dynamic linking nor custom frameworks.
 
-*Windows*
+*** WINDOWS ***
 
 Requirements
--FreeImage
--POCO C++
--OpenAL1.1 + freeAlut
--glew
--OIS Input Library
-	-Directx SDK
+-FreeImage					http://freeimage.sourceforge.net/
+-Poco C++					http://pocoproject.org/
+-OpenAL1.1 + freeAlut				http://connect.creativelabs.com/openal/Downloads/Forms/AllItems.aspx
+-glew						http://glew.sourceforge.net/index.html
+-OIS Input Library				http://sourceforge.net/projects/wgois/
+	-Directx SDK for DirectInput for OIS
 
 The VC++ project looks for the needed files under "dojo/dependencies/include" and "dojo/dependencies/lib". 
 
-The easiest way to build Dojo is to download a precompiled dependency pack from the downloads section on bitbucket:
+The easiest way to build Dojo for Windows is to download a precompiled dependency pack from the downloads section on bitbucket:
 https://bitbucket.org/tommo89/dojo/downloads
-
 Then place it under dojo/dependencies, open your .sln version and hit rebuild.
+
+Yes, many of those dependencies are more of an utility to maintain a sane codebase, but if needed some of them (like alit, OIS or Poco could be replaced with native code).
+
+Tested on Windows 7 x64, VC2008
+
+*** MAC OS X ***
+
+Open dojo.xcodeproj, hit build. Done. It will get installed as a Framework into /Library/Frameworks for future use.
+
+Tested on Snow Leopard x64, XCode4
+
+*** IPHONE OS ***
+
+Drop the Dojo folder to your project, and select "Create group for any added folder", delete (as in "Remove Reference") the other Platform's folders (Apple/OSX, Linux, Win32) and you're good to go.
+
+Code drop-in is indeed ugly, but Apple's policy about dylibs is not crystal clear (and OpenFeint does this, so.)
+
+Warning: On IOS you will need a custom main.mm calling UIApplicationMain, and .xib interface file that links the UIView to Apple/IOS/Application class.
+
+Tested on IOS 4.3, XCode4
 
 *More systems to come*
 
 ===USING DOJO===
 
-The code first:
+*Runtime*
 
-	Platform* platform = Platform::createNativePlatform();
+The best way to develop your game using Dojo, is taking advantage of its state/event framework.
+Many classes are meant to be inherited, allowing your game code to be called by the engine's events.
 
-	platform->setGame( new NinjaGame() );
+You can recognize at a glance what events a class listens to, looking for methods like "onBegin", "onStateLoop", "onButtonClicked".
 
-	platform->initialise();
+The interface that rules the game's runtime is StateInterface, an interface that represents a State.
+A State can begin (onBegin) can repeat itself (onLoop) can end (onEnd).
+Game, GameState and some objects are in fact states.
 
-	platform->loop( 1.f/60.f );
+Every State is also a State Machine by itself, meaning that it will manage other Substates. 
+For example, a GameState is a substate owned by a Game.
 
-The first thing to create to startup Dojo is a Platform instance:
+A State can have "Implicit Substates" when implementing the callbacks "onStateBegin()/Loop()/End()".
+This allows to have plenty of substates without creating a swarm of StateInterface classes.
+The current substate of a State can be queried using "getCurrentState()" if implicit, and "getCurrentStatePtr()" if explicit.
 
-	Platform::createNativePlatform();
+Also, any Object's subclass that is registered either to a GameState or to a parent Object receives an "onAction" event each frame.
 
-it will take care of selecting the correct implementation for your system, and is usually done in the main function (yeah, even on IOS).
+*Rendering*
 
-Then, you create some Dojo::Game subclass and pass it to the platform to be executed.
+Dojo's rendering is organized by Layers: objects in layers with a lower index are always drawn behind objects in higher layers, and this also applies to 3D layers.
+This is really useful in games where you need a structure like "skybox < level < weapon < 2D hud". 
 
-	initialise() 
-then performs window creation, and whatever the system needs.
+Each layer has some flags that tell how the Renderables it contains are rendered together.
+-projectionOff: disables projection (farther things smaller)
+-depthCheck: enables depth check. Depth Check is needed for a correct perspective rendering, but can make things faster in 2D
+	it is also useful when managing 3D alpha blending.
+-depthClear: enables a layer to clear the ZBuffer before rendering. It is on by default.
+	can be useful to "merge" two layers together, for example to ensure that glass is always drawn after the walls.
+-lightingOn: enables lighting. Heavy on performance.
 
-	loop() 
-starts your main loop, with a specified minimum frame time; 1/60 means that the framerate is capped at 60 fps.
+Dojo offers a single rendering primitive, Renderable.
+Renderable owns a RenderState and can have 1 to 8 textures, and needs to have one Mesh, along with other parameters like alpha blending and visibility.
 
-Note: loop() internally calls a step() method, that *could* as well be called in your own main loop, while ideally everything should fit well enough in your Game::onLoop() method.
+Sprite is an useful class that extends Renderable for your regular sprite-based animation.
 
-Other general directions:
+TextArea extends Renderable to display (currently ASCII only) texts using bitmap Fonts (.font + .png)
 
-Game, GameState, and Sprite are meant to be subclasses.
-Your gameplay should fit in the Event Methods, (pure) virtual methods that are called by dojo when something happens, for example:
+Particle extends Renderable to offer faster execution and pooling using the ParticlePool class.
 
-	onBegin()
-	onLoop()
-	onButtonClicked()
-	onKeyPressed()
+Viewport is the "eye" that sees your world; the same object shares the 2D and 3D settings, being able to see all the layers from the same position.
+If you have 3D and 2D layers, remember to attach all the 2D objects to your Viewport ;)
 
-The typical flow of a game could be:
+*Resources*
 
--game's onBegin() 
-setups globals and starts up a level
-Example:
+Resources are loaded using loadResources() method on ResourceGroup (and incidentally, GameState is a ResourceGroup).
+Resources can be FrameSets, Textures, Meshes, Fonts, Tables, SoundSets and SoundBuffers.
 
-	MyGame::onBegin()
-	{
-		setState( new MyLevel( this ) );
-	}
+The most useful are the "composite resources", that just map to a group of "real resources" such as:
+-FrameSet: a frameset is a collection of Textures either created procedurally adding them to the collection, 
+	or reading sequentially named .pngs from disk.
+	For example, "frame_1.png frame_2.png frame_3.png" are auto-loaded into a FrameSet.
+	FrameSets are best used for sprite animations.
 
--level's onBegin()
-every setState triggers onBegin on the state being activated;
-now it's your first level.
+-Font: a font is defined in a .font file, that defines character width, height, and ASCII offset.
+	It requires a Texture as its bitmap.
 
-You could want to load resources
-	loadResources( "data/something" );
+-SoundSet: sounds can be easily made random using SoundSets, think for example at collisions sounds for a material. 
+	SoundSet maps any filename sequence just like FrameSet.
 
-Create a viewport with a background and a nice fade
+"Real Resources" are:
+-Texture: an image, or a tile of a Texture Atlas.
+-Mesh: well, a mesh. A collection of points and triangles. Currently all meshes have
+	to be constructed procedurally as there isn't any importer to .dms format 
+	(and it WILL get scrapped for something better, sometime).
 
-	camera = new Viewport( 
-this, 
-Vector::ZERO, 
-size,
- Color( 0, 0, 0, 1 ), 
-480,
- 320 );
+-SoundBuffer is a sound. Prefer using SoundSet instead, or better SoundSource.
 
-	camera->setBackgroundSprite( "background" );
+-Table is a "property list tree" that does a whole lot of serialization heavy duties, see the Serializable interface.
+	It can store named ints, bools, Vectors, Colors, child Tables and even raw Data.
+	Use this to implement your loading/saving needs across platforms.
+	See also Platform::load()/save()
 
-	
+Phew. This covers a great deal of Dojo, but there's obviously much more. Feel free to peek in the code to get more insights ;)
 
-	camera->getFader()->color = Color( 0,0,0,1 );
-	
-	camera->getFader()->startFade( 1, 0, 2 );
+										Tommaso Checchi, 2011
 
-	addObject( camera );
-	
-	
 
-	Platform::getSingleton()->getRender()->setViewport( camera );
-
-And then add any Renderable  (such as Sprite, AnimatedQuad, Font and Model ) to be rendered in a given layer, where lesser is farthest
-
-	addObject( renderable, layer, clickable );
-
-Runtime:
-check Game's onLoop(), GameState onLoop and GameState::updateObjects()  ;)

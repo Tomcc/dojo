@@ -72,9 +72,9 @@ void Trail::retesselate( const Vector& startpoint )
 	mesh->end();
 }
 
-void Trail::action( float dt )
+void Trail::onAction( float dt )
 {
-	Renderable::action(dt);
+	Renderable::onAction(dt);
 
 	if( autoUpdate )
 	{

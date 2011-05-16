@@ -109,7 +109,7 @@ void GameState::updateObjects( float dt )
 		}
 
 		else if( o->isActive() )
-			o->action( dt );
+			o->onAction( dt );
 	}			
 }
 

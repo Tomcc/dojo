@@ -49,7 +49,7 @@ namespace Dojo
 
 		void retesselate( const Vector& startpoint );
 
-		virtual void action( float dt );
+		virtual void onAction( float dt );
 
 	protected:
 

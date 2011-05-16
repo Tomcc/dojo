@@ -261,6 +261,8 @@ void Win32Platform::present()
 
 void Win32Platform::step( float dt )
 {
+	Timer timer;
+	
 	//cattura l'input prima del gameplay
 	keys->capture();
 	mouse->capture();
@@ -270,7 +272,8 @@ void Win32Platform::step( float dt )
 	render->render();
 	
 	sound->update( dt );
-
+	
+	realFrameTime = timer.getElapsedTime();
 }
 
 void stepCallback( void* platform )
@@ -278,8 +281,6 @@ void stepCallback( void* platform )
 	Win32Platform* self = (Win32Platform*)platform;
 
 	self->_callbackThread( self->getFrameInterval() );
-
-	//return 0;
 }
 
 void Win32Platform::_callbackThread( float frameLength )

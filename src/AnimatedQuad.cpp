@@ -50,9 +50,9 @@ void AnimatedQuad::immediateAnimation( const std::string& name, float timePerFra
 	immediateAnimation( gameState->getFrameSet( name ), timePerFrame );
 }
 
-void AnimatedQuad::action( float dt )
+void AnimatedQuad::onAction( float dt )
 {
-	Renderable::action( dt );
+	Renderable::onAction( dt );
 	
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP ;

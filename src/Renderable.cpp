@@ -7,9 +7,9 @@
 
 using namespace Dojo;
 
-void Renderable::action( float dt )
+void Renderable::onAction( float dt )
 {
-	Object::action( dt );
+	Object::onAction( dt );
 	
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP ;

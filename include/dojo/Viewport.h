@@ -185,9 +185,9 @@ namespace Dojo
 			makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
 		}
 
-		virtual void action( float dt )
+		virtual void onAction( float dt )
 		{
-			Object::action(dt);
+			Object::onAction(dt);
 
 			//do not call if not explicitly required
 			if( frustumCullingEnabled )

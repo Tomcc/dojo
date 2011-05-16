@@ -153,7 +153,7 @@ namespace Dojo
 			}
 		}
 		
-		virtual void action( float dt );		
+		virtual void onAction( float dt );		
 		
 		inline void _notifyRenderInfo( Render* r, int layerID, uint renderIdx )
 		{			

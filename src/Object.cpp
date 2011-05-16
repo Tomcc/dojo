@@ -44,7 +44,7 @@ void Object::removeChild( Object* o )
 	gameState->removeClickableSprite( (Renderable*)o ); //if existing
 }
 
-void Object::action( float dt )
+void Object::onAction( float dt )
 {
 	if( absoluteTimeSpeed )  //correct time speed
 		dt = Game::UPDATE_INTERVAL_CAP;
@@ -88,7 +88,7 @@ void Object::action( float dt )
 				--i;
 			}
 			else
-				childs->at(i)->action(dt);
+				childs->at(i)->onAction(dt);
 		}
 	}
 }
