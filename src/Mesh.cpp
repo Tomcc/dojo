@@ -254,6 +254,8 @@ bool Mesh::load()
 		PS_INDEXDATA
 	} state = PS_INIT;
 			
+	//TODO why this sometimes hangs?
+	
 	float x,y,z,w;
 	while( buf < end )
 	{

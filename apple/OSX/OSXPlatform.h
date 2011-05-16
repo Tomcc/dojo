@@ -9,7 +9,7 @@
 #ifndef __OSXPlatform_h
 #define __OSXPlatform_h
 
-#include "CocoaPlatform.h"
+#include "ApplePlatform.h"
 
 #ifdef __OBJC__
     #import <AppKit/NSOpenGLView.h>
@@ -28,7 +28,7 @@ namespace Dojo
 #endif
 
 	
-    class OSXPlatform : public CocoaPlatform
+    class OSXPlatform : public ApplePlatform
     {
     public:
      
@@ -46,9 +46,6 @@ namespace Dojo
 		virtual void present();
         
 		virtual void loop( float frameTime );
-        
-		///loads the given file in a buffer - WARNING not every format is supported on every platform
-		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
 	
 	protected:
                 

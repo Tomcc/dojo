@@ -1,12 +1,14 @@
 //
-//  CocoaPlatform.cpp
+//  ApplePlatform.cpp
 //  dojo
 //
 //  Created by Tommaso Checchi on 5/16/11.
 //  Copyright 2011 none. All rights reserved.
 //
 
-#include "CocoaPlatform.h"
+#include "ApplePlatform.h"
+
+#import <AudioToolbox/AudioToolbox.h>
 
 #include "Timer.h"
 #include "Render.h"
@@ -19,17 +21,17 @@
 using namespace Dojo;
 using namespace std;
 
-CocoaPlatform::CocoaPlatform()
+ApplePlatform::ApplePlatform()
 {
     pool = [[NSAutoreleasePool alloc] init];
 }
 
-CocoaPlatform::~CocoaPlatform()
+ApplePlatform::~ApplePlatform()
 {
 	[pool release];	
 }
 
-void CocoaPlatform::step( float dt )
+void ApplePlatform::step( float dt )
 {    	
 	Timer frameTimer;
 	
@@ -41,7 +43,7 @@ void CocoaPlatform::step( float dt )
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-std::string CocoaPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
+std::string ApplePlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
 	NSString* NSName = Utils::toNSString( name );
 	NSString* NSType = Utils::toNSString( type );
@@ -60,7 +62,7 @@ std::string CocoaPlatform::getCompleteFilePath( const std::string& name, const s
 }
 
 
-void CocoaPlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
+void ApplePlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
 {	
 	DEBUG_ASSERT( type.size() );
 	DEBUG_ASSERT( path.size() );
@@ -79,7 +81,7 @@ void CocoaPlatform::getFilePathsForType( const std::string& type, const std::str
 	[nstype release];
 }
 
-uint CocoaPlatform::loadFileContent( char*& bufptr, const std::string& path )
+uint ApplePlatform::loadFileContent( char*& bufptr, const std::string& path )
 {
     bufptr = NULL;
 	
@@ -104,7 +106,7 @@ uint CocoaPlatform::loadFileContent( char*& bufptr, const std::string& path )
 }
 
 
-void CocoaPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
+void ApplePlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
 {
 	width = height = 0;
 	
@@ -165,19 +167,63 @@ void CocoaPlatform::loadPNGContent( void*& imageData, const std::string& path, u
 	[texData release];
 }
 
-void CocoaPlatform::load( Table* dest, const std::string& absPath )
+
+uint ApplePlatform::loadAudioFileContent( ALuint& buffer, const std::string& path )
 {
-	DEBUG_ASSERT(dest);
-	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
+	//only load caf files on iphone
+	DEBUG_ASSERT( Utils::hasExtension( "caf", path ) );
 	
-	NSString* fullPath;
+	NSString* filePath = Utils::toNSString( path );
+	
+	// first, open the file	
+	AudioFileID fileID;
+	// use the NSURl instead of a cfurlref cuz it is easier
+	NSURL * afUrl = [NSURL fileURLWithPath:filePath];
+	
+	OSStatus result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
+	
+	UInt64 outDataSize; 
+	UInt32 propertySize, writable;
+	
+	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &writable );
+	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &outDataSize);
+	UInt32 fileSize = (UInt32)outDataSize;
+	
+	UInt32 freq;
+	
+	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyBitRate, &propertySize, &writable );
+	AudioFileGetProperty( fileID, kAudioFilePropertyBitRate, &propertySize, &freq );
+	
+	// this is where the audio data will live for the moment
+	void* outData = malloc(fileSize);
+	
+	// this where we actually get the bytes from the file and put them
+	// into the data buffer
+	result = AudioFileReadBytes(fileID, false, 0, &fileSize, outData);
+	AudioFileClose(fileID); //close the file
+	
+	// jam the audio data into the new buffer
+	alBufferData( buffer, AL_FORMAT_STEREO16, outData, fileSize, freq/32); 
+	
+	free( outData );
+	
+	return fileSize;
+}
+
+NSString* ApplePlatform::_getDestinationFilePath( Table* table, const std::string& absPath )
+{	
+	DEBUG_ASSERT( table );
+	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) != '/' ); //need to NOT have the terminating /
+	
+	NSString* fullPath;	
+	std::string fileName = "/" + game->getName() + "/" + table->getName() + ".table";
 	
 	//save this in a file in the user preferences folder, or in the abs path
 	if( absPath.size() == 0 )
 	{
 		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		NSString* nspath = [nspaths objectAtIndex:0];
-		NSString* nsname = Utils::toNSString(dest->getName());
+		NSString* nsname = Utils::toNSString( fileName );
 		
 		fullPath = [nspath stringByAppendingString:nsname];
 		
@@ -186,54 +232,46 @@ void CocoaPlatform::load( Table* dest, const std::string& absPath )
 	}
 	else
 	{
-		fullPath = Utils::toNSString( absPath + dest->getName() );
+		fullPath = Utils::toNSString( absPath + fileName );
 	}
+	
+	return fullPath;
+}
+
+void ApplePlatform::load( Table* dest, const std::string& absPath )
+{
+	NSString* fullPath = _getDestinationFilePath( dest, absPath );
 	
 	//read file
 	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
 	
-	DEBUG_ASSERT( nsfile );
+	//do nothing if file doesn't exist
+	if( nsfile )
+	{
+		//drop the data in a stringstr - TODO don't duplicate it
+		std::stringstream str;
+		str.write( (char*)[nsfile bytes], [nsfile length] );
 	
-	//drop the data in a stringstr - TODO don't duplicate it
-	std::stringstream str;
-	str.write( (char*)[nsfile bytes], [nsfile length] );
-	
-	dest->deserialize( str );
+		dest->deserialize( str );
+		
+		[nsfile release];
+	}
 	
 	[fullPath release];
-	[nsfile release];
 }
 
-void CocoaPlatform::save( Table* src, const std::string& absPath )
+void ApplePlatform::save( Table* src, const std::string& absPath )
 {
-	DEBUG_ASSERT(src);
-	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
-	
 	//serialize to stream
 	std::stringstream buf;
 	src->serialize( buf );
 	
-	NSString* fullPath;
-	
-	//save this in a file in the user preferences folder, or in the abs path
-	if( absPath.size() == 0 )
-	{
-		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-		NSString* nspath = [nspaths objectAtIndex:0];
-		NSString* nsname = Utils::toNSString(src->getName());
-		
-		fullPath = [nspath stringByAppendingString:nsname];
-		
-		[nsname release];
-		[nspaths release];
-	}
-	else
-	{
-		fullPath = Utils::toNSString( absPath + src->getName() );
-	}
+	NSString* fullPath = _getDestinationFilePath( src, absPath );
 	
 	//drop into NSData
-	NSData* nsfile = [[NSData alloc] initWithBytesNoCopy:(void*)buf.str().c_str() length:buf.str().size() freeWhenDone:false];
+	NSData* nsfile = [[NSData alloc] 	initWithBytesNoCopy:(void*)buf.str().c_str() 
+										length:buf.str().size() 
+										freeWhenDone:false ];
 	
 	//drop on file
 	[nsfile writeToFile:fullPath atomically:false];
@@ -242,7 +280,7 @@ void CocoaPlatform::save( Table* src, const std::string& absPath )
 	[nsfile release];
 }
 
-void CocoaPlatform::openWebPage( const std::string& site )
+void ApplePlatform::openWebPage( const std::string& site )
 {
 	NSString* nssite = Utils::toNSString(site);
 	NSURL* url = [NSURL URLWithString:nssite];

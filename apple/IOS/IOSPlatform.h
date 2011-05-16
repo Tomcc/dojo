@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 
-#include "Platform.h"
+#include "ApplePlatform.h"
 #include "Utils.h"
 
 #ifdef __OBJC__
@@ -17,7 +17,7 @@
 
 namespace Dojo
 {
-	class IOSPlatform : public CocoaPlatform
+	class IOSPlatform : public ApplePlatform
 	{
 	public:
 		
@@ -33,9 +33,7 @@ namespace Dojo
 
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
-		
-		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
-		
+				
 		virtual bool isSystemSoundInUse();
 		
 #ifdef __OBJC__

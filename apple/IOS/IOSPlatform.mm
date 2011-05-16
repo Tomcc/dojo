@@ -21,7 +21,7 @@ using namespace Dojo;
 IOSPlatform::IOSPlatform() :
 app( NULL )
 {
-	
+	running = true; //IOS Platform autoruns
 }
 
 IOSPlatform::~IOSPlatform()
@@ -159,48 +159,6 @@ uint IOSPlatform::loadFileContent( char*& bufptr, const std::string& path )
 	[data release];
 	
 	return size;
-}
-
-uint IOSPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path )
-{
-	//only load caf files on iphone
-	DEBUG_ASSERT( Utils::hasExtension( "caf", path ) );
-	
-	NSString* filePath = Utils::toNSString( path );
-	
-	// first, open the file	
-	AudioFileID fileID;
-	// use the NSURl instead of a cfurlref cuz it is easier
-	NSURL * afUrl = [NSURL fileURLWithPath:filePath];
-	
-	OSStatus result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
-	
-	UInt64 outDataSize; 
-	UInt32 propertySize, writable;
-	
-	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &writable );
-	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &outDataSize);
-	UInt32 fileSize = (UInt32)outDataSize;
-	
-	UInt32 freq;
-	
-	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyBitRate, &propertySize, &writable );
-	AudioFileGetProperty( fileID, kAudioFilePropertyBitRate, &propertySize, &freq );
-	
-	// this is where the audio data will live for the moment
-	void* outData = malloc(fileSize);
-	
-	// this where we actually get the bytes from the file and put them
-	// into the data buffer
-	result = AudioFileReadBytes(fileID, false, 0, &fileSize, outData);
-	AudioFileClose(fileID); //close the file
-	
-	// jam the audio data into the new buffer
-	alBufferData( buffer, AL_FORMAT_STEREO16, outData, fileSize, freq/32); 
-	
-	free( outData );
-	
-	return fileSize;
 }
 
 bool IOSPlatform::isSystemSoundInUse()

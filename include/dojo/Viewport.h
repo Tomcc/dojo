@@ -65,7 +65,7 @@ namespace Dojo
 			const Color& clear, 
 			float _VFOV = 0, 
 			float _zNear = 0,
-			float _zFar = 0 ) :
+			float _zFar = 100 ) :
 		Object( level, pos, size ),
 		clearColor( clear ),
 		cullingEnabled( true ),

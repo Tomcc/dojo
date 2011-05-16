@@ -35,7 +35,7 @@ void OSXPlatform::initialise()
 	
     NSRect frame;
     frame.origin.x = 10;
-    frame.origin.y = 10;
+    frame.origin.y = 768;
     frame.size.width = game->getNativeWidth();
     frame.size.height = game->getNativeHeight();
 	
@@ -121,12 +121,8 @@ void OSXPlatform::loop( float frameTime )
 	//listen the window
 	[window setDelegate:callback];
 	
+	running = true;
+	
 	//start event dispatching loop and give control to Cocoa
 	[[NSApplication sharedApplication] run];
-}
-
-///loads the given file in a buffer - WARNING not every format is supported on every platform
-uint OSXPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path )
-{
-    return DEBUG_TODO;
 }

@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4373D54D13812A4B00B35607 /* CocoaPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D53D13812A4B00B35607 /* CocoaPlatform.mm */; };
-		4373D54E13812A4B00B35607 /* CocoaPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D53E13812A4B00B35607 /* CocoaPlatform.h */; };
-		4373D55513812A4B00B35607 /* Dojo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4373D54713812A4B00B35607 /* Dojo-Info.plist */; };
-		4373D55613812A4B00B35607 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54813812A4B00B35607 /* Dojo-Prefix.pch */; };
-		4373D55713812A4B00B35607 /* GenericListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54913812A4B00B35607 /* GenericListener.h */; };
-		4373D55813812A4B00B35607 /* GenericListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D54A13812A4B00B35607 /* GenericListener.mm */; };
-		4373D55913812A4B00B35607 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54B13812A4B00B35607 /* OSXPlatform.h */; };
-		4373D55A13812A4B00B35607 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D54C13812A4B00B35607 /* OSXPlatform.mm */; };
+		4373D6041381649600B35607 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4373D6031381649600B35607 /* AudioToolbox.framework */; };
+		4373D6351381664600B35607 /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D6251381664600B35607 /* ApplePlatform.h */; };
+		4373D6361381664600B35607 /* ApplePlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D6261381664600B35607 /* ApplePlatform.mm */; };
+		4373D63D1381664600B35607 /* Dojo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4373D62F1381664600B35607 /* Dojo-Info.plist */; };
+		4373D63E1381664600B35607 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4373D6301381664600B35607 /* Dojo-Prefix.pch */; };
+		4373D63F1381664600B35607 /* GenericListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D6311381664600B35607 /* GenericListener.h */; };
+		4373D6401381664600B35607 /* GenericListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D6321381664600B35607 /* GenericListener.mm */; };
+		4373D6411381664600B35607 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D6331381664600B35607 /* OSXPlatform.h */; };
+		4373D6421381664600B35607 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D6341381664600B35607 /* OSXPlatform.mm */; };
 		4374A64D137C7D6E003F7907 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A64C137C7D6E003F7907 /* Cocoa.framework */; };
 		4374A65F137C7E50003F7907 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A65E137C7E50003F7907 /* OpenAL.framework */; };
 		4374A661137C7E55003F7907 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A660137C7E55003F7907 /* OpenGL.framework */; };
@@ -87,14 +88,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4373D53D13812A4B00B35607 /* CocoaPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaPlatform.mm; sourceTree = "<group>"; };
-		4373D53E13812A4B00B35607 /* CocoaPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaPlatform.h; sourceTree = "<group>"; };
-		4373D54713812A4B00B35607 /* Dojo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Dojo-Info.plist"; sourceTree = "<group>"; };
-		4373D54813812A4B00B35607 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
-		4373D54913812A4B00B35607 /* GenericListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericListener.h; sourceTree = "<group>"; };
-		4373D54A13812A4B00B35607 /* GenericListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericListener.mm; sourceTree = "<group>"; };
-		4373D54B13812A4B00B35607 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
-		4373D54C13812A4B00B35607 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
+		4373D6031381649600B35607 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		4373D6251381664600B35607 /* ApplePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlatform.h; sourceTree = "<group>"; };
+		4373D6261381664600B35607 /* ApplePlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePlatform.mm; sourceTree = "<group>"; };
+		4373D62F1381664600B35607 /* Dojo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Dojo-Info.plist"; sourceTree = "<group>"; };
+		4373D6301381664600B35607 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
+		4373D6311381664600B35607 /* GenericListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericListener.h; sourceTree = "<group>"; };
+		4373D6321381664600B35607 /* GenericListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericListener.mm; sourceTree = "<group>"; };
+		4373D6331381664600B35607 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
+		4373D6341381664600B35607 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
 		4374A649137C7D6E003F7907 /* dojo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = dojo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4374A64C137C7D6E003F7907 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4374A64F137C7D6E003F7907 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -175,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4373D6041381649600B35607 /* AudioToolbox.framework in Frameworks */,
 				4374A7A6137C9CB0003F7907 /* OIS.framework in Frameworks */,
 				4374A661137C7E55003F7907 /* OpenGL.framework in Frameworks */,
 				4374A65F137C7E50003F7907 /* OpenAL.framework in Frameworks */,
@@ -185,25 +188,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4373D53C13812A4B00B35607 /* Cocoa */ = {
+		4373D6241381664600B35607 /* apple */ = {
 			isa = PBXGroup;
 			children = (
-				4373D53D13812A4B00B35607 /* CocoaPlatform.mm */,
-				4373D53E13812A4B00B35607 /* CocoaPlatform.h */,
-				4373D54613812A4B00B35607 /* OSX */,
+				4373D6251381664600B35607 /* ApplePlatform.h */,
+				4373D6261381664600B35607 /* ApplePlatform.mm */,
+				4373D62E1381664600B35607 /* OSX */,
 			);
-			path = Cocoa;
+			path = apple;
 			sourceTree = "<group>";
 		};
-		4373D54613812A4B00B35607 /* OSX */ = {
+		4373D62E1381664600B35607 /* OSX */ = {
 			isa = PBXGroup;
 			children = (
-				4373D54713812A4B00B35607 /* Dojo-Info.plist */,
-				4373D54813812A4B00B35607 /* Dojo-Prefix.pch */,
-				4373D54913812A4B00B35607 /* GenericListener.h */,
-				4373D54A13812A4B00B35607 /* GenericListener.mm */,
-				4373D54B13812A4B00B35607 /* OSXPlatform.h */,
-				4373D54C13812A4B00B35607 /* OSXPlatform.mm */,
+				4373D62F1381664600B35607 /* Dojo-Info.plist */,
+				4373D6301381664600B35607 /* Dojo-Prefix.pch */,
+				4373D6311381664600B35607 /* GenericListener.h */,
+				4373D6321381664600B35607 /* GenericListener.mm */,
+				4373D6331381664600B35607 /* OSXPlatform.h */,
+				4373D6341381664600B35607 /* OSXPlatform.mm */,
 			);
 			path = OSX;
 			sourceTree = "<group>";
@@ -211,7 +214,7 @@
 		4374A63D137C7D6E003F7907 = {
 			isa = PBXGroup;
 			children = (
-				4373D53C13812A4B00B35607 /* Cocoa */,
+				4373D6241381664600B35607 /* apple */,
 				4374A662137C7E9C003F7907 /* include */,
 				4374A68F137C7E9C003F7907 /* src */,
 				4374A64B137C7D6E003F7907 /* Frameworks */,
@@ -230,6 +233,7 @@
 		4374A64B137C7D6E003F7907 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4373D6031381649600B35607 /* AudioToolbox.framework */,
 				4374A7A5137C9CB0003F7907 /* OIS.framework */,
 				4374A660137C7E55003F7907 /* OpenGL.framework */,
 				4374A65E137C7E50003F7907 /* OpenAL.framework */,
@@ -366,10 +370,10 @@
 				4374A74A137C8132003F7907 /* Utils.h in Headers */,
 				4374A74B137C8132003F7907 /* Vector.h in Headers */,
 				4374A74C137C8132003F7907 /* Viewport.h in Headers */,
-				4373D54E13812A4B00B35607 /* CocoaPlatform.h in Headers */,
-				4373D55613812A4B00B35607 /* Dojo-Prefix.pch in Headers */,
-				4373D55713812A4B00B35607 /* GenericListener.h in Headers */,
-				4373D55913812A4B00B35607 /* OSXPlatform.h in Headers */,
+				4373D6351381664600B35607 /* ApplePlatform.h in Headers */,
+				4373D63E1381664600B35607 /* Dojo-Prefix.pch in Headers */,
+				4373D63F1381664600B35607 /* GenericListener.h in Headers */,
+				4373D6411381664600B35607 /* OSXPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,7 +428,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4373D55513812A4B00B35607 /* Dojo-Info.plist in Resources */,
+				4373D63D1381664600B35607 /* Dojo-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,9 +465,9 @@
 				4374A6EC137C7E9C003F7907 /* Trail.cpp in Sources */,
 				4374A6ED137C7E9C003F7907 /* Vector.cpp in Sources */,
 				4374A6EE137C7E9C003F7907 /* Viewport.cpp in Sources */,
-				4373D54D13812A4B00B35607 /* CocoaPlatform.mm in Sources */,
-				4373D55813812A4B00B35607 /* GenericListener.mm in Sources */,
-				4373D55A13812A4B00B35607 /* OSXPlatform.mm in Sources */,
+				4373D6361381664600B35607 /* ApplePlatform.mm in Sources */,
+				4373D6401381664600B35607 /* GenericListener.mm in Sources */,
+				4373D6421381664600B35607 /* OSXPlatform.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,10 +519,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Cocoa/OSX/dojo-Prefix.pch";
+				GCC_PREFIX_HEADER = "Apple/OSX/dojo-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				HEADER_SEARCH_PATHS = /usr/local/include;
-				INFOPLIST_FILE = "Cocoa/OSX/dojo-Info.plist";
+				INFOPLIST_FILE = "Apple/OSX/dojo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -537,9 +541,9 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Cocoa/OSX/dojo-Prefix.pch";
+				GCC_PREFIX_HEADER = "Apple/OSX/dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/local/include;
-				INFOPLIST_FILE = "Cocoa/OSX/dojo-Info.plist";
+				INFOPLIST_FILE = "Apple/OSX/dojo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};

@@ -1,5 +1,5 @@
 //
-//  CocoaPlatform.h
+//  ApplePlatform.h
 //  dojo
 //
 //  Created by Tommaso Checchi on 5/16/11.
@@ -7,8 +7,8 @@
 //
 
 
-#ifndef __CocoaPlatform_h
-#define __CocoaPlatform_h
+#ifndef __ApplePlatform_h
+#define __ApplePlatform_h
 
 #include "dojo_common_header.h"
 
@@ -24,15 +24,16 @@ namespace Dojo
 	
 #ifndef __OBJC__
 	class NSAutoreleasePool;
-#endif	
+	class NSString;
+#endif
 	
-    class CocoaPlatform : public Platform
+    class ApplePlatform : public Platform
     {
     public:
 		
-        CocoaPlatform();
+        ApplePlatform();
 		
-		virtual ~CocoaPlatform();
+		virtual ~ApplePlatform();
         
 		virtual void step( float dt );
 		
@@ -41,12 +42,17 @@ namespace Dojo
 		virtual uint loadFileContent( char*& bufptr, const std::string& path );
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
 		
-		virtual void load( Table* dest, const std::string& relPath = "" );
-		virtual void save( Table* table, const std::string& relPath = "" );
+		uint loadAudioFileContent( ALuint& buffer, const std::string& path );
+		
+		
+		virtual void load( Table* dest, const std::string& absPath = "" );
+		virtual void save( Table* table, const std::string& absPath = "" );
 		
 		virtual void openWebPage( const std::string& site );
         
     protected:
+		
+		NSString* _getDestinationFilePath( Table* t, const std::string& absPath = "" );
 		
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
        	NSAutoreleasePool* pool;
