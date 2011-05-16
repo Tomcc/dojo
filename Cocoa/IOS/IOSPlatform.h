@@ -17,7 +17,7 @@
 
 namespace Dojo
 {
-	class IOSPlatform : public Platform
+	class IOSPlatform : public CocoaPlatform
 	{
 	public:
 		
@@ -33,18 +33,8 @@ namespace Dojo
 
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
-
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
-		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
 		
 		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
-		
-		virtual void load( Table* dest, const std::string& relPath = ""  );
-		virtual void save( Table* table, const std::string& relPath = ""  );
-
-		virtual void openWebPage( const std::string& site );
 		
 		virtual bool isSystemSoundInUse();
 		
@@ -64,9 +54,7 @@ namespace Dojo
 		
 	protected:
 			
-#ifdef __OBJC__
-		NSAutoreleasePool * pool;
-		
+#ifdef __OBJC__		
 		EAGLContext* context;
 		
 		Application* app;		

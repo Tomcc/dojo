@@ -6,11 +6,11 @@
 //  Copyright 2011 none. All rights reserved.
 //
 
-#import "StepCallback.h"
+#import "GenericListener.h"
 
 #include "Platform.h"
 
-@implementation StepCallback
+@implementation GenericListener
 
 - (id)initWithPlatform:(Dojo::Platform*)targetPlatform
 {
@@ -25,6 +25,11 @@
     return self;
 }
 
+- (void)windowWillClose:(NSNotification *)notification
+{
+	//shutdown the app and let the Platform continue
+	[[NSApplication sharedApplication] stop:self];
+}
 
 - (void)stepCallback:(NSTimer *)timer
 {

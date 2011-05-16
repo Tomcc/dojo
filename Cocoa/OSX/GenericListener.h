@@ -15,7 +15,7 @@ namespace Dojo
 	class Platform;
 }
 
-@interface StepCallback : NSObject {
+@interface GenericListener : NSObject<NSWindowDelegate> {
 @private
 	Dojo::Platform* platform;
 	CFAbsoluteTime time;
@@ -24,6 +24,12 @@ namespace Dojo
 
 - (id)initWithPlatform:(Dojo::Platform*)targetPlatform;
 
+//window callbacks
+- (void)windowWillClose:(NSNotification *)notification;
+
+//timer callback
 - (void) stepCallback:(NSTimer *)timer;
+
+
 
 @end

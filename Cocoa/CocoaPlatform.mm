@@ -1,109 +1,35 @@
 //
-//  OSXPlatform.mm
+//  CocoaPlatform.cpp
 //  dojo
 //
-//  Created by Tommaso Checchi on 5/7/11.
+//  Created by Tommaso Checchi on 5/16/11.
 //  Copyright 2011 none. All rights reserved.
 //
 
-#include "OSXPlatform.h"
+#include "CocoaPlatform.h"
 
-#include <OIS/OIS.h>
-
-#import <ApplicationServices/ApplicationServices.h>
-#import <AppKit/NSImage.h>
-#import <Foundation/NSTimer.h>
-#import <Foundation/NSURL.h>
-
+#include "Timer.h"
+#include "Render.h"
+#include "SoundManager.h"
+#include "TouchSource.h"
 #include "Game.h"
 #include "Utils.h"
 #include "Table.h"
 
 using namespace Dojo;
+using namespace std;
 
-void OSXPlatform::initialise()
-{	
-	DEBUG_ASSERT( game );
-	
-	[NSApplication sharedApplication];
-	
+CocoaPlatform::CocoaPlatform()
+{
     pool = [[NSAutoreleasePool alloc] init];
-	
-	//show menu bar
-	NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
-	 [[NSApplication sharedApplication] setMenu:menu];
-	
-    NSRect frame;
-    frame.origin.x = 10;
-    frame.origin.y = 10;
-    frame.size.width = game->getNativeWidth();
-    frame.size.height = game->getNativeHeight();
-	
-    NSOpenGLPixelFormatAttribute attributes [] = {
-        NSOpenGLPFAWindow,
-        NSOpenGLPFADoubleBuffer,	// double buffered
-        NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
-        (NSOpenGLPixelFormatAttribute)nil
-    };
-	
-    //create the window
-	window = [[NSWindow alloc]
-              initWithContentRect: frame
-              styleMask: (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask)
-              backing: NSBackingStoreBuffered
-              defer: YES];
-	
-	[window setReleasedWhenClosed:false];
-	    
-	NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-	
-    view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
-	
-    [window setContentView: view];
-	
-	[window makeKeyAndOrderFront:nil];
-	
-    //create render
-    render = new Render( frame.size.width, frame.size.height, 1, Render::RO_LANDSCAPE_LEFT );
-    
-    //create soundmanager
-    sound = new SoundManager();
-    
-    //create input
-    input = new TouchSource();
-    
-    //launch the game
-    game->onBegin();
 }
 
-OSXPlatform::~OSXPlatform()
+CocoaPlatform::~CocoaPlatform()
 {
-	[pool release];
+	[pool release];	
 }
 
-void OSXPlatform::shutdown()
-{
-	[callback release];
-    
-	game->onEnd();
-	
-	delete game;
-	
-    delete render;
-    delete sound;
-    delete input;
-}
-
-void OSXPlatform::acquireContext()
-{    
-    [[view openGLContext] makeCurrentContext];
-}
-void OSXPlatform::present()
-{    
-    [[view openGLContext] flushBuffer];
-}
-
-void OSXPlatform::step( float dt )
+void CocoaPlatform::step( float dt )
 {    	
 	Timer frameTimer;
 	
@@ -111,33 +37,11 @@ void OSXPlatform::step( float dt )
     
     render->render();
     sound->update(dt);
-
+	
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-void OSXPlatform::loop( float frameTime )
-{	
-	//listen the window
-	callback = [[GenericListener alloc] initWithPlatform:this];
-		
-	// start animation timer
-	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( frameTime ) 
-								target:callback 
-								selector:@selector(stepCallback:) 
-								userInfo:nil 
-								repeats:YES];
-	
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSEventTrackingRunLoopMode]; // ensure timer fires during resize
-	
-	//listen the window
-	[window setDelegate:callback];
-	
-	//start event dispatching loop and give control to Cocoa
-	[[NSApplication sharedApplication] run];
-}
-
-std::string OSXPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
+std::string CocoaPlatform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
 {
 	NSString* NSName = Utils::toNSString( name );
 	NSString* NSType = Utils::toNSString( type );
@@ -156,7 +60,7 @@ std::string OSXPlatform::getCompleteFilePath( const std::string& name, const std
 }
 
 
-void OSXPlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
+void CocoaPlatform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
 {	
 	DEBUG_ASSERT( type.size() );
 	DEBUG_ASSERT( path.size() );
@@ -175,8 +79,7 @@ void OSXPlatform::getFilePathsForType( const std::string& type, const std::strin
 	[nstype release];
 }
 
-
-uint OSXPlatform::OSXPlatform::loadFileContent( char*& bufptr, const std::string& path )
+uint CocoaPlatform::loadFileContent( char*& bufptr, const std::string& path )
 {
     bufptr = NULL;
 	
@@ -201,7 +104,7 @@ uint OSXPlatform::OSXPlatform::loadFileContent( char*& bufptr, const std::string
 }
 
 
-void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
+void CocoaPlatform::loadPNGContent( void*& imageData, const std::string& path, uint& width, uint& height )
 {
 	width = height = 0;
 	
@@ -210,10 +113,10 @@ void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	NSData *texData = [[NSData alloc] initWithContentsOfFile: imgPath ];
 	
 	CGDataProviderRef prov = CGDataProviderCreateWithData( 
-														   NULL, 
-														   [texData bytes], 
-														   [texData length], 
-														   NULL );
+														  NULL, 
+														  [texData bytes], 
+														  [texData length], 
+														  NULL );
 	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, false, kCGRenderingIntentDefault );	
 	
 	width = (int)CGImageGetWidth(CGImage);
@@ -239,6 +142,21 @@ void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	CGContextTranslateCTM( context, 0, internalHeight - height );
 	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
 	
+	//correct premultiplied alpha
+	int pixelcount = internalWidth*internalHeight;
+	unsigned char* off = (unsigned char*)imageData;
+	for( int pi=0; pi<pixelcount; ++pi )
+	{
+		unsigned char alpha = off[3];
+		if( alpha!=255 && alpha!=0 )
+		{
+			off[0] = ((int)off[0])*255/alpha;
+			off[1] = ((int)off[1])*255/alpha;
+			off[2] = ((int)off[2])*255/alpha;
+		}
+		off += 4;
+	}
+	
 	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
@@ -247,15 +165,7 @@ void OSXPlatform::loadPNGContent( void*& imageData, const std::string& path, uin
 	[texData release];
 }
 
-
-
-///loads the given file in a buffer - WARNING not every format is supported on every platform
-uint OSXPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path )
-{
-    return DEBUG_TODO;
-}
-
-void OSXPlatform::load( Table* dest, const std::string& absPath )
+void CocoaPlatform::load( Table* dest, const std::string& absPath )
 {
 	DEBUG_ASSERT(dest);
 	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
@@ -283,7 +193,7 @@ void OSXPlatform::load( Table* dest, const std::string& absPath )
 	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
 	
 	DEBUG_ASSERT( nsfile );
-			
+	
 	//drop the data in a stringstr - TODO don't duplicate it
 	std::stringstream str;
 	str.write( (char*)[nsfile bytes], [nsfile length] );
@@ -294,7 +204,7 @@ void OSXPlatform::load( Table* dest, const std::string& absPath )
 	[nsfile release];
 }
 
-void OSXPlatform::save( Table* src, const std::string& absPath )
+void CocoaPlatform::save( Table* src, const std::string& absPath )
 {
 	DEBUG_ASSERT(src);
 	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
@@ -332,12 +242,16 @@ void OSXPlatform::save( Table* src, const std::string& absPath )
 	[nsfile release];
 }
 
-void OSXPlatform::openWebPage( const std::string& site )
+void CocoaPlatform::openWebPage( const std::string& site )
 {
 	NSString* nssite = Utils::toNSString(site);
 	NSURL* url = [NSURL URLWithString:nssite];
 	
+#ifdef PLATFORM_OSX
 	[[NSWorkspace sharedWorkspace] openURL: url ];
+#else
+	[[UIApplication sharedApplication] openURL:url];
+#endif
 	
 	[nssite release];
 	[url release];

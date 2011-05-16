@@ -7,15 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		43710D9D138034FA00647E41 /* GenericListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 43710D9B138034FA00647E41 /* GenericListener.h */; };
-		43710D9E138034FA00647E41 /* GenericListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43710D9C138034FA00647E41 /* GenericListener.mm */; };
+		4373D54D13812A4B00B35607 /* CocoaPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D53D13812A4B00B35607 /* CocoaPlatform.mm */; };
+		4373D54E13812A4B00B35607 /* CocoaPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D53E13812A4B00B35607 /* CocoaPlatform.h */; };
+		4373D55513812A4B00B35607 /* Dojo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4373D54713812A4B00B35607 /* Dojo-Info.plist */; };
+		4373D55613812A4B00B35607 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54813812A4B00B35607 /* Dojo-Prefix.pch */; };
+		4373D55713812A4B00B35607 /* GenericListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54913812A4B00B35607 /* GenericListener.h */; };
+		4373D55813812A4B00B35607 /* GenericListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D54A13812A4B00B35607 /* GenericListener.mm */; };
+		4373D55913812A4B00B35607 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4373D54B13812A4B00B35607 /* OSXPlatform.h */; };
+		4373D55A13812A4B00B35607 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4373D54C13812A4B00B35607 /* OSXPlatform.mm */; };
 		4374A64D137C7D6E003F7907 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A64C137C7D6E003F7907 /* Cocoa.framework */; };
 		4374A65F137C7E50003F7907 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A65E137C7E50003F7907 /* OpenAL.framework */; };
 		4374A661137C7E55003F7907 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A660137C7E55003F7907 /* OpenGL.framework */; };
-		4374A6D1137C7E9C003F7907 /* Dojo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4374A68B137C7E9C003F7907 /* Dojo-Info.plist */; };
-		4374A6D2137C7E9C003F7907 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */; settings = {ATTRIBUTES = (); }; };
-		4374A6D3137C7E9C003F7907 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A68D137C7E9C003F7907 /* OSXPlatform.h */; settings = {ATTRIBUTES = (); }; };
-		4374A6D4137C7E9C003F7907 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4374A68E137C7E9C003F7907 /* OSXPlatform.mm */; };
 		4374A6D5137C7E9C003F7907 /* AnimatedQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A690137C7E9C003F7907 /* AnimatedQuad.cpp */; };
 		4374A6D6137C7E9C003F7907 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A691137C7E9C003F7907 /* Color.cpp */; };
 		4374A6D7137C7E9C003F7907 /* dojomath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4374A692137C7E9C003F7907 /* dojomath.cpp */; };
@@ -85,8 +87,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		43710D9B138034FA00647E41 /* GenericListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericListener.h; sourceTree = "<group>"; };
-		43710D9C138034FA00647E41 /* GenericListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericListener.mm; sourceTree = "<group>"; };
+		4373D53D13812A4B00B35607 /* CocoaPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaPlatform.mm; sourceTree = "<group>"; };
+		4373D53E13812A4B00B35607 /* CocoaPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaPlatform.h; sourceTree = "<group>"; };
+		4373D54713812A4B00B35607 /* Dojo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Dojo-Info.plist"; sourceTree = "<group>"; };
+		4373D54813812A4B00B35607 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
+		4373D54913812A4B00B35607 /* GenericListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericListener.h; sourceTree = "<group>"; };
+		4373D54A13812A4B00B35607 /* GenericListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericListener.mm; sourceTree = "<group>"; };
+		4373D54B13812A4B00B35607 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
+		4373D54C13812A4B00B35607 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
 		4374A649137C7D6E003F7907 /* dojo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = dojo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4374A64C137C7D6E003F7907 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4374A64F137C7D6E003F7907 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -94,10 +102,6 @@
 		4374A651137C7D6E003F7907 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4374A65E137C7E50003F7907 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		4374A660137C7E55003F7907 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		4374A68B137C7E9C003F7907 /* Dojo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Dojo-Info.plist"; sourceTree = "<group>"; };
-		4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
-		4374A68D137C7E9C003F7907 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
-		4374A68E137C7E9C003F7907 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
 		4374A690137C7E9C003F7907 /* AnimatedQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimatedQuad.cpp; sourceTree = "<group>"; };
 		4374A691137C7E9C003F7907 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		4374A692137C7E9C003F7907 /* dojomath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dojomath.cpp; sourceTree = "<group>"; };
@@ -181,11 +185,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4373D53C13812A4B00B35607 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				4373D53D13812A4B00B35607 /* CocoaPlatform.mm */,
+				4373D53E13812A4B00B35607 /* CocoaPlatform.h */,
+				4373D54613812A4B00B35607 /* OSX */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		4373D54613812A4B00B35607 /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				4373D54713812A4B00B35607 /* Dojo-Info.plist */,
+				4373D54813812A4B00B35607 /* Dojo-Prefix.pch */,
+				4373D54913812A4B00B35607 /* GenericListener.h */,
+				4373D54A13812A4B00B35607 /* GenericListener.mm */,
+				4373D54B13812A4B00B35607 /* OSXPlatform.h */,
+				4373D54C13812A4B00B35607 /* OSXPlatform.mm */,
+			);
+			path = OSX;
+			sourceTree = "<group>";
+		};
 		4374A63D137C7D6E003F7907 = {
 			isa = PBXGroup;
 			children = (
+				4373D53C13812A4B00B35607 /* Cocoa */,
 				4374A662137C7E9C003F7907 /* include */,
-				4374A68A137C7E9C003F7907 /* OSX */,
 				4374A68F137C7E9C003F7907 /* src */,
 				4374A64B137C7D6E003F7907 /* Frameworks */,
 				4374A64A137C7D6E003F7907 /* Products */,
@@ -258,19 +285,6 @@
 				4374A725137C8132003F7907 /* Viewport.h */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		4374A68A137C7E9C003F7907 /* OSX */ = {
-			isa = PBXGroup;
-			children = (
-				4374A68B137C7E9C003F7907 /* Dojo-Info.plist */,
-				4374A68C137C7E9C003F7907 /* Dojo-Prefix.pch */,
-				4374A68D137C7E9C003F7907 /* OSXPlatform.h */,
-				4374A68E137C7E9C003F7907 /* OSXPlatform.mm */,
-				43710D9B138034FA00647E41 /* GenericListener.h */,
-				43710D9C138034FA00647E41 /* GenericListener.mm */,
-			);
-			path = OSX;
 			sourceTree = "<group>";
 		};
 		4374A68F137C7E9C003F7907 /* src */ = {
@@ -352,9 +366,10 @@
 				4374A74A137C8132003F7907 /* Utils.h in Headers */,
 				4374A74B137C8132003F7907 /* Vector.h in Headers */,
 				4374A74C137C8132003F7907 /* Viewport.h in Headers */,
-				4374A6D2137C7E9C003F7907 /* Dojo-Prefix.pch in Headers */,
-				4374A6D3137C7E9C003F7907 /* OSXPlatform.h in Headers */,
-				43710D9D138034FA00647E41 /* GenericListener.h in Headers */,
+				4373D54E13812A4B00B35607 /* CocoaPlatform.h in Headers */,
+				4373D55613812A4B00B35607 /* Dojo-Prefix.pch in Headers */,
+				4373D55713812A4B00B35607 /* GenericListener.h in Headers */,
+				4373D55913812A4B00B35607 /* OSXPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +424,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4374A6D1137C7E9C003F7907 /* Dojo-Info.plist in Resources */,
+				4373D55513812A4B00B35607 /* Dojo-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +435,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4374A6D4137C7E9C003F7907 /* OSXPlatform.mm in Sources */,
 				4374A6D5137C7E9C003F7907 /* AnimatedQuad.cpp in Sources */,
 				4374A6D6137C7E9C003F7907 /* Color.cpp in Sources */,
 				4374A6D7137C7E9C003F7907 /* dojomath.cpp in Sources */,
@@ -447,7 +461,9 @@
 				4374A6EC137C7E9C003F7907 /* Trail.cpp in Sources */,
 				4374A6ED137C7E9C003F7907 /* Vector.cpp in Sources */,
 				4374A6EE137C7E9C003F7907 /* Viewport.cpp in Sources */,
-				43710D9E138034FA00647E41 /* GenericListener.mm in Sources */,
+				4373D54D13812A4B00B35607 /* CocoaPlatform.mm in Sources */,
+				4373D55813812A4B00B35607 /* GenericListener.mm in Sources */,
+				4373D55A13812A4B00B35607 /* OSXPlatform.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,10 +515,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OSX/dojo-Prefix.pch";
+				GCC_PREFIX_HEADER = "Cocoa/OSX/dojo-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				HEADER_SEARCH_PATHS = /usr/local/include;
-				INFOPLIST_FILE = "OSX/dojo-Info.plist";
+				INFOPLIST_FILE = "Cocoa/OSX/dojo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -521,9 +537,9 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OSX/dojo-Prefix.pch";
+				GCC_PREFIX_HEADER = "Cocoa/OSX/dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/local/include;
-				INFOPLIST_FILE = "OSX/dojo-Info.plist";
+				INFOPLIST_FILE = "Cocoa/OSX/dojo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
