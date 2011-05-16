@@ -552,7 +552,7 @@ std::string Win32Platform::_getUserDirectory()
 	return _toNormalPath( dir );
 }
 
-void Win32Platform::load( Table* dest, const std::string& relPath )
+void Win32Platform::load( Table* dest, const std::string& absPath )
 {
 	DEBUG_ASSERT( dest );
 
@@ -560,10 +560,10 @@ void Win32Platform::load( Table* dest, const std::string& relPath )
 	
 	//cerca tra le user prefs un file con lo stesso nome
 	string fileName;	
-	if( relPath.size() == 0 )
+	if( absPath.size() == 0 )
 		fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
 	else
-		fileName = relPath + "/" + dest->getName() + ".txt";
+		fileName = absPath + "/" + dest->getName() + ".txt";
 
 	fstream file( fileName.c_str(), ios_base::in | ios_base::binary );
 
@@ -575,17 +575,17 @@ void Win32Platform::load( Table* dest, const std::string& relPath )
 	file.close();
 }
 
-void Win32Platform::save( Table* src, const std::string& relPath )
+void Win32Platform::save( Table* src, const std::string& absPath )
 {
 	DEBUG_ASSERT( src );
 
 	using namespace std;
 
 	std::string fileName;
-	if( relPath.size() == 0 )
+	if( absPath.size() == 0 )
 		fileName = _getUserDirectory() + "/" + game->getName() + "/" + src->getName() + ".txt";
 	else
-		fileName = relPath + "/" + src->getName() + ".txt";
+		fileName = absPath + "/" + src->getName() + ".txt";
 
 	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 

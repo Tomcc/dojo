@@ -17,7 +17,7 @@
 
 #include "Game.h"
 #include "Utils.h"
-
+#include "Table.h"
 
 using namespace Dojo;
 
@@ -104,11 +104,15 @@ void OSXPlatform::present()
 }
 
 void OSXPlatform::step( float dt )
-{    
+{    	
+	Timer frameTimer;
+	
     game->onLoop(dt);
     
     render->render();
     sound->update(dt);
+
+	realFrameTime = frameTimer.getElapsedTime();
 }
 
 void OSXPlatform::loop( float frameTime )
@@ -251,16 +255,81 @@ uint OSXPlatform::loadAudioFileContent( ALuint& buffer, const std::string& path 
     return DEBUG_TODO;
 }
 
-
-
-void OSXPlatform::load( Table* dest, const std::string& relPath )
+void OSXPlatform::load( Table* dest, const std::string& absPath )
 {
-    DEBUG_TODO;
+	DEBUG_ASSERT(dest);
+	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
+	
+	NSString* fullPath;
+	
+	//save this in a file in the user preferences folder, or in the abs path
+	if( absPath.size() == 0 )
+	{
+		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSString* nspath = [nspaths objectAtIndex:0];
+		NSString* nsname = Utils::toNSString(dest->getName());
+		
+		fullPath = [nspath stringByAppendingString:nsname];
+		
+		[nsname release];
+		[nspaths release];
+	}
+	else
+	{
+		fullPath = Utils::toNSString( absPath + dest->getName() );
+	}
+	
+	//read file
+	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
+	
+	DEBUG_ASSERT( nsfile );
+			
+	//drop the data in a stringstr - TODO don't duplicate it
+	std::stringstream str;
+	str.write( (char*)[nsfile bytes], [nsfile length] );
+	
+	dest->deserialize( str );
+	
+	[fullPath release];
+	[nsfile release];
 }
 
-void OSXPlatform::save( Table* table, const std::string& relPath )
+void OSXPlatform::save( Table* src, const std::string& absPath )
 {
-    DEBUG_TODO;
+	DEBUG_ASSERT(src);
+	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) == '/' ); //need to have the terminating /
+	
+	//serialize to stream
+	std::stringstream buf;
+	src->serialize( buf );
+	
+	NSString* fullPath;
+	
+	//save this in a file in the user preferences folder, or in the abs path
+	if( absPath.size() == 0 )
+	{
+		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSString* nspath = [nspaths objectAtIndex:0];
+		NSString* nsname = Utils::toNSString(src->getName());
+		
+		fullPath = [nspath stringByAppendingString:nsname];
+		
+		[nsname release];
+		[nspaths release];
+	}
+	else
+	{
+		fullPath = Utils::toNSString( absPath + src->getName() );
+	}
+	
+	//drop into NSData
+	NSData* nsfile = [[NSData alloc] initWithBytesNoCopy:(void*)buf.str().c_str() length:buf.str().size() freeWhenDone:false];
+	
+	//drop on file
+	[nsfile writeToFile:fullPath atomically:false];
+	
+	[fullPath release];
+	[nsfile release];
 }
 
 void OSXPlatform::openWebPage( const std::string& site )

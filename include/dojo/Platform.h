@@ -33,7 +33,8 @@ namespace Dojo
 		render( NULL ),
 		sound( NULL ),
 		input( NULL ),
-		running( true )
+		running( true ),
+		realFrameTime( 0 )
 		{
 
 		}		
@@ -52,8 +53,10 @@ namespace Dojo
 		inline SoundManager* getSoundManager()	{	return sound;	}
 		inline Render* getRender()				{	return render;	}
 		inline TouchSource* getInput()			{	return input;	}
-
-		inline bool isRunning()					{	return running;}
+		inline double getRealFrameTime()		{	return realFrameTime;	}
+		
+		inline bool isRunning()					{	return running; }
+		
 
 		virtual void initialise()=0;
 		virtual void shutdown()=0;
@@ -93,6 +96,8 @@ namespace Dojo
 		SoundManager* sound;
 		Render* render;
 		TouchSource* input;
+		
+		float realFrameTime;
 	};
 }
 
