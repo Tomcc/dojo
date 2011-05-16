@@ -6,14 +6,16 @@ MIT License. But tell me if you do something cool with Dojo ;)
 
 so, here's the part for which you opened this file in the first place:
 
-*IOS*
+*** IOS ***
 
-Just add to your project any file from 
--include
--src
--IOS 
+Drop the whole Dojo folder to your project, and select "Create group for any added folder", delete (as in "Remove Reference") the other Platform's folders (Apple/OSX, Linux, Win32), any non-source file (.hg, .sln, etc) and you're good to go.
 
-folders, as IOS won't support dynamic linking nor custom frameworks.
+Code drop-in is indeed ugly, but Apple's policy about dylibs is not crystal clear (and OpenFeint does this, so.)
+
+Warning: On IOS you will need a custom main.mm calling UIApplicationMain, and .xib interface file that links the UIView to Apple/IOS/Application class.
+You will need two .xibs in the case of iPhone+iPad non universal App.
+
+Tested on IOS 4.3, XCode4
 
 *** WINDOWS ***
 
@@ -40,16 +42,6 @@ Tested on Windows 7 x64, VC2008
 Open dojo.xcodeproj, hit build. Done. It will get installed as a Framework into /Library/Frameworks for future use.
 
 Tested on Snow Leopard x64, XCode4
-
-*** IPHONE OS ***
-
-Drop the Dojo folder to your project, and select "Create group for any added folder", delete (as in "Remove Reference") the other Platform's folders (Apple/OSX, Linux, Win32) and you're good to go.
-
-Code drop-in is indeed ugly, but Apple's policy about dylibs is not crystal clear (and OpenFeint does this, so.)
-
-Warning: On IOS you will need a custom main.mm calling UIApplicationMain, and .xib interface file that links the UIView to Apple/IOS/Application class.
-
-Tested on IOS 4.3, XCode4
 
 *More systems to come*
 
