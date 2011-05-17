@@ -15,7 +15,7 @@
     #import <AppKit/NSOpenGLView.h>
     #import <AppKit/NSWindow.h>
 
-	#import "GenericListener.h"
+	#import "CustomOpenGLView.h"
 #endif
 
 namespace Dojo
@@ -24,7 +24,7 @@ namespace Dojo
 #ifndef __OBJC__
 	class NSOpenGLView;
 	class NSWindow;
-	class GenericListener;
+	class CustomOpenGLView;
 #endif
 
 	
@@ -50,11 +50,9 @@ namespace Dojo
 	protected:
                 
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
-        NSOpenGLView* view;
+        CustomOpenGLView* view;
         NSWindow* window;
 		NSAutoreleasePool* pool;
-		
-		GenericListener* callback;
     };
 }
 

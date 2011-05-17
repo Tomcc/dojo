@@ -16,7 +16,6 @@
 
 #ifdef __OBJC__
 #import <Foundation/NSAutoreleasePool.h>
-#import "GenericListener.h"
 #endif
 
 namespace Dojo

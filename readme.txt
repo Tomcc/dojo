@@ -33,7 +33,7 @@ The easiest way to build Dojo for Windows is to download a precompiled dependenc
 https://bitbucket.org/tommo89/dojo/downloads
 Then place it under dojo/dependencies, open your .sln version and hit rebuild.
 
-Yes, many of those dependencies are more of an utility to maintain a sane codebase, but if needed some of them (like alit, OIS or Poco could be replaced with native code).
+Yes, many of those dependencies are more of an utility to maintain a sane codebase, but if needed some of them (like alit, OIS or Poco) could be replaced with native code.
 
 Tested on Windows 7 x64, VC2008
 

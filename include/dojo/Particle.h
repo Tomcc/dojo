@@ -82,6 +82,7 @@ namespace Dojo
 		inline EventListener* getListener()		{	return listener;	}
 		
 		inline bool launchTimedEvent()
+		
 		{
 			return listener && lifeTime < eventTime;
 		}

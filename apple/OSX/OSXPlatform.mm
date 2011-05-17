@@ -56,8 +56,8 @@ void OSXPlatform::initialise()
 	[window setReleasedWhenClosed:false];
 	    
 	NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-	
-    view = [[NSOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
+		
+    view = [[CustomOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
 	
     [window setContentView: view];
 	
@@ -68,23 +68,23 @@ void OSXPlatform::initialise()
     
     //create soundmanager
     sound = new SoundManager();
-    
+	
     //create input
     input = new TouchSource();
-    
+	
+	[view setPlatform:this];
+        
     //launch the game
     game->onBegin();
 }
 
 OSXPlatform::~OSXPlatform()
 {
-	[pool release];
+	
 }
 
 void OSXPlatform::shutdown()
-{
-	[callback release];
-    
+{    
 	game->onEnd();
 	
 	delete game;
@@ -104,13 +104,10 @@ void OSXPlatform::present()
 }
 
 void OSXPlatform::loop( float frameTime )
-{	
-	//listen the window
-	callback = [[GenericListener alloc] initWithPlatform:this];
-		
+{		
 	// start animation timer
 	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( frameTime ) 
-								target:callback 
+								target:view 
 								selector:@selector(stepCallback:) 
 								userInfo:nil 
 								repeats:YES];
@@ -119,7 +116,7 @@ void OSXPlatform::loop( float frameTime )
 	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSEventTrackingRunLoopMode]; // ensure timer fires during resize
 	
 	//listen the window
-	[window setDelegate:callback];
+	[window setDelegate:view];
 	
 	running = true;
 	
