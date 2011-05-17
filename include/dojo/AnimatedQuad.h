@@ -121,7 +121,8 @@ namespace Dojo
 		
 		virtual ~AnimatedQuad()
 		{
-			delete animation;
+			if( animation )
+				delete animation;
 		}
 		
 		virtual void reset();

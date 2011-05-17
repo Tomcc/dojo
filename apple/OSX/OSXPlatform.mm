@@ -30,8 +30,8 @@ void OSXPlatform::initialise()
     pool = [[NSAutoreleasePool alloc] init];
 	
 	//show menu bar
-	NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
-	 [[NSApplication sharedApplication] setMenu:menu];
+	/*NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
+	 [[NSApplication sharedApplication] setMenu:menu];*/
 	
     NSRect frame;
     frame.origin.x = 10;
