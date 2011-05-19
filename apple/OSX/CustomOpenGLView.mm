@@ -100,6 +100,21 @@ using namespace Dojo;
 	
 }
 
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+	NSLog([theEvent characters]);
+	
+	input->_fireKeyPressedEvent( [[theEvent characters] characterAtIndex:0], [theEvent keyCode] );
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{	
+	NSLog([theEvent characters]);
+	
+	input->_fireKeyReleasedEvent( [[theEvent characters] characterAtIndex:0], [theEvent keyCode] );	
+}
+
 - (void)dealloc
 {
     [super dealloc];

@@ -60,6 +60,7 @@ void OSXPlatform::initialise()
     view = [[CustomOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
 	
     [window setContentView: view];
+	[window makeFirstResponder: view];
 	
 	[window makeKeyAndOrderFront:nil];
 	

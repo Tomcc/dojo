@@ -54,4 +54,10 @@ namespace Dojo
 
 - (void)otherMouseUp: (NSEvent *)theEvent;
 
+- (void)keyDown:(NSEvent *)theEvent;
+
+- (void)keyUp:(NSEvent *)theEvent;
+
+
+
 @end
