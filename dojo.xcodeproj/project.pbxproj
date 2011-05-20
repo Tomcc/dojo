@@ -79,7 +79,7 @@
 		4374A745137C8132003F7907 /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71E137C8132003F7907 /* TextArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A746137C8132003F7907 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A71F137C8132003F7907 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A747137C8132003F7907 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A720137C8132003F7907 /* Timer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4374A748137C8132003F7907 /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A721137C8132003F7907 /* TouchSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4374A748137C8132003F7907 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A721137C8132003F7907 /* InputSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A749137C8132003F7907 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A722137C8132003F7907 /* Trail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A74A137C8132003F7907 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A723137C8132003F7907 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4374A74B137C8132003F7907 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4374A724137C8132003F7907 /* Vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,7 +163,7 @@
 		4374A71E137C8132003F7907 /* TextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextArea.h; path = dojo/TextArea.h; sourceTree = "<group>"; };
 		4374A71F137C8132003F7907 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = dojo/Texture.h; sourceTree = "<group>"; };
 		4374A720137C8132003F7907 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timer.h; path = dojo/Timer.h; sourceTree = "<group>"; };
-		4374A721137C8132003F7907 /* TouchSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchSource.h; path = dojo/TouchSource.h; sourceTree = "<group>"; };
+		4374A721137C8132003F7907 /* InputSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputSystem.h; path = dojo/InputSystem.h; sourceTree = "<group>"; };
 		4374A722137C8132003F7907 /* Trail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Trail.h; path = dojo/Trail.h; sourceTree = "<group>"; };
 		4374A723137C8132003F7907 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = dojo/Utils.h; sourceTree = "<group>"; };
 		4374A724137C8132003F7907 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector.h; path = dojo/Vector.h; sourceTree = "<group>"; };
@@ -278,7 +278,7 @@
 				4374A71E137C8132003F7907 /* TextArea.h */,
 				4374A71F137C8132003F7907 /* Texture.h */,
 				4374A720137C8132003F7907 /* Timer.h */,
-				4374A721137C8132003F7907 /* TouchSource.h */,
+				4374A721137C8132003F7907 /* InputSystem.h */,
 				4374A722137C8132003F7907 /* Trail.h */,
 				4374A723137C8132003F7907 /* Utils.h */,
 				4374A724137C8132003F7907 /* Vector.h */,
@@ -361,7 +361,7 @@
 				4374A745137C8132003F7907 /* TextArea.h in Headers */,
 				4374A746137C8132003F7907 /* Texture.h in Headers */,
 				4374A747137C8132003F7907 /* Timer.h in Headers */,
-				4374A748137C8132003F7907 /* TouchSource.h in Headers */,
+				4374A748137C8132003F7907 /* InputSystem.h in Headers */,
 				4374A749137C8132003F7907 /* Trail.h in Headers */,
 				4374A74A137C8132003F7907 /* Utils.h in Headers */,
 				4374A74B137C8132003F7907 /* Vector.h in Headers */,
