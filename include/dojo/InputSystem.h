@@ -21,7 +21,7 @@ namespace Dojo
 	class Renderable;
 	
 	///keycodes, thanks to OIS Library
-	class TouchSource
+	class InputSystem
 	{
 	public:
 		
@@ -190,7 +190,7 @@ namespace Dojo
 					source->removeTouchListener( this );
 			}
 			
-			inline TouchSource* getSource()	{	return source;	}
+			inline InputSystem* getSource()	{	return source;	}
 			
 			virtual void onTouchBegan( const Vector& point )=0;
 			virtual void onTouchMove( const Vector& point, const Vector& trans )=0;
@@ -216,16 +216,16 @@ namespace Dojo
 
 			}
 
-			inline void _notifySource( TouchSource* src )	{	source = src;	}
+			inline void _notifySource( InputSystem* src )	{	source = src;	}
 			
 		protected:
 			
-			TouchSource* source;
+			InputSystem* source;
 		};	
 				
 		typedef Array<Listener*> ListenerList;
 		
-		TouchSource( bool enable = true ) :
+		InputSystem( bool enable = true ) :
 		enabled(enable)
 		{
 			

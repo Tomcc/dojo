@@ -9,7 +9,7 @@ namespace Dojo
 {
 	class SoundManager;
 	class Render;
-	class TouchSource;
+	class InputSystem;
 	class Game;
 	class Table;
 
@@ -52,7 +52,7 @@ namespace Dojo
 
 		inline SoundManager* getSoundManager()	{	return sound;	}
 		inline Render* getRender()				{	return render;	}
-		inline TouchSource* getInput()			{	return input;	}
+		inline InputSystem* getInput()			{	return input;	}
 		inline double getRealFrameTime()		{	return realFrameTime;	}
 		
 		inline bool isRunning()					{	return running; }
@@ -95,7 +95,7 @@ namespace Dojo
 
 		SoundManager* sound;
 		Render* render;
-		TouchSource* input;
+		InputSystem* input;
 		
 		float realFrameTime;
 	};

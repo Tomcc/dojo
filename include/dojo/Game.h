@@ -14,9 +14,9 @@
 #include "Array.h"
 
 #include "Render.h"
-#include "TouchSource.h"
+#include "InputSystem.h"
 #include "SoundManager.h"
-#include "TouchSource.h"
+#include "InputSystem.h"
 #include "StateInterface.h"
 
 #include "Platform.h"

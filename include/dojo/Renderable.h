@@ -18,7 +18,7 @@
 #include "FrameSet.h"
 #include "Render.h"
 #include "RenderState.h"
-#include "TouchSource.h"
+#include "InputSystem.h"
 
 namespace Dojo 
 {

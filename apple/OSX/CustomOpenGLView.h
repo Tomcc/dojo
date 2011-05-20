@@ -12,7 +12,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <AppKit/NSOpenGLView.h>
 
-#include "TouchSource.h"
+#include "InputSystem.h"
 
 namespace Dojo
 {
@@ -24,9 +24,9 @@ namespace Dojo
 	Dojo::Platform* platform;
 	CFAbsoluteTime time;
     
-	Dojo::TouchSource* input;
+	Dojo::InputSystem* input;
 	
-	Dojo::TouchSource::KeyCode keymap[0x76];
+	Dojo::InputSystem::KeyCode keymap[0x76];
 }
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform;

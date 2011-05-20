@@ -71,7 +71,7 @@ void OSXPlatform::initialise()
     sound = new SoundManager();
 	
     //create input
-    input = new TouchSource();
+    input = new InputSystem();
 	
 	[view setPlatform:this];
         

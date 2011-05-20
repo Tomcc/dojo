@@ -15,7 +15,7 @@
 #include "Array.h"
 
 #include "ResourceGroup.h"
-#include "TouchSource.h"
+#include "InputSystem.h"
 #include "StateInterface.h"
 #include "Renderable.h"
 
@@ -27,7 +27,7 @@ namespace Dojo {
 	class Object;
 	class Game;
 	
-	class GameState : public ResourceGroup, public TouchSource::Listener, public Renderable::Listener, public StateInterface
+	class GameState : public ResourceGroup, public InputSystem::Listener, public Renderable::Listener, public StateInterface
 	{
 	public:
 		
