@@ -12,10 +12,11 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <AppKit/NSOpenGLView.h>
 
+#include "TouchSource.h"
+
 namespace Dojo
 {
 	class Platform;
-	class TouchSource;
 }
 
 @interface CustomOpenGLView : NSOpenGLView<NSWindowDelegate> {
@@ -24,6 +25,8 @@ namespace Dojo
 	CFAbsoluteTime time;
     
 	Dojo::TouchSource* input;
+	
+	Dojo::TouchSource::KeyCode keymap[0x76];
 }
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform;
