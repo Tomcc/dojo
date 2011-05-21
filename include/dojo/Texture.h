@@ -74,7 +74,9 @@ namespace Dojo
 		void enableTiling();
 
 		void disableTiling();
-						
+		
+		inline bool isNonPowerOfTwo()			{	return npot;		}
+		
 		inline uint getWidth()					{	return width;		}
 		inline uint getHeight()					{	return height;		}
 		
@@ -101,8 +103,11 @@ namespace Dojo
 			return OBB;
 		}
 		
-		inline bool isNonPowerOfTwo()			{	return npot;		}
-		inline bool isAtlasTile()				{	return parentAtlas;	}
+		inline float _getXTextureUVRatio()		{	return xRatio;		}
+		inline float _getYTextureUVRatio()		{	return yRatio;		}
+		
+		inline float _getXTextureOffset()		{	return xOffset;		}
+		inline float _getYTextureOffset()		{	return yOffset;		}
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{

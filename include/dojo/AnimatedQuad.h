@@ -121,9 +121,8 @@ namespace Dojo
 		
 		virtual ~AnimatedQuad()
 		{
-			//HACK - MEMLEAK
-			//if( animation )
-				//	delete animation;
+			if( animation )
+				delete animation;
 		}
 		
 		virtual void reset();
@@ -231,6 +230,9 @@ namespace Dojo
 		inline void _setTexture( Texture* t )
 		{			
 			setTexture( t );
+
+			if( t->isNonPowerOfTwo() )
+				mesh = t->getOptimalBillboard();
 		}		
 	};
 }

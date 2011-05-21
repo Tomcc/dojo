@@ -18,12 +18,9 @@ namespace Dojo
 	{
 	public:
 		
-		bool autoDeleteWhenReplaced;
-		
 		StateInterface() :
 		currentState(-1),
-		currentStatePtr( NULL ),
-		autoDeleteWhenReplaced( true )
+		currentStatePtr( NULL )
 		{
 			
 		}
@@ -36,14 +33,24 @@ namespace Dojo
 		
 		inline void setState( uint newState )		
 		{
-			_setState( newState, NULL );
+			_subStateEnd();
+				
+			currentState = newState;
+			currentStatePtr = NULL;
+				
+			_subStateBegin();
 		}
 		
 		inline void setState( StateInterface* child )
 		{
 			DEBUG_ASSERT( child );
 			
-			_setState( -1, child );
+			_subStateEnd();
+			
+			currentState = -1;
+			currentStatePtr = child;
+			
+			_subStateBegin();			
 		}
 		
 		inline uint getCurrentState()					{	return currentState;	}
@@ -97,35 +104,10 @@ namespace Dojo
 		}
 		
 		//----- eventi per i sottostati immediati
-		virtual void onStateBegin()
-		{
-			
-		}	
-		
-		virtual void onStateLoop( float dt )
-		{
-			
-		}
-		
-		virtual void onStateEnd()
-		{
-			
-		}
-		
-		void _setState( int newState, StateInterface* newChild )
-		{
-			_subStateEnd();
-			
-			//kill old state?
-			/*if( hasChildState() && currentStatePtr->autoDeleteWhenReplaced )
-				delete currentStatePtr;*/
-			
-			currentState = newState;
-			currentStatePtr = newChild;
-			
-			_subStateBegin();	
-		}
-		
+		virtual void onStateBegin()=0;		
+		virtual void onStateLoop( float dt )=0;		
+		virtual void onStateEnd()=0;
+				
 		inline void _subStateBegin()
 		{
 			if( currentStatePtr )
