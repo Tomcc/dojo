@@ -18,6 +18,8 @@ pixelScale( 1,1 ),
 autoAdvancement( true ),
 pixelPerfect( pp )
 {
+	cullMode = CM_DISABLED;
+	
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );
 	

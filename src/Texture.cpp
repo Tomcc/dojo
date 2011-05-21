@@ -16,6 +16,14 @@ void Texture::bind( uint index )
 	glEnable( GL_TEXTURE_2D );
 
 	glBindTexture( GL_TEXTURE_2D, glhandle );
+	
+	glMatrixMode( GL_TEXTURE );
+	glLoadIdentity();
+	if( isAtlasTile() )
+	{
+		glTranslatef(xOffset, yOffset, 0 );
+		glScalef(xRatio, yRatio, 1);
+	}
 }
 
 void Texture::enableBilinearFiltering()
@@ -138,20 +146,20 @@ void Texture::_buildOptimalBillboard()
 	OBB->begin( 4 );
 	
 	OBB->vertex( -0.5, -0.5 );		
-	OBB->uv( _getXTextureOffset(), 
-			 _getYTextureOffset() + _getYTextureUVRatio() );
+	OBB->uv( xOffset, 
+			 yOffset + yRatio );
 	
 	OBB->vertex( 0.5, -0.5 );		
-	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
-			 _getYTextureOffset() + _getYTextureUVRatio() );
+	OBB->uv( xOffset + xRatio, 
+			 yOffset + yRatio );
 	
 	OBB->vertex( -0.5, 0.5 );		
-	OBB->uv( _getXTextureOffset(), 
-			 _getYTextureOffset() );
+	OBB->uv( xOffset, 
+			 yOffset );
 	
 	OBB->vertex( 0.5, 0.5 );
-	OBB->uv( _getXTextureOffset() + _getXTextureUVRatio(), 
-			 _getYTextureOffset() );
+	OBB->uv( xOffset + xRatio, 
+			 yOffset );
 	
 	OBB->end();			
 }
