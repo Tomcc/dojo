@@ -32,10 +32,10 @@ ApplePlatform::~ApplePlatform()
 }
 
 void ApplePlatform::step( float dt )
-{    	
+{
 	Timer frameTimer;
 	
-    game->onLoop(dt);
+    game->loop(dt);
     
     render->render();
     sound->update(dt);

@@ -76,7 +76,7 @@ void OSXPlatform::initialise()
 	[view setPlatform:this];
         
     //launch the game
-    game->onBegin();
+    game->begin();
 }
 
 OSXPlatform::~OSXPlatform()
@@ -86,7 +86,7 @@ OSXPlatform::~OSXPlatform()
 
 void OSXPlatform::shutdown()
 {    
-	game->onEnd();
+	game->end();
 	
 	delete game;
 	

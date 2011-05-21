@@ -33,24 +33,24 @@ namespace Dojo
 		
 		inline void setState( uint newState )		
 		{
-			_stateEnd();
+			_subStateEnd();
 				
 			currentState = newState;
 			currentStatePtr = NULL;
 				
-			_stateBegin();
+			_subStateBegin();
 		}
 		
 		inline void setState( StateInterface* child )
 		{
 			DEBUG_ASSERT( child );
 			
-			_stateEnd();
+			_subStateEnd();
 			
 			currentState = -1;
 			currentStatePtr = child;
 			
-			_stateBegin();			
+			_subStateBegin();			
 		}
 		
 		inline uint getCurrentState()					{	return currentState;	}
@@ -61,6 +61,34 @@ namespace Dojo
 
 		inline bool hasChildState()						{	return currentStatePtr != NULL;	}
 		
+		///begin the execution of this state
+		void begin()
+		{
+			onBegin();
+		}
+		
+		///loop the execution of this state (and its childs)
+		void loop( float dt )
+		{					
+			onLoop( dt );
+			
+			_subStateLoop( dt );
+		}
+		
+		///end the execution of this state (and its childs)
+		void end()
+		{
+			_subStateEnd();
+			
+			onEnd();	
+		}
+						
+	protected:
+		int currentState;		
+		StateInterface* currentStatePtr;
+		
+	private:
+				
 		//------ eventi dello stato
 		virtual void onBegin()
 		{
@@ -79,32 +107,31 @@ namespace Dojo
 		virtual void onStateBegin()=0;		
 		virtual void onStateLoop( float dt )=0;		
 		virtual void onStateEnd()=0;
-		
-	protected:
-		int currentState;		
-		StateInterface* currentStatePtr;
-		
-	private:
-		
-		
-		inline void _stateEnd()
+				
+		inline void _subStateBegin()
 		{
 			if( currentStatePtr )
-			{				
-				currentStatePtr->onEnd();
-			}
-			else {
-				onStateEnd();
-			}		
-		}
-		
-		inline void _stateBegin()
-		{
-			if( currentStatePtr )
-				currentStatePtr->onBegin();
+				currentStatePtr->begin();
 			else
 				onStateBegin();
 		}
+		
+		inline void _subStateLoop( float dt )
+		{
+			if( currentStatePtr )
+				currentStatePtr->loop( dt );
+			else
+				onStateLoop( dt );
+		}
+		
+		inline void _subStateEnd()
+		{
+			if( currentStatePtr )
+				currentStatePtr->end();
+			else
+				onStateEnd();
+		}
+		
 	};
 }
 
