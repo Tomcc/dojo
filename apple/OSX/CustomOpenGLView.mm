@@ -169,7 +169,7 @@ using namespace Dojo;
 	
 	time = CFAbsoluteTimeGetCurrent();
 	
-	//HACK - use real elapsed time
+	//use real elapsed time
 	platform->step( deltaTime );
 }
 

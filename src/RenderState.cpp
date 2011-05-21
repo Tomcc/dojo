@@ -46,6 +46,7 @@ void RenderState::commitChanges( RenderState* pastState )
 	if( !getTextureNumber() )
 		_bindTextureSlot(0);
 
+	//HACK this applies the transform to the last bound texture!
 	//apply transform?
 	//past state had texture transform, but we dont' need it
 	if( textureTransform != pastState->textureTransform )
