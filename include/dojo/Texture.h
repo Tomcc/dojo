@@ -71,6 +71,8 @@ namespace Dojo
 		
 		void disableBilinearFiltering();
 
+		void enableMipmaps();
+
 		void enableTiling();
 
 		void disableTiling();

@@ -58,6 +58,10 @@ void Texture::disableTiling()
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
 
+void Texture::enableMipmaps() {
+	DEBUG_TODO;
+}
+
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );
