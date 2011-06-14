@@ -291,20 +291,14 @@ void ResourceGroup::loadFonts( const std::string& subdirectory )
 	
 	std::vector<std::string> paths;
 	
-	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "ttf", subdirectory, paths );
 	
+	///just load a Font for any .ttf file found
 	for( uint i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] ); 
-		
-		///use the frameset with the same name
-		if( isFrameSetLoaded( name ) )
-		{
-			font = new Font( paths[i], getFrameSet( name ) );
-			
-			if( font->load() )			
-				addFont( font, name );
-		}	
+						
+		addFont( new Font( paths[i] ), name );
 	}
 }
 

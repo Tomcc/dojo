@@ -81,8 +81,6 @@ void Mesh::_prepareVertex( float x, float y, float z )
 	dimensions = max - min;
 
 	++vertexCount;
-
-	currentUVSet = 0;
 }
 
 void Mesh::vertex( float x, float y )

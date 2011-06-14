@@ -18,13 +18,20 @@
 
 #include "Utils.h"
 
+#define FONT_PAGE_SIDE 16
+#define FONT_CHARS_PER_PAGE ( FONT_PAGE_SIDE * FONT_PAGE_SIDE )
+#define FONT_MAX_PAGES (65535 / FONT_CHARS_PER_PAGE )
+
 namespace Dojo 
 {
 	class Font : public BaseObject
 	{
 	public:
+
+		class Page;
+		class Character;
 		
-		struct Character
+		class Character
 		{
 		public:			
 			unichar character;
@@ -34,54 +41,75 @@ namespace Dojo
 			
 			uint pixelWidth;
 			float width; //charWidth/fontWidth
-			
-			Texture* page;
-			
-			Character() :
-			page( NULL ),
-			character(0)
+
+			Page* page;
+						
+			Character()
 			{
-				
+
+			}
+
+			inline Texture* getTexture()
+			{
+				return page->getTexture();
 			}
 		};
 		
-		struct Page
+		class Page
 		{
 		public:
 			
-			Character* chars;
-			
-			Texture* texture;
-			
-			Page( Texture* page ) :
-			texture( page )
-			{
-				chars = new Character[ 256 ];	
-				
-				for( uint i = 0; i < 256; ++i )
-					chars[i].page = texture;
-			}
+			///create a new page for the given index
+			Page( const std::string& fontName, int index );
 
 			virtual ~Page()
 			{
-				delete [] chars;
+				texture->unload();
+
+				delete texture;
+			}
+
+			void initialise();
+
+			inline Texture* getTexture() 
+			{
+				return texture;
+			}
+
+			///get the char in this page
+			inline Character* getChar( unichar c )
+			{
+				DEBUG_ASSERT( _charInPage(c) );
+
+				return &( chars[ c - firstCharIdx ] );
+			}
+
+		protected:
+
+			Texture* texture;
+			uint index;
+			unichar firstCharIdx;
+
+			Character chars[ FONT_CHARS_PER_PAGE ];
+
+			Texture* _createTextureFromTTF( const std::string& name );
+
+			inline boolean _charInPage( unichar c ) 
+			{
+				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
 			}
 		};
 		
-		Font( const std::string& path, FrameSet* set ) :
-		fontSet( set ),
-		filePath( path )
+		Font( const std::string& name ) :
+		fontName( name )
 		{			
-			//allocate page pointers (but not pages)
-			pages = (Page**)malloc( sizeof( void* ) * fontSet->getFrameNumber() );
-			memset( pages, 0, sizeof( void* ) * fontSet->getFrameNumber() );
-			
-			//allocate char widths
-			charWidth = (uint*)malloc( sizeof( uint ) * fontSet->getFrameNumber() * 256 );
+			//miss all the pages
+			memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
 		}
 		
 		virtual ~Font()
 		{
+			//clear every page
 			unload();
 		}
 		
@@ -89,103 +117,69 @@ namespace Dojo
 		inline uint getFontHeight()					{	return fontHeight;		}
 		
 		inline const Vector& getFontUVSize()		{	return fontUVSize;		}
-		inline FrameSet* getFrameSet()				{	return fontSet;			}
-				
+
+		inline Page* getPage( uint index )
+		{
+			DEBUG_ASSERT( index < FONT_MAX_PAGES );
+
+			Page* res = pages[ index ];
+
+			if( !res )
+				pages[ index ] = res = new Page( fontName, index );
+
+			return res;
+		}
+
+		inline Page* getPageForChar( unichar c )
+		{
+			return getPage( c / FONT_CHARS_PER_PAGE );
+		}
+
 		///returns the texture page and the uv min and max for that character
 		inline Character* getCharacter( unichar c )
 		{
-			//TODO: support multiple pages
-			c = c % 256;
-			Character* res = pages[ 0 ]->chars + (c % 256);
-			return res;
+			return getPageForChar( c )->getChar( c );
 		}
-		
-		bool load();
+
+		inline Texture* getTexture( unichar c )
+		{
+			return getPageForChar( c )->getTexture();
+		}
+
+		///make sure that the pages at the given indices are loaded
+		inline void preloadPages( const char pages[], uint n ) 
+		{
+			for( int i = 0; i < n; ++i )
+				getPage( pages[i] );
+		}
+
+		///unload, remove and destroy the given page
+		inline void destroyPage( uint idx )
+		{
+			DEBUG_ASSERT( idx < FONT_MAX_PAGES );
+
+			if( pages[idx] ) 
+			{
+				delete pages[idx];
+				pages[idx] = NULL;
+			}
+		}
 		
 		void unload()
 		{
-			DEBUG_ASSERT( pages );
-			DEBUG_ASSERT( fontSet );
-
-			//delete every loaded page
-			for( int i = 0; i < fontSet->getFrameNumber(); ++i )
-			{
-				if( pages[i] )
-					delete pages[i];
-			}
-
-			free( pages );
-
-			if( charWidth )
-				free( charWidth );
-				
-			pages = NULL;
-			charWidth = NULL;
-				
-			fontSet = NULL;
+			for( uint i = 0; i < FONT_MAX_PAGES; ++i )
+				destroyPage(i);
 		}
 		
 	protected:
 		
-		std::string filePath;
-		
-		FrameSet* fontSet;
-		
-		Page** pages; 
-		
-		uint* charWidth; //width for each char
-		
-		uint offset;
-		uint rows, cols, totalCharNumber;
+		std::string fontName;
+
+		Page* pages[ FONT_MAX_PAGES ]; 
+
 		uint fontWidth, fontHeight; //measurements of the "character box"
 		
 		Vector fontUVSize;	//char max size in UV metrics
-		
-		//creates the given page
-		bool _createPage( uint n )
-		{
-			if( n >= fontSet->getFrameNumber() )
-				return false;
-			
-			pages[ n ] = new Page( fontSet->getFrame( n ) );
-			
-			Character* chars = pages[n]->chars;
-			
-			//get the widths for this page
-			uint* pageCharWidth = charWidth + n * 256;
-			
-			//load characters settings
-			Vector uv;
-								
-			uint i = offset;
-			uint j = 0;
-			Character* c;
-			for( ; i < totalCharNumber; ++i, ++j )
-			{
-				//next line?
-				if( j == cols )
-				{				
-					uv.y += fontUVSize.y;
-					uv.x = 0;
-					
-					j = 0;					
-				}
-				
-				c = chars + i;
-				
-				c->character = i;
-				c->pixelWidth = pageCharWidth[i];
-				c->width = (float)c->pixelWidth/(float)fontWidth;
-				
-				c->uvPos = uv;				
-				c->uvWidth = c->width * fontUVSize.x;
-				
-				//next char
-				uv.x += fontUVSize.x;				
-			}
-			
-			return true;
-		}
 	};
 }
 

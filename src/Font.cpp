@@ -6,48 +6,24 @@
 
 using namespace Dojo;
 
-bool Font::load()
+Font::Page::Page( const std::string& fontName, int idx ) :
+index( idx ),
+firstCharIdx( index * FONT_CHARS_PER_PAGE )
 {
-	char* file;
+	//notify me to each char
+	for( uint i = 0; i < FONT_CHARS_PER_PAGE; ++i )
+		chars[i].page = this;
 
-	uint size = Platform::getSingleton()->loadFileContent( file, filePath );
-	
-	if( file == NULL )
-		return false;
-	 
-	char* buf = file;
-	char* end = buf + size;
-	
-	//the first two values are pixel width and height of the font
-	fontWidth = Utils::toInt( buf, end );
-	fontHeight = Utils::toInt( buf, end );
-	
-	offset = Utils::toInt( buf, end );
-	
-	//get UV dimensions
-	Texture* tex = fontSet->getFrame(0);
-	
-	cols = (uint)tex->getWidth() / fontWidth;
-	rows = (uint)tex->getHeight() / fontHeight;
-	
-	totalCharNumber = rows*cols;
-				
-	//find height of a char in UV space
-	fontUVSize.x = (float)fontWidth/(float)( tex->getWidth() );
-	fontUVSize.y = (float)fontHeight/(float)( tex->getHeight() );			
-	
-	//get ints representing char width in pixels
-	uint i = 0;
-	for (; i < 256 && buf < end; ++i)
-	{
-		charWidth[i] = Utils::toInt( buf, end );
-	}
+	texture = _createTextureFromTTF( fontName );
 
-	free( file );
-		
-	DEBUG_ASSERT( i == 256 );
-	
-	_createPage( 0 );			
-				
-	return true;
+	//load each char
+	DEBUG_TODO;
+}
+
+Texture* Font::Page::_createTextureFromTTF( const std::string& name )
+{
+	//create the texture somehow
+	DEBUG_TODO;
+
+	return NULL;
 }

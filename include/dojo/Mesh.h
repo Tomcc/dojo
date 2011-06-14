@@ -16,6 +16,8 @@
 #include "Vector.h"
 #include "Color.h"
 
+#define MESH_MAX_TEXTURES 8
+
 namespace Dojo 
 {
 	class Mesh : public Buffer 
@@ -66,7 +68,6 @@ namespace Dojo
 		triangleMode( TM_STRIP ),
 		vertexHandle(0),
 		indexHandle(0),
-		currentUVSet(0),
 		indexGLType(0),
 		indexMaxValue(0),
 		indexByteSize(0)
@@ -215,15 +216,22 @@ namespace Dojo
 		}
 				
 		///sets the uv of the last set vertex				
-		inline void uv( float u, float v )
+		inline void uv( float u, float v, byte set = 0 )
 		{			
 			DEBUG_ASSERT( isEditing() );
 			
-			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV + currentUVSet ] );
-			*ptr++ = u;
-			*ptr = v;
+			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV + set ] );
+			ptr[0] = u;
+			ptr[1] = v;
+		}
 
-			++currentUVSet;
+		inline void setAllUVs( float u, float v ) 
+		{
+			for( int i = 0; i < MESH_MAX_TEXTURES; ++i )
+			{
+				if( isVertexFieldEnabled( (VertexField)(VF_UV + i) ) )
+					uv( u,v,i );
+			}
 		}
 		
 		//sets the color of the last set vertex		
@@ -232,10 +240,10 @@ namespace Dojo
 			DEBUG_ASSERT( isEditing() );	
 			
 			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
-			*ptr++ = (GLubyte)(r*255);
-			*ptr++ = (GLubyte)(g*255);
-			*ptr++ = (GLubyte)(b*255);
-			*ptr = (GLubyte)(a*255);
+			ptr[0] = (GLubyte)(r*255);
+			ptr[1] = (GLubyte)(g*255);
+			ptr[2] = (GLubyte)(b*255);
+			ptr[3] = (GLubyte)(a*255);
 		}
 
 		inline void color( const Color& c )
@@ -250,9 +258,9 @@ namespace Dojo
 			
 			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_NORMAL ] );
 			
-			*ptr++ = x;
-			*ptr++ = y;
-			*ptr = z;
+			ptr[0] = x;
+			ptr[1] = y;
+			ptr[2] = z;
 		}
 		
 		inline void normal( const Vector& n )
@@ -378,8 +386,6 @@ namespace Dojo
 		byte* indices;//indices have varying size
 
 		uint triangleCount;
-
-		uint currentUVSet;
 		
 		bool vertexFields[ FIELDS_NUMBER ];		
 		uint vertexFieldOffset[ FIELDS_NUMBER ];
