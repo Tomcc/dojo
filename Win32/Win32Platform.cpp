@@ -219,17 +219,17 @@ void Win32Platform::initialise()
 	//initialize OIS to emulate the touch
 	_initialiseOIS();
 
-	input = new TouchSource();
+	input = new InputSystem();
 
 	//start the game
-	game->onBegin();
+	game->begin();
 }
 
 
 void Win32Platform::shutdown()
 {
 	//destroy game
-	game->onEnd();
+	game->end();
 
 	delete game;
 
@@ -267,7 +267,7 @@ void Win32Platform::step( float dt )
 	keys->capture();
 	mouse->capture();
 
-	game->onLoop( dt);
+	game->loop( dt);
 
 	render->render();
 	

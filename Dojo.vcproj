@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
+				AdditionalIncludeDirectories=".;include/dojo;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -108,7 +108,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
+				AdditionalIncludeDirectories=".;include/dojo;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -267,163 +267,163 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\include\AnimatedQuad.h"
+				RelativePath=".\include\dojo\AnimatedQuad.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Array.h"
+				RelativePath=".\include\dojo\Array.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\BaseObject.h"
+				RelativePath=".\include\dojo\BaseObject.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Buffer.h"
+				RelativePath=".\include\dojo\Buffer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Color.h"
+				RelativePath=".\include\dojo\Color.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo_common_header.h"
+				RelativePath=".\include\dojo\dojo_common_header.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo_config.h"
+				RelativePath=".\include\dojo\dojo_config.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojomath.h"
+				RelativePath=".\include\dojo\dojomath.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Font.h"
+				RelativePath=".\include\dojo\Font.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\FrameSet.h"
+				RelativePath=".\include\dojo\FrameSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Game.h"
+				RelativePath=".\include\dojo\Game.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\GameState.h"
+				RelativePath=".\include\dojo\GameState.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Mesh.h"
+				RelativePath=".\include\dojo\InputSystem.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Model.h"
+				RelativePath=".\include\dojo\Mesh.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Object.h"
+				RelativePath=".\include\dojo\Model.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Particle.h"
+				RelativePath=".\include\dojo\Object.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\ParticlePool.h"
+				RelativePath=".\include\dojo\Particle.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Platform.h"
+				RelativePath=".\include\dojo\ParticlePool.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Render.h"
+				RelativePath=".\include\dojo\Platform.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Renderable.h"
+				RelativePath=".\include\dojo\Render.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\RenderState.h"
+				RelativePath=".\include\dojo\Renderable.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\RenderTarget.h"
+				RelativePath=".\include\dojo\RenderState.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\ResourceGroup.h"
+				RelativePath=".\include\dojo\ResourceGroup.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Scene.h"
+				RelativePath=".\include\dojo\Serializable.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Serializable.h"
+				RelativePath=".\include\dojo\SoundBuffer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\SoundBuffer.h"
+				RelativePath=".\include\dojo\SoundManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\SoundManager.h"
+				RelativePath=".\include\dojo\SoundSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\SoundSet.h"
+				RelativePath=".\include\dojo\SoundSource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\SoundSource.h"
+				RelativePath=".\include\dojo\Sprite.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Sprite.h"
+				RelativePath=".\include\dojo\StateInterface.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\StateInterface.h"
+				RelativePath=".\include\dojo\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Table.h"
+				RelativePath=".\include\dojo\Table.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\TextArea.h"
+				RelativePath=".\include\dojo\TextArea.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Texture.h"
+				RelativePath=".\include\dojo\Texture.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Timer.h"
+				RelativePath=".\include\dojo\Timer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\TouchSource.h"
+				RelativePath=".\include\dojo\TouchSource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Trail.h"
+				RelativePath=".\include\dojo\Trail.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Utils.h"
+				RelativePath=".\include\dojo\Utils.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Vector.h"
+				RelativePath=".\include\dojo\Vector.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\Viewport.h"
+				RelativePath=".\include\dojo\Viewport.h"
 				>
 			</File>
 		</Filter>
