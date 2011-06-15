@@ -291,7 +291,7 @@ void ResourceGroup::loadFonts( const std::string& subdirectory )
 	
 	std::vector<std::string> paths;
 	
-	Platform::getSingleton()->getFilePathsForType( "ttf", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
 	
 	///just load a Font for any .ttf file found
 	for( uint i = 0; i < paths.size(); ++i )

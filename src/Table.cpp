@@ -3,11 +3,23 @@
 #include "Table.h"
 
 using namespace Dojo;
+using namespace std;
 
 const std::string Table::UNDEFINED_STRING = "";
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
+void Table::serialize( std::ostream& buf)
+{		
+	DEBUG_TODO;
+}
+
+void Table::deserialize( std::istream& buf )
+{
+	DEBUG_TODO;
+}
+
+/*
 void Table::serialize( std::ostream& buf)
 {			
 	using namespace std;
@@ -143,4 +155,4 @@ void Table::deserialize( std::istream& buf )
 			}
 		}
 	}
-}
+}*/

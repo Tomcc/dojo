@@ -100,12 +100,7 @@ namespace Dojo
 			}
 		};
 		
-		Font( const std::string& name ) :
-		fontName( name )
-		{			
-			//miss all the pages
-			memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
-		}
+		Font( const std::string& table );
 		
 		virtual ~Font()
 		{
@@ -174,12 +169,16 @@ namespace Dojo
 	protected:
 		
 		std::string fontName;
+		std::string fontFile;
 
-		Page* pages[ FONT_MAX_PAGES ]; 
+		bool border;
+		Color borderColor;
 
 		uint fontWidth, fontHeight; //measurements of the "character box"
+
+		Vector fontUVSize;
 		
-		Vector fontUVSize;	//char max size in UV metrics
+		Page* pages[ FONT_MAX_PAGES ]; 
 	};
 }
 

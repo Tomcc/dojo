@@ -11,6 +11,8 @@
 #define Color_h__
 
 #include "dojo_common_header.h"
+#include "Vector.h"
+
 
 namespace Dojo
 {
@@ -36,6 +38,14 @@ namespace Dojo
 			this->r = r;
 			this->g = g;
 			this->b = b;
+			this->a = a;
+		}
+
+		Color( const Vector& v, float a ) 
+		{
+			this->r = v.x;
+			this->g = v.y;
+			this->b = v.z;
 			this->a = a;
 		}
 		

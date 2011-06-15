@@ -14,6 +14,15 @@ namespace Dojo
 	{
 	public:
 
+		enum FieldType 
+		{
+			FT_NUMBER,
+			FT_STRING,
+			FT_DATA,
+			FT_VECTOR,
+			FT_TABLE
+		};
+
 		struct Data
 		{
 			void* ptr;
@@ -34,17 +43,33 @@ namespace Dojo
 			}
 		};
 
-		typedef std::map< std::string, float > NumberMap;
-		typedef std::map< std::string, std::string > StringMap;
-		typedef std::map< std::string, Vector > VectorMap;
-		typedef std::map< std::string, Data > DataMap;
-		typedef std::map< std::string, Table* > TableMap;
+		struct Entry 
+		{
+			FieldType type;
+			void* value;
+
+			Entry( FieldType fieldType, void* v ) :
+			type( fieldType ),
+			value( v )
+			{
+				
+			}
+
+			///need to call this before overwriting the entry
+			void dispose()
+			{
+				if( type != FT_NUMBER )
+					delete value;
+			}
+		};
+
+		typedef std::map< std::string, Entry > EntryMap;
 
 		static const std::string UNDEFINED_STRING;
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
-		Table( const std::string& tablename ) :
+		Table( const std::string& tablename = "" ) :
 		name( tablename )
 		{
 			DEBUG_ASSERT( name.size() );
@@ -69,12 +94,21 @@ namespace Dojo
 			
 			return t;
 		}
-		
-		inline void setNumber( const std::string& key, float value )
+
+		inline void setRaw( const std::string& key, FieldType type, void* value )
 		{
 			DEBUG_ASSERT( key.size() );
-			
-			numbers[key] = value;
+			DEBUG_ASSERT( type == FT_NUMBER || (value != NULL) );
+
+			if( exists( key ) )
+				map[ key ].dispose();
+
+			map[ key ] = Entry( type, value );
+		}
+		
+		inline void setNumber( const std::string& key, float value )
+		{			
+			setRaw(key, FT_NUMBER, reinterpret_cast< float >( value ) );
 		}
 
 		inline void setInteger( const std::string& key, int value )
@@ -88,104 +122,74 @@ namespace Dojo
 		}
 		
 		inline void setString( const std::string& key, const std::string& value )
-		{
-			DEBUG_ASSERT( key.size() );
-			
-			strings[ key ] = value;
+		{			
+			setRaw(key, FT_STRING, new std::string( value ) );
 		}
 
-		inline void setVector( const std::string& key, const Dojo::Vector& value )
+		inline void setVector( const std::string& key, const Vector& value )
 		{
-			DEBUG_ASSERT( key.size() );
-
-			vectors[ key ] = value;
+			setRaw( key, FT_VECTOR, new Vector( value ) );
 		}
 
-		///WARNING - Table DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
+		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
 		inline void setData( const std::string& key, void* value, uint size )
 		{
 			DEBUG_ASSERT( value );
 			DEBUG_ASSERT( size );
 
-			data[ key ] = Data( value, size );
+			setRaw(key, FT_DATA, new Data( value, size ) );
 		}
 		
 		inline void setTable( Table* value )
 		{
 			DEBUG_ASSERT( value );
-			
-			//avoid mem leaks
-			if( existsAsTable( value->getName() ) )
-				delete tables[ value->getName() ];
-			
-			tables[ value->getName() ] = value;
-		}
-
-		
+						
+			setRaw( value->getName(), FT_TABLE, value);
+		}		
 		
 		void clear()
-		{
-			numbers.clear();
-			strings.clear();
-			vectors.clear();
-			data.clear();
-						
-			//cancella tutte le tabelle figlie
-			TableMap::iterator itr;
-			for( itr = tables.begin(); itr != tables.end(); ++itr )
-				delete itr->second;
+		{					
+			//clean up every entry
+			EntryMap::iterator itr;
+			for( itr = map.begin(); itr != map.end(); ++itr )
+				itr->second.dispose();
 			
-			tables.clear();
-		}
-		
+			map.clear();
+		}		
 		
 		inline const std::string& getName()
 		{
 			return name;
 		}
 
-		inline bool existsAsNumber( const std::string& name )
+		inline bool exists( const std::string& key )
 		{
-			DEBUG_ASSERT( name.size() );
+			DEBUG_ASSERT( key.size() );
 
-			return numbers.find( name ) != numbers.end();
+			return map.find( key ) == map.end();
 		}
 
-		inline bool existsAsString( const std::string& name )
+		inline bool existsAs( const std::string& key, FieldType t )
 		{
-			DEBUG_ASSERT( name.size() );
+			EntryMap::iterator itr = map.find( key );
 
-			return strings.find( name ) != strings.end();
-		}
-
-		inline bool existsAsTable( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-
-			return tables.find( name ) != tables.end();
-		}
-
-		inline bool existsAsVector( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-
-			return vectors.find( name ) != vectors.end();
-		}
-
-		inline bool existsAsData( const std::string& name )
-		{
-			DEBUG_ASSERT( name.size() );
-
-			return data.find( name ) != data.end();
+			return itr != map.end() && itr->second.type == t;
 		}
 		
 		inline float getNumber( const std::string& key )
 		{			
-			if( existsAsNumber( key ) )
-				return numbers[key];
+			if( existsAs( key, FT_NUMBER ) )
+				return reinterpret_cast< float >( map[key].value );
 			else
 				return 0;
 		}
+
+		/*inline const Entry& get( int i )
+		{
+			DEBUG_ASSERT( i < map.size() );
+
+			return (map.begin() + i)->second;
+		}*/
 
 		inline int getInt( const std::string& key )
 		{
@@ -199,60 +203,61 @@ namespace Dojo
 		
 		inline const std::string& getString( const std::string& key )
 		{
-			if( existsAsString(key) )
-			   return strings[key];
+			if( existsAs(key, FT_STRING ) )
+				return *( (std::string*)map[key].value );
 			else
 			   return UNDEFINED_STRING;
 		}
 
 		inline const Dojo::Vector& getVector( const std::string& key )
 		{
-			if( existsAsVector( key ) )
-				return vectors[key];
+			if( existsAs( key, FT_VECTOR ) ) 
+				return *( (Vector*)map[key].value );
 			else
 				return Vector::ZERO;
+		}
+
+		inline const Dojo::Color getColor( const std::string& key, float alpha = 1.f )
+		{
+			return Color( getVector( key ), alpha );
 		}
 		
 		inline Table* getTable( const std::string& key )
 		{			
-			if( existsAsTable(key) )
-			   return tables[key];
+			if( existsAs(key, FT_TABLE ) )
+			   return (Table*)map[key].value;
 		   else
 			   return &EMPTY_TABLE;
 		}
 
 		inline const Data& getData( const std::string& key )
 		{
-			if( existsAsData( key ) )
-				return data[ key ];
+			if( existsAs( key, FT_DATA ) )
+				return *( (Data*)map[ key ].value );
 			else
 				return EMPTY_DATA;
 		}		
 
+		inline const EntryMap::iterator getIterator()
+		{
+			return map.begin();
+		}
+
 		inline bool isEmpty()
 		{
-			return (numbers.size() + strings.size() + vectors.size() + data.size() + tables.size() ) == 0;
+			return map.size() == 0;
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
 		void serialize( std::ostream& buf);
 
 		void deserialize( std::istream& buf );
-
-		inline const TableMap& _getTables()
-		{
-			return tables;
-		}
 				
 	protected:
 		
 		std::string name;
 		
-		NumberMap numbers;
-		StringMap strings;
-		VectorMap vectors;
-		DataMap data;
-		TableMap tables;	
+		EntryMap map;
 
 		void _getLine( std::istream& in, char* buf, uint max, char delim )
 		{
