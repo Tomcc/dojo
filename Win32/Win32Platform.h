@@ -103,6 +103,7 @@ namespace Dojo
 		std::string _toNormalPath( const std::string& path );
 
 		std::string _getUserDirectory();
+		std::string _getFilename( Table* dest, const std::string& absPath );
 
 		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 		void _initialiseOIS();

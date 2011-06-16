@@ -16,6 +16,7 @@ namespace Dojo
 
 		enum FieldType 
 		{
+			FT_UNDEFINED,
 			FT_NUMBER,
 			FT_STRING,
 			FT_DATA,
@@ -23,8 +24,9 @@ namespace Dojo
 			FT_TABLE
 		};
 
-		struct Data
+		class Data
 		{
+		public:
 			void* ptr;
 			uint size;
 
@@ -43,10 +45,19 @@ namespace Dojo
 			}
 		};
 
-		struct Entry 
+		class Entry 
 		{
+		public:
 			FieldType type;
+
 			void* value;
+
+			Entry() :
+			type( FT_UNDEFINED ),
+			value( NULL )
+			{
+
+			}
 
 			Entry( FieldType fieldType, void* v ) :
 			type( fieldType ),
@@ -58,21 +69,43 @@ namespace Dojo
 			///need to call this before overwriting the entry
 			void dispose()
 			{
-				if( type != FT_NUMBER )
-					delete value;
+				delete value;
 			}
 		};
 
 		typedef std::map< std::string, Entry > EntryMap;
+
+		class Iterator : public EntryMap::iterator
+		{
+		public:
+
+			Iterator( Table* t ) :
+			iterator( t->map.begin() )
+			{
+				DEBUG_ASSERT( t );
+
+				endItr = t->map.end();
+			}
+
+			inline boolean valid()
+			{
+				return (*this) != endItr;
+			}
+
+		protected:
+
+			EntryMap::iterator endItr;
+		};
 
 		static const std::string UNDEFINED_STRING;
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
 		Table( const std::string& tablename = "" ) :
-		name( tablename )
+		name( tablename ),
+		unnamedMembers( 0 )
 		{
-			DEBUG_ASSERT( name.size() );
+
 		}
 		
 		///legge la tabella dal formato standard su stringa
@@ -95,20 +128,32 @@ namespace Dojo
 			return t;
 		}
 
+		inline void setName( const std::string& newName )
+		{
+			DEBUG_ASSERT( newName.size() > 0 );
+
+			name = newName;
+		}
+
 		inline void setRaw( const std::string& key, FieldType type, void* value )
 		{
-			DEBUG_ASSERT( key.size() );
 			DEBUG_ASSERT( type == FT_NUMBER || (value != NULL) );
 
-			if( exists( key ) )
-				map[ key ].dispose();
+			//generate name
+			if( key.size() == 0 )
+				map[ _getAutoName() ] = Entry( type, value );
+			else
+			{
+				if( exists( key ) )
+					map[ key ].dispose();
 
-			map[ key ] = Entry( type, value );
+				map[ key ] = Entry( type, value );
+			}
 		}
 		
 		inline void setNumber( const std::string& key, float value )
 		{			
-			setRaw(key, FT_NUMBER, reinterpret_cast< float >( value ) );
+			setRaw(key, FT_NUMBER, new float( value ) );
 		}
 
 		inline void setInteger( const std::string& key, int value )
@@ -118,7 +163,7 @@ namespace Dojo
 
 		inline void setBoolean( const std::string& key, bool value )
 		{
-			setNumber( key, (int)value );
+			setNumber( key, (float)value );
 		}
 		
 		inline void setString( const std::string& key, const std::string& value )
@@ -150,8 +195,8 @@ namespace Dojo
 		void clear()
 		{					
 			//clean up every entry
-			EntryMap::iterator itr;
-			for( itr = map.begin(); itr != map.end(); ++itr )
+			
+			for( Iterator itr = getIterator(); itr.valid(); ++itr )
 				itr->second.dispose();
 			
 			map.clear();
@@ -160,6 +205,16 @@ namespace Dojo
 		inline const std::string& getName()
 		{
 			return name;
+		}
+
+		inline uint getAutoMembers()
+		{
+			return unnamedMembers;
+		}
+
+		inline boolean hasName() 
+		{
+			return name.size() > 0;
 		}
 
 		inline bool exists( const std::string& key )
@@ -179,17 +234,10 @@ namespace Dojo
 		inline float getNumber( const std::string& key )
 		{			
 			if( existsAs( key, FT_NUMBER ) )
-				return reinterpret_cast< float >( map[key].value );
+				return *( (float*)map[key].value );
 			else
 				return 0;
 		}
-
-		/*inline const Entry& get( int i )
-		{
-			DEBUG_ASSERT( i < map.size() );
-
-			return (map.begin() + i)->second;
-		}*/
 
 		inline int getInt( const std::string& key )
 		{
@@ -238,9 +286,9 @@ namespace Dojo
 				return EMPTY_DATA;
 		}		
 
-		inline const EntryMap::iterator getIterator()
+		inline const Iterator getIterator()
 		{
-			return map.begin();
+			return Iterator( this );
 		}
 
 		inline bool isEmpty()
@@ -249,7 +297,7 @@ namespace Dojo
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
-		void serialize( std::ostream& buf);
+		void serialize( std::ostream& buf, std::string indent );
 
 		void deserialize( std::istream& buf );
 				
@@ -259,42 +307,14 @@ namespace Dojo
 		
 		EntryMap map;
 
-		void _getLine( std::istream& in, char* buf, uint max, char delim )
+		uint unnamedMembers;
+
+		inline std::string _getAutoName()
 		{
-			char c='\n';
-			uint i=0;
-
-			while( c == '\n' || c == '\r' )
-				in.read( &c, 1 );
-
-			while( !in.eof() && i < max )
-			{
-				if( c == delim || c == '\n' || c == '\r' )
-				{
-					buf[i] = 0;
-					return;
-				}
-				else
-					buf[ i++ ] = c;
-
-				in.read( &c, 1 );
-			}
-
-			if( i < max )
-				buf[i] = 0;
+			return "_" + Utils::toString( unnamedMembers++ );
 		}
 	};
 }
 
 
 #endif
-
-/*
- *  Table.h
- *  Drafted
- *
- *  Created by Tommaso Checchi on 2/1/11.
- *  Copyright 2011 none. All rights reserved.
- *
- */
-

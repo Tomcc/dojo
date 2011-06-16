@@ -29,18 +29,23 @@ Texture* Font::Page::_createTextureFromTTF( const std::string& name )
 	return NULL;
 }
 
-Font::Font( const std::string& table )
+Font::Font( const std::string& path )
 {			
 	//miss all the pages
 	memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
 
 	//load table
 	Table* t = new Table();	
-	Platform::getSingleton()->load( t, table );
+	Platform::getSingleton()->load( t, path );
 
 	fontFile = t->getString( "truetype" );
 	fontHeight = t->getInt( "size" );
-	border = t->getBool( "border" );
-	borderColor = t->getColor( "borderColor" );
-	borderColor.a = t->getNumber( "borderAlpha" );
+	border = t->exists( "border_color" );
+	borderColor = t->getColor( "border_color" );
+
+	Table* preload = t->getTable( "preloadedPages" );
+	for( uint i = 0; i < preload->getAutoMembers(); ++i )
+		getPage( preload->getInt( "_" + Utils::toString(i) ) );
+
+	Platform::getSingleton()->save( t, path.substr(0, path.find_last_of('/') ) + "out.ds" );
 }

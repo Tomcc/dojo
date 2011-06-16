@@ -23,6 +23,7 @@
 
 using namespace Dojo;
 using namespace OIS;
+using namespace std;
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
@@ -553,24 +554,30 @@ std::string Win32Platform::_getUserDirectory()
 	return _toNormalPath( dir );
 }
 
+std::string Win32Platform::_getFilename( Table* dest, const std::string& absPath )
+{	
+	if( absPath.size() == 0 )
+	{
+		DEBUG_ASSERT( dest->hasName() );
+
+		//cerca tra le user prefs un file con lo stesso nome
+		return _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".ds";
+	}
+	else
+		return absPath;
+}
+
 void Win32Platform::load( Table* dest, const std::string& absPath )
 {
 	DEBUG_ASSERT( dest );
 
-	using namespace std;
-	
-	//cerca tra le user prefs un file con lo stesso nome
-	string fileName;	
-	if( absPath.size() == 0 )
-		fileName = _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".txt";
-	else
-		fileName = absPath + "/" + dest->getName() + ".txt";
-
-	fstream file( fileName.c_str(), ios_base::in | ios_base::binary );
+	std::string filename =  _getFilename(dest, absPath);
+	fstream file( filename.c_str(), ios_base::in | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
 
+	dest->setName( Utils::getFileName( filename ) );
 	dest->deserialize( file );
 
 	file.close();
@@ -579,21 +586,13 @@ void Win32Platform::load( Table* dest, const std::string& absPath )
 void Win32Platform::save( Table* src, const std::string& absPath )
 {
 	DEBUG_ASSERT( src );
-
-	using namespace std;
-
-	std::string fileName;
-	if( absPath.size() == 0 )
-		fileName = _getUserDirectory() + "/" + game->getName() + "/" + src->getName() + ".txt";
-	else
-		fileName = absPath + "/" + src->getName() + ".txt";
-
-	fstream file( fileName.c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
+	
+	fstream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
 
-	src->serialize( file );
+	src->serialize( file, "" );
 
 	file.close();
 }

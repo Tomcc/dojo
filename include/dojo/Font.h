@@ -100,7 +100,7 @@ namespace Dojo
 			}
 		};
 		
-		Font( const std::string& table );
+		Font( const std::string& path );
 		
 		virtual ~Font()
 		{
