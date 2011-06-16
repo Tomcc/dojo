@@ -157,8 +157,13 @@ void Table::deserialize( std::istream& buf )
 			setNumber( curName, number );
 			break;
 		case PT_STRING:
-			buf >> str;
-			str.resize( str.size()-1 );
+
+			while(1)
+			{
+				c = buf.get();
+				if( c == '"' )	break;
+				str += c;
+			}
 
 			setString( curName, str );
 			break;

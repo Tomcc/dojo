@@ -28,7 +28,6 @@ void Texture::enableBilinearFiltering()
 {					
     glBindTexture( GL_TEXTURE_2D, glhandle );
     
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	
 }
 
@@ -36,7 +35,6 @@ void Texture::disableBilinearFiltering()
 {						
     glBindTexture( GL_TEXTURE_2D, glhandle );
     
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST ); 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST );		
 }
 
@@ -56,31 +54,78 @@ void Texture::disableTiling()
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
 
-void Texture::enableMipmaps() {
-	DEBUG_TODO;
+void Texture::enableMipmaps() 
+{
+	glBindTexture( GL_TEXTURE_2D, glhandle );
+
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST ); 
+}
+
+bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
+{
+	DEBUG_ASSERT( imageData );
+
+	glGenTextures( 1, &glhandle );
+
+	DEBUG_ASSERT( glhandle );
+
+	glBindTexture( GL_TEXTURE_2D, glhandle );
+	glActiveTexture( GL_TEXTURE0 );
+
+	internalWidth = Math::nextPowerOfTwo( width );
+	internalHeight = Math::nextPowerOfTwo( height );	
+
+	npot = ( internalWidth != width || internalHeight != height );
+
+	xRatio = (float)width/(float)internalWidth;
+	yRatio = (float)height/(float)internalHeight;
+
+	size = internalWidth * internalHeight * 4;
+
+	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
+	glTexImage2D(
+		GL_TEXTURE_2D, 
+		0, 
+		GL_RGBA, 
+		internalWidth, 
+		internalHeight, 
+		0, 
+		GL_RGBA, 
+		GL_UNSIGNED_BYTE, 
+		imageData);
+
+	loaded = glGetError() == GL_NO_ERROR;
+
+	if( !loaded )
+		unload(); //destroy buffer
+
+	return loaded;
+}
+
+bool Texture::loadFromPNG( const std::string& path )
+{
+	void* imageData = NULL;
+
+	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+
+	loadFromMemory( (byte*)imageData, width, height );
+
+	free(imageData);
+
+	enableBilinearFiltering();
+	enableTiling();
+	enableMipmaps();
+
+	return loaded;
 }
 
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( textureType == "png" );
-		
-	glGenTextures(1, &glhandle );
-	
-	DEBUG_ASSERT( glhandle );
-	
-	enableTiling();
-		
-	
-	loaded = _loadPNGToBoundTexture();
 
-	if( !loaded )
-		unload();
-	
-	//force disable filtering and alpha on too big textures
-	enableBilinearFiltering();
-		
-	return loaded;
+	return loadFromPNG( filePath );
 }
 
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
@@ -164,27 +209,4 @@ void Texture::_buildOptimalBillboard()
 			 yOffset );
 	
 	OBB->end();			
-}
-
-bool Texture::_loadPNGToBoundTexture()
-{
-	void* imageData = NULL;
-	
-	Platform::getSingleton()->loadPNGContent( imageData, filePath, width, height );
-		
-	internalWidth = Math::nextPowerOfTwo( width );
-	internalHeight = Math::nextPowerOfTwo( height );	
-	
-	npot = ( internalWidth != width || internalHeight != height );
-	
-	xRatio = (float)width/(float)internalWidth;
-	yRatio = (float)height/(float)internalHeight;
-
-	size = internalWidth * internalHeight * 4;
-							 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, internalWidth, internalHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-		
-	free(imageData);
-	
-	return true;
 }

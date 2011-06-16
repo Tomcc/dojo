@@ -114,6 +114,8 @@ namespace Dojo
 		uint lastPressedText;
 
 		float frameInterval;
+
+		FT_Library freeType;
 	};
 }
 

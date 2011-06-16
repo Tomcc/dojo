@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "Utils.h"
 #include "Table.h"
+#include "FontSystem.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -221,6 +222,7 @@ void Win32Platform::initialise()
 	_initialiseOIS();
 
 	input = new InputSystem();
+	fonts = new FontSystem();
 
 	//start the game
 	game->begin();
@@ -235,10 +237,10 @@ void Win32Platform::shutdown()
 	delete game;
 
 	//destroy managers
-	
 	delete render;
 	delete sound;
 	delete input;
+	delete fonts;
 
 	//clean OIS
 	inputManager->destroyInputObject( mouse );

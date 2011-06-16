@@ -10,6 +10,7 @@ namespace Dojo
 	class SoundManager;
 	class Render;
 	class InputSystem;
+	class FontSystem;
 	class Game;
 	class Table;
 
@@ -53,11 +54,11 @@ namespace Dojo
 		inline SoundManager* getSoundManager()	{	return sound;	}
 		inline Render* getRender()				{	return render;	}
 		inline InputSystem* getInput()			{	return input;	}
+		inline FontSystem* getFontSystem()		{	return fonts;	}
 		inline double getRealFrameTime()		{	return realFrameTime;	}
 		
 		inline bool isRunning()					{	return running; }
 		
-
 		virtual void initialise()=0;
 		virtual void shutdown()=0;
 
@@ -96,6 +97,7 @@ namespace Dojo
 		SoundManager* sound;
 		Render* render;
 		InputSystem* input;
+		FontSystem* fonts;
 		
 		float realFrameTime;
 	};

@@ -60,7 +60,7 @@ namespace Dojo
 		public:
 			
 			///create a new page for the given index
-			Page( const std::string& fontName, int index );
+			Page( Font* font, int index );
 
 			virtual ~Page()
 			{
@@ -68,8 +68,6 @@ namespace Dojo
 
 				delete texture;
 			}
-
-			void initialise();
 
 			inline Texture* getTexture() 
 			{
@@ -86,13 +84,12 @@ namespace Dojo
 
 		protected:
 
+			Font* font;
 			Texture* texture;
 			uint index;
 			unichar firstCharIdx;
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
-
-			Texture* _createTextureFromTTF( const std::string& name );
 
 			inline boolean _charInPage( unichar c ) 
 			{
@@ -120,7 +117,7 @@ namespace Dojo
 			Page* res = pages[ index ];
 
 			if( !res )
-				pages[ index ] = res = new Page( fontName, index );
+				pages[ index ] = res = new Page( this, index );
 
 			return res;
 		}
@@ -139,6 +136,11 @@ namespace Dojo
 		inline Texture* getTexture( unichar c )
 		{
 			return getPageForChar( c )->getTexture();
+		}
+
+		inline bool isAntialiased()
+		{
+			return antialias;
 		}
 
 		///make sure that the pages at the given indices are loaded
@@ -174,9 +176,16 @@ namespace Dojo
 		bool border;
 		Color borderColor;
 
+		bool antialias;
+
 		uint fontWidth, fontHeight; //measurements of the "character box"
 
 		Vector fontUVSize;
+
+		FT_Face face;
+
+		///this has to be called each time that we need to use the face
+		void _prepareFace();
 		
 		Page* pages[ FONT_MAX_PAGES ]; 
 	};

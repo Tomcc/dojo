@@ -87,6 +87,16 @@ namespace Dojo
 			
 			return res;
 		}
+
+		static std::string getDirectory( const std::string& str )
+		{
+			size_t end = getLastOf( str, '/' );
+
+			if( end == -1 )
+				return "";
+
+			return str.substr( 0, end );
+		}
 		
 		inline static bool isNumber( char c )
 		{

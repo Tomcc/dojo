@@ -61,4 +61,7 @@
 
 #endif
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #endif // dojo_common_headers_h__

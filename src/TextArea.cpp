@@ -213,9 +213,7 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 	{
 		rep = characters[i];
 
-		set = _findTextureSlot( rep->getTexture() );
-
-		//avoid special chars
+		//avoid to rendering spaces
 		if( rep == NULL )
 		{									
 			//if centered move every character of this line along x of 1/2 size
@@ -235,6 +233,8 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 
 		else	//real character
 		{
+			set = _findTextureSlot( rep->getTexture() );
+
 			//assign vertex positions					
 			//and uv coordinates
 			mesh->vertex( cursorPosition.x, cursorPosition.y );

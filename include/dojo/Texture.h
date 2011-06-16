@@ -55,12 +55,19 @@ namespace Dojo
 				unload();
 		}
 		
-		///loads the texture with the given parameters
-		bool load();
+
+		///loads the texture from a memory area with RGBA8 format
+		bool loadFromMemory( byte* buf, uint width, uint height );
+
+		///loads the texture from the png pointed by the filename
+		bool loadFromPNG( const std::string& path );
 		
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
-		
+
+		///loads the texture with the given parameters
+		bool load();
+
 		void unload();
 		
 		bool isLoaded()			{	return loaded;			}
@@ -140,8 +147,6 @@ namespace Dojo
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _buildOptimalBillboard();
-
-		bool _loadPNGToBoundTexture();
 	};
 }
 
