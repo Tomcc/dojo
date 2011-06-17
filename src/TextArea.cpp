@@ -27,7 +27,7 @@ pixelScale( 1,1 )
 	DEBUG_ASSERT( font );
 
 	charSpacing = font->getSpacing();
-	spaceWidth = font->getCharacter(' ')->widthRatio;
+	spaceWidth = font->getCharacter('a')->widthRatio;
 
 	//a font always requires alpha
 	setRequiresAlpha( true );
@@ -181,6 +181,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	int set;
 	bool doKerning = font->isKerningEnabled();
 	uint lastLineVertexID = 0;
+	uint idx = 0;
 
 	cursorPosition.x = 0;
 	cursorPosition.y = 0;
@@ -198,22 +199,25 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 		if( rep->character == '\n' )
 		{									
 			//if centered move every character of this line along x of 1/2 size
-			if( centered )
+			if( centered ) 
+			{
 				_centerLastLine( lastLineVertexID, cursorPosition.x );
+				lastLineVertexID = mesh->getVertexCount();
+			}
 
 			cursorPosition.y -= 1.f + interline;
 			cursorPosition.x = 0;
 			lastRep = NULL;
-
-			lastLineVertexID = mesh->getVertexCount();
 		}
 		else if( rep->character == '\t' )
 		{
 			cursorPosition.x += spaceWidth*4;
+			lastRep = NULL;
 		}
 		else if( rep->character == ' ' )
 		{
 			cursorPosition.x += spaceWidth;
+			lastRep = NULL;
 		}
 		else	//real character
 		{
@@ -223,7 +227,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 			float y = cursorPosition.y - rep->bearingV;
 
 			if( doKerning && lastRep )
-				x -= font->getKerning( rep, lastRep ); 
+				x += font->getKerning( rep, lastRep ); 
 
 			//assign vertex positions					
 			//and uv coordinates
@@ -231,31 +235,32 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight, set );
 
-			mesh->vertex( x + rep->widthRatio, y );
-			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight, set);
+ 			mesh->vertex( x + rep->widthRatio, y );
+ 			mesh->setAllUVs(0,0);
+ 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight, set);
+ 
+ 			mesh->vertex( x, y + rep->heightRatio );
+ 			mesh->setAllUVs(0,0);
+ 			mesh->uv( rep->uvPos.x, rep->uvPos.y, set );
+ 
+ 			mesh->vertex( x + rep->widthRatio, y + rep->heightRatio );
+ 			mesh->setAllUVs(0,0);
+ 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y, set );
 
-			mesh->vertex( x, y + rep->heightRatio );
-			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x, rep->uvPos.y, set );
-
-			mesh->vertex( x + rep->widthRatio, y + rep->heightRatio );
-			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y, set );
-
-			uint idx = i*4;
 			mesh->triangle( idx, idx+2, idx+1 );
 			mesh->triangle( idx+1, idx+3, idx+2 );
 
+			idx += 4;
+
 			//now move to the next character
 			cursorPosition.x += rep->widthRatio + charSpacing;
+
+			lastRep = rep;
 		}	
 
 		//update size to contain cursorPos to the longest line
 		if( cursorPosition.x > newSize.x )
-			newSize.x = cursorPosition.x;	
-
-		lastRep = rep;
+			newSize.x = cursorPosition.x;
 	}
 
 	//if centered move every character of this line along x of 1/2 size
@@ -265,7 +270,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	//set new size
 	newSize.x *= screenSize.x;
 	newSize.y = -cursorPosition.y+1 * screenSize.y * 1.5f;
-	setSize(newSize);	
+	setSize(newSize);
 
 	//push the mesh on the GPU
 	mesh->end();

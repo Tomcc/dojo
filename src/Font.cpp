@@ -47,6 +47,40 @@ void blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 	}
 }
 
+void blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
+{
+	DEBUG_ASSERT( dest );
+	DEBUG_ASSERT( bitmap );
+
+	uint rowy, py, idx;
+	Dojo::byte* ptr;
+	if( bitmap->pixel_mode != FT_PIXEL_MODE_MONO )
+	{
+		for( uint i = 0; i < bitmap->rows; ++i )
+		{
+			rowy = ( i + y ) * destside;
+
+			for( uint j = 0; j < bitmap->width; ++j )
+			{
+				ptr = dest + 4*( (j+x) + rowy );
+
+				float a = (float)bitmap->buffer[ j + i * bitmap->pitch ];
+				a /= 255.f;
+				float inva = 1.f - a;
+
+				ptr[0] = ptr[0] * inva + a * col.r * 255.f;
+				ptr[1] = ptr[1] * inva + a * col.g * 255.f;
+				ptr[2] = ptr[2] * inva + a * col.b * 255.f;
+				ptr[3] = ptr[3] * inva + a * a * 255.f;  //the font is really the alpha
+			}
+		}
+	}
+	else
+	{
+		DEBUG_TODO;
+	}
+}
+
 void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics )
 {
 	DEBUG_ASSERT( p );
@@ -56,19 +90,21 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 	float fsy = (float)sy;
 	float fw = (float)p->getFont()->getFontWidth();
 	float fh = (float)p->getFont()->getFontHeight();
+	Font* f = p->getFont();
 
 	page = p;
 	character = c;
-	gliphIdx = p->getFont()->getCharIndex( this );
+	gliphIdx = f->getCharIndex( this );
 
-	pixelWidth = (float)metrics->width * FONT_PPI;
+	pixelWidth = (float)(metrics->width ) * FONT_PPI + f->border*5;
+	float pixelHeight = (float)metrics->height * FONT_PPI + f->border*5;
 
 	uvWidth = (float)pixelWidth / fsx;
-	uvHeight = ((float)metrics->height * FONT_PPI) / fsy;
+	uvHeight = pixelHeight / fsy;
 	uvPos.x = (float)x / fsy;
 	uvPos.y = (float)y / fsy;
 	widthRatio = (float)pixelWidth / fw;
-	heightRatio = ((float)metrics->height * FONT_PPI) / fh;
+	heightRatio = pixelHeight / fh;
 
 	bearingU = ((float)metrics->horiBearingX * FONT_PPI ) / fsy;
 	bearingV = ((float)(metrics->height - metrics->horiBearingY) * FONT_PPI ) / fh;
@@ -92,16 +128,22 @@ font( f )
 	byte* buf = (byte*)malloc( sxp2 * syp2 * 4 );
 	
 	unsigned int * ptr = (unsigned int*)buf;
-	//set alpha to 0
+	//set alpha to 0 and colours to white
 	for( int i = sxp2*syp2-1; i >= 0; --i )
 		*ptr++ = 0x00ffffff;
 
 	//render into buffer
 	FT_Render_Mode renderMode = ( font->isAntialiased() ) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
+	FT_GlyphSlot slot = font->face->glyph;
+	FT_Glyph glyph;
+	FT_Bitmap* bitmap;
+	FT_Vector vec = {0,0};
+	uint index;
+	int err;
+
+	FT_Stroker stroker = font->getStroker();
 
 	font->_prepareFace();
-
-	FT_GlyphSlot slot = font->face->glyph;
 
 	unichar c = firstCharIdx;
 	Font::Character* character = chars;
@@ -111,13 +153,18 @@ font( f )
 	{
 		for( uint j = 0; j < FONT_PAGE_SIDE; ++j, ++c, ++character )
 		{
-			int err = FT_Load_Char( font->face, c, FT_LOAD_DEFAULT );
-			DEBUG_ASSERT( err == 0 );
-
-			FT_Render_Glyph( font->face->glyph, renderMode );
+			index = FT_Get_Char_Index( font->face, c );
+			err = FT_Load_Glyph( font->face, index, FT_LOAD_DEFAULT );
 
 			x = j * font->getFontWidth();
 			y = i * font->getFontHeight();
+
+			//offset a bit
+			if( font->border > 0 )
+			{
+				x += font->border *4.5; 
+				y += font->border *4.5;
+			}
 
 			//load character data
 			character->init( 
@@ -125,16 +172,35 @@ font( f )
 				c, 
 				x, y, 
 				sxp2, syp2, 
-				&(font->face->glyph->metrics) );
-			
+				&(slot->metrics) );
+
+			FT_Render_Glyph( slot, renderMode );
+
+			bitmap = &(slot->bitmap);
+
 			//blit the bitmap if it was rendered
-			if( font->face->glyph->bitmap.buffer )
-				blit( 
-					buf, 
-					&(font->face->glyph->bitmap), 
-					x,
-					y,
-					sxp2 );
+			if( bitmap->buffer )
+				blit( buf, bitmap, x, y, sxp2 );
+
+			if( font->border > 0 )
+			{			
+				x = j * font->getFontWidth();
+				y = i * font->getFontHeight();
+
+				//load, copy, stroke and draw to bitmap
+				err = FT_Load_Glyph( font->face, index, FT_LOAD_DEFAULT );
+				err += FT_Get_Glyph( slot, &glyph );
+				err += FT_Glyph_Stroke( &glyph, stroker, true );
+				err += FT_Glyph_To_Bitmap( &glyph, renderMode, &vec, true );
+
+				DEBUG_ASSERT( err == 0 );
+
+				bitmap = &(((FT_BitmapGlyph)glyph)->bitmap);
+
+				//blit the bitmap if it was rendered
+				if( bitmap->buffer )
+					blitborder( buf, bitmap, x, y, sxp2, font->borderColor );
+			}
 		}
 	}
 
@@ -159,18 +225,33 @@ Font::Font( const std::string& path )
 	Platform::getSingleton()->load( t, path );
 
 	fontFile = Utils::getDirectory( path ) + "/" + t->getString( "truetype" );
-	fontWidth = fontHeight = t->getInt( "size" );
-	border = t->exists( "border_color" );
+	
+	border = t->getNumber( "border" );
 	borderColor = t->getColor( "border_color" );
+
 	antialias = t->getBool( "antialias" );
 	kerning = t->getBool( "kerning" );
 	spacing = t->getNumber( "spacing" );
 
+	fontWidth = fontHeight = t->getInt( "size" );
+
 	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
+
+	//create stroker
+	if( border > 0 )
+		stroker = Platform::getSingleton()->getFontSystem()->getStroker( border );
 
 	Table* preload = t->getTable( "preloadedPages" );
 	for( uint i = 0; i < preload->getAutoMembers(); ++i )
 		getPage( preload->getInt( "_" + Utils::toString(i) ) );
+}
+
+Font::~Font()
+{
+	unload();
+
+	if( border > 0 )
+		FT_Stroker_Done( stroker );
 }
 
 float Font::getKerning( Character* next, Character* prev )

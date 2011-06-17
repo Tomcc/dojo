@@ -19,6 +19,7 @@ namespace Dojo
 		{
 			//launch FreeType
 			int err = FT_Init_FreeType( &freeType );
+
 			DEBUG_ASSERT( err == 0 );
 		}
 
@@ -37,6 +38,19 @@ namespace Dojo
 				return where->second;
 		}
 
+		FT_Stroker getStroker( float width )
+		{
+			FT_Stroker s;
+			FT_Stroker_New( freeType, &s );
+
+			FT_Stroker_Set( s, 
+				width * 64, 
+				FT_STROKER_LINECAP_ROUND, 
+				FT_STROKER_LINEJOIN_ROUND, 
+				0 ); 
+
+			return s;
+		}
 
 	protected:
 

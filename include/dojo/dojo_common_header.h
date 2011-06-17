@@ -63,5 +63,6 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_STROKER_H
 
 #endif // dojo_common_headers_h__

@@ -111,14 +111,10 @@ namespace Dojo
 		
 		Font( const std::string& path );
 		
-		virtual ~Font()
-		{
-			//clear every page
-			unload();
-		}
+		virtual ~Font();
 		
-		inline uint getFontWidth()			{	return fontWidth;		}
-		inline uint getFontHeight()			{	return fontHeight;		}
+		inline uint getFontWidth()			{	return fontWidth + border;	}
+		inline uint getFontHeight()			{	return fontHeight + border;	}
 
 		inline Page* getPage( uint index )
 		{
@@ -158,6 +154,11 @@ namespace Dojo
 		inline float getCharIndex( Character* c )
 		{
 			return FT_Get_Char_Index( face, c->character );
+		}
+
+		inline FT_Stroker getStroker()
+		{
+			return stroker;
 		}
 
 		inline bool isAntialiased()
@@ -200,7 +201,7 @@ namespace Dojo
 		std::string fontName;
 		std::string fontFile;
 
-		bool border;
+		float border;
 		Color borderColor;
 
 		bool antialias, kerning;
@@ -210,6 +211,7 @@ namespace Dojo
 		uint fontWidth, fontHeight; //measurements of the "character box"
 
 		FT_Face face;
+		FT_Stroker stroker;
 
 		///this has to be called each time that we need to use the face
 		void _prepareFace();
