@@ -18,6 +18,8 @@
 
 #include "Utils.h"
 
+#define FONT_PPI (1.f/64.f)
+
 #define FONT_PAGE_SIDE 16
 #define FONT_CHARS_PER_PAGE ( FONT_PAGE_SIDE * FONT_PAGE_SIDE )
 #define FONT_MAX_PAGES (65535 / FONT_CHARS_PER_PAGE )
@@ -35,6 +37,7 @@ namespace Dojo
 		{
 		public:			
 			unichar character;
+			uint gliphIdx;
 			
 			Vector uvPos;
 			float uvWidth, uvHeight;
@@ -42,12 +45,16 @@ namespace Dojo
 			uint pixelWidth;
 			float widthRatio, heightRatio; //the ratio of the cell that is occupied
 
+			float bearingU, bearingV;
+
 			Page* page;
 						
 			Character()
 			{
 
 			}
+
+			void init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics );
 
 			inline Texture* getTexture()
 			{
@@ -80,6 +87,11 @@ namespace Dojo
 				DEBUG_ASSERT( _charInPage(c) );
 
 				return &( chars[ c - firstCharIdx ] );
+			}
+
+			inline Font* getFont()
+			{
+				return font;
 			}
 
 		protected:
@@ -128,7 +140,6 @@ namespace Dojo
 		///returns the texture page and the uv min and max for that character
 		inline Character* getCharacter( unichar c )
 		{
-			c = 230 + c;
 			return getPageForChar( c )->getChar( c );
 		}
 
@@ -137,9 +148,26 @@ namespace Dojo
 			return getPageForChar( c )->getTexture();
 		}
 
+		float getKerning( Character* next, Character* prev );
+
+		inline float getSpacing()
+		{
+			return spacing;
+		}
+
+		inline float getCharIndex( Character* c )
+		{
+			return FT_Get_Char_Index( face, c->character );
+		}
+
 		inline bool isAntialiased()
 		{
 			return antialias;
+		}
+
+		inline bool isKerningEnabled()
+		{
+			return kerning;
 		}
 
 		///make sure that the pages at the given indices are loaded
@@ -175,7 +203,9 @@ namespace Dojo
 		bool border;
 		Color borderColor;
 
-		bool antialias;
+		bool antialias, kerning;
+
+		float spacing;
 
 		uint fontWidth, fontHeight; //measurements of the "character box"
 

@@ -63,10 +63,8 @@ void AnimatedQuad::onAction( float dt )
 		advanceAnim(dt);
 }
 
-void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
+bool AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
-	Renderable::prepare(viewportPixelRatio);
-
 	if( getTexture(0) && pixelPerfect )
 	{		
 		//compute the pixel occupied by the first texture on the screen				
@@ -81,6 +79,8 @@ void AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 		screenSize.x = mesh->getDimensions().x * scale.x;
 		screenSize.y = mesh->getDimensions().y * scale.y;
 	}
+
+	return true;
 }
 
 void AnimatedQuad::_updateScreenSize()

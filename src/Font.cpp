@@ -47,6 +47,33 @@ void blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 	}
 }
 
+void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics )
+{
+	DEBUG_ASSERT( p );
+	DEBUG_ASSERT( metrics );
+
+	float fsx = (float)sx;
+	float fsy = (float)sy;
+	float fw = (float)p->getFont()->getFontWidth();
+	float fh = (float)p->getFont()->getFontHeight();
+
+	page = p;
+	character = c;
+	gliphIdx = p->getFont()->getCharIndex( this );
+
+	pixelWidth = (float)metrics->width * FONT_PPI;
+
+	uvWidth = (float)pixelWidth / fsx;
+	uvHeight = ((float)metrics->height * FONT_PPI) / fsy;
+	uvPos.x = (float)x / fsy;
+	uvPos.y = (float)y / fsy;
+	widthRatio = (float)pixelWidth / fw;
+	heightRatio = ((float)metrics->height * FONT_PPI) / fh;
+
+	bearingU = ((float)metrics->horiBearingX * FONT_PPI ) / fsy;
+	bearingV = ((float)(metrics->height - metrics->horiBearingY) * FONT_PPI ) / fh;
+}
+
 
 Font::Page::Page( Font* f, int idx ) :
 index( idx ),
@@ -89,27 +116,22 @@ font( f )
 
 			FT_Render_Glyph( font->face->glyph, renderMode );
 
-			FT_Bitmap* bitmap = &(font->face->glyph->bitmap);
-
 			x = j * font->getFontWidth();
 			y = i * font->getFontHeight();
 
 			//load character data
-			character->page = this;
-			character->character = c;
-			character->pixelWidth = bitmap->width;
-			character->uvWidth = (float)character->pixelWidth / (float)sxp2;
-			character->uvHeight = (float)bitmap->rows / (float)syp2;
-			character->uvPos.x = (float)x / (float)sxp2;
-			character->uvPos.y = (float)y / (float)syp2;
-			character->widthRatio = (float)character->pixelWidth / (float)font->getFontWidth();
-			character->heightRatio = (float)bitmap->rows / (float)font->getFontHeight();
-
+			character->init( 
+				this, 
+				c, 
+				x, y, 
+				sxp2, syp2, 
+				&(font->face->glyph->metrics) );
+			
 			//blit the bitmap if it was rendered
-			if( bitmap->buffer )
+			if( font->face->glyph->bitmap.buffer )
 				blit( 
 					buf, 
-					bitmap, 
+					&(font->face->glyph->bitmap), 
 					x,
 					y,
 					sxp2 );
@@ -141,12 +163,32 @@ Font::Font( const std::string& path )
 	border = t->exists( "border_color" );
 	borderColor = t->getColor( "border_color" );
 	antialias = t->getBool( "antialias" );
+	kerning = t->getBool( "kerning" );
+	spacing = t->getNumber( "spacing" );
 
 	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
 
 	Table* preload = t->getTable( "preloadedPages" );
 	for( uint i = 0; i < preload->getAutoMembers(); ++i )
 		getPage( preload->getInt( "_" + Utils::toString(i) ) );
+}
+
+float Font::getKerning( Character* next, Character* prev )
+{
+	DEBUG_ASSERT( kerning );
+	DEBUG_ASSERT( next );
+	DEBUG_ASSERT( prev );
+
+	FT_Vector vec;
+
+	FT_Get_Kerning( 
+		face,
+		prev->gliphIdx,
+		next->gliphIdx,
+		FT_KERNING_DEFAULT,
+		&vec );
+
+	return ((float)vec.x * FONT_PPI) / (float)fontWidth;
 }
 
 void Font::_prepareFace()

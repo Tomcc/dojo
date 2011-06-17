@@ -66,7 +66,7 @@ namespace Dojo
 				
 		inline const Vector& getScreenSize()	{	return screenSize;		}	
 		
-		void prepare( const Vector& viewportPixelRatio );
+		bool prepare( const Vector& viewportPixelRatio );
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{

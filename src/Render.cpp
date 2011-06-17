@@ -242,12 +242,15 @@ void Render::renderElement( Renderable* s )
 	DEBUG_ASSERT( frameStarted );
 	DEBUG_ASSERT( viewport );
 
+	//if prepare fails, the object can't be rendered
+	if( !s->prepare( viewportPixelRatio ) )
+		return;
+
 	frameVertexCount += s->getMesh()->getVertexCount();
 	frameTriCount += s->getMesh()->getTriangleCount();
 	//each renderable is a single batch
 	++frameBatchCount;
 	
-	s->prepare( viewportPixelRatio );
 	
 	//change the renderstate
 	s->commitChanges( currentRenderState );

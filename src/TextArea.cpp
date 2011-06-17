@@ -14,7 +14,6 @@ Renderable( l, pos ),
 fontName( fontSetName ),
 maxChars( chars ),
 interline( 0.2f ),
-charSpacing( 0 ),
 maxLineLenght( 0xfffffff ),
 centered( center ),
 pixelScale( 1,1 )
@@ -27,6 +26,7 @@ pixelScale( 1,1 )
 
 	DEBUG_ASSERT( font );
 
+	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->widthRatio;
 
 	//a font always requires alpha
@@ -78,34 +78,22 @@ void TextArea::clearText()
 
 	setSize(0,0);
 
-	setVisible( false );
-
 	changed = true;
 }
 
 void TextArea::addText( const std::string& text, bool autoLineFeed )
-{				
-	setVisible( true );
-
+{	
 	content += text;
 
 	//parse and setup characters
 	for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
-	{
-		if( text.at( i ) == '\n' )
-			characters[currentCharIdx] = NULL;
-
-		else
-			characters[currentCharIdx] = font->getCharacter( text.at(i) );
-	}
+		characters[currentCharIdx] = font->getCharacter( text[i] );
 
 	changed = true;
 }
 
 void TextArea::addLineFeededText( const std::string& text )
 {
-	setVisible( true );
-
 	content += text;
 
 	uint currentLineLenght = 0;
@@ -117,10 +105,7 @@ void TextArea::addLineFeededText( const std::string& text )
 	//parse and setup characters
 	for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
 	{
-		c = text.at(i);
-
-		if( c < 0 )
-			continue;
+		c = text[i];
 
 		currentChar = characters[currentCharIdx] = font->getCharacter( c );
 
@@ -132,14 +117,13 @@ void TextArea::addLineFeededText( const std::string& text )
 		else if( c == '\n' )
 		{
 			lastSpace = 0;
-			characters[currentCharIdx] = NULL;
 			currentLineLenght = 0;
 		}
 
 		//lenght eccess? find last whitespace and replace with \n.
 		if( currentLineLenght > maxLineLenght && lastSpace )
 		{
-			characters[lastSpace] = NULL;
+			characters[lastSpace] = font->getCharacter('\n');
 			lastSpace = 0;
 			currentLineLenght = 0;
 		}
@@ -178,27 +162,24 @@ void TextArea::addText( uint n, char paddingChar, uint digits )
 	addText( number );
 }
 
-void TextArea::prepare( const Vector& viewportPixelRatio )
+bool TextArea::prepare( const Vector& viewportPixelRatio )
 {
 	//not changed
 	if( !changed )
-		return;
+		return true;
 
 	//no characters
 	if( !currentCharIdx )
-	{
-		setVisible( false );
-		return;
-	}
+		return false;
 
 	//get screen size
 	screenSize.x = scale.x = font->getFontWidth() * viewportPixelRatio.x * pixelScale.x;
 	screenSize.y = scale.y = font->getFontHeight() * viewportPixelRatio.y * pixelScale.y;
 
-	Font::Character* rep;
+	Font::Character* rep, *lastRep = NULL;
 	Vector newSize(0,0);
 	int set;
-
+	bool doKerning = font->isKerningEnabled();
 	uint lastLineVertexID = 0;
 
 	cursorPosition.x = 0;
@@ -208,13 +189,13 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 	textures.clear();
 
 	//preallocate vertices
-	mesh->begin( currentCharIdx * 6 );
+	mesh->begin( currentCharIdx * 4 );
 	for( uint i = 0; i < currentCharIdx; ++i )
 	{
 		rep = characters[i];
 
 		//avoid to rendering spaces
-		if( rep == NULL )
+		if( rep->character == '\n' )
 		{									
 			//if centered move every character of this line along x of 1/2 size
 			if( centered )
@@ -222,40 +203,49 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 
 			cursorPosition.y -= 1.f + interline;
 			cursorPosition.x = 0;
+			lastRep = NULL;
 
 			lastLineVertexID = mesh->getVertexCount();
 		}
 		else if( rep->character == '\t' )
+		{
 			cursorPosition.x += spaceWidth*4;
-
+		}
 		else if( rep->character == ' ' )
+		{
 			cursorPosition.x += spaceWidth;
-
+		}
 		else	//real character
 		{
 			set = _findTextureSlot( rep->getTexture() );
 
+			float x = cursorPosition.x + rep->bearingU;
+			float y = cursorPosition.y - rep->bearingV;
+
+			if( doKerning && lastRep )
+				x -= font->getKerning( rep, lastRep ); 
+
 			//assign vertex positions					
 			//and uv coordinates
-			mesh->vertex( cursorPosition.x, cursorPosition.y );
+			mesh->vertex( x, y );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight, set );
 
-			mesh->vertex( cursorPosition.x + rep->widthRatio, cursorPosition.y );
+			mesh->vertex( x + rep->widthRatio, y );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight, set);
 
-			mesh->vertex( cursorPosition.x, cursorPosition.y + rep->heightRatio );
+			mesh->vertex( x, y + rep->heightRatio );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x, rep->uvPos.y, set );
 
-			mesh->vertex( cursorPosition.x + rep->widthRatio, cursorPosition.y + rep->heightRatio );
+			mesh->vertex( x + rep->widthRatio, y + rep->heightRatio );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y, set );
 
 			uint idx = i*4;
 			mesh->triangle( idx, idx+2, idx+1 );
-			mesh->triangle( idx+1, idx+2, idx+3 );
+			mesh->triangle( idx+1, idx+3, idx+2 );
 
 			//now move to the next character
 			cursorPosition.x += rep->widthRatio + charSpacing;
@@ -263,9 +253,10 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 
 		//update size to contain cursorPos to the longest line
 		if( cursorPosition.x > newSize.x )
-			newSize.x = cursorPosition.x;		
-	}
+			newSize.x = cursorPosition.x;	
 
+		lastRep = rep;
+	}
 
 	//if centered move every character of this line along x of 1/2 size
 	if( centered )
@@ -280,4 +271,6 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 	mesh->end();
 
 	changed = false;
+
+	return true;
 }

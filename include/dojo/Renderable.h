@@ -125,9 +125,9 @@ namespace Dojo
 				p.y > worldLowerBound.y;
 		}
 
-		virtual void prepare( const Vector& viewportPixelSize )
+		virtual bool prepare( const Vector& viewportPixelSize )
 		{
-
+			return true;
 		}
 			
 		inline void advanceFade( float dt )		
