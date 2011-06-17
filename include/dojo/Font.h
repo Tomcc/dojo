@@ -37,10 +37,10 @@ namespace Dojo
 			unichar character;
 			
 			Vector uvPos;
-			float uvWidth;
+			float uvWidth, uvHeight;
 			
 			uint pixelWidth;
-			float width; //charWidth/fontWidth
+			float widthRatio, heightRatio; //the ratio of the cell that is occupied
 
 			Page* page;
 						
@@ -105,10 +105,8 @@ namespace Dojo
 			unload();
 		}
 		
-		inline uint getFontWidth()					{	return fontWidth;		}
-		inline uint getFontHeight()					{	return fontHeight;		}
-		
-		inline const Vector& getFontUVSize()		{	return fontUVSize;		}
+		inline uint getFontWidth()			{	return fontWidth;		}
+		inline uint getFontHeight()			{	return fontHeight;		}
 
 		inline Page* getPage( uint index )
 		{
@@ -130,6 +128,7 @@ namespace Dojo
 		///returns the texture page and the uv min and max for that character
 		inline Character* getCharacter( unichar c )
 		{
+			c = 230 + c;
 			return getPageForChar( c )->getChar( c );
 		}
 
@@ -179,8 +178,6 @@ namespace Dojo
 		bool antialias;
 
 		uint fontWidth, fontHeight; //measurements of the "character box"
-
-		Vector fontUVSize;
 
 		FT_Face face;
 

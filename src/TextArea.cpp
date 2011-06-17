@@ -27,7 +27,7 @@ pixelScale( 1,1 )
 
 	DEBUG_ASSERT( font );
 
-	spaceWidth = font->getCharacter(' ')->width;
+	spaceWidth = font->getCharacter(' ')->widthRatio;
 
 	//a font always requires alpha
 	setRequiresAlpha( true );
@@ -239,25 +239,26 @@ void TextArea::prepare( const Vector& viewportPixelRatio )
 			//and uv coordinates
 			mesh->vertex( cursorPosition.x, cursorPosition.y );
 			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x, rep->uvPos.y + font->getFontUVSize().y, set );
+			mesh->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight, set );
 
-			mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y );
+			mesh->vertex( cursorPosition.x + rep->widthRatio, cursorPosition.y );
 			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + font->getFontUVSize().y, set);
+			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight, set);
 
-			mesh->vertex( cursorPosition.x, cursorPosition.y + 1 );
+			mesh->vertex( cursorPosition.x, cursorPosition.y + rep->heightRatio );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x, rep->uvPos.y, set );
 
-			mesh->vertex( cursorPosition.x + rep->width, cursorPosition.y + 1 );
+			mesh->vertex( cursorPosition.x + rep->widthRatio, cursorPosition.y + rep->heightRatio );
 			mesh->setAllUVs(0,0);
 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y, set );
 
-			mesh->triangle( 0,1,2 );
-			mesh->triangle( 1,2,3 );
+			uint idx = i*4;
+			mesh->triangle( idx, idx+2, idx+1 );
+			mesh->triangle( idx+1, idx+2, idx+3 );
 
 			//now move to the next character
-			cursorPosition.x += rep->width + charSpacing;
+			cursorPosition.x += rep->widthRatio + charSpacing;
 		}	
 
 		//update size to contain cursorPos to the longest line
