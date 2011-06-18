@@ -112,6 +112,9 @@ void Table::deserialize( InputStream& buf )
 	char* bytes = (char*)&c;
 	while( !buf.eof() && state != PS_END && state != PS_ERROR )
 	{
+		if( buf.tellg() % 2 == 1 ) //something did read only the first byte of something
+			buf.get();
+
 		bytes[0] = (char)buf.get();
 		bytes[1] = (char)buf.get();
 
