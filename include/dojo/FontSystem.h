@@ -62,7 +62,7 @@ namespace Dojo
 		{
 			//create new face
 			FT_Face face;
-			int err = FT_New_Face( freeType, fileName.UTF8().c_str(), 0, &face );
+			int err = FT_New_Face( freeType, fileName.ASCII().c_str(), 0, &face );
 			faceMap[ fileName ] = face;
 
 			DEBUG_ASSERT( err == 0 );

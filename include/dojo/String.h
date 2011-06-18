@@ -3,7 +3,6 @@
 
 #include "dojo_common_header.h"
 
-
 namespace Dojo 
 {
 	typedef unsigned int uint;
@@ -60,9 +59,9 @@ namespace Dojo
 			appendUTF8( utf8 );
 		}
 
-		inline std::string UTF8() const 
+		///converts this string into ASCII. WARNING: fails silently on unsupported chars!!!
+		inline std::string ASCII() const 
 		{
-			//HACK!!!!! make a real parser!!!
 			std::string res;
 
 			unichar c;
@@ -71,11 +70,15 @@ namespace Dojo
 				c = at(i);
 				if( c <= 0xff )
 					res += (char)c;
-				else
-					res += '?';
 			}
 
 			return res;
+		}
+
+		inline std::string UTF8() const 
+		{
+			//HACK!!!!! make a real parser!!!
+			return ASCII();
 		}
 
 		inline void appendASCII( const char* s )

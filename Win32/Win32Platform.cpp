@@ -126,7 +126,7 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowA("DojoOpenGLWindow",
-		windowCaption.UTF8().c_str(),
+		windowCaption.ASCII().c_str(),
 		dwstyle,  //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -209,7 +209,7 @@ void Win32Platform::initialise()
 	//create user dir if not existing
 	String userDir = _getUserDirectory() + '/' + game->getName();
 
-	CreateDirectoryA( userDir.UTF8().c_str(), NULL );
+	CreateDirectoryA( userDir.ASCII().c_str(), NULL );
 
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
@@ -423,7 +423,7 @@ void Win32Platform::getFilePathsForType( const String& type, const String& path,
 {
 	try
 	{
-		Poco::DirectoryIterator itr( path.UTF8() );
+		Poco::DirectoryIterator itr( path.ASCII() );
 
 		String extension = '.' + type;
 
@@ -477,7 +477,7 @@ void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& wid
 	//pointer to the image, once loaded
 	FIBITMAP *dib = NULL;
 
-	std::string ansipath = path.UTF8();
+	std::string ansipath = path.ASCII();
 
 	//check the file signature and deduce its format
 	fif = FreeImage_GetFileType(ansipath.c_str(), 0);
@@ -608,5 +608,5 @@ void Win32Platform::save( Table* src, const String& absPath )
 
 void Win32Platform::openWebPage( const String& site )
 {
-	ShellExecuteA(hwnd, "open", site.UTF8().c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteA(hwnd, "open", site.ASCII().c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
