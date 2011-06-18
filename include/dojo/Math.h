@@ -10,9 +10,9 @@
 #ifndef Math_h__
 #define Math_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Vector.h"
+#include "dojo/Vector.h"
 
 namespace Dojo 
 {
@@ -29,6 +29,7 @@ namespace Dojo
 		
 		static float random();
 		static float rangeRandom( float min, float max );
+		static int rangeRandom( int min, int max );
 		static Vector randomVector( const Vector& min, const Vector& max );
 
 		static Vector randomVector( float min, float max )

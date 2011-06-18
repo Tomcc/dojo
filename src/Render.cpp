@@ -1,16 +1,16 @@
 #include "stdafx.h"
 
-#include "Render.h"
+#include "dojo/Render.h"
 
-#include "Renderable.h"
-#include "TextArea.h"
-#include "Platform.h"
-#include "Viewport.h"
+#include "dojo/Renderable.h"
+#include "dojo/TextArea.h"
+#include "dojo/Platform.h"
+#include "dojo/Viewport.h"
 
-#include "Mesh.h"
-#include "Model.h"
+#include "dojo/Mesh.h"
+#include "dojo/Model.h"
 
-#include "Game.h"
+#include "dojo/Game.h"
 
 using namespace Dojo;
 
@@ -81,10 +81,10 @@ Render::~Render()
 	delete backLayer;
 
 	//delete layers
-	for(int i = 0; i < negativeLayers.size(); ++i )
+	for( uint i = 0; i < negativeLayers.size(); ++i )
 		delete negativeLayers.at(i);
 
-	for(int i = 0; i < positiveLayers.size(); ++i )
+	for( uint i = 0; i < positiveLayers.size(); ++i )
 		delete positiveLayers.at(i);
 }
 
@@ -107,7 +107,7 @@ Render::Layer* Render::getLayer( int layerID )
 	}
 	
 	//allocate the needed layers if layerID > layer size
-	while( layerList->size() <= layerID )
+	while( layerList->size() <= (uint)layerID )
 		layerList->add( new Layer() );	
 
 	if( !currentLayer ) //first layer!
@@ -304,7 +304,7 @@ void Render::_gluPerspectiveClone( float fovy, float aspect, float zNear, float 
 {
 	float xmin, xmax, ymin, ymax;
 	
-	ymax = zNear * tan(fovy * Math::PI / 360.0);
+	ymax = zNear * tan(fovy * Math::PI / 360.f);
 	ymin = -ymax;
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;

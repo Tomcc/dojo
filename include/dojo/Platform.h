@@ -1,9 +1,9 @@
 #ifndef Platform_h__
 #define Platform_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "BaseObject.h"
+#include "dojo/BaseObject.h"
 
 namespace Dojo 
 {
@@ -68,23 +68,23 @@ namespace Dojo
 		virtual void step( float dt )=0;
 		virtual void loop( float frameTime )=0;
 
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )=0;
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )=0;
-		virtual uint loadFileContent( char*& bufptr, const std::string& path )=0;
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )=0;
+		virtual String getCompleteFilePath( const String& name, const String& type, const String& path )=0;
+		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out )=0;
+		virtual uint loadFileContent( char*& bufptr, const String& path )=0;
+		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )=0;
 		
 		///loads the given file in a buffer - WARNING not every format is supported on every platform
-		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path )=0;
+		virtual uint loadAudioFileContent( ALuint& buffer, const String& path )=0;
 
-		virtual void load( Table* dest, const std::string& absPath = "" )=0;
-		virtual void save( Table* table, const std::string& absPath = "" )=0;
+		virtual void load( Table* dest, const String& absPath = String::EMPTY )=0;
+		virtual void save( Table* table, const String& absPath = String::EMPTY )=0;
 		
 		virtual bool isSystemSoundInUse()
 		{
 			return false;
 		}
 
-		virtual void openWebPage( const std::string& site )=0;
+		virtual void openWebPage( const String& site )=0;
 
 	protected:
 

@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "Sprite.h"
+#include "dojo/Sprite.h"
 
-#include "Viewport.h"
+#include "dojo/Viewport.h"
 
 using namespace Dojo;
 
-Sprite::Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName, float tpf, bool pp ) :
+Sprite::Sprite( GameState* level, const Vector& pos, const String& defaultAnimName, float tpf, bool pp ) :
 AnimatedQuad( level, pos, pp )
 {	
 	//get rid of default animation
@@ -25,7 +25,7 @@ AnimatedQuad( level, pos, pp )
 	}
 }
 
-uint Sprite::registerAnimation( const std::string& base, float timePerFrame )
+uint Sprite::registerAnimation( const String& base, float timePerFrame )
 {
 	FrameSet* s = gameState->getFrameSet( base );
 	

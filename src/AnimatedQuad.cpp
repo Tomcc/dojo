@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "AnimatedQuad.h"
+#include "dojo/AnimatedQuad.h"
 
-#include "Game.h"
-#include "GameState.h"
-#include "Viewport.h"
-#include "Mesh.h"
-#include "math.h"
+#include "dojo/Game.h"
+#include "dojo/GameState.h"
+#include "dojo/Viewport.h"
+#include "dojo/Mesh.h"
+#include "dojo/math.h"
 
 using namespace Dojo;
 
@@ -45,7 +45,7 @@ void AnimatedQuad::reset()
 	mesh = gameState->getMesh( "texturedQuad" );
 }
 
-void AnimatedQuad::immediateAnimation( const std::string& name, float timePerFrame )
+void AnimatedQuad::immediateAnimation( const String& name, float timePerFrame )
 {
 	DEBUG_ASSERT( name.size() );
 	

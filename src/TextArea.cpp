@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
-#include "TextArea.h"
+#include "dojo/TextArea.h"
 
 using namespace Dojo;
 
 TextArea::TextArea( GameState* l, 
-		 const std::string& fontSetName, 
+		 const String& fontSetName, 
 		 const Vector& pos, 
 		 uint chars, 
 		 bool center,
@@ -81,7 +81,7 @@ void TextArea::clearText()
 	changed = true;
 }
 
-void TextArea::addText( const std::string& text, bool autoLineFeed )
+void TextArea::addText( const String& text )
 {	
 	content += text;
 
@@ -92,7 +92,7 @@ void TextArea::addText( const std::string& text, bool autoLineFeed )
 	changed = true;
 }
 
-void TextArea::addLineFeededText( const std::string& text )
+void TextArea::addLineFeededText( const String& text )
 {
 	content += text;
 
@@ -100,7 +100,7 @@ void TextArea::addLineFeededText( const std::string& text )
 
 	uint lastSpace = 0;
 	Font::Character* currentChar;
-	char c;
+	unichar c;
 
 	//parse and setup characters
 	for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
@@ -134,7 +134,7 @@ void TextArea::addLineFeededText( const std::string& text )
 
 void TextArea::addText( uint n, char paddingChar, uint digits )
 {
-	std::string number = Utils::toString( n );
+	String number = Utils::toString( n );
 
 	//if not specified, budget is max char number
 	if( digits == 0 )
@@ -150,7 +150,7 @@ void TextArea::addText( uint n, char paddingChar, uint digits )
 		//pad to fill
 		else if( number.size() < digits )
 		{
-			std::string padding;
+			String padding;
 
 			for( uint i = 0; i < digits - number.size(); ++i )
 				padding += paddingChar;

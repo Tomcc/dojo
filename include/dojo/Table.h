@@ -1,12 +1,12 @@
 #ifndef Table_h__
 #define Table_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "BaseObject.h"
-#include "Vector.h"
-#include "Array.h"
-#include "Utils.h"
+#include "dojo/BaseObject.h"
+#include "dojo/Vector.h"
+#include "dojo/Array.h"
+#include "dojo/Utils.h"
 
 namespace Dojo
 {
@@ -73,7 +73,7 @@ namespace Dojo
 			}
 		};
 
-		typedef std::map< std::string, Entry > EntryMap;
+		typedef std::map< String, Entry > EntryMap;
 
 		class Iterator : public EntryMap::iterator
 		{
@@ -97,11 +97,10 @@ namespace Dojo
 			EntryMap::iterator endItr;
 		};
 
-		static const std::string UNDEFINED_STRING;
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
-		Table( const std::string& tablename = "" ) :
+		Table( const String& tablename = String::EMPTY ) :
 		name( tablename ),
 		unnamedMembers( 0 )
 		{
@@ -109,7 +108,7 @@ namespace Dojo
 		}
 		
 		///legge la tabella dal formato standard su stringa
-		Table( std::istream& buf )
+		Table( InputStream& buf )
 		{	
 			deserialize( buf );
 		}		
@@ -119,7 +118,7 @@ namespace Dojo
 			clear();
 		}
 		
-		inline Table* createTable( const std::string& key )
+		inline Table* createTable( const String& key )
 		{			
 			Table* t = new Table( key );
 			
@@ -128,14 +127,14 @@ namespace Dojo
 			return t;
 		}
 
-		inline void setName( const std::string& newName )
+		inline void setName( const String& newName )
 		{
 			DEBUG_ASSERT( newName.size() > 0 );
 
 			name = newName;
 		}
 
-		inline void setRaw( const std::string& key, FieldType type, void* value )
+		inline void setRaw( const String& key, FieldType type, void* value )
 		{
 			DEBUG_ASSERT( type == FT_NUMBER || (value != NULL) );
 
@@ -151,33 +150,33 @@ namespace Dojo
 			}
 		}
 		
-		inline void setNumber( const std::string& key, float value )
+		inline void setNumber( const String& key, float value )
 		{			
 			setRaw(key, FT_NUMBER, new float( value ) );
 		}
 
-		inline void setInteger( const std::string& key, int value )
+		inline void setInteger( const String& key, int value )
 		{
-			setNumber( key, (int)value );
+			setNumber( key, (float)value );
 		}
 
-		inline void setBoolean( const std::string& key, bool value )
+		inline void setBoolean( const String& key, bool value )
 		{
 			setNumber( key, (float)value );
 		}
 		
-		inline void setString( const std::string& key, const std::string& value )
+		inline void setString( const String& key, const String& value )
 		{			
-			setRaw(key, FT_STRING, new std::string( value ) );
+			setRaw(key, FT_STRING, new String( value ) );
 		}
 
-		inline void setVector( const std::string& key, const Vector& value )
+		inline void setVector( const String& key, const Vector& value )
 		{
 			setRaw( key, FT_VECTOR, new Vector( value ) );
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
-		inline void setData( const std::string& key, void* value, uint size )
+		inline void setData( const String& key, void* value, uint size )
 		{
 			DEBUG_ASSERT( value );
 			DEBUG_ASSERT( size );
@@ -202,7 +201,7 @@ namespace Dojo
 			map.clear();
 		}		
 		
-		inline const std::string& getName()
+		inline const String& getName()
 		{
 			return name;
 		}
@@ -217,21 +216,21 @@ namespace Dojo
 			return name.size() > 0;
 		}
 
-		inline bool exists( const std::string& key )
+		inline bool exists( const String& key )
 		{
 			DEBUG_ASSERT( key.size() );
 
 			return map.find( key ) == map.end();
 		}
 
-		inline bool existsAs( const std::string& key, FieldType t )
+		inline bool existsAs( const String& key, FieldType t )
 		{
 			EntryMap::iterator itr = map.find( key );
 
 			return itr != map.end() && itr->second.type == t;
 		}
 		
-		inline float getNumber( const std::string& key )
+		inline float getNumber( const String& key )
 		{			
 			if( existsAs( key, FT_NUMBER ) )
 				return *( (float*)map[key].value );
@@ -239,25 +238,25 @@ namespace Dojo
 				return 0;
 		}
 
-		inline int getInt( const std::string& key )
+		inline int getInt( const String& key )
 		{
 			return (int)getNumber(key);
 		}
 
-		inline bool getBool( const std::string& key )
+		inline bool getBool( const String& key )
 		{
 			return getNumber(key) > 0.f;
 		}
 		
-		inline const std::string& getString( const std::string& key )
+		inline const String& getString( const String& key )
 		{
 			if( existsAs(key, FT_STRING ) )
-				return *( (std::string*)map[key].value );
+				return *( (String*)map[key].value );
 			else
-			   return UNDEFINED_STRING;
+			   return String::EMPTY;
 		}
 
-		inline const Dojo::Vector& getVector( const std::string& key )
+		inline const Dojo::Vector& getVector( const String& key )
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
 				return *( (Vector*)map[key].value );
@@ -265,12 +264,12 @@ namespace Dojo
 				return Vector::ZERO;
 		}
 
-		inline const Dojo::Color getColor( const std::string& key, float alpha = 1.f )
+		inline const Dojo::Color getColor( const String& key, float alpha = 1.f )
 		{
 			return Color( getVector( key ), alpha );
 		}
 		
-		inline Table* getTable( const std::string& key )
+		inline Table* getTable( const String& key )
 		{			
 			if( existsAs(key, FT_TABLE ) )
 			   return (Table*)map[key].value;
@@ -278,7 +277,7 @@ namespace Dojo
 			   return &EMPTY_TABLE;
 		}
 
-		inline const Data& getData( const std::string& key )
+		inline const Data& getData( const String& key )
 		{
 			if( existsAs( key, FT_DATA ) )
 				return *( (Data*)map[ key ].value );
@@ -297,21 +296,21 @@ namespace Dojo
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
-		void serialize( std::ostream& buf, std::string indent );
+		void serialize( OutputStream& buf, String indent = String::EMPTY );
 
-		void deserialize( std::istream& buf );
+		void deserialize( InputStream& buf );
 				
 	protected:
 		
-		std::string name;
+		String name;
 		
 		EntryMap map;
 
 		uint unnamedMembers;
 
-		inline std::string _getAutoName()
+		inline String _getAutoName()
 		{
-			return "_" + Utils::toString( unnamedMembers++ );
+			return '_' + Utils::toString( unnamedMembers++ );
 		}
 	};
 }

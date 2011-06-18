@@ -10,11 +10,11 @@
 #ifndef FrameSet_h__
 #define FrameSet_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
-#include "dojomath.h"
-#include "Texture.h"
+#include "dojo/Array.h"
+#include "dojo/Math.h"
+#include "dojo/Texture.h"
 
 namespace Dojo 
 {
@@ -25,7 +25,7 @@ namespace Dojo
 		typedef Array<Texture*> TextureList;
 		
 		//crea un set di frames col nome dato + _1, _2, _3...
-		FrameSet( ResourceGroup* creator, const std::string& prefixName ) :
+		FrameSet( ResourceGroup* creator, const String& prefixName ) :
 		Buffer( creator, prefixName )
 		{
 			
@@ -39,7 +39,7 @@ namespace Dojo
 		
 		virtual bool load();
 		
-		bool loadAtlas( const std::string& infoFile, Texture* atlas = NULL );
+		bool loadAtlas( const String& infoFile, Texture* atlas = NULL );
 		
 		virtual void unload() //delete all of the content
 		{
@@ -76,7 +76,7 @@ namespace Dojo
 		//return a random frame
 		inline Texture* getRandomFrame()
 		{
-			return frames.at( (int)Math::rangeRandom(0, (float)frames.size() ) );
+			return frames.at( Math::rangeRandom( 0, frames.size() ) );
 		}
 		
 		uint getFrameNumber()				{	return frames.size();	}

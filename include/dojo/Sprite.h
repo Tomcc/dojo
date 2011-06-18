@@ -10,17 +10,17 @@
 #ifndef Sprite_h__
 #define Sprite_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
+#include "dojo/Array.h"
 
-#include "Texture.h"
-#include "Vector.h"
-#include "Renderable.h"
-#include "FrameSet.h"
-#include "Color.h"
-#include "Render.h"
-#include "AnimatedQuad.h"
+#include "dojo/Texture.h"
+#include "dojo/Vector.h"
+#include "dojo/Renderable.h"
+#include "dojo/FrameSet.h"
+#include "dojo/Color.h"
+#include "dojo/Render.h"
+#include "dojo/AnimatedQuad.h"
 
 namespace Dojo
 {	
@@ -31,7 +31,7 @@ namespace Dojo
 				
 		typedef Array<Animation*> AnimationList;
 														
-		Sprite( GameState* level, const Vector& pos, const std::string& defaultAnimName = "", float timePerFrame = 1, bool pixelPerfect = true );
+		Sprite( GameState* level, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = 1, bool pixelPerfect = true );
 				
 		virtual ~Sprite()
 		{
@@ -61,7 +61,7 @@ namespace Dojo
 			return animations.size()-1;
 		}
 		
-		uint registerAnimation( const std::string& base, float timePerFrame );
+		uint registerAnimation( const String& base, float timePerFrame );
 				
 		///sets the animation at the given index
 		inline void setAnimation( uint i ) 	

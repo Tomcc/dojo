@@ -10,11 +10,11 @@
 #ifndef ParticlePool_h__
 #define ParticlePool_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Particle.h"
-#include "Viewport.h"
-#include "Game.h"
+#include "dojo/Particle.h"
+#include "dojo/Viewport.h"
+#include "dojo/Game.h"
 
 namespace Dojo 
 {		

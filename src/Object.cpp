@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
-#include "Object.h"
+#include "dojo/Object.h"
 
-#include "Game.h"
-#include "Renderable.h"
-#include "GameState.h"
+#include "dojo/Game.h"
+#include "dojo/Renderable.h"
+#include "dojo/GameState.h"
 
 using namespace Dojo;
 

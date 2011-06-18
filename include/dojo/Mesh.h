@@ -10,11 +10,11 @@
 #ifndef Mesh_h__
 #define Mesh_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Buffer.h"
-#include "Vector.h"
-#include "Color.h"
+#include "dojo/Buffer.h"
+#include "dojo/Vector.h"
+#include "dojo/Color.h"
 
 #define MESH_MAX_TEXTURES 8
 
@@ -52,7 +52,7 @@ namespace Dojo
 			TM_LIST
 		};
 				
-		Mesh( ResourceGroup* creator = NULL, const std::string& filePath = "" ) :
+		Mesh( ResourceGroup* creator = NULL, const String& filePath = String::EMPTY ) :
 		Buffer( creator, filePath ),
 		vertexSize(0),
 		vertexCount( 0 ),		

@@ -1,11 +1,11 @@
 #ifndef Trail_h__
 #define Trail_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 #include <queue>
 
-#include "Renderable.h"
+#include "dojo/Renderable.h"
 
 namespace Dojo
 {
@@ -20,7 +20,7 @@ namespace Dojo
 
 		bool autoUpdate;
 
-		Trail( GameState* l, const Vector& pos, const std::string& texName = "" );
+		Trail( GameState* l, const Vector& pos, const String& texName = String::EMPTY );
 
 		virtual ~Trail();
 

@@ -10,7 +10,7 @@
 #ifndef StateInterface_h__
 #define StateInterface_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 namespace Dojo
 {

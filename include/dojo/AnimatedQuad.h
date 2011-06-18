@@ -10,9 +10,9 @@
 #ifndef AnimatedQuad_h__
 #define AnimatedQuad_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Renderable.h"
+#include "dojo/Renderable.h"
 
 namespace Dojo
 {
@@ -139,7 +139,7 @@ namespace Dojo
 			_updateScreenSize();
 		}
 		
-		void immediateAnimation( const std::string& name, float timePerFrame );
+		void immediateAnimation( const String& name, float timePerFrame );
 		
 		///returns the default screen size for the current animation frame
 		inline const Vector& getScreenSize()				

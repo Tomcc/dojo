@@ -10,13 +10,13 @@
 #ifndef Font_h__
 #define Font_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Vector.h"
-#include "Texture.h"
-#include "FrameSet.h"
+#include "dojo/Vector.h"
+#include "dojo/Texture.h"
+#include "dojo/FrameSet.h"
 
-#include "Utils.h"
+#include "dojo/Utils.h"
 
 #define FONT_PPI (1.f/64.f)
 
@@ -109,12 +109,12 @@ namespace Dojo
 			}
 		};
 		
-		Font( const std::string& path );
+		Font( const String& path );
 		
 		virtual ~Font();
 		
-		inline uint getFontWidth()			{	return fontWidth + border;	}
-		inline uint getFontHeight()			{	return fontHeight + border;	}
+		inline uint getFontWidth()			{	return (uint)(fontWidth + border);	}
+		inline uint getFontHeight()			{	return (uint)(fontHeight + border);	}
 
 		inline Page* getPage( uint index )
 		{
@@ -151,7 +151,7 @@ namespace Dojo
 			return spacing;
 		}
 
-		inline float getCharIndex( Character* c )
+		inline uint getCharIndex( Character* c )
 		{
 			return FT_Get_Char_Index( face, c->character );
 		}
@@ -174,7 +174,7 @@ namespace Dojo
 		///make sure that the pages at the given indices are loaded
 		inline void preloadPages( const char pages[], uint n ) 
 		{
-			for( int i = 0; i < n; ++i )
+			for( uint i = 0; i < n; ++i )
 				getPage( pages[i] );
 		}
 
@@ -198,8 +198,8 @@ namespace Dojo
 		
 	protected:
 		
-		std::string fontName;
-		std::string fontFile;
+		String fontName;
+		String fontFile;
 
 		float border;
 		Color borderColor;

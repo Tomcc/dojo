@@ -1,17 +1,17 @@
 #ifndef Win32Platform_h__
 #define Win32Platform_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 #include <Poco/Thread.h>
 #include <Poco/Mutex.h>
 #include <Poco/Semaphore.h>
 #include <OIS/OIS.h>
 
-#include "Platform.h"
-#include "Vector.h"
+#include "dojo/Platform.h"
+#include "dojo/Vector.h"
 
-#include "Timer.h"
+#include "dojo/Timer.h"
 
 namespace Dojo
 {
@@ -31,16 +31,16 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
-		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
-		virtual uint loadAudioFileContent( ALuint& buffer, const std::string& path );
+		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
+		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
+		virtual uint loadFileContent( char*& bufptr, const String& path );
+		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height );
+		virtual uint loadAudioFileContent( ALuint& buffer, const String& path );
 		
-		virtual void load(  Table* dest, const std::string& relPath = "" );
-		virtual void save( Table* table, const std::string& relPath = "" );
+		virtual void load(  Table* dest, const String& relPath = String::EMPTY );
+		virtual void save( Table* table, const String& relPath = String::EMPTY );
 
-		virtual void openWebPage( const std::string& site );
+		virtual void openWebPage( const String& site );
 
 		virtual bool mouseMoved( const OIS::MouseEvent& arg );
 		virtual bool mousePressed( const OIS::MouseEvent& arg, OIS::MouseButtonID id );
@@ -62,8 +62,6 @@ namespace Dojo
 			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 
 			char *extensions = (char*)glGetString( GL_EXTENSIONS );
-
-			GLenum error = glGetError();
 
 			if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
 				return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
@@ -99,13 +97,13 @@ namespace Dojo
 
 		bool dragging;
 
-		bool _hasExtension( const std::string& type, const std::string& nameOrPath );
-		std::string _toNormalPath( const std::string& path );
+		bool _hasExtension( const String& type, const String& nameOrPath );
+		String _toNormalPath( const String& path );
 
-		std::string _getUserDirectory();
-		std::string _getFilename( Table* dest, const std::string& absPath );
+		String _getUserDirectory();
+		String _getFilename( Table* dest, const String& absPath );
 
-		bool _initialiseWindow( const std::string& caption, uint w, uint h );
+		bool _initialiseWindow( const String& caption, uint w, uint h );
 		void _initialiseOIS();
 
 	private:

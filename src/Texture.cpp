@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "Texture.h"
-#include "dojomath.h"
-#include "Platform.h"
+#include "dojo/Texture.h"
+#include "dojo/Math.h"
+#include "dojo/Platform.h"
 
 using namespace Dojo;
 
@@ -103,7 +103,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	return loaded;
 }
 
-bool Texture::loadFromPNG( const std::string& path )
+bool Texture::loadFromPNG( const String& path )
 {
 	void* imageData = NULL;
 
@@ -123,7 +123,6 @@ bool Texture::loadFromPNG( const std::string& path )
 bool Texture::load()
 {
 	DEBUG_ASSERT( !loaded );
-	DEBUG_ASSERT( textureType == "png" );
 
 	return loadFromPNG( filePath );
 }
@@ -134,8 +133,7 @@ bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 	DEBUG_ASSERT( tex->isLoaded() );
 	DEBUG_ASSERT( !isLoaded() );	
 			
-	loaded = true;			
-	textureType = "atlas";
+	loaded = true;
 	parentAtlas = tex;
 	
 	width = sx;

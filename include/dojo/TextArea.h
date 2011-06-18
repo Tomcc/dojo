@@ -10,14 +10,11 @@
 #ifndef TextArea_h__
 #define TextArea_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include <string>
-
-#include "Sprite.h"
-#include "Font.h"
-
-#include "GameState.h"
+#include "dojo/Sprite.h"
+#include "dojo/Font.h"
+#include "dojo/GameState.h"
 
 namespace Dojo 
 {	
@@ -30,7 +27,7 @@ namespace Dojo
 		Vector pixelScale;
 		
 		TextArea( GameState* l, 
-				 const std::string& fontSetName, 
+				 const String& fontSetName, 
 				 const Vector& pos, 
 				 uint chars, 
 				 bool center = false,
@@ -47,9 +44,9 @@ namespace Dojo
 		void clearText();
 							
 		///async text update
-		void addText( const std::string& text, bool autoLineFeed = false );
+		void addText( const String& text );
 		
-		void addLineFeededText( const std::string& text );
+		void addLineFeededText( const String& text );
 		
 		void addText( uint n, char paddingChar = 0, uint digits = 0 );
 					
@@ -62,7 +59,7 @@ namespace Dojo
 		
 		inline Font* getFont()					{	return font;			}		
 		inline uint getLenght()					{	return currentCharIdx;	}
-		inline const std::string& getContent()	{	return content;			}
+		inline const String& getContent()	{	return content;			}
 				
 		inline const Vector& getScreenSize()	{	return screenSize;		}	
 		
@@ -76,9 +73,9 @@ namespace Dojo
 		
 	protected:
 		
-		std::string content;
+		String content;
 		
-		std::string fontName;
+		String fontName;
 		float spaceWidth, interline, charSpacing;
 		uint maxChars;
 		uint maxLineLenght;

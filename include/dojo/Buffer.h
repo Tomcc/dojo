@@ -10,10 +10,10 @@
 #ifndef Buffer_h__
 #define Buffer_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 
-#include "BaseObject.h"
+#include "dojo/BaseObject.h"
 
 namespace Dojo 
 {
@@ -23,7 +23,7 @@ namespace Dojo
 	{
 	public:
 		
-		Buffer( ResourceGroup* creatorGroup, const std::string& path ) :
+		Buffer( ResourceGroup* creatorGroup, const String& path ) :
 		creator( creatorGroup ),
 		filePath( path ),
 		loaded( false ),
@@ -63,7 +63,7 @@ namespace Dojo
 			return creator;
 		}
 		
-		inline const std::string& getFilePath()
+		inline const String& getFilePath()
 		{
 			return filePath;
 		}
@@ -75,7 +75,7 @@ namespace Dojo
 		bool loaded;
 		uint size;
 		
-		std::string filePath;
+		String filePath;
 	};
 }
 

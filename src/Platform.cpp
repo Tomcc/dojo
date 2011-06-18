@@ -1,21 +1,21 @@
 #include "stdafx.h"
 
-#include "Platform.h"
+#include "dojo/Platform.h"
 
-#include "Utils.h"
-#include "dojomath.h"
+#include "dojo/Utils.h"
+#include "dojo/Math.h"
 
 #if defined (PLATFORM_WIN32)
 	#include "Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
-    #include "OSXPlatform.h"
+    #include "dojo/OSXPlatform.h"
 
 #elif defined( PLATFORM_IOS )
-    #include "IOSPlatform.h"
+    #include "dojo/IOSPlatform.h"
 
 #elif defined( PLATFORM_LINUX )
-    #include "LinuxPlatform.h"
+    #include "dojo/LinuxPlatform.h"
 
 #endif
 

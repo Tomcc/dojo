@@ -1,13 +1,13 @@
 #ifndef SoundData_h__
 #define SoundData_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
-#include "SoundBuffer.h"
+#include "dojo/Array.h"
+#include "dojo/SoundBuffer.h"
 
-#include "dojomath.h"
-#include "BaseObject.h"
+#include "dojo/Math.h"
+#include "dojo/BaseObject.h"
 
 namespace Dojo
 {
@@ -16,7 +16,7 @@ namespace Dojo
 	{
 	public:
 
-		SoundSet( const std::string& setName ) :
+		SoundSet( const String& setName ) :
 		name( setName ),
 		buffers( 1,1 )	//pagina minima, il vettore e' statico
 		{
@@ -32,7 +32,7 @@ namespace Dojo
 			if( i < 0 )
 			{
 				if( buffers.size() > 1 )
-					i = (int)Math::rangeRandom( 0, (float)buffers.size() );
+					i = Math::rangeRandom( 0, buffers.size() );
 				else 
 					i = 0;
 			}
@@ -42,7 +42,7 @@ namespace Dojo
 
 		inline uint getBufferNb()	{	return buffers.size();	 }
 
-		inline const std::string& getName()	{	return name;	}
+		inline const String& getName()	{	return name;	}
 
 		inline void addBuffer( SoundBuffer* b )
 		{
@@ -53,7 +53,7 @@ namespace Dojo
 
 	protected:
 
-		std::string name;
+		String name;
 
 		Array<SoundBuffer*> buffers;
 	};

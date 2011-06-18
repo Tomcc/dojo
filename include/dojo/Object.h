@@ -10,12 +10,12 @@
 #ifndef Object_h__
 #define Object_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Vector.h"
-#include "BaseObject.h"
-#include "Array.h"
-#include "dojomath.h"
+#include "dojo/Vector.h"
+#include "dojo/BaseObject.h"
+#include "dojo/Array.h"
+#include "dojo/Math.h"
 
 namespace Dojo {
 	

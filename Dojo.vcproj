@@ -41,13 +41,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;include/dojo;Win32;dependencies\include"
+				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -113,6 +115,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -165,10 +168,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\dojomath.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\Font.cpp"
 				>
 			</File>
@@ -182,6 +181,10 @@
 			</File>
 			<File
 				RelativePath=".\src\GameState.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Math.cpp"
 				>
 			</File>
 			<File
@@ -230,6 +233,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Sprite.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\String.cpp"
 				>
 			</File>
 			<File
@@ -287,15 +294,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\dojo.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\dojo\dojo_common_header.h"
 				>
 			</File>
 			<File
 				RelativePath=".\include\dojo\dojo_config.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\dojo\dojomath.h"
 				>
 			</File>
 			<File
@@ -320,6 +327,10 @@
 			</File>
 			<File
 				RelativePath=".\include\dojo\InputSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\Math.h"
 				>
 			</File>
 			<File
@@ -392,6 +403,10 @@
 			</File>
 			<File
 				RelativePath=".\include\dojo\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\String.h"
 				>
 			</File>
 			<File

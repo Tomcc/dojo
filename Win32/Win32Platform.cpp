@@ -13,18 +13,17 @@
 
 #include <gl/wglext.h>
 
-#include "Render.h"
-#include "Game.h"
-#include "Utils.h"
-#include "Table.h"
-#include "FontSystem.h"
+#include "dojo/Render.h"
+#include "dojo/Game.h"
+#include "dojo/Utils.h"
+#include "dojo/Table.h"
+#include "dojo/FontSystem.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
 using namespace OIS;
-using namespace std;
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
@@ -84,7 +83,7 @@ Win32Platform::~Win32Platform()
 
 }
 
-bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w, uint h )
+bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
 {
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
@@ -127,7 +126,7 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowA("DojoOpenGLWindow",
-		windowCaption.c_str(),
+		windowCaption.UTF8().c_str(),
 		dwstyle,  //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -173,10 +172,14 @@ bool Win32Platform::_initialiseWindow( const std::string& windowCaption, uint w,
 
 void Win32Platform::_initialiseOIS()
 {
-
-	//evita il grab del cursore
 	OIS::ParamList params;
-	params.insert( std::make_pair( "WINDOW", Utils::toString( (uint)hwnd ) ) );
+
+	//convert the hwnd to std strng
+	std::stringstream tostring;
+	tostring << (uint)hwnd;
+	params.insert( std::make_pair( "WINDOW", tostring.str() ) );
+
+	//avoid cursor grab
 	params.insert( std::make_pair( "w32_mouse", "DISCL_FOREGROUND" ) );
 	params.insert( std::make_pair( "w32_mouse", "DISCL_NONEXCLUSIVE" ) );
 
@@ -204,9 +207,9 @@ void Win32Platform::initialise()
 	DEBUG_ASSERT( game );
 
 	//create user dir if not existing
-	std::string userDir = _getUserDirectory() + "/" + game->getName();
+	String userDir = _getUserDirectory() + '/' + game->getName();
 
-	CreateDirectoryA( userDir.c_str(), NULL );
+	CreateDirectoryA( userDir.UTF8().c_str(), NULL );
 
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
@@ -276,7 +279,7 @@ void Win32Platform::step( float dt )
 	
 	sound->update( dt );
 	
-	realFrameTime = timer.getElapsedTime();
+	realFrameTime = (float)timer.getElapsedTime();
 }
 
 void stepCallback( void* platform )
@@ -299,7 +302,7 @@ void Win32Platform::_callbackThread( float frameLength )
 
 		}
 
-		Poco::Thread::sleep( frameLength * 1000.f );
+		Poco::Thread::sleep( (long)(frameLength * 1000.f) );
 	}
 }
 
@@ -329,7 +332,7 @@ void Win32Platform::loop( float frameTime )
 			DispatchMessage( &msg );
 		}
 
-		step( timer.deltaTime() );
+		step( (float)timer.deltaTime() );
 	}
 
 	if( frameTime )
@@ -340,8 +343,8 @@ bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 {
 	dragging = true;
 
-	cursorPos.x = arg.state.X.abs;
-	cursorPos.y = arg.state.Y.abs;
+	cursorPos.x = (float)arg.state.X.abs;
+	cursorPos.y = (float)arg.state.Y.abs;
 
 	input->_fireTouchBeginEvent( cursorPos );
 
@@ -352,8 +355,8 @@ bool Win32Platform::mouseMoved( const MouseEvent& arg )
 {
 	if( dragging )
 	{
-		cursorPos.x = arg.state.X.abs;
-		cursorPos.y = arg.state.Y.abs;
+		cursorPos.x = (float)arg.state.X.abs;
+		cursorPos.y = (float)arg.state.Y.abs;
 
 		input->_fireTouchMoveEvent( cursorPos );
 	}
@@ -364,8 +367,8 @@ bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
 {
 	dragging = false;
 
-	cursorPos.x = arg.state.X.abs;
-	cursorPos.y = arg.state.Y.abs;
+	cursorPos.x = (float)arg.state.X.abs;
+	cursorPos.y = (float)arg.state.Y.abs;
 
 	input->_fireTouchEndEvent( cursorPos );
 
@@ -388,9 +391,9 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-std::string Win32Platform::_toNormalPath( const std::string& input )
+String Win32Platform::_toNormalPath( const String& input )
 {
-	std::string path = input;
+	String path = input;
 
 	for( uint i = 0; i < path.size(); ++i )
 	{
@@ -405,28 +408,28 @@ std::string Win32Platform::_toNormalPath( const std::string& input )
 	return path;
 }
 
-std::string Win32Platform::getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path )
+String Win32Platform::getCompleteFilePath( const String& name, const String& type, const String& path )
 {
 	//semplicemente il path relativo all'exe
-	return _toNormalPath( path ) + "/" + name + "." + type; 
+	return _toNormalPath( path ) + '/' + name + '.' + type; 
 }
 
-bool Win32Platform::_hasExtension( const std::string& ext, const std::string& nameOrPath )
+bool Win32Platform::_hasExtension( const String& ext, const String& nameOrPath )
 {
 	return nameOrPath.size() > ext.size() && ext == nameOrPath.substr( nameOrPath.size() - ext.size() );
 }
 
-void Win32Platform::getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out )
+void Win32Platform::getFilePathsForType( const String& type, const String& path, std::vector<String>& out )
 {
 	try
 	{
-		Poco::DirectoryIterator itr( path );
+		Poco::DirectoryIterator itr( path.UTF8() );
 
-		std::string extension = "." + type;
+		String extension = '.' + type;
 
 		while( itr.name().size() )
 		{
-			const std::string& name = itr.name();
+			const String& name = itr.name();
 
 			if( _hasExtension( extension, name ) )
 				out.push_back( _toNormalPath( itr->path() ) );
@@ -440,10 +443,10 @@ void Win32Platform::getFilePathsForType( const std::string& type, const std::str
 	}	
 }
 
-uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
-{
+uint Win32Platform::loadFileContent( char*& bufptr, const String& path )
+{	
 	using namespace std;
-	
+
 	fstream file( path.c_str(), ios_base::in | ios_base::ate );
 
 	if( !file.is_open() )
@@ -461,7 +464,7 @@ uint Win32Platform::loadFileContent( char*& bufptr, const std::string& path )
 	return size;
 }
 
-void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height )
+void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
 	if( !_hasExtension( ".png", path ) )
@@ -474,18 +477,20 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	//pointer to the image, once loaded
 	FIBITMAP *dib = NULL;
 
+	std::string ansipath = path.UTF8();
+
 	//check the file signature and deduce its format
-	fif = FreeImage_GetFileType(path.c_str(), 0);
+	fif = FreeImage_GetFileType(ansipath.c_str(), 0);
 	//if still unknown, try to guess the file format from the file extension
 	if(fif == FIF_UNKNOWN)
-		fif = FreeImage_GetFIFFromFilename(path.c_str());
+		fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
 		return;
 
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
-		dib = FreeImage_Load(fif, path.c_str());
+		dib = FreeImage_Load(fif, ansipath.c_str());
 	//if the image failed to load, return failure
 	if(!dib)
 		return;
@@ -524,7 +529,7 @@ void Win32Platform::loadPNGContent( void*& bufptr, const std::string& path, uint
 	FreeImage_Unload( dib );
 }
 
-uint Win32Platform::loadAudioFileContent( ALuint& buffer, const std::string& filePath )
+uint Win32Platform::loadAudioFileContent( ALuint& buffer, const String& filePath )
 {
 	ALvoid* data;
 	ALboolean loop;
@@ -540,7 +545,7 @@ uint Win32Platform::loadAudioFileContent( ALuint& buffer, const std::string& fil
 	return size;
 }
 
-std::string Win32Platform::_getUserDirectory()
+String Win32Platform::_getUserDirectory()
 {
 	char szPath[MAX_PATH];
 
@@ -551,30 +556,31 @@ std::string Win32Platform::_getUserDirectory()
 		0, 
 		szPath);
 
-	std::string dir( szPath );
+	String dir( szPath );
 
 	return _toNormalPath( dir );
 }
 
-std::string Win32Platform::_getFilename( Table* dest, const std::string& absPath )
+String Win32Platform::_getFilename( Table* dest, const String& absPath )
 {	
 	if( absPath.size() == 0 )
 	{
 		DEBUG_ASSERT( dest->hasName() );
 
 		//cerca tra le user prefs un file con lo stesso nome
-		return _getUserDirectory() + "/" + game->getName() + "/" + dest->getName() + ".ds";
+		return _getUserDirectory() + '/' + game->getName() + '/' + dest->getName() + ".ds";
 	}
 	else
 		return absPath;
 }
 
-void Win32Platform::load( Table* dest, const std::string& absPath )
+void Win32Platform::load( Table* dest, const String& absPath )
 {
 	DEBUG_ASSERT( dest );
+	using namespace std;
 
-	std::string filename =  _getFilename(dest, absPath);
-	fstream file( filename.c_str(), ios_base::in | ios_base::binary );
+	String filename =  _getFilename(dest, absPath);
+	FileStream file( filename.c_str(), ios_base::in | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
@@ -585,21 +591,22 @@ void Win32Platform::load( Table* dest, const std::string& absPath )
 	file.close();
 }
 
-void Win32Platform::save( Table* src, const std::string& absPath )
+void Win32Platform::save( Table* src, const String& absPath )
 {
 	DEBUG_ASSERT( src );
+	using namespace std;
 	
-	fstream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
+	FileStream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
 
-	src->serialize( file, "" );
+	src->serialize( file );
 
 	file.close();
 }
 
-void Win32Platform::openWebPage( const std::string& site )
+void Win32Platform::openWebPage( const String& site )
 {
-	ShellExecuteA(hwnd, "open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteA(hwnd, "open", site.UTF8().c_str(), NULL, NULL, SW_SHOWNORMAL);
 }

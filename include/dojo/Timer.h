@@ -1,9 +1,9 @@
 #ifndef Timer_h__
 #define Timer_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "BaseObject.h"
+#include "dojo/BaseObject.h"
 
 namespace Dojo
 {
@@ -44,12 +44,12 @@ namespace Dojo
 			return d;
 		}
 
-		inline void setLoop( float period )
+		inline void setLoop( double period )
 		{
 			mPeriod = (period > 0) ? period : 0;
 		}
 
-		inline void setLoopFPS( float FPS )
+		inline void setLoopFPS( double FPS )
 		{
 			mPeriod = (FPS > 0) ? 1.f/FPS : 0;
 		}
@@ -84,9 +84,9 @@ namespace Dojo
 		When the method is called and period has passed, it returns the real cycle time
 		\remark If loop is disabled, this method always returns true.
 		*/
-		inline bool loopElapsed( float* actualPeriod = NULL )
+		inline bool loopElapsed( double* actualPeriod = NULL )
 		{
-			float t = getElapsedTime();
+			double t = getElapsedTime();
 			if( t >= mPeriod)
 				reset();
 

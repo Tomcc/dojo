@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
-#include "RenderState.h"
+#include "dojo/RenderState.h"
 
-#include "Texture.h"
-#include "Mesh.h"
-#include "FrameSet.h"
-#include "Timer.h"
+#include "dojo/Texture.h"
+#include "dojo/Mesh.h"
+#include "dojo/FrameSet.h"
+#include "dojo/Timer.h"
 
 using namespace Dojo;
 
@@ -33,7 +33,7 @@ void RenderState::commitChanges( RenderState* pastState )
 	DEBUG_ASSERT( mesh );
 		
 	//bind the new textures
-	int i = 0;
+	uint i = 0;
 	for( ; i < getTextureNumber() && i < pastState->getTextureNumber(); ++i )
 	{
 		if( getTexture(i) != pastState->getTexture(i) )

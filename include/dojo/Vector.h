@@ -9,7 +9,7 @@
 #ifndef Vector_h__
 #define Vector_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 namespace Dojo	
 {
@@ -271,20 +271,6 @@ namespace Dojo
 			c = (c < 0) ? -c : c;
 
 			return a + b + c;
-		}
-
-		inline std::ostream& writeToStream( std::ostream& str )
-		{
-			str << x << ' ' << y << ' ' << z;
-
-			return str;
-		}
-
-		inline void readFromStream( std::istream& str )
-		{
-			str >> x;
-			str >> y;
-			str >> z;
 		}
 				
 	protected:

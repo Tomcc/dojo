@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "Mesh.h"
+#include "dojo/Mesh.h"
 
-#include "Utils.h"
-#include "Platform.h"
+#include "dojo/Utils.h"
+#include "dojo/Platform.h"
 
 using namespace Dojo;
 
@@ -114,8 +114,7 @@ bool Mesh::end()
 	glGetError();
 	if( !vertexHandle )
 		glGenBuffers(1, &vertexHandle );	
-		
-	int error = glGetError();
+
 	DEBUG_ASSERT( vertexHandle );
 	
 	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;

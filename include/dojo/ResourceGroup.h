@@ -10,14 +10,14 @@
 #ifndef ResourceGroup_h__
 #define ResourceGroup_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 #include <string>
 
-#include "Font.h"
-#include "FrameSet.h"
-#include "Mesh.h"
-#include "SoundSet.h"
+#include "dojo/Font.h"
+#include "dojo/FrameSet.h"
+#include "dojo/Mesh.h"
+#include "dojo/SoundSet.h"
 
 namespace Dojo {
 	
@@ -25,57 +25,57 @@ namespace Dojo {
 	{			
 	public:		
 		
-		typedef std::map<std::string, FrameSet*> FrameSetMap;
-		typedef std::map<std::string, Font*> FontMap;
-		typedef std::map<std::string, Mesh*> MeshMap;
-		typedef std::map<std::string, SoundSet*> SoundMap;
+		typedef std::map<String, FrameSet*> FrameSetMap;
+		typedef std::map<String, Font*> FontMap;
+		typedef std::map<String, Mesh*> MeshMap;
+		typedef std::map<String, SoundSet*> SoundMap;
 			
 		ResourceGroup();
 		
 		virtual ~ResourceGroup();
 		
-		inline bool isFrameSetLoaded( const std::string& name )
+		inline bool isFrameSetLoaded( const String& name )
 		{
 			return frameSets.find( name ) != frameSets.end();
 		}
 		
-		inline bool isFontLoaded( const std::string& name )
+		inline bool isFontLoaded( const String& name )
 		{
 			return fonts.find( name ) != fonts.end();
 		}
 		
-		inline bool isMeshLoaded( const std::string& name )
+		inline bool isMeshLoaded( const String& name )
 		{
 			return meshes.find( name ) != meshes.end();
 		}
 
-		inline bool isSoundLoaded( const std::string& name )
+		inline bool isSoundLoaded( const String& name )
 		{
 			return sounds.find( name ) != sounds.end();
 		}
 				
-		inline void addFrameSet( FrameSet* set, const std::string& name )
+		inline void addFrameSet( FrameSet* set, const String& name )
 		{
 			DEBUG_ASSERT( !isFrameSetLoaded( name ) );
 			
 			frameSets[name] = set;
 		}
 		
-		inline void addFont( Font* f, const std::string& name )
+		inline void addFont( Font* f, const String& name )
 		{
 			DEBUG_ASSERT( !isFontLoaded( name ) );
 			
 			fonts[name] = f;
 		}
 		
-		inline void addMesh( Mesh* m, const std::string& name )
+		inline void addMesh( Mesh* m, const String& name )
 		{
 			DEBUG_ASSERT( !isMeshLoaded( name ) );
 			
 			meshes[ name ] = m;
-		}		
+		}
 		
-		inline void addSound( SoundSet* sb, const std::string& name )
+		inline void addSound( SoundSet* sb, const String& name )
 		{
 			DEBUG_ASSERT( !isSoundLoaded( name ) );
 
@@ -84,7 +84,7 @@ namespace Dojo {
 
 		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
 
-		inline FrameSet* getFrameSet( const std::string& name )
+		inline FrameSet* getFrameSet( const String& name )
 		{
 			if( isFrameSetLoaded( name ) )
 				return frameSets[name];
@@ -92,7 +92,7 @@ namespace Dojo {
 			return NULL;
 		}
 		
-		inline Font* getFont( const std::string& name )
+		inline Font* getFont( const String& name )
 		{
 			if( isFontLoaded( name ) )
 				return fonts[name];
@@ -100,7 +100,7 @@ namespace Dojo {
 			return NULL;
 		}
 		
-		inline Mesh* getMesh( const std::string& name )
+		inline Mesh* getMesh( const String& name )
 		{
 			if( isMeshLoaded( name ) )
 				return meshes[name];
@@ -108,7 +108,7 @@ namespace Dojo {
 			return NULL;
 		}
 
-		inline SoundSet* getSound( const std::string& name )
+		inline SoundSet* getSound( const String& name )
 		{
 			if( isSoundLoaded( name ) )
 				return sounds[ name ];
@@ -116,12 +116,12 @@ namespace Dojo {
 			return NULL;
 		}
 						
-		void loadSets( const std::string& folder );		
-		void loadFonts( const std::string& folder );
-		void loadMeshes( const std::string& folder );
-		void loadSounds( const std::string& folder );
+		void loadSets( const String& folder );		
+		void loadFonts( const String& folder );
+		void loadMeshes( const String& folder );
+		void loadSounds( const String& folder );
 
-		void loadResources( const std::string& folder )
+		void loadResources( const String& folder )
 		{
 			loadSets( folder );
 			loadFonts( folder );

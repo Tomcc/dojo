@@ -10,10 +10,10 @@
 #ifndef Model_h__
 #define Model_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Renderable.h"
-#include "GameState.h"
+#include "dojo/Renderable.h"
+#include "dojo/GameState.h"
 
 namespace Dojo 
 {
@@ -21,7 +21,7 @@ namespace Dojo
 	{
 	public:
 				
-		Model( GameState* gamestate, const Vector& pos, const std::string& meshName = "", const std::string& setName = "" ) :
+		Model( GameState* gamestate, const Vector& pos, const String& meshName = String::EMPTY, const String& setName = String::EMPTY ) :
 		Renderable( gamestate, pos )
 		{			
 			if( !meshName.empty() )
@@ -31,12 +31,12 @@ namespace Dojo
 				setTextureName( setName );
 		}
 		
-		void setMeshName( const std::string& meshName )
+		void setMeshName( const String& meshName )
 		{
 			RenderState::setMesh( gameState->getMesh( meshName ) );
 		}
 
-		inline void setTextureName( const std::string& name )
+		inline void setTextureName( const String& name )
 		{
 			setTexture( gameState->getFrameSet( name )->getRandomFrame() );
 		}

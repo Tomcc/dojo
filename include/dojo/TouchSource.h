@@ -10,11 +10,11 @@
 #ifndef TouchListener_h__
 #define TouchListener_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
+#include "dojo/Array.h"
 
-#include "Vector.h"
+#include "dojo/Vector.h"
 
 namespace Dojo 
 {

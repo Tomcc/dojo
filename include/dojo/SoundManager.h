@@ -1,17 +1,17 @@
 #ifndef SOUNDMANAGER_H_
 #define SOUNDMANAGER_H_
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
-#include "Vector.h"
+#include "dojo/Array.h"
+#include "dojo/Vector.h"
 
-#include "SoundBuffer.h"
-#include "SoundSet.h"
-#include "SoundSource.h"
-#include "BaseObject.h"
+#include "dojo/SoundBuffer.h"
+#include "dojo/SoundSet.h"
+#include "dojo/SoundSource.h"
+#include "dojo/BaseObject.h"
 
-#include "Platform.h"
+#include "dojo/Platform.h"
 
 #define MAX_SOURCES 32
 

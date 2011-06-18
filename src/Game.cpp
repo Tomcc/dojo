@@ -1,17 +1,17 @@
 #include "stdafx.h"
 
-#include "Game.h"
+#include "dojo/Game.h"
 
-#include "Object.h"
-#include "GameState.h"
-#include "Sprite.h"
-#include "math.h"
+#include "dojo/Object.h"
+#include "dojo/GameState.h"
+#include "dojo/Sprite.h"
+#include "dojo/math.h"
 
 using namespace Dojo;
 
 const float Game::UPDATE_INTERVAL_CAP = 1.f/60.f;
 
-Game::Game( const std::string& gamename, uint w, uint h, Render::RenderOrientation r ) :
+Game::Game( const String& gamename, uint w, uint h, Render::RenderOrientation r ) :
 name( gamename ),
 nativeWidth( w ),
 nativeHeight( h ),

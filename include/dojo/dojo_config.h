@@ -80,11 +80,4 @@
 	#define GL_FRAMEBUFFER_COMPLETE	GL_FRAMEBUFFER_COMPLETE_OES
 #endif
 
-namespace Dojo
-{
-    typedef unsigned int uint;
-	typedef unsigned char byte;
-	typedef unsigned short unichar;
-}
-
 #endif

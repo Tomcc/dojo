@@ -10,15 +10,15 @@
 #ifndef Renderable_h__
 #define Renderable_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Object.h"
-#include "Color.h"
+#include "dojo/Object.h"
+#include "dojo/Color.h"
 
-#include "FrameSet.h"
-#include "Render.h"
-#include "RenderState.h"
-#include "InputSystem.h"
+#include "dojo/FrameSet.h"
+#include "dojo/Render.h"
+#include "dojo/RenderState.h"
+#include "dojo/InputSystem.h"
 
 namespace Dojo 
 {

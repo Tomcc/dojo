@@ -10,16 +10,16 @@
 #ifndef Texture_h__
 #define Texture_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
 #include <string>
 
 
-#include "Utils.h"
-#include "Vector.h"
+#include "dojo/Utils.h"
+#include "dojo/Vector.h"
 
-#include "Buffer.h"
-#include "Mesh.h"
+#include "dojo/Buffer.h"
+#include "dojo/Mesh.h"
 
 namespace Dojo 
 {
@@ -30,7 +30,7 @@ namespace Dojo
 	{
 	public:
 		 
-		Texture( ResourceGroup* creator, const std::string& path ) :
+		Texture( ResourceGroup* creator, const String& path ) :
 		Buffer( creator, path ),
 		width(0),
 		height(0),
@@ -46,7 +46,7 @@ namespace Dojo
 		OBB( NULL ),
 		ownerFrameSet( NULL )
 		{
-			textureType = Utils::getFileExtension( filePath );
+
 		}
 		
 		virtual ~Texture()
@@ -60,7 +60,7 @@ namespace Dojo
 		bool loadFromMemory( byte* buf, uint width, uint height );
 
 		///loads the texture from the png pointed by the filename
-		bool loadFromPNG( const std::string& path );
+		bool loadFromPNG( const String& path );
 		
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
@@ -111,7 +111,7 @@ namespace Dojo
 		}
 		
 		inline bool isNonPowerOfTwo()			{	return npot;		}
-		inline bool isAtlasTile()				{	return parentAtlas;	}
+		inline bool isAtlasTile()				{	return parentAtlas == NULL;	}
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{
@@ -142,8 +142,6 @@ namespace Dojo
 		uint glhandle;
 			
 		Vector screenSize;
-		
-		std::string textureType;
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _buildOptimalBillboard();

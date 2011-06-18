@@ -10,16 +10,16 @@
 #ifndef Viewport_h__
 #define Viewport_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Vector.h"
-#include "Color.h"
-#include "Object.h"
-#include "Model.h"
-#include "Sprite.h"
-#include "Texture.h"
-#include "Platform.h"
-#include "Renderable.h"
+#include "dojo/Vector.h"
+#include "dojo/Color.h"
+#include "dojo/Object.h"
+#include "dojo/Model.h"
+#include "dojo/Sprite.h"
+#include "dojo/Texture.h"
+#include "dojo/Platform.h"
+#include "dojo/Renderable.h"
 
 namespace Dojo 
 {	
@@ -79,11 +79,11 @@ namespace Dojo
 
 			nativeToScreenRatio = render->getNativeToScreenRatio();
 			
-			targetSize.x = render->getWidth();
-			targetSize.y = render->getHeight();
+			targetSize.x = (float)render->getWidth();
+			targetSize.y = (float)render->getHeight();
 
 			//create the fader object			
-			fadeObject = new Model( level, position, "texturedQuad", "" );
+			fadeObject = new Model( level, position, "texturedQuad", String::EMPTY );
 			fadeObject->color = Color( 0, 0, 0, 0 );
 			
 			fadeObject->scale.x = size.x;
@@ -108,7 +108,7 @@ namespace Dojo
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum( float VFOV, float zNear, float zFar );
 		
-		inline void setBackgroundSprite( const std::string& name )
+		inline void setBackgroundSprite( const String& name )
 		{			
 			DEBUG_ASSERT( name.size() );
 			

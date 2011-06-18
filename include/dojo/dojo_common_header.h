@@ -1,7 +1,7 @@
 #ifndef dojo_common_header
 #define dojo_common_header
 
-#include "dojo_config.h"
+#include "dojo/dojo_config.h"
 
 #include <math.h>
 #include <assert.h>
@@ -64,5 +64,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_STROKER_H
+
+//string has to be included here!
+#include "dojo/String.h"
 
 #endif // dojo_common_headers_h__

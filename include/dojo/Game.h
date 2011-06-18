@@ -9,19 +9,19 @@
 #ifndef Game_h__
 #define Game_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
+#include "dojo/Array.h"
 
-#include "Render.h"
-#include "InputSystem.h"
-#include "SoundManager.h"
-#include "InputSystem.h"
-#include "StateInterface.h"
+#include "dojo/Render.h"
+#include "dojo/InputSystem.h"
+#include "dojo/SoundManager.h"
+#include "dojo/InputSystem.h"
+#include "dojo/StateInterface.h"
 
-#include "Platform.h"
+#include "dojo/Platform.h"
 
-#include "Render.h"
+#include "dojo/Render.h"
 
 namespace Dojo 
 {
@@ -31,11 +31,11 @@ namespace Dojo
 		
 		static const float UPDATE_INTERVAL_CAP;
 				
-		Game( const std::string& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation );
+		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation );
 		
 		virtual ~Game();
 
-		inline const std::string& getName()
+		inline const String& getName()
 		{
 			return name;	
 		}
@@ -65,7 +65,7 @@ namespace Dojo
 		
 		Render::RenderOrientation nativeOrientation;
 
-		std::string name;
+		String name;
 	};
 }
 

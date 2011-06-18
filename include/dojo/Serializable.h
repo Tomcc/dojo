@@ -1,9 +1,9 @@
 #ifndef Serializable_h__
 #define Serializable_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Table.h"
+#include "dojo/Table.h"
 
 namespace Dojo
 {

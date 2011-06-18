@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojomath.h"
+#include "dojo/Math.h"
 
 using namespace Dojo;
 
@@ -24,6 +24,11 @@ float Math::random()
 float Math::rangeRandom( float min, float max )
 {
 	return ((float)rand()/(float)RAND_MAX)*(max-min) + min;
+}
+
+int Math::rangeRandom( int min, int max )
+{
+	return (int)((float)rand()/(float)RAND_MAX) * (max-min) + min;
 }
 
 Vector Math::randomVector( const Vector& min, const Vector& max )

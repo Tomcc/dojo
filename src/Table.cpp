@@ -1,20 +1,21 @@
 #include "stdafx.h"
 
-#include "Table.h"
+#include "dojo/Table.h"
 
 using namespace Dojo;
-using namespace std;
 
-const std::string Table::UNDEFINED_STRING = "";
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
-void Table::serialize( std::ostream& buf, std::string indent )
-{		
+void Table::serialize( OutputStream& buf, String indent )
+{	
+	using namespace std;	
+
 	Data* data;
+	Vector* v;
 
 	//serialize to the Table Format
-	indent += "\t";
+	indent += '\t';
 	
 	for( Iterator itr = getIterator(); itr.valid(); ++itr ) 
 	{
@@ -33,17 +34,16 @@ void Table::serialize( std::ostream& buf, std::string indent )
 			buf << *((float*)e.value);
 			break;
 		case FT_STRING:
-			buf  << "\"" << *((string*)e.value) << "\"";
+			buf  << '\"' << *((String*)e.value) << '\"';
 			break;
 		case FT_VECTOR:
-			buf  << "(";
-			((Vector*)e.value)->writeToStream( buf );
-			buf << ")";
+			v = (Vector*)e.value;
+			buf  << '(' << v->x << ' ' << v->y << ' ' << v->z << ')';
 			break;
 		case FT_DATA:
 			data = (Data*)e.value;
 			buf << "#" << data->size << " ";
-			buf.write( (const char*)data->ptr, data->size );
+			buf.write( (unichar*)data->ptr, data->size );
 
 			break;
 		case FT_TABLE:
@@ -78,30 +78,28 @@ enum ParseTarget
 	PT_CHILD,
 };
 
-inline bool isNameStarter( char c )
+inline bool isNameStarter( unichar c )
 {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-inline bool isNumber( char c )
+inline bool isNumber( unichar c )
 {
 	return c >= '0' && c <= '9';
 }
 
-inline bool isName( char c )
+inline bool isName( unichar c )
 {
 	return isNameStarter(c) || isNumber(c) || c == '_';
 }
 
-void Table::deserialize( std::istream& buf )
+void Table::deserialize( InputStream& buf )
 {
 	ParseState state = PS_TABLE;
 	ParseTarget target = PT_UNDEFINED;
-	char c;
-	string curName;
-	uint assignedAnons = 0;
+	
+	String curName, str;
 	float number;
-	string str;
 	Vector vec;
 	Data data;
 	Table* table;
@@ -110,14 +108,17 @@ void Table::deserialize( std::istream& buf )
 	clear();
 
 	//feed one char at a time and do things
+	unichar c;
+	char* bytes = (char*)&c;
 	while( !buf.eof() && state != PS_END && state != PS_ERROR )
 	{
-		c = buf.get();
+		bytes[0] = (char)buf.get();
+		bytes[1] = (char)buf.get();
 
 		switch( state )
 		{
 		case PS_TABLE: //wait for either a name, or an anon value	
-				 if( c == '}' )		state = PS_END;
+				 if( c == '}' )				state = PS_END;
 			else if( isNameStarter( c ) )	state = PS_NAME;
 
 			else if( c == '"' )		target = PT_STRING;
@@ -127,7 +128,10 @@ void Table::deserialize( std::istream& buf )
 			else if( isNumber( c ) )target = PT_NUMBER;
 
 			if( state == PS_NAME )
-				curName = c;
+			{
+				curName.clear();
+				curName += c;
+			}
 
 			break;
 		case PS_NAME:			
@@ -158,9 +162,12 @@ void Table::deserialize( std::istream& buf )
 			break;
 		case PT_STRING:
 
-			while(1)
+			str.clear();
+			while( true )
 			{
-				c = buf.get();
+				bytes[0] = (char)buf.get();
+				bytes[1] = (char)buf.get();
+
 				if( c == '"' )	break;
 				str += c;
 			}
@@ -169,7 +176,9 @@ void Table::deserialize( std::istream& buf )
 			break;
 
 		case PT_VECTOR:
-			vec.readFromStream( buf );
+			buf >> vec.x;
+			buf >> vec.y;
+			buf >> vec.z;
 
 			setVector( curName, vec );
 			break;
@@ -181,7 +190,7 @@ void Table::deserialize( std::istream& buf )
 			//skip space
 			buf.get();
 
-			buf.read( (char*)data.ptr, data.size );
+			buf.read( (unichar*)data.ptr, data.size );
 
 			setData( curName, data.ptr, data.size );
 			break;

@@ -1,11 +1,11 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "BaseObject.h"
+#include "dojo/BaseObject.h"
 
-#include "Buffer.h"
+#include "dojo/Buffer.h"
 
 namespace Dojo 
 {
@@ -20,7 +20,7 @@ namespace Dojo
 	public:
 
 		///Costruttore
-		SoundBuffer( ResourceGroup* creator, const std::string& path );
+		SoundBuffer( ResourceGroup* creator, const String& path );
 		///Distruttore
 		~SoundBuffer();
 

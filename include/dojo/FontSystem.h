@@ -1,11 +1,11 @@
 #ifndef FontSystem_h__
 #define FontSystem_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "BaseObject.h"
+#include "dojo/BaseObject.h"
 
-#include "Utils.h"
+#include "dojo/Utils.h"
 
 namespace Dojo
 {
@@ -13,7 +13,7 @@ namespace Dojo
 	{
 	public:
 
-		typedef std::map< std::string, FT_Face > FaceMap;
+		typedef std::map< String, FT_Face > FaceMap;
 
 		FontSystem()
 		{
@@ -28,7 +28,7 @@ namespace Dojo
 			FT_Done_FreeType( freeType );
 		}
 
-		FT_Face getFace( const std::string& fileName )
+		FT_Face getFace( const String& fileName )
 		{
 			FaceMap::iterator where = faceMap.find( fileName );
 
@@ -44,7 +44,7 @@ namespace Dojo
 			FT_Stroker_New( freeType, &s );
 
 			FT_Stroker_Set( s, 
-				width * 64, 
+				(FT_Fixed)(width * 64.f), 
 				FT_STROKER_LINECAP_ROUND, 
 				FT_STROKER_LINEJOIN_ROUND, 
 				0 ); 
@@ -58,11 +58,11 @@ namespace Dojo
 
 		FT_Library freeType;
 
-		FT_Face _createFaceForFile( const std::string& fileName )
+		FT_Face _createFaceForFile( const String& fileName )
 		{
 			//create new face
 			FT_Face face;
-			int err = FT_New_Face( freeType, fileName.c_str(), 0, &face );
+			int err = FT_New_Face( freeType, fileName.UTF8().c_str(), 0, &face );
 			faceMap[ fileName ] = face;
 
 			DEBUG_ASSERT( err == 0 );

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "ResourceGroup.h"
+#include "dojo/ResourceGroup.h"
 
-#include "Platform.h"
+#include "dojo/Platform.h"
 
 using namespace Dojo;
 
@@ -224,14 +224,14 @@ ResourceGroup::~ResourceGroup()
 	unloadAll();
 }
 
-void ResourceGroup::loadSets( const std::string& subdirectory )
+void ResourceGroup::loadSets( const String& subdirectory )
 {
 	//load all the sets in the given folder
 	
 	DEBUG_ASSERT( subdirectory.size() );
 	
-	std::vector< std::string > paths;
-	std::string name, lastName;
+	std::vector< String > paths;
+	String name, lastName;
 	
 	FrameSet* currentSet = NULL;
 	
@@ -247,7 +247,7 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 			if( currentSet )
 				currentSet->load();
 			
-			std::string setPrefix = Utils::removeTag( name );
+			String setPrefix = Utils::removeTag( name );
 			
 			//create a new set
 			currentSet = new FrameSet( this, setPrefix );
@@ -281,15 +281,13 @@ void ResourceGroup::loadSets( const std::string& subdirectory )
 	}
 }
 
-void ResourceGroup::loadFonts( const std::string& subdirectory )
+void ResourceGroup::loadFonts( const String& subdirectory )
 {
 	//load all the sets in the given folder
 	DEBUG_ASSERT( subdirectory.size() );
 	
-	std::string name;
-	Font* font = NULL;
-	
-	std::vector<std::string> paths;
+	String name;
+	std::vector<String> paths;
 	
 	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
 	
@@ -302,10 +300,10 @@ void ResourceGroup::loadFonts( const std::string& subdirectory )
 	}
 }
 
-void ResourceGroup::loadMeshes( const std::string& subdirectory )
+void ResourceGroup::loadMeshes( const String& subdirectory )
 {
-	std::vector<std::string> paths;
-	std::string name;
+	std::vector<String> paths;
+	String name;
 	
 	Platform::getSingleton()->getFilePathsForType( "dms", subdirectory, paths );
 	
@@ -319,11 +317,11 @@ void ResourceGroup::loadMeshes( const std::string& subdirectory )
 	}
 }
 
-void ResourceGroup::loadSounds( const std::string& subdirectory )
+void ResourceGroup::loadSounds( const String& subdirectory )
 {
 	//ask all the sound files to the main bundle
-	std::vector< std::string > paths;
-	std::string name, lastName;
+	std::vector< String > paths;
+	String name, lastName;
 
 	SoundSet* currentSet = NULL;
 
@@ -336,7 +334,7 @@ void ResourceGroup::loadSounds( const std::string& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
-			std::string setPrefix = Utils::removeTag( name );
+			String setPrefix = Utils::removeTag( name );
 			
 			//create a new set
 			currentSet = new SoundSet( setPrefix );

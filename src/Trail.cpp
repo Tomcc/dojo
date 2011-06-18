@@ -1,13 +1,13 @@
 #include "stdafx.h"
 
-#include "Trail.h"
+#include "dojo/Trail.h"
 
-#include "FrameSet.h"
-#include "GameState.h"
+#include "dojo/FrameSet.h"
+#include "dojo/GameState.h"
 
 using namespace Dojo;
 
-Trail::Trail( GameState* l, const Vector& pos, const std::string& texName /* = */ ) :
+Trail::Trail( GameState* l, const Vector& pos, const String& texName /* = */ ) :
 Renderable( l, pos ),
 offset( Vector::UNIT_Y ),
 updateInterval( 1 ),
@@ -63,7 +63,7 @@ void Trail::retesselate( const Vector& startpoint )
 
 	mesh->vertex(Vector::ZERO);
 
-	for( int i = 0; i < points.size(); ++i )
+	for( uint i = 0; i < points.size(); ++i )
 	{
 		mesh->vertex( points.at(i) );
 		mesh->color( Color::WHITE );

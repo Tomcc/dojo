@@ -10,14 +10,14 @@
 #ifndef GameState_h__
 #define GameState_h__
 
-#include "dojo_common_header.h"
+#include "dojo/dojo_common_header.h"
 
-#include "Array.h"
+#include "dojo/Array.h"
 
-#include "ResourceGroup.h"
-#include "InputSystem.h"
-#include "StateInterface.h"
-#include "Renderable.h"
+#include "dojo/ResourceGroup.h"
+#include "dojo/InputSystem.h"
+#include "dojo/StateInterface.h"
+#include "dojo/Renderable.h"
 
 namespace Dojo {
 	

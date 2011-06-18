@@ -1,19 +1,18 @@
 #include "stdafx.h"
 
-#include "SoundBuffer.h"
-#include "SoundManager.h"
+#include "dojo/SoundBuffer.h"
+#include "dojo/SoundManager.h"
 
-#include "Utils.h"
+#include "dojo/Utils.h"
 
 
 using namespace Dojo;
-using namespace std;
 
 #define OGG_ENDIAN 0
 
 ///////////////////////////////////////
 
-SoundBuffer::SoundBuffer( ResourceGroup* creator, const string& path ) :
+SoundBuffer::SoundBuffer( ResourceGroup* creator, const String& path ) :
 Buffer( creator, path ),
 size(0),
 buffer( AL_NONE )

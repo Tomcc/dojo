@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "Viewport.h"
+#include "dojo/Viewport.h"
 
-#include "Render.h"
+#include "dojo/Render.h"
 
 using namespace Dojo;
 
@@ -30,7 +30,7 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right
 	farPlaneSide.z = zFar;
-	farPlaneSide.y = zFar * tan( Math::toRadian( VFOV*0.5 ) );
+	farPlaneSide.y = zFar * tan( Math::toRadian( VFOV*0.5f ) );
 	farPlaneSide.x = ((float)targetSize.x/(float)targetSize.y) * farPlaneSide.y;
 
 	localFrustumVertices[0] = Vector( farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );

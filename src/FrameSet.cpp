@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "FrameSet.h"
+#include "dojo/FrameSet.h"
 
-#include "ResourceGroup.h"
-#include "Platform.h"
+#include "dojo/ResourceGroup.h"
+#include "dojo/Platform.h"
 
 using namespace Dojo;
 
@@ -26,7 +26,7 @@ bool FrameSet::load()
 }
 
 
-bool FrameSet::loadAtlas( const std::string& infoFile, Texture* atlas )
+bool FrameSet::loadAtlas( const String& infoFile, Texture* atlas )
 {
 	if( isLoaded() )
 		return true;
