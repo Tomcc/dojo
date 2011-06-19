@@ -10,9 +10,8 @@ namespace Dojo
 	typedef unsigned short unichar;
 
 	//define the unicode stuff
-	typedef std::basic_fstream< unichar > FileStream;
-	typedef std::basic_istream< unichar > InputStream;
-	typedef std::basic_ostream< unichar > OutputStream;
+	typedef std::basic_ifstream< unichar > InputStream;
+	typedef std::basic_ofstream< unichar > OutputStream;
 
 	typedef std::basic_string< unichar > _ustring;
 
@@ -59,6 +58,18 @@ namespace Dojo
 			appendUTF8( utf8 );
 		}
 
+		String( int i, unichar paddingChar ) :
+		_ustring()
+		{
+			appendInt( i, paddingChar );
+		}
+
+		String( float f ) :
+		_ustring()
+		{
+			appendFloat( f );
+		}
+
 		///converts this string into ASCII. WARNING: fails silently on unsupported chars!!!
 		inline std::string ASCII() const 
 		{
@@ -92,9 +103,44 @@ namespace Dojo
 			//TODO do it better
 			appendASCII( utf8.c_str() );
 		}
+
+		void appendInt( int i, unichar paddingChar )
+		{
+			if( i == 0 )
+			{
+				if( paddingChar )
+				{
+					for( uint p = 0; p < 9; ++p )
+						*this += paddingChar;
+				}
+			}			
+
+			bool nonZeroFound = false;
+			unichar c;
+			for( uint div = 1000000000; div > 0; div /= 10 )
+			{
+				c = '0' + (i / div);
+
+				if( !nonZeroFound && c != '0' )
+					nonZeroFound = true;
+
+				if( nonZeroFound )	
+					*this += c;
+
+				else if( paddingChar )
+					*this += paddingChar;
+
+				i %= div;
+			}
+		}
+
+		inline void appendFloat( float f )
+		{
+			DEBUG_TODO;
+		}
 	};
 
-	inline String operator+ ( const String lhs, const String& rhs)
+	inline String operator+ ( const String& lhs, const String& rhs)
 	{
 		return String( lhs ).append( rhs );
 	}

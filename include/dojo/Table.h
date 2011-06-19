@@ -296,7 +296,7 @@ namespace Dojo
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
-		void serialize( OutputStream& buf, String indent = String::EMPTY );
+		void serialize( String& buf, String indent = String::EMPTY );
 
 		void deserialize( InputStream& buf );
 				

@@ -7,7 +7,7 @@ using namespace Dojo;
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
-void Table::serialize( OutputStream& buf, String indent )
+void Table::serialize( String& buf, String indent )
 {	
 	using namespace std;	
 
@@ -22,40 +22,48 @@ void Table::serialize( OutputStream& buf, String indent )
 		const Entry& e = itr->second;
 
 		if( indent.size() )
-			buf << indent;
+			buf += indent;
 
 		//write name and equal only if not anonymous and if not managed later
 		if( itr->first[0] != '_' )
-			buf << itr->first << " = ";
+			buf += itr->first + " = ";
 
 		switch( e.type )
 		{
 		case FT_NUMBER:
-			buf << *((float*)e.value);
+			buf.appendFloat( *((float*)e.value) );
 			break;
 		case FT_STRING:
-			buf  << '\"' << *((String*)e.value) << '\"';
+			buf += '\"' + *((String*)e.value) + '\"';
 			break;
 		case FT_VECTOR:
 			v = (Vector*)e.value;
-			buf  << '(' << v->x << ' ' << v->y << ' ' << v->z << ')';
+			buf += '(';
+			buf.appendFloat( v->x );
+			buf += ' ';
+			buf.appendFloat( v->y );
+			buf += ' ';
+			buf.appendFloat( v->z );
+			buf += ')';
+
 			break;
 		case FT_DATA:
 			data = (Data*)e.value;
-			buf << "#" << data->size << " ";
-			buf.write( (unichar*)data->ptr, data->size );
+			buf += '#' + Utils::toString( data->size ) + ' ';
+
+			buf.append( (unichar*)data->ptr, data->size/2 );
 
 			break;
 		case FT_TABLE:
-			buf << "{" << endl;
+			buf += String( "{\n" );
 			((Table*)e.value)->serialize( buf, indent );
 
-			buf << indent << "}";
+			buf += indent + '}';
 
 			break;
 		}
 
-		buf << endl;
+		buf += '\n';
 	}
 }
 

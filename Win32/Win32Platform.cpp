@@ -580,7 +580,7 @@ void Win32Platform::load( Table* dest, const String& absPath )
 	using namespace std;
 
 	String filename =  _getFilename(dest, absPath);
-	FileStream file( filename.c_str(), ios_base::in | ios_base::binary );
+	InputStream file( filename.c_str(), ios_base::in | ios_base::binary );
 
 	if( !file.is_open() )
 		return;
@@ -595,15 +595,27 @@ void Win32Platform::save( Table* src, const String& absPath )
 {
 	DEBUG_ASSERT( src );
 	using namespace std;
+
+	//HACK - OutputStream won't output unformatted text!
 	
-	FileStream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
+	/*OutputStream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
 
 	if( !file.is_open() )
-		return;
+		return;*/
 
-	src->serialize( file );
+	String buf;
 
-	file.close();
+	src->serialize( buf );
+
+	FILE* f = fopen( _getFilename(src, absPath).ASCII().c_str(), "wb" );
+
+	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );
+
+	fclose( f );
+
+	/*file.write( (const unichar*)buf.data(), buf.size()*sizeof(unichar) );
+
+	file.close();*/
 }
 
 void Win32Platform::openWebPage( const String& site )

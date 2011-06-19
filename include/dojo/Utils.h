@@ -305,40 +305,8 @@ namespace Dojo
 		}
 		
 		static String toString( uint i, char paddingChar = 0 )
-		{				
-			String res;
-			
-			if( i == 0 )
-			{
-				if( paddingChar )
-				{
-					for( uint p = 0; p < 9; ++p )
-						res += paddingChar;
-				}
-				
-				return res += '0';
-			}			
-					
-			bool nonZeroFound = false;
-			char c;
-			for( uint div = 1000000000; div > 0; div /= 10 )
-			{
-				c = '0' + (i / div);
-				
-				if( !nonZeroFound && c != '0' )
-					nonZeroFound = true;
-				
-				if( nonZeroFound )	
-					res += c;
-				
-				else if( paddingChar )
-					res += paddingChar;
-				
-				i %= div;
-			}
-			
-			
-			return res;
+		{		
+			return String( i, paddingChar );
 		}
 		
 		inline static String getFileExtension( const String& path )
