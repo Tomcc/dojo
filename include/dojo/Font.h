@@ -44,6 +44,7 @@ namespace Dojo
 			
 			uint pixelWidth;
 			float widthRatio, heightRatio; //the ratio of the cell that is occupied
+			float advance;
 
 			float bearingU, bearingV;
 

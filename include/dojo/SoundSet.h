@@ -32,7 +32,7 @@ namespace Dojo
 			if( i < 0 )
 			{
 				if( buffers.size() > 1 )
-					i = Math::rangeRandom( 0, buffers.size() );
+					i = (int)Math::rangeRandom( 0, (float)buffers.size() );
 				else 
 					i = 0;
 			}

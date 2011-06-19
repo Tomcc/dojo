@@ -26,11 +26,6 @@ float Math::rangeRandom( float min, float max )
 	return ((float)rand()/(float)RAND_MAX)*(max-min) + min;
 }
 
-int Math::rangeRandom( int min, int max )
-{
-	return (int)((float)rand()/(float)RAND_MAX) * (max-min) + min;
-}
-
 Vector Math::randomVector( const Vector& min, const Vector& max )
 {
 	DEBUG_ASSERT( min.x < max.x );

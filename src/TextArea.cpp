@@ -33,18 +33,8 @@ pixelScale( 1,1 )
 	setRequiresAlpha( true );
 
 	//allocate buffers			
-	mesh = new Mesh();
-	mesh->setDynamic( true );
-	mesh->setTriangleMode( Mesh::TM_LIST );
-	mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_1 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_2 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_3 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_4 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_5 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_6 );
-	mesh->setVertexFieldEnabled( Mesh::VF_UV_7 );
+	mesh = _createMesh();
+	freeLayers.add( this ); //add itself to the free layers
 
 	characters = (Font::Character**)malloc( sizeof( void* ) * maxChars );
 
@@ -61,6 +51,8 @@ TextArea::~TextArea()
 		mesh->unload();				
 		delete mesh;
 	}
+
+	_destroyLayers();
 
 	free( characters );
 }
@@ -178,7 +170,6 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 
 	Font::Character* rep, *lastRep = NULL;
 	Vector newSize(0,0);
-	int set;
 	bool doKerning = font->isKerningEnabled();
 	uint lastLineVertexID = 0;
 	uint idx = 0;
@@ -186,11 +177,9 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	cursorPosition.x = 0;
 	cursorPosition.y = 0;
 
-	//clear textures
-	textures.clear();
+	//clear layers
+	_hideLayers();
 
-	//preallocate vertices
-	mesh->begin( currentCharIdx * 4 );
 	for( uint i = 0; i < currentCharIdx; ++i )
 	{
 		rep = characters[i];
@@ -221,7 +210,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 		}
 		else	//real character
 		{
-			set = _findTextureSlot( rep->getTexture() );
+			Mesh* layer = _getLayer( rep->getTexture() )->getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;
@@ -229,31 +218,26 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 			if( doKerning && lastRep )
 				x += font->getKerning( rep, lastRep ); 
 
-			//assign vertex positions					
-			//and uv coordinates
-			mesh->vertex( x, y );
-			mesh->setAllUVs(0,0);
-			mesh->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight, set );
+			idx = layer->getVertexCount();
 
- 			mesh->vertex( x + rep->widthRatio, y );
- 			mesh->setAllUVs(0,0);
- 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight, set);
+			//assign vertex positions and uv coordinates
+			layer->vertex( x, y );
+			layer->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight );
+
+ 			layer->vertex( x + rep->widthRatio, y );
+ 			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight );
  
- 			mesh->vertex( x, y + rep->heightRatio );
- 			mesh->setAllUVs(0,0);
- 			mesh->uv( rep->uvPos.x, rep->uvPos.y, set );
+ 			layer->vertex( x, y + rep->heightRatio );
+ 			layer->uv( rep->uvPos.x, rep->uvPos.y );
  
- 			mesh->vertex( x + rep->widthRatio, y + rep->heightRatio );
- 			mesh->setAllUVs(0,0);
- 			mesh->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y, set );
+ 			layer->vertex( x + rep->widthRatio, y + rep->heightRatio );
+ 			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
 
-			mesh->triangle( idx, idx+2, idx+1 );
-			mesh->triangle( idx+1, idx+3, idx+2 );
-
-			idx += 4;
+			layer->triangle( idx, idx+1, idx+2 );
+			layer->triangle( idx+1, idx+3, idx+2 );
 
 			//now move to the next character
-			cursorPosition.x += rep->widthRatio + charSpacing;
+			cursorPosition.x += rep->advance + charSpacing;
 
 			lastRep = rep;
 		}	
@@ -272,8 +256,8 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	newSize.y = -cursorPosition.y+1 * screenSize.y * 1.5f;
 	setSize(newSize);
 
-	//push the mesh on the GPU
-	mesh->end();
+	//push any active layer on the GPU
+	_endLayers();
 
 	changed = false;
 

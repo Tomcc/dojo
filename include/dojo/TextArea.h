@@ -73,6 +73,8 @@ namespace Dojo
 		
 	protected:
 		
+		typedef Array< Renderable* > LayerList;
+
 		String content;
 		
 		String fontName;
@@ -89,7 +91,9 @@ namespace Dojo
 		float *vertexBuffer, *uvBuffer;		
 		uint currentCharIdx;
 		
-		Vector cursorPosition, screenSize;	
+		Vector cursorPosition, screenSize, lastScale;
+
+		LayerList busyLayers, freeLayers;
 
 		inline void _centerLastLine( uint startingAt, float size )
 		{
@@ -102,21 +106,122 @@ namespace Dojo
 				*(mesh->_getVertex( i )) -= halfWidth;		
 		}
 
-		inline uint _findTextureSlot( Texture* tex ) 
+		///create a mesh to be used for text
+		inline Mesh* _createMesh()
+		{
+			Mesh * mesh = new Mesh();
+			mesh->setDynamic( true );
+			mesh->setTriangleMode( Mesh::TM_LIST );
+			mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+			mesh->setVertexFieldEnabled( Mesh::VF_UV );
+
+			return mesh;
+		}
+
+		///create a Layer that uses the given Page
+		inline Renderable* _createLayer( Texture* t )
+		{
+			DEBUG_ASSERT( t );
+
+			Renderable* r = new Renderable( gameState, Vector::ZERO );
+			r->scale = scale;
+			r->setMesh( _createMesh() );
+			r->setTexture( t );
+			r->setVisible( false );
+			r->setActive( false );
+
+			addChild( r, getLayer() );
+			freeLayers.add( r );
+
+			return r;
+		}
+
+		///get a layer for this page
+		inline Renderable* _enableLayer( Texture* tex )
+		{
+			if( freeLayers.size() == 0 )
+				_createLayer( tex );
+
+			Renderable* r = freeLayers.top();
+			freeLayers.pop();
+
+			r->setVisible( true );
+			r->setActive( true );
+			r->setTexture( tex );
+
+			r->getMesh()->begin( currentCharIdx * 2 );
+
+			busyLayers.add( r );
+
+			return r;
+		}
+
+		///get the layer assigned to this texture
+		inline Renderable* _getLayer( Texture* tex )
 		{
 			DEBUG_ASSERT( tex );
 
-			int set = textures.getElementIndex( tex );
-
-			if( set == -1 )
+			//find this layer in the already assigned, or get new
+			for( uint i = 0; i < busyLayers.size(); ++i )
 			{
-				DEBUG_ASSERT( textures.size() < MESH_MAX_TEXTURES );
-
-				set = textures.size();
-				textures.add( tex );
+				if( busyLayers[i]->getTexture() == tex )
+					return busyLayers[i];
 			}
 
-			return set;
+			//does not exist, hit a free one
+			return _enableLayer( tex );
+		}
+
+		///finishes editing the layers
+		inline void _endLayers()
+		{
+			for( uint i = 0; i < busyLayers.size(); ++i )
+				busyLayers[i]->getMesh()->end();
+
+			//also end this
+			if( mesh->isEditing() )
+				mesh->end();
+		}
+
+		///Free any created layer			
+		inline void _hideLayers()
+		{
+			for( uint i = 0; i < busyLayers.size(); ++i )
+			{
+				Renderable* l = busyLayers[i];
+
+				l->setVisible( false );
+				l->setActive( false );
+
+				freeLayers.add( l );
+			}
+
+			busyLayers.clear();
+		}
+
+		inline void _destroyLayer( Renderable* r )
+		{
+			DEBUG_ASSERT( r );
+
+			if( r == this )  //do not delete the TA itself, even if it is a layer
+				return;
+
+			delete r->getMesh();
+
+			removeChild( r );
+			busyLayers.remove( r );
+			freeLayers.remove( r );
+
+			delete r;
+		}
+
+		inline void _destroyLayers()
+		{
+			for( uint i = 0; i < busyLayers.size(); ++i )
+				_destroyLayer( busyLayers[i] );
+
+			for( uint i = 0; i < freeLayers.size(); ++i )
+				_destroyLayer( freeLayers[i] );
 		}
 	};
 }
