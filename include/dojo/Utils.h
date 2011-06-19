@@ -125,7 +125,7 @@ namespace Dojo
 			return num;
 		}
 		
-		inline static void skipWhiteSpace( char*& buf, const char* eof )
+		inline static void skipWhiteSpace( unichar*& buf, const unichar* eof )
 		{
 			DEBUG_ASSERT( buf && eof );
 			
@@ -133,7 +133,7 @@ namespace Dojo
 				++buf;
 		}
 		
-		inline static void skipToken( char*& buf, const char* eof )
+		inline static void skipToken( unichar*& buf, const unichar* eof )
 		{
 			DEBUG_ASSERT( buf && eof );
 			
@@ -142,7 +142,7 @@ namespace Dojo
 		}
 		
 		///extracts an uint from a stream until a delimiter is found
-		static uint toInt( char*& buf, const char* eof )
+		static uint toInt( unichar*& buf, const unichar* eof )
 		{		
 			DEBUG_ASSERT( buf && eof );
 			
@@ -163,7 +163,7 @@ namespace Dojo
 		}
 		
 		///extracts a float from a stream
-		static float toFloat( char*& buf, const char* eof )
+		static float toFloat( unichar*& buf, const unichar* eof )
 		{
 			DEBUG_ASSERT( buf && eof );
 			
@@ -178,7 +178,7 @@ namespace Dojo
 						
 			skipWhiteSpace( buf, eof );
 			
-			char c;
+			unichar c;
 			float sign = 1;
 			float count = 0;
 			float res = 0;
@@ -246,28 +246,20 @@ namespace Dojo
 			
 			return sign * res;
 		}
-		
-		static String toString( char*& buf, const char* eof )
-		{
-			DEBUG_ASSERT( buf && eof );
-			
-			skipWhiteSpace( buf, eof );
-			
-			String res;
-			while( !isWhiteSpace( *buf ) && buf < eof ) 
-				res += *buf++;
-			
-			return res;
+
+		static float toFloat( const String& s )
+		{	
+			unichar* buf = (unichar*)s.c_str();
+			unichar* eof = buf + s.size();	
+
+			return toFloat( buf, eof );
 		}
-		
+				
 		static char* findFirstLineEnd( char* c, const char* eof )
 		{		
 			DEBUG_ASSERT( c && eof );
 			
-			for( ; *c != '\n' && c < eof; ++c )
-			{
-				
-			}
+			for( ; *c != '\n' && c < eof; ++c );
 			
 			return c;
 		}
@@ -297,14 +289,14 @@ namespace Dojo
 			return true;
 		}
 		
-		static void nextToken( char*& buf, const char* eof )
+		static void nextToken( unichar*& buf, const unichar* eof )
 		{			
 			skipWhiteSpace( buf, eof );
 			skipToken( buf, eof );
 			skipWhiteSpace( buf, eof );
 		}
 		
-		static String toString( uint i, char paddingChar = 0 )
+		static String toString( uint i, unichar paddingChar = 0 )
 		{		
 			return String( i, paddingChar );
 		}

@@ -10,8 +10,7 @@ namespace Dojo
 	typedef unsigned short unichar;
 
 	//define the unicode stuff
-	typedef std::basic_ifstream< unichar > InputStream;
-	typedef std::basic_ofstream< unichar > OutputStream;
+	typedef std::basic_stringstream< unichar > StringStream;
 
 	typedef std::basic_string< unichar > _ustring;
 
@@ -58,7 +57,7 @@ namespace Dojo
 			appendUTF8( utf8 );
 		}
 
-		String( int i, unichar paddingChar ) :
+		String( int i, unichar paddingChar = 0 ) :
 		_ustring()
 		{
 			appendInt( i, paddingChar );
@@ -104,39 +103,34 @@ namespace Dojo
 			appendASCII( utf8.c_str() );
 		}
 
-		void appendInt( int i, unichar paddingChar )
+		void appendInt( int i, unichar paddingChar = 0 )
 		{
-			if( i == 0 )
-			{
-				if( paddingChar )
-				{
-					for( uint p = 0; p < 9; ++p )
-						*this += paddingChar;
-				}
-			}			
-
-			bool nonZeroFound = false;
+			uint div = 1000000000;
 			unichar c;
-			for( uint div = 1000000000; div > 0; div /= 10 )
+
+			for( ; div > 0; i %= div, div /= 10 )
 			{
 				c = '0' + (i / div);
 
-				if( !nonZeroFound && c != '0' )
-					nonZeroFound = true;
-
-				if( nonZeroFound )	
-					*this += c;
-
+				if( c != '0' )	break;
 				else if( paddingChar )
 					*this += paddingChar;
-
-				i %= div;
 			}
+
+			if( i == 0 )
+				*this += '0';
+
+			for( ; div > 0; i %= div, div /= 10 )
+				*this += '0' + (i / div);
 		}
 
 		inline void appendFloat( float f )
 		{
-			DEBUG_TODO;
+			//HACK
+			StringStream str;
+			str << f;
+
+			append( str.str() );
 		}
 	};
 

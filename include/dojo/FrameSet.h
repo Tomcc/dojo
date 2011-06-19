@@ -15,6 +15,7 @@
 #include "dojo/Array.h"
 #include "dojo/Math.h"
 #include "dojo/Texture.h"
+#include "dojo/Table.h"
 
 namespace Dojo 
 {
@@ -39,7 +40,8 @@ namespace Dojo
 		
 		virtual bool load();
 		
-		bool loadAtlas( const String& infoFile, Texture* atlas = NULL );
+		///loads an atlas table
+		bool loadAtlas( Table* table, ResourceGroup* atlasTextureProvider );
 		
 		virtual void unload() //delete all of the content
 		{

@@ -410,6 +410,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\dojo\StringReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\dojo\Table.h"
 				>
 			</File>

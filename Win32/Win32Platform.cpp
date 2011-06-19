@@ -579,16 +579,26 @@ void Win32Platform::load( Table* dest, const String& absPath )
 	DEBUG_ASSERT( dest );
 	using namespace std;
 
+	String buf;
 	String filename =  _getFilename(dest, absPath);
-	InputStream file( filename.c_str(), ios_base::in | ios_base::binary );
 
-	if( !file.is_open() )
+	FILE* file = fopen( filename.ASCII().c_str(), "rb" );
+	if( !file )
 		return;
 
-	dest->setName( Utils::getFileName( filename ) );
-	dest->deserialize( file );
+	fseek (file, 0, SEEK_END);
+	uint uchars = ftell (file)/ sizeof( unichar );
 
-	file.close();
+	fseek (file, 0, SEEK_SET );
+
+	buf.resize( uchars, 0 ); //reserve actual bytes
+
+	fread( (void*)buf.data(), sizeof( unichar ), uchars, file );
+
+	fclose( file );
+	
+	dest->setName( Utils::getFileName( filename ) );
+	dest->deserialize( StringReader( buf ) );
 }
 
 void Win32Platform::save( Table* src, const String& absPath )
@@ -597,25 +607,18 @@ void Win32Platform::save( Table* src, const String& absPath )
 	using namespace std;
 
 	//HACK - OutputStream won't output unformatted text!
-	
-	/*OutputStream file( _getFilename(src, absPath).c_str(), ios_base::out | ios_base::trunc | ios_base::binary );
-
-	if( !file.is_open() )
-		return;*/
-
 	String buf;
 
 	src->serialize( buf );
 
 	FILE* f = fopen( _getFilename(src, absPath).ASCII().c_str(), "wb" );
 
+	if( !f )
+		return;
+
 	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );
 
 	fclose( f );
-
-	/*file.write( (const unichar*)buf.data(), buf.size()*sizeof(unichar) );
-
-	file.close();*/
 }
 
 void Win32Platform::openWebPage( const String& site )

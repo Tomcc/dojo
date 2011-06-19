@@ -271,13 +271,19 @@ void ResourceGroup::loadSets( const String& subdirectory )
 	Platform::getSingleton()->getFilePathsForType( "atlasinfo", subdirectory, paths );
 	
 	//now load atlases!		
+	Table def;
 	for(uint  i = 0; i < paths.size(); ++i)
 	{
 		name = Utils::getFileName( paths[i] ); 
+
+		Platform::getSingleton()->load( &def, paths[i] );
 			
 		currentSet = new FrameSet( this, name );
-		if( currentSet->loadAtlas( paths[i] ) )
+
+		if( currentSet->loadAtlas( &def, this ) )
 			addFrameSet( currentSet, name );
+
+		def.clear();
 	}
 }
 

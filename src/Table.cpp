@@ -101,7 +101,17 @@ inline bool isName( unichar c )
 	return isNameStarter(c) || isNumber(c) || c == '_';
 }
 
-void Table::deserialize( InputStream& buf )
+inline bool isValidFloat( unichar c )
+{
+	return isNumber( c ) || c == '.';
+}
+
+inline bool isWhiteSpace( unichar c )
+{
+	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+}
+
+void Table::deserialize( StringReader& buf )
 {
 	ParseState state = PS_TABLE;
 	ParseTarget target = PT_UNDEFINED;
@@ -117,14 +127,9 @@ void Table::deserialize( InputStream& buf )
 
 	//feed one char at a time and do things
 	unichar c;
-	char* bytes = (char*)&c;
 	while( !buf.eof() && state != PS_END && state != PS_ERROR )
 	{
-		if( buf.tellg() % 2 == 1 ) //something did read only the first byte of something
-			buf.get();
-
-		bytes[0] = (char)buf.get();
-		bytes[1] = (char)buf.get();
+		c = buf.get();
 
 		switch( state )
 		{
@@ -166,8 +171,9 @@ void Table::deserialize( InputStream& buf )
 		switch( target )
 		{
 		case PT_NUMBER:
-			buf.putback(c);
-			buf >> number;
+			buf.back();
+
+			number = buf.readFloat();
 
 			setNumber( curName, number );
 			break;
@@ -176,9 +182,7 @@ void Table::deserialize( InputStream& buf )
 			str.clear();
 			while( true )
 			{
-				bytes[0] = (char)buf.get();
-				bytes[1] = (char)buf.get();
-
+				c = buf.get();
 				if( c == '"' )	break;
 				str += c;
 			}
@@ -187,26 +191,27 @@ void Table::deserialize( InputStream& buf )
 			break;
 
 		case PT_VECTOR:
-			buf >> vec.x;
-			buf >> vec.y;
-			buf >> vec.z;
+			vec.x = buf.readFloat();
+			vec.y = buf.readFloat();
+			vec.z = buf.readFloat();
 
 			setVector( curName, vec );
 			break;
 
 		case PT_DATA:
-			buf >> data.size;
+			data.size = (int)buf.readFloat();
 			data.ptr = malloc( data.size );
 
 			//skip space
 			buf.get();
 
-			buf.read( (unichar*)data.ptr, data.size );
+			buf.readBytes( data.ptr, data.size );
 
 			setData( curName, data.ptr, data.size );
 			break;
 
 		case PT_CHILD:
+
 			table = createTable(curName);
 			table->deserialize( buf );
 

@@ -7,6 +7,8 @@
 #include "dojo/Vector.h"
 #include "dojo/Array.h"
 #include "dojo/Utils.h"
+#include "dojo/StringReader.h"
+#include "dojo/String.h"
 
 namespace Dojo
 {
@@ -107,20 +109,21 @@ namespace Dojo
 
 		}
 		
-		///legge la tabella dal formato standard su stringa
-		Table( InputStream& buf )
-		{	
-			deserialize( buf );
-		}		
-		
 		~Table()
 		{
 			clear();
 		}
 		
 		inline Table* createTable( const String& key )
-		{			
-			Table* t = new Table( key );
+		{	
+			String name;
+
+			if( key.size() == 0 )
+				name = _getAutoName();
+			else
+				name = key;
+
+			Table* t = new Table( name );
 			
 			setTable( t );
 			
@@ -283,7 +286,14 @@ namespace Dojo
 				return *( (Data*)map[ key ].value );
 			else
 				return EMPTY_DATA;
-		}		
+		}	
+
+		inline String autoMember( uint i )
+		{
+			DEBUG_ASSERT( i < getAutoMembers() );
+
+			return '_' + String( (int)i );
+		}
 
 		inline const Iterator getIterator()
 		{
@@ -298,7 +308,7 @@ namespace Dojo
 		///scrive la tabella in un formato standard su stringa che inizia a pos
 		void serialize( String& buf, String indent = String::EMPTY );
 
-		void deserialize( InputStream& buf );
+		void deserialize( StringReader& buf );
 				
 	protected:
 		

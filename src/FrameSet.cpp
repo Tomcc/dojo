@@ -26,56 +26,41 @@ bool FrameSet::load()
 }
 
 
-bool FrameSet::loadAtlas( const String& infoFile, Texture* atlas )
+bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 {
+	DEBUG_ASSERT( data );
+	DEBUG_ASSERT( atlasTextureProvider );
+
 	if( isLoaded() )
 		return true;
 	
-	//can obtain the atlas?
-	if( !creator && !atlas )
-		return NULL;
-	
-	char* data; 
-	uint size = Platform::getSingleton()->loadFileContent( data, infoFile );
-	
-	if( !data )
-		return NULL;
-	
-	char* buf = data;
-	char* end = data + size;
-		
-	//retrieve the correctly named texture
-	if( !atlas )
-	{		
-		FrameSet* atlasSet = creator->getFrameSet( Utils::toString( buf , end ) );
-		//check atlas existence
-		if( !atlasSet || atlasSet->getFrameNumber() == 0 )
-			return false;
-		
-		atlas = atlasSet->getFrame(0);
-	}	
+	//get atlas texture
+	FrameSet* atlasSet = atlasTextureProvider->getFrameSet( data->getString( "texture" ) );	
+
+	DEBUG_ASSERT( atlasSet );
+
+	Texture* atlas = atlasSet->getFrame(0);
+
+	Table* tiles = data->getTable( "tiles" );
+
 	uint x, y, sx, sy;
-	Texture* tex;
-	while( buf < end )
+	for( uint i = 0; i < tiles->getAutoMembers(); ++i )
 	{
-		//for each 4 ints extracted, create a new tile texture
-		x = Utils::toInt( buf, end );
-		y = Utils::toInt( buf, end );
-		
-		sx = Utils::toInt( buf, end );
-		sy = Utils::toInt( buf, end );
-		
-		tex = new Texture( creator, "none" );
-		
-		if( tex->loadFromAtlas( atlas, x,y, sx,sy ) )			
-			addTexture( tex, true );
-		
+		Table* tile = tiles->getTable( tiles->autoMember(i) );
+
+		x = tile->getInt( tile->autoMember(0) );
+		y = tile->getInt( tile->autoMember(1) );
+		sx = tile->getInt( tile->autoMember(2) );
+		sy = tile->getInt( tile->autoMember(3) );
+
+		Texture* tiletex = new Texture( NULL, String::EMPTY );
+
+		if( tiletex->loadFromAtlas( atlas, x,y, sx,sy ) )			
+			addTexture( tiletex, true );
 	}
-	
+		
 	//loaded at least one?
 	loaded = frames.size() > 0;
-	
-	free( data );
 	
 	return true;
 }
