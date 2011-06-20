@@ -33,7 +33,7 @@
 #endif
 
 
-#ifndef _DEBUG
+#if !defined( _DEBUG ) && !defined( NDEBUG )
 #define NDEBUG  //to be sure!
 #endif
 

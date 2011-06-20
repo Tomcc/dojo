@@ -19,7 +19,7 @@ namespace Dojo
 	{
 	public:
 
-		Win32Platform();
+		Win32Platform( const Table& config );
 		virtual ~Win32Platform();
 
 		virtual void initialise();

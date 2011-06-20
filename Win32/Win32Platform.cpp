@@ -66,8 +66,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	return DefWindowProc( hwnd, message, wparam, lparam );
 }
 
-Win32Platform::Win32Platform() :
-Platform(),
+Win32Platform::Win32Platform( const Table& config ) :
+Platform( config ),
 dragging( false ),
 cursorPos( 0,0 ),
 frameStart( 1 ),
@@ -162,7 +162,7 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	//int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
 
 	int chosenPixelFormat;
-	ChooseAntiAliasingPixelFormat( chosenPixelFormat, 4 );
+	ChooseAntiAliasingPixelFormat( chosenPixelFormat, config.getInt( "MSAA" ));
 
 	if( chosenPixelFormat == 0 )
 		return false;
@@ -205,6 +205,8 @@ void Win32Platform::_initialiseOIS()
 		mouse->getMouseState().width = width;
 		mouse->getMouseState().height = height;
 	}
+
+	setVSync( !config.getBool( "disable_vsync" ) );		
 }
 
 void Win32Platform::initialise()

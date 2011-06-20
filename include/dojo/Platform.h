@@ -4,6 +4,7 @@
 #include "dojo/dojo_common_header.h"
 
 #include "dojo/BaseObject.h"
+#include "dojo/Table.h"
 
 namespace Dojo 
 {
@@ -18,7 +19,7 @@ namespace Dojo
 	{
 	public:
 
-		static Platform* createNativePlatform();
+		static Platform* createNativePlatform( const Table& config = Table::EMPTY_TABLE );
 
 		static void shutdownPlatform();
 
@@ -29,11 +30,12 @@ namespace Dojo
 			return singleton;
 		}
 	
-		Platform() :
+		Platform( const Table& configTable ) :
 		game( NULL ),
 		render( NULL ),
 		sound( NULL ),
 		input( NULL ),
+		config( configTable ),
 		running( true ),
 		realFrameTime( 0 )
 		{
@@ -89,6 +91,8 @@ namespace Dojo
 	protected:
 
 		static Platform* singleton;
+
+		Table config;
 
 		bool running;
 
