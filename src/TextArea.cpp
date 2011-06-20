@@ -126,7 +126,7 @@ void TextArea::addLineFeededText( const String& text )
 
 void TextArea::addText( uint n, char paddingChar, uint digits )
 {
-	String number = Utils::toString( n );
+	String number( n );
 
 	//if not specified, budget is max char number
 	if( digits == 0 )

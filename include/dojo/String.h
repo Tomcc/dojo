@@ -63,6 +63,12 @@ namespace Dojo
 			appendInt( i, paddingChar );
 		}
 
+		String( uint i, unichar paddingChar = 0 ) :
+		_ustring()
+		{
+			appendInt( i, paddingChar );
+		}
+
 		String( float f ) :
 		_ustring()
 		{
@@ -132,6 +138,33 @@ namespace Dojo
 
 			append( str.str() );
 		}
+
+		///appends data to this string. It has to be 2 bytes aligned!
+		inline void appendRaw( void* data, uint sz )
+		{
+			DEBUG_ASSERT( sz % sizeof( unichar ) == 0 );
+
+			append( (unichar*)data, sz / sizeof( unichar ) );
+		}
+		
+#ifdef __OBJC__
+		inline static NSString* toNSString()
+		{			
+			return [[NSString alloc] initWithCharacters: data() length: size() ];
+		}
+
+		inline static void appendNSString( NSString* nss )
+		{
+			DEBUG_ASSERT( s );
+
+			uint sz = size();
+			resize( sz + [nss length] );
+			
+			///copy the whole string verbatim
+			[nss getCharacters: data() + sz withRange: NSMakeRange( 0, [nss length] )];
+		}
+#endif
+
 	};
 
 	inline String operator+ ( const String& lhs, const String& rhs)

@@ -23,44 +23,7 @@ namespace Dojo
 	class Utils
 	{
 	public:
-		
-#ifdef __OBJC__
-		static NSString* toNSString( const String& str )
-		{			
-			size_t sz = str.size();
-			unichar* unic = (unichar*)malloc( sz * sizeof( unichar ) );
-			for( size_t i = 0; i < sz; ++i )
-				unic[i] = (unichar)( str.at(i) );
-			
-			NSString* nstring = [[NSString alloc] initWithCharacters:(const unichar*)unic length:(NSUInteger)sz];
-			
-			free( unic );
-			
-			return nstring;			
-		}
-		static 
-		String toSTDString( NSString* s )
-		{
-			DEBUG_ASSERT( s );
-			
-			String str;
-			
-			unichar c;
-			for( uint i = 0; i < [s length]; ++i )
-			{
-				c = [s characterAtIndex:i];
-				str += (char)c;
-			}
-			
-			return str;
-		}
-		
-		/*static inline UIColor* toUIColor( const Color& c )
-		{
-			return [UIColor colorWithRed:c.r green:c.g blue:c.b alpha:c.a];
-		}*/
-#endif
-		
+				
 		static int getLastOf( const String& str, unichar c )
 		{			
 			for( int i = (int)str.size()-1; i >= 0; --i )
@@ -72,42 +35,11 @@ namespace Dojo
 			return -1;
 		}
 		
-		///leaves only the filename in the string
-		static String getFileName( const String& str )
-		{			
-			size_t end = getLastOf( str, '.' );
-			size_t start = getLastOf( str, '/' )+1;
-			
-			if( end < start ) //there isn't a file execption
-				end = str.size();
-			
-			String res;
-			for( size_t i = start; i < end; ++i )
-				res += str.at(i);
-			
-			return res;
-		}
-
-		static String getDirectory( const String& str )
-		{
-			size_t end = getLastOf( str, '/' );
-
-			if( end == -1 )
-				return String::EMPTY;
-
-			return str.substr( 0, end );
-		}
-		
 		inline static bool isNumber( unichar c )
 		{
 			return c >= '0' && c <= '9';
 		}
-		
-		inline static bool isWhiteSpace( unichar c )
-		{
-			return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-		}
-		
+
 		static uint toInt( const String& str, uint startPos = 0 )
 		{
 			uint num = 0; 
@@ -124,183 +56,7 @@ namespace Dojo
 			}
 			return num;
 		}
-		
-		inline static void skipWhiteSpace( unichar*& buf, const unichar* eof )
-		{
-			DEBUG_ASSERT( buf && eof );
-			
-			while( buf < eof && isWhiteSpace( *buf ) )
-				++buf;
-		}
-		
-		inline static void skipToken( unichar*& buf, const unichar* eof )
-		{
-			DEBUG_ASSERT( buf && eof );
-			
-			while( !isWhiteSpace(*buf) && buf < eof )
-				++buf;
-		}
-		
-		///extracts an uint from a stream until a delimiter is found
-		static uint toInt( unichar*& buf, const unichar* eof )
-		{		
-			DEBUG_ASSERT( buf && eof );
-			
-			skipWhiteSpace( buf, eof );
-			
-			uint num = 0; 						
-			while( isNumber( *buf ) && buf < eof )
-			{
-				num *= 10;
-				num += *buf-'0';	
 				
-				++buf;
-			}
-			
-			skipWhiteSpace( buf, eof );
-			
-			return num;
-		}
-		
-		///extracts a float from a stream
-		static float toFloat( unichar*& buf, const unichar* eof )
-		{
-			DEBUG_ASSERT( buf && eof );
-			
-			enum ParseState
-			{
-				PS_SIGN,
-				PS_INT,
-				PS_MANTISSA,
-				PS_END,
-				PS_ERROR
-			} state = PS_SIGN;
-						
-			skipWhiteSpace( buf, eof );
-			
-			unichar c;
-			float sign = 1;
-			float count = 0;
-			float res = 0;
-			while( state != PS_END && buf < eof )
-			{
-				c = *buf++;
-				
-				if( state == PS_SIGN )
-				{
-					if( c == '-' )		
-						sign = -1;
-					else if( isNumber( c ) )
-					{
-						--buf;
-						state = PS_INT;
-					}
-					else if( !isWhiteSpace(c) )
-						state = PS_ERROR;
-				}
-				else if( state == PS_INT )
-				{
-					if( c == '.' )
-					{						
-						state = PS_MANTISSA;
-						count = 9 ;
-					}
-					
-					else if( isNumber( c ) )
-					{
-						res *= 10;
-						res += c - '0';
-					}
-					else if( isWhiteSpace( c ) && count > 0 )
-						state = PS_END;
-					else //not enough digits
-						state = PS_ERROR;	
-					
-					++count;
-				}
-				else if( state == PS_MANTISSA )
-				{
-					if( isWhiteSpace(c) )
-					{
-						if( count > 0 )
-							state = PS_END;
-						else 
-							state = PS_ERROR;
-					}
-					else if( isNumber(c) )
-					{
-						res += (float)(c-'0') / count;
-						count *= 10.f;
-					}
-					else 
-						state = PS_ERROR;
-				}
-				else if( state == PS_ERROR )
-				{		
-					res = 0; //return 0
-					state = PS_END;
-				}			
-			}
-			
-			skipWhiteSpace( buf, eof );
-			
-			return sign * res;
-		}
-
-		static float toFloat( const String& s )
-		{	
-			unichar* buf = (unichar*)s.c_str();
-			unichar* eof = buf + s.size();	
-
-			return toFloat( buf, eof );
-		}
-				
-		static char* findFirstLineEnd( char* c, const char* eof )
-		{		
-			DEBUG_ASSERT( c && eof );
-			
-			for( ; *c != '\n' && c < eof; ++c );
-			
-			return c;
-		}
-		
-		static uint streamsEqual( const char* s1, const char* s2 )
-		{
-			DEBUG_ASSERT( s1 && s2 );
-			
-			uint matches = 0;
-			
-			for( ; *s1 == *s2; ++s1, ++s2 )				
-				++matches;
-			
-			return matches;
-		}
-		
-		//checks if the string starting at "buf" contains "str"
-		static bool tokenEquals( const char* buf, const char* str )
-		{			
-			DEBUG_ASSERT( buf && str );
-			
-			for( uint i = 0; str[i] != '\0'; ++i )
-			{				
-				if( buf[i] != str[i] )
-					return false;
-			}
-			return true;
-		}
-		
-		static void nextToken( unichar*& buf, const unichar* eof )
-		{			
-			skipWhiteSpace( buf, eof );
-			skipToken( buf, eof );
-			skipWhiteSpace( buf, eof );
-		}
-		
-		static String toString( uint i, unichar paddingChar = 0 )
-		{		
-			return String( i, paddingChar );
-		}
-		
 		inline static String getFileExtension( const String& path )
 		{
 			String str;
@@ -310,6 +66,31 @@ namespace Dojo
 				str = path.substr( dot + 1 );
 			
 			return str;
+		}
+
+		static String getFileName( const String& str )
+		{			
+			size_t end = getLastOf( str, '.' );
+			size_t start = getLastOf( str, '/' )+1;
+
+			if( end < start ) //there isn't a file execption
+				end = str.size();
+
+			String res;
+			for( size_t i = start; i < end; ++i )
+				res += str.at(i);
+
+			return res;
+		}
+
+		inline static String getDirectory( const String& str )
+		{
+			size_t end = getLastOf( str, '/' );
+
+			if( end == -1 )
+				return String::EMPTY;
+
+			return str.substr( 0, end );
 		}
 
 		inline static bool hasExtension( const String& ext, const String& nameOrPath )

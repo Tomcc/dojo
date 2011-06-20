@@ -83,6 +83,26 @@ Win32Platform::~Win32Platform()
 
 }
 
+HWND Win32Platform::_createDummyAAWindow()
+{
+	return DEBUG_TODO;
+}
+
+void Win32Platform::_destroyDummyAAWindow( HWND w )
+{
+	DEBUG_TODO;
+}
+
+int Win32Platform::_getBestMSAAPF()
+{
+	return DEBUG_TODO;
+}
+
+int Win32Platform::_getBestAntiAliasingPF()
+{
+	return DEBUG_TODO;
+}
+
 bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
 {
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
@@ -296,6 +316,7 @@ void Win32Platform::_callbackThread( float frameLength )
 		try
 		{
 			frameStart.set();
+
 		}
 		catch( Poco::SystemException e )
 		{

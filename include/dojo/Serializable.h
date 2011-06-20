@@ -23,7 +23,7 @@ namespace Dojo
 			DEBUG_ASSERT( t );
 
 			if( ID )
-				t->setInteger( "ID", ID );
+				t->set( "ID", ID );
 
 			onSerialize( t );
 		}

@@ -114,6 +114,12 @@ namespace Dojo
 		float frameInterval;
 
 		FT_Library freeType;
+
+		HWND _createDummyAAWindow();
+		void _destroyDummyAAWindow( HWND w );
+
+		int _getBestMSAAPF();
+		int _getBestAntiAliasingPF();
 	};
 }
 

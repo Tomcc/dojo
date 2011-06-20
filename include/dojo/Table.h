@@ -123,10 +123,9 @@ namespace Dojo
 			else
 				name = key;
 
-			Table* t = new Table( name );
-			
-			setTable( t );
-			
+			Table* t = new Table( name );			
+			set( t );
+
 			return t;
 		}
 
@@ -137,7 +136,7 @@ namespace Dojo
 			name = newName;
 		}
 
-		inline void setRaw( const String& key, FieldType type, void* value )
+		inline void set( const String& key, FieldType type, void* value )
 		{
 			DEBUG_ASSERT( type == FT_NUMBER || (value != NULL) );
 
@@ -153,45 +152,51 @@ namespace Dojo
 			}
 		}
 		
-		inline void setNumber( const String& key, float value )
+		inline void set( const String& key, float value )
 		{			
-			setRaw(key, FT_NUMBER, new float( value ) );
+			set(key, FT_NUMBER, new float( value ) );
 		}
 
-		inline void setInteger( const String& key, int value )
+		inline void set( const String& key, int value )
 		{
-			setNumber( key, (float)value );
+			set( key, (float)value );
 		}
 
+		inline void set( const String& key, uint value )
+		{
+			set( key, (float)value );
+		}
+
+		///boolean has to be specified as C has the ugly habit of casting everything to it without complaining
 		inline void setBoolean( const String& key, bool value )
 		{
-			setNumber( key, (float)value );
+			set( key, (float)value );
 		}
 		
-		inline void setString( const String& key, const String& value )
+		inline void set( const String& key, const String& value )
 		{			
-			setRaw(key, FT_STRING, new String( value ) );
+			set(key, FT_STRING, new String( value ) );
 		}
 
-		inline void setVector( const String& key, const Vector& value )
+		inline void set( const String& key, const Vector& value )
 		{
-			setRaw( key, FT_VECTOR, new Vector( value ) );
+			set( key, FT_VECTOR, new Vector( value ) );
 		}
 
-		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA and requires it to be preserved!
-		inline void setData( const String& key, void* value, uint size )
+		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
+		inline void set( const String& key, void* value, uint size )
 		{
 			DEBUG_ASSERT( value );
 			DEBUG_ASSERT( size );
 
-			setRaw(key, FT_DATA, new Data( value, size ) );
+			set(key, FT_DATA, new Data( value, size ) );
 		}
 		
-		inline void setTable( Table* value )
+		inline void set( Table* value )
 		{
 			DEBUG_ASSERT( value );
 						
-			setRaw( value->getName(), FT_TABLE, value);
+			set( value->getName(), FT_TABLE, value);
 		}		
 		
 		void clear()
@@ -320,7 +325,7 @@ namespace Dojo
 
 		inline String _getAutoName()
 		{
-			return '_' + Utils::toString( unnamedMembers++ );
+			return '_' + String( unnamedMembers++ );
 		}
 	};
 }

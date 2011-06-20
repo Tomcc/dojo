@@ -49,9 +49,9 @@ void Table::serialize( String& buf, String indent )
 			break;
 		case FT_DATA:
 			data = (Data*)e.value;
-			buf += '#' + Utils::toString( data->size ) + ' ';
+			buf += '#' + String( data->size ) + ' ';
 
-			buf.append( (unichar*)data->ptr, data->size/2 );
+			buf.appendRaw( data->ptr, data->size );
 
 			break;
 		case FT_TABLE:
@@ -175,7 +175,7 @@ void Table::deserialize( StringReader& buf )
 
 			number = buf.readFloat();
 
-			setNumber( curName, number );
+			set( curName, number );
 			break;
 		case PT_STRING:
 
@@ -187,7 +187,7 @@ void Table::deserialize( StringReader& buf )
 				str += c;
 			}
 
-			setString( curName, str );
+			set( curName, str );
 			break;
 
 		case PT_VECTOR:
@@ -195,7 +195,7 @@ void Table::deserialize( StringReader& buf )
 			vec.y = buf.readFloat();
 			vec.z = buf.readFloat();
 
-			setVector( curName, vec );
+			set( curName, vec );
 			break;
 
 		case PT_DATA:
@@ -207,7 +207,7 @@ void Table::deserialize( StringReader& buf )
 
 			buf.readBytes( data.ptr, data.size );
 
-			setData( curName, data.ptr, data.size );
+			set( curName, data.ptr, data.size );
 			break;
 
 		case PT_CHILD:
