@@ -19,6 +19,8 @@
 #include "dojo/Table.h"
 #include "dojo/FontSystem.h"
 
+#include "WGL_ARB_multisample.h"
+
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
@@ -81,26 +83,6 @@ frameInterval(0)
 Win32Platform::~Win32Platform()
 {
 
-}
-
-HWND Win32Platform::_createDummyAAWindow()
-{
-	return DEBUG_TODO;
-}
-
-void Win32Platform::_destroyDummyAAWindow( HWND w )
-{
-	DEBUG_TODO;
-}
-
-int Win32Platform::_getBestMSAAPF()
-{
-	return DEBUG_TODO;
-}
-
-int Win32Platform::_getBestAntiAliasingPF()
-{
-	return DEBUG_TODO;
 }
 
 bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
@@ -177,7 +159,10 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 
 	pfd.cDepthBits = 32;                // 32 bits to measure pixel depth.  That's accurate!
 
-	int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
+	//int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
+
+	int chosenPixelFormat;
+	ChooseAntiAliasingPixelFormat( chosenPixelFormat, 4 );
 
 	if( chosenPixelFormat == 0 )
 		return false;

@@ -478,6 +478,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Win32\WGL_ARB_multisample.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Win32\WGL_ARB_multisample.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Win32\Win32Platform.cpp"
 				>
 			</File>
