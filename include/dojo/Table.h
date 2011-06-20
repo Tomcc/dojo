@@ -1,14 +1,14 @@
 #ifndef Table_h__
 #define Table_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
-#include "dojo/Vector.h"
-#include "dojo/Array.h"
-#include "dojo/Utils.h"
-#include "dojo/StringReader.h"
-#include "dojo/String.h"
+#include "BaseObject.h"
+#include "Vector.h"
+#include "Array.h"
+#include "Utils.h"
+#include "StringReader.h"
+#include "dojostring.h"
 
 namespace Dojo
 {
@@ -76,28 +76,6 @@ namespace Dojo
 		};
 
 		typedef std::map< String, Entry > EntryMap;
-
-		class Iterator : public EntryMap::iterator
-		{
-		public:
-
-			Iterator( Table* t ) :
-			iterator( t->map.begin() )
-			{
-				DEBUG_ASSERT( t );
-
-				endItr = t->map.end();
-			}
-
-			inline boolean valid()
-			{
-				return (*this) != endItr;
-			}
-
-		protected:
-
-			EntryMap::iterator endItr;
-		};
 
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
@@ -202,8 +180,9 @@ namespace Dojo
 		void clear()
 		{					
 			//clean up every entry
+			EntryMap::iterator itr = map.begin();
 			
-			for( Iterator itr = getIterator(); itr.valid(); ++itr )
+			for( ; itr != map.end(); ++itr )
 				itr->second.dispose();
 			
 			map.clear();
@@ -219,7 +198,7 @@ namespace Dojo
 			return unnamedMembers;
 		}
 
-		inline boolean hasName() 
+		inline bool hasName() 
 		{
 			return name.size() > 0;
 		}
@@ -298,11 +277,6 @@ namespace Dojo
 			DEBUG_ASSERT( i < getAutoMembers() );
 
 			return '_' + String( (int)i );
-		}
-
-		inline const Iterator getIterator()
-		{
-			return Iterator( this );
 		}
 
 		inline bool isEmpty()

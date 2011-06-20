@@ -10,16 +10,16 @@
 #ifndef Viewport_h__
 #define Viewport_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Vector.h"
-#include "dojo/Color.h"
-#include "dojo/Object.h"
-#include "dojo/Model.h"
-#include "dojo/Sprite.h"
-#include "dojo/Texture.h"
-#include "dojo/Platform.h"
-#include "dojo/Renderable.h"
+#include "Vector.h"
+#include "Color.h"
+#include "Object.h"
+#include "Model.h"
+#include "Sprite.h"
+#include "Texture.h"
+#include "Platform.h"
+#include "Renderable.h"
 
 namespace Dojo 
 {	

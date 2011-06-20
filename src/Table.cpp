@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojo/Table.h"
+#include "Table.h"
 
 using namespace Dojo;
 
@@ -17,7 +17,8 @@ void Table::serialize( String& buf, String indent )
 	//serialize to the Table Format
 	indent += '\t';
 	
-	for( Iterator itr = getIterator(); itr.valid(); ++itr ) 
+	EntryMap::iterator itr = map.begin();
+	for( ; itr != map.end(); ++itr ) 
 	{
 		const Entry& e = itr->second;
 

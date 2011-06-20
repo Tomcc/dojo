@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "dojo/Viewport.h"
+#include "Viewport.h"
 
-#include "dojo/Render.h"
+#include "Render.h"
 
 using namespace Dojo;
 

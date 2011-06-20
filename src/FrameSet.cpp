@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "dojo/FrameSet.h"
+#include "FrameSet.h"
 
-#include "dojo/ResourceGroup.h"
-#include "dojo/Platform.h"
+#include "ResourceGroup.h"
+#include "Platform.h"
 
 using namespace Dojo;
 

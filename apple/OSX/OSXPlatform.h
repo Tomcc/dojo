@@ -32,7 +32,8 @@ namespace Dojo
     {
     public:
      
-        OSXPlatform()
+        OSXPlatform( const Table& config ) :
+		ApplePlatform( config )
         {
             
         }

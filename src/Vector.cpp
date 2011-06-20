@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojo/Vector.h"
+#include "Vector.h"
 
 using namespace Dojo;
 

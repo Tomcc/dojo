@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "dojo/Mesh.h"
+#include "Mesh.h"
 
-#include "dojo/Utils.h"
-#include "dojo/Platform.h"
+#include "Utils.h"
+#include "Platform.h"
 
 using namespace Dojo;
 

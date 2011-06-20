@@ -3,9 +3,9 @@
 
 #define FV_INLINE inline
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {

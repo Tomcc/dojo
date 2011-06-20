@@ -10,12 +10,12 @@
 #ifndef RenderState_h__
 #define RenderState_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Color.h"
-#include "dojo/BaseObject.h"
-#include "dojo/Vector.h"
-#include "dojo/Array.h"
+#include "Color.h"
+#include "BaseObject.h"
+#include "Vector.h"
+#include "Array.h"
 
 namespace Dojo
 {

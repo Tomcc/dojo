@@ -10,10 +10,10 @@
 #ifndef Model_h__
 #define Model_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Renderable.h"
-#include "dojo/GameState.h"
+#include "Renderable.h"
+#include "GameState.h"
 
 namespace Dojo 
 {

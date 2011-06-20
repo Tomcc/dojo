@@ -10,16 +10,16 @@
 #ifndef Texture_h__
 #define Texture_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
 #include <string>
 
 
-#include "dojo/Utils.h"
-#include "dojo/Vector.h"
+#include "Utils.h"
+#include "Vector.h"
 
-#include "dojo/Buffer.h"
-#include "dojo/Mesh.h"
+#include "Buffer.h"
+#include "Mesh.h"
 
 namespace Dojo 
 {

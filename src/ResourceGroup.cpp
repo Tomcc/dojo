@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "dojo/ResourceGroup.h"
+#include "ResourceGroup.h"
 
-#include "dojo/Platform.h"
+#include "Platform.h"
 
 using namespace Dojo;
 

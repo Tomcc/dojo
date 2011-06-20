@@ -9,19 +9,19 @@
 #ifndef Game_h__
 #define Game_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Array.h"
+#include "Array.h"
 
-#include "dojo/Render.h"
-#include "dojo/InputSystem.h"
-#include "dojo/SoundManager.h"
-#include "dojo/InputSystem.h"
-#include "dojo/StateInterface.h"
+#include "Render.h"
+#include "InputSystem.h"
+#include "SoundManager.h"
+#include "InputSystem.h"
+#include "StateInterface.h"
 
-#include "dojo/Platform.h"
+#include "Platform.h"
 
-#include "dojo/Render.h"
+#include "Render.h"
 
 namespace Dojo 
 {

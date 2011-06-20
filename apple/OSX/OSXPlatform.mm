@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "Utils.h"
 #include "Table.h"
+#include "FontSystem.h"
 
 using namespace Dojo;
 
@@ -73,6 +74,9 @@ void OSXPlatform::initialise()
     //create input
     input = new InputSystem();
 	
+	//fonts
+	fonts = new FontSystem();
+	
 	[view setPlatform:this];
         
     //launch the game
@@ -93,6 +97,7 @@ void OSXPlatform::shutdown()
     delete render;
     delete sound;
     delete input;
+	delete fonts;
 }
 
 void OSXPlatform::acquireContext()

@@ -10,12 +10,12 @@
 #ifndef Particle_h__
 #define Particle_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Sprite.h"
-#include "dojo/GameState.h"
+#include "Sprite.h"
+#include "GameState.h"
 
-#include "dojo/Renderable.h"
+#include "Renderable.h"
 
 namespace Dojo 
 {

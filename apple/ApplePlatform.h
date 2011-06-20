@@ -15,7 +15,7 @@
 #include "Platform.h"
 
 #ifdef __OBJC__
-#import <Foundation/NSAutoreleasePool.h>
+	#import <Foundation/NSAutoreleasePool.h>
 #endif
 
 namespace Dojo
@@ -30,28 +30,27 @@ namespace Dojo
     {
     public:
 		
-        ApplePlatform();
+        ApplePlatform( const Table& config );
 		
 		virtual ~ApplePlatform();
         
 		virtual void step( float dt );
 		
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path );
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out );
-		virtual uint loadFileContent( char*& bufptr, const std::string& path );
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height );
+		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
+		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
+		virtual uint loadFileContent( char*& bufptr, const String& path );
+				
+		virtual void loadPNGContent( void*& imageData, const String& path, uint& width, uint& height );		
+		virtual uint loadAudioFileContent( ALuint& buffer, const String& path );
+				
+		virtual void load( Table* dest, const String& absPath = String::EMPTY );
+		virtual void save( Table* table, const String& absPath = String::EMPTY );
 		
-		uint loadAudioFileContent( ALuint& buffer, const std::string& path );
-		
-		
-		virtual void load( Table* dest, const std::string& absPath = "" );
-		virtual void save( Table* table, const std::string& absPath = "" );
-		
-		virtual void openWebPage( const std::string& site );
+		virtual void openWebPage( const String& site );
         
     protected:
 		
-		NSString* _getDestinationFilePath( Table* t, const std::string& absPath = "" );
+		NSString* _getDestinationFilePath( Table* t, const String& absPath = String::EMPTY );
 		
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
        	NSAutoreleasePool* pool;

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "dojo/Trail.h"
+#include "Trail.h"
 
-#include "dojo/FrameSet.h"
-#include "dojo/GameState.h"
+#include "FrameSet.h"
+#include "GameState.h"
 
 using namespace Dojo;
 

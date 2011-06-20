@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "dojo/ParticlePool.h"
+#include "ParticlePool.h"
 
-#include "dojo/Viewport.h"
+#include "Viewport.h"
 
 using namespace Dojo;
 

@@ -10,8 +10,8 @@
 #ifndef Color_h__
 #define Color_h__
 
-#include "dojo/dojo_common_header.h"
-#include "dojo/Vector.h"
+#include "dojo_common_header.h"
+#include "Vector.h"
 
 
 namespace Dojo

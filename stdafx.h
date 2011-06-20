@@ -7,7 +7,7 @@
 #ifndef dojo_stdafx_h__
 #define dojo_stdafx_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
 #endif
 

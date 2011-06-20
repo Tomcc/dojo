@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "dojo/SoundBuffer.h"
-#include "dojo/SoundManager.h"
+#include "SoundBuffer.h"
+#include "SoundManager.h"
 
-#include "dojo/Utils.h"
+#include "Utils.h"
 
 
 using namespace Dojo;

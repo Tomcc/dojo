@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojo/TextArea.h"
+#include "TextArea.h"
 
 using namespace Dojo;
 

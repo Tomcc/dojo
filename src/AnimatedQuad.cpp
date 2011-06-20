@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "dojo/AnimatedQuad.h"
+#include "AnimatedQuad.h"
 
-#include "dojo/Game.h"
-#include "dojo/GameState.h"
-#include "dojo/Viewport.h"
-#include "dojo/Mesh.h"
-#include "dojo/math.h"
+#include "Game.h"
+#include "GameState.h"
+#include "Viewport.h"
+#include "Mesh.h"
+#include "dojomath.h"
 
 using namespace Dojo;
 

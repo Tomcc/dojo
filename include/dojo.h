@@ -8,7 +8,7 @@
 #include <dojo/BaseObject.h>
 #include <dojo/Buffer.h>
 #include <dojo/Color.h>
-#include <dojo/Math.h>
+#include <dojo/dojomath.h>
 #include <dojo/Font.h>
 #include <dojo/FontSystem.h>
 #include <dojo/FrameSet.h>

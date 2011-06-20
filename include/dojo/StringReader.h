@@ -140,7 +140,7 @@ namespace Dojo
 
 			//clamp into string
 			if( idx + sz > str.size() )
-				sz = str.size() - idx;
+				sz = (uint)str.size() - idx;
 
 			byte* data = (byte*)str.data() + idx * sizeof( unichar );
 

@@ -1,11 +1,11 @@
 #ifndef FontSystem_h__
 #define FontSystem_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
+#include "BaseObject.h"
 
-#include "dojo/Utils.h"
+#include "Utils.h"
 
 namespace Dojo
 {

@@ -10,13 +10,13 @@
 #ifndef Font_h__
 #define Font_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Vector.h"
-#include "dojo/Texture.h"
-#include "dojo/FrameSet.h"
+#include "Vector.h"
+#include "Texture.h"
+#include "FrameSet.h"
 
-#include "dojo/Utils.h"
+#include "Utils.h"
 
 #define FONT_PPI (1.f/64.f)
 
@@ -104,7 +104,7 @@ namespace Dojo
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
 
-			inline boolean _charInPage( unichar c ) 
+			inline bool _charInPage( unichar c ) 
 			{
 				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
 			}

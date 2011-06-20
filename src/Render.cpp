@@ -1,16 +1,16 @@
 #include "stdafx.h"
 
-#include "dojo/Render.h"
+#include "Render.h"
 
-#include "dojo/Renderable.h"
-#include "dojo/TextArea.h"
-#include "dojo/Platform.h"
-#include "dojo/Viewport.h"
+#include "Renderable.h"
+#include "TextArea.h"
+#include "Platform.h"
+#include "Viewport.h"
 
-#include "dojo/Mesh.h"
-#include "dojo/Model.h"
+#include "Mesh.h"
+#include "Model.h"
 
-#include "dojo/Game.h"
+#include "Game.h"
 
 using namespace Dojo;
 

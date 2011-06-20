@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "dojo/Renderable.h"
+#include "Renderable.h"
 
-#include "dojo/Game.h"
-#include "dojo/Viewport.h"
+#include "Game.h"
+#include "Viewport.h"
 
 using namespace Dojo;
 

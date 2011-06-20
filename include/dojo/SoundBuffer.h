@@ -1,11 +1,11 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
+#include "BaseObject.h"
 
-#include "dojo/Buffer.h"
+#include "Buffer.h"
 
 namespace Dojo 
 {

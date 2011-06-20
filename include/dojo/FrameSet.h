@@ -10,12 +10,12 @@
 #ifndef FrameSet_h__
 #define FrameSet_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Array.h"
-#include "dojo/Math.h"
-#include "dojo/Texture.h"
-#include "dojo/Table.h"
+#include "Array.h"
+#include "dojomath.h"
+#include "Texture.h"
+#include "Table.h"
 
 namespace Dojo 
 {

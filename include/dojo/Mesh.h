@@ -10,11 +10,11 @@
 #ifndef Mesh_h__
 #define Mesh_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Buffer.h"
-#include "dojo/Vector.h"
-#include "dojo/Color.h"
+#include "Buffer.h"
+#include "Vector.h"
+#include "Color.h"
 
 #define MESH_MAX_TEXTURES 8
 

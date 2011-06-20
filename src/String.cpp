@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojo/String.h"
+#include "dojostring.h"
 
 using namespace Dojo;
 

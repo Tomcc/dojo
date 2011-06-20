@@ -9,7 +9,11 @@
 #ifndef Vector_h__
 #define Vector_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
+
+#include <cmath>
+
+using namespace std;
 
 namespace Dojo	
 {
@@ -134,7 +138,7 @@ namespace Dojo
 
 		inline float lenght() const 
 		{
-			return sqrt( lenghtSquared() );
+			return sqrtf( lenghtSquared() );
 		}
 
 		inline float lenghtSquared() const 
@@ -235,7 +239,7 @@ namespace Dojo
 		{
 			return Vector(
 					57.47f * atan2(x, y),
-					57.47f * atan2(z, sqrt((x*x) + (y*y)) ),
+					57.47f * atan2(z,sqrt((x*x) + (y*y)) ),
 					0 );
 		}
 

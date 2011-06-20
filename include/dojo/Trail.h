@@ -1,11 +1,11 @@
 #ifndef Trail_h__
 #define Trail_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
 #include <queue>
 
-#include "dojo/Renderable.h"
+#include "Renderable.h"
 
 namespace Dojo
 {

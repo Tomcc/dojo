@@ -1,20 +1,20 @@
 #ifndef dojo_common_header
 #define dojo_common_header
 
-#include "dojo/dojo_config.h"
+#include "dojo_config.h"
 
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <float.h>
 
 #include <map>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <float.h>
 #include <fstream>
 
 #ifndef PLATFORM_WIN32
@@ -66,6 +66,6 @@
 #include FT_STROKER_H
 
 //string has to be included here!
-#include "dojo/String.h"
+#include "dojostring.h"
 
 #endif // dojo_common_headers_h__

@@ -1,12 +1,12 @@
 #ifndef SoundSource_h__
 #define SoundSource_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Vector.h"
+#include "Vector.h"
 
-#include "dojo/SoundBuffer.h"
-#include "dojo/BaseObject.h"
+#include "SoundBuffer.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {

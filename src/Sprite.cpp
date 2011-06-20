@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "dojo/Sprite.h"
+#include "Sprite.h"
 
-#include "dojo/Viewport.h"
+#include "Viewport.h"
 
 using namespace Dojo;
 

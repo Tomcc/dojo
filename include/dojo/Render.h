@@ -8,14 +8,14 @@
 #ifndef Render_h__
 #define Render_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Array.h"
-#include "dojo/Color.h"
-#include "dojo/Vector.h"
-#include "dojo/RenderState.h"
-#include "dojo/BaseObject.h"
-#include "dojo/Timer.h"
+#include "Array.h"
+#include "Color.h"
+#include "Vector.h"
+#include "RenderState.h"
+#include "BaseObject.h"
+#include "Timer.h"
 
 namespace Dojo {
 	

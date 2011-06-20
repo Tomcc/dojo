@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "dojo/Texture.h"
-#include "dojo/Math.h"
-#include "dojo/Platform.h"
+#include "Texture.h"
+#include "dojomath.h"
+#include "Platform.h"
 
 using namespace Dojo;
 

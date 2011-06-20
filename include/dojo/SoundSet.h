@@ -1,13 +1,13 @@
 #ifndef SoundData_h__
 #define SoundData_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Array.h"
-#include "dojo/SoundBuffer.h"
+#include "Array.h"
+#include "SoundBuffer.h"
 
-#include "dojo/Math.h"
-#include "dojo/BaseObject.h"
+#include "dojomath.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {

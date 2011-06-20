@@ -1,10 +1,10 @@
 #ifndef Platform_h__
 #define Platform_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
-#include "dojo/Table.h"
+#include "BaseObject.h"
+#include "Table.h"
 
 namespace Dojo 
 {

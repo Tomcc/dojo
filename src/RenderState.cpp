@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
-#include "dojo/RenderState.h"
+#include "RenderState.h"
 
-#include "dojo/Texture.h"
-#include "dojo/Mesh.h"
-#include "dojo/FrameSet.h"
-#include "dojo/Timer.h"
+#include "Texture.h"
+#include "Mesh.h"
+#include "FrameSet.h"
+#include "Timer.h"
 
 using namespace Dojo;
 

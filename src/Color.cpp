@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "dojo/Color.h"
+#include "Color.h"
 
 using namespace Dojo;
 

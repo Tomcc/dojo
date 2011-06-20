@@ -1,9 +1,9 @@
 #ifndef Timer_h__
 #define Timer_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/BaseObject.h"
+#include "BaseObject.h"
 
 namespace Dojo
 {

@@ -10,14 +10,14 @@
 #ifndef ResourceGroup_h__
 #define ResourceGroup_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
 #include <string>
 
-#include "dojo/Font.h"
-#include "dojo/FrameSet.h"
-#include "dojo/Mesh.h"
-#include "dojo/SoundSet.h"
+#include "Font.h"
+#include "FrameSet.h"
+#include "Mesh.h"
+#include "SoundSet.h"
 
 namespace Dojo {
 	

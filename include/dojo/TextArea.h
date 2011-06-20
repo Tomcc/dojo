@@ -10,11 +10,11 @@
 #ifndef TextArea_h__
 #define TextArea_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Sprite.h"
-#include "dojo/Font.h"
-#include "dojo/GameState.h"
+#include "Sprite.h"
+#include "Font.h"
+#include "GameState.h"
 
 namespace Dojo 
 {	

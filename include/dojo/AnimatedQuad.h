@@ -10,9 +10,9 @@
 #ifndef AnimatedQuad_h__
 #define AnimatedQuad_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include "dojo/Renderable.h"
+#include "Renderable.h"
 
 namespace Dojo
 {
@@ -121,8 +121,9 @@ namespace Dojo
 		
 		virtual ~AnimatedQuad()
 		{
-			if( animation )
-				delete animation;
+			//HACK MEMLEAK
+			//if( animation ) 
+			//	delete animation;
 		}
 		
 		virtual void reset();
