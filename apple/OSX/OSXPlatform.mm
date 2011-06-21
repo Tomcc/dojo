@@ -44,6 +44,12 @@ void OSXPlatform::initialise()
         NSOpenGLPFAWindow,
         NSOpenGLPFADoubleBuffer,	// double buffered
         NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
+		
+		//msaa
+		NSOpenGLPFASampleBuffers, 1,
+		NSOpenGLPFASamples, config.getInt( "MSAA" ),
+		NSOpenGLPFANoRecovery,
+		
         (NSOpenGLPixelFormatAttribute)nil
     };
 	
@@ -67,6 +73,10 @@ void OSXPlatform::initialise()
 	
     //create render
     render = new Render( frame.size.width, frame.size.height, 1, Render::RO_LANDSCAPE_LEFT );
+	
+	//enable MSAA?
+	if( config.getInt( "MSAA" ) )
+		glEnable(GL_MULTISAMPLE);
     
     //create soundmanager
     sound = new SoundManager();
