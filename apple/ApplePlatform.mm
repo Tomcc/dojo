@@ -249,9 +249,7 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 void ApplePlatform::load( Table* dest, const String& absPath )
 {
 	NSString* fullPath = _getDestinationFilePath( dest, absPath );
-	
-	NSLog( fullPath );
-	
+		
 	//read file
 	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
 	
@@ -259,11 +257,11 @@ void ApplePlatform::load( Table* dest, const String& absPath )
 	if( !nsfile )
 		return;
 
-	printf( "%s", [nsfile bytes] );
-	
 	//drop the data in a String - TODO don't duplicate it
 	String buf;
 	buf.appendRaw( (char*)[nsfile bytes], [nsfile length] );
+	
+	dest->setName( Utils::getFileName( String( fullPath ) ) );
 	
 	StringReader in( buf );
 	dest->deserialize( in );

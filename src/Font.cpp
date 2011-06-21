@@ -203,10 +203,6 @@ font( f )
 		}
 	}
 
-	//HACK OH MY GOD THIS IS AWFUL
-	//every character 0 of every page will have a white pixel on top left.
-	*((unsigned int*)buf) = 0xffffffff;
-
 	//drop the buffer in the texture
 	texture = new Texture( NULL, String::EMPTY );
 	texture->loadFromMemory( buf, sxp2, syp2 );
@@ -214,7 +210,7 @@ font( f )
 
 	free( buf );
 
-	DEBUG_MESSAGE( "Page " << index << " generated in " << timer.getElapsedTime() << " s" );
+	DEBUG_MESSAGE( font->getName().ASCII() << ":Page " << index << " generated in " << timer.getElapsedTime() << " s" );
 }
 
 /// --------------------------------------------------------------------------------
@@ -229,6 +225,8 @@ Font::Font( const String& path )
 	//load table
 	Table* t = new Table();	
 	Platform::getSingleton()->load( t, path );
+	
+	fontName = t->getName();
 
 	fontFile = Utils::getDirectory( path ) + '/' + t->getString( "truetype" );
 	fontWidth = fontHeight = t->getInt( "size" );	

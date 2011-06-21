@@ -114,6 +114,11 @@ namespace Dojo
 		
 		virtual ~Font();
 		
+		inline const String& getName()
+		{
+			return fontName;
+		}
+		
 		inline uint getFontWidth()			{	return (uint)(fontWidth + border);	}
 		inline uint getFontHeight()			{	return (uint)(fontHeight + border);	}
 
