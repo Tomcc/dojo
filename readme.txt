@@ -8,7 +8,11 @@ so, here's the part for which you opened this file in the first place:
 
 *** IOS ***
 
+Download the FreeType precompiled dependency from the Downloads folder in the BitBucket repo.
+
 Drop the whole Dojo folder to your project, and select "Create group for any added folder", delete (as in "Remove Reference") the other Platform's folders (Apple/OSX, Linux, Win32), any non-source file (.hg, .sln, etc) and you're good to go.
+
+Add libfreetype.a between the frameworks in your projects.
 
 Code drop-in is indeed ugly, but Apple's policy about dylibs is not crystal clear (and OpenFeint does this, so.)
 
@@ -38,6 +42,11 @@ Yes, many of those dependencies are more of an utility to maintain a sane codeba
 Tested on Windows 7 x64, VC2008
 
 *** MAC OS X ***
+
+Download FreeType, do the classic
+./configure
+make
+sudo make install
 
 Open dojo.xcodeproj, hit build. Done. It will get installed as a Framework into /Library/Frameworks for future use.
 
