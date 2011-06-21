@@ -20,6 +20,10 @@
 #include "dojostring.h"
 #include "StringReader.h"
 
+#ifdef PLATFORM_IOS
+	#import <UIKit/UIApplication.h>
+#endif
+
 using namespace Dojo;
 using namespace std;
 
@@ -246,6 +250,8 @@ void ApplePlatform::load( Table* dest, const String& absPath )
 {
 	NSString* fullPath = _getDestinationFilePath( dest, absPath );
 	
+	NSLog( fullPath );
+	
 	//read file
 	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
 	
@@ -253,7 +259,9 @@ void ApplePlatform::load( Table* dest, const String& absPath )
 	if( !nsfile )
 		return;
 
-		//drop the data in a String - TODO don't duplicate it
+	printf( "%s", [nsfile bytes] );
+	
+	//drop the data in a String - TODO don't duplicate it
 	String buf;
 	buf.appendRaw( (char*)[nsfile bytes], [nsfile length] );
 	

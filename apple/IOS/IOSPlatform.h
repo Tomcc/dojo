@@ -21,7 +21,7 @@ namespace Dojo
 	{
 	public:
 		
-		IOSPlatform( );
+		IOSPlatform( const Table& config );
 		
 		virtual ~IOSPlatform();
 				
@@ -31,7 +31,6 @@ namespace Dojo
 		virtual void acquireContext();
 		virtual void present();
 
-		virtual void step( float dt );
 		virtual void loop( float frameTime );
 				
 		virtual bool isSystemSoundInUse();

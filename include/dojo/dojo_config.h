@@ -19,16 +19,23 @@
 	#define NOMINMAX  //Y U NO LEAVE STL ALONE
 
 //are we on mac?
-#elif defined( __APPLE__ ) && defined( __MACH__ )
-    #define PLATFORM_OSX
+#elif defined( __APPLE__ )
+
+#include <TargetConditionals.h>
+
+	#ifdef DOJO_IOS
+		#define PLATFORM_IOS	
+	#else
+		#define PLATFORM_OSX
+	
+	#endif
 
 //are we on GNU/Linux?
 #elif defined( LINUX )
     #define PLATFORM_LINUX
 
-//default is IOS
 #else 
-    #define PLATFORM_IOS
+    #error "Platform unrecognized"
 
 #endif
 

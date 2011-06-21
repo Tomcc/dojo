@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
-#include "Render.h"
-#include "SoundManager.h"
-#include "TouchSource.h"
-#include "Timer.h"
+#include <dojo/Render.h>
+#include <dojo/SoundManager.h>
+#include <dojo/InputSystem.h>
+#include <dojo/Timer.h>
 
 namespace Dojo {
 	class Game;
@@ -32,7 +32,7 @@ namespace Dojo {
 	Dojo::IOSPlatform* platform;
 	
 	Dojo::Render* renderImpl;
-	Dojo::TouchSource* touchSource;
+	Dojo::InputSystem* touchSource;
 	
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;

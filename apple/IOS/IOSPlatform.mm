@@ -10,15 +10,17 @@
 #include "Utils.h"
 #include "dojomath.h"
 
-#include "Render.h"
-#include "SoundManager.h"
-#include "TouchSource.h"
-#include "Game.h"
-#include "Table.h"
+#include <dojo/Render.h>
+#include <dojo/SoundManager.h>
+#include <dojo/InputSystem.h>
+#include <dojo/FontSystem.h>
+#include <dojo/Game.h>
+#include <dojo/Table.h>
 
 using namespace Dojo;
 
-IOSPlatform::IOSPlatform() :
+IOSPlatform::IOSPlatform( const Table& config ) :
+ApplePlatform( config ),
 app( NULL )
 {
 	running = true; //IOS Platform autoruns
@@ -84,9 +86,11 @@ void IOSPlatform::initialise()
 	
 //INPUT MANAGER
 
-	input = new TouchSource();
+	input = new InputSystem();
 	
-	game->onBegin();
+	fonts = new FontSystem();
+	
+	game->begin();
 }
 	
 void IOSPlatform::shutdown()
@@ -135,30 +139,6 @@ void IOSPlatform::present()
 void IOSPlatform::loop( float minstep )
 {
 	DEBUG_TODO;
-}
-
-uint IOSPlatform::loadFileContent( char*& bufptr, const std::string& path )
-{
-	bufptr = NULL;
-	
-	DEBUG_ASSERT( path.size() );
-	
-	NSString* NSPath = Utils::toNSString( path );
-	
-	NSData* data = [[NSData alloc] initWithContentsOfFile: NSPath ];
-	
-	if( !data )
-		return false;
-	
-	uint size = [data length];
-	
-	//alloc the new buffer
-	bufptr = (char*)malloc( size );
-	memcpy( bufptr, [data bytes], size );
-	
-	[data release];
-	
-	return size;
 }
 
 bool IOSPlatform::isSystemSoundInUse()

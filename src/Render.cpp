@@ -51,8 +51,6 @@ backLayer( NULL )
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	glEnable( GL_COLOR_MATERIAL );
-
-	glEnable( GL_POLYGON_SMOOTH );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
