@@ -178,11 +178,6 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 		viewportWidth = height;
 		viewportHeight = width;
 	}
-
-
-	//put a fresh identity matrix over it
-	glPushMatrix();
-	glLoadIdentity();
 }
 
 void Render::startFrame()
@@ -195,7 +190,7 @@ void Render::startFrame()
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 						
 	glViewport( 0, 0, width, height );
-	
+		
 	//clear the viewport
 	glClearColor( 
 				 viewport->getClearColor().r, 
@@ -207,7 +202,7 @@ void Render::startFrame()
 
 	_setupOrthoProjection();
 	_setupFrustumProjection();
-			
+				
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
 		viewportPixelRatio.x = viewport->getSize().x / width;
@@ -403,6 +398,9 @@ void Render::_setupOrthoProjection()
 	//setup ortho projection
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
+		
+	glRotatef( renderRotation, 0,0,1 );
+	
 	glOrthof( 
 		-viewport->getHalfSize().x, 
 		viewport->getHalfSize().x,
@@ -421,8 +419,8 @@ void Render::_setupOrthoProjection()
 	glTranslatef(
 		-viewport->getWorldPosition().x,
 		-viewport->getWorldPosition().y,
-		0 );
-
+		0 );	
+	
 	glGetFloatv( GL_MODELVIEW_MATRIX, orthoView );
 }
 
@@ -433,6 +431,9 @@ void Render::_setupFrustumProjection()
 	//compute frustum
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
+	
+	glRotatef( renderRotation, 0,0,1 );
+	
 	_gluPerspectiveClone( 
 		viewport->getVFOV(), 
 		(float)width/(float)height, 

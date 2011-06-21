@@ -65,7 +65,7 @@ void IOSPlatform::initialise()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
 	render = new Render( width, height, devicePixelScale, Render::RO_PORTRAIT );
-	
+		
 	
 //SOUND MANAGER
 
@@ -83,11 +83,7 @@ void IOSPlatform::initialise()
 	AudioSessionSetActive (true);	
 	
 	sound = new SoundManager();
-	
-//INPUT MANAGER
-
 	input = new InputSystem();
-	
 	fonts = new FontSystem();
 	
 	game->begin();

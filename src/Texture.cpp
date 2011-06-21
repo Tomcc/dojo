@@ -15,10 +15,12 @@ void Texture::bind( uint index )
 
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 	
+	
 	glMatrixMode( GL_TEXTURE );
 	glLoadIdentity();
+	
 	if( isAtlasTile() )
-	{
+	{		
 		glTranslatef(xOffset, yOffset, 0 );
 		glScalef(xRatio, yRatio, 1);
 	}
@@ -63,6 +65,7 @@ void Texture::enableMipmaps()
 
 bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 {
+	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( imageData );
 
 	glGenTextures( 1, &glhandle );
@@ -105,6 +108,8 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 
 bool Texture::loadFromPNG( const String& path )
 {
+	DEBUG_ASSERT( !loaded );
+	
 	void* imageData = NULL;
 
 	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
@@ -121,9 +126,9 @@ bool Texture::loadFromPNG( const String& path )
 }
 
 bool Texture::load()
-{
+{	
 	DEBUG_ASSERT( !loaded );
-
+	
 	return loadFromPNG( filePath );
 }
 

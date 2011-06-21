@@ -111,7 +111,7 @@ namespace Dojo
 		}
 		
 		inline bool isNonPowerOfTwo()			{	return npot;		}
-		inline bool isAtlasTile()				{	return parentAtlas == NULL;	}
+		inline bool isAtlasTile()				{	return parentAtlas != NULL;	}
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{

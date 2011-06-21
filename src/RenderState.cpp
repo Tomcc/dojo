@@ -48,17 +48,14 @@ void RenderState::commitChanges( RenderState* pastState )
 
 	//apply transform?
 	//past state had texture transform, but we dont' need it
-	if( textureTransform != pastState->textureTransform )
+	if( textureTransform )
 	{
 		glMatrixMode( GL_TEXTURE );
 		glLoadIdentity();
-
-		if( textureTransform )
-		{
-			glScalef( textureScale.x, textureScale.y, 1 );
-			glRotatef( textureRotation, 0, 0, 1.f );
-			glTranslatef( textureOffset.x, textureOffset.y, 0 );
-		}
+		
+		glScalef( textureScale.x, textureScale.y, 1 );
+		glRotatef( textureRotation, 0, 0, 1.f );
+		glTranslatef( textureOffset.x, textureOffset.y, 0 );
 	}
 	
 	//bind the new mesh
