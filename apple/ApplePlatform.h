@@ -52,6 +52,8 @@ namespace Dojo
 		
 		NSString* _getDestinationFilePath( Table* t, const String& absPath = String::EMPTY );
 		
+		void _createApplicationDirectory();
+		
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
        	NSAutoreleasePool* pool;
     };

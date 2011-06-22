@@ -158,9 +158,11 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 		unsigned char alpha = off[3];
 		if( alpha!=255 && alpha!=0 )
 		{
-			off[0] = ((int)off[0])*255/alpha;
-			off[1] = ((int)off[1])*255/alpha;
-			off[2] = ((int)off[2])*255/alpha;
+			float a = ((float)(alpha)/255.f);
+			
+			off[0] = ((float)off[0]) / a;
+			off[1] = ((float)off[1]) / a;
+			off[2] = ((float)off[2]) / a;
 		}
 		off += 4;
 	}
@@ -216,6 +218,31 @@ uint ApplePlatform::loadAudioFileContent( ALuint& buffer, const String& path )
 	return fileSize;
 }
 
+void ApplePlatform::_createApplicationDirectory()
+{	
+	String dirname = "/" + game->getName();
+	
+	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString* nspath = [nspaths objectAtIndex:0];
+	NSString* nsgamedir = dirname.toNSString();	
+	NSString* nsdir = [nspath stringByAppendingString:nsgamedir];
+	
+	//check if the directory exists, if not existing create it!
+	NSLog( nsdir );
+	
+	NSFileManager *fileManager= [NSFileManager defaultManager]; 
+	if(![ fileManager fileExistsAtPath:nsdir ])
+	{
+		bool success = [fileManager 
+						createDirectoryAtPath:nsdir
+						withIntermediateDirectories:YES 
+						attributes:nil 
+						error:NULL];
+		
+		DEBUG_ASSERT( success );
+	}	
+}
+
 NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& absPath )
 {	
 	DEBUG_ASSERT( table );
@@ -226,7 +253,7 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 	//save this in a file in the user preferences folder, or in the abs path
 	if( absPath.size() == 0 )
 	{		
-		String fileName = "/" + game->getName() + "/" + table->getName() + ".table";
+		String fileName = "/" + game->getName() + "/" + table->getName() + ".ds";
 		
 		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		NSString* nspath = [nspaths objectAtIndex:0];
@@ -234,6 +261,7 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 		
 		fullPath = [nspath stringByAppendingString:nsname];
 		
+		[fullPath retain];
 		[nsname release];
 		[nspaths release];
 	}
@@ -275,15 +303,18 @@ void ApplePlatform::save( Table* src, const String& absPath )
 	String buf;
 	src->serialize( buf );
 	
+	//ensure application dir created
+	_createApplicationDirectory();
+	
 	NSString* fullPath = _getDestinationFilePath( src, absPath );
 	
 	//drop into NSData
 	NSData* nsfile = [[NSData alloc] 	initWithBytesNoCopy:(void*)buf.data()
-										length:buf.size() 
+										length:buf.byteSize()
 										freeWhenDone:false ];
-	
+		
 	//drop on file
-	[nsfile writeToFile:fullPath atomically:false];
+	bool success = [nsfile writeToFile:fullPath atomically:true];
 	
 	[fullPath release];
 	[nsfile release];

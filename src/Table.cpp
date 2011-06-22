@@ -14,9 +14,7 @@ void Table::serialize( String& buf, String indent )
 	Data* data;
 	Vector* v;
 
-	//serialize to the Table Format
-	indent += '\t';
-	
+	//serialize to the Table Format	
 	EntryMap::iterator itr = map.begin();
 	for( ; itr != map.end(); ++itr ) 
 	{
@@ -57,7 +55,7 @@ void Table::serialize( String& buf, String indent )
 			break;
 		case FT_TABLE:
 			buf += String( "{\n" );
-			((Table*)e.value)->serialize( buf, indent );
+			((Table*)e.value)->serialize( buf, indent + '\t' );
 
 			buf += indent + '}';
 
