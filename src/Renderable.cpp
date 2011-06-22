@@ -16,13 +16,13 @@ void Renderable::onAction( float dt )
 
 	if( mesh )
 	{
-		worldUpperBound.x = worldPosition.x + mesh->getMax().x * scale.x;
-		worldUpperBound.y = worldPosition.y + mesh->getMax().y * scale.y;
-		worldUpperBound.z = worldPosition.z + mesh->getMax().z * scale.z;
+		worldUpperBound.x = worldPosition.x + mesh->getMax().x * abs( scale.x );
+		worldUpperBound.y = worldPosition.y + mesh->getMax().y * abs( scale.y );
+		worldUpperBound.z = worldPosition.z + mesh->getMax().z * abs( scale.z );
 				
-		worldLowerBound.x = worldPosition.x + mesh->getMin().x * scale.x;
-		worldLowerBound.y = worldPosition.y + mesh->getMin().y * scale.y;
-		worldLowerBound.z = worldPosition.z + mesh->getMin().z * scale.z;
+		worldLowerBound.x = worldPosition.x + mesh->getMin().x * abs( scale.x );
+		worldLowerBound.y = worldPosition.y + mesh->getMin().y * abs( scale.y );
+		worldLowerBound.z = worldPosition.z + mesh->getMin().z * abs( scale.z );
 	}
 	
 	advanceFade(dt);

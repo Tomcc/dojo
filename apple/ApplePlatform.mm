@@ -230,10 +230,11 @@ void ApplePlatform::_createApplicationDirectory()
 	//check if the directory exists, if not existing create it!
 	NSLog( nsdir );
 	
+	BOOL b;
 	NSFileManager *fileManager= [NSFileManager defaultManager]; 
-	if(![ fileManager fileExistsAtPath:nsdir ])
+	if(![ fileManager fileExistsAtPath:nsdir isDirectory: &b ])
 	{
-		bool success = [fileManager 
+		bool success = b || [fileManager 
 						createDirectoryAtPath:nsdir
 						withIntermediateDirectories:YES 
 						attributes:nil 
@@ -261,9 +262,9 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 		
 		fullPath = [nspath stringByAppendingString:nsname];
 		
-		[fullPath retain];
+		/*[fullPath retain];
 		[nsname release];
-		[nspaths release];
+		[nspaths release];*/
 	}
 	else
 	{
@@ -293,8 +294,8 @@ void ApplePlatform::load( Table* dest, const String& absPath )
 	StringReader in( buf );
 	dest->deserialize( in );
 		
-	[nsfile release];
-	[fullPath release];
+	/*[nsfile release];
+	[fullPath release];*/
 }
 
 void ApplePlatform::save( Table* src, const String& absPath )
@@ -314,10 +315,10 @@ void ApplePlatform::save( Table* src, const String& absPath )
 										freeWhenDone:false ];
 		
 	//drop on file
-	bool success = [nsfile writeToFile:fullPath atomically:true];
+	[nsfile writeToFile:fullPath atomically:true];
 	
-	[fullPath release];
-	[nsfile release];
+	/*[fullPath release];
+	[nsfile release];*/
 }
 
 void ApplePlatform::openWebPage( const String& site )
@@ -329,6 +330,4 @@ void ApplePlatform::openWebPage( const String& site )
 #else
 	[[UIApplication sharedApplication] openURL:url];
 #endif
-	
-	[url release];
 }

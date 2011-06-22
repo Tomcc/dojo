@@ -78,7 +78,8 @@ Renderable* GameState::getClickableAtPoint( const Vector& point )
 	
 	for( uint i = 0; i < clickables.size(); ++i )
 	{
-		c = clickables.at(i);
+		c = clickables[i];
+				
 		if( c->isVisible() && c->isActive() && c->contains( pointer ) )
 		{
 			//pick highest layer

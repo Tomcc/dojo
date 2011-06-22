@@ -9,6 +9,7 @@
 using namespace Dojo;
 
 
+
 void Object::addChild( Object* o )
 {
 	if( !childs )
@@ -44,20 +45,14 @@ void Object::removeChild( Object* o )
 	gameState->removeClickableSprite( (Renderable*)o ); //if existing
 }
 
-void Object::onAction( float dt )
+void Object::updateWorldPosition()
 {
-	if( absoluteTimeSpeed )  //correct time speed
-		dt = Game::UPDATE_INTERVAL_CAP;
-	
-	position += speed * dt;	
-	angle += rotationSpeed * dt;
-
 	if( parent )  //add parent world transform
 	{
 		if( inheritAngle )
 		{		
 			worldPosition = parent->getWorldPosition( position );
-
+			
 			//TODO also rotate angle
 			worldRotation = angle;
 		}
@@ -72,11 +67,22 @@ void Object::onAction( float dt )
 		worldPosition = position;
 		worldRotation = angle;
 	}	
-
+	
 	//update max and min TODO - real transforms
 	max = worldPosition + halfSize;
 	min = worldPosition - halfSize;
+}
 
+void Object::onAction( float dt )
+{
+	if( absoluteTimeSpeed )  //correct time speed
+		dt = Game::UPDATE_INTERVAL_CAP;
+	
+	position += speed * dt;	
+	angle += rotationSpeed * dt;
+
+	updateWorldPosition();
+	
 	if( childs )
 	{
 		for( uint i = 0; i < childs->size(); ++i )

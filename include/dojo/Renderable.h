@@ -40,8 +40,6 @@ namespace Dojo
 		Listener* clickListener;		
 			
 		Vector uvOffset;
-
-		bool renderedLastFrame;
 				
 		Renderable( GameState* level, const Vector& pos ) :
 		Object( level, pos, Vector::ONE ),
@@ -49,8 +47,7 @@ namespace Dojo
 		renderingOrder(0),
 		visible( true ),
 		currentFadeTime(0),
-		clickListener( NULL ),
-		renderedLastFrame( false )
+		clickListener( NULL )
 		{
 			reset();
 		}

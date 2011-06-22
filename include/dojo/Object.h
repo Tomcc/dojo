@@ -66,9 +66,13 @@ namespace Dojo {
 			active = true;
 			speed.x = speed.y = 0;
 			
-			angle = Vector::ZERO;			
+			angle = Vector::ZERO;
 			rotationSpeed = Vector::ZERO;
-		}
+			
+			updateWorldPosition();
+		}		
+		
+		void updateWorldPosition();
 		
 		inline void setSize( float x, float y )
 		{						
@@ -181,7 +185,7 @@ namespace Dojo {
 
 			parent = p;
 		}
-		
+				
 	protected:		
 		
 		GameState* gameState;

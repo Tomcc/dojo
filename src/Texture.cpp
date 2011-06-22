@@ -14,16 +14,6 @@ void Texture::bind( uint index )
 	glEnable( GL_TEXTURE_2D );
 
 	glBindTexture( GL_TEXTURE_2D, glhandle );
-	
-	
-	glMatrixMode( GL_TEXTURE );
-	glLoadIdentity();
-	
-	if( isAtlasTile() )
-	{		
-		glTranslatef(xOffset, yOffset, 0 );
-		glScalef(xRatio, yRatio, 1);
-	}
 }
 
 void Texture::enableBilinearFiltering()

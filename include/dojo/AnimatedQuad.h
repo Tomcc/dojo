@@ -232,8 +232,7 @@ namespace Dojo
 		{			
 			setTexture( t );
 
-			if( t->isNonPowerOfTwo() )
-				mesh = t->getOptimalBillboard();
+			mesh = t->getOptimalBillboard();
 		}		
 	};
 }

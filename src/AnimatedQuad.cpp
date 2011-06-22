@@ -39,7 +39,8 @@ void AnimatedQuad::reset()
 	pixelScale.x = pixelScale.y = 1;
 	screenSize.x = screenSize.y = 1;
 	
-	animation->setup(NULL, 0);
+	if( animation )
+		animation->setup(NULL, 0);
 	
 	setTexture( NULL );
 	mesh = gameState->getMesh( "texturedQuad" );

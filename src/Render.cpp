@@ -198,7 +198,7 @@ void Render::startFrame()
 				 viewport->getClearColor().b, 
 				 viewport->getClearColor().a );
 	
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	_setupOrthoProjection();
 	_setupFrustumProjection();
@@ -246,7 +246,6 @@ void Render::renderElement( Renderable* s )
 	//each renderable is a single batch
 	++frameBatchCount;
 	
-	
 	//change the renderstate
 	s->commitChanges( currentRenderState );
 
@@ -257,7 +256,7 @@ void Render::renderElement( Renderable* s )
 	glPushMatrix();	
 	
 	//move
-	glTranslatef( 
+	glTranslatef(
 				 s->getWorldPosition().x,
 				 s->getWorldPosition().y,
 				 s->getWorldPosition().z );

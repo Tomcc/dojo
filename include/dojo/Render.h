@@ -39,7 +39,7 @@ namespace Dojo {
 			projectionOff( true ),
 			depthCheck( false ),
 			lightingOn( false ),
-			depthClear( true )
+			depthClear( false )
 			{
 
 			}

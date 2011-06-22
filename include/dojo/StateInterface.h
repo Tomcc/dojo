@@ -20,9 +20,11 @@ namespace Dojo
 		
 		StateInterface() :
 		currentState(-1),
-		currentStatePtr( NULL )
+		currentStatePtr( NULL ),
+		autoDelete( true )
 		{
-			
+			nextState = -1;
+			nextStatePtr = NULL;
 		}
 		
 		virtual ~StateInterface()
@@ -32,51 +34,54 @@ namespace Dojo
 		}
 		
 		inline void setState( uint newState )		
-		{
-			_subStateEnd();
-				
-			currentState = newState;
-			currentStatePtr = NULL;
-				
-			_subStateBegin();
+		{			
+			nextState = newState;
+			
+			//start immediately if we have no current state
+			if( !hasCurrentState() )
+				_applyNextState();
 		}
 		
 		inline void setState( StateInterface* child )
 		{
-			DEBUG_ASSERT( child );
-			
-			_subStateEnd();
-			
-			currentState = -1;
-			currentStatePtr = child;
-			
-			_subStateBegin();			
+			nextStatePtr = child;
+						
+			//start immediately if we have no current state
+			if( !hasCurrentState() )
+				_applyNextState();
 		}
 		
 		inline uint getCurrentState()					{	return currentState;	}
-		inline StateInterface* getChildState()		{	return currentStatePtr;	}
+		inline StateInterface* getChildState()			{	return currentStatePtr;	}
 		
 		inline bool isCurrentState( uint state )		{	return currentState == state;	}
 		inline bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
+		inline bool isAutoDeleted()						{	return autoDelete;				}
 
 		inline bool hasChildState()						{	return currentStatePtr != NULL;	}
 		
+		inline bool hasCurrentState()					{	return currentStatePtr != NULL || currentState != -1; }
+		inline bool hasNextState()						{	return nextStatePtr != NULL || nextState != -1; }
+		
 		///begin the execution of this state
-		void begin()
+		inline void begin()
 		{
 			onBegin();
 		}
 		
 		///loop the execution of this state (and its childs)
-		void loop( float dt )
-		{					
+		inline void loop( float dt )
+		{			
+			_subStateLoop( dt );
+		
 			onLoop( dt );
 			
-			_subStateLoop( dt );
+			if( hasNextState() )
+				_applyNextState();
 		}
 		
 		///end the execution of this state (and its childs)
-		void end()
+		inline void end()
 		{
 			_subStateEnd();
 			
@@ -86,6 +91,11 @@ namespace Dojo
 	protected:
 		int currentState;		
 		StateInterface* currentStatePtr;
+		
+		int nextState;
+		StateInterface* nextStatePtr;
+		
+		bool autoDelete;
 		
 	private:
 				
@@ -130,6 +140,48 @@ namespace Dojo
 				currentStatePtr->end();
 			else
 				onStateEnd();
+		}
+				
+		inline void _nextState( uint newState )		
+		{
+			_subStateEnd();
+			
+			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+				delete currentStatePtr;
+			
+			currentState = newState;
+			currentStatePtr = NULL;
+			
+			_subStateBegin();
+		}
+		
+		inline void _nextState( StateInterface* child )
+		{
+			DEBUG_ASSERT( child );
+			
+			_subStateEnd();
+			
+			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+				delete currentStatePtr;
+			
+			currentState = -1;
+			currentStatePtr = child;
+			
+			_subStateBegin();			
+		}
+		
+		inline void _applyNextState()
+		{
+			DEBUG_ASSERT( hasNextState() );
+			
+			//change state
+			if( nextStatePtr )
+				_nextState( nextStatePtr );
+			else if( nextState != -1 )
+				_nextState( nextState );
+			
+			nextState = -1;
+			nextStatePtr = NULL;
 		}
 		
 	};

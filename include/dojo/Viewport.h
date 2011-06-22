@@ -83,7 +83,7 @@ namespace Dojo
 			targetSize.y = (float)render->getHeight();
 
 			//create the fader object			
-			fadeObject = new Model( level, position, "texturedQuad", String::EMPTY );
+			fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );
 			fadeObject->color = Color( 0, 0, 0, 0 );
 			
 			fadeObject->scale.x = size.x;
@@ -118,8 +118,9 @@ namespace Dojo
 				delete background;
 			}
 			
-			background = new Sprite( gameState, position, name );
+			background = new Sprite( gameState, Vector::ZERO, name );
 			background->setRequiresAlpha( false );
+			background->setVisible( true );
 			background->inheritAngle = false;
 									
 			//force the proportions to fill screen
@@ -156,10 +157,10 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( s );
 
-			return cullingEnabled && s->isVisible() && contains( s );
+			return cullingEnabled && s->isVisible() && touches( s );
 		}
 
-		inline bool contains( Renderable* r )
+		inline bool touches( Renderable* r )
 		{
 			DEBUG_ASSERT( r );
 
