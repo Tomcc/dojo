@@ -9,6 +9,11 @@
 #include "ApplePlatform.h"
 
 #import <AudioToolbox/AudioToolbox.h>
+#import <Foundation/NSLocale.h>
+
+#ifdef PLATFORM_IOS
+	#import <UIKit/UIApplication.h>
+#endif
 
 #include "Timer.h"
 #include "Render.h"
@@ -20,10 +25,6 @@
 #include "dojostring.h"
 #include "StringReader.h"
 
-#ifdef PLATFORM_IOS
-	#import <UIKit/UIApplication.h>
-#endif
-
 using namespace Dojo;
 using namespace std;
 
@@ -31,6 +32,8 @@ ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
     pool = [[NSAutoreleasePool alloc] init];
+	
+	locale = String( [[NSLocale currentLocale] localeIdentifier] );
 }
 
 ApplePlatform::~ApplePlatform()

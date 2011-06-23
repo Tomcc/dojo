@@ -58,6 +58,7 @@ namespace Dojo
 		inline InputSystem* getInput()			{	return input;	}
 		inline FontSystem* getFontSystem()		{	return fonts;	}
 		inline double getRealFrameTime()		{	return realFrameTime;	}
+		inline const String& getLocale()		{	return locale;	}
 		
 		inline bool isRunning()					{	return running; }
 		
@@ -91,6 +92,8 @@ namespace Dojo
 	protected:
 
 		static Platform* singleton;
+		
+		String locale;
 
 		Table config;
 
