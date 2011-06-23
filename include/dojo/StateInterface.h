@@ -18,10 +18,10 @@ namespace Dojo
 	{
 	public:
 		
-		StateInterface() :
+		StateInterface( bool autoDelete = true ) :
 		currentState(-1),
 		currentStatePtr( NULL ),
-		autoDelete( true )
+		autoDelete( false )
 		{
 			nextState = -1;
 			nextStatePtr = NULL;
@@ -174,14 +174,20 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( hasNextState() );
 			
-			//change state
-			if( nextStatePtr )
-				_nextState( nextStatePtr );
-			else if( nextState != -1 )
-				_nextState( nextState );
+			//they have to be cancelled before, because the state that is beginning
+			//could need to set them again
+			int temp = nextState;
+			StateInterface* tempPtr = nextStatePtr;
 			
 			nextState = -1;
 			nextStatePtr = NULL;
+			
+			//change state
+			if( tempPtr )
+				_nextState( tempPtr );
+			else if( temp != -1 )
+				_nextState( temp );
+			
 		}
 		
 	};

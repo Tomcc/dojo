@@ -65,7 +65,7 @@ using namespace Dojo;
 
 - (void) drawView:(id)sender
 {		
-	platform->step( Game::UPDATE_INTERVAL_CAP ); //one step
+	platform->step( frameTimer.deltaTime() ); //one step
 }
 
 - (void) layoutSubviews
@@ -81,6 +81,8 @@ using namespace Dojo;
 	
 		renderImpl = platform->getRender();
 		touchSource = platform->getInput();	
+		
+		frameTimer.reset();
 	}
 }
 

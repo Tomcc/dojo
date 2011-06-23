@@ -34,6 +34,8 @@ namespace Dojo {
 	Dojo::Render* renderImpl;
 	Dojo::InputSystem* touchSource;
 	
+	Dojo::Timer frameTimer;
+	
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;
 	

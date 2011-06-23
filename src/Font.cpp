@@ -209,8 +209,6 @@ font( f )
 	texture->disableTiling();
 
 	free( buf );
-
-	DEBUG_MESSAGE( font->getName().ASCII() << ":Page " << index << " generated in " << timer.getElapsedTime() << " s" );
 }
 
 /// --------------------------------------------------------------------------------
