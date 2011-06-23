@@ -9,6 +9,7 @@
 #include <dojo/Buffer.h>
 #include <dojo/Color.h>
 #include <dojo/dojomath.h>
+#include <dojo/dojostring.h>
 #include <dojo/Font.h>
 #include <dojo/FontSystem.h>
 #include <dojo/FrameSet.h>
@@ -32,6 +33,7 @@
 #include <dojo/SoundSet.h>
 #include <dojo/SoundSource.h>
 #include <dojo/Sprite.h>
+#include <dojo/StringReader.h>
 #include <dojo/StateInterface.h>
 #include <dojo/Table.h>
 #include <dojo/TextArea.h>

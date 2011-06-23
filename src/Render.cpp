@@ -20,7 +20,7 @@ viewport( NULL ),
 valid( true ),
 width( w ),
 height( h ),
-devicePixelScale( (float)dps ),
+devicePixelScale( 1.f/(float)dps ),
 renderOrientation( RO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr ),
 currentLayer( NULL ),
@@ -398,7 +398,7 @@ void Render::_setupOrthoProjection()
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 		
-	glRotatef( renderRotation, 0,0,1 );
+	glRotatef( renderRotation, 0,0,1 );	
 	
 	glOrthof( 
 		-viewport->getHalfSize().x, 
@@ -418,8 +418,8 @@ void Render::_setupOrthoProjection()
 	glTranslatef(
 		-viewport->getWorldPosition().x,
 		-viewport->getWorldPosition().y,
-		0 );	
-	
+		0 );
+		
 	glGetFloatv( GL_MODELVIEW_MATRIX, orthoView );
 }
 

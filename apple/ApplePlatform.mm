@@ -83,7 +83,7 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	for( int i = 0; i < [paths count]; ++i )
 		out.push_back( String( [paths objectAtIndex:i] ) );
 	
-	[nspath release];
+	//[nspath release];
 	[nstype release];
 }
 

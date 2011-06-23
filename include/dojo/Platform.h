@@ -36,7 +36,7 @@ namespace Dojo
 		sound( NULL ),
 		input( NULL ),
 		config( configTable ),
-		running( true ),
+		running( false ),
 		realFrameTime( 0 )
 		{
 

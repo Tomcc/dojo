@@ -23,7 +23,7 @@ IOSPlatform::IOSPlatform( const Table& config ) :
 ApplePlatform( config ),
 app( NULL )
 {
-	running = true; //IOS Platform autoruns
+	
 }
 
 IOSPlatform::~IOSPlatform()
@@ -87,6 +87,8 @@ void IOSPlatform::initialise()
 	fonts = new FontSystem();
 	
 	game->begin();
+	
+	running = true;
 }
 	
 void IOSPlatform::shutdown()

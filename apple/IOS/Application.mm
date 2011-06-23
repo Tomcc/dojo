@@ -45,6 +45,7 @@ using namespace Dojo;
 		animationFrameInterval = 60.f * Game::UPDATE_INTERVAL_CAP ;
 		displayLink = nil;
 		animationTimer = nil;
+		renderImpl = NULL;
 		
 		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
 		// class is used as fallback when it isn't available.
@@ -71,7 +72,15 @@ using namespace Dojo;
 {		
 	// Set the scale factor to be the same as the main screen
 	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
-		[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
+		[self setContentScaleFactor:2];
+	}	
+	
+	if( !renderImpl )
+	{
+		platform->initialise();
+	
+		renderImpl = platform->getRender();
+		touchSource = platform->getInput();	
 	}
 }
 
@@ -111,11 +120,6 @@ using namespace Dojo;
 	platform = (IOSPlatform*)Platform::getSingleton();
 	
 	platform->_notifyNativeApp( self );
-	
-	platform->initialise();
-		
-	renderImpl = platform->getRender();
-	touchSource = platform->getInput();	
 }
 
 - (void) startAnimation
