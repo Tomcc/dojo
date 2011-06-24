@@ -81,6 +81,11 @@ namespace Dojo
 			appendFloat( f );
 		}
 		
+		inline size_t byteSize()
+		{
+			return size() * sizeof( unichar );
+		}
+		
 		///converts this string into ASCII. WARNING: fails silently on unsupported chars!!!
 		inline std::string ASCII() const 
 		{
@@ -154,20 +159,26 @@ namespace Dojo
 		}
 		
 #ifdef __OBJC__
-		inline static NSString* toNSString()
+		inline NSString* toNSString() const 
 		{                       
 			return [[NSString alloc] initWithCharacters: data() length: size() ];
 		}
 		
-		inline static void appendNSString( NSString* nss )
+		String( NSString* nss ) :
+		_ustring()
 		{
-			DEBUG_ASSERT( s );
+			appendNSString( nss );
+		}
+		
+		inline void appendNSString( NSString* nss )
+		{
+			DEBUG_ASSERT( nss );
 			
 			uint sz = size();
 			resize( sz + [nss length] );
 			
 			///copy the whole string verbatim
-			[nss getCharacters: data() + sz withRange: NSMakeRange( 0, [nss length] )];
+			[nss getCharacters: (unichar*)data() + sz range: NSMakeRange( 0, [nss length] )];
 		}
 #endif
 		

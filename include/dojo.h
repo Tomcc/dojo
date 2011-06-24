@@ -36,6 +36,7 @@
 #include <dojo/StringReader.h>
 #include <dojo/StateInterface.h>
 #include <dojo/Table.h>
+#include <dojo/Tests.h>
 #include <dojo/TextArea.h>
 #include <dojo/Texture.h>
 #include <dojo/Timer.h>

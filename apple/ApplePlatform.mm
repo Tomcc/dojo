@@ -121,9 +121,13 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 		 [nsname release];
 		 [nspaths release];*/
 	}
-	else
-	{
+	else if( absPath[0] != '/' ) //it is a relative path
+	{		
 		fullPath = _getFullPath( absPath.toNSString() );
+	}
+	else  //real absolute 
+	{
+		fullPath = absPath.toNSString();
 	}
 	
 	return fullPath;
@@ -315,9 +319,7 @@ void ApplePlatform::_createApplicationDirectory()
 	NSString* nsgamedir = dirname.toNSString();	
 	NSString* nsdir = [nspath stringByAppendingString:nsgamedir];
 	
-	//check if the directory exists, if not existing create it!
-	NSLog( nsdir );
-	
+	//check if the directory exists, if not existing create it!	
 	BOOL b;
 	NSFileManager *fileManager= [NSFileManager defaultManager]; 
 	if(![ fileManager fileExistsAtPath:nsdir isDirectory: &b ])
