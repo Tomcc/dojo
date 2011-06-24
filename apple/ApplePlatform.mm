@@ -61,9 +61,9 @@ String ApplePlatform::getCompleteFilePath( const String& name, const String& typ
 	
 	NSString* res = [[NSBundle mainBundle] pathForResource:NSName ofType:NSType inDirectory:NSPath ];
 	
-	[NSName release];
+	/*[NSName release];
 	[NSType release];
-	[NSPath release];
+	[NSPath release];*/
 	
 	if( res )
 		return String( res );
@@ -87,7 +87,7 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 		out.push_back( String( [paths objectAtIndex:i] ) );
 	
 	//[nspath release];
-	[nstype release];
+	//[nstype release];
 }
 
 
@@ -95,9 +95,7 @@ NSString* ApplePlatform::_getFullPath( const String& path )
 {			
 	NSString* nsbundlepath = [[NSBundle mainBundle] bundlePath];
 	NSString* nspath = [nsbundlepath stringByAppendingString: ("/" + path).toNSString() ];
-	
-	NSLog( nspath );
-	
+		
 	return nspath;
 }
 

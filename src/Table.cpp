@@ -15,7 +15,7 @@ void Table::serialize( String& buf, String indent )
 	Vector* v;
 	
 	//write 0xFFFE or they won't get this is unicode!
-	//buf += (unichar)0xfeff;
+	buf += (unichar)0xfeff;
 
 	//serialize to the Table Format	
 	EntryMap::iterator itr = map.begin();
