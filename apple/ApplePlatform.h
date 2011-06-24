@@ -50,6 +50,8 @@ namespace Dojo
         
     protected:
 		
+		NSString* _getFullPath( const String& path );
+		
 		NSString* _getDestinationFilePath( Table* t, const String& absPath = String::EMPTY );
 		
 		void _createApplicationDirectory();

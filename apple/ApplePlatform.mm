@@ -90,15 +90,102 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	[nstype release];
 }
 
+
+NSString* ApplePlatform::_getFullPath( const String& path )
+{			
+	NSString* nsbundlepath = [[NSBundle mainBundle] bundlePath];
+	NSString* nspath = [nsbundlepath stringByAppendingString: ("/" + path).toNSString() ];
+	
+	NSLog( nspath );
+	
+	return nspath;
+}
+
+NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& absPath )
+{	
+	DEBUG_ASSERT( table );
+	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) != '/' ); //need to NOT have the terminating /
+	
+	NSString* fullPath;	
+	
+	//save this in a file in the user preferences folder, or in the abs path
+	if( absPath.size() == 0 )
+	{		
+		String fileName = "/" + game->getName() + "/" + table->getName() + ".ds";
+		
+		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSString* nspath = [nspaths objectAtIndex:0];
+		NSString* nsname = fileName.toNSString();
+		
+		fullPath = [nspath stringByAppendingString:nsname];
+		
+		/*[fullPath retain];
+		 [nsname release];
+		 [nspaths release];*/
+	}
+	else
+	{
+		fullPath = _getFullPath( absPath.toNSString() );
+	}
+	
+	return fullPath;
+}
+
+void ApplePlatform::load( Table* dest, const String& absPath )
+{
+	NSString* fullPath = _getDestinationFilePath( dest, absPath );
+	
+	//read file
+	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
+	
+	//do nothing if file doesn't exist
+	if( !nsfile )
+		return;
+	
+	//drop the data in a String - TODO don't duplicate it
+	String buf;
+	buf.appendRaw( (char*)[nsfile bytes], [nsfile length] );
+	
+	dest->setName( Utils::getFileName( String( fullPath ) ) );
+	
+	StringReader in( buf );
+	dest->deserialize( in );
+	
+	/*[nsfile release];
+	 [fullPath release];*/
+}
+
+void ApplePlatform::save( Table* src, const String& absPath )
+{
+	//serialize to stream
+	String buf;
+	src->serialize( buf );
+	
+	//ensure application dir created
+	_createApplicationDirectory();
+	
+	NSString* fullPath = _getDestinationFilePath( src, absPath );
+	
+	//drop into NSData
+	NSData* nsfile = [[NSData alloc] 	initWithBytesNoCopy:(void*)buf.data()
+												   length:buf.byteSize()
+											 freeWhenDone:false ];
+	
+	//drop on file
+	[nsfile writeToFile:fullPath atomically:true];
+	
+	/*[fullPath release];
+	 [nsfile release];*/
+}
+
+
 uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
 {
     bufptr = NULL;
 	
 	DEBUG_ASSERT( path.size() );
-	
-	NSString* NSPath = path.toNSString();
-	
-	NSData* data = [[NSData alloc] initWithContentsOfFile: NSPath ];
+		
+	NSData* data = [[NSData alloc] initWithContentsOfFile: _getFullPath( path ) ];
 	
 	if( !data )
 		return false;
@@ -245,83 +332,6 @@ void ApplePlatform::_createApplicationDirectory()
 		
 		DEBUG_ASSERT( success );
 	}	
-}
-
-NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& absPath )
-{	
-	DEBUG_ASSERT( table );
-	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) != '/' ); //need to NOT have the terminating /
-	
-	NSString* fullPath;	
-	
-	//save this in a file in the user preferences folder, or in the abs path
-	if( absPath.size() == 0 )
-	{		
-		String fileName = "/" + game->getName() + "/" + table->getName() + ".ds";
-		
-		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-		NSString* nspath = [nspaths objectAtIndex:0];
-		NSString* nsname = fileName.toNSString();
-		
-		fullPath = [nspath stringByAppendingString:nsname];
-		
-		/*[fullPath retain];
-		[nsname release];
-		[nspaths release];*/
-	}
-	else
-	{
-		fullPath = absPath.toNSString();
-	}
-	
-	return fullPath;
-}
-
-void ApplePlatform::load( Table* dest, const String& absPath )
-{
-	NSString* fullPath = _getDestinationFilePath( dest, absPath );
-		
-	//read file
-	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
-	
-	//do nothing if file doesn't exist
-	if( !nsfile )
-		return;
-
-	//drop the data in a String - TODO don't duplicate it
-	String buf;
-	buf.appendRaw( (char*)[nsfile bytes], [nsfile length] );
-	
-	dest->setName( Utils::getFileName( String( fullPath ) ) );
-	
-	StringReader in( buf );
-	dest->deserialize( in );
-		
-	/*[nsfile release];
-	[fullPath release];*/
-}
-
-void ApplePlatform::save( Table* src, const String& absPath )
-{
-	//serialize to stream
-	String buf;
-	src->serialize( buf );
-	
-	//ensure application dir created
-	_createApplicationDirectory();
-	
-	NSString* fullPath = _getDestinationFilePath( src, absPath );
-	
-	//drop into NSData
-	NSData* nsfile = [[NSData alloc] 	initWithBytesNoCopy:(void*)buf.data()
-										length:buf.byteSize()
-										freeWhenDone:false ];
-		
-	//drop on file
-	[nsfile writeToFile:fullPath atomically:true];
-	
-	/*[fullPath release];
-	[nsfile release];*/
 }
 
 void ApplePlatform::openWebPage( const String& site )
