@@ -84,11 +84,18 @@ void IOSPlatform::initialise()
 	
 	sound = new SoundManager();
 	input = new InputSystem();
-	fonts = new FontSystem();
+	fonts = new FontSystem();	
+	
+	if( config.exists( "runTests" ) )
+		testSuite.initTests();
 	
 	game->begin();
 	
 	running = true;
+	
+	
+	if( config.exists( "runTests" ) )
+		testSuite.runtimeTests();
 }
 	
 void IOSPlatform::shutdown()

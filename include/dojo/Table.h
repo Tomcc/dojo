@@ -188,104 +188,109 @@ namespace Dojo
 			map.clear();
 		}		
 		
-		inline const String& getName()
+		inline const String& getName() const
 		{
 			return name;
 		}
 
-		inline uint getAutoMembers()
+		inline uint getAutoMembers() const
 		{
 			return unnamedMembers;
 		}
 
-		inline bool hasName() 
+		inline bool hasName() const
 		{
 			return name.size() > 0;
 		}
 
-		inline bool exists( const String& key )
+		inline bool exists( const String& key ) const
 		{
 			DEBUG_ASSERT( key.size() );
 
 			return map.find( key ) == map.end();
 		}
 
-		inline bool existsAs( const String& key, FieldType t )
+		inline bool existsAs( const String& key, FieldType t ) const
 		{
-			EntryMap::iterator itr = map.find( key );
+			EntryMap::const_iterator itr = map.find( key );
 
 			return itr != map.end() && itr->second.type == t;
 		}
 		
-		inline float getNumber( const String& key )
+		inline const Entry& get( const String& key ) const
+		{
+			return map.find( key )->second;
+		}
+		
+		inline float getNumber( const String& key ) const
 		{			
 			if( existsAs( key, FT_NUMBER ) )
-				return *( (float*)map[key].value );
+				return *( (float*)get(key).value );
 			else
 				return 0;
 		}
 
-		inline int getInt( const String& key )
+		inline int getInt( const String& key ) const
 		{
 			return (int)getNumber(key);
 		}
 
-		inline bool getBool( const String& key )
+		inline bool getBool( const String& key ) const
 		{
 			return getNumber(key) > 0.f;
 		}
 		
-		inline const String& getString( const String& key )
+		inline const String& getString( const String& key ) const
 		{
 			if( existsAs(key, FT_STRING ) )
-				return *( (String*)map[key].value );
+				return *( (String*)get(key).value );
 			else
 			   return String::EMPTY;
 		}
 
-		inline const Dojo::Vector& getVector( const String& key )
+		inline const Dojo::Vector& getVector( const String& key ) const
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
-				return *( (Vector*)map[key].value );
+				return *( (Vector*)get(key).value );
 			else
 				return Vector::ZERO;
 		}
 
-		inline const Dojo::Color getColor( const String& key, float alpha = 1.f )
+		inline const Dojo::Color getColor( const String& key, float alpha = 1.f ) const
 		{
 			return Color( getVector( key ), alpha );
 		}
 		
-		inline Table* getTable( const String& key )
+		inline Table* getTable( const String& key ) const
 		{			
 			if( existsAs(key, FT_TABLE ) )
-			   return (Table*)map[key].value;
+			   return (Table*)get(key).value;
 		   else
 			   return &EMPTY_TABLE;
 		}
 
-		inline const Data& getData( const String& key )
+		inline const Data& getData( const String& key ) const
 		{
 			if( existsAs( key, FT_DATA ) )
-				return *( (Data*)map[ key ].value );
+				return *( (Data*)get(key).value );
 			else
 				return EMPTY_DATA;
 		}	
 
-		inline String autoMember( uint i )
+		inline String autoMember( uint i ) const
 		{
 			DEBUG_ASSERT( i < getAutoMembers() );
 
 			return '_' + String( (int)i );
 		}
 
-		inline bool isEmpty()
+		inline bool isEmpty() const
 		{
 			return map.size() == 0;
 		}
 		
 		///scrive la tabella in un formato standard su stringa che inizia a pos
-		void serialize( String& buf, String indent = String::EMPTY );
+		void serialize( String& buf, String indent = String::EMPTY ) const;
 
 		void deserialize( StringReader& buf );
 				

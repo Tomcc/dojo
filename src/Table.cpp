@@ -7,7 +7,7 @@ using namespace Dojo;
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
-void Table::serialize( String& buf, String indent )
+void Table::serialize( String& buf, String indent ) const
 {	
 	using namespace std;	
 
@@ -18,7 +18,7 @@ void Table::serialize( String& buf, String indent )
 	buf += (unichar)0xfeff;
 
 	//serialize to the Table Format	
-	EntryMap::iterator itr = map.begin();
+	EntryMap::const_iterator itr = map.begin();
 	for( ; itr != map.end(); ++itr ) 
 	{
 		const Entry& e = itr->second;

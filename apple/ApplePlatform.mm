@@ -29,11 +29,15 @@ using namespace Dojo;
 using namespace std;
 
 ApplePlatform::ApplePlatform( const Table& config ) :
-Platform( config )
+Platform( config ),
+testSuite( std::cout )
 {
     pool = [[NSAutoreleasePool alloc] init];
 	
 	locale = String( [[NSLocale currentLocale] localeIdentifier] );
+	
+	if( config.exists( "runTests" ) )
+		testSuite.staticTest();
 }
 
 ApplePlatform::~ApplePlatform()

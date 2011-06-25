@@ -13,6 +13,7 @@
 #include "dojo_common_header.h"
 
 #include "Platform.h"
+#include "FrameworkTests.h"
 
 #ifdef __OBJC__
 	#import <Foundation/NSAutoreleasePool.h>
@@ -49,6 +50,8 @@ namespace Dojo
 		virtual void openWebPage( const String& site );
         
     protected:
+		
+		FrameworkTests testSuite;
 		
 		NSString* _getFullPath( const String& path );
 		
