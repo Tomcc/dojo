@@ -28,16 +28,16 @@ namespace Dojo {
 		}
 		
 		///tests static objects such as Strings, Vectors, Colors for correctness
-		bool staticTest();
+		void staticTest();
 		
 		///various initialization tests, such as Table parsing, resource loading and scene setup
-		bool initTests();
+		void initTests();
 		
 		///tests that can only be executed at runtime, such as state machines and gamestates.
 		/**
 		 Also performs teardown tests on the created objects.
 		*/
-		bool runtimeTests();
+		void runtimeTests();
 		
 		
 	protected:

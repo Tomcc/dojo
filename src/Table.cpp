@@ -19,9 +19,12 @@ void Table::serialize( String& buf, String indent ) const
 
 	//serialize to the Table Format	
 	EntryMap::const_iterator itr = map.begin();
+	
+	DEBUG_MESSAGE( map.size() );
+	
 	for( ; itr != map.end(); ++itr ) 
 	{
-		const Entry& e = itr->second;
+		Entry* e = itr->second;
 
 		if( indent.size() )
 			buf += indent;
@@ -30,16 +33,16 @@ void Table::serialize( String& buf, String indent ) const
 		if( itr->first[0] != '_' )
 			buf += itr->first + " = ";
 
-		switch( e.type )
+		switch( e->type )
 		{
 		case FT_NUMBER:
-			buf.appendFloat( *((float*)e.value) );
+			buf.appendFloat( *((float*)e->getValue() ) );
 			break;
 		case FT_STRING:
-			buf += '\"' + *((String*)e.value) + '\"';
+			buf += '\"' + *((String*)e->getValue() ) + '\"';
 			break;
 		case FT_VECTOR:
-			v = (Vector*)e.value;
+			v = (Vector*)e->getValue();
 			buf += '(';
 			buf.appendFloat( v->x );
 			buf += ' ';
@@ -50,7 +53,7 @@ void Table::serialize( String& buf, String indent ) const
 
 			break;
 		case FT_DATA:
-			data = (Data*)e.value;
+			data = (Data*)e->getValue();
 			buf += '#' + String( data->size ) + ' ';
 
 			buf.appendRaw( data->ptr, data->size );
@@ -58,7 +61,7 @@ void Table::serialize( String& buf, String indent ) const
 			break;
 		case FT_TABLE:
 			buf += String( "{\n" );
-			((Table*)e.value)->serialize( buf, indent + '\t' );
+			(*(Table**)e->getValue())->serialize( buf, indent + '\t' );
 
 			buf += indent + '}';
 

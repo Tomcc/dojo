@@ -18,16 +18,17 @@ namespace Dojo
 	{
 	public:
 		
-		TestUnit( const std::string& testName, std::ostream& out = std::cout ) :
+		TestUnit( const std::string& testName, std::ostream& out = std::cout, bool displayPassed = true ) :
 		total( 0 ),
 		failed( 0 ),
 		timeTotal( 0 ),
 		name( testName ),
-		outStream( out )
+		outStream( out ),
+		outputPassed( displayPassed )
 		{
 			DEBUG_ASSERT( name.size() );
 			
-			outStream << "RUNNING " << name;
+			outStream << "RUNNING " << name << "... ";
 		}
 		
 		~TestUnit()
@@ -41,16 +42,14 @@ namespace Dojo
 			timeTotal += timeSinceLastTest;
 			
 			++total;
-			
-			outStream << std::endl << "[" << total << "]";
-			
+						
 			if( !condition )
 			{
 				++failed;				
-				outStream << " FAIL: ";				
+				outStream << std::endl << "[" << total << "] " << " FAIL: ";				
 			}
-			else
-				outStream << " OK\t\t" << timeSinceLastTest*1000.0 << " ms";
+			else if( outputPassed )
+				outStream << std::endl << "[" << total << "] " << " OK\t\t" << timeSinceLastTest*1000.0 << " ms";
 			
 			testTimer.reset();
 			
@@ -70,14 +69,16 @@ namespace Dojo
 		}
 		
 		void report()
-		{
-			outStream << std::endl;
-			
+		{			
 			if( failed )
-				outStream << "FAILED " << name << ": " << failed << " fail on " << total << " tests";
+				outStream << std::endl << "FAILED " << name << ": " << failed << " fail on " << total << " tests";
 			else
+			{
+				if( outputPassed )			//same line if 
+					outStream << std::endl;
+				
 				outStream << "OK " << total << " tests\t" << timeTotal*1000.0 << " ms";
-			
+			}
 			outStream << std::endl << std::endl;
 		}
 		
@@ -85,6 +86,8 @@ namespace Dojo
 				
 		uint total, failed;
 		double timeTotal;
+		
+		bool outputPassed;
 		
 		Timer testTimer;
 		

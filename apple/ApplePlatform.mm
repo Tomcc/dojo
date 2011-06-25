@@ -36,7 +36,7 @@ testSuite( std::cout )
 	
 	locale = String( [[NSLocale currentLocale] localeIdentifier] );
 	
-	if( config.exists( "runTests" ) )
+	//if( config.exists( "runTests" ) )
 		testSuite.staticTest();
 }
 

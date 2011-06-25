@@ -139,15 +139,16 @@ namespace Dojo
 			
 			for( ; div > 0; i %= div, div /= 10 )
 				*this += '0' + (i / div);
+			
 		}
 		
 		inline void appendFloat( float f )
 		{
 			//HACK
-			StringStream str;
+			std::stringstream str;
 			str << f;
 			
-			append( str.str() );
+			appendASCII( str.str().c_str() );
 		}
 		
 		///appends data to this string. It has to be 2 bytes aligned!
@@ -170,7 +171,7 @@ namespace Dojo
 			appendNSString( nss );
 		}
 		
-		inline void appendNSString( NSString* nss )
+		inline String& appendNSString( NSString* nss )
 		{
 			DEBUG_ASSERT( nss );
 			
@@ -179,6 +180,8 @@ namespace Dojo
 			
 			///copy the whole string verbatim
 			[nss getCharacters: (unichar*)data() + sz range: NSMakeRange( 0, [nss length] )];
+			
+			return *this;
 		}
 #endif
 		

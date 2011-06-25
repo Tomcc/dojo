@@ -94,6 +94,11 @@ namespace Dojo
 			return *this;
 		}
 		
+		inline bool operator == ( const Vector& v ) const
+		{
+			return x == v.x && y == v.y && z == v.z;
+		}
+		
 		inline Vector operator + ( const Vector& v ) const 
 		{
 				return Vector( x + v.x, y + v.y, z + v.z );

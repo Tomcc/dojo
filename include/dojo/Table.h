@@ -46,36 +46,52 @@ namespace Dojo
 
 			}
 		};
-
-		class Entry 
+		
+		class Entry
 		{
 		public:
 			FieldType type;
-
-			void* value;
-
-			Entry() :
-			type( FT_UNDEFINED ),
-			value( NULL )
+			
+			Entry( FieldType fieldType ) :
+			type( fieldType )
 			{
-
+				DEBUG_ASSERT( type <= FT_TABLE );
 			}
+					
+			virtual ~Entry()
+			{
+				
+			}
+			
+			virtual void* getValue()=0;
+		};
+		
+		template <class T>
+		class TypedEntry : public Entry
+		{
+		public:
 
-			Entry( FieldType fieldType, void* v ) :
-			type( fieldType ),
+			T value;
+
+			TypedEntry( FieldType fieldType, const T& v ) :
+			Entry( fieldType ), 
 			value( v )
 			{
 				
 			}
-
-			///need to call this before overwriting the entry
-			void dispose()
+					
+			virtual ~TypedEntry()
 			{
-				delete value;
+				
+			}
+			
+			virtual void* getValue()
+			{
+				return &value;
 			}
 		};
 
-		typedef std::map< String, Entry > EntryMap;
+		typedef std::map< String, Entry* > EntryMap;
 
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
@@ -92,7 +108,7 @@ namespace Dojo
 			clear();
 		}
 		
-		inline Table* createTable( const String& key )
+		inline Table* createTable( const String& key = String::EMPTY )
 		{	
 			String name;
 
@@ -114,25 +130,26 @@ namespace Dojo
 			name = newName;
 		}
 
-		inline void set( const String& key, FieldType type, void* value )
+		template< class T >
+		inline void set( const String& key, FieldType type, const T& value )
 		{
-			DEBUG_ASSERT( type == FT_NUMBER || (value != NULL) );
-
+			DEBUG_ASSERT( key.size() );
+			
 			//generate name
 			if( key.size() == 0 )
-				map[ _getAutoName() ] = Entry( type, value );
+				map[ _getAutoName() ] = new TypedEntry< T >( type, value );
 			else
 			{
 				if( exists( key ) )
-					map[ key ].dispose();
+					delete map[key];
 
-				map[ key ] = Entry( type, value );
+				map[ key ] = new TypedEntry< T >( type, value );
 			}
 		}
 		
 		inline void set( const String& key, float value )
 		{			
-			set(key, FT_NUMBER, new float( value ) );
+			set(key, FT_NUMBER, value );
 		}
 
 		inline void set( const String& key, int value )
@@ -153,12 +170,12 @@ namespace Dojo
 		
 		inline void set( const String& key, const String& value )
 		{			
-			set(key, FT_STRING, new String( value ) );
+			set(key, FT_STRING, value );
 		}
 
 		inline void set( const String& key, const Vector& value )
 		{
-			set( key, FT_VECTOR, new Vector( value ) );
+			set( key, FT_VECTOR, value );
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
@@ -167,14 +184,14 @@ namespace Dojo
 			DEBUG_ASSERT( value );
 			DEBUG_ASSERT( size );
 
-			set(key, FT_DATA, new Data( value, size ) );
+			set(key, FT_DATA, Data( value, size ) );
 		}
 		
 		inline void set( Table* value )
 		{
 			DEBUG_ASSERT( value );
 						
-			set( value->getName(), FT_TABLE, value);
+			set( value->getName(), FT_TABLE, value );
 		}		
 		
 		void clear()
@@ -183,7 +200,7 @@ namespace Dojo
 			EntryMap::iterator itr = map.begin();
 			
 			for( ; itr != map.end(); ++itr )
-				itr->second.dispose();
+				delete itr->second;
 			
 			map.clear();
 		}		
@@ -207,17 +224,22 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( key.size() );
 
-			return map.find( key ) == map.end();
+			return map.find( key ) != map.end();
 		}
 
 		inline bool existsAs( const String& key, FieldType t ) const
 		{
 			EntryMap::const_iterator itr = map.find( key );
-
-			return itr != map.end() && itr->second.type == t;
+						
+			if( itr != map.end() )
+			{
+				Entry* e = itr->second;
+				return e->type == t;
+			}
+			return false;
 		}
 		
-		inline const Entry& get( const String& key ) const
+		inline Entry* get( const String& key ) const
 		{
 			return map.find( key )->second;
 		}
@@ -225,7 +247,7 @@ namespace Dojo
 		inline float getNumber( const String& key ) const
 		{			
 			if( existsAs( key, FT_NUMBER ) )
-				return *( (float*)get(key).value );
+				return *( (float*)get(key)->getValue() );
 			else
 				return 0;
 		}
@@ -243,7 +265,7 @@ namespace Dojo
 		inline const String& getString( const String& key ) const
 		{
 			if( existsAs(key, FT_STRING ) )
-				return *( (String*)get(key).value );
+				return *( (String*)get(key)->getValue() );
 			else
 			   return String::EMPTY;
 		}
@@ -251,7 +273,7 @@ namespace Dojo
 		inline const Dojo::Vector& getVector( const String& key ) const
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
-				return *( (Vector*)get(key).value );
+				return *( (Vector*)get(key)->getValue() );
 			else
 				return Vector::ZERO;
 		}
@@ -264,7 +286,7 @@ namespace Dojo
 		inline Table* getTable( const String& key ) const
 		{			
 			if( existsAs(key, FT_TABLE ) )
-			   return (Table*)get(key).value;
+			   return *( (Table**)get(key)->getValue());
 		   else
 			   return &EMPTY_TABLE;
 		}
@@ -272,7 +294,7 @@ namespace Dojo
 		inline const Data& getData( const String& key ) const
 		{
 			if( existsAs( key, FT_DATA ) )
-				return *( (Data*)get(key).value );
+				return *( (Data*)get(key)->getValue() );
 			else
 				return EMPTY_DATA;
 		}	
