@@ -35,9 +35,6 @@ testSuite( std::cout )
     pool = [[NSAutoreleasePool alloc] init];
 	
 	locale = String( [[NSLocale currentLocale] localeIdentifier] );
-	
-	//if( config.exists( "runTests" ) )
-		testSuite.staticTest();
 }
 
 ApplePlatform::~ApplePlatform()

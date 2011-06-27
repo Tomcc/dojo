@@ -26,6 +26,7 @@ namespace Dojo
 		static const Vector UNIT_Y;
 		static const Vector UNIT_Z;
 		static const Vector ONE;
+		static const Vector MAX, MIN;
 		
 		float x, y, z;
 		

@@ -31,7 +31,7 @@ namespace Dojo
 		public:
 			void* ptr;
 			uint size;
-
+			
 			Data() :
 			ptr( NULL ),
 			size( 0 )
@@ -39,21 +39,28 @@ namespace Dojo
 
 			}
 
-			Data( void* p, uint s ) :
+			Data( void* p, uint s) :
 			ptr( p ),
 			size( s )
 			{
 
 			}
+			
+			~Data()
+			{
+				
+			}			
 		};
 		
 		class Entry
 		{
 		public:
 			FieldType type;
+			bool autoRelease;
 			
 			Entry( FieldType fieldType ) :
-			type( fieldType )
+			type( fieldType ),
+			autoRelease( false )
 			{
 				DEBUG_ASSERT( type <= FT_TABLE );
 			}
@@ -79,10 +86,17 @@ namespace Dojo
 			{
 				
 			}
-					
+			
 			virtual ~TypedEntry()
 			{
-				
+				if( autoRelease )
+				{
+					if( type == FT_TABLE ) //delete the table
+						delete *((Table**)(&value));
+					
+					else if( type == FT_DATA ) //delete data's payload
+						free( ((Data*)(&value))->ptr );
+				}
 			}
 			
 			virtual void* getValue()
@@ -108,21 +122,6 @@ namespace Dojo
 			clear();
 		}
 		
-		inline Table* createTable( const String& key = String::EMPTY )
-		{	
-			String name;
-
-			if( key.size() == 0 )
-				name = _getAutoName();
-			else
-				name = key;
-
-			Table* t = new Table( name );			
-			set( t );
-
-			return t;
-		}
-
 		inline void setName( const String& newName )
 		{
 			DEBUG_ASSERT( newName.size() > 0 );
@@ -132,9 +131,7 @@ namespace Dojo
 
 		template< class T >
 		inline void set( const String& key, FieldType type, const T& value )
-		{
-			DEBUG_ASSERT( key.size() );
-			
+		{			
 			//generate name
 			if( key.size() == 0 )
 				map[ _getAutoName() ] = new TypedEntry< T >( type, value );
@@ -179,23 +176,48 @@ namespace Dojo
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		inline void set( const String& key, void* value, uint size )
+		inline void set( const String& key, void* value, uint size, bool managed = false )
 		{
 			DEBUG_ASSERT( value );
 			DEBUG_ASSERT( size );
 
 			set(key, FT_DATA, Data( value, size ) );
+			
+			//set it managed
+			if( managed )
+				map[ key ]->autoRelease = true;
 		}
 		
-		inline void set( Table* value )
+		inline void set( Table* value, bool managed = false )
 		{
 			DEBUG_ASSERT( value );
 						
 			set( value->getName(), FT_TABLE, value );
+						
+			//set it managed
+			if( managed )
+				map[ value->getName() ]->autoRelease = true;
 		}		
+		
+		inline Table* createTable( const String& key = String::EMPTY )
+		{	
+			String name;
+			
+			if( key.size() == 0 )
+				name = _getAutoName();
+			else
+				name = key;
+			
+			Table* t = new Table( name );			
+			set( t, true ); //always retain created tables
+			
+			return t;
+		}
 		
 		void clear()
 		{					
+			unnamedMembers = 0;
+			
 			//clean up every entry
 			EntryMap::iterator itr = map.begin();
 			
@@ -204,6 +226,11 @@ namespace Dojo
 			
 			map.clear();
 		}		
+		
+		inline uint size()
+		{
+			return map.size();
+		}
 		
 		inline const String& getName() const
 		{

@@ -23,12 +23,6 @@ namespace Dojo
 	class Mesh : public Buffer 
 	{
 	public:
-				
-		static const uint FIELDS_NUMBER = 12;	
-		static const uint VERTEX_PAGE_SIZE = 256;
-		static const uint INDEX_PAGE_SIZE = 256;
-		
-		static const uint VERTEX_FIELD_SIZES[];
 		
 		enum VertexField
 		{
@@ -45,6 +39,12 @@ namespace Dojo
 			VF_COLOR,
 			VF_NORMAL,
 		};
+				
+		static const uint FIELDS_NUMBER = VF_NORMAL;	
+		static const uint VERTEX_PAGE_SIZE = 256;
+		static const uint INDEX_PAGE_SIZE = 256;
+		
+		static const uint VERTEX_FIELD_SIZES[];
 		
 		enum TriangleMode
 		{

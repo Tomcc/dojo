@@ -132,11 +132,12 @@ namespace Dojo
 			if( fading ) //fade is scheduled
 			{
 				float fade = currentFadeTime/fadeEndTime;
+				float invf = 1.f-fade;
 				
-				color.r = fadeEndColor.r*fade + (1.f-fade)*fadeStartColor.r;
-				color.g = fadeEndColor.g*fade + (1.f-fade)*fadeStartColor.g;
-				color.b = fadeEndColor.b*fade + (1.f-fade)*fadeStartColor.b;
-				color.a = fadeEndColor.a*fade + (1.f-fade)*fadeStartColor.a;
+				color.r = fadeEndColor.r*fade + invf*fadeStartColor.r;
+				color.g = fadeEndColor.g*fade + invf*fadeStartColor.g;
+				color.b = fadeEndColor.b*fade + invf*fadeStartColor.b;
+				color.a = fadeEndColor.a*fade + invf*fadeStartColor.a;
 								
 				if( currentFadeTime > fadeEndTime )
 				{

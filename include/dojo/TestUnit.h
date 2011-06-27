@@ -28,7 +28,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( name.size() );
 			
-			outStream << "RUNNING " << name << "... ";
+			outStream << "TEST " << name << "... ";
 		}
 		
 		~TestUnit()

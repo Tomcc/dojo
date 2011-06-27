@@ -20,8 +20,6 @@ void Table::serialize( String& buf, String indent ) const
 	//serialize to the Table Format	
 	EntryMap::const_iterator itr = map.begin();
 	
-	DEBUG_MESSAGE( map.size() );
-	
 	for( ; itr != map.end(); ++itr ) 
 	{
 		Entry* e = itr->second;
@@ -212,7 +210,7 @@ void Table::deserialize( StringReader& buf )
 
 			buf.readBytes( data.ptr, data.size );
 
-			set( curName, data.ptr, data.size );
+			set( curName, data.ptr, data.size, true ); //always retain deserialized data
 			break;
 
 		case PT_CHILD:

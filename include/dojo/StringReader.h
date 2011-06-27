@@ -32,7 +32,7 @@ namespace Dojo
 		{
 		  --idx;
 		}
-
+		
 		inline static bool isNumber( unichar c )
 		{
 			return c >= '0' && c <= '9';
@@ -49,7 +49,7 @@ namespace Dojo
 
 			back(); //put back first non whitespace char
 		}
-
+		
 		float readFloat()
 		{
 			enum ParseState
