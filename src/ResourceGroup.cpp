@@ -358,6 +358,22 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 	}
 }
 
+void ResourceGroup::loadTables( const String& folder )
+{
+	std::vector< String > paths;
+	
+	Platform::getSingleton()->getFilePathsForType("ds", folder, paths );
+	
+	for( uint i = 0; i < paths.size(); ++i )
+	{
+		Table* t = new Table( Utils::getFileName( paths[i] ) );
+		
+		Platform::getSingleton()->load( t, paths[i] );
+		
+		addTable( t );
+	}
+}
+
 void ResourceGroup::unloadSets()
 {	
 	FrameSetMap::iterator itr = frameSets.begin();
@@ -396,5 +412,15 @@ void ResourceGroup::unloadSounds()
 		delete itr->second;	
 	
 	sounds.clear();
+}
+
+void ResourceGroup::unloadTables()
+{
+	TableMap::iterator itr = tables.begin();
+	
+	for( ; itr != tables.end(); ++itr )
+		delete itr->second;	
+	
+	tables.clear();
 }
 
