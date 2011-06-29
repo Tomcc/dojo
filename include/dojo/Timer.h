@@ -3,11 +3,9 @@
 
 #include "dojo_common_header.h"
 
-#include "BaseObject.h"
-
 namespace Dojo
 {
-	class Timer : public BaseObject
+	class Timer 
 	{
 	public:
 		Timer( double period = 0 )

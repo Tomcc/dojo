@@ -3,7 +3,6 @@
 
 #include "dojo_common_header.h"
 
-#include "BaseObject.h"
 #include "Table.h"
 
 namespace Dojo 
@@ -15,7 +14,7 @@ namespace Dojo
 	class Game;
 	class Table;
 
-	class Platform : public BaseObject
+	class Platform 
 	{
 	public:
 

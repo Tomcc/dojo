@@ -13,7 +13,6 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "BaseObject.h"
 #include "Array.h"
 #include "dojomath.h"
 
@@ -22,7 +21,7 @@ namespace Dojo {
 	class GameState;
 	class Renderable;
 	
-	class Object : public BaseObject
+	class Object 
 	{
 	public:
 		

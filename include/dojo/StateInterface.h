@@ -21,7 +21,7 @@ namespace Dojo
 		StateInterface( bool autoDelete = true ) :
 		currentState(-1),
 		currentStatePtr( NULL ),
-		autoDelete( false )
+		autoDelete( autoDelete )
 		{
 			nextState = -1;
 			nextStatePtr = NULL;

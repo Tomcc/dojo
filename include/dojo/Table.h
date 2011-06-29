@@ -3,7 +3,6 @@
 
 #include "dojo_common_header.h"
 
-#include "BaseObject.h"
 #include "Vector.h"
 #include "Array.h"
 #include "Utils.h"
@@ -12,7 +11,7 @@
 
 namespace Dojo
 {
-	class Table : public BaseObject 
+	class Table  
 	{
 	public:
 

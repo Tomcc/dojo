@@ -3,8 +3,6 @@
 
 #include "dojo_common_header.h"
 
-#include "BaseObject.h"
-
 #include "Utils.h"
 
 namespace Dojo

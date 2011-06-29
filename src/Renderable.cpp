@@ -7,6 +7,12 @@
 
 using namespace Dojo;
 
+Renderable::~Renderable()
+{
+	//be sure that it is removed
+	gameState->removeSprite( this );
+}
+
 void Renderable::onAction( float dt )
 {
 	Object::onAction( dt );

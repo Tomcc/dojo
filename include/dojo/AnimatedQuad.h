@@ -30,7 +30,7 @@ namespace Dojo
 			currentFrame( NULL )
 			{
 				setup( set, timePerFrame );
-			}
+			}			
 						
 			inline void setup( FrameSet* set, float tpf )
 			{

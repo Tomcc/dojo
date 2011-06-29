@@ -14,7 +14,6 @@
 #include "Color.h"
 #include "Vector.h"
 #include "RenderState.h"
-#include "BaseObject.h"
 #include "Timer.h"
 
 namespace Dojo {
@@ -26,7 +25,7 @@ namespace Dojo {
 	class Platform;
 	class Game;
 	
-	class Render : public BaseObject
+	class Render 
 	{	
 	public:		
 

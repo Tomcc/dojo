@@ -6,7 +6,6 @@
 #include "Vector.h"
 
 #include "SoundBuffer.h"
-#include "BaseObject.h"
 
 namespace Dojo
 {
@@ -20,7 +19,7 @@ namespace Dojo
 		SoundManager implementa un sistema automatico di gestione dei buffer e delle sources, e anche 
 		un Garbage Collector che fa pulizia dei suoni non piu' utilizzati.
 		*/
-		class SoundSource : public BaseObject
+		class SoundSource 
 		{				
 		public:
 

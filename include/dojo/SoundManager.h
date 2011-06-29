@@ -9,7 +9,6 @@
 #include "SoundBuffer.h"
 #include "SoundSet.h"
 #include "SoundSource.h"
-#include "BaseObject.h"
 
 #include "Platform.h"
 
@@ -20,8 +19,8 @@ namespace Dojo {
 		class SoundListener;
 		class SoundSource;
 
-		///Classe che gestisce il sistema Audio di eVolve.
-		class SoundManager : public BaseObject
+		///Classe che gestisce il sistema Audio di Dojo.
+		class SoundManager 
 		{
 		public:
 			typedef Array< SoundSource* > SoundList;

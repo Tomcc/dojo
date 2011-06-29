@@ -25,7 +25,7 @@
 
 namespace Dojo 
 {
-	class Game : public BaseObject, public StateInterface
+	class Game : public StateInterface
 	{
 	public:
 		

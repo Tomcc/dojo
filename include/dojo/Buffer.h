@@ -12,14 +12,11 @@
 
 #include "dojo_common_header.h"
 
-
-#include "BaseObject.h"
-
 namespace Dojo 
 {
 	class ResourceGroup;
 	
-	class Buffer : public BaseObject
+	class Buffer 
 	{
 	public:
 		

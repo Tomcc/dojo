@@ -26,7 +26,7 @@
 
 namespace Dojo 
 {
-	class Font : public BaseObject
+	class Font 
 	{
 	public:
 

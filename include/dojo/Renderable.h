@@ -29,6 +29,11 @@ namespace Dojo
 		class Listener
 		{
 		public:
+			
+			virtual ~Listener()
+			{
+				
+			}
 
 			virtual void onButtonPressed( Renderable* r, const Vector& point )=0;
 			virtual void onButtonReleased( Renderable* r, const Vector& point )=0;
@@ -52,12 +57,8 @@ namespace Dojo
 			reset();
 		}
 		
-		virtual ~Renderable()
-		{
-			if( render )
-				render->removeRenderable( this );
-		}
-				
+		virtual ~Renderable();
+		
 		virtual void reset()
 		{
 			Object::reset();

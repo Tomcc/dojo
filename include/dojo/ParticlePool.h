@@ -18,7 +18,7 @@
 
 namespace Dojo 
 {		
-	class ParticlePool : public BaseObject
+	class ParticlePool 
 	{	
 	public:		
 			

@@ -13,7 +13,6 @@
 #include "dojo_common_header.h"
 
 #include "Color.h"
-#include "BaseObject.h"
 #include "Vector.h"
 #include "Array.h"
 
@@ -23,7 +22,7 @@ namespace Dojo
 	class Mesh;
 	
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
-	class RenderState : public BaseObject
+	class RenderState 
 	{
 	public:
 
@@ -50,6 +49,11 @@ namespace Dojo
 		textureTransform( false ),
 		textureScale( 1,1 ),
 		cullMode( CM_BACK )
+		{
+			
+		}
+		
+		virtual ~RenderState()
 		{
 			
 		}

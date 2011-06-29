@@ -22,7 +22,7 @@
 
 namespace Dojo {
 	
-	class ResourceGroup : public BaseObject
+	class ResourceGroup 
 	{			
 	public:		
 		

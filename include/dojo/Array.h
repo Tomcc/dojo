@@ -5,288 +5,286 @@
 
 #include "dojo_common_header.h"
 
-#include "BaseObject.h"
-
 namespace Dojo
 {
 		template <typename T>
-	class Array : public BaseObject
+	class Array 
+	{
+	public:
+		
+		///Costruttore
+		/**
+		 E' opzionale specificare la grandezza delle pagine di memoria.
+		 */
+		Array(uint firstPageSize = 0, uint newPageSize = 0, uint validElements = 0)
 		{
-		public:
-
-			///Costruttore
-			/**
-			E' opzionale specificare la grandezza delle pagine di memoria.
-			*/
-			Array(uint firstPageSize = 0, uint newPageSize = 0, uint validElements = 0)
-			{
-				DEBUG_ASSERT( validElements*sizeof(T) <= firstPageSize );
-
-				pageSize = (newPageSize == 0) ? 64 : newPageSize;
-				firstPageSize = ( firstPageSize == 0) ? pageSize : firstPageSize;
-
-				elements = validElements;
-				arraySize = firstPageSize;
-
-				//allocate the first memory page
-				vectorArray = (T*)malloc( sizeof(T) * arraySize );
-			}
-
-			///assigment constructor - the memory is assigned to this vector
-			/**
-			WARNING - buffer has to be created with malloc()
-			*/
-			Array( T* buffer, uint size ) :
-			vectorArray( buffer ),
-			arraySize( size )
-			{
-				DEBUG_ASSERT( elements );
-				DEBUG_ASSERT( size );
-
-				elements = arraySize / sizeof( T );
-
-				pageSize = 64;
-			}
-
-			///Costruttore copia - permette di evitare l'allocazione dovuta al costruttore.
-			Array( const Array<T>& fv ) :
-			elements( fv.elements ),
-			arraySize( fv.arraySize ),
-			pageSize( fv.pageSize )
-			{
-				//allocae copia la memoria necessaria
-				vectorArray = (T*)malloc( sizeof(T) * arraySize );
-				memcpy( vectorArray, fv.vectorArray, sizeof(T) * elements);
-			}
+			DEBUG_ASSERT( validElements*sizeof(T) <= firstPageSize );
 			
-			~Array()
-			{
-				//libera la memoria puntata
-				if(vectorArray)	free(vectorArray);
-			}
+			pageSize = (newPageSize == 0) ? 64 : newPageSize;
+			firstPageSize = ( firstPageSize == 0) ? pageSize : firstPageSize;
 			
-			///Aggiunge un elemento al termine del vettore
-			FV_INLINE void add(const T& element)
-			{
-				//se nel vettore non entra un'altra pagina di memoria
-				if(elements >= arraySize) _allocatePage();
-								
-				vectorArray[ elements ] = element;
-				elements++;
-			}
-			///Inserisce un elemento in un punto del vettore
-			/**
-			\param element Elemento da inserire;
-			\param index Indirizzo del nuovo elemento
-
-			Tutti gli elementi successivi saranno spostati di 1 per fare spazio al nuovo.
-			\remark E' sensibilmente piu' lento di add(). Se index e' fuori del vettore
-			l'elemento sara' aggiunto alla fine.
-			*/
-			FV_INLINE void add(const T& element, const size_t& index)
-			{
-				//se l'index e' fuori dei limiti aggiungilo alla fine
-				if(index > size())
-					add(element);
-				else
-				{
-					//se nel vettore non entra un'altro elemento
-					if(arraySize == elements) _allocatePage();
-
-					//spostiamo tutto quanto di 1 per fare spazio al nuovo elemento
-					memmove( vectorArray + index+1, vectorArray +index, (size() - index)*sizeof(T));
-
-					//ora infiliamo l'elemento
-					vectorArray[ index ] = element;
-					elements++;	
-				}
-			}
-
-			///Copia in questo vettore un altro vettore
-			FV_INLINE void operator= (const Array<T>& fv)
-			{
-				//libera la memoria che non serve piu'
-				free( vectorArray );
-
-				//copia i parametri del vettore Src
-				elements = fv.size();
-				arraySize = fv.getArraySize();
-				pageSize = fv.getPageSize();
-
-				//rialloca la memoria necessaria
-				vectorArray = (T*)malloc( sizeof(T) * arraySize );
-				//e poi copiala
-				memcpy( vectorArray, fv._getArrayPointer(), sizeof(T) * elements);
-			}
+			elements = validElements;
+			arraySize = firstPageSize;
 			
-			///removes an element at the given index
-			/**
-			WARNING - DEFAULT BEHAVIOUR IS "REMOVE UNORDERED"
-			Use removeOrdered() if you need to keep relative ordering between elements
-			*/
-			FV_INLINE void remove(uint index)
+			//allocate the first memory page
+			vectorArray = (T*)malloc( sizeof(T) * arraySize );
+		}
+		
+		///assigment constructor - the memory is assigned to this vector
+		/**
+		 WARNING - buffer has to be created with malloc()
+		 */
+		Array( T* buffer, uint size ) :
+		vectorArray( buffer ),
+		arraySize( size )
+		{
+			DEBUG_ASSERT( elements );
+			DEBUG_ASSERT( size );
+			
+			elements = arraySize / sizeof( T );
+			
+			pageSize = 64;
+		}
+		
+		///Costruttore copia - permette di evitare l'allocazione dovuta al costruttore.
+		Array( const Array<T>& fv ) :
+		elements( fv.elements ),
+		arraySize( fv.arraySize ),
+		pageSize( fv.pageSize )
+		{
+			//allocae copia la memoria necessaria
+			vectorArray = (T*)malloc( sizeof(T) * arraySize );
+			memcpy( vectorArray, fv.vectorArray, sizeof(T) * elements);
+		}
+		
+		~Array()
+		{
+			//libera la memoria puntata
+			if(vectorArray)	free(vectorArray);
+		}
+		
+		///Aggiunge un elemento al termine del vettore
+		FV_INLINE void add(const T& element)
+		{
+			//se nel vettore non entra un'altra pagina di memoria
+			if(elements >= arraySize) _allocatePage();
+			
+			vectorArray[ elements ] = element;
+			elements++;
+		}
+		///Inserisce un elemento in un punto del vettore
+		/**
+		 \param element Elemento da inserire;
+		 \param index Indirizzo del nuovo elemento
+		 
+		 Tutti gli elementi successivi saranno spostati di 1 per fare spazio al nuovo.
+		 \remark E' sensibilmente piu' lento di add(). Se index e' fuori del vettore
+		 l'elemento sara' aggiunto alla fine.
+		 */
+		FV_INLINE void add(const T& element, const size_t& index)
+		{
+			//se l'index e' fuori dei limiti aggiungilo alla fine
+			if(index > size())
+				add(element);
+			else
 			{
-				DEBUG_ASSERT( size() > index );
-
-				--elements;
-
-				if( index != elements )
-					vectorArray[ index ] = vectorArray[ elements ];					
+				//se nel vettore non entra un'altro elemento
+				if(arraySize == elements) _allocatePage();
+				
+				//spostiamo tutto quanto di 1 per fare spazio al nuovo elemento
+				memmove( vectorArray + index+1, vectorArray +index, (size() - index)*sizeof(T));
+				
+				//ora infiliamo l'elemento
+				vectorArray[ index ] = element;
+				elements++;	
 			}
-
-			///Rimuove un elemento dal vettore.
-			/**
-			Chiama semplicemente getElementIndex seguito da remove(unsigned int).
-			Non chiama delte in caso di pointers.
-			*/
-			FV_INLINE bool remove( const T& e)
+		}
+		
+		///Copia in questo vettore un altro vettore
+		FV_INLINE void operator= (const Array<T>& fv)
+		{
+			//libera la memoria che non serve piu'
+			free( vectorArray );
+			
+			//copia i parametri del vettore Src
+			elements = fv.size();
+			arraySize = fv.getArraySize();
+			pageSize = fv.getPageSize();
+			
+			//rialloca la memoria necessaria
+			vectorArray = (T*)malloc( sizeof(T) * arraySize );
+			//e poi copiala
+			memcpy( vectorArray, fv._getArrayPointer(), sizeof(T) * elements);
+		}
+		
+		///removes an element at the given index
+		/**
+		 WARNING - DEFAULT BEHAVIOUR IS "REMOVE UNORDERED"
+		 Use removeOrdered() if you need to keep relative ordering between elements
+		 */
+		FV_INLINE void remove(uint index)
+		{
+			DEBUG_ASSERT( size() > index );
+			
+			--elements;
+			
+			if( index != elements )
+				vectorArray[ index ] = vectorArray[ elements ];					
+		}
+		
+		///Rimuove un elemento dal vettore.
+		/**
+		 Chiama semplicemente getElementIndex seguito da remove(unsigned int).
+		 Non chiama delte in caso di pointers.
+		 */
+		FV_INLINE bool remove( const T& e)
+		{
+			int i = getElementIndex(e);
+			if(i != -1)
 			{
-				int i = getElementIndex(e);
-				if(i != -1)
-				{
-					remove(i);
-					return true;
-				}
-				else return false;
+				remove(i);
+				return true;
 			}
-
-			FV_INLINE void removeOrdered( uint index )
+			else return false;
+		}
+		
+		FV_INLINE void removeOrdered( uint index )
+		{
+			DEBUG_ASSERT( size() > index );
+			
+			if(index < size()-1)
 			{
-				DEBUG_ASSERT( size() > index );
-
-				if(index < size()-1)
-				{
-					//we have already the index
-					//remove the element from the vector moving the rest in the empty spot
-					memmove( vectorArray + index, vectorArray +index+1, (size() - index-1)*sizeof(T));
-
-					elements--;
-				}
-				//we don't need to move memory for the last element
-				else if( index == size()-1 )
-					elements--;
-			}
-
-			FV_INLINE void removeOrdered( const T& e )
-			{
-				int i = getElementIndex(e);
-				if(i != -1)
-					removeOrdered(i);
-			}
-
-			///Rimuove l'elemento in coda del vettore
-			FV_INLINE void pop()
-			{
-				DEBUG_ASSERT( size() );
-
+				//we have already the index
+				//remove the element from the vector moving the rest in the empty spot
+				memmove( vectorArray + index, vectorArray +index+1, (size() - index-1)*sizeof(T));
+				
 				elements--;
 			}
-
-			FV_INLINE T& top()
+			//we don't need to move memory for the last element
+			else if( index == size()-1 )
+				elements--;
+		}
+		
+		FV_INLINE void removeOrdered( const T& e )
+		{
+			int i = getElementIndex(e);
+			if(i != -1)
+				removeOrdered(i);
+		}
+		
+		///Rimuove l'elemento in coda del vettore
+		FV_INLINE void pop()
+		{
+			DEBUG_ASSERT( size() );
+			
+			elements--;
+		}
+		
+		FV_INLINE T& top()
+		{
+			DEBUG_ASSERT( size() );
+			
+			return vectorArray[ elements-1 ];
+		}
+		
+		///Rimuove qualsiasi elemento dal vettore
+		/**
+		 Non chiama delete.
+		 \param newPageSize la nuova grandezza della page per il vettore. Lasciare a 0 per non 
+		 modificare.
+		 */
+		FV_INLINE void clear( uint newPageSize = 0)
+		{
+			elements = 0;
+			
+			//cancel the array
+			free(vectorArray);
+			
+			//recreate the array
+			if(newPageSize != 0)	pageSize = newPageSize;
+			
+			arraySize = pageSize;
+			vectorArray = (T*)malloc(sizeof(T) * arraySize);
+		}
+		
+		///Dice se i vettori sono identici
+		FV_INLINE bool operator== (const Array<T>& f)
+		{
+			if(f.size() != size())
+				return false;
+			
+			return ( memcmp(vectorArray, f._getArrayPointer(), sizeof(T) * elements) == 0);
+		}
+		
+		///Dice se il vettore ha 0 elementi
+		FV_INLINE bool isEmpty()	{	return (elements == 0);	}
+		
+		///Dice se questo elemento esiste nel vettore
+		FV_INLINE bool exists(T& e)
+		{
+			return (getElementIndex(e) != -1);
+		}	
+		
+		///restituisce l'elemento all'indice richiesto
+		FV_INLINE T& operator[] (const size_t index) const
+		{
+			DEBUG_ASSERT( index < size() );
+			
+			return vectorArray[ index ];
+		}
+		///Metodo identico a [] utile se si ha un pointer al vettore
+		FV_INLINE T& at( const size_t index) const
+		{
+			DEBUG_ASSERT( index < size() );
+			
+			return vectorArray[ index ];
+		}
+		
+		///Restituisce la posizione nel vettore dell'elemento dato
+		/**
+		 Non chiama delete.
+		 \returns 0...n se l'elemento e' stato trovato; -1 se l'elemento non esiste.
+		 */
+		FV_INLINE int getElementIndex(const T& element)
+		{
+			//find the element index
+			for(uint i = 0; i < size(); ++i)
 			{
-				DEBUG_ASSERT( size() );
-
-				return vectorArray[ elements-1 ];
+				if(vectorArray[i] == element)
+					return (uint)i;
 			}
-
-			///Rimuove qualsiasi elemento dal vettore
-			/**
-			Non chiama delete.
-			\param newPageSize la nuova grandezza della page per il vettore. Lasciare a 0 per non 
-			modificare.
-			*/
-			FV_INLINE void clear( uint newPageSize = 0)
-			{
-				elements = 0;
-
-				//cancel the array
-				free(vectorArray);
-
-				//recreate the array
-				if(newPageSize != 0)	pageSize = newPageSize;
-
-				arraySize = pageSize;
-				vectorArray = (T*)malloc(sizeof(T) * arraySize);
-			}
-
-			///Dice se i vettori sono identici
-			FV_INLINE bool operator== (const Array<T>& f)
-			{
-				if(f.size() != size())
-					return false;
-
-				return ( memcmp(vectorArray, f._getArrayPointer(), sizeof(T) * elements) == 0);
-			}
-
-			///Dice se il vettore ha 0 elementi
-			FV_INLINE bool isEmpty()	{	return (elements == 0);	}
-
-			///Dice se questo elemento esiste nel vettore
-			FV_INLINE bool exists(T& e)
-			{
-				return (getElementIndex(e) != -1);
-			}	
-
-			///restituisce l'elemento all'indice richiesto
-			FV_INLINE T& operator[] (const size_t index) const
-			{
-				DEBUG_ASSERT( index < size() );
-				
-				return vectorArray[ index ];
-			}
-			///Metodo identico a [] utile se si ha un pointer al vettore
-			FV_INLINE T& at( const size_t index) const
-			{
-				DEBUG_ASSERT( index < size() );
-				
-				return vectorArray[ index ];
-			}
-
-			///Restituisce la posizione nel vettore dell'elemento dato
-			/**
-			Non chiama delete.
-			\returns 0...n se l'elemento e' stato trovato; -1 se l'elemento non esiste.
-			*/
-			FV_INLINE int getElementIndex(const T& element)
-			{
-				//find the element index
-				for(uint i = 0; i < size(); ++i)
-				{
-					if(vectorArray[i] == element)
-						return (uint)i;
-				}
-				return -1;
-			}
-
-			///Numero di elementi
-			FV_INLINE uint size() const	{	return elements;	}
-			///Numero di bytes
-			FV_INLINE uint byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
-			///Numero massimo di elementi prima di un nuovo realloc
-			FV_INLINE uint getArraySize()	const {	return arraySize;	}
-			///Ottieni il numero massimo di elementi accettabili prima di riallocare
-			FV_INLINE uint getPageSize()	const {	return pageSize;	}
-
-
-			///Posizione del vettore in memoria -uso avanzato-
-			FV_INLINE T* _getArrayPointer()	const {	return vectorArray;	}
-
-		protected:
-
-			uint elements, arraySize, pageSize;
-
-			//puntatore C-style alla memoria che contiene gli elementi.
-			T* vectorArray;
-
-			FV_INLINE void _allocatePage()
-			{
-				//add a page to the array
-				arraySize += pageSize;
-				//reallocate the memory
-				vectorArray = (T*)realloc( vectorArray, sizeof(T) * arraySize );
-			}
-
-		};
+			return -1;
+		}
+		
+		///Numero di elementi
+		FV_INLINE uint size() const	{	return elements;	}
+		///Numero di bytes
+		FV_INLINE uint byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
+		///Numero massimo di elementi prima di un nuovo realloc
+		FV_INLINE uint getArraySize()	const {	return arraySize;	}
+		///Ottieni il numero massimo di elementi accettabili prima di riallocare
+		FV_INLINE uint getPageSize()	const {	return pageSize;	}
+		
+		
+		///Posizione del vettore in memoria -uso avanzato-
+		FV_INLINE T* _getArrayPointer()	const {	return vectorArray;	}
+		
+	protected:
+		
+		uint elements, arraySize, pageSize;
+		
+		//puntatore C-style alla memoria che contiene gli elementi.
+		T* vectorArray;
+		
+		FV_INLINE void _allocatePage()
+		{
+			//add a page to the array
+			arraySize += pageSize;
+			//reallocate the memory
+			vectorArray = (T*)realloc( vectorArray, sizeof(T) * arraySize );
+		}
+		
+	};
 }
 
 #endif

@@ -7,12 +7,11 @@
 #include "SoundBuffer.h"
 
 #include "dojomath.h"
-#include "BaseObject.h"
 
 namespace Dojo
 {
 	
-	class SoundSet : public BaseObject
+	class SoundSet 
 	{
 	public:
 
