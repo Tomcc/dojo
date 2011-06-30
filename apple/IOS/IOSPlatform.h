@@ -17,6 +17,8 @@
 
 namespace Dojo
 {
+	class Texture;
+	
 	class IOSPlatform : public ApplePlatform
 	{
 	public:
@@ -34,6 +36,8 @@ namespace Dojo
 		virtual void loop( float frameTime );
 				
 		virtual bool isSystemSoundInUse();
+		
+		void copyImageIntoCameraRoll( Texture* tex );
 		
 #ifdef __OBJC__
 		void _notifyNativeApp( Application* application )

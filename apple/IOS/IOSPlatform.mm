@@ -16,6 +16,7 @@
 #include <dojo/FontSystem.h>
 #include <dojo/Game.h>
 #include <dojo/Table.h>
+#include <dojo/Texture.h>
 
 using namespace Dojo;
 
@@ -156,4 +157,20 @@ bool IOSPlatform::isSystemSoundInUse()
 	AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &otherAudioIsPlaying);
 	
 	return otherAudioIsPlaying;
+}
+
+void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )
+{
+	//the image has to be created from a file
+	if( tex->getFilePath().size() == 0 )
+		return;
+	
+	DEBUG_MESSAGE( tex->getFilePath().ASCII() );
+	
+	//create an UIImage
+	UIImage* img = [[UIImage alloc] initWithContentsOfFile: tex->getFilePath().toNSString() ];
+	
+	UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil );
+	
+	//HACK release sometimes, but not before copying ends
 }
