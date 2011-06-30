@@ -341,6 +341,16 @@ namespace Dojo
 		void serialize( String& buf, String indent = String::EMPTY ) const;
 
 		void deserialize( StringReader& buf );
+		
+		inline void debug()
+		{
+#ifdef _DEBUG
+			String buf;
+			serialize( buf );
+			
+			DEBUG_MESSAGE( buf.ASCII() );
+#endif
+		}
 				
 	protected:
 		

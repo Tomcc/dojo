@@ -143,7 +143,7 @@ namespace Dojo {
 		
 		inline Table* getTable( const String& name )
 		{
-			TableMap::iterator where = tables.begin();
+			TableMap::iterator where = tables.find( name );
 			
 			if( where != tables.end() )
 				return where->second;
