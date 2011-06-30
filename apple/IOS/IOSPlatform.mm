@@ -165,8 +165,6 @@ void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )
 	if( tex->getFilePath().size() == 0 )
 		return;
 	
-	DEBUG_MESSAGE( tex->getFilePath().ASCII() );
-	
 	//create an UIImage
 	UIImage* img = [[UIImage alloc] initWithContentsOfFile: tex->getFilePath().toNSString() ];
 	
