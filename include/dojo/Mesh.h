@@ -26,18 +26,18 @@ namespace Dojo
 		
 		enum VertexField
 		{
-			VF_POSITION2D,
-			VF_POSITION3D,
-			VF_UV,
-			VF_UV_1,
-			VF_UV_2,
-			VF_UV_3,
-			VF_UV_4,
-			VF_UV_5,
-			VF_UV_6,
-			VF_UV_7,
-			VF_COLOR,
-			VF_NORMAL,
+			VF_POSITION2D = 1,
+			VF_POSITION3D = 2,
+			VF_UV = 3,
+			VF_UV_1 = 4,
+			VF_UV_2 = 5,
+			VF_UV_3 = 6,
+			VF_UV_4 = 7,
+			VF_UV_5 = 8,
+			VF_UV_6 = 9,
+			VF_UV_7 = 10,
+			VF_COLOR = 11,
+			VF_NORMAL = 12,
 		};
 				
 		static const uint FIELDS_NUMBER = VF_NORMAL;	
