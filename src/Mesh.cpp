@@ -266,29 +266,31 @@ bool Mesh::load()
 	dimensions = (max-min);
 	
 	//vertex count
-	vertexCount = *((int*)ptr);
+	uint vc = *((int*)ptr);
 	ptr += sizeof( int );
 	
 	//index count
-	indexCount = *((int*)ptr);
+	uint ic = *((int*)ptr);
 	ptr += sizeof( int );
-		
+	
+	
 	setDynamic( false );
 	
-	begin( vertexCount );
+	begin( vc );
 	
 	//grab vertex data
-	memcpy( vertices, ptr, vertexCount * vertexSize );
-	ptr += vertexCount * vertexSize;
+	memcpy( vertices, ptr, vc * vertexSize );
+	ptr += vc * vertexSize;
+	vertexCount = vc;
 	
 	//grab index data
-	if( indexCount )
+	if( ic )
 	{
-		setIndexCap( indexCount );
-		
-		memcpy( indices, ptr, indexCount * indexByteSize );
+		setIndexCap( ic );
+		memcpy( indices, ptr, ic * indexByteSize );
+		indexCount = ic;
 	}
-		
+	
 	//push over to GPU
 	return end();
 }

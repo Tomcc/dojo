@@ -93,7 +93,11 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 
 
 NSString* ApplePlatform::_getFullPath( const String& path )
-{			
+{	
+	//is it already absolute?
+	if( path[0] == '/' )
+		return path.toNSString();
+		
 	NSString* nsbundlepath = [[NSBundle mainBundle] bundlePath];
 	NSString* nspath = [nsbundlepath stringByAppendingString: ("/" + path).toNSString() ];
 		
@@ -122,13 +126,9 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 		 [nsname release];
 		 [nspaths release];*/
 	}
-	else if( absPath[0] != '/' ) //it is a relative path
+	else
 	{		
 		fullPath = _getFullPath( absPath.toNSString() );
-	}
-	else  //real absolute 
-	{
-		fullPath = absPath.toNSString();
 	}
 	
 	return fullPath;
@@ -188,7 +188,7 @@ uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
 	
 	DEBUG_ASSERT( path.size() );
 		
-	NSData* data = [[NSData alloc] initWithContentsOfFile: _getFullPath( path ) ];
+	NSData* data = [ NSData dataWithContentsOfFile: _getFullPath( path ) ];
 	
 	if( !data )
 		return false;
