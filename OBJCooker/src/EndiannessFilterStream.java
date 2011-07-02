@@ -24,9 +24,9 @@ public class EndiannessFilterStream extends OutputStream {
 	
 	boolean needsSwap()
 	{
-		return endianness != systemEndianness;
+		return !endianness.equals( systemEndianness );
 	}
-
+	
 	public void write(byte[] b, int off, int len) throws IOException {
 		
 		//swap endianness and write
@@ -43,5 +43,23 @@ public class EndiannessFilterStream extends OutputStream {
 	
 	public void write(byte[] b )  throws IOException {
 		write( b, 0, b.length );
+	}
+	
+	public void writeInt( int i ) throws IOException {
+	
+		byte b[] = new byte[4];
+		
+		//build an array
+		b[0] =(byte)( i >> 24 );
+		b[1] =(byte)( (i << 8) >> 24 );
+		b[2] =(byte)( (i << 16) >> 24 );
+		b[3] =(byte)( (i << 24) >> 24 );
+		
+		write( b );
+	}
+	
+	public void writeFloat( float f ) throws IOException {
+		
+		writeInt( Float.floatToIntBits( f ) );
 	}
 }

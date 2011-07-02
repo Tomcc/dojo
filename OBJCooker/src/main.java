@@ -1,40 +1,60 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteOrder;
 
 
-public class main {
+public class Main {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		/*if( args.length < 2 ) {
-			System.out.println( "usage: 'OBJCooker infile outfile");
-			return;
-		}*/
-				
-		String infile = "dado.obj";
-		String outfile = "dado.dbm";
+		String infile = "";
+		if( args.length < 1 )	{
+			System.out.print( "Input file name: ");
+			BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+			
+			try {
+				infile = in.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else
+			infile = args[0];
+						
+		String filename = infile.substring(0, infile.lastIndexOf('.') );
 		
 		Mesh m;
 		long t;
 		try {
 
-			System.out.println( "parsing file " + infile );
+			System.out.println( "parsing file " + infile + "... \t" );
 			
 			t = System.currentTimeMillis();
 			m = new Mesh( infile );
 			
-			System.out.println( "done... " + (System.currentTimeMillis()-t) + " ms" );
-			System.out.println( "writing binary file " + outfile );
-
+			t = System.currentTimeMillis()-t;
+			
+			System.out.print( "Parsed " + m.getVertexCount() + " vertices and " + m.getIndexCount() + " indices... ");
+			System.out.println( t + " ms" );
+		
+			System.out.print( "writing big-endian mesh " + filename + ".bem... \t" );
 			t = System.currentTimeMillis();
 			
-			m.write( "dado.lem", ByteOrder.LITTLE_ENDIAN );
-			m.write( "dado.bem", ByteOrder.BIG_ENDIAN );
+			m.write( filename + ".bem", ByteOrder.BIG_ENDIAN );
 			
-			System.out.println( "DONE... " + (System.currentTimeMillis()-t) + " ms" );
+			System.out.println( (System.currentTimeMillis()-t) + " ms" );			
+			System.out.print( "writing little-endian mesh " + filename + ".lem... \t" );
+			t = System.currentTimeMillis();
+			
+			m.write( filename + ".lem", ByteOrder.LITTLE_ENDIAN );
+			
+			System.out.println( (System.currentTimeMillis()-t) + " ms" );
+			
+			System.out.println( "DONE" );
 			
 		} catch (IOException e) {
 			System.out.println( "ERROR: " + e.getMessage() );
