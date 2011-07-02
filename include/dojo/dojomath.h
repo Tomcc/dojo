@@ -24,6 +24,12 @@ namespace Dojo
 		static const float EULER_TO_RADIANS;
 		static const float RADIANS_TO_EULER;
 		
+		static inline bool isLittleEndian()
+		{
+			unsigned short x = 0x0001;
+			return *((byte*)&x) != 0;
+		}
+		
 		//seeds the random either using the given seed, or current time if omitted
 		static void seedRandom( uint seed = 0 );
 		

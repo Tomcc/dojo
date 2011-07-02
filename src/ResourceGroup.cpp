@@ -311,7 +311,10 @@ void ResourceGroup::loadMeshes( const String& subdirectory )
 	std::vector<String> paths;
 	String name;
 	
-	Platform::getSingleton()->getFilePathsForType( "dms", subdirectory, paths );
+	//look for different binary files on different platforms
+	String format = Math::isLittleEndian() ? "lem" : "bem"; 
+	
+	Platform::getSingleton()->getFilePathsForType( format, subdirectory, paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{

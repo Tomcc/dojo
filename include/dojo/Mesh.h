@@ -26,21 +26,21 @@ namespace Dojo
 		
 		enum VertexField
 		{
-			VF_POSITION2D = 1,
-			VF_POSITION3D = 2,
-			VF_UV = 3,
-			VF_UV_1 = 4,
-			VF_UV_2 = 5,
-			VF_UV_3 = 6,
-			VF_UV_4 = 7,
-			VF_UV_5 = 8,
-			VF_UV_6 = 9,
-			VF_UV_7 = 10,
-			VF_COLOR = 11,
-			VF_NORMAL = 12,
+			VF_POSITION2D = 0,
+			VF_POSITION3D = 1,
+			VF_UV = 2,
+			VF_UV_1 = 3,
+			VF_UV_2 = 4,
+			VF_UV_3 = 5,
+			VF_UV_4 = 6,
+			VF_UV_5 = 7,
+			VF_UV_6 = 8,
+			VF_UV_7 = 9,
+			VF_COLOR = 10,
+			VF_NORMAL = 11
 		};
 				
-		static const uint FIELDS_NUMBER = VF_NORMAL;	
+		static const uint FIELDS_NUMBER = VF_NORMAL+1;	
 		static const uint VERTEX_PAGE_SIZE = 256;
 		static const uint INDEX_PAGE_SIZE = 256;
 		
@@ -48,8 +48,8 @@ namespace Dojo
 		
 		enum TriangleMode
 		{
-			TM_STRIP,
-			TM_LIST
+			TM_STRIP = 0,
+			TM_LIST = 1
 		};
 				
 		Mesh( ResourceGroup* creator = NULL, const String& filePath = String::EMPTY ) :

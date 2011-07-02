@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar OBJCooker.jar
+java -jar OBJCooker.jar $1

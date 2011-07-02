@@ -232,7 +232,63 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 
 bool Mesh::load()
 {
-	DEBUG_TODO;
+	//load binary mesh
+	char* data;
+	Platform::getSingleton()->loadFileContent( data, filePath );
 	
-	return false;
+	if( !data )
+		return false;
+	
+	char* ptr = data;
+	
+	//index size
+	setIndexByteSize( *ptr++ );
+	
+	//triangle mode
+	setTriangleMode( (TriangleMode)*ptr++ );
+	
+	//fields
+	for( int i = 0; i < FIELDS_NUMBER; ++i )
+	{
+		if( *ptr++ )
+			setVertexFieldEnabled( (VertexField)i );
+	}
+	
+	//max and min
+	float* fp = (float*)ptr;
+	max = Vector( fp[0], fp[1], fp[2] );
+	min = Vector( fp[3], fp[4], fp[5] );
+	
+	ptr += 2*sizeof( Vector );
+	
+	//center and dimensions
+	center = (max+min)*0.5;
+	dimensions = (max-min);
+	
+	//vertex count
+	vertexCount = *((int*)ptr);
+	ptr += sizeof( int );
+	
+	//index count
+	indexCount = *((int*)ptr);
+	ptr += sizeof( int );
+		
+	setDynamic( false );
+	
+	begin( vertexCount );
+	
+	//grab vertex data
+	memcpy( vertices, ptr, vertexCount * vertexSize );
+	ptr += vertexCount * vertexSize;
+	
+	//grab index data
+	if( indexCount )
+	{
+		setIndexCap( indexCount );
+		
+		memcpy( indices, ptr, indexCount * indexByteSize );
+	}
+		
+	//push over to GPU
+	return end();
 }
