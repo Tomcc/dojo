@@ -272,8 +272,7 @@ bool Mesh::load()
 	//index count
 	uint ic = *((int*)ptr);
 	ptr += sizeof( int );
-	
-	
+		
 	setDynamic( false );
 	
 	begin( vc );

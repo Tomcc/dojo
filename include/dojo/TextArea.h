@@ -35,6 +35,7 @@ namespace Dojo
 		
 		virtual  ~TextArea();
 				
+		///sets the max pixel lenght for this line.
 		inline void setMaxLineLenght( uint l )	{	maxLineLenght = l;	}
 		inline void setInterline( float i )		{	interline = i;		}
 		inline void setCharSpacing( float c )	{	charSpacing = c;	}

@@ -27,7 +27,7 @@ pixelScale( 1,1 )
 	DEBUG_ASSERT( font );
 
 	charSpacing = font->getSpacing();
-	spaceWidth = font->getCharacter('a')->widthRatio;
+	spaceWidth = font->getCharacter(' ')->advance;
 
 	//a font always requires alpha
 	setRequiresAlpha( true );
