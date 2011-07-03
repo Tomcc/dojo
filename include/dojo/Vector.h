@@ -142,19 +142,19 @@ namespace Dojo
 			return *this;
 		}
 
-		inline float lenght() const 
+		inline float length() const 
 		{
-			return sqrtf( lenghtSquared() );
+			return sqrtf( lengthSquared() );
 		}
 
-		inline float lenghtSquared() const 
+		inline float lengthSquared() const 
 		{
 			return x*x+y*y+z*z;
 		}
 		
 		inline const Vector& normalize()
 		{
-			float s = 1.f / lenght();
+			float s = 1.f / length();
 			x *= s;
 			y *= s;
 			z *= s;

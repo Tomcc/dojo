@@ -26,6 +26,9 @@ using namespace Dojo;
 		
 	time = CFAbsoluteTimeGetCurrent();
 	
+	//set every repetition to 0
+	memset( repetition, 0, sizeof( bool ) );
+	
 	//init keys
 	// Virtual Key Map to KeyCode
 	keymap[0x12] = InputSystem::KC_1;
@@ -232,12 +235,19 @@ using namespace Dojo;
 
 - (void)keyDown:(NSEvent *)theEvent
 {	
-	input->_fireKeyPressedEvent( [[theEvent characters] characterAtIndex:0], keymap[[theEvent keyCode]] );
+	uint kc = [theEvent keyCode];
+	if( !repetition[kc] ) {
+		input->_fireKeyPressedEvent( [[theEvent characters] characterAtIndex:0], keymap[kc] );
+		
+		repetition[kc] = true;
+	}		
 }
 
 - (void)keyUp:(NSEvent *)theEvent
 {	
-	input->_fireKeyReleasedEvent( [[theEvent characters] characterAtIndex:0], keymap[[theEvent keyCode] ] );	
+	input->_fireKeyReleasedEvent( [[theEvent characters] characterAtIndex:0], keymap[[theEvent keyCode] ] );
+	
+	repetition[[theEvent keyCode]] = false;
 }
 
 - (void)dealloc

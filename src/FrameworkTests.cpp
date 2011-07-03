@@ -67,8 +67,8 @@ void FrameworkTests::staticTest()
 		Vector a( 1,0,0 );
 		Vector b( 1.5, 0,0 );
 		
-		u.test( Vector::ZERO.lenght() == 0 ) << "lenght 0";
-		u.test( Vector::UNIT_Y.lenght() == 1 ) << "lenght 1";
+		u.test( Vector::ZERO.length() == 0 ) << "lenght 0";
+		u.test( Vector::UNIT_Y.length() == 1 ) << "lenght 1";
 		
 		u.test( a == a ) << "equality";
 		u.test( a*1.5 == b ) << "scale";

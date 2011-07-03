@@ -26,7 +26,8 @@ namespace Dojo
     
 	Dojo::InputSystem* input;
 	
-	Dojo::InputSystem::KeyCode keymap[0x76];
+	Dojo::InputSystem::KeyCode keymap[0x80];
+	bool repetition[0x80];
 }
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform;
