@@ -100,8 +100,7 @@ namespace Dojo
 						
 		virtual ~Viewport()
 		{
-			if( background )
-				delete background;
+			
 		}	
 
 
