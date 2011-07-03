@@ -31,11 +31,11 @@ namespace Dojo {
 		typedef std::map<String, Mesh*> MeshMap;
 		typedef std::map<String, SoundSet*> SoundMap;
 		typedef std::map<String, Table*> TableMap;
-			
+		
 		ResourceGroup();
 		
 		virtual ~ResourceGroup();
-		
+				
 		inline bool isFrameSetLoaded( const String& name )
 		{
 			DEBUG_ASSERT( name.size() );
@@ -150,7 +150,7 @@ namespace Dojo {
 			
 			return NULL;
 		}
-						
+		
 		void loadSets( const String& folder );		
 		void loadFonts( const String& folder );
 		void loadMeshes( const String& folder );

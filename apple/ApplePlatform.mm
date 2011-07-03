@@ -199,7 +199,7 @@ uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
 	bufptr = (char*)malloc( size );
 	memcpy( bufptr, [data bytes], size );
 	
-	[data release];
+	//[data release];
 	
 	return size;
 }
@@ -265,7 +265,8 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	CGColorSpaceRelease( colorSpace );
 	CGImageRelease( CGImage );
 	CGDataProviderRelease( prov );
-	[texData release];
+	
+	//[texData release];
 }
 
 
