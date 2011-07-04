@@ -13,11 +13,11 @@
 
 #include <gl/wglext.h>
 
-#include "dojo/Render.h"
-#include "dojo/Game.h"
-#include "dojo/Utils.h"
-#include "dojo/Table.h"
-#include "dojo/FontSystem.h"
+#include "Render.h"
+#include "Game.h"
+#include "Utils.h"
+#include "Table.h"
+#include "FontSystem.h"
 
 #include "WGL_ARB_multisample.h"
 
@@ -105,7 +105,7 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	RegisterClass(&wc);
 
 	RECT rect;
-	rect.top = 100;
+	rect.top = 10;
 	rect.left = 100;
 	rect.bottom = rect.top + h + 7;
 	rect.right = rect.left + w;
@@ -151,13 +151,15 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 
 	pfd.dwFlags = PFD_SUPPORT_OPENGL |  // OpenGL support - not DirectDraw
 		PFD_DOUBLEBUFFER   |  // double buffering support
-		PFD_DRAW_TO_WINDOW;   // draw to the app window, not to a bitmap image
+		PFD_DRAW_TO_WINDOW |
+		PFD_SWAP_EXCHANGE;   // draw to the app window, not to a bitmap image
 
 	pfd.iPixelType = PFD_TYPE_RGBA ;    // red, green, blue, alpha for each pixel
-	pfd.cColorBits = 24;                // 24 bit == 8 bits for red, 8 for green, 8 for blue.
+	pfd.cColorBits = 32;                // 24 bit == 8 bits for red, 8 for green, 8 for blue.
+	pfd.cAlphaBits = 0;
 	// This count of color bits EXCLUDES alpha.
 
-	pfd.cDepthBits = 32;                // 32 bits to measure pixel depth.  That's accurate!
+	pfd.cDepthBits = 16;                // 32 bits to measure pixel depth.  That's accurate!
 
 	//int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
 
@@ -223,6 +225,13 @@ void Win32Platform::initialise()
 		return;
 
 	glewInit();
+
+	DEBUG_MESSAGE( "Creating OpenGL context...");
+	DEBUG_MESSAGE ("querying GL info... ");
+	DEBUG_MESSAGE ("vendor: " << glGetString (GL_VENDOR));
+	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
+	DEBUG_MESSAGE ("version: " << glGetString (GL_VERSION));
+	DEBUG_MESSAGE ("GL extensions: " << glGetString (GL_EXTENSIONS));
 
 	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
 
@@ -326,6 +335,7 @@ void Win32Platform::loop( float frameTime )
 		t.start( stepCallback, this );
 
 	Timer timer;
+	running = true;
 	while( running )
 	{
 		if( frameInterval > 0 )

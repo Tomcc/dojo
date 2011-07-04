@@ -1,17 +1,16 @@
 #ifndef Win32Platform_h__
 #define Win32Platform_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
+
+#include "Platform.h"
+#include "Vector.h"
+#include "Timer.h"
 
 #include <Poco/Thread.h>
 #include <Poco/Mutex.h>
 #include <Poco/Semaphore.h>
 #include <OIS/OIS.h>
-
-#include "dojo/Platform.h"
-#include "dojo/Vector.h"
-
-#include "dojo/Timer.h"
 
 namespace Dojo
 {

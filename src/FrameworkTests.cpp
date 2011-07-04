@@ -12,11 +12,11 @@ using namespace Dojo;
 using namespace std;
 
 
-void testTable( TestUnit& u, Table* a, byte data[] )
+void testTable( TestUnit& u, Table* a, Dojo::byte data[] )
 {	
 	u.test( a->getAutoMembers() == 10 ) << "auto member number";
 	
-	for( int i = 0; i < a->getAutoMembers(); ++i )
+	for( uint i = 0; i < a->getAutoMembers(); ++i )
 		u.test( a->getInt( a->autoMember(i) ) == i ) << "auto member " << i;
 	
 	u.test( a->getString( "string1" ) == String("hello world") ) << "string 1";
@@ -88,7 +88,7 @@ void FrameworkTests::staticTest()
 		TestUnit u( "Math", out, false );
 				
 		for( int i = 2; i < 32; ++i )
-			u.test( Math::nextPowerOfTwo( Math::rangeRandom( pow(2.f,i-1 )+1.f, pow( 2.f, i ) ) ) == pow( 2.f,i ) )
+			u.test( Math::nextPowerOfTwo( (uint)Math::rangeRandom( pow(2.f,i-1 )+1.f, pow( 2.f, i ) ) ) == pow( 2.f,i ) )
 				   << "next power of two " << i;
 		
 		Vector BIG( 99999,99999,99999 );
@@ -180,7 +180,7 @@ void FrameworkTests::staticTest()
 		a.set( "data", data, 120 );		
 		a.serialize( buf );
 		
-		u.test( buf.size() ) << "write anything";
+		u.test( buf.size() > 0 ) << "write anything";
 		
 		a.clear();
 		

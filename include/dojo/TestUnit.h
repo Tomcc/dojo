@@ -8,9 +8,9 @@
 #ifndef TestUnit_h__
 #define TestUnit_h__
 
-#include "dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
-#include <dojo/Timer.h>
+#include "Timer.h"
 
 namespace Dojo
 {		

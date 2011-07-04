@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
+				AdditionalIncludeDirectories=".;include/dojo;../include/dojo;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;include;Win32;dependencies\include"
+				AdditionalIncludeDirectories=".;include/dojo;../include/dojo;Win32;dependencies\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\FrameworkTests.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Game.cpp"
 				>
 			</File>
@@ -189,6 +193,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Noise.cpp"
 				>
 			</File>
 			<File
@@ -244,6 +252,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\TestUnit.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\TextArea.cpp"
 				>
 			</File>
@@ -282,10 +294,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo\BaseObject.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\dojo\Buffer.h"
 				>
 			</File>
@@ -306,6 +314,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\dojo\dojomath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\dojostring.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\dojo\Font.h"
 				>
 			</File>
@@ -315,6 +331,10 @@
 			</File>
 			<File
 				RelativePath=".\include\dojo\FrameSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\FrameworkTests.h"
 				>
 			</File>
 			<File
@@ -330,15 +350,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo\Math.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\dojo\Mesh.h"
 				>
 			</File>
 			<File
 				RelativePath=".\include\dojo\Model.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\Noise.h"
 				>
 			</File>
 			<File
@@ -402,19 +422,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\dojo\String.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\dojo\StringReader.h"
 				>
 			</File>
 			<File
 				RelativePath=".\include\dojo\Table.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\TestUnit.h"
 				>
 			</File>
 			<File

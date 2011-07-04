@@ -49,7 +49,7 @@ namespace Dojo
 		
 		int nextInt( int min, int max )
 		{
-			return min + (max-min)*nextFloat();
+			return min + (int)((float)(max-min)*nextFloat());
 		}
 		
 		float nextFloat()
