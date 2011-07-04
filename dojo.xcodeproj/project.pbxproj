@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		430AC99E13AFADAF0062A4D5 /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 430AC99D13AFADAF0062A4D5 /* stdafx.h */; };
 		430ACAA113AFCB7B0062A4D5 /* libfreetype.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 430ACAA013AFCB7A0062A4D5 /* libfreetype.dylib */; };
+		430CCD3913C1FD060076B83E /* Noise.h in Headers */ = {isa = PBXBuildFile; fileRef = 430CCD3813C1FD060076B83E /* Noise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		430CCD3C13C1FF760076B83E /* Noise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 430CCD3B13C1FF760076B83E /* Noise.cpp */; };
 		43642E8113C0FD62004C6ABD /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 43642E2413C0FD62004C6ABD /* ApplePlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43642E8213C0FD62004C6ABD /* ApplePlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 43642E2513C0FD62004C6ABD /* ApplePlatform.mm */; };
 		43642E8A13C0FD62004C6ABD /* CustomOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 43642E2F13C0FD62004C6ABD /* CustomOpenGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -98,6 +100,8 @@
 /* Begin PBXFileReference section */
 		430AC99D13AFADAF0062A4D5 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
 		430ACAA013AFCB7A0062A4D5 /* libfreetype.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfreetype.dylib; path = usr/local/lib/libfreetype.dylib; sourceTree = SDKROOT; };
+		430CCD3813C1FD060076B83E /* Noise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noise.h; sourceTree = "<group>"; };
+		430CCD3B13C1FF760076B83E /* Noise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Noise.cpp; sourceTree = "<group>"; };
 		43642E2413C0FD62004C6ABD /* ApplePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlatform.h; sourceTree = "<group>"; };
 		43642E2513C0FD62004C6ABD /* ApplePlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePlatform.mm; sourceTree = "<group>"; };
 		43642E2F13C0FD62004C6ABD /* CustomOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomOpenGLView.h; sourceTree = "<group>"; };
@@ -281,6 +285,7 @@
 				43642E6013C0FD62004C6ABD /* Utils.h */,
 				43642E6113C0FD62004C6ABD /* Vector.h */,
 				43642E6213C0FD62004C6ABD /* Viewport.h */,
+				430CCD3813C1FD060076B83E /* Noise.h */,
 			);
 			path = dojo;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				43642E7E13C0FD62004C6ABD /* Trail.cpp */,
 				43642E7F13C0FD62004C6ABD /* Vector.cpp */,
 				43642E8013C0FD62004C6ABD /* Viewport.cpp */,
+				430CCD3B13C1FF760076B83E /* Noise.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -407,6 +413,7 @@
 				43642EB613C0FD62004C6ABD /* Timer.h in Headers */,
 				43642EB713C0FD62004C6ABD /* TouchSource.h in Headers */,
 				43642EB813C0FD62004C6ABD /* Trail.h in Headers */,
+				430CCD3913C1FD060076B83E /* Noise.h in Headers */,
 				43642EB913C0FD62004C6ABD /* Utils.h in Headers */,
 				43642EBA13C0FD62004C6ABD /* Vector.h in Headers */,
 				43642EBB13C0FD62004C6ABD /* Viewport.h in Headers */,
@@ -509,6 +516,7 @@
 				43642ED613C0FD62004C6ABD /* Trail.cpp in Sources */,
 				43642ED713C0FD62004C6ABD /* Vector.cpp in Sources */,
 				43642ED813C0FD62004C6ABD /* Viewport.cpp in Sources */,
+				430CCD3C13C1FF760076B83E /* Noise.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
