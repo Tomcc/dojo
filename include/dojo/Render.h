@@ -122,16 +122,18 @@ namespace Dojo {
 		
 		//renders all the layers and their contained Renderables in the given order
 		void render()
-		{		
+		{
 			startFrame();
-			
+
 			//first render from the most negative to -1
 			if( negativeLayers.size() > 0 )
 			{				
 				for( int i = negativeLayers.size()-1; i >= 0; --i )
 					renderLayer( negativeLayers.at(i) );
 			}
-			
+
+			Timer t;
+
 			//then from 0 to the most positive
 			for( uint i = 0; i < positiveLayers.size(); ++i )
 				renderLayer( positiveLayers.at(i) );

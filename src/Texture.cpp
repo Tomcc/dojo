@@ -20,7 +20,7 @@ void Texture::enableBilinearFiltering()
 {					
     glBindTexture( GL_TEXTURE_2D, glhandle );
     
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);	
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 }
 
 void Texture::disableBilinearFiltering()
@@ -50,7 +50,7 @@ void Texture::enableMipmaps()
 {
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST ); 
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 }
 
 bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )

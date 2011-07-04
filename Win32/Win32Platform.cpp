@@ -143,25 +143,28 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 
 	hdc = GetDC( hwnd );
 	// CREATE PFD:
-	PIXELFORMATDESCRIPTOR pfd = { 0 };  // create the pfd,
-	// and start it out with ALL ZEROs in ALL of its fields.
-
-	pfd.nSize = sizeof( PIXELFORMATDESCRIPTOR );    // just its size
-	pfd.nVersion = 1;   // always 1
-
-	pfd.dwFlags = PFD_SUPPORT_OPENGL |  // OpenGL support - not DirectDraw
-		PFD_DOUBLEBUFFER   |  // double buffering support
-		PFD_DRAW_TO_WINDOW |
-		PFD_SWAP_EXCHANGE;   // draw to the app window, not to a bitmap image
-
-	pfd.iPixelType = PFD_TYPE_RGBA ;    // red, green, blue, alpha for each pixel
-	pfd.cColorBits = 32;                // 24 bit == 8 bits for red, 8 for green, 8 for blue.
-	pfd.cAlphaBits = 0;
-	// This count of color bits EXCLUDES alpha.
-
-	pfd.cDepthBits = 16;                // 32 bits to measure pixel depth.  That's accurate!
-
-	//int chosenPixelFormat = ChoosePixelFormat( hdc, &pfd );
+	static	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
+		1,											// Version Number
+		PFD_DRAW_TO_WINDOW |						// Format Must Support Window
+		PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
+		PFD_DOUBLEBUFFER |							// Must Support Double Buffering
+		PFD_SWAP_EXCHANGE,
+		PFD_TYPE_RGBA,								// Request An RGBA Format
+		32, 										// Select Our Color Depth
+		0, 0, 0, 0, 0, 0,							// Color Bits Ignored
+		0,											// No Alpha Buffer
+		0,											// Shift Bit Ignored
+		0,											// No Accumulation Buffer
+		0, 0, 0, 0,									// Accumulation Bits Ignored
+		16,											// 16Bit Z-Buffer (Depth Buffer)  
+		0,											// No Stencil Buffer
+		0,											// No Auxiliary Buffer
+		PFD_MAIN_PLANE,								// Main Drawing Layer
+		0,											// Reserved
+		0, 0, 0										// Layer Masks Ignored
+	};
 
 	int chosenPixelFormat;
 	ChooseAntiAliasingPixelFormat( chosenPixelFormat, config.getInt( "MSAA" ));
@@ -231,7 +234,6 @@ void Win32Platform::initialise()
 	DEBUG_MESSAGE ("vendor: " << glGetString (GL_VENDOR));
 	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
 	DEBUG_MESSAGE ("version: " << glGetString (GL_VERSION));
-	DEBUG_MESSAGE ("GL extensions: " << glGetString (GL_EXTENSIONS));
 
 	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
 
@@ -340,6 +342,7 @@ void Win32Platform::loop( float frameTime )
 	{
 		if( frameInterval > 0 )
 			frameStart.wait();
+
 
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
