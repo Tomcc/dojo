@@ -109,6 +109,11 @@ namespace Dojo
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
+		inline static String index( uint i )
+		{
+			return '_' + String(i);
+		}
+		
 		Table( const String& tablename = String::EMPTY ) :
 		name( tablename ),
 		unnamedMembers( 0 )
@@ -277,12 +282,12 @@ namespace Dojo
 			else
 				return 0;
 		}
-
+		
 		inline int getInt( const String& key ) const
 		{
 			return (int)getNumber(key);
 		}
-
+		
 		inline bool getBool( const String& key ) const
 		{
 			return getNumber(key) > 0.f;
@@ -293,9 +298,9 @@ namespace Dojo
 			if( existsAs(key, FT_STRING ) )
 				return *( (String*)get(key)->getValue() );
 			else
-			   return String::EMPTY;
+				return String::EMPTY;
 		}
-
+		
 		inline const Dojo::Vector& getVector( const String& key ) const
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
@@ -303,7 +308,7 @@ namespace Dojo
 			else
 				return Vector::ZERO;
 		}
-
+		
 		inline const Dojo::Color getColor( const String& key, float alpha = 1.f ) const
 		{
 			return Color( getVector( key ), alpha );
@@ -312,11 +317,11 @@ namespace Dojo
 		inline Table* getTable( const String& key ) const
 		{			
 			if( existsAs(key, FT_TABLE ) )
-			   return *( (Table**)get(key)->getValue());
-		   else
-			   return &EMPTY_TABLE;
+				return *( (Table**)get(key)->getValue());
+			else
+				return &EMPTY_TABLE;
 		}
-
+		
 		inline const Data& getData( const String& key ) const
 		{
 			if( existsAs( key, FT_DATA ) )
@@ -324,13 +329,53 @@ namespace Dojo
 			else
 				return EMPTY_DATA;
 		}	
-
-		inline String autoMember( uint i ) const
+		
+		inline String autoMemberName( uint idx ) const 
 		{
-			DEBUG_ASSERT( i < getAutoMembers() );
-
-			return '_' + String( (int)i );
+			DEBUG_ASSERT( idx < getAutoMembers() );
+			
+			return '_' + String( idx );
 		}
+		
+		inline float getNumber( uint idx ) const
+		{			
+			return getNumber( autoMemberName( idx ) );
+		}
+		
+		inline int getInt( uint idx ) const
+		{
+			return (int)getNumber( idx );
+		}
+		
+		inline bool getBool( uint idx ) const
+		{
+			return getNumber(idx) > 0.f;
+		}
+		
+		inline const String& getString( uint idx ) const
+		{
+			return getString( autoMemberName(idx) );
+		}
+		
+		inline const Dojo::Vector& getVector( uint idx ) const
+		{
+			return  getVector( autoMemberName(idx ) );
+		}
+		
+		inline const Dojo::Color getColor( uint idx, float alpha = 1.f ) const
+		{
+			return Color( getVector( idx ), alpha );
+		}
+		
+		inline Table* getTable( uint idx ) const
+		{			
+			return getTable( autoMemberName(idx) );
+		}
+		
+		inline const Data& getData( uint idx ) const
+		{
+			return getData( autoMemberName( idx ) );
+		}	
 
 		inline bool isEmpty() const
 		{

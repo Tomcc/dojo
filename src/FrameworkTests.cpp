@@ -12,12 +12,12 @@ using namespace Dojo;
 using namespace std;
 
 
-void testTable( TestUnit& u, Table* a, Dojo::byte data[] )
+void testTable( TestUnit& u, Table* a, byte data[] )
 {	
 	u.test( a->getAutoMembers() == 10 ) << "auto member number";
 	
-	for( uint i = 0; i < a->getAutoMembers(); ++i )
-		u.test( a->getInt( a->autoMember(i) ) == i ) << "auto member " << i;
+	for( int i = 0; i < a->getAutoMembers(); ++i )
+		u.test( a->getInt( i ) == i ) << "auto member " << i;
 	
 	u.test( a->getString( "string1" ) == String("hello world") ) << "string 1";
 	u.test( a->getString( "string2" ) == String::EMPTY ) << "string 2";
@@ -88,7 +88,7 @@ void FrameworkTests::staticTest()
 		TestUnit u( "Math", out, false );
 				
 		for( int i = 2; i < 32; ++i )
-			u.test( Math::nextPowerOfTwo( (uint)Math::rangeRandom( pow(2.f,i-1 )+1.f, pow( 2.f, i ) ) ) == pow( 2.f,i ) )
+			u.test( Math::nextPowerOfTwo( Math::rangeRandom( pow(2.f,i-1 )+1.f, pow( 2.f, i ) ) ) == pow( 2.f,i ) )
 				   << "next power of two " << i;
 		
 		Vector BIG( 99999,99999,99999 );
@@ -157,7 +157,7 @@ void FrameworkTests::staticTest()
 			
 			u.test( a->getInt( "a" ) == 1 )	<< "int get broken";
 			
-			a = d.getTable( d.autoMember(0) );
+			a = d.getTable( 0 );
 			
 			u.test( a->getInt( "a" ) == 1 ) << "table get broken";
 		}
@@ -180,7 +180,7 @@ void FrameworkTests::staticTest()
 		a.set( "data", data, 120 );		
 		a.serialize( buf );
 		
-		u.test( buf.size() > 0 ) << "write anything";
+		u.test( buf.size() ) << "write anything";
 		
 		a.clear();
 		

@@ -107,7 +107,7 @@ namespace Dojo
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum( float VFOV, float zNear, float zFar );
 		
-		inline void setBackgroundSprite( const String& name )
+		inline void setBackgroundSprite( const String& name, float frameTime = 0 )
 		{			
 			DEBUG_ASSERT( name.size() );
 			
@@ -117,7 +117,7 @@ namespace Dojo
 				delete background;
 			}
 			
-			background = new Sprite( gameState, Vector::ZERO, name );
+			background = new Sprite( gameState, Vector::ZERO, name, frameTime );
 			background->setRequiresAlpha( false );
 			background->setVisible( true );
 			background->inheritAngle = false;

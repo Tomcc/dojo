@@ -96,7 +96,7 @@ inline bool isNameStarter( unichar c )
 
 inline bool isNumber( unichar c )
 {
-	return c >= '0' && c <= '9';
+	return (c >= '0' && c <= '9') || c == '-';  //- is part of a number!!!
 }
 
 inline bool isName( unichar c )
@@ -133,7 +133,7 @@ void Table::deserialize( StringReader& buf )
 	while( !buf.eof() && state != PS_END && state != PS_ERROR )
 	{
 		c = buf.get();
-
+		
 		switch( state )
 		{
 		case PS_TABLE: //wait for either a name, or an anon value	

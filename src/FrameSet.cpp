@@ -46,12 +46,12 @@ bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 	uint x, y, sx, sy;
 	for( uint i = 0; i < tiles->getAutoMembers(); ++i )
 	{
-		Table* tile = tiles->getTable( tiles->autoMember(i) );
+		Table* tile = tiles->getTable( i );
 
-		x = tile->getInt( tile->autoMember(0) );
-		y = tile->getInt( tile->autoMember(1) );
-		sx = tile->getInt( tile->autoMember(2) );
-		sy = tile->getInt( tile->autoMember(3) );
+		x = tile->getInt( 0 );
+		y = tile->getInt( 1 );
+		sx = tile->getInt( 2 );
+		sy = tile->getInt( 3 );
 
 		Texture* tiletex = new Texture( NULL, String::EMPTY );
 
