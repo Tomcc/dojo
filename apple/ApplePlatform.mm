@@ -321,12 +321,11 @@ void ApplePlatform::_createApplicationDirectory()
 	NSString* nsgamedir = dirname.toNSString();	
 	NSString* nsdir = [nspath stringByAppendingString:nsgamedir];
 	
-	//check if the directory exists, if not existing create it!	
-	BOOL b;
+	//check if the directory exists, if not existing create it!
 	NSFileManager *fileManager= [NSFileManager defaultManager]; 
-	if(![ fileManager fileExistsAtPath:nsdir isDirectory: &b ])
+	if(![ fileManager fileExistsAtPath:nsdir ])
 	{
-		bool success = b || [fileManager 
+		bool success = [fileManager 
 						createDirectoryAtPath:nsdir
 						withIntermediateDirectories:YES 
 						attributes:nil 
