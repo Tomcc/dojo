@@ -39,6 +39,11 @@ namespace Dojo
 		
 		void copyImageIntoCameraRoll( Texture* tex );
 		
+		///creates a context sharing resources with the main context, and sets it as current on the current thread
+		void acquireSharedContext();
+		
+		void createAutoReleasePool();
+		
 #ifdef __OBJC__
 		void _notifyNativeApp( Application* application )
 		{
@@ -51,6 +56,7 @@ namespace Dojo
 		{			
 			return app;
 		}
+		
 #endif
 		
 	protected:

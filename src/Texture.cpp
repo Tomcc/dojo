@@ -105,7 +105,8 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 		GL_UNSIGNED_BYTE, 
 		imageData);
 
-	loaded = glGetError() == GL_NO_ERROR;
+	int err = glGetError();
+	loaded = err == GL_NO_ERROR;
 
 	if( !loaded )
 		unload(); //destroy buffer

@@ -82,6 +82,7 @@ namespace Dojo {
 		inline void addFrameSet( FrameSet* set, const String& name )
 		{
 			DEBUG_ASSERT( !getFrameSet( name ) );
+			DEBUG_ASSERT( !finalized );
 			
 			frameSets[name] = set;
 		}
@@ -89,6 +90,7 @@ namespace Dojo {
 		inline void addFont( Font* f, const String& name )
 		{
 			DEBUG_ASSERT( !getFont( name ) );
+			DEBUG_ASSERT( !finalized );
 			
 			fonts[name] = f;
 		}
@@ -96,6 +98,7 @@ namespace Dojo {
 		inline void addMesh( Mesh* m, const String& name )
 		{
 			DEBUG_ASSERT( !getMesh( name ) );
+			DEBUG_ASSERT( !finalized );
 			
 			meshes[ name ] = m;
 		}
@@ -103,7 +106,8 @@ namespace Dojo {
 		inline void addSound( SoundSet* sb, const String& name )
 		{
 			DEBUG_ASSERT( !getSound( name ) );
-
+			DEBUG_ASSERT( !finalized );
+			
 			sounds[ name ] = sb;
 		}
 		
@@ -111,6 +115,7 @@ namespace Dojo {
 		{
 			DEBUG_ASSERT( t );
 			DEBUG_ASSERT( !getTable( t->getName() ) );
+			DEBUG_ASSERT( !finalized );
 			
 			tables[ t->getName() ] = t;
 		}
@@ -181,6 +186,11 @@ namespace Dojo {
 			return find< Table >( name, RT_TABLE );
 		}
 		
+		inline bool isFinalized()
+		{
+			return finalized;
+		}
+		
 		void loadSets( const String& folder );		
 		void loadFonts( const String& folder );
 		void loadMeshes( const String& folder );
@@ -194,6 +204,12 @@ namespace Dojo {
 			loadMeshes( folder );
 			loadSounds( folder );
 			loadTables( folder );
+		}
+		
+		///asserts that this group will not load more resources in the future, useful for task-based loading
+		void finalize()
+		{
+			finalized = true;
 		}
 				
 		void unloadSets();
@@ -213,6 +229,8 @@ namespace Dojo {
 		}
 		
 	protected:
+		
+		bool finalized;
 		
 		FrameSet* empty;
 		

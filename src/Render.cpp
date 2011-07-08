@@ -184,7 +184,7 @@ void Render::startFrame()
 	DEBUG_ASSERT( !frameStarted );
 	DEBUG_ASSERT( viewport );
 
-	//platform->acquireContext();
+	platform->acquireContext();
 	
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 						

@@ -6,7 +6,8 @@
 
 using namespace Dojo;
 
-ResourceGroup::ResourceGroup()
+ResourceGroup::ResourceGroup() :
+finalized( false )
 {
 	//link map array
 	mapArray[ RT_FRAMESET ] = &frameSets;
