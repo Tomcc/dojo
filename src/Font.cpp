@@ -221,20 +221,20 @@ Font::Font( const String& path )
 	memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
 
 	//load table
-	Table* t = new Table();	
-	Platform::getSingleton()->load( t, path );
+	Table t;
+	Platform::getSingleton()->load( &t, path );
 	
-	fontName = t->getName();
+	fontName = t.getName();
 
-	fontFile = Utils::getDirectory( path ) + '/' + t->getString( "truetype" );
-	fontWidth = fontHeight = t->getInt( "size" );	
+	fontFile = Utils::getDirectory( path ) + '/' + t.getString( "truetype" );
+	fontWidth = fontHeight = t.getInt( "size" );	
 
-	border = t->getNumber( "border" );
-	borderColor = t->getColor( "border_color" );
+	border = t.getNumber( "border" );
+	borderColor = t.getColor( "border_color" );
 
-	antialias = t->getBool( "antialias" );
-	kerning = t->getBool( "kerning" );
-	spacing = t->getNumber( "spacing" );
+	antialias = t.getBool( "antialias" );
+	kerning = t.getBool( "kerning" );
+	spacing = t.getNumber( "spacing" );
 
 	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
 
@@ -242,9 +242,9 @@ Font::Font( const String& path )
 	if( border > 0 )
 		stroker = Platform::getSingleton()->getFontSystem()->getStroker( border );
 
-	Table* preload = t->getTable( "preloadedPages" );
+	Table* preload = t.getTable( "preloadedPages" );
 	for( uint i = 0; i < preload->getAutoMembers(); ++i )
-		getPage( preload->getInt( String( '_' ) + String(i) ) );
+		getPage( preload->getInt( i ) );
 }
 
 Font::~Font()

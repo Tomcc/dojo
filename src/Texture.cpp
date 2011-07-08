@@ -6,6 +6,27 @@
 
 using namespace Dojo;
 
+Texture::Texture( ResourceGroup* creator, const String& path ) :
+Buffer( creator, path ),
+width(0),
+height(0),
+internalWidth(0),
+internalHeight(0),
+xRatio(0),
+yRatio(0),
+xOffset(0),
+yOffset(0),
+glhandle( 0 ),
+npot( false ),
+parentAtlas( NULL ),
+OBB( NULL ),
+ownerFrameSet( NULL )
+{			
+	glGenTextures( 1, &glhandle );
+	
+	DEBUG_ASSERT( glhandle );
+}
+
 void Texture::bind( uint index )
 {
 	DEBUG_ASSERT( index < 8 );
@@ -58,10 +79,6 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( imageData );
 
-	glGenTextures( 1, &glhandle );
-
-	DEBUG_ASSERT( glhandle );
-
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 	glActiveTexture( GL_TEXTURE0 );
 
@@ -76,7 +93,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	size = internalWidth * internalHeight * 4;
 
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-
+	
 	glTexImage2D(
 		GL_TEXTURE_2D, 
 		0, 
@@ -102,15 +119,15 @@ bool Texture::loadFromPNG( const String& path )
 	
 	void* imageData = NULL;
 
-	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
-
-	loadFromMemory( (byte*)imageData, width, height );
-
-	free(imageData);
-
 	enableBilinearFiltering();
 	enableTiling();
 	enableMipmaps();
+	
+	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+	
+	loadFromMemory( (byte*)imageData, width, height );
+
+	free(imageData);
 
 	return loaded;
 }

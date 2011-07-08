@@ -69,7 +69,9 @@ void IOSPlatform::initialise()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
 	
 	render = new Render( width, height, devicePixelScale, Render::RO_PORTRAIT );
-		
+	
+	//some local configs
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	
 //SOUND MANAGER
 
@@ -95,8 +97,7 @@ void IOSPlatform::initialise()
 	
 	game->begin();
 	
-	running = true;
-	
+	running = true;	
 	
 	if( config.exists( "runTests" ) )
 		testSuite.runtimeTests();

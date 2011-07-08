@@ -8,6 +8,13 @@ using namespace Dojo;
 
 ResourceGroup::ResourceGroup()
 {
+	//link map array
+	mapArray[ RT_FRAMESET ] = &frameSets;
+	mapArray[ RT_FONT ] = &fonts;
+	mapArray[ RT_MESH ] = &meshes;
+	mapArray[ RT_SOUND ] = &sounds;
+	mapArray[ RT_TABLE ] = &tables;
+	
 	empty = new FrameSet( this, "empty" );
 	
 	//create an empty texturedQuad

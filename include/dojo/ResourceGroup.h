@@ -13,6 +13,7 @@
 #include "dojo_common_header.h"
 
 #include <string>
+#include <map>
 
 #include "Font.h"
 #include "FrameSet.h"
@@ -26,75 +27,82 @@ namespace Dojo {
 	{			
 	public:		
 		
+		enum ResourceType
+		{
+			RT_FRAMESET,
+			RT_FONT,
+			RT_MESH,
+			RT_SOUND,
+			RT_TABLE,
+		};
+		
 		typedef std::map<String, FrameSet*> FrameSetMap;
 		typedef std::map<String, Font*> FontMap;
 		typedef std::map<String, Mesh*> MeshMap;
 		typedef std::map<String, SoundSet*> SoundMap;
 		typedef std::map<String, Table*> TableMap;
+		typedef Array< ResourceGroup* > SubgroupList;
 		
 		ResourceGroup();
 		
 		virtual ~ResourceGroup();
+		
+		template < class R >
+		inline std::map< String, R* >* getResourceMap( ResourceType r ) const
+		{
+			return (std::map< String, R* >*)mapArray[ (uint)r ];
+		}
+		
+		
+		template < class R >
+		inline R* find( const String& name, ResourceType r )
+		{
+			typedef std::map< String, R* > RMap;
+			
+			RMap* map = getResourceMap< R >( r );
+			
+			typename RMap::iterator itr = map->find( name );
+			
+			if( itr != map->end() )
+				return itr->second;
+			
+			//try in subgroups
+			R* f;
+			for( uint i = 0; i < subs.size(); ++i )
+			{
+				f = subs[i]->find< R >( name, r );
 				
-		inline bool isFrameSetLoaded( const String& name )
-		{
-			DEBUG_ASSERT( name.size() );
+				if( f )
+					return f;
+			}
 			
-			return frameSets.find( name ) != frameSets.end();
-		}
-		
-		inline bool isFontLoaded( const String& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return fonts.find( name ) != fonts.end();
-		}
-		
-		inline bool isMeshLoaded( const String& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return meshes.find( name ) != meshes.end();
-		}
-
-		inline bool isSoundLoaded( const String& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return sounds.find( name ) != sounds.end();
-		}
-		
-		inline bool isTableLoaded( const String& name )
-		{
-			DEBUG_ASSERT( name.size() );
-			
-			return tables.find( name ) != tables.end();
+			return NULL;
 		}
 				
 		inline void addFrameSet( FrameSet* set, const String& name )
 		{
-			DEBUG_ASSERT( !isFrameSetLoaded( name ) );
+			DEBUG_ASSERT( !getFrameSet( name ) );
 			
 			frameSets[name] = set;
 		}
 		
 		inline void addFont( Font* f, const String& name )
 		{
-			DEBUG_ASSERT( !isFontLoaded( name ) );
+			DEBUG_ASSERT( !getFont( name ) );
 			
 			fonts[name] = f;
 		}
 		
 		inline void addMesh( Mesh* m, const String& name )
 		{
-			DEBUG_ASSERT( !isMeshLoaded( name ) );
+			DEBUG_ASSERT( !getMesh( name ) );
 			
 			meshes[ name ] = m;
 		}
 		
 		inline void addSound( SoundSet* sb, const String& name )
 		{
-			DEBUG_ASSERT( !isSoundLoaded( name ) );
+			DEBUG_ASSERT( !getSound( name ) );
 
 			sounds[ name ] = sb;
 		}
@@ -102,53 +110,75 @@ namespace Dojo {
 		inline void addTable( Table* t )
 		{
 			DEBUG_ASSERT( t );
-			DEBUG_ASSERT( !isTableLoaded( t->getName() ) );
+			DEBUG_ASSERT( !getTable( t->getName() ) );
 			
 			tables[ t->getName() ] = t;
+		}
+		
+		inline void addSubgroup( ResourceGroup* g )
+		{
+			DEBUG_ASSERT( g );
+			
+			subs.add( g );
+		}
+		
+		inline void removeSubgroup( ResourceGroup* g )
+		{
+			DEBUG_ASSERT( g );
+			
+			subs.remove( g );
+		}
+		
+		inline void removeFrameSet( const String& name )
+		{
+			frameSets.erase( name );
+		}
+		
+		inline void removeFont( const String& name )
+		{
+			fonts.erase( name );
+		}
+		
+		inline void removeMesh( const String& name )
+		{
+			meshes.erase( name );
+		}
+		
+		inline void removeSound( const String& name )
+		{
+			sounds.erase( name );
+		}
+		
+		inline void removeTable( const String& name )
+		{
+			tables.erase( name );
 		}
 
 		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
 
 		inline FrameSet* getFrameSet( const String& name )
 		{
-			if( isFrameSetLoaded( name ) )
-				return frameSets[name];
-
-			return NULL;
+			return find< FrameSet >( name, RT_FRAMESET );
 		}
 		
 		inline Font* getFont( const String& name )
 		{
-			if( isFontLoaded( name ) )
-				return fonts[name];
-			
-			return NULL;
+			return find< Font >( name, RT_FONT );
 		}
 		
 		inline Mesh* getMesh( const String& name )
 		{
-			if( isMeshLoaded( name ) )
-				return meshes[name];
-			
-			return NULL;
+			return find< Mesh >( name, RT_MESH );
 		}
 
 		inline SoundSet* getSound( const String& name )
 		{
-			if( isSoundLoaded( name ) )
-				return sounds[ name ];
-
-			return NULL;
+			return find< SoundSet >( name, RT_SOUND );
 		}
 		
 		inline Table* getTable( const String& name )
 		{
-			TableMap::iterator where = tables.find( name );
-			
-			if( where != tables.end() )
-				return where->second;
-			
-			return NULL;
+			return find< Table >( name, RT_TABLE );
 		}
 		
 		void loadSets( const String& folder );		
@@ -191,6 +221,12 @@ namespace Dojo {
 		MeshMap meshes;
 		SoundMap sounds;
 		TableMap tables;
+		
+		void* mapArray[5];
+		
+		SubgroupList subs;
+		
+		
 	};
 }
 

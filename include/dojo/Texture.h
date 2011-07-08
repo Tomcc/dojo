@@ -30,24 +30,7 @@ namespace Dojo
 	{
 	public:
 		 
-		Texture( ResourceGroup* creator, const String& path ) :
-		Buffer( creator, path ),
-		width(0),
-		height(0),
-		internalWidth(0),
-		internalHeight(0),
-		xRatio(0),
-		yRatio(0),
-		xOffset(0),
-		yOffset(0),
-		glhandle( 0 ),
-		npot( false ),
-		parentAtlas( NULL ),
-		OBB( NULL ),
-		ownerFrameSet( NULL )
-		{
-
-		}
+		Texture( ResourceGroup* creator, const String& path );
 		
 		virtual ~Texture()
 		{

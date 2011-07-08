@@ -41,7 +41,6 @@ backLayer( NULL )
 	glEnable( GL_LIGHTING );
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
-	glEnable( GL_VERTEX_ARRAY );
 	glEnable( GL_CULL_FACE );
 
 	glCullFace( GL_BACK );

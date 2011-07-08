@@ -39,7 +39,7 @@ testSuite( std::cout )
 
 ApplePlatform::~ApplePlatform()
 {
-	[pool release];	
+	[pool release];
 }
 
 void ApplePlatform::step( float dt )
@@ -61,11 +61,7 @@ String ApplePlatform::getCompleteFilePath( const String& name, const String& typ
 	NSString* NSPath = path.toNSString();
 	
 	NSString* res = [[NSBundle mainBundle] pathForResource:NSName ofType:NSType inDirectory:NSPath ];
-	
-	/*[NSName release];
-	[NSType release];
-	[NSPath release];*/
-	
+		
 	if( res )
 		return String( res );
 	else
@@ -86,9 +82,6 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	//convert array
 	for( int i = 0; i < [paths count]; ++i )
 		out.push_back( String( [paths objectAtIndex:i] ) );
-	
-	//[nspath release];
-	//[nstype release];
 }
 
 
@@ -121,10 +114,6 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 		NSString* nsname = fileName.toNSString();
 		
 		fullPath = [nspath stringByAppendingString:nsname];
-		
-		/*[fullPath retain];
-		 [nsname release];
-		 [nspaths release];*/
 	}
 	else
 	{		
@@ -154,8 +143,7 @@ void ApplePlatform::load( Table* dest, const String& absPath )
 	StringReader in( buf );
 	dest->deserialize( in );
 	
-	/*[nsfile release];
-	 [fullPath release];*/
+	[nsfile release];
 }
 
 void ApplePlatform::save( Table* src, const String& absPath )
@@ -177,8 +165,7 @@ void ApplePlatform::save( Table* src, const String& absPath )
 	//drop on file
 	[nsfile writeToFile:fullPath atomically:true];
 	
-	/*[fullPath release];
-	 [nsfile release];*/
+	[nsfile release];
 }
 
 
@@ -188,7 +175,7 @@ uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
 	
 	DEBUG_ASSERT( path.size() );
 		
-	NSData* data = [ NSData dataWithContentsOfFile: _getFullPath( path ) ];
+	NSData* data = [ [NSData alloc ] initWithContentsOfFile: _getFullPath( path ) ];
 	
 	if( !data )
 		return false;
@@ -199,7 +186,7 @@ uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
 	bufptr = (char*)malloc( size );
 	memcpy( bufptr, [data bytes], size );
 	
-	//[data release];
+	[data release];
 	
 	return size;
 }
@@ -266,7 +253,7 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	CGImageRelease( CGImage );
 	CGDataProviderRelease( prov );
 	
-	//[texData release];
+	[texData release];
 }
 
 

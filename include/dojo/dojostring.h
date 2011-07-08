@@ -162,7 +162,7 @@ namespace Dojo
 #ifdef __OBJC__
 		inline NSString* toNSString() const 
 		{                       
-			return [[NSString alloc] initWithCharacters: data() length: size() ];
+			return [ NSString stringWithCharacters: data() length: size() ];
 		}
 		
 		String( NSString* nss ) :
