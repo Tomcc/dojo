@@ -137,15 +137,14 @@ void IOSPlatform::acquireContext()
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 }
 
-void IOSPlatform::acquireSharedContext()
+void IOSPlatform::prepareThreadContext()
 {	
+	DEBUG_ASSERT( context );
+	
 	EAGLContext* clone = [[EAGLContext alloc] initWithAPI:[context API] sharegroup:[context sharegroup]];
 	
 	DEBUG_ASSERT( [EAGLContext setCurrentContext:clone] );
-}
-
-void IOSPlatform::createAutoReleasePool()
-{
+	
 	[[NSAutoreleasePool alloc] init];
 }
 

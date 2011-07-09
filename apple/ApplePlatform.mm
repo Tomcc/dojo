@@ -216,6 +216,7 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	
 	uint internalWidth = Math::nextPowerOfTwo( width );
 	uint internalHeight = Math::nextPowerOfTwo( height );
+	uint pitch = 4 * internalWidth;	
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	imageData = malloc( internalWidth * internalHeight * 4 );
@@ -226,7 +227,7 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 												 internalWidth, 
 												 internalHeight, 
 												 8, 
-												 4 * internalWidth, 
+												 pitch, 
 												 colorSpace, 
 												 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
 	
@@ -234,21 +235,37 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	CGContextTranslateCTM( context, 0, internalHeight - height );
 	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
 	
-	//correct premultiplied alpha
-	int pixelcount = internalWidth*internalHeight;
-	unsigned char* off = (unsigned char*)imageData;
-	for( int pi=0; pi<pixelcount; ++pi )
+	//correct premultiplied alpha - only in the useful part of the image
+	byte* ptr = (byte*)imageData;
+	byte* rowptr = (byte*)imageData;
+	byte r, g, b;
+	for( int i = 0; i < height; ++i )
 	{
-		unsigned char alpha = off[3];
-		if( alpha!=255 && alpha!=0 )
+		ptr = rowptr;
+		
+		for( int j = 0; j < width; ++j )
 		{
-			float a = ((float)(alpha)/255.f);
+			byte alpha = ptr[3];
+				
+			if( alpha < 5 )
+			{
+				ptr[0] = r;
+				ptr[1] = g;
+				ptr[2] = b;
+			}
+			else if( alpha < 255 )
+			{
+				float a = ((float)(alpha)/255.f);
+				
+				r = (ptr[0] = ((float)ptr[0]) / a);
+				g = (ptr[1] = ((float)ptr[1]) / a);
+				b = (ptr[2] = ((float)ptr[2]) / a);
+			}
 			
-			off[0] = ((float)off[0]) / a;
-			off[1] = ((float)off[1]) / a;
-			off[2] = ((float)off[2]) / a;
+			ptr += 4;
 		}
-		off += 4;
+		
+		rowptr += pitch;
 	}
 	
 	//free everything

@@ -63,6 +63,9 @@ namespace Dojo
 		
 		virtual void initialise()=0;
 		virtual void shutdown()=0;
+		
+		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
+		virtual void prepareThreadContext()=0;
 
 		virtual void acquireContext()=0;
 		virtual void present()=0;
