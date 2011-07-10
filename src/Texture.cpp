@@ -25,6 +25,8 @@ ownerFrameSet( NULL )
 	glGenTextures( 1, &glhandle );
 	
 	DEBUG_ASSERT( glhandle );
+	
+	glGetError();
 }
 
 void Texture::bind( uint index )
@@ -76,12 +78,14 @@ void Texture::enableMipmaps()
 
 bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 {
+	int err;
+	
 	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( imageData );
 
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 	glActiveTexture( GL_TEXTURE0 );
-
+	
 	internalWidth = Math::nextPowerOfTwo( width );
 	internalHeight = Math::nextPowerOfTwo( height );	
 
@@ -105,11 +109,10 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 		GL_UNSIGNED_BYTE, 
 		imageData);
 
-	int err = glGetError();
+	err = glGetError();
 	loaded = err == GL_NO_ERROR;
 
-	if( !loaded )
-		unload(); //destroy buffer
+	DEBUG_ASSERT( loaded );
 
 	return loaded;
 }

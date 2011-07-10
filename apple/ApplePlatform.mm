@@ -219,9 +219,9 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	uint pitch = 4 * internalWidth;	
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	imageData = malloc( internalWidth * internalHeight * 4 );
+	imageData = malloc( internalWidth * pitch );
 	
-	memset( imageData, 0, internalWidth * internalHeight * 4 );
+	memset( imageData, 0, internalWidth * pitch );
 	
 	CGContextRef context = CGBitmapContextCreate(imageData, 
 												 internalWidth, 

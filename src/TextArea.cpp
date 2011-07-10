@@ -16,7 +16,9 @@ maxChars( chars ),
 interline( 0.2f ),
 maxLineLenght( 0xfffffff ),
 centered( center ),
-pixelScale( 1,1 )
+pixelScale( 1,1 ),
+currentLineLength( 0 ),
+lastSpace( 0 )
 {		
 	setSize( bounds );
 	cullMode = CM_DISABLED;
@@ -71,26 +73,15 @@ void TextArea::clearText()
 	setSize(0,0);
 
 	changed = true;
+	
+	currentLineLength = 0;
+	lastSpace = 0;
 }
 
 void TextArea::addText( const String& text )
-{	
-	content += text;
-
-	//parse and setup characters
-	for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
-		characters[currentCharIdx] = font->getCharacter( text[i] );
-
-	changed = true;
-}
-
-void TextArea::addLineFeededText( const String& text )
 {
 	content += text;
 
-	uint currentLineLenght = 0;
-
-	uint lastSpace = 0;
 	Font::Character* currentChar;
 	unichar c;
 
@@ -101,7 +92,7 @@ void TextArea::addLineFeededText( const String& text )
 
 		currentChar = characters[currentCharIdx] = font->getCharacter( c );
 
-		currentLineLenght += currentChar->pixelWidth;
+		currentLineLength += currentChar->pixelWidth;
 
 		if( c == ' ' || c == '\t' )
 			lastSpace = currentCharIdx;
@@ -109,15 +100,15 @@ void TextArea::addLineFeededText( const String& text )
 		else if( c == '\n' )
 		{
 			lastSpace = 0;
-			currentLineLenght = 0;
+			currentLineLength = 0;
 		}
 
 		//lenght eccess? find last whitespace and replace with \n.
-		if( currentLineLenght > maxLineLenght && lastSpace )
+		if( currentLineLength > maxLineLenght && lastSpace )
 		{
 			characters[lastSpace] = font->getCharacter('\n');
 			lastSpace = 0;
-			currentLineLenght = 0;
+			currentLineLength = 0;
 		}
 	}
 

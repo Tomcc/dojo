@@ -17,212 +17,6 @@ finalized( false )
 	mapArray[ RT_TABLE ] = &tables;
 	
 	empty = new FrameSet( this, "empty" );
-	
-	//create an empty texturedQuad
-	Mesh* m = new Mesh( this );
-	m->setTriangleMode( Mesh::TM_STRIP );
-	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-	m->setVertexFieldEnabled( Mesh::VF_UV );
-	
-	m->begin(4);	
-
-	m->vertex( -0.5, -0.5 );		
-	m->uv( 0,1 );
-	
-	m->vertex( 0.5, -0.5 );		
-	m->uv( 1,1 );
-	
-	m->vertex( -0.5, 0.5 );		
-	m->uv( 0,0 );
-	
-	m->vertex( 0.5, 0.5 );
-	m->uv( 1,0 );
-	
-	m->end();
-	
-	addMesh( m, "texturedQuad" );
-
-	//create a texturedCube
-#define l 0.501f
-	
-	Mesh* cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 24 );
-
-	cube->vertex( l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,1);
-	cube->vertex( l, -l, l );	cube->normal( 0,0,1 );  cube->uv(0,1);
-	cube->vertex( -l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,0);
-	cube->vertex( -l, -l, l );	cube->normal( 0,0,1 );	cube->uv(0,0);
-
-	cube->quad(0,1,2,3);
-
-	cube->vertex( l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
-	cube->vertex( -l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,1);
-	cube->vertex( l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
-	cube->vertex( -l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
-
-	cube->quad(4,5,6,7);
-
-	cube->vertex( l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
-	cube->vertex( l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
-	cube->vertex( l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
-	cube->vertex( l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
-
-	cube->quad(8,9,10,11);
-
-	cube->vertex( -l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
-	cube->vertex( -l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
-	cube->vertex( -l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
-	cube->vertex( -l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
-
-	cube->quad(12,13,14,15);
-
-	cube->vertex( l, l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
-	cube->vertex( -l, l, l );	cube->normal( 0,1,0 );  cube->uv(0,1);
-	cube->vertex( l, l, -l );	cube->normal( 0,1,0 );	cube->uv(1,0);
-	cube->vertex( -l, l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
-
-	cube->quad(16,17,18,19);
-
-	cube->vertex( l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
-	cube->vertex( l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,1);
-	cube->vertex( -l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
-	cube->vertex( -l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
-
-	cube->quad(20,21,22,23);
-
-	cube->end();
-
-	addMesh( cube, "texturedCube" );
-
-//MEGA HACK -------------------------------------------
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-//-Z
-	cube->vertex( l, l, -l );	cube->normal( 0,0,1 );	cube->uv(1,0);
-	cube->vertex( l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(1,1);
-	cube->vertex( -l, l, -l );	cube->normal( 0,0,1 );	cube->uv(0,0);
-	cube->vertex( -l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(0,1);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-	addMesh( cube, "prefabSkybox_1" );
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-//+X
-	cube->vertex( l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
-	cube->vertex( l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
-	cube->vertex( l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
-	cube->vertex( l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-	addMesh( cube, "prefabSkybox_2" );
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-//+Z
-	cube->vertex( l, l, l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
-	cube->vertex( -l, l, l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
-	cube->vertex( l, -l, l );	cube->normal( 0,0,-1 ); cube->uv(0,1);
-	cube->vertex( -l, -l, l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-	addMesh( cube, "prefabSkybox_3" );
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-//-X
-	cube->vertex( -l, l, l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
-	cube->vertex( -l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
-	cube->vertex( -l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
-	cube->vertex( -l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-	addMesh( cube, "prefabSkybox_4" );
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-
-	cube->vertex( l, l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
-	cube->vertex( l, l, -l );	cube->normal( 0,-1,0 );  cube->uv(0,1);
-	cube->vertex( -l, l, l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
-	cube->vertex( -l, l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-	addMesh( cube, "prefabSkybox_5" );
-
-	cube = new Mesh( this );
-
-	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
-	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
-
-	cube->begin( 4 );
-
-	cube->vertex( l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,0);
-	cube->vertex( -l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
-	cube->vertex( l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
-	cube->vertex( -l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,1);
-
-	cube->quad(0,1,2,3);
-
-	cube->end();
-
-	addMesh( cube, "prefabSkybox_6");
 }
  
 ResourceGroup::~ResourceGroup()
@@ -435,3 +229,211 @@ void ResourceGroup::unloadTables()
 	tables.clear();
 }
 
+void ResourceGroup::loadPrefabMeshes()
+{
+	//create an empty texturedQuad
+	Mesh* m = new Mesh( this );
+	m->setTriangleMode( Mesh::TM_STRIP );
+	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+	m->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	m->begin(4);	
+	
+	m->vertex( -0.5, -0.5 );		
+	m->uv( 0,1 );
+	
+	m->vertex( 0.5, -0.5 );		
+	m->uv( 1,1 );
+	
+	m->vertex( -0.5, 0.5 );		
+	m->uv( 0,0 );
+	
+	m->vertex( 0.5, 0.5 );
+	m->uv( 1,0 );
+	
+	m->end();
+	
+	addMesh( m, "texturedQuad" );
+	
+	//create a texturedCube
+#define l 0.501f
+	
+	Mesh* cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 24 );
+	
+	cube->vertex( l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( l, -l, l );	cube->normal( 0,0,1 );  cube->uv(0,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,0);
+	cube->vertex( -l, -l, l );	cube->normal( 0,0,1 );	cube->uv(0,0);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->vertex( l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
+	cube->vertex( -l, l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
+	
+	cube->quad(4,5,6,7);
+	
+	cube->vertex( l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
+	cube->vertex( l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
+	cube->vertex( l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
+	
+	cube->quad(8,9,10,11);
+	
+	cube->vertex( -l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
+	cube->vertex( -l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
+	cube->vertex( -l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
+	
+	cube->quad(12,13,14,15);
+	
+	cube->vertex( l, l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,1,0 );  cube->uv(0,1);
+	cube->vertex( l, l, -l );	cube->normal( 0,1,0 );	cube->uv(1,0);
+	cube->vertex( -l, l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
+	
+	cube->quad(16,17,18,19);
+	
+	cube->vertex( l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,1);
+	cube->vertex( -l, -l, l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
+	
+	cube->quad(20,21,22,23);
+	
+	cube->end();
+	
+	addMesh( cube, "texturedCube" );
+	
+	//MEGA HACK -------------------------------------------
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	//-Z
+	cube->vertex( l, l, -l );	cube->normal( 0,0,1 );	cube->uv(1,0);
+	cube->vertex( l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( -l, l, -l );	cube->normal( 0,0,1 );	cube->uv(0,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,0,1 );	cube->uv(0,1);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	addMesh( cube, "prefabSkybox_1" );
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	//+X
+	cube->vertex( l, l, l );	cube->normal( -1,0, 0 );	cube->uv(1,0);
+	cube->vertex( l, -l, l );	cube->normal( -1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,0);
+	cube->vertex( l, -l, -l );	cube->normal( -1,0, 0 );	cube->uv(0,1);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	addMesh( cube, "prefabSkybox_2" );
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	//+Z
+	cube->vertex( l, l, l );	cube->normal( 0,0,-1 );	cube->uv(0,0);
+	cube->vertex( -l, l, l );	cube->normal( 0,0,-1 );	cube->uv(1,0);
+	cube->vertex( l, -l, l );	cube->normal( 0,0,-1 ); cube->uv(0,1);
+	cube->vertex( -l, -l, l );	cube->normal( 0,0,-1 );	cube->uv(1,1);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	addMesh( cube, "prefabSkybox_3" );
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	//-X
+	cube->vertex( -l, l, l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
+	cube->vertex( -l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
+	cube->vertex( -l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	addMesh( cube, "prefabSkybox_4" );
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	
+	cube->vertex( l, l, l );	cube->normal( 0,-1,0 );	cube->uv(1,1);
+	cube->vertex( l, l, -l );	cube->normal( 0,-1,0 );  cube->uv(0,1);
+	cube->vertex( -l, l, l );	cube->normal( 0,-1,0 );	cube->uv(1,0);
+	cube->vertex( -l, l, -l );	cube->normal( 0,-1,0 );	cube->uv(0,0);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	addMesh( cube, "prefabSkybox_5" );
+	
+	cube = new Mesh( this );
+	
+	cube->setIndexByteSize( 1 ); //byte indices
+	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
+	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	cube->begin( 4 );
+	
+	cube->vertex( l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,0);
+	cube->vertex( -l, -l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
+	cube->vertex( -l, -l, -l );	cube->normal( 0,1,0 );	cube->uv(0,1);
+	
+	cube->quad(0,1,2,3);
+	
+	cube->end();
+	
+	addMesh( cube, "prefabSkybox_6");
+}

@@ -47,8 +47,6 @@ namespace Dojo
 		///async text update
 		void addText( const String& text );
 		
-		void addLineFeededText( const String& text );
-		
 		void addText( uint n, char paddingChar = 0, uint digits = 0 );
 					
 		inline void addTimeSeconds( uint n )
@@ -83,6 +81,8 @@ namespace Dojo
 		uint maxChars;
 		uint maxLineLenght;
 		bool centered;
+		
+		uint currentLineLength, lastSpace;
 		
 		Font* font;
 				

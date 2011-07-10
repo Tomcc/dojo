@@ -47,6 +47,16 @@ namespace Dojo {
 		
 		virtual ~ResourceGroup();
 		
+		///sets the default locale to look for in this resource group
+		/**
+		A locale is a subfolder with the given name, selectively loaded when a locale is provided
+		*/
+		void setLocale( const Dojo::String& locID, const Dojo::String& fallbackLocaleID )
+		{
+			locale = locID;
+			fallbackLocale = fallbackLocaleID;
+		}
+		
 		template < class R >
 		inline std::map< String, R* >* getResourceMap( ResourceType r ) const
 		{
@@ -186,9 +196,19 @@ namespace Dojo {
 			return find< Table >( name, RT_TABLE );
 		}
 		
+		inline const String& getLocale()
+		{
+			return locale;
+		}
+		
 		inline bool isFinalized()
 		{
 			return finalized;
+		}
+		
+		inline bool isLocalizationRequired()
+		{
+			return locale.size() > 0;
 		}
 		
 		void loadSets( const String& folder );		
@@ -196,14 +216,41 @@ namespace Dojo {
 		void loadMeshes( const String& folder );
 		void loadSounds( const String& folder );
 		void loadTables( const String& folder );
-
-		void loadResources( const String& folder )
+		
+		void loadPrefabMeshes();
+		
+		void loadFolder( const String& folder )
 		{
 			loadSets( folder );
 			loadFonts( folder );
 			loadMeshes( folder );
 			loadSounds( folder );
 			loadTables( folder );
+		}
+		
+		void loadLocalizedFolder( const String& basefolder )
+		{
+			String lid = basefolder;
+				
+			if( lid[ lid.size() - 1 ] != '/' )
+				lid += '/';
+			
+			lid += locale;
+			
+			loadSets( lid );
+			loadFonts( lid );
+			loadMeshes( lid );
+			loadSounds( lid );
+			loadTables( lid );
+		}
+
+		void loadResources( const String& folder )
+		{
+			loadFolder( folder );
+			
+			//localized loading
+			if( isLocalizationRequired() )		
+				loadLocalizedFolder( folder );
 		}
 		
 		///asserts that this group will not load more resources in the future, useful for task-based loading
@@ -228,8 +275,18 @@ namespace Dojo {
 			unloadTables();
 		}
 		
+		inline FrameSetMap::const_iterator getFrameSets() const
+		{
+			return frameSets.begin();
+		}
+		inline FrameSetMap::const_iterator getFrameSetsEnd() const 
+		{
+			return frameSets.end();
+		}
+		
 	protected:
 		
+		String locale, fallbackLocale;		
 		bool finalized;
 		
 		FrameSet* empty;
