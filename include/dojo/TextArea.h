@@ -34,6 +34,26 @@ namespace Dojo
 				 const Vector& bounds = Vector::ONE );
 		
 		virtual  ~TextArea();
+		
+		///sets this TextArea to only show up to n of its characters
+		/**
+		n can be higher than the current character count; all the characters will be shown
+		*/
+		inline void setVisibleCharacters( uint n )
+		{
+			if( n != visibleCharsNumber )
+			{
+				visibleCharsNumber = n;
+				
+				changed = true;
+			}
+		}
+		
+		///increments by 1 the number of visibile characters
+		inline void showNextChar()
+		{
+			setVisibleCharacters( getVisibleCharacters() + 1 );
+		}
 				
 		///sets the max pixel lenght for this line.
 		inline void setMaxLineLenght( uint l )	{	maxLineLenght = l;	}
@@ -41,6 +61,7 @@ namespace Dojo
 		inline void setCharSpacing( float c )	{	charSpacing = c;	}
 		
 		inline float getInterline()				{	return interline;	}
+		inline uint getVisibleCharacters()		{	return visibleCharsNumber;	}
 		
 		void clearText();
 							
@@ -90,7 +111,7 @@ namespace Dojo
 		bool changed;
 		
 		float *vertexBuffer, *uvBuffer;		
-		uint currentCharIdx;
+		uint currentCharIdx, visibleCharsNumber;
 		
 		Vector cursorPosition, screenSize, lastScale;
 

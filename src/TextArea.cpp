@@ -18,7 +18,8 @@ maxLineLenght( 0xfffffff ),
 centered( center ),
 pixelScale( 1,1 ),
 currentLineLength( 0 ),
-lastSpace( 0 )
+lastSpace( 0 ),
+visibleCharsNumber( 0xffffffff )
 {		
 	setSize( bounds );
 	cullMode = CM_DISABLED;
@@ -151,8 +152,8 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	if( !changed )
 		return true;
 
-	//no characters
-	if( !currentCharIdx )
+	//no characters to show
+	if( !visibleCharsNumber || !currentCharIdx )
 		return false;
 
 	//get screen size
@@ -171,7 +172,8 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	//clear layers
 	_hideLayers();
 
-	for( uint i = 0; i < currentCharIdx; ++i )
+	//either reach the last valid character or the last existing character
+	for( uint i = 0; i < visibleCharsNumber && i < currentCharIdx; ++i )
 	{
 		rep = characters[i];
 
