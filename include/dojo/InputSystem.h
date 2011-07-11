@@ -192,9 +192,20 @@ namespace Dojo
 			
 			inline InputSystem* getSource()	{	return source;	}
 			
-			virtual void onTouchBegan( const Vector& point )=0;
-			virtual void onTouchMove( const Vector& point, const Vector& trans )=0;
-			virtual void onTouchEnd( const Vector& point )=0;	
+			virtual void onTouchBegan( const Vector& point )
+			{
+				
+			}
+			
+			virtual void onTouchMove( const Vector& point, const Vector& trans )
+			{
+				
+			}
+			
+			virtual void onTouchEnd( const Vector& point )
+			{
+				
+			}
 			
 			virtual void onShake()
 			{

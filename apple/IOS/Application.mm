@@ -125,9 +125,7 @@ using namespace Dojo;
 }
 
 - (void) startAnimation
-{
-	[self becomeFirstResponder];
-	
+{	
 	if (!animating)
 	{
 		if (displayLinkSupported)
@@ -145,6 +143,8 @@ using namespace Dojo;
 					
 		animating = TRUE;
 	}
+	
+	[self becomeFirstResponder];
 }
 
 - (void)stopAnimation

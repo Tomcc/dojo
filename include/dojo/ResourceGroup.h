@@ -221,6 +221,8 @@ namespace Dojo {
 		
 		void loadFolder( const String& folder )
 		{
+			DEBUG_MESSAGE( "[" << folder.ASCII() << "]" );
+			
 			loadSets( folder );
 			loadFonts( folder );
 			loadMeshes( folder );
@@ -237,11 +239,7 @@ namespace Dojo {
 			
 			lid += locale;
 			
-			loadSets( lid );
-			loadFonts( lid );
-			loadMeshes( lid );
-			loadSounds( lid );
-			loadTables( lid );
+			loadFolder( lid );
 		}
 
 		void loadResources( const String& folder )
