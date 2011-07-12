@@ -136,7 +136,7 @@ public class Mesh {
 					UV v = new UV();
 					
 					v.u = Float.parseFloat( tk.nextToken() );
-					v.v = Float.parseFloat( tk.nextToken() );
+					v.v = 1.f - Float.parseFloat( tk.nextToken() );
 										
 					uv.add( v );					
 				}

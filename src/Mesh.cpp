@@ -284,45 +284,12 @@ bool Mesh::load()
 	ptr += vc * vertexSize;
 	vertexCount = vc;
 	
-	for( int i = 0; i < vertexCount*8; )
-	{
-		/*
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		*/
-		
-		i += 3;
-		
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-				
-		i += 3;
-		
-		/*
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
-		*/
-		DEBUG_MESSAGE(" ");
-	}
-
-	
 	//grab index data
 	if( ic )
 	{
 		setIndexCap( ic );
 		memcpy( indices, ptr, ic * indexByteSize );
 		indexCount = ic;
-		
-		for( int i = 0; i < indexCount; )
-		{
-			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
-			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
-			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
-						
-			DEBUG_MESSAGE(" ");
-		}
 	}
 	
 	//push over to GPU
