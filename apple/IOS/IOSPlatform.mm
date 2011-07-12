@@ -36,9 +36,6 @@ void IOSPlatform::initialise()
 {
 	DEBUG_ASSERT( app );
 	
-	//if( config.exists( "runTests" ) )
-	testSuite.staticTest();
-	
 	uint devicePixelScale = [UIScreen mainScreen].scale;
 	uint width = [UIScreen mainScreen].bounds.size.height;
 	uint height = [UIScreen mainScreen].bounds.size.width;

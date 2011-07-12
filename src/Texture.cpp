@@ -124,11 +124,16 @@ bool Texture::loadFromPNG( const String& path )
 	void* imageData = NULL;
 
 	enableBilinearFiltering();
-	enableTiling();
-	enableMipmaps();
 	
 	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
 	
+	//guess if this is a texture or a sprite
+	if( width != Math::nextPowerOfTwo( width ) || height != Math::nextPowerOfTwo( height ) )
+	{
+		enableTiling();
+		enableMipmaps();
+	}
+		
 	loadFromMemory( (byte*)imageData, width, height );
 
 	free(imageData);

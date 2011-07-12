@@ -45,6 +45,16 @@ public class EndiannessFilterStream extends OutputStream {
 		write( b, 0, b.length );
 	}
 	
+	public void writeShort( short s ) throws IOException {
+		
+		byte b[] = new byte[2];
+		
+		b[1] =(byte)( s >> 8 );
+		b[0] =(byte)( s );
+			
+		write( b );
+	}
+	
 	public void writeInt( int i ) throws IOException {
 	
 		byte b[] = new byte[4];

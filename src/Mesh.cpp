@@ -234,7 +234,9 @@ bool Mesh::load()
 {
 	//load binary mesh
 	char* data;
-	Platform::getSingleton()->loadFileContent( data, filePath );
+	uint r = Platform::getSingleton()->loadFileContent( data, filePath );
+	
+	DEBUG_MESSAGE( r );
 	
 	if( !data )
 		return false;
@@ -255,12 +257,12 @@ bool Mesh::load()
 	}
 	
 	//max and min
-	float* fp = (float*)ptr;
-	max = Vector( fp[0], fp[1], fp[2] );
-	min = Vector( fp[3], fp[4], fp[5] );
+	memcpy( &max, ptr, sizeof( Vector ) );
+	ptr += sizeof( Vector );
 	
-	ptr += 2*sizeof( Vector );
-	
+	memcpy( &min, ptr, sizeof( Vector ) );
+	ptr += sizeof( Vector );
+		
 	//center and dimensions
 	center = (max+min)*0.5;
 	dimensions = (max-min);
@@ -282,12 +284,45 @@ bool Mesh::load()
 	ptr += vc * vertexSize;
 	vertexCount = vc;
 	
+	for( int i = 0; i < vertexCount*8; )
+	{
+		/*
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		*/
+		
+		i += 3;
+		
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+				
+		i += 3;
+		
+		/*
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		DEBUG_OUT( (float)(((float*)vertices)[i++]) );
+		*/
+		DEBUG_MESSAGE(" ");
+	}
+
+	
 	//grab index data
 	if( ic )
 	{
 		setIndexCap( ic );
 		memcpy( indices, ptr, ic * indexByteSize );
 		indexCount = ic;
+		
+		for( int i = 0; i < indexCount; )
+		{
+			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
+			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
+			DEBUG_OUT( (int)(((byte*)indices)[i++]) );
+						
+			DEBUG_MESSAGE(" ");
+		}
 	}
 	
 	//push over to GPU

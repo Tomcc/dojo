@@ -201,8 +201,11 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	width = height = 0;
 	
 	NSString* imgPath = path.toNSString();
+	
 	//magic OBJC code
 	NSData *texData = [[NSData alloc] initWithContentsOfFile: imgPath ];
+	
+	DEBUG_ASSERT( texData );
 	
 	CGDataProviderRef prov = CGDataProviderCreateWithData( 
 														  NULL, 

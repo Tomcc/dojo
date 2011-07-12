@@ -38,7 +38,11 @@ namespace Dojo
 
 		inline void setTextureName( const String& name )
 		{
-			setTexture( gameState->getFrameSet( name )->getRandomFrame() );
+			FrameSet* t = gameState->getFrameSet(name);
+			
+			DEBUG_ASSERT( t );
+			
+			setTexture( t->getRandomFrame() );
 		}
 				
 	protected:

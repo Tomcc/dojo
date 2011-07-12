@@ -200,7 +200,8 @@ public class Mesh {
 		};*/
 		
 		//either 8 bit or 16 bit indices
-		out.write( getIndexCount() < 0xff ? 1 : 2 );
+		int indexBytes = (getIndexCount()) < 0xff ? 1 : 2; 
+		out.write( indexBytes );
 		
 		//always triangle list
 		out.write( 1 );
@@ -255,10 +256,19 @@ public class Mesh {
 		}
 		
 		//write down index data
-		for( Face f : face ) {
-			out.writeInt( f.i1 );
-			out.writeInt( f.i2 );
-			out.writeInt( f.i3 );
+		if( indexBytes == 1 ) {
+			for( Face f : face ) {
+				out.write( f.i1 );
+				out.write( f.i2 );
+				out.write( f.i3 );
+			}
+		}
+		else if( indexBytes == 2 ) {
+			for( Face f : face ) {
+				out.writeShort( (short)f.i1 );
+				out.writeShort( (short)f.i2 );
+				out.writeShort( (short)f.i3 );
+			}
 		}
 	}
 	
