@@ -16,6 +16,8 @@
 #include "RenderState.h"
 #include "Timer.h"
 
+#define RENDER_MAX_LIGHTS 8
+
 namespace Dojo {
 	
 	class Renderable;
@@ -24,6 +26,7 @@ namespace Dojo {
 	class Mesh;
 	class Platform;
 	class Game;
+	class Light;
 	
 	class Render 
 	{	
@@ -53,6 +56,7 @@ namespace Dojo {
 		};
 						
 		typedef Array< Layer* > LayerList;
+		typedef Array< Light* > LightList;
 		
 		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
 		
@@ -71,11 +75,37 @@ namespace Dojo {
 				positiveLayers.at(i)->clear();
 		}
 		
+		inline void addLight( Light* l )
+		{
+			DEBUG_ASSERT( l );
+			DEBUG_ASSERT( lights.size() < RENDER_MAX_LIGHTS );
+			
+			lights.add( l );
+		}
+		
+		inline void removeLight( Light* l )
+		{
+			DEBUG_ASSERT( l );
+			
+			lights.remove( l );	
+			
+			//remove removes always the last element in the list - just disable the last index now
+			glDisable( GL_LIGHT0 + lights.size() );
+		}
+		
 		void setViewport( Viewport* v );
 						
 		void setInterfaceOrientation( RenderOrientation o );
 
 		void setWireframe( bool wireframe );
+		
+		inline void setDefaultAmbient( const Color& a )
+		{
+			defaultAmbient = a;
+			defaultAmbient.a = 1;
+			
+			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, (GLfloat*)&defaultAmbient );
+		}
 		
 		inline RenderOrientation getInterfaceOrientation()
 		{
@@ -168,7 +198,10 @@ namespace Dojo {
 		
 		LayerList negativeLayers, positiveLayers;
 		Layer* backLayer;
-
+		
+		LightList lights;
+		Color defaultAmbient;
+		
 		//precomputed matrices
 		float orthoProj[16], orthoView[16], frustumProj[16], frustumView[16];
 

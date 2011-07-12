@@ -6,7 +6,7 @@
 #include "TextArea.h"
 #include "Platform.h"
 #include "Viewport.h"
-
+#include "Light.h"
 #include "Mesh.h"
 #include "Model.h"
 
@@ -72,6 +72,8 @@ backLayer( NULL )
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
 	nativeToScreenRatio = (float)viewportHeight / (float)platform->getGame()->getNativeHeight();
+	
+	setDefaultAmbient( Color::BLACK );
 }
 
 Render::~Render()
@@ -220,7 +222,12 @@ void Render::startFrame()
 	//viewportPixelRatio *= devicePixelScale;
 
 	frameStarted = true;
-
+	
+	//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
+	uint i = 0;
+	for( ; i < lights.size(); ++i )
+		lights[i]->bind( i );
+	
 	//draw the backdrop
 	Renderable* backdrop = viewport->getBackgroundSprite();
 	if( backdrop )

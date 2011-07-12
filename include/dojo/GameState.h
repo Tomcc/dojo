@@ -18,6 +18,7 @@
 #include "InputSystem.h"
 #include "StateInterface.h"
 #include "Renderable.h"
+#include "Light.h"
 
 namespace Dojo {
 	
@@ -48,13 +49,19 @@ namespace Dojo {
 						
 		inline void addClickable( Renderable* s )
 		{
+			DEBUG_ASSERT( s );
+			
 			clickables.add( s );
 		}
 		
 		inline void addObject( Object* o )
 		{
+			DEBUG_ASSERT( o );
+			
 			objects.add( o );
 		}
+		
+		void addLight( Light* l );
 				
 		void addObject( Renderable* s, int layer, bool clickable = false );
 		

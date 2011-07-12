@@ -241,7 +241,7 @@ namespace Dojo
 		/**
 		Rotation is relative to the "forward" vector (0,0,1)
 		*/
-		inline Vector angleFromDirection()
+		inline Vector angleFromDirection() const
 		{
 			return Vector(
 					57.47f * atan2(x, y),

@@ -43,6 +43,15 @@ void GameState::addObject( Renderable* s, int layer, bool clickable )
 		addClickable( s );
 }
 
+void GameState::addLight( Light* l )
+{
+	DEBUG_ASSERT( l );
+	
+	addObject( l );
+	
+	Platform::getSingleton()->getRender()->addLight( l );
+}
+
 void GameState::removeSprite( Renderable* s )
 {
 	removeObject( s );
