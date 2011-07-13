@@ -23,8 +23,11 @@ namespace Dojo
 		
 		static const Vector ZERO;
 		static const Vector UNIT_X;
+		static const Vector NEGATIVE_UNIT_X;
 		static const Vector UNIT_Y;
+		static const Vector NEGATIVE_UNIT_Y;
 		static const Vector UNIT_Z;
+		static const Vector NEGATIVE_UNIT_Z;
 		static const Vector ONE;
 		static const Vector MAX, MIN;
 		
@@ -259,6 +262,7 @@ namespace Dojo
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
 		}
 		
+		///returns the distance of this vector from the given plane
 		inline float distanceFromPlane( const Vector& normal, float d ) const 
 		{
 			return *this * normal + d;

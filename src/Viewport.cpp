@@ -6,13 +6,6 @@
 
 using namespace Dojo;
 
-void Viewport::Plane::setup( const Vector& center, const Vector& A, const Vector& B )
-{
-	n = (A-center) ^ (B-center);
-	n.normalize();
-
-	d = -(center * n);
-}
 
 void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 {

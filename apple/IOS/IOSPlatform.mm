@@ -54,16 +54,30 @@ void IOSPlatform::initialise()
 	glGenFramebuffers(1, &defaultFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
 	
+//color render buffer
 	glGenRenderbuffers(1, &colorRenderbuffer);	
-	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
+	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);		
+	
+	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];	
+	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &w);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &h);
 	
 	width = w;
-	height = h;
+	height = h;	
 	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+	
+//depth render buffer
+	glGenRenderbuffers(1, &depthRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+	
+	glRenderbufferStorageOES(GL_RENDERBUFFER_OES, 
+                             GL_DEPTH_COMPONENT16_OES, 
+                             w, h );
+	
+	
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER, depthRenderbuffer );
 	
 	render = new Render( width, height, devicePixelScale, Render::RO_PORTRAIT );
 	

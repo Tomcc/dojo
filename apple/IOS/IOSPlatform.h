@@ -63,7 +63,7 @@ namespace Dojo
 		
 		Application* app;		
 		
-		GLuint defaultFramebuffer, colorRenderbuffer;
+		GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
 #endif
 		
 	};

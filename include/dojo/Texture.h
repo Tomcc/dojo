@@ -62,6 +62,9 @@ namespace Dojo
 		void disableBilinearFiltering();
 
 		void enableMipmaps();
+		
+		///warning - this does not free the allocated memory!
+		void disableMipmaps();
 
 		void enableTiling();
 

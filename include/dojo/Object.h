@@ -103,12 +103,13 @@ namespace Dojo {
 		///returns the world position of the given local point
 		inline Vector getWorldPosition( const Vector& localPos )
 		{
-			Vector worldPos = localPos;
+			Vector pos = localPos;
 
-			worldPos.scale( scale );
-			worldPos.rotate( worldRotation );
+			pos.scale( scale );
+			pos.pitch( worldRotation.x );
+			pos.yaw( worldRotation.y );
 
-			return worldPos + worldPosition;
+			return pos + worldPosition;
 		}
 
 		inline Vector getLocalPosition( const Vector& worldPos )

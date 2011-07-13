@@ -20,6 +20,7 @@
 #include "Texture.h"
 #include "Platform.h"
 #include "Renderable.h"
+#include "Plane.h"
 
 namespace Dojo 
 {	
@@ -28,36 +29,7 @@ namespace Dojo
 	class Viewport : public Object
 	{
 	public:
-
-		struct Plane
-		{
-			Vector n;
-			float d;
-
-			Plane() :
-			d( 0 )
-			{
-
-			}
-
-			void setup( const Vector& center, const Vector& A, const Vector& B );
-
-			///tells which side of this plane the AABB lies in. -1 is negative, 0 is both, 1 is positive
-			inline int getSide( const Vector& center, const Vector& halfsize )
-			{
-				float dist = center.distanceFromPlane( n, d );
-
-				float maxAbsDist = n.absDot( halfsize );
-
-				if (dist < -maxAbsDist)			
-					return -1;
-				else if (dist > +maxAbsDist)	
-					return 1;
-				else							
-					return 0;
-			}
-		};
-						
+					
 		Viewport( 
 			GameState* level, 
 			const Vector& pos,

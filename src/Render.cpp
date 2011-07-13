@@ -223,11 +223,6 @@ void Render::startFrame()
 
 	frameStarted = true;
 	
-	//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
-	uint i = 0;
-	for( ; i < lights.size(); ++i )
-		lights[i]->bind( i );
-	
 	//draw the backdrop
 	Renderable* backdrop = viewport->getBackgroundSprite();
 	if( backdrop )
@@ -477,10 +472,6 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-
-	if( list->lightingOn )	glEnable( GL_LIGHTING );
-	else					glDisable( GL_LIGHTING );
-
 	if( list->projectionOff )	
 	{
 		glMatrixMode( GL_MODELVIEW );
@@ -499,8 +490,21 @@ void Render::renderLayer( Layer* list )
 	if( list->depthClear )
 		glClear( GL_DEPTH_BUFFER_BIT );
 
-	currentLayer = list;
-
+	currentLayer = list;	
+	
+	
+	if( list->lightingOn )	
+	{
+		glEnable( GL_LIGHTING );	
+		
+		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
+		uint i = 0;
+		for( ; i < lights.size(); ++i )
+			lights[i]->bind( i );
+	}
+	else
+		glDisable( GL_LIGHTING );
+	
 	Renderable* s;
 
 	//2D layer

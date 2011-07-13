@@ -76,6 +76,13 @@ void Texture::enableMipmaps()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 }
 
+void Texture::disableMipmaps() 
+{
+	glBindTexture( GL_TEXTURE_2D, glhandle );
+	
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+}
+
 bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 {
 	int err;
