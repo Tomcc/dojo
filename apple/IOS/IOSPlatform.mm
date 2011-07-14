@@ -133,6 +133,12 @@ void IOSPlatform::shutdown()
 			colorRenderbuffer = 0;
 		}
 		
+		if( depthRenderbuffer )
+		{
+			glDeleteRenderbuffersOES(1, &depthRenderbuffer);
+			depthRenderbuffer = 0;
+		}
+		
 		// Tear down context
 		if ([EAGLContext currentContext] == context)
 			[EAGLContext setCurrentContext:nil];
