@@ -256,22 +256,29 @@ void Render::renderElement( Renderable* s )
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();	
 	
-	//move
-	glTranslatef(
-				 s->getWorldPosition().x,
-				 s->getWorldPosition().y,
-				 s->getWorldPosition().z );
-	
-	//rotate
-	glRotatef( s->getWorldRotation().z, 0,0,1 );
-	glRotatef( s->getWorldRotation().y, 0,1,0 );
-	glRotatef( s->getWorldRotation().x, 1,0,0 );
-	
-	//and then scale
-	glScalef( 
-			 s->scale.x,
-			 s->scale.y, 
-			 s->scale.z );
+	if( !s->customMatrix )
+	{		
+		//move
+		glTranslatef(
+					 s->getWorldPosition().x,
+					 s->getWorldPosition().y,
+					 s->getWorldPosition().z );
+		
+		//rotate
+		glRotatef( s->getWorldRotation().z, 0,0,1 );
+		glRotatef( s->getWorldRotation().y, 0,1,0 );
+		glRotatef( s->getWorldRotation().x, 1,0,0 );
+		
+		//and then scale
+		glScalef( 
+				 s->scale.x,
+				 s->scale.y, 
+				 s->scale.z );
+	}
+	else
+	{
+		glMultMatrixf( s->customMatrix );
+	}
 	
 	Mesh* m = currentRenderState->getMesh();
 

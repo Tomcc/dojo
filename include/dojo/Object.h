@@ -34,7 +34,9 @@ namespace Dojo {
 		bool inheritAngle;
 		
 		Vector position, speed, angle, rotationSpeed, scale;
-				
+		
+		float* customMatrix;
+		
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 		position( pos ),
 		gameState( parentLevel ),
@@ -47,7 +49,8 @@ namespace Dojo {
 		childs( NULL ),
 		parent( NULL ),
 		dispose( false ),
-		inheritAngle( true )
+		inheritAngle( true ),
+		customMatrix( NULL )
 		{
 			DEBUG_ASSERT( parentLevel );
 			

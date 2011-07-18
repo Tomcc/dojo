@@ -155,15 +155,24 @@ namespace Dojo
 			return x*x+y*y+z*z;
 		}
 		
-		inline const Vector& normalize()
+		inline const float normalize()
 		{
-			float s = 1.f / length();
+			float l = length();
+			float s = 1.f / l;
 			x *= s;
 			y *= s;
 			z *= s;
 
-			return *this;
+			return l;
 		}	
+		
+		inline Vector normalized()
+		{
+			Vector v = *this;
+			v.normalize();
+			
+			return v;
+		}
 
 		inline const Vector& reflect( const Dojo::Vector& normal )
 		{
