@@ -103,8 +103,6 @@ namespace Dojo {
 		{
 			defaultAmbient = a;
 			defaultAmbient.a = 1;
-			
-			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, (GLfloat*)&defaultAmbient );
 		}
 		
 		inline RenderOrientation getInterfaceOrientation()

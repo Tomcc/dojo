@@ -32,6 +32,13 @@ namespace Dojo
 		
 		void setColors(	const Color& diffuse, const Color& specular, const Color& ambient );
 		
+		void setSpecularExponent( float exponent )
+		{
+			DEBUG_ASSERT( exponent >= 0 );
+			
+			specularExponent = exponent;
+		}
+		
 		///setups this light to be a point light
 		void initPoint( float attenuation = 0 );
 		
@@ -64,6 +71,7 @@ namespace Dojo
 		
 		Type type;
 		Color ambient, diffuse, specular;
+		float specularExponent;
 		
 		float attenuation;
 		float spotFOV, spotExponent;

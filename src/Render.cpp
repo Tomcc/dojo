@@ -49,7 +49,7 @@ backLayer( NULL )
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	glEnable( GL_COLOR_MATERIAL );
+	//glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
@@ -507,7 +507,12 @@ void Render::renderLayer( Layer* list )
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
 		uint i = 0;
 		for( ; i < lights.size(); ++i )
+		{
 			lights[i]->bind( i );
+			
+			if( !lights[i]->hasAmbient() )
+				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );
+		}
 	}
 	else
 		glDisable( GL_LIGHTING );

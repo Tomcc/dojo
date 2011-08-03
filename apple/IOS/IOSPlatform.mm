@@ -160,7 +160,8 @@ void IOSPlatform::prepareThreadContext()
 	
 	EAGLContext* clone = [[EAGLContext alloc] initWithAPI:[context API] sharegroup:[context sharegroup]];
 	
-	DEBUG_ASSERT( [EAGLContext setCurrentContext:clone] );
+	bool err = [EAGLContext setCurrentContext:clone];
+	DEBUG_ASSERT( err );
 	
 	[[NSAutoreleasePool alloc] init];
 }
@@ -186,6 +187,11 @@ bool IOSPlatform::isSystemSoundInUse()
 	AudioSessionGetProperty(kAudioSessionProperty_OtherAudioIsPlaying, &size, &otherAudioIsPlaying);
 	
 	return otherAudioIsPlaying;
+}
+
+void IOSPlatform::enableScreenSaver( bool s )
+{
+	[[UIApplication sharedApplication] setIdleTimerDisabled: !s ];
 }
 
 void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )

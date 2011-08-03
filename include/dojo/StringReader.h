@@ -20,17 +20,17 @@ namespace Dojo
 
 		inline bool eof()
 		{
-		  return idx == str.size();
+			return idx >= str.size();
 		}
-
+		
 		inline unichar get()
 		{
-		  return str[ idx++ ];
+			return str[ idx++ ];
 		}
-
+		
 		inline void back()
 		{
-		  --idx;
+			--idx;
 		}
 		
 		inline static bool isNumber( unichar c )
@@ -98,7 +98,10 @@ namespace Dojo
 						res += c - '0';
 					}
 					else if( isWhiteSpace( c ) && count > 0 )
+					{
+						back();
 						state = PS_END;
+					}
 					else //not enough digits
 						state = PS_ERROR;	
 
@@ -108,11 +111,10 @@ namespace Dojo
 				{
 					if( isWhiteSpace(c) )
 					{
-						if( count > 0 )
-							state = PS_END;
-						else 
-							state = PS_ERROR;
+						back();
+						state = PS_END;
 					}
+
 					else if( isNumber(c) )
 					{
 						res += (float)(c-'0') / count;
@@ -123,14 +125,13 @@ namespace Dojo
 				}
 				else if( state == PS_ERROR )
 				{		
+					//TODO do something for errors
 					res = 0; //return 0
 					state = PS_END;
 
 				}			
 			}
-
-			back(); //put back the character that terminated the number
-
+			
 			return sign * res;
 		}
 

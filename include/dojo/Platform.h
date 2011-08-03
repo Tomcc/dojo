@@ -41,6 +41,11 @@ namespace Dojo
 
 		}		
 		
+		virtual ~Platform()
+		{
+			
+		}
+		
 		inline void setGame( Game* g )
 		{
 			DEBUG_ASSERT( g );

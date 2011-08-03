@@ -77,6 +77,12 @@ void Light::bind( uint i )
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );
 		glLightfv( light, GL_SPECULAR, (float*) &specular );
 		
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, (float*)&ambient );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)&diffuse );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, (float*)&specular );
+		
+		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, specularExponent );
+		
 		if( hasAmbient() )
 			glLightfv( light, GL_AMBIENT, (float*) &ambient );
 		

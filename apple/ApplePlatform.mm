@@ -80,7 +80,7 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType:nstype inDirectory:nspath];
 	
 	//convert array
-	for( int i = 0; i < [paths count]; ++i )
+	for( uint i = 0; i < [paths count]; ++i )
 	{
 		out.push_back( String( [paths objectAtIndex:i] ) );
 		
@@ -242,11 +242,11 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	byte* ptr = (byte*)imageData;
 	byte* rowptr = (byte*)imageData;
 	byte r, g, b;
-	for( int i = 0; i < height; ++i )
+	for( uint i = 0; i < height; ++i )
 	{
 		ptr = rowptr;
 		
-		for( int j = 0; j < width; ++j )
+		for( uint j = 0; j < width; ++j )
 		{
 			byte alpha = ptr[3];
 				

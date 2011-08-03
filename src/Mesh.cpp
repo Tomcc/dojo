@@ -250,7 +250,7 @@ bool Mesh::load()
 	setTriangleMode( (TriangleMode)*ptr++ );
 	
 	//fields
-	for( int i = 0; i < FIELDS_NUMBER; ++i )
+	for( uint i = 0; i < FIELDS_NUMBER; ++i )
 	{
 		if( *ptr++ )
 			setVertexFieldEnabled( (VertexField)i );

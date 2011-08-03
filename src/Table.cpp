@@ -86,7 +86,7 @@ enum ParseTarget
 	PT_STRING,
 	PT_DATA,
 	PT_VECTOR,
-	PT_CHILD,
+	PT_CHILD
 };
 
 inline bool isNameStarter( unichar c )

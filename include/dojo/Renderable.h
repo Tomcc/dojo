@@ -91,10 +91,7 @@ namespace Dojo
 		}
 		
 		inline void startFade( float startAlpha, float endAlpha, float duration )
-		{
-			DEBUG_ASSERT( startAlpha <= 1.0f && startAlpha >= 0.f );
-			DEBUG_ASSERT( endAlpha <= 1.0f && endAlpha >= 0.f );
-			
+		{			
 			color.a = startAlpha;
 			
 			Color end = color;

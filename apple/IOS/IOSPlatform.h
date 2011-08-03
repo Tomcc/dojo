@@ -39,6 +39,8 @@ namespace Dojo
 				
 		virtual bool isSystemSoundInUse();
 				
+		void enableScreenSaver( bool s );
+				
 		void copyImageIntoCameraRoll( Texture* tex );
 				
 #ifdef __OBJC__

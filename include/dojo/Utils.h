@@ -85,7 +85,7 @@ namespace Dojo
 
 		inline static String getDirectory( const String& str )
 		{
-			size_t end = getLastOf( str, '/' );
+			int end = getLastOf( str, '/' );
 
 			if( end == -1 )
 				return String::EMPTY;
@@ -130,7 +130,7 @@ namespace Dojo
 		{
 			String res = str;
 			
-			uint tidx = getTagIdx( str );
+			int tidx = getTagIdx( str );
 			
 			if( tidx != -1 )
 				res.resize( tidx );  //tag found, remove

@@ -33,7 +33,7 @@ namespace Dojo {
 			RT_FONT,
 			RT_MESH,
 			RT_SOUND,
-			RT_TABLE,
+			RT_TABLE
 		};
 		
 		typedef std::map<String, FrameSet*> FrameSetMap;

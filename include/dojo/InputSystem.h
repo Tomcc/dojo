@@ -242,6 +242,11 @@ namespace Dojo
 			
 		}
 		
+		virtual ~InputSystem()
+		{
+			
+		}
+		
 		inline void addTouchListener( Listener* l )
 		{
 			DEBUG_ASSERT( l );
