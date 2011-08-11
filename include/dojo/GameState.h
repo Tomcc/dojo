@@ -89,9 +89,8 @@ namespace Dojo {
 
 		void updateObjects( float dt );
 
-		//metodi finalizzati qui perche' gamestate vede solo "clickables"
-		void onTouchBegan( const Vector& point );
-		void onTouchEnd( const Vector& point );
+		virtual void onTouchBegan( const Vector& point );
+		virtual void onTouchEnd( const Vector& point );
 		
 	protected:
 		

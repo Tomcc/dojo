@@ -49,7 +49,7 @@ backLayer( NULL )
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	//glEnable( GL_COLOR_MATERIAL );
+	glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
@@ -441,9 +441,11 @@ void Render::_setupFrustumProjection()
 	
 	glRotatef( renderRotation, 0,0,1 );
 	
+	float f = (renderRotation == 0 || renderRotation == 180 ) ? (float)width/(float)height : (float)height/(float)width;
+	
 	_gluPerspectiveClone( 
 		viewport->getVFOV(), 
-		(float)width/(float)height, 
+		f, 
 		viewport->getZNear(), 
 		viewport->getZFar() );
 

@@ -34,7 +34,8 @@ namespace Dojo
         ApplePlatform( const Table& config );
 		
 		virtual ~ApplePlatform();
-        
+		
+		virtual void initialise()=0;        
 		virtual void step( float dt );
 		
 		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
