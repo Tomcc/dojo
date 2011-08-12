@@ -235,8 +235,8 @@ namespace Dojo
 		
 		inline const Vector& rotate( const Vector& angles )
 		{
-			pitch( angles.x );
 			yaw( angles.y );
+			pitch( angles.x );
 
 			return *this;
 		}
