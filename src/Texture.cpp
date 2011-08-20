@@ -41,21 +41,21 @@ void Texture::bind( uint index )
 
 void Texture::enableBilinearFiltering()
 {					
-    glBindTexture( GL_TEXTURE_2D, glhandle );
+    bind(0);
     
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 }
 
 void Texture::disableBilinearFiltering()
 {						
-    glBindTexture( GL_TEXTURE_2D, glhandle );
+    bind(0);
     
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST );		
 }
 
 void Texture::enableTiling()
 {
-    glBindTexture( GL_TEXTURE_2D, glhandle );
+    bind(0);
     
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
@@ -63,7 +63,7 @@ void Texture::enableTiling()
 
 void Texture::disableTiling()
 {
-    glBindTexture( GL_TEXTURE_2D, glhandle );
+    bind(0);
     
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
@@ -71,14 +71,14 @@ void Texture::disableTiling()
 
 void Texture::enableMipmaps() 
 {
-	glBindTexture( GL_TEXTURE_2D, glhandle );
+	bind(0);
 
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
 }
 
 void Texture::disableMipmaps() 
 {
-	glBindTexture( GL_TEXTURE_2D, glhandle );
+	bind(0);
 	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 }
@@ -90,8 +90,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( imageData );
 
-	glBindTexture( GL_TEXTURE_2D, glhandle );
-	glActiveTexture( GL_TEXTURE0 );
+	bind(0);
 	
 	internalWidth = Math::nextPowerOfTwo( width );
 	internalHeight = Math::nextPowerOfTwo( height );	
@@ -120,7 +119,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	loaded = err == GL_NO_ERROR;
 
 	DEBUG_ASSERT( loaded );
-
+	
 	return loaded;
 }
 
@@ -135,7 +134,7 @@ bool Texture::loadFromPNG( const String& path )
 	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
 	
 	//guess if this is a texture or a sprite
-	if( width != Math::nextPowerOfTwo( width ) || height != Math::nextPowerOfTwo( height ) )
+	if( width == Math::nextPowerOfTwo( width ) && height == Math::nextPowerOfTwo( height ) )
 	{
 		enableTiling();
 		enableMipmaps();

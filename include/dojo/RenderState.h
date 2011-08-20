@@ -48,7 +48,8 @@ namespace Dojo
 		textureRotation( 0 ),
 		textureTransform( false ),
 		textureScale( 1,1 ),
-		cullMode( CM_BACK )
+		cullMode( CM_BACK ),
+		textures( 8 )
 		{
 			
 		}

@@ -37,7 +37,8 @@ namespace Dojo
 			const Color& clear, 
 			float _VFOV = 0, 
 			float _zNear = 0,
-			float _zFar = 100 ) :
+			float _zFar = 100,
+			int fadeObjectLayer = 8 ) :
 		Object( level, pos, size ),
 		clearColor( clear ),
 		cullingEnabled( true ),
@@ -64,7 +65,7 @@ namespace Dojo
 			fadeObject->setVisible( false );
 			fadeObject->inheritAngle = false;
 
-			addChild( fadeObject, 8, false );
+			addChild( fadeObject, fadeObjectLayer, false );
 
 			if( _VFOV > 0 )
 				enableFrustum( _VFOV, _zNear, _zFar );

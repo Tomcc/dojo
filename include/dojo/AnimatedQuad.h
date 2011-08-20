@@ -230,7 +230,7 @@ namespace Dojo
 				
 		inline void _setTexture( Texture* t )
 		{			
-			setTexture( t );
+			setTexture( t, 0 );
 
 			mesh = t->getOptimalBillboard();
 		}		
