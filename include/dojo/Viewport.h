@@ -121,6 +121,9 @@ namespace Dojo
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 
 		Vector getScreenPosition( const Vector& pos );
+		
+		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
+		Vector getRayDirecton( const Vector& screenSpacePos );
 
 		bool isContainedInFrustum( Renderable* r );
 

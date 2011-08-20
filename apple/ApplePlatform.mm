@@ -34,7 +34,7 @@ testSuite( std::cout )
 {
     pool = [[NSAutoreleasePool alloc] init];
 	
-	locale = String( [[NSLocale currentLocale] localeIdentifier] );
+	locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
 }
 
 ApplePlatform::~ApplePlatform()
