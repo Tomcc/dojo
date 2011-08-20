@@ -78,6 +78,11 @@ namespace Dojo
 			if( n < min )	return min;
 			return n;
 		}
+		
+		static inline float saturate( float n )
+		{
+			return clamp( n, 1, 0 );
+		}
 
 		static inline uint nextPowerOfTwo( uint val )
 		{
@@ -116,6 +121,17 @@ namespace Dojo
 				!(cy > (maxA.y - minA.y) + (maxB.y - minB.y) || cy < 0) &&	
 				!(cz > (maxA.z - minA.z) + (maxB.z - minB.z) || cz < 0);
 		}
+				
+		static unsigned char rotateLeft(unsigned char n, unsigned char i)
+		{  
+			return (n << i) | (n >> (8 - i));
+		}
+		
+		static unsigned char rotateRight(unsigned char n, unsigned char i)
+		{  
+			return (n >> i) | (n << (8 - i));
+		}
+
 	};
 }
 

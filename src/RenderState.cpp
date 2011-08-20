@@ -34,15 +34,19 @@ void RenderState::commitChanges( RenderState* pastState )
 		
 	//bind the new textures
 	uint i = 0;
-	for( ; i < getTextureNumber() && i < pastState->getTextureNumber(); ++i )
+	for( ; i < getTextureNumber(); ++i )
 	{
-		if( getTexture(i) != pastState->getTexture(i) )
-			_bindTextureSlot( i );
+		_bindTextureSlot( i );
 	}
 	//bind remaining slots
-	for( ; i < getTextureNumber(); ++i )
-		_bindTextureSlot(i);
-
+	for( ; i < 8; ++i )
+	{
+		//bind nothing
+		glActiveTexture( GL_TEXTURE0 + i );
+		glBindTexture( GL_TEXTURE_2D, NULL );
+		glDisable( GL_TEXTURE_2D );
+	}
+	
 	if( !getTextureNumber() )
 		_bindTextureSlot(0);
 

@@ -41,8 +41,6 @@ visibleCharsNumber( 0xffffffff )
 
 	characters = (Font::Character**)malloc( sizeof( void* ) * maxChars );
 
-	absoluteTimeSpeed = true;
-
 	//init
 	clearText();
 }

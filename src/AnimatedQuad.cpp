@@ -56,10 +56,7 @@ void AnimatedQuad::immediateAnimation( const String& name, float timePerFrame )
 void AnimatedQuad::onAction( float dt )
 {
 	Renderable::onAction( dt );
-	
-	if( absoluteTimeSpeed )  //correct time speed
-		dt = Game::UPDATE_INTERVAL_CAP ;
-	
+		
 	if( autoAdvancement )
 		advanceAnim(dt);
 }

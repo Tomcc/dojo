@@ -74,10 +74,7 @@ void Object::updateWorldPosition()
 }
 
 void Object::onAction( float dt )
-{
-	if( absoluteTimeSpeed )  //correct time speed
-		dt = Game::UPDATE_INTERVAL_CAP;
-	
+{	
 	position += speed * dt;	
 	angle += rotationSpeed * dt;
 

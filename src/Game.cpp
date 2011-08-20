@@ -9,13 +9,12 @@
 
 using namespace Dojo;
 
-const float Game::UPDATE_INTERVAL_CAP = 1.f/60.f;
-
-Game::Game( const String& gamename, uint w, uint h, Render::RenderOrientation r ) :
+Game::Game( const String& gamename, uint w, uint h, Render::RenderOrientation r, float freq ) :
 name( gamename ),
 nativeWidth( w ),
 nativeHeight( h ),
 nativeOrientation( r ),
+nativeFrequency( freq ),
 focus( false )
 {	
 	DEBUG_ASSERT( name.size() );

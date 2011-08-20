@@ -27,8 +27,6 @@ namespace Dojo {
 		
 		typedef Dojo::Array< Object* > ChildList;
 		
-		bool absoluteTimeSpeed;
-
 		bool dispose;
 
 		bool inheritAngle;
@@ -42,7 +40,6 @@ namespace Dojo {
 		gameState( parentLevel ),
 		speed(0,0,0),
 		active( true ),
-		absoluteTimeSpeed( false ),
 		angle( 0,0,0 ),
 		rotationSpeed( 0,0,0 ),
 		scale( 1,1,1 ),

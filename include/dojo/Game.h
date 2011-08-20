@@ -28,10 +28,8 @@ namespace Dojo
 	class Game : public StateInterface
 	{
 	public:
-		
-		static const float UPDATE_INTERVAL_CAP;
-				
-		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation );
+						
+		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation, float nativeFrequency = 1.f/60.f );
 		
 		virtual ~Game();
 
@@ -50,6 +48,11 @@ namespace Dojo
 			return nativeHeight;
 		}
 		
+		inline float getNativeFrequency()
+		{
+			return nativeFrequency;
+		}
+		
 		inline Render::RenderOrientation getNativeOrientation()
 		{
 			return nativeOrientation;
@@ -62,6 +65,7 @@ namespace Dojo
 		bool focus;
 		
 		uint nativeWidth, nativeHeight;
+		float nativeFrequency;
 		
 		Render::RenderOrientation nativeOrientation;
 

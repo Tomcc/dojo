@@ -173,6 +173,11 @@ namespace Dojo
 			
 			return v;
 		}
+		
+		inline Vector lerp( float s, const Dojo::Vector& v )
+		{			
+			return (*this)*s + v*(1.f-s);
+		}
 
 		inline const Vector& reflect( const Dojo::Vector& normal )
 		{

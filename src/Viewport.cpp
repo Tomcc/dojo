@@ -80,6 +80,23 @@ Vector Viewport::getScreenPosition( const Vector& pos )
 	return local;
 }
 
+Vector Viewport::getRayDirecton( const Vector& screenSpacePos )
+{
+	//frustum[0]: top left
+	//frustum[1]: bottom left
+	//frustum[2]: bottom right
+	//frustum[3]: top right
+	
+	//find points on each side of the frustum
+	Vector a = worldFrustumVertices[0].lerp( screenSpacePos.x, worldFrustumVertices[1] );
+	Vector b = worldFrustumVertices[3].lerp( screenSpacePos.x, worldFrustumVertices[2] );
+		
+	//now we can find the final far plane projection and the ray direction
+	a = a.lerp( screenSpacePos.y, b );
+	
+	return (getWorldPosition() - a).normalized();
+}
+
 void Viewport::makeScreenSize( Vector& dest, int w, int h )
 {	
 	dest.x = (float)w/targetSize.x * size.x * nativeToScreenRatio;

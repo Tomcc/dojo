@@ -17,9 +17,6 @@ void Renderable::onAction( float dt )
 {
 	Object::onAction( dt );
 	
-	if( absoluteTimeSpeed )  //correct time speed
-		dt = Game::UPDATE_INTERVAL_CAP ;
-
 	if( mesh )
 	{
 		worldUpperBound.x = worldPosition.x + mesh->getMax().x * abs( scale.x );
