@@ -38,11 +38,16 @@ namespace Dojo
 		virtual void loop( float frameTime );
 				
 		virtual bool isSystemSoundInUse();
-				
+						
 		void enableScreenSaver( bool s );
 				
 		void copyImageIntoCameraRoll( Texture* tex );
-				
+		
+		/*
+		virtual void sendEmail( const Email& e );
+		void onEmailSent( void* senderController, bool success );
+		*/
+		 
 #ifdef __OBJC__
 		void _notifyNativeApp( Application* application )
 		{
@@ -59,7 +64,11 @@ namespace Dojo
 #endif
 		
 	protected:
-			
+		/*
+		typedef std::map< void*, Email::Listener* > SenderEmailListenerMap;
+		SenderEmailListenerMap senderEmailListenerMap;
+		*/
+		
 #ifdef __OBJC__		
 		EAGLContext* context;
 		

@@ -41,6 +41,8 @@ namespace Dojo
 		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
 		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
 		virtual uint loadFileContent( char*& bufptr, const String& path );
+		
+		virtual String getAppDataPath();
 				
 		virtual void loadPNGContent( void*& imageData, const String& path, uint& width, uint& height );		
 		virtual uint loadAudioFileContent( ALuint& buffer, const String& path );

@@ -6,9 +6,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>	
 #import <UIKit/UIKit.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
 #include "Utils.h"
 #include "dojomath.h"
+#include "Email.h"
 
 #include <dojo/Render.h>
 #include <dojo/SoundManager.h>
@@ -182,7 +184,57 @@ bool IOSPlatform::isSystemSoundInUse()
 	
 	return otherAudioIsPlaying;
 }
+/*
+void IOSPlatform::sendEmail( const Email& e )
+{	
+	//check if this device can send emails
+	if( ![MFMailComposeViewController canSendMail ] )
+	{
+		e.listener->onEmailFailed();
+		return;
+	}
+	
+	MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
+	controller.mailComposeDelegate = app;
+	
+	NSArray* recipients = [NSArray arrayWithObject:e.dest.toNSString() ];
+	
+	[controller setToRecipients: recipients ];
+	[controller setSubject: e.subject.toNSString() ];
+	[controller setMessageBody: e.message.toNSString()  isHTML:NO];
+	
+	if( e.attachmentData )
+	{		
+		NSData* attachmentData = [NSData dataWithBytes:e.attachmentData length:e.attachmentSize ];
+		
+		[controller addAttachmentData: attachmentData 
+					mimeType: e.attachmentMimeType.toNSString() 
+					fileName:e.attachmentName.toNSString() ];
+	}
+	
+	senderEmailListenerMap[ controller ] = e.listener;
+	
+	[app addSubview: [controller view] ];
+	[[controller view] becomeFirstResponder];
+	
+	//[controller release];
+}
 
+void IOSPlatform::onEmailSent( void* senderController, bool success )
+{
+	SenderEmailListenerMap::iterator pos = senderEmailListenerMap.find( senderController );
+	
+	if( pos != senderEmailListenerMap.end() )
+	{
+		if( success )
+			pos->second->onEmailSent();
+		else
+			pos->second->onEmailFailed();
+		
+		senderEmailListenerMap.erase( pos );
+	}
+}
+*/
 void IOSPlatform::enableScreenSaver( bool s )
 {
 	[[UIApplication sharedApplication] setIdleTimerDisabled: !s ];

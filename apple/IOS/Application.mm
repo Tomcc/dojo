@@ -201,7 +201,7 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 }
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
-{
+{	
 	if (motion == UIEventSubtypeMotionShake)
 		touchSource->_fireShakeEvent();
 }
@@ -228,5 +228,13 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 										(float)acceleration.z,
 										relativeRoll);
 }
+/*
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
+{
+	platform->onEmailSent( controller, result != MFMailComposeResultFailed );
+		
+	[[controller view] resignFirstResponder];
+}
+*/
 
 @end

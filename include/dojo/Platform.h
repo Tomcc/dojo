@@ -13,7 +13,8 @@ namespace Dojo
 	class FontSystem;
 	class Game;
 	class Table;
-
+	class Email;
+	
 	class Platform 
 	{
 	public:
@@ -83,6 +84,11 @@ namespace Dojo
 		virtual uint loadFileContent( char*& bufptr, const String& path )=0;
 		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )=0;
 		
+		virtual String getAppDataPath()
+		{
+			DEBUG_TODO;
+		}
+		
 		///loads the given file in a buffer - WARNING not every format is supported on every platform
 		virtual uint loadAudioFileContent( ALuint& buffer, const String& path )=0;
 
@@ -95,6 +101,12 @@ namespace Dojo
 		}
 
 		virtual void openWebPage( const String& site )=0;
+		
+		///send an email object
+		virtual void sendEmail( const Email& email )
+		{
+			DEBUG_TODO;
+		}
 
 	protected:
 

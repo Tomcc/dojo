@@ -73,6 +73,7 @@ void TextArea::clearText()
 
 	changed = true;
 	
+	visibleCharsNumber = 0xffffffff;
 	currentLineLength = 0;
 	lastSpace = 0;
 }
@@ -161,8 +162,8 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	Font::Character* rep, *lastRep = NULL;
 	Vector newSize(0,0);
 	bool doKerning = font->isKerningEnabled();
-	uint lastLineVertexID = 0;
-	uint idx = 0;
+	int lastLineVertexID = 0;
+	int idx = 0;
 
 	cursorPosition.x = 0;
 	cursorPosition.y = 0;
@@ -171,7 +172,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	_hideLayers();
 
 	//either reach the last valid character or the last existing character
-	for( uint i = 0; i < visibleCharsNumber && i < currentCharIdx; ++i )
+	for( int i = 0; i < visibleCharsNumber && i < currentCharIdx; ++i )
 	{
 		rep = characters[i];
 

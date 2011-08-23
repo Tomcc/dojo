@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
+/*
+#import <MessageUI/MFMailComposeViewController.h>
+*/
+ 
 #include <dojo/Render.h>
 #include <dojo/SoundManager.h>
 #include <dojo/InputSystem.h>
@@ -25,7 +29,7 @@ namespace Dojo {
 //#ifdef OPENFEINT_ENABLED
 //@interface Application : UIView < UIAccelerometerDelegate, ApplicationSetupDelegate, OpenFeintDelegate >
 //#elseif
-@interface Application : UIView < UIAccelerometerDelegate >
+@interface Application : UIView < UIAccelerometerDelegate > //, MFMailComposeViewControllerDelegate >
 //#endif
 {    
 @protected	
@@ -67,5 +71,7 @@ namespace Dojo {
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event;
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
-
+/*
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error;
+*/
 @end

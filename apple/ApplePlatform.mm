@@ -78,7 +78,7 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	NSString* nspath = path.toNSString();
 	
 	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType:nstype inDirectory:nspath];
-	
+		
 	//convert array
 	for( uint i = 0; i < [paths count]; ++i )
 	{
@@ -101,6 +101,14 @@ NSString* ApplePlatform::_getFullPath( const String& path )
 	return nspath;
 }
 
+String ApplePlatform::getAppDataPath()
+{
+	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString* nspath = [nspaths objectAtIndex:0];
+	
+	return String( nspath );
+}
+
 NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& absPath )
 {	
 	DEBUG_ASSERT( table );
@@ -113,11 +121,7 @@ NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& ab
 	{		
 		String fileName = "/" + game->getName() + "/" + table->getName() + ".ds";
 		
-		NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-		NSString* nspath = [nspaths objectAtIndex:0];
-		NSString* nsname = fileName.toNSString();
-		
-		fullPath = [nspath stringByAppendingString:nsname];
+		fullPath = (getAppDataPath() + fileName).toNSString();
 	}
 	else
 	{		
