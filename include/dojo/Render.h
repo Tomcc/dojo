@@ -93,6 +93,20 @@ namespace Dojo {
 			glDisable( GL_LIGHT0 + lights.size() );
 		}
 		
+		///completely removes all layers!
+		inline void clearLayers()
+		{
+			for( int i = 0; i < negativeLayers.size(); ++i )
+				delete negativeLayers[i];
+			
+			negativeLayers.clear();
+			
+			for( int i = 0; i < positiveLayers.size(); ++i )
+				delete positiveLayers[i];
+			
+			positiveLayers.clear();
+		}
+		
 		void setViewport( Viewport* v );
 						
 		void setInterfaceOrientation( RenderOrientation o );
@@ -111,6 +125,8 @@ namespace Dojo {
 		}
 		
 		Layer* getLayer( int layerID );
+		
+		bool hasLayer( int layerID );
 
 		uint getLayerNumber()
 		{

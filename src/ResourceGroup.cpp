@@ -179,56 +179,6 @@ void ResourceGroup::loadTables( const String& folder )
 	}
 }
 
-void ResourceGroup::unloadSets()
-{	
-	FrameSetMap::iterator itr = frameSets.begin();
-	
-	for( ; itr != frameSets.end(); ++itr )
-		delete itr->second;	
-		
-	frameSets.clear();
-}
-
-void ResourceGroup::unloadFonts()
-{
-	FontMap::iterator itr = fonts.begin();
-	
-	for( ; itr != fonts.end(); ++itr )
-		delete itr->second;	
-	
-	fonts.clear();
-}
-
-void ResourceGroup::unloadMeshes()
-{
-	MeshMap::iterator itr = meshes.begin();
-	
-	for( ; itr != meshes.end(); ++itr )
-		delete itr->second;	
-	
-	meshes.clear();
-}
-
-void ResourceGroup::unloadSounds()
-{
-	SoundMap::iterator itr = sounds.begin();
-	
-	for( ; itr != sounds.end(); ++itr )
-		delete itr->second;	
-	
-	sounds.clear();
-}
-
-void ResourceGroup::unloadTables()
-{
-	TableMap::iterator itr = tables.begin();
-	
-	for( ; itr != tables.end(); ++itr )
-		delete itr->second;	
-	
-	tables.clear();
-}
-
 void ResourceGroup::loadPrefabMeshes()
 {
 	//create an empty texturedQuad

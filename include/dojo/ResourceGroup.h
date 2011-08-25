@@ -257,13 +257,32 @@ namespace Dojo {
 			finalized = true;
 		}
 				
-		void unloadSets();
-		void unloadFonts();
-		void unloadMeshes();
-		void unloadSounds();
-		void unloadTables();
+		inline void unloadSets()
+		{	
+			unload< FrameSet >( frameSets );
+		}
 		
-		void unloadAll()
+		inline void unloadFonts()
+		{
+			unload< Font >( fonts );
+		}
+		
+		inline void unloadMeshes()
+		{
+			unload< Mesh >( meshes );
+		}
+		
+		inline void unloadSounds()
+		{
+			unload< SoundSet >( sounds );
+		}
+		
+		inline void unloadTables()
+		{
+			unload< Table >( tables );
+		}
+		
+		inline void unloadAll()
 		{
 			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
 			unloadFonts();
@@ -298,8 +317,19 @@ namespace Dojo {
 		void* mapArray[5];
 		
 		SubgroupList subs;
-		
-		
+				
+		template <class T> 
+		void unload( std::map< String, T* >& map )
+		{
+			while( !map.empty() )
+			{
+				DEBUG_MESSAGE( "~" << map.begin()->first.ASCII() );
+				
+				delete map.begin()->second;
+				
+				map.erase( map.begin() );
+			}
+		}
 	};
 }
 

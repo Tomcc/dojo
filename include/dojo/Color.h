@@ -20,7 +20,7 @@ namespace Dojo
 	{
 	public:
 		
-		static const Color RED, GREEN, BLUE, BLACK, WHITE, GRAY, NIL;
+		static const Color RED, GREEN, BLUE, BLACK, WHITE, GRAY, YELLOW, NIL;
 				
 		float r,g,b,a;
 		

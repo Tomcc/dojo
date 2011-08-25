@@ -178,6 +178,11 @@ namespace Dojo
 		{
 			set( key, FT_VECTOR, value );
 		}
+		
+		inline void set( const String& key, const Color& value )
+		{
+			set( key, FT_VECTOR, Vector( value.r, value.g, value.b ) );
+		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
 		inline void set( const String& key, void* value, uint size, bool managed = false )

@@ -38,7 +38,10 @@ void IOSPlatform::initialise()
 {
 	DEBUG_ASSERT( app );
 	
-	uint devicePixelScale = [UIScreen mainScreen].scale;
+	
+	CGRect bounds = [[UIScreen mainScreen] bounds];
+	
+	uint devicePixelScale = game->getNativeWidth() / bounds.size.width;
 	uint width = [UIScreen mainScreen].bounds.size.height;
 	uint height = [UIScreen mainScreen].bounds.size.width;
 		

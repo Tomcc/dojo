@@ -10,4 +10,5 @@ const Color Color::BLUE = Color( 0, 0, 1, 1 );
 const Color Color::BLACK = Color( 0, 0, 0, 1 );
 const Color Color::WHITE = Color( 1, 1, 1, 1 );
 const Color Color::GRAY = Color( 0.5, 0.5, 0.5, 1 );
+const Color Color::YELLOW = Color( 1, 0.9, 0, 1 );
 const Color Color::NIL = Color( 0, 0, 0, 0);

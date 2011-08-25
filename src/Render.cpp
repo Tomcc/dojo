@@ -118,6 +118,18 @@ Render::Layer* Render::getLayer( int layerID )
 	return layerList->at( layerID );
 }
 
+bool Render::hasLayer( int layerID )
+{
+	LayerList* layerList = &positiveLayers;
+	if( layerID < 0 )
+	{
+		layerID = -layerID - 1; //flip and shift by 1
+		layerList = &negativeLayers;
+	}
+	
+	return layerList->size() > abs( layerID );
+}
+
 void Render::addRenderable( Renderable* s, int layerID )
 {				
 	//get the needed layer	
@@ -148,7 +160,8 @@ void Render::addRenderable( Renderable* s, int layerID )
 
 void Render::removeRenderable( Renderable* s )
 {	
-	getLayer( s->getLayer() )->remove( s );
+	if( hasLayer( s->getLayer() ) )
+		getLayer( s->getLayer() )->remove( s );
 	
 	s->_notifyRenderInfo( NULL, 0, 0 );
 }
