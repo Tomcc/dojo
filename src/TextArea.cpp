@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "TextArea.h"
+#include "Game.h"
 
 using namespace Dojo;
 
@@ -76,6 +77,12 @@ void TextArea::clearText()
 	visibleCharsNumber = 0xffffffff;
 	currentLineLength = 0;
 	lastSpace = 0;
+}
+
+void TextArea::setMaxLineLength( uint l )
+{		
+	//HACK PAZZESCOH
+	maxLineLenght = l * ((float)gameState->getGame()->getNativeWidth() / (float)640 );
 }
 
 void TextArea::addText( const String& text )

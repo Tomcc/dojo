@@ -21,6 +21,7 @@
 #include "Platform.h"
 #include "Renderable.h"
 #include "Plane.h"
+#include "Game.h"
 
 namespace Dojo 
 {	
@@ -52,8 +53,8 @@ namespace Dojo
 
 			nativeToScreenRatio = render->getNativeToScreenRatio();
 			
-			targetSize.x = (float)render->getWidth();
-			targetSize.y = (float)render->getHeight();
+			targetSize.x = (float)level->getGame()->getNativeWidth();
+			targetSize.y = (float)level->getGame()->getNativeHeight();
 
 			//create the fader object			
 			fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );
@@ -100,9 +101,7 @@ namespace Dojo
 			
 			//the background image must not be stretched on different aspect ratios
 			//so we just pick the pixel size for the horizontal			
-			Vector ss = background->getScreenSize();
-			
-			background->pixelScale.x = size.x / ss.x;
+			background->pixelScale.x = (float)background->getTexture(0)->getWidth() / (float)targetSize.x;
 			background->pixelScale.y = background->pixelScale.x;	
 
 			addChild( background );
