@@ -99,7 +99,7 @@ namespace Dojo
 		
 	private:
 				
-		//------ eventi dello stato
+		//------ state events
 		virtual void onBegin()
 		{
 			
@@ -113,10 +113,21 @@ namespace Dojo
 			
 		}
 		
-		//----- eventi per i sottostati immediati
-		virtual void onStateBegin()=0;		
-		virtual void onStateLoop( float dt )=0;		
-		virtual void onStateEnd()=0;
+		//----- immediate substate events
+		virtual void onStateBegin()
+		{
+			
+		}
+		
+		virtual void onStateLoop( float dt )
+		{
+			
+		}
+		
+		virtual void onStateEnd()
+		{
+			
+		}
 				
 		inline void _subStateBegin()
 		{

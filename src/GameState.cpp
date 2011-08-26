@@ -52,6 +52,15 @@ void GameState::addLight( Light* l )
 	Platform::getSingleton()->getRender()->addLight( l );
 }
 
+void GameState::setViewport( Viewport* v )
+{
+	DEBUG_ASSERT( v );
+	
+	camera = v;
+	
+	Platform::getSingleton()->getRender()->setViewport( v );
+}
+
 void GameState::removeSprite( Renderable* s )
 {
 	removeObject( s );

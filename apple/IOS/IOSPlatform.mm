@@ -38,10 +38,16 @@ void IOSPlatform::initialise()
 {
 	DEBUG_ASSERT( app );
 	
-	
 	CGRect bounds = [[UIScreen mainScreen] bounds];
+		
+	//HACK	
+	uint devicePixelScale;
 	
-	uint devicePixelScale = game->getNativeWidth() / bounds.size.width;
+	if( game->getNativeOrientation() == Render::RO_LANDSCAPE_LEFT || game->getNativeOrientation() == Render::RO_LANDSCAPE_RIGHT )
+		devicePixelScale = game->getNativeWidth() / bounds.size.height;
+	else
+		devicePixelScale = game->getNativeWidth() / bounds.size.width;
+	
 	uint width = [UIScreen mainScreen].bounds.size.height;
 	uint height = [UIScreen mainScreen].bounds.size.width;
 		

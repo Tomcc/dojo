@@ -65,6 +65,8 @@ namespace Dojo {
 				
 		void addObject( Renderable* s, int layer, bool clickable = false );
 		
+		void setViewport( Viewport* v );
+		
 		inline void removeObject( Object* o )
 		{
 			objects.remove( o );
