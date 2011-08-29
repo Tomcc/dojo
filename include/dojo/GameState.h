@@ -69,6 +69,8 @@ namespace Dojo {
 		
 		inline void removeObject( Object* o )
 		{
+			DEBUG_ASSERT( o );
+			
 			objects.remove( o );
 		}
 		
@@ -76,16 +78,17 @@ namespace Dojo {
         
 		void removeSprite( Renderable* s );
 		
+		void destroyObject( Object* o );
+		
+		void destroyObject( Renderable* s );
+		
+		void collectDisposed();
+		
+		///removes each object
 		void removeAll();
-
-		inline void destroyAll()
-		{
-			for( uint i = 0; i < objects.size(); ++i )
-				delete objects.at(i);
-
-			//clear vectors
-			removeAll();
-		}
+		
+		///deletes and removes each object
+		void destroyAll();
 		
 		Renderable* getClickableAtPoint( const Vector& point );
 

@@ -42,7 +42,6 @@ using namespace Dojo;
 		animating = FALSE;
 		displayLinkSupported = FALSE;
 		displayLink = nil;
-		animationTimer = nil;
 		renderImpl = NULL;
 		
 		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
@@ -101,8 +100,11 @@ using namespace Dojo;
 {	
 	if (!animating)
 	{
-		animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)( platform->getGame()->getNativeFrequency() ) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
-					
+		displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
+		
+		[displayLink setFrameInterval: platform->getGame()->getNativeFrequency() ];
+		[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		
 		animating = TRUE;
 	}
 	
@@ -113,17 +115,9 @@ using namespace Dojo;
 {
 	if (animating)
 	{
-		if (displayLinkSupported)
-		{
-			[displayLink invalidate];
-			displayLink = nil;
-		}
-		else
-		{
-			[animationTimer invalidate];
-			animationTimer = nil;
-		}
-		
+		[displayLink invalidate];
+		displayLink = nil;
+			
 		animating = FALSE;
 	}
 }

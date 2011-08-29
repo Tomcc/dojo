@@ -71,18 +71,41 @@ void GameState::removeSprite( Renderable* s )
 
 void GameState::removeClickableSprite( Renderable* s )
 {
+	DEBUG_ASSERT( s );
+	
 	clickables.remove( s );
-	s->clickListener = NULL;
 }
 
+void GameState::destroyObject( Object* o )
+{
+	DEBUG_ASSERT(o);
+	
+	removeObject( o );
+	
+	delete o;
+}
+
+void GameState::destroyObject( Renderable* s )
+{
+	DEBUG_ASSERT( s );
+	
+	removeSprite( s );
+	
+	delete s;
+}
 
 void GameState::removeAll()
-{
-	for( uint i = 0; i < clickables.size(); ++i )
-		clickables.at(i)->clickListener = NULL;
-	
+{	
 	clickables.clear();
 	objects.clear();
+}
+
+void GameState::destroyAll()
+{
+	for( int i = 0; i < objects.size(); ++i )
+		objects[i]->dispose = true;
+	
+	collectDisposed();
 }
 
 Renderable* GameState::getClickableAtPoint( const Vector& point )
@@ -109,26 +132,34 @@ Renderable* GameState::getClickableAtPoint( const Vector& point )
 	return clickable;
 }
 
-void GameState::updateObjects( float dt )
-{			
-	Object* o;
+void GameState::collectDisposed()
+{
 	for( uint i = 0; i < objects.size(); ++i )
 	{
-		o = objects.at(i);
+		Object * o = objects.at(i);
 		
 		if( o->dispose )
 		{
 			o->onDestruction();
-
-			removeObject( o );
-
-			delete o;
-
+			
+			//could be a clickable
+			removeSprite( (Renderable*)o );
+			
 			--i;
+			
+			delete o;
 		}
+	}		
+}
 
-		else if( o->isActive() )
-			o->onAction( dt );
+void GameState::updateObjects( float dt )
+{		
+	collectDisposed();
+	
+	for( uint i = 0; i < objects.size(); ++i )
+	{
+		if( objects[i]->isActive() )
+			objects[i]->onAction( dt );
 	}			
 }
 

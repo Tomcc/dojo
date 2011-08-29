@@ -34,6 +34,16 @@
 	[glView stopAnimation];
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+	[glView stopAnimation];	
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+	[glView startAnimation];
+}
+
 - (void) dealloc
 {
 	[window release];

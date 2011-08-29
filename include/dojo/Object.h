@@ -145,20 +145,11 @@ namespace Dojo {
 		void addChild( Renderable* o, uint layer, bool clickable = false );
 
 		void removeChild( Object* o );
-
+		
+		void collectChilds();
+		
 		///completely destroys all the childs of this object
-		void destroyAllChilds()
-		{
-			if( !childs )
-				return;
-
-			for( uint i = 0; i < childs->size(); ++ i )
-				delete childs->at(i);
-
-			delete childs;
-
-			childs = NULL;
-		}
+		void destroyAllChilds();
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			

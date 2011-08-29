@@ -45,6 +45,21 @@ void Object::removeChild( Object* o )
 	gameState->removeClickableSprite( (Renderable*)o ); //if existing
 }
 
+void Object::destroyAllChilds()
+{
+	if( childs )
+	{	
+		for( uint i = 0; i < childs->size(); ++i )
+			childs->at(i)->dispose = true;
+	
+		collectChilds();
+	
+		delete childs;
+	
+		childs = NULL;
+	}
+}
+
 void Object::updateWorldPosition()
 {
 	if( parent )  //add parent world transform
@@ -73,6 +88,28 @@ void Object::updateWorldPosition()
 	min = worldPosition - halfSize;
 }
 
+void Object::collectChilds()
+{
+	if( childs )
+	{
+		for( uint i = 0; i < childs->size(); ++i )
+		{
+			Object* o = childs->at( i );
+			
+			if( o->dispose )
+			{
+				gameState->removeSprite( (Renderable*)o );
+								
+				removeChild(o);
+				
+				--i;
+				
+				delete o;
+			}
+		}
+	}
+}
+
 void Object::onAction( float dt )
 {	
 	position += speed * dt;	
@@ -82,15 +119,11 @@ void Object::onAction( float dt )
 	
 	if( childs )
 	{
+		collectChilds();
+		
 		for( uint i = 0; i < childs->size(); ++i )
 		{
-			if( childs->at(i)->dispose )
-			{
-				gameState->removeObject( childs->at(i) );
-				removeChild( childs->at(i) );
-				--i;
-			}
-			else
+			if( childs->at(i )->isActive() )
 				childs->at(i)->onAction(dt);
 		}
 	}
