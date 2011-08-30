@@ -12,6 +12,8 @@
 
 #include "dojo_common_header.h"
 
+#include <stack>
+
 #include "Vector.h"
 #include "Array.h"
 #include "dojomath.h"
@@ -35,24 +37,7 @@ namespace Dojo {
 		
 		float* customMatrix;
 		
-		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
-		position( pos ),
-		gameState( parentLevel ),
-		speed(0,0,0),
-		active( true ),
-		angle( 0,0,0 ),
-		rotationSpeed( 0,0,0 ),
-		scale( 1,1,1 ),
-		childs( NULL ),
-		parent( NULL ),
-		dispose( false ),
-		inheritAngle( true ),
-		customMatrix( NULL )
-		{
-			DEBUG_ASSERT( parentLevel );
-			
-			setSize( bbSize );
-		}
+		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  );
 		
 		virtual ~Object()
 		{
@@ -137,10 +122,28 @@ namespace Dojo {
 						
 		inline bool isActive()				{	return active;	}
 		
+		inline bool hasChilds()
+		{
+			return childs != NULL && childs->size() > 0;
+		}
+		
 		//TODO use real transforms
 		inline const Vector& getWorldMax()				{	return max;	}
 		inline const Vector& getWorldMin()				{	return min;	}
 
+		inline Object* getChild( int i )				
+		{
+			DEBUG_ASSERT( hasChilds() );
+			DEBUG_ASSERT( childs->size() > i );
+			
+			return childs->at( i );
+		}
+		
+		inline int getChildNumber()
+		{
+			return (childs) ? childs->size() : 0;
+		}
+		
 		void addChild( Object* o );
 		void addChild( Renderable* o, uint layer, bool clickable = false );
 
@@ -150,6 +153,8 @@ namespace Dojo {
 		
 		///completely destroys all the childs of this object
 		void destroyAllChilds();
+		
+		void updateChilds( float dt );
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			

@@ -19,21 +19,18 @@
 #include "StateInterface.h"
 #include "Renderable.h"
 #include "Light.h"
+#include "Object.h"
 
 namespace Dojo {
 	
 	class Viewport;
 	class SoundManager;
 	class Renderable;
-	class Object;
 	class Game;
 	
-	class GameState : public ResourceGroup, public InputSystem::Listener, public Renderable::Listener, public StateInterface
+	class GameState : public Object, public ResourceGroup, public InputSystem::Listener, public Renderable::Listener, public StateInterface
 	{
 	public:
-		
-		typedef Array<Object*> ObjectList;
-		typedef Array<Renderable*> RenderableList;
 		
 		GameState( Game* parentGame );
 		
@@ -46,53 +43,10 @@ namespace Dojo {
 				
 		inline float getCurrentTime()		{	return timeElapsed;		}		
 		inline Viewport* getViewport()		{	return camera;			}
-						
-		inline void addClickable( Renderable* s )
-		{
-			DEBUG_ASSERT( s );
-			
-			clickables.add( s );
-		}
-		
-		inline void addObject( Object* o )
-		{
-			DEBUG_ASSERT( o );
-			
-			objects.add( o );
-		}
-		
-		void addLight( Light* l );
-				
-		void addObject( Renderable* s, int layer, bool clickable = false );
 		
 		void setViewport( Viewport* v );
 		
-		inline void removeObject( Object* o )
-		{
-			DEBUG_ASSERT( o );
-			
-			objects.remove( o );
-		}
-		
-		void removeClickableSprite( Renderable* s );
-        
-		void removeSprite( Renderable* s );
-		
-		void destroyObject( Object* o );
-		
-		void destroyObject( Renderable* s );
-		
-		void collectDisposed();
-		
-		///removes each object
-		void removeAll();
-		
-		///deletes and removes each object
-		void destroyAll();
-		
 		Renderable* getClickableAtPoint( const Vector& point );
-
-		void updateObjects( float dt );
 
 		virtual void onTouchBegan( const Vector& point );
 		virtual void onTouchEnd( const Vector& point );
@@ -103,10 +57,7 @@ namespace Dojo {
 		
 		Viewport* camera;
 		
-		float timeElapsed;		
-		
-		ObjectList objects;
-		RenderableList clickables;
+		float timeElapsed;
 	};
 }
 

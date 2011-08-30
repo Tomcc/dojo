@@ -8,7 +8,24 @@
 
 using namespace Dojo;
 
-
+Object::Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
+position( pos ),
+gameState( parentLevel ),
+speed(0,0,0),
+active( true ),
+angle( 0,0,0 ),
+rotationSpeed( 0,0,0 ),
+scale( 1,1,1 ),
+childs( NULL ),
+parent( NULL ),
+dispose( false ),
+inheritAngle( true ),
+customMatrix( NULL )
+{
+	DEBUG_ASSERT( parentLevel );
+	
+	setSize( bbSize );
+}
 
 void Object::addChild( Object* o )
 {
@@ -27,9 +44,12 @@ void Object::addChild( Renderable* o, uint layer, bool clickable )
 	addChild( o );
 
 	Platform::getSingleton()->getRender()->addRenderable( o, layer );
-
-	if( clickable )
-		gameState->addClickable( o );
+	
+	//compatibility utility - either set listener to NULL if not clickable, or to gameState if clickable AND not defined
+	if( !clickable )
+		o->clickListener = NULL;
+	else if( clickable && !o->clickListener )
+		o->clickListener = gameState;
 }
 
 void Object::removeChild( Object* o )
@@ -41,8 +61,6 @@ void Object::removeChild( Object* o )
 	childs->remove( o );
 
 	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)o ); //if existing
-
-	gameState->removeClickableSprite( (Renderable*)o ); //if existing
 }
 
 void Object::destroyAllChilds()
@@ -98,8 +116,6 @@ void Object::collectChilds()
 			
 			if( o->dispose )
 			{
-				gameState->removeSprite( (Renderable*)o );
-								
 				removeChild(o);
 				
 				--i;
@@ -110,12 +126,8 @@ void Object::collectChilds()
 	}
 }
 
-void Object::onAction( float dt )
-{	
-	position += speed * dt;	
-	angle += rotationSpeed * dt;
-
-	updateWorldPosition();
+void Object::updateChilds( float dt )
+{
 	
 	if( childs )
 	{
@@ -127,4 +139,14 @@ void Object::onAction( float dt )
 				childs->at(i)->onAction(dt);
 		}
 	}
+}
+
+void Object::onAction( float dt )
+{	
+	position += speed * dt;	
+	angle += rotationSpeed * dt;
+
+	updateWorldPosition();
+	
+	updateChilds( dt );
 }

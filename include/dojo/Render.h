@@ -133,6 +133,16 @@ namespace Dojo {
 			return positiveLayers.size() + negativeLayers.size();
 		}
 		
+		inline int getFirstLayerID()
+		{
+			return -negativeLayers.size();	
+		}
+		
+		inline int getLastLayerID()
+		{
+			return positiveLayers.size();
+		}
+		
 		inline int getScreenWidth()						{	return width;		}
 		inline int getScreenHeight()					{	return height;		}
 		

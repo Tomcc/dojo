@@ -10,6 +10,7 @@
 using namespace Dojo;
 
 GameState::GameState( Game* parentGame ) :
+Object( this, Vector::ZERO, Vector::ONE ),
 ResourceGroup(),
 game( parentGame ),
 timeElapsed(0),
@@ -26,30 +27,10 @@ GameState::~GameState()
 void GameState::clear()
 {	
 	//unregister objects
-	destroyAll();
+	destroyAllChilds();
 		
 	//flush resources
 	unloadAll();
-}
-
-
-void GameState::addObject( Renderable* s, int layer, bool clickable )		
-{
-	Platform::getSingleton()->getRender()->addRenderable( s, layer );
-	
-	addObject( s );
-	
-	if( clickable )
-		addClickable( s );
-}
-
-void GameState::addLight( Light* l )
-{
-	DEBUG_ASSERT( l );
-	
-	addObject( l );
-	
-	Platform::getSingleton()->getRender()->addLight( l );
 }
 
 void GameState::setViewport( Viewport* v )
@@ -61,125 +42,41 @@ void GameState::setViewport( Viewport* v )
 	Platform::getSingleton()->getRender()->setViewport( v );
 }
 
-void GameState::removeSprite( Renderable* s )
-{
-	removeObject( s );
-	removeClickableSprite( s );
-	
-	Platform::getSingleton()->getRender()->removeRenderable( s );
-}
-
-void GameState::removeClickableSprite( Renderable* s )
-{
-	DEBUG_ASSERT( s );
-	
-	clickables.remove( s );
-}
-
-void GameState::destroyObject( Object* o )
-{
-	DEBUG_ASSERT(o);
-	
-	removeObject( o );
-	
-	delete o;
-}
-
-void GameState::destroyObject( Renderable* s )
-{
-	DEBUG_ASSERT( s );
-	
-	removeSprite( s );
-	
-	delete s;
-}
-
-void GameState::removeAll()
-{	
-	clickables.clear();
-	objects.clear();
-}
-
-void GameState::destroyAll()
-{
-	for( int i = 0; i < objects.size(); ++i )
-		objects[i]->dispose = true;
-	
-	collectDisposed();
-}
-
 Renderable* GameState::getClickableAtPoint( const Vector& point )
 {	
-	//look for clicked clickables
-	Renderable *c = NULL;
-	Renderable *clickable = NULL;
+	Vector pointer = getViewport()->makeWorldCoordinates( point );
 	
-	//find the pointer position in viewport space
-	Vector pointer = camera->makeWorldCoordinates( point );
+	//look into layers
+	Render* r = Platform::getSingleton()->getRender();
 	
-	for( uint i = 0; i < clickables.size(); ++i )
+	for( int i = r->getLastLayerID()-1; i >= r->getFirstLayerID(); --i )
 	{
-		c = clickables[i];
-				
-		if( c->isVisible() && c->isActive() && c->contains( pointer ) )
+		Render::Layer* l = r->getLayer( i );
+		
+		for( int j = 0; j < l->size(); ++j )
 		{
-			//pick highest layer
-			if( !clickable || (clickable && c->getLayer() > clickable->getLayer() ) ) 
-			   clickable = c;
+			Renderable* r = l->at(j);
+			
+			if( r->isClickable() && r->isVisible() && r->isActive() && r->contains( pointer ) )
+				return r;
 		}
 	}
 	
-	return clickable;
+	return NULL;
 }
-
-void GameState::collectDisposed()
-{
-	for( uint i = 0; i < objects.size(); ++i )
-	{
-		Object * o = objects.at(i);
-		
-		if( o->dispose )
-		{
-			o->onDestruction();
-			
-			//could be a clickable
-			removeSprite( (Renderable*)o );
-			
-			--i;
-			
-			delete o;
-		}
-	}		
-}
-
-void GameState::updateObjects( float dt )
-{		
-	collectDisposed();
-	
-	for( uint i = 0; i < objects.size(); ++i )
-	{
-		if( objects[i]->isActive() )
-			objects[i]->onAction( dt );
-	}			
-}
-
 
 void GameState::onTouchBegan( const Vector& point )
 {
 	Renderable* click = getClickableAtPoint( point );
 
-	if( click && click->clickListener )
+	if( click )
 		click->clickListener->onButtonPressed( click , point );
-	else
-		onButtonPressed( click, point ); //puo anche essere null!
 }
 
 void GameState::onTouchEnd(const Dojo::Vector &point)
 {
 	Renderable* click = getClickableAtPoint( point );
 
-	if( click && click->clickListener )
+	if( click )
 		click->clickListener->onButtonReleased( click , point );
-	else
-		onButtonReleased( click, point ); //puo anche essere null!
 }

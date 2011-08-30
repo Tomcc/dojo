@@ -109,6 +109,8 @@ namespace Dojo
 		///tells if the object is either visible or has a mesh
 		inline bool isVisible()				{	return visible && mesh;	}
 		inline bool isFading()				{	return fading;			}
+		
+		inline bool isClickable() 			{	return clickListener != NULL;	}
 
 
 		inline bool contains( const Vector& p )
