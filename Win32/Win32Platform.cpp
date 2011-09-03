@@ -6,7 +6,6 @@
 #include <ShellAPI.h>
 #include <ShlObj.h>
 
-#include <Poco/DirectoryIterator.h>
 #include <Freeimage.h>
 #include <al/alut.h>
 #include <gl/glu.h>
@@ -412,58 +411,6 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-String Win32Platform::_toNormalPath( const String& input )
-{
-	String path = input;
-
-	for( uint i = 0; i < path.size(); ++i )
-	{
-		if( path[i] == '\\' )
-			path[i] = '/';
-	}
-
-	//remove ending /
-	if( path[path.size()-1] == '/')
-		path.resize( path.size()-1 );
-
-	return path;
-}
-
-String Win32Platform::getCompleteFilePath( const String& name, const String& type, const String& path )
-{
-	//semplicemente il path relativo all'exe
-	return _toNormalPath( path ) + '/' + name + '.' + type; 
-}
-
-bool Win32Platform::_hasExtension( const String& ext, const String& nameOrPath )
-{
-	return nameOrPath.size() > ext.size() && ext == nameOrPath.substr( nameOrPath.size() - ext.size() );
-}
-
-void Win32Platform::getFilePathsForType( const String& type, const String& path, std::vector<String>& out )
-{
-	try
-	{
-		Poco::DirectoryIterator itr( path.ASCII() );
-
-		String extension = '.' + type;
-
-		while( itr.name().size() )
-		{
-			const String& name = itr.name();
-
-			if( _hasExtension( extension, name ) )
-				out.push_back( _toNormalPath( itr->path() ) );
-
-			++itr;
-		}
-	}
-	catch (...)
-	{
-		
-	}	
-}
-
 void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
@@ -529,7 +476,7 @@ void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& wid
 	FreeImage_Unload( dib );
 }
 
-String Win32Platform::_getUserDirectory()
+String Win32Platform::getAppDataDirectory()
 {
 	char szPath[MAX_PATH];
 

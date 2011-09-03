@@ -22,6 +22,9 @@
 #include "StringReader.h"
 #include "Game.h"
 
+#include <Poco/DirectoryIterator.h>
+#include <Poco/Exception.h>
+
 using namespace Dojo;
 
 Platform * Platform::singleton = NULL;
@@ -54,6 +57,37 @@ void Platform::shutdownPlatform()
 	singleton = NULL;
 }
 
+void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
+{
+	try
+	{
+		string path = (getRootPath() + "/" + wpath).ASCII();
+		
+		DEBUG_MESSAGE( path );
+		
+		Poco::DirectoryIterator itr( path );
+		Poco::DirectoryIterator end;
+		
+		String extension = type;
+		
+		while( itr != end )
+		{			
+			String path = itr->path();
+			
+			if( Utils::getFileExtension( path ) == extension )
+			{
+				Utils::makeCanonicalPath( path );
+				
+				out.push_back( path );
+			}
+			++itr;
+		}
+	}
+	catch ( Poco::Exception& e )
+	{
+		DEBUG_MESSAGE( e.code() << " " << e.name() << " " << e.message() );
+	}	
+}
 
 uint Platform::loadFileContent( char*& bufptr, const String& path )
 {	

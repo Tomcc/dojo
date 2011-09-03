@@ -92,6 +92,20 @@ namespace Dojo
 
 			return str.substr( 0, end );
 		}
+		
+		///replace any "\\" in the path with the canonical / and removes any last /
+		inline static void makeCanonicalPath( String& path )
+		{			
+			for( uint i = 0; i < path.size(); ++i )
+			{
+				if( path[i] == '\\' )
+					path[i] = '/';
+			}
+			
+			//remove ending /
+			if( path[path.size()-1] == '/')
+				path.resize( path.size()-1 );
+		}
 
 		inline static bool hasExtension( const String& ext, const String& nameOrPath )
 		{

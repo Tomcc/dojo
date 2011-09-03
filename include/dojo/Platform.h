@@ -79,14 +79,14 @@ namespace Dojo
 		virtual void step( float dt )=0;
 		virtual void loop( float frameTime )=0;
 
-		virtual String getCompleteFilePath( const String& name, const String& type, const String& path )=0;
-		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out )=0;
 		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )=0;
 		
 		virtual String getAppDataPath()=0;
-				
-		uint loadFileContent( char*& bufptr, const String& path );
+		virtual String getRootPath()=0;
 		
+		uint loadFileContent( char*& bufptr, const String& path );
+				
+		void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );		
 		void load( Table* dest, const String& absPath = String::EMPTY );
 		void save( Table* table, const String& absPath = String::EMPTY );
 		

@@ -37,10 +37,8 @@ namespace Dojo
 		virtual void initialise()=0;        
 		virtual void step( float dt );
 		
-		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
-		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
-	
 		virtual String getAppDataPath();
+		virtual String getRootPath();
 				
 		virtual void loadPNGContent( void*& imageData, const String& path, uint& width, uint& height );		
 		

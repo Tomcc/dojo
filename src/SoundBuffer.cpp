@@ -38,7 +38,7 @@ bool SoundBuffer::load()
 
 	ALenum error = alGetError();
 	
-	String ext = filePath.getPathExtension();
+	String ext = Utils::getFileExtension( filePath );
 	
 	DEBUG_ASSERT( ext == String( "ogg" ) );
 	

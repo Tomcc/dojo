@@ -53,46 +53,17 @@ void ApplePlatform::step( float dt )
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-String ApplePlatform::getCompleteFilePath( const String& name, const String& type, const String& path )
-{
-	NSString* NSName = name.toNSString();
-	NSString* NSType = type.toNSString();
-	NSString* NSPath = path.toNSString();
-	
-	NSString* res = [[NSBundle mainBundle] pathForResource:NSName ofType:NSType inDirectory:NSPath ];
-		
-	if( res )
-		return String( res );
-	else
-		return String::EMPTY;
-}
-
-
-void ApplePlatform::getFilePathsForType( const String& type, const String& path, std::vector<String>& out )
-{	
-	DEBUG_ASSERT( type.size() );
-	DEBUG_ASSERT( path.size() );
-	
-    NSString* nstype = type.toNSString();
-	NSString* nspath = path.toNSString();
-	
-	NSArray* paths = [[NSBundle mainBundle] pathsForResourcesOfType:nstype inDirectory:nspath];
-		
-	//convert array
-	for( uint i = 0; i < [paths count]; ++i )
-	{
-		out.push_back( String( [paths objectAtIndex:i] ) );
-		
-		DEBUG_MESSAGE( Utils::getFileName( out[i] ).ASCII() );
-	}
-}
-
 String ApplePlatform::getAppDataPath()
 {
 	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString* nspath = [nspaths objectAtIndex:0];
 	
 	return String( nspath );
+}
+
+String ApplePlatform::getRootPath()
+{
+	return String( [[NSBundle mainBundle] bundlePath] );
 }
 
 void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& width, uint& height )
