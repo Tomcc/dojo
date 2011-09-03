@@ -48,6 +48,12 @@
     #include <OpenGL/glext.h>
 
 #elif defined( PLATFORM_LINUX )
+	#include <AL/al.h>
+	#include <AL/alc.h>
+
+	#include <GL/glew.h>
+	#include <GL/glext.h>
+	#include <GL/gl.h>
 
 #elif defined( PLATFORM_IOS )
     #include <OpenGLES/ES1/gl.h>

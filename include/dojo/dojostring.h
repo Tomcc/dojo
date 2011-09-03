@@ -11,7 +11,9 @@
 
 namespace Dojo 
 {
+#ifndef PLATFORM_LINUX
 	typedef unsigned int uint;
+#endif
 	typedef unsigned char byte;
 	typedef unsigned short unichar;
 

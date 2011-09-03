@@ -325,7 +325,7 @@ namespace Dojo
 			}
 		}
 
-		virtual void _fireKeyPressedEvent(Dojo::uint character, Dojo::uint keyID )
+		virtual void _fireKeyPressedEvent(uint character, uint keyID )
 		{
 			if( enabled )
 			{				
@@ -334,7 +334,7 @@ namespace Dojo
 			}
 		}
 
-		virtual void _fireKeyReleasedEvent(Dojo::uint character, Dojo::uint keyID )
+		virtual void _fireKeyReleasedEvent(uint character, uint keyID )
 		{
 			if( enabled )
 			{				
