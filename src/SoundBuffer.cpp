@@ -60,80 +60,16 @@ bool SoundBuffer::load()
 }
 
 ////-------------------------------------////-------------------------------------////-------------------------------------
-//LOADING FROM OGG FROM MEMORY
-
-struct VorbisSource
-{
-	void* data;
-	size_t size;
-	
-	long pointer;
-	
-	VorbisSource( void* d, size_t sz ) :
-	data( d ),
-	size( sz ),
-	pointer( 0 )
-	{
-		DEBUG_ASSERT( data );
-		DEBUG_ASSERT( size );
-	}
-};
-
-size_t vorbis_read( void* out, size_t size, size_t count, void* source )
-{
-	VorbisSource* src = (VorbisSource*)source;
-	
-	int bytes = min( size * count, src->size - src->pointer );
-	
-	if( bytes > 0 )
-	{
-		memcpy( out, (char*)src->data + src->pointer, bytes );
-		
-		src->pointer += bytes;
-	}
-	
-	return bytes / size;
-}
-
-int vorbis_seek( void *source, ogg_int64_t offset, int whence )
-{
-	VorbisSource* src = (VorbisSource*)source;
-
-	if( whence == SEEK_SET )
-		src->pointer = offset;
-	else if( whence == SEEK_END )
-		src->pointer = src->size - offset;
-	else if( whence == SEEK_CUR )
-		src->pointer += offset;
-	else
-	{
-		DEBUG_TODO;
-	}
-	
-	return 0;
-}
-
-int vorbis_close( void *source )
-{
-	//do nothing
-	
-	return 0;
-}
-
-long vorbis_tell( void *source )
-{
-	return ((VorbisSource*)source)->pointer;
-}
 
 int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 {
 	VorbisSource src( buf, sz );
 	ov_callbacks callbacks;
 	
-	callbacks.read_func = vorbis_read;
-	callbacks.seek_func = vorbis_seek;
-	callbacks.close_func = vorbis_close;
-	callbacks.tell_func = vorbis_tell;
+	callbacks.read_func = VorbisSource::read;
+	callbacks.seek_func = VorbisSource::seek;
+	callbacks.close_func = VorbisSource::close;
+	callbacks.tell_func = VorbisSource::tell;
 		
 	OggVorbis_File file;
 	vorbis_info* info;
