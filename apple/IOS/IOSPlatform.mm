@@ -267,7 +267,7 @@ void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )
 
 void IOSPlatform::playMp3File( const Dojo::String& relPath, bool loop )
 {
-	NSString* path = _getFullPath( relPath );
+	NSString* path = [[[NSBundle mainBundle] bundlePath] stringByAppendingString: ( "/" + relPath ).toNSString() ];
 	
 	NSURL* url = [NSURL fileURLWithPath: path ];
 	

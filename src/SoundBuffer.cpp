@@ -40,12 +40,10 @@ bool SoundBuffer::load()
 	
 	String ext = filePath.getPathExtension();
 	
-	if( ext == String("caf") )
-		size = Platform::getSingleton()->loadAudioFileContent( buffer, filePath );
+	DEBUG_ASSERT( ext == String( "ogg" ) );
 	
-	else if( ext == String("ogg") )
-		size = _loadOggFromFile();
-		
+	size = _loadOggFromFile();
+			
 	//error check
 	if( error == AL_NO_ERROR )
 		error = alGetError();

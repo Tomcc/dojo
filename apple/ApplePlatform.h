@@ -13,7 +13,6 @@
 #include "dojo_common_header.h"
 
 #include "Platform.h"
-#include "FrameworkTests.h"
 
 #ifdef __OBJC__
 	#import <Foundation/NSAutoreleasePool.h>
@@ -40,25 +39,14 @@ namespace Dojo
 		
 		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
 		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
-		virtual uint loadFileContent( char*& bufptr, const String& path );
-		
+	
 		virtual String getAppDataPath();
 				
 		virtual void loadPNGContent( void*& imageData, const String& path, uint& width, uint& height );		
-		virtual uint loadAudioFileContent( ALuint& buffer, const String& path );
-				
-		virtual void load( Table* dest, const String& absPath = String::EMPTY );
-		virtual void save( Table* table, const String& absPath = String::EMPTY );
 		
 		virtual void openWebPage( const String& site );
         
     protected:
-		
-		FrameworkTests testSuite;
-		
-		NSString* _getFullPath( const String& path );
-		
-		NSString* _getDestinationFilePath( Table* t, const String& absPath = String::EMPTY );
 		
 		void _createApplicationDirectory();
 		

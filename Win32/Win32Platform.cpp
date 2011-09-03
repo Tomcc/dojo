@@ -464,27 +464,6 @@ void Win32Platform::getFilePathsForType( const String& type, const String& path,
 	}	
 }
 
-uint Win32Platform::loadFileContent( char*& bufptr, const String& path )
-{	
-	using namespace std;
-
-	fstream file( path.c_str(), ios_base::in | ios_base::ate );
-
-	if( !file.is_open() )
-		return 0;
-
-	uint size = file.tellg();
-	file.seekg(0);
-
-	bufptr = (char*)malloc( size );
-
-	file.read( bufptr, size );
-
-	file.close();
-
-	return size;
-}
-
 void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
@@ -550,22 +529,6 @@ void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& wid
 	FreeImage_Unload( dib );
 }
 
-uint Win32Platform::loadAudioFileContent( ALuint& buffer, const String& filePath )
-{
-	ALvoid* data;
-	ALboolean loop;
-	ALenum format;
-	ALsizei size, freq;
-
-	alutLoadWAVFile( (ALbyte*)filePath.c_str(), &format, &data, &size, &freq, &loop );
-
-	alBufferData(buffer,format,data,size,freq);
-
-	alutUnloadWAV(format,data,size,freq);
-
-	return size;
-}
-
 String Win32Platform::_getUserDirectory()
 {
 	char szPath[MAX_PATH];
@@ -580,66 +543,6 @@ String Win32Platform::_getUserDirectory()
 	String dir( szPath );
 
 	return _toNormalPath( dir );
-}
-
-String Win32Platform::_getFilename( Table* dest, const String& absPath )
-{	
-	if( absPath.size() == 0 )
-	{
-		DEBUG_ASSERT( dest->hasName() );
-
-		//cerca tra le user prefs un file con lo stesso nome
-		return _getUserDirectory() + '/' + game->getName() + '/' + dest->getName() + ".ds";
-	}
-	else
-		return absPath;
-}
-
-void Win32Platform::load( Table* dest, const String& absPath )
-{
-	DEBUG_ASSERT( dest );
-	using namespace std;
-
-	String buf;
-	String filename =  _getFilename(dest, absPath);
-
-	FILE* file = fopen( filename.ASCII().c_str(), "rb" );
-	if( !file )
-		return;
-
-	fseek (file, 0, SEEK_END);
-	uint uchars = ftell (file)/ sizeof( unichar );
-
-	fseek (file, 0, SEEK_SET );
-
-	buf.resize( uchars, 0 ); //reserve actual bytes
-
-	fread( (void*)buf.data(), sizeof( unichar ), uchars, file );
-
-	fclose( file );
-	
-	dest->setName( Utils::getFileName( filename ) );
-	dest->deserialize( StringReader( buf ) );
-}
-
-void Win32Platform::save( Table* src, const String& absPath )
-{
-	DEBUG_ASSERT( src );
-	using namespace std;
-
-	//HACK - OutputStream won't output unformatted text!
-	String buf;
-
-	src->serialize( buf );
-
-	FILE* f = fopen( _getFilename(src, absPath).ASCII().c_str(), "wb" );
-
-	if( !f )
-		return;
-
-	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );
-
-	fclose( f );
 }
 
 void Win32Platform::openWebPage( const String& site )

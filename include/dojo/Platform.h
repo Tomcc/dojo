@@ -81,19 +81,14 @@ namespace Dojo
 
 		virtual String getCompleteFilePath( const String& name, const String& type, const String& path )=0;
 		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out )=0;
-		virtual uint loadFileContent( char*& bufptr, const String& path )=0;
 		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )=0;
 		
-		virtual String getAppDataPath()
-		{
-			DEBUG_TODO;
-		}
+		virtual String getAppDataPath()=0;
+				
+		uint loadFileContent( char*& bufptr, const String& path );
 		
-		///loads the given file in a buffer - WARNING not every format is supported on every platform
-		virtual uint loadAudioFileContent( ALuint& buffer, const String& path )=0;
-
-		virtual void load( Table* dest, const String& absPath = String::EMPTY )=0;
-		virtual void save( Table* table, const String& absPath = String::EMPTY )=0;
+		void load( Table* dest, const String& absPath = String::EMPTY );
+		void save( Table* table, const String& absPath = String::EMPTY );
 		
 		virtual bool isSystemSoundInUse()
 		{
@@ -126,6 +121,8 @@ namespace Dojo
 		FontSystem* fonts;
 		
 		float realFrameTime;
+		
+		String _getTablePath( Table* dest, const String& absPath );
 	};
 }
 

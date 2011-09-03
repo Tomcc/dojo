@@ -19,6 +19,9 @@
 
 #endif
 
+#include "StringReader.h"
+#include "Game.h"
+
 using namespace Dojo;
 
 Platform * Platform::singleton = NULL;
@@ -49,4 +52,89 @@ void Platform::shutdownPlatform()
 
 	delete singleton;
 	singleton = NULL;
+}
+
+
+uint Platform::loadFileContent( char*& bufptr, const String& path )
+{	
+	using namespace std;
+	
+	fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate );
+	
+	if( !file.is_open() )
+		return 0;
+	
+	uint size = file.tellg();
+	file.seekg(0);
+	
+	bufptr = (char*)malloc( size );
+	
+	file.read( bufptr, size );
+	
+	file.close();
+	
+	return size;
+}
+
+String Platform::_getTablePath( Table* dest, const String& absPath )
+{
+	if( absPath.size() == 0 )
+	{
+		DEBUG_ASSERT( dest->hasName() );
+		
+		//cerca tra le user prefs un file con lo stesso nome
+		return getAppDataPath() + '/' + game->getName() + '/' + dest->getName() + ".ds";
+	}
+	else
+		return absPath;
+}
+
+void Platform::load( Table* dest, const String& absPath )
+{
+	DEBUG_ASSERT( dest );
+	
+	using namespace std;
+	
+	String buf;
+	String path = _getTablePath( dest, absPath );
+	
+	FILE* file = fopen( path.ASCII().c_str(), "rb" );
+	if( !file )
+		return;
+	
+	fseek( file, 0, SEEK_END);
+	uint uchars = ftell (file)/ sizeof( unichar );
+	
+	fseek( file, 0, SEEK_SET );
+	
+	buf.resize( uchars, 0 ); //reserve actual bytes
+	
+	fread( (void*)buf.data(), sizeof( unichar ), uchars, file );
+	
+	fclose( file );
+	
+	dest->setName( Utils::getFileName( path ) );
+	
+	StringReader reader( buf );
+	dest->deserialize( reader );
+}
+
+void Platform::save( Table* src, const String& absPath )
+{
+	DEBUG_ASSERT( src );
+	
+	using namespace std;
+	
+	//HACK - OutputStream won't output unformatted text!
+	String buf;
+	
+	src->serialize( buf );
+	
+	FILE* f = fopen( _getTablePath(src, absPath).ASCII().c_str(), "wb" );
+	
+	DEBUG_ASSERT( f );
+	
+	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );
+	
+	fclose( f );
 }

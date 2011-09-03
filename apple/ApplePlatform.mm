@@ -29,8 +29,7 @@ using namespace Dojo;
 using namespace std;
 
 ApplePlatform::ApplePlatform( const Table& config ) :
-Platform( config ),
-testSuite( std::cout )
+Platform( config )
 {
     pool = [[NSAutoreleasePool alloc] init];
 	
@@ -88,19 +87,6 @@ void ApplePlatform::getFilePathsForType( const String& type, const String& path,
 	}
 }
 
-
-NSString* ApplePlatform::_getFullPath( const String& path )
-{	
-	//is it already absolute?
-	if( path[0] == '/' )
-		return path.toNSString();
-		
-	NSString* nsbundlepath = [[NSBundle mainBundle] bundlePath];
-	NSString* nspath = [nsbundlepath stringByAppendingString: ("/" + path).toNSString() ];
-		
-	return nspath;
-}
-
 String ApplePlatform::getAppDataPath()
 {
 	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -108,97 +94,6 @@ String ApplePlatform::getAppDataPath()
 	
 	return String( nspath );
 }
-
-NSString* ApplePlatform::_getDestinationFilePath( Table* table, const String& absPath )
-{	
-	DEBUG_ASSERT( table );
-	DEBUG_ASSERT( absPath.size() == 0 || absPath.at( absPath.size()-1 ) != '/' ); //need to NOT have the terminating /
-	
-	NSString* fullPath;	
-	
-	//save this in a file in the user preferences folder, or in the abs path
-	if( absPath.size() == 0 )
-	{		
-		String fileName = "/" + game->getName() + "/" + table->getName() + ".ds";
-		
-		fullPath = (getAppDataPath() + fileName).toNSString();
-	}
-	else
-	{		
-		fullPath = _getFullPath( absPath.toNSString() );
-	}
-	
-	return fullPath;
-}
-
-void ApplePlatform::load( Table* dest, const String& absPath )
-{
-	NSString* fullPath = _getDestinationFilePath( dest, absPath );
-	
-	//read file
-	NSData* nsfile = [[NSData alloc] initWithContentsOfFile:fullPath];
-	
-	//do nothing if file doesn't exist
-	if( !nsfile )
-		return;
-	
-	//drop the data in a String - TODO don't duplicate it
-	String buf;
-	buf.appendRaw( (char*)[nsfile bytes], [nsfile length] );
-	
-	dest->setName( Utils::getFileName( String( fullPath ) ) );
-	
-	StringReader in( buf );
-	dest->deserialize( in );
-	
-	[nsfile release];
-}
-
-void ApplePlatform::save( Table* src, const String& absPath )
-{
-	//serialize to stream
-	String buf;
-	src->serialize( buf );
-	
-	//ensure application dir created
-	_createApplicationDirectory();
-	
-	NSString* fullPath = _getDestinationFilePath( src, absPath );
-	
-	//drop into NSData
-	NSData* nsfile = [[NSData alloc] 	initWithBytesNoCopy:(void*)buf.data()
-												   length:buf.byteSize()
-											 freeWhenDone:false ];
-	
-	//drop on file
-	[nsfile writeToFile:fullPath atomically:true];
-	
-	[nsfile release];
-}
-
-
-uint ApplePlatform::loadFileContent( char*& bufptr, const String& path )
-{
-    bufptr = NULL;
-	
-	DEBUG_ASSERT( path.size() );
-		
-	NSData* data = [ [NSData alloc ] initWithContentsOfFile: _getFullPath( path ) ];
-	
-	if( !data )
-		return false;
-	
-	uint size = (uint)[data length];
-	
-	//alloc the new buffer
-	bufptr = (char*)malloc( size );
-	memcpy( bufptr, [data bytes], size );
-	
-	[data release];
-	
-	return size;
-}
-
 
 void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& width, uint& height )
 {
@@ -282,77 +177,6 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& 
 	CGDataProviderRelease( prov );
 	
 	[texData release];
-}
-
-
-uint ApplePlatform::loadAudioFileContent( ALuint& buffer, const String& path )
-{
-	//only load caf files on iphone
-	DEBUG_ASSERT( Utils::hasExtension( "caf", path ) );
-	
-	AudioFileID fileID;
-	UInt64 dataSize;
-	AudioStreamBasicDescription desc;
-	UInt32 dataSize32;
-	void* outData;
-	OSStatus result;
-	ALenum channelFormat;
-	
-	NSURL * afUrl = [NSURL fileURLWithPath: path.toNSString() ];
-	
-	//open file
-	result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
-	
-	//read format
-	UInt32 propSize = sizeof( desc );	
-	AudioFileGetProperty( fileID, kAudioFilePropertyDataFormat, &propSize, &desc );
-	
-	//read size
-	propSize = sizeof( dataSize );
-	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propSize, &dataSize );
-	dataSize32 = (UInt32)dataSize;
-		
-	//ensure format
-	DEBUG_ASSERT( desc.mFormatID == kAudioFormatLinearPCM );	
-	DEBUG_ASSERT( !((desc.mChannelsPerFrame > 2) || (desc.mChannelsPerFrame < 1) ) );
-	
-	//deduce channel format	
-	if(desc.mBitsPerChannel == 8)
-		channelFormat = (desc.mChannelsPerFrame == 1) ? AL_FORMAT_MONO8 : AL_FORMAT_STEREO8;
-	else if(desc.mBitsPerChannel == 16)
-		channelFormat = (desc.mChannelsPerFrame == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-	else
-	{
-		DEBUG_TODO;
-	}
-	
-	//read data
-	outData = malloc( dataSize );
-		
-	AudioFileReadBytes( fileID, false, 0, &dataSize32, outData );
-	
-	//ensure native endianness and spit a warning if wrong!!
-	if( desc.mBitsPerChannel > 8 && !TestAudioFormatNativeEndian( desc ) )
-	{
-		DEBUG_MESSAGE( "Warning slow loading: sound file " << path.ASCII() << " has wrong endianness" );
-		
-		//flip every damn word
-		unsigned char* ptr = (unsigned char*) outData;
-		
-		for( UInt64 i = 0; i < dataSize; i += 2 )
-		{
-			unsigned char tmp = ptr[i];
-			ptr[i] = ptr[i+1];
-			ptr[i+1] = tmp;
-		}
-	}
-	
-	//finally, drop data into the buffer
-	alBufferData( buffer, channelFormat, outData, dataSize32, desc.mSampleRate );
-	
-	free( outData );
-	
-	return dataSize;
 }
 
 void ApplePlatform::_createApplicationDirectory()
