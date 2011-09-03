@@ -71,6 +71,8 @@ void GameState::onTouchBegan( const Vector& point )
 
 	if( click )
 		click->clickListener->onButtonPressed( click , point );
+	else
+		onButtonPressed( NULL, point );
 }
 
 void GameState::onTouchEnd(const Dojo::Vector &point)
@@ -79,4 +81,6 @@ void GameState::onTouchEnd(const Dojo::Vector &point)
 
 	if( click )
 		click->clickListener->onButtonReleased( click , point );
+	else
+		onButtonReleased( NULL, point );
 }

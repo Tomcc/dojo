@@ -12,6 +12,8 @@
 	#import <OpenGLES/EAGL.h>
 	#import <OpenGLES/EAGLDrawable.h>
 
+	#import <AVFoundation/AVAudioPlayer.h>
+
 	#import "Application.h"
 #endif
 
@@ -40,8 +42,19 @@ namespace Dojo
 		virtual bool isSystemSoundInUse();
 						
 		void enableScreenSaver( bool s );
-				
+		
+		///IOS SPECIFIC - copies the file from which the passed texture was created to the camera roll
+		/**TODO - actually read the texture from VRAM, useful for auto screenshots*/
 		void copyImageIntoCameraRoll( Texture* tex );
+				
+		///IOS SPECIFIC - plays and loops an audio file using hardware system decompression
+		void playMp3File( const Dojo::String& relPath, bool loop );		
+		
+		///IOS SPECIFIC - stops the currently playing mp3
+		void stopMp3File();		
+		
+		///IOS SPECIFIC - sets mp3 volume (0.0-1.0)
+		void setMp3FileVolume( float gain );		
 		
 		/*
 		virtual void sendEmail( const Email& e );
@@ -60,7 +73,6 @@ namespace Dojo
 		{			
 			return app;
 		}
-		
 #endif
 		
 	protected:
@@ -75,6 +87,8 @@ namespace Dojo
 		Application* app;		
 		
 		GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
+		
+		AVAudioPlayer* player;
 #endif
 		
 	};

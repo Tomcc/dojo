@@ -147,9 +147,13 @@ namespace Dojo {
 		void addChild( Object* o );
 		void addChild( Renderable* o, uint layer, bool clickable = false );
 
+		void removeChild( int idx );
 		void removeChild( Object* o );
 		
 		void collectChilds();
+		
+		void destroyChild( int idx );
+		void destroyChild( Object* o );
 		
 		///completely destroys all the childs of this object
 		void destroyAllChilds();

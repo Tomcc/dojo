@@ -52,16 +52,67 @@ void Object::addChild( Renderable* o, uint layer, bool clickable )
 		o->clickListener = gameState;
 }
 
+void Object::removeChild( int i )
+{	
+	DEBUG_ASSERT( hasChilds() );
+	DEBUG_ASSERT( childs->size() > i );
+	
+	Object* child = childs->at( i );
+	
+	child->_notifyParent( NULL );
+	
+	childs->remove( i );
+		
+	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
+}
+
 void Object::removeChild( Object* o )
 {
 	DEBUG_ASSERT( o );
-
-	o->_notifyParent( NULL );
-
-	childs->remove( o );
-
-	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)o ); //if existing
+	DEBUG_ASSERT( hasChilds() );
+	
+	int i = childs->getElementIndex( o );
+	
+	if( i >= 0 )
+		removeChild( i );
 }
+
+void Object::destroyChild( int i )
+{
+	DEBUG_ASSERT( hasChilds() );
+	DEBUG_ASSERT( childs->size() > i );
+	
+	Object* child = childs->at( i );
+	
+	removeChild( i );
+	
+	delete child; 
+}
+
+void Object::destroyChild( Object* o )
+{
+	DEBUG_ASSERT( o );
+	DEBUG_ASSERT( hasChilds() );
+	
+	int i = childs->getElementIndex( o );
+	
+	if( i )
+		destroyChild( i );
+}
+
+
+void Object::collectChilds()
+{
+	if( childs )
+	{
+		for( uint i = 0; i < childs->size(); ++i )
+		{
+ 			if( childs->at( i )->dispose )
+				destroyChild( i-- );
+		}
+	}
+}
+
 
 void Object::destroyAllChilds()
 {
@@ -104,26 +155,6 @@ void Object::updateWorldPosition()
 	//update max and min TODO - real transforms
 	max = worldPosition + halfSize;
 	min = worldPosition - halfSize;
-}
-
-void Object::collectChilds()
-{
-	if( childs )
-	{
-		for( uint i = 0; i < childs->size(); ++i )
-		{
-			Object* o = childs->at( i );
-			
-			if( o->dispose )
-			{
-				removeChild(o);
-				
-				--i;
-				
-				delete o;
-			}
-		}
-	}
 }
 
 void Object::updateChilds( float dt )

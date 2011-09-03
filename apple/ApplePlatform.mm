@@ -290,41 +290,69 @@ uint ApplePlatform::loadAudioFileContent( ALuint& buffer, const String& path )
 	//only load caf files on iphone
 	DEBUG_ASSERT( Utils::hasExtension( "caf", path ) );
 	
-	NSString* filePath = path.toNSString();
-	
-	// first, open the file	
 	AudioFileID fileID;
-	// use the NSURl instead of a cfurlref cuz it is easier
-	NSURL * afUrl = [NSURL fileURLWithPath:filePath];
+	UInt64 dataSize;
+	AudioStreamBasicDescription desc;
+	UInt32 dataSize32;
+	void* outData;
+	OSStatus result;
+	ALenum channelFormat;
 	
-	OSStatus result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
+	NSURL * afUrl = [NSURL fileURLWithPath: path.toNSString() ];
 	
-	UInt64 outDataSize; 
-	UInt32 propertySize, writable;
+	//open file
+	result = AudioFileOpenURL((CFURLRef)afUrl, kAudioFileReadPermission, 0, &fileID);
 	
-	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &writable );
-	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propertySize, &outDataSize);
-	UInt32 fileSize = (UInt32)outDataSize;
+	//read format
+	UInt32 propSize = sizeof( desc );	
+	AudioFileGetProperty( fileID, kAudioFilePropertyDataFormat, &propSize, &desc );
 	
-	UInt32 freq;
+	//read size
+	propSize = sizeof( dataSize );
+	AudioFileGetProperty( fileID, kAudioFilePropertyAudioDataByteCount, &propSize, &dataSize );
+	dataSize32 = (UInt32)dataSize;
+		
+	//ensure format
+	DEBUG_ASSERT( desc.mFormatID == kAudioFormatLinearPCM );	
+	DEBUG_ASSERT( !((desc.mChannelsPerFrame > 2) || (desc.mChannelsPerFrame < 1) ) );
 	
-	AudioFileGetPropertyInfo( fileID, kAudioFilePropertyBitRate, &propertySize, &writable );
-	AudioFileGetProperty( fileID, kAudioFilePropertyBitRate, &propertySize, &freq );
+	//deduce channel format	
+	if(desc.mBitsPerChannel == 8)
+		channelFormat = (desc.mChannelsPerFrame == 1) ? AL_FORMAT_MONO8 : AL_FORMAT_STEREO8;
+	else if(desc.mBitsPerChannel == 16)
+		channelFormat = (desc.mChannelsPerFrame == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+	else
+	{
+		DEBUG_TODO;
+	}
 	
-	// this is where the audio data will live for the moment
-	void* outData = malloc(fileSize);
+	//read data
+	outData = malloc( dataSize );
+		
+	AudioFileReadBytes( fileID, false, 0, &dataSize32, outData );
 	
-	// this where we actually get the bytes from the file and put them
-	// into the data buffer
-	result = AudioFileReadBytes(fileID, false, 0, &fileSize, outData);
-	AudioFileClose(fileID); //close the file
+	//ensure native endianness and spit a warning if wrong!!
+	if( desc.mBitsPerChannel > 8 && !TestAudioFormatNativeEndian( desc ) )
+	{
+		DEBUG_MESSAGE( "Warning slow loading: sound file " << path.ASCII() << " has wrong endianness" );
+		
+		//flip every damn word
+		unsigned char* ptr = (unsigned char*) outData;
+		
+		for( UInt64 i = 0; i < dataSize; i += 2 )
+		{
+			unsigned char tmp = ptr[i];
+			ptr[i] = ptr[i+1];
+			ptr[i+1] = tmp;
+		}
+	}
 	
-	// jam the audio data into the new buffer
-	alBufferData( buffer, AL_FORMAT_STEREO16, outData, fileSize, freq/32); 
+	//finally, drop data into the buffer
+	alBufferData( buffer, channelFormat, outData, dataSize32, desc.mSampleRate );
 	
 	free( outData );
 	
-	return fileSize;
+	return dataSize;
 }
 
 void ApplePlatform::_createApplicationDirectory()

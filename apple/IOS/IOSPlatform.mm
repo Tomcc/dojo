@@ -24,14 +24,16 @@ using namespace Dojo;
 
 IOSPlatform::IOSPlatform( const Table& config ) :
 ApplePlatform( config ),
-app( NULL )
+app( NULL ),
+player( NULL )
 {
 	
 }
 
 IOSPlatform::~IOSPlatform()
 {
-	
+	if( player )
+		[player release];
 }
 
 void IOSPlatform::initialise()
@@ -261,4 +263,43 @@ void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )
 	UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil );
 	
 	//HACK release sometimes, but not before copying ends
+}
+
+void IOSPlatform::playMp3File( const Dojo::String& relPath, bool loop )
+{
+	NSString* path = _getFullPath( relPath );
+	
+	NSURL* url = [NSURL fileURLWithPath: path ];
+	
+	if( player )
+		[player stop];
+	else if( !player )
+		player = [AVAudioPlayer alloc];
+	
+	[player initWithContentsOfURL: url error:NULL ];
+	
+	//loop and play
+	if( loop )
+		player.numberOfLoops = -1;
+	
+	[player play];
+}
+
+void IOSPlatform::stopMp3File()
+{
+	DEBUG_ASSERT( player );
+	DEBUG_ASSERT( player.playing );
+	
+	[player stop];
+}
+
+void IOSPlatform::setMp3FileVolume( float gain )
+{
+	DEBUG_ASSERT( gain >= 0.0 );
+	DEBUG_ASSERT( gain <= 1.0 );
+	
+	if( !player )
+		player = [AVAudioPlayer alloc];
+	
+	player.volume = gain;
 }
