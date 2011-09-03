@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "dojomath.h"
 #include "Platform.h"
+#include "Timer.h"
 
 using namespace Dojo;
 

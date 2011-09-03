@@ -60,12 +60,8 @@ void Platform::shutdownPlatform()
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
 {
 	try
-	{
-		string path = (getRootPath() + "/" + wpath).ASCII();
-		
-		DEBUG_MESSAGE( path );
-		
-		Poco::DirectoryIterator itr( path );
+	{				
+		Poco::DirectoryIterator itr( (getRootPath() + "/" + wpath).ASCII() );
 		Poco::DirectoryIterator end;
 		
 		String extension = type;
@@ -85,7 +81,7 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 	}
 	catch ( Poco::Exception& e )
 	{
-		DEBUG_MESSAGE( e.code() << " " << e.name() << " " << e.message() );
+		
 	}	
 }
 

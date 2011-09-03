@@ -116,7 +116,7 @@ namespace Dojo
 	protected:
 				
 		bool npot;
-		uint width, height, internalWidth, internalHeight;
+		int width, height, internalWidth, internalHeight;
 		float xRatio, yRatio;
 		float xOffset, yOffset;
 		

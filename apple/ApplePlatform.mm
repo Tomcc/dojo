@@ -66,7 +66,7 @@ String ApplePlatform::getRootPath()
 	return String( [[NSBundle mainBundle] bundlePath] );
 }
 
-void ApplePlatform::loadPNGContent( void*& imageData, const String& path, uint& width, uint& height )
+void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& width, int& height )
 {
 	width = height = 0;
 	

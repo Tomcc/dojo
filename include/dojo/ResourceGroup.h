@@ -95,6 +95,8 @@ namespace Dojo {
 			DEBUG_ASSERT( !finalized );
 			
 			frameSets[name] = set;
+			
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "set" );
 		}
 		
 		inline void addFont( Font* f, const String& name )
@@ -103,6 +105,8 @@ namespace Dojo {
 			DEBUG_ASSERT( !finalized );
 			
 			fonts[name] = f;
+			
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "font" );
 		}
 		
 		inline void addMesh( Mesh* m, const String& name )
@@ -111,6 +115,8 @@ namespace Dojo {
 			DEBUG_ASSERT( !finalized );
 			
 			meshes[ name ] = m;
+			
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "mesh" );
 		}
 		
 		inline void addSound( SoundSet* sb, const String& name )
@@ -119,6 +125,8 @@ namespace Dojo {
 			DEBUG_ASSERT( !finalized );
 			
 			sounds[ name ] = sb;
+			
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "sound" );
 		}
 		
 		inline void addTable( Table* t )
@@ -128,6 +136,8 @@ namespace Dojo {
 			DEBUG_ASSERT( !finalized );
 			
 			tables[ t->getName() ] = t;
+			
+			DEBUG_MESSAGE( "+" << t->getName().ASCII() << "\t\t" << "table" );
 		}
 		
 		inline void addSubgroup( ResourceGroup* g )

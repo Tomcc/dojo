@@ -40,7 +40,7 @@ namespace Dojo
 		virtual String getAppDataPath();
 		virtual String getRootPath();
 				
-		virtual void loadPNGContent( void*& imageData, const String& path, uint& width, uint& height );		
+		virtual void loadPNGContent( void*& imageData, const String& path, int& width, int& height );		
 		
 		virtual void openWebPage( const String& site );
         
