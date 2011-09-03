@@ -48,6 +48,9 @@ namespace Dojo
 		ALsizei	size;
 
 		ALuint buffer;
+		
+		int _loadOggFromMemory( void* buf, int sz );
+		int _loadOggFromFile();
 	};
 }
 

@@ -5,6 +5,9 @@
 
 #include "Utils.h"
 
+#include <ogg/ogg.h>
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 
 using namespace Dojo;
 
@@ -35,7 +38,13 @@ bool SoundBuffer::load()
 
 	ALenum error = alGetError();
 	
-	size = Platform::getSingleton()->loadAudioFileContent( buffer, filePath );
+	String ext = filePath.getPathExtension();
+	
+	if( ext == String("caf") )
+		size = Platform::getSingleton()->loadAudioFileContent( buffer, filePath );
+	
+	else if( ext == String("ogg") )
+		size = _loadOggFromFile();
 		
 	//error check
 	if( error == AL_NO_ERROR )
@@ -49,6 +58,141 @@ bool SoundBuffer::load()
 
 	return error != AL_NO_ERROR;
 }
+
+////-------------------------------------////-------------------------------------////-------------------------------------
+//LOADING FROM OGG FROM MEMORY
+
+struct VorbisSource
+{
+	void* data;
+	size_t size;
+	
+	long pointer;
+	
+	VorbisSource( void* d, size_t sz ) :
+	data( d ),
+	size( sz ),
+	pointer( 0 )
+	{
+		DEBUG_ASSERT( data );
+		DEBUG_ASSERT( size );
+	}
+};
+
+size_t vorbis_read( void* out, size_t size, size_t count, void* source )
+{
+	VorbisSource* src = (VorbisSource*)source;
+	
+	int bytes = min( size * count, src->size - src->pointer );
+	
+	if( bytes > 0 )
+	{
+		memcpy( out, (char*)src->data + src->pointer, bytes );
+		
+		src->pointer += bytes;
+	}
+	
+	return bytes / size;
+}
+
+int vorbis_seek( void *source, ogg_int64_t offset, int whence )
+{
+	VorbisSource* src = (VorbisSource*)source;
+
+	if( whence == SEEK_SET )
+		src->pointer = offset;
+	else if( whence == SEEK_END )
+		src->pointer = src->size - offset;
+	else if( whence == SEEK_CUR )
+		src->pointer += offset;
+	else
+	{
+		DEBUG_TODO;
+	}
+	
+	return 0;
+}
+
+int vorbis_close( void *source )
+{
+	//do nothing
+	
+	return 0;
+}
+
+long vorbis_tell( void *source )
+{
+	return ((VorbisSource*)source)->pointer;
+}
+
+int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
+{
+	VorbisSource src( buf, sz );
+	ov_callbacks callbacks;
+	
+	callbacks.read_func = vorbis_read;
+	callbacks.seek_func = vorbis_seek;
+	callbacks.close_func = vorbis_close;
+	callbacks.tell_func = vorbis_tell;
+		
+	OggVorbis_File file;
+	vorbis_info* info;
+	ALenum format;
+	int uncompressedSize;
+	
+	int error = ov_open_callbacks( &src, &file, NULL, 0, callbacks );
+	
+	DEBUG_ASSERT( error == 0 );
+	
+	info = ov_info( &file, -1 );
+	
+	int wordSize = 2;
+	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+	
+	//guess uncompressed size (file should have only 1 stream)
+	uncompressedSize = info->channels * ov_pcm_total( &file, -1 );
+	
+	char* uncompressedData = (char*)malloc( uncompressedSize );
+	int section = -1;
+	int totalRead = 0;
+	
+	//read all vorbis packets
+	do 
+	{
+		int read = ov_read( &file, uncompressedData + totalRead, 4096, 0, wordSize, 1, &section );
+		
+		DEBUG_ASSERT( read >= 0 );
+		
+		totalRead += read;
+	}
+	while( read > 0 && totalRead < uncompressedSize );
+	
+	DEBUG_ASSERT( totalRead > 0 );
+	
+	alBufferData( buffer, format, uncompressedData, uncompressedSize, info->rate );
+	
+	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
+	
+	free( uncompressedData );
+	
+	return uncompressedSize;
+}
+
+int SoundBuffer::_loadOggFromFile()
+{
+	char* buf;
+	int sz = Platform::getSingleton()->loadFileContent( buf, filePath );
+	
+	DEBUG_ASSERT( sz );
+	
+	_loadOggFromMemory( buf, sz );
+	
+	free( buf );
+	
+	return sz;
+}
+
+////-------------------------------------////-------------------------------------////-------------------------------------
 
 void SoundBuffer::unload()
 {

@@ -138,6 +138,7 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 
 	Platform::getSingleton()->getFilePathsForType( "caf", subdirectory, paths );
 	Platform::getSingleton()->getFilePathsForType( "wav", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "ogg", subdirectory, paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{

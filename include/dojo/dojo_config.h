@@ -24,7 +24,7 @@
 #include <TargetConditionals.h>
 
 	#ifdef DOJO_IOS
-		#define PLATFORM_IOS	
+		#define PLATFORM_IOS
 	#else
 		#define PLATFORM_OSX
 	
@@ -57,6 +57,12 @@
 	#define DEBUG_OUT( T ) 
 	#define DEBUG_MESSAGE( T )
 
+#endif
+
+#ifdef PLATFORM_IOS
+	#define BIG_ENDIAN 1
+#else
+	#define BIG_ENDIAN 0
 #endif
 
 

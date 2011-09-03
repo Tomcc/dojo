@@ -159,6 +159,16 @@ namespace Dojo
 			append( (unichar*)data, sz / sizeof( unichar ) );
 		}
 		
+		inline Dojo::String getPathExtension()
+		{
+			int dotIdx = find_last_of( '.' );
+			
+			if( dotIdx != npos )
+				return substr( dotIdx+1 );
+			else
+				return "";
+		}
+		
 #ifdef __OBJC__
 		inline NSString* toNSString() const 
 		{                       
