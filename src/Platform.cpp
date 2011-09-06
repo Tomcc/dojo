@@ -163,10 +163,14 @@ void Platform::save( Table* src, const String& absPath )
 	
 	src->serialize( buf );
 	
-	DEBUG_MESSAGE( _getTablePath(src, absPath).ASCII().c_str() );
+	std::string path = _getTablePath(src, absPath).ASCII();
+	FILE* f = fopen( path.c_str(), "wb" );
 	
-	FILE* f = fopen( _getTablePath(src, absPath).ASCII().c_str(), "wb" );
-	
+	if( !f )
+	{
+		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
+		DEBUG_MESSAGE( path );
+	}
 	DEBUG_ASSERT( f );
 	
 	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );

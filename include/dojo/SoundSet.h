@@ -22,7 +22,7 @@ namespace Dojo
 			
 		}
 
-		///restituisce un buffer casuale o quello numero "i"
+		///returns a random buffer (-1) or the one at index i
 		inline SoundBuffer* getBuffer( int i = -1 )
 		{
 			DEBUG_ASSERT( buffers.size() );
