@@ -129,8 +129,12 @@ void Platform::load( Table* dest, const String& absPath )
 	String path = _getTablePath( dest, absPath );
 	
 	FILE* file = fopen( path.ASCII().c_str(), "rb" );
+	
 	if( !file )
+	{
+		DEBUG_MESSAGE( "WARNING: Cannot load table " << path.ASCII() );
 		return;
+	}
 	
 	fseek( file, 0, SEEK_END);
 	uint uchars = ftell (file)/ sizeof( unichar );
@@ -155,10 +159,11 @@ void Platform::save( Table* src, const String& absPath )
 	
 	using namespace std;
 	
-	//HACK - OutputStream won't output unformatted text!
 	String buf;
 	
 	src->serialize( buf );
+	
+	DEBUG_MESSAGE( _getTablePath(src, absPath).ASCII().c_str() );
 	
 	FILE* f = fopen( _getTablePath(src, absPath).ASCII().c_str(), "wb" );
 	

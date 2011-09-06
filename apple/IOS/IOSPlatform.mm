@@ -115,6 +115,8 @@ void IOSPlatform::initialise()
 	sound = new SoundManager();
 	input = new InputSystem();
 	fonts = new FontSystem();	
+	
+	_createApplicationDirectory();
 		
 	game->begin();
 	

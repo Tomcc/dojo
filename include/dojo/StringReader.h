@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 
-#include "String.h"
+#include "dojostring.h"
 
 namespace Dojo
 {
