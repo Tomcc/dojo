@@ -75,7 +75,7 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	int uncompressedSize;
 	
 	int error = ov_open_callbacks( &src, &file, NULL, 0, callbacks );
-	
+
 	DEBUG_ASSERT( error == 0 );
 	
 	info = ov_info( &file, -1 );
@@ -91,9 +91,10 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	int totalRead = 0;
 	
 	//read all vorbis packets
+	int read = 0;
 	do 
 	{
-		int read = ov_read( &file, uncompressedData + totalRead, 4096, 0, wordSize, 1, &section );
+		read = ov_read( &file, uncompressedData + totalRead, 4096, 0, wordSize, 1, &section );
 		
 		DEBUG_ASSERT( read >= 0 );
 		

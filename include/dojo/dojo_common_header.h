@@ -30,8 +30,6 @@
     #include <GL/glext.h>
     #include <GL/gl.h>
 
-    #include <Windows.h>
-
     //this cant be in config.h as it breaks successive system includes
     #ifdef _DEBUG
 

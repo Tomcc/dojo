@@ -25,8 +25,8 @@ namespace Dojo {
 	
 	class ResourceGroup 
 	{			
-	public:		
-		
+	public:	
+
 		enum ResourceType
 		{
 			RT_FRAMESET,
@@ -218,7 +218,7 @@ namespace Dojo {
 		
 		inline bool isLocalizationRequired()
 		{
-			return locale.size() > 0;
+			return this->locale.size() > 0;
 		}
 		
 		void loadSets( const String& folder );		

@@ -69,7 +69,6 @@ void ResourceGroup::loadSets( const String& subdirectory )
 		currentSet->load();
 	
 	paths.clear();
-
 	Platform::getSingleton()->getFilePathsForType( "atlasinfo", subdirectory, paths );
 	
 	//now load atlases!		

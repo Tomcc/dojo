@@ -42,7 +42,7 @@ namespace Dojo
 				
 				int bytes = size * count;
 				int max = src->size - src->pointer;
-				
+
 				if( bytes > max ) bytes = max;
 				
 				if( bytes > 0 )
