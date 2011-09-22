@@ -48,11 +48,11 @@ namespace Dojo
 				
 		Renderable( GameState* level, const Vector& pos ) :
 		Object( level, pos, Vector::ONE ),
+		clickListener( NULL ),
+		visible( true ),
 		layer(0),
 		renderingOrder(0),
-		visible( true ),
-		currentFadeTime(0),
-		clickListener( NULL )
+		currentFadeTime(0)		
 		{
 			reset();
 		}

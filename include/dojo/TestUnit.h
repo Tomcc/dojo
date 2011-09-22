@@ -22,9 +22,9 @@ namespace Dojo
 		total( 0 ),
 		failed( 0 ),
 		timeTotal( 0 ),
-		name( testName ),
-		outStream( out ),
-		outputPassed( displayPassed )
+		outputPassed( displayPassed ),
+		name( testName ),		
+		outStream( out )
 		{
 			DEBUG_ASSERT( name.size() );
 			

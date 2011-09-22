@@ -60,17 +60,17 @@ namespace Dojo
 		currentVertex( NULL ),
 		vertices( NULL ),
 		indexCount( 0 ),
-		triangleCount(0),
 		indexMaxCount( 0 ),
+		indexByteSize(0),
+		indexMaxValue(0),
+		indexGLType(0),
 		indices( NULL ),
-		dynamic( false ),
-		editing( false ),
+		triangleCount(0),
 		triangleMode( TM_STRIP ),
 		vertexHandle(0),
 		indexHandle(0),
-		indexGLType(0),
-		indexMaxValue(0),
-		indexByteSize(0)
+		dynamic( false ),
+		editing( false )		
 		{
 			//set all fields to zero
 			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );

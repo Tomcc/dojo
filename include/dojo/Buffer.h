@@ -22,9 +22,9 @@ namespace Dojo
 		
 		Buffer( ResourceGroup* creatorGroup, const String& path ) :
 		creator( creatorGroup ),
-		filePath( path ),
 		loaded( false ),
-		size( 0 )
+		size( 0 ),
+		filePath( path )
 		{
 			
 		}

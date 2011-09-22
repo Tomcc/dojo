@@ -94,7 +94,7 @@ namespace Dojo
 		bool load();
 		void unload();
 
-		void bind()
+		virtual void bind()
 		{
 
 		}

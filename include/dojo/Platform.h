@@ -31,12 +31,12 @@ namespace Dojo
 		}
 	
 		Platform( const Table& configTable ) :
-		game( NULL ),
-		render( NULL ),
-		sound( NULL ),
-		input( NULL ),
 		config( configTable ),
 		running( false ),
+		game( NULL ),
+		sound( NULL ),
+		render( NULL ),
+		input( NULL ),
 		realFrameTime( 0 )
 		{
 

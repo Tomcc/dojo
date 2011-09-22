@@ -35,12 +35,15 @@ namespace Dojo {
 		class Layer : public Dojo::Array< Renderable* >
 		{
 		public:
-			bool depthCheck, lightingOn, projectionOff, depthClear;
+			bool depthCheck;
+			bool lightingOn;
+			bool projectionOff;
+			bool depthClear;
 
 			Layer() :
-			projectionOff( true ),
 			depthCheck( false ),
 			lightingOn( false ),
+			projectionOff( true ),
 			depthClear( true )
 			{
 

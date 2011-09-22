@@ -166,9 +166,9 @@ void IOSPlatform::acquireContext()
 void IOSPlatform::prepareThreadContext()
 {	
 	DEBUG_ASSERT( context );
-	
+		
 	EAGLContext* clone = [[EAGLContext alloc] initWithAPI:[context API] sharegroup:[context sharegroup]];
-	
+		
 	bool err = [EAGLContext setCurrentContext:clone];
 	DEBUG_ASSERT( err );
 	

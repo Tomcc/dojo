@@ -41,13 +41,13 @@ namespace Dojo
 			float _zFar = 100,
 			int fadeObjectLayer = 8 ) :
 		Object( level, pos, size ),
-		clearColor( clear ),
 		cullingEnabled( true ),
 		background( NULL ),
+		clearColor( clear ),
+		frustumCullingEnabled( false ),
 		VFOV( 0 ),
 		zNear( 0 ),
-		zFar( 1000 ),
-		frustumCullingEnabled( false )
+		zFar( 1000 )
 		{
 			Render* render = Platform::getSingleton()->getRender();
 

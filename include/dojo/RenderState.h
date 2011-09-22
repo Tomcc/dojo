@@ -43,13 +43,13 @@ namespace Dojo
 		CullMode cullMode;
 
 		RenderState() :
-		alphaRequired( true ),
-		mesh( NULL ),
-		textureRotation( 0 ),
-		textureTransform( false ),
 		textureScale( 1,1 ),
+		textureRotation( 0 ),
 		cullMode( CM_BACK ),
-		textures( 8 )
+		alphaRequired( true ),
+		textureTransform( false ),
+		textures( 8 ),
+		mesh( NULL )
 		{
 			
 		}
