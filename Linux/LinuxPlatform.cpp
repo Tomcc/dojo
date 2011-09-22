@@ -17,8 +17,8 @@ using namespace OIS;
 
 const GLint LinuxPlatform::att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 
-LinuxPlatform::LinuxPlatform() :
-Platform(),
+LinuxPlatform::LinuxPlatform(const Table& table) :
+Platform(table),
 dragging( false ),
 cursorPos( 0,0 ){
 

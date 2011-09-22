@@ -24,17 +24,21 @@ namespace Dojo
 		virtual void initialise();
 		virtual void shutdown();
 
+		virtual void prepareThreadContext()
+		{
+			//do nothing
+		}
+
 		virtual void acquireContext();
 		virtual void present();
 
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual String getCompleteFilePath( const String& name, const String& type, const String& path );
-		virtual void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
-		virtual void loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height );
+		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
 		
-		virtual String getAppDataPath()
+		virtual String getAppDataPath();
+		virtual String getRootPath();
 
 		virtual void openWebPage( const String& site );
 
@@ -92,9 +96,6 @@ namespace Dojo
 		Vector cursorPos;
 
 		bool dragging;
-
-		bool _hasExtension( const String& type, const String& nameOrPath );
-		String _toNormalPath( const String& path );
 
 		bool _initialiseWindow( const String& caption, uint w, uint h );
 		void _initialiseOIS();

@@ -132,8 +132,8 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	x *= r->getContentScale();
 	y *= r->getContentScale();
 	
-	int sx = r->getScreenWidth();
-	int sy = r->getScreenHeight();
+	int sx = Platform::getSingleton()->getGame()->getNativeWidth();
+	int sy = Platform::getSingleton()->getGame()->getNativeHeight();
 	
 	switch( r->getInterfaceOrientation() )
 	{
@@ -144,10 +144,10 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 			return Vector( sx - x, sy - y );
 			
 		case Render::RO_LANDSCAPE_RIGHT:		
-			return Vector( y, sx - x );
+			return Vector( y, sy - x );
 			
 		case Render::RO_LANDSCAPE_LEFT:			
-			return Vector( sy - y, x );
+			return Vector( sx - y, x );
 	}
 	return Vector::ZERO;
 }

@@ -25,7 +25,6 @@ namespace Dojo {
 	
 	class Viewport;
 	class SoundManager;
-	class Renderable;
 	class Game;
 	
 	class GameState : public Object, public ResourceGroup, public InputSystem::Listener, public Renderable::Listener, public StateInterface

@@ -53,7 +53,7 @@ namespace Dojo
 			type = LT_NONE;
 		}
 		
-		void bind( uint slot ); //updates light for rendering in the assigned sloto
+		void bind( uint slot ); //updates light for rendering in the assigned slot
 		
 		inline Type getType()
 		{

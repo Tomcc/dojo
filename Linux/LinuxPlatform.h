@@ -19,7 +19,7 @@ namespace Dojo
 	{
 	public:
 
-		LinuxPlatform();
+		LinuxPlatform(const Table& table);
 
 		virtual void initialise();
 		virtual void shutdown();
@@ -47,6 +47,16 @@ namespace Dojo
 
 		virtual bool keyPressed(const OIS::KeyEvent &arg);
 		virtual bool keyReleased(const OIS::KeyEvent &arg);
+		
+		virtual void prepareThreadContext();
+		
+		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
+		
+		virtual String getAppDataPath();
+		virtual String getRootPath();
+		
+		virtual void openWebPage( const String& site );
+		
 
 	protected:
 

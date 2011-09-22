@@ -149,8 +149,8 @@ namespace Dojo
 		inline Vector makeWorldCoordinates( int x, int y )
 		{
 			return Vector(
-						  getWorldMin().x + (x / targetSize.x) * size.x,
-						  getWorldMax().y - (y / targetSize.y) * size.y );
+						  getWorldMin().x + ((float)x / targetSize.x) * size.x,
+						  getWorldMax().y - ((float)y / targetSize.y) * size.y );
 		}
 						
 		void makeScreenSize( Vector& dest, int w, int h );

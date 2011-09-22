@@ -49,7 +49,7 @@
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
-				WarnAsError="true"
+				WarnAsError="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="alut.lib OIS_d.lib OpenGL32.lib glew32.lib FreeImage.lib freetype.lib OpenAL32.lib"
+				AdditionalDependencies="OIS_d.lib OpenGL32.lib glew32.lib FreeImage.lib freetype.lib OpenAL32.lib libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib"
 				OutputFile="$(OutDir)\dojo_d.lib"
 				AdditionalLibraryDirectories="dependencies\lib"
 			/>
@@ -130,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="alut.lib OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib OIS.lib freetype.lib"
+				AdditionalDependencies="OpenGL32.lib glew32.lib FreeImage.lib OpenAL32.lib OIS.lib freetype.lib libogg_static.lib libvorbis_static.lib libvorbisfile_static.lib"
 				OutputFile="$(OutDir)\dojo.lib"
 				AdditionalLibraryDirectories="dependencies\lib"
 			/>
@@ -176,15 +176,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\FrameworkTests.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\Game.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\GameState.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Light.cpp"
 				>
 			</File>
 			<File
@@ -264,6 +264,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Timer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\TouchSource.cpp"
 				>
 			</File>
@@ -302,10 +306,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\dojo\dojo_common_header.h"
 				>
 			</File>
@@ -322,6 +322,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\dojo\Email.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\dojo\Font.h"
 				>
 			</File>
@@ -334,10 +338,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\dojo\FrameworkTests.h"
-				>
-			</File>
-			<File
 				RelativePath=".\include\dojo\Game.h"
 				>
 			</File>
@@ -347,6 +347,10 @@
 			</File>
 			<File
 				RelativePath=".\include\dojo\InputSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\Light.h"
 				>
 			</File>
 			<File
@@ -371,6 +375,10 @@
 			</File>
 			<File
 				RelativePath=".\include\dojo\ParticlePool.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\dojo\Plane.h"
 				>
 			</File>
 			<File

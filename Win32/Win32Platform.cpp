@@ -12,6 +12,8 @@
 
 #include <gl/wglext.h>
 
+#include <Poco/Path.h>
+
 #include "Render.h"
 #include "Game.h"
 #include "Utils.h"
@@ -218,7 +220,7 @@ void Win32Platform::initialise()
 	DEBUG_ASSERT( game );
 
 	//create user dir if not existing
-	String userDir = _getUserDirectory() + '/' + game->getName();
+	String userDir = getAppDataPath() + '/' + game->getName();
 
 	CreateDirectoryA( userDir.ASCII().c_str(), NULL );
 
@@ -411,10 +413,10 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& width, uint& height )
+void Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
-	if( !_hasExtension( ".png", path ) )
+	if( !Utils::hasExtension( ".png", path ) )
 		return;
 
 	void* data;
@@ -476,7 +478,7 @@ void Win32Platform::loadPNGContent( void*& bufptr, const String& path, uint& wid
 	FreeImage_Unload( dib );
 }
 
-String Win32Platform::getAppDataDirectory()
+String Win32Platform::getAppDataPath()
 {
 	char szPath[MAX_PATH];
 
@@ -489,7 +491,14 @@ String Win32Platform::getAppDataDirectory()
 
 	String dir( szPath );
 
-	return _toNormalPath( dir );
+	Utils::makeCanonicalPath( dir );
+
+	return dir; 
+}
+
+String Win32Platform::getRootPath()
+{
+	return String( Poco::Path::current() );
 }
 
 void Win32Platform::openWebPage( const String& site )

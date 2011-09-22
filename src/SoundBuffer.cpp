@@ -57,7 +57,54 @@ bool SoundBuffer::load()
 	return error != AL_NO_ERROR;
 }
 
-////-------------------------------------////-------------------------------------////-------------------------------------
+////-------------------------------------////-------------------------------------////------------------------------------
+
+size_t SoundBuffer::VorbisSource::read( void* out, size_t size, size_t count, void* source )
+{
+	VorbisSource* src = (VorbisSource*)source;
+	
+	int bytes = size * count;
+	int max = src->size - src->pointer;
+	
+	if( bytes > max ) bytes = max;
+	
+	if( bytes > 0 )
+	{
+		memcpy( out, (char*)src->data + src->pointer, bytes );
+		
+		src->pointer += bytes;
+	}
+	
+	return bytes / size;
+}
+
+int SoundBuffer::VorbisSource::seek( void *source, ogg_int64_t offset, int whence )
+{
+	VorbisSource* src = (VorbisSource*)source;
+	
+	if( whence == SEEK_SET )
+		src->pointer = offset;
+	else if( whence == SEEK_END )
+		src->pointer = src->size - offset;
+	else if( whence == SEEK_CUR )
+		src->pointer += offset;
+	else
+	{
+		DEBUG_TODO;
+	}
+	
+	return 0;
+}
+
+int SoundBuffer::VorbisSource::close( void *source )
+{
+	return 0;
+}
+
+long SoundBuffer::VorbisSource::tell( void *source )
+{
+	return ((VorbisSource*)source)->pointer;
+}
 
 int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 {
