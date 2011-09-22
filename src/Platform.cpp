@@ -89,7 +89,7 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 {	
 	using namespace std;
 	
-	fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate );
+	fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate | ios_base::binary );
 	
 	if( !file.is_open() )
 		return 0;

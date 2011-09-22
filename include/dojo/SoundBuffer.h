@@ -36,54 +36,10 @@ namespace Dojo
 				DEBUG_ASSERT( size );
 			}
 			
-			static size_t read( void* out, size_t size, size_t count, void* source )
-			{
-				VorbisSource* src = (VorbisSource*)source;
-				
-				int bytes = size * count;
-				int max = src->size - src->pointer;
-
-				if( bytes > max ) bytes = max;
-				
-				if( bytes > 0 )
-				{
-					memcpy( out, (char*)src->data + src->pointer, bytes );
-					
-					src->pointer += bytes;
-				}
-				
-				return bytes / size;
-			}
-			
-			static int seek( void *source, ogg_int64_t offset, int whence )
-			{
-				VorbisSource* src = (VorbisSource*)source;
-				
-				if( whence == SEEK_SET )
-					src->pointer = offset;
-				else if( whence == SEEK_END )
-					src->pointer = src->size - offset;
-				else if( whence == SEEK_CUR )
-					src->pointer += offset;
-				else
-				{
-					DEBUG_TODO;
-				}
-				
-				return 0;
-			}
-			
-			static int close( void *source )
-			{
-				//do nothing
-				
-				return 0;
-			}
-			
-			static long tell( void *source )
-			{
-				return ((VorbisSource*)source)->pointer;
-			}
+			static size_t read( void* out, size_t size, size_t count, void* source );
+			static int seek( void *source, ogg_int64_t offset, int whence );			
+			static int close( void *source );			
+			static long tell( void *source );
 		};
 
 		///Costruttore
