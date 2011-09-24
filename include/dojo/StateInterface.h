@@ -30,7 +30,7 @@ namespace Dojo
 		virtual ~StateInterface()
 		{			
 			if( currentStatePtr )
-				delete currentStatePtr;
+				SAFE_DELETE( currentStatePtr );
 		}
 		
 		inline void setState( uint newState )		
@@ -158,7 +158,7 @@ namespace Dojo
 			_subStateEnd();
 			
 			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
-				delete currentStatePtr;
+				SAFE_DELETE( currentStatePtr );
 			
 			currentState = newState;
 			currentStatePtr = NULL;
@@ -173,7 +173,7 @@ namespace Dojo
 			_subStateEnd();
 			
 			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
-				delete currentStatePtr;
+				SAFE_DELETE( currentStatePtr );
 			
 			currentState = -1;
 			currentStatePtr = child;

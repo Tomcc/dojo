@@ -100,12 +100,12 @@ namespace Dojo {
 		inline void clearLayers()
 		{
 			for( int i = 0; i < negativeLayers.size(); ++i )
-				delete negativeLayers[i];
+				SAFE_DELETE( negativeLayers[i] );
 			
 			negativeLayers.clear();
 			
 			for( int i = 0; i < positiveLayers.size(); ++i )
-				delete positiveLayers[i];
+				SAFE_DELETE( positiveLayers[i] );
 			
 			positiveLayers.clear();
 		}

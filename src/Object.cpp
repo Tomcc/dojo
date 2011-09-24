@@ -86,7 +86,7 @@ void Object::destroyChild( int i )
 	
 	removeChild( i );
 	
-	delete child; 
+	SAFE_DELETE( child );
 }
 
 void Object::destroyChild( Object* o )
@@ -123,9 +123,7 @@ void Object::destroyAllChilds()
 	
 		collectChilds();
 	
-		delete childs;
-	
-		childs = NULL;
+		SAFE_DELETE( childs );
 	}
 }
 

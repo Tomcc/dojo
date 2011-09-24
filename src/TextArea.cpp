@@ -51,7 +51,7 @@ TextArea::~TextArea()
 	if( mesh )
 	{
 		mesh->unload();				
-		delete mesh;
+		SAFE_DELETE( mesh );
 	}
 
 	_destroyLayers();

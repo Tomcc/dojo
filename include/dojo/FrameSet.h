@@ -50,7 +50,7 @@ namespace Dojo
 			for( uint i = 0; i < frames.size(); ++i )
 			{
 				if( frames.at(i)->getOwnerFrameSet() == this )
-					delete frames.at(i);
+					SAFE_DELETE( frames.at(i) );
 			}				
 			
 			loaded = false;

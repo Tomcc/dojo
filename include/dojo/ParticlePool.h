@@ -38,7 +38,7 @@ namespace Dojo
 			{
 				_unregisterParticle( pool.at(i) );
 				
-				delete pool.at(i);
+				SAFE_DELETE( pool.at(i) );
 			}
 		}
 		

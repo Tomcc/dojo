@@ -59,6 +59,8 @@
 
 #endif
 
+#define SAFE_DELETE( T ) { DEBUG_ASSERT( T ); delete T; T = NULL; }
+
 #ifdef PLATFORM_IOS
 	#define BIG_ENDIAN 1
 #else
@@ -72,7 +74,7 @@
 	#define glOrthof glOrtho
 	#define glFrustumf glFrustum
 #else
-	//IOS platform - OpenglES
+	//iOS platform - OpenglES
 
 	#define glGenRenderbuffers			glGenRenderbuffersOES
 	#define glGenFramebuffers			glGenFramebuffersOES

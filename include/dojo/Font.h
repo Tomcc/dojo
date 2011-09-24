@@ -74,7 +74,7 @@ namespace Dojo
 			{
 				texture->unload();
 
-				delete texture;
+				SAFE_DELETE( texture );
 			}
 
 			inline Texture* getTexture() 
@@ -190,10 +190,7 @@ namespace Dojo
 			DEBUG_ASSERT( idx < FONT_MAX_PAGES );
 
 			if( pages[idx] ) 
-			{
-				delete pages[idx];
-				pages[idx] = NULL;
-			}
+				SAFE_DELETE( pages[idx] );
 		}
 		
 		void unload()

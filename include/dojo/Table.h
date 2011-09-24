@@ -142,7 +142,7 @@ namespace Dojo
 			else
 			{
 				if( exists( key ) )
-					delete map[key];
+					SAFE_DELETE( map[key] );
 
 				map[ key ] = new TypedEntry< T >( type, value );
 			}
@@ -231,7 +231,7 @@ namespace Dojo
 			EntryMap::iterator itr = map.begin();
 			
 			for( ; itr != map.end(); ++itr )
-				delete itr->second;
+				SAFE_DELETE( itr->second );
 			
 			map.clear();
 		}		

@@ -335,7 +335,7 @@ namespace Dojo {
 			{
 				DEBUG_MESSAGE( "~" << map.begin()->first.ASCII() );
 				
-				delete map.begin()->second;
+				SAFE_DELETE( map.begin()->second );
 				
 				map.erase( map.begin() );
 			}

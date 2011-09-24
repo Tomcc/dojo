@@ -53,8 +53,7 @@ void Platform::shutdownPlatform()
 
 	singleton->shutdown();
 
-	delete singleton;
-	singleton = NULL;
+	SAFE_DELETE( singleton );
 }
 
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )

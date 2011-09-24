@@ -22,7 +22,7 @@ finalized( false )
  
 ResourceGroup::~ResourceGroup()
 {
-	delete empty;
+	SAFE_DELETE( empty );
 	
 	unloadAll();
 }

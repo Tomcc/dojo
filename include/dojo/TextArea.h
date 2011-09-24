@@ -235,7 +235,7 @@ namespace Dojo
 			busyLayers.remove( r );
 			freeLayers.remove( r );
 
-			delete r;
+			SAFE_DELETE( r );
 		}
 
 		inline void _destroyLayers()

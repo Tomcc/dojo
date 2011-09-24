@@ -10,8 +10,7 @@ Sprite::Sprite( GameState* level, const Vector& pos, const String& defaultAnimNa
 AnimatedQuad( level, pos, pp )
 {	
 	//get rid of default animation
-	delete animation;
-	animation = NULL;
+	SAFE_DELETE( animation );
 	
 	if( defaultAnimName.size() )
 	{		

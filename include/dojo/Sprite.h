@@ -36,7 +36,7 @@ namespace Dojo
 		virtual ~Sprite()
 		{
 			for( uint i = 0; i < animations.size(); ++i )
-				delete animations.at(i);
+				SAFE_DELETE( animations.at(i) );
 						
 			//frames have to be relased manually from the group!
 		}		

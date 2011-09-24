@@ -86,10 +86,7 @@ namespace Dojo
 			DEBUG_ASSERT( name.size() );
 			
 			if( background )
-			{
-				removeChild( background );
-				delete background;
-			}
+				destroyChild( background );
 			
 			background = new Sprite( gameState, Vector::ZERO, name, frameTime );
 			background->setRequiresAlpha( false );

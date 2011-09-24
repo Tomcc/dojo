@@ -6,7 +6,7 @@ MIT License. But tell me if you do something cool with Dojo ;)
 
 so, here's the part for which you opened this file in the first place:
 
-*** IOS ***
+*** iOS ***
 
 Download the FreeType precompiled dependency from the Downloads folder in the BitBucket repo.
 
@@ -16,10 +16,10 @@ Add libfreetype.a between the frameworks in your projects.
 
 Code drop-in is indeed ugly, but Apple's policy about dylibs is not crystal clear (and OpenFeint does this, so.)
 
-Warning: On IOS you will need a custom main.mm calling UIApplicationMain, and .xib interface file that links the UIView to Apple/IOS/Application class.
+Warning: On iOS you will need a custom main.mm calling UIApplicationMain, and .xib interface file that links the UIView to Apple/iOS/Application class.
 You will need two .xibs in the case of iPhone+iPad non universal App.
 
-Tested on IOS 4.3, XCode4
+Tested on iOS 4.3, XCode4
 
 *** WINDOWS ***
 

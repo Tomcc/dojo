@@ -71,12 +71,12 @@ SoundManager::~SoundManager()
 {
 	//trash sounds
 	for( unsigned int i = 0; i < busySoundPool.size(); ++i )
-		delete busySoundPool.at(i);
+		SAFE_DELETE( busySoundPool.at(i) );
 	
 	for( unsigned int i = 0; i < idleSoundPool.size(); ++i )
-		delete idleSoundPool.at(i);
+		SAFE_DELETE( idleSoundPool.at(i) );
 
-	delete fakeSource;
+	SAFE_DELETE( fakeSource );
 
 	alDeleteSources( MAX_SOURCES, sources );
 }

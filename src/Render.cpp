@@ -78,15 +78,10 @@ backLayer( NULL )
 
 Render::~Render()
 {
-	delete firstRenderState;
-	delete backLayer;
+	SAFE_DELETE( firstRenderState );
+	SAFE_DELETE( backLayer );
 
-	//delete layers
-	for( uint i = 0; i < negativeLayers.size(); ++i )
-		delete negativeLayers.at(i);
-
-	for( uint i = 0; i < positiveLayers.size(); ++i )
-		delete positiveLayers.at(i);
+	clearLayers();
 }
 
 void Render::setWireframe( bool wireframe )

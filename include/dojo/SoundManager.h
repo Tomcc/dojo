@@ -51,7 +51,7 @@ namespace Dojo {
 					SoundSource* s = busySoundPool.top();
 					busySoundPool.pop();
 					s->stop();
-					delete s;
+					SAFE_DELETE( s );
 				}
 				
 				musicTrack = NULL;

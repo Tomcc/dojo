@@ -193,8 +193,7 @@ void Texture::unload()
 	{
 		OBB->unload();
 		
-		delete OBB;
-		OBB = NULL;
+		SAFE_DELETE( OBB );
 	}
 	
 	if( !parentAtlas ) //don't unload parent texture!
