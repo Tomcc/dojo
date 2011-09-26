@@ -125,6 +125,8 @@ void IOSPlatform::initialise()
 	
 void IOSPlatform::shutdown()
 {
+	game->end();
+	
 	if( render )
 	{
 		delete render;

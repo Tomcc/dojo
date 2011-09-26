@@ -180,7 +180,7 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
 		viewportWidth = width;
-		viewportHeight = height;
+		viewportHeight = height;	
 	}
 	else 
 	{

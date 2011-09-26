@@ -46,8 +46,6 @@ void ResourceGroup::loadSets( const String& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
-			Timer t;
-
 			//load last set
 			if( currentSet )
 				currentSet->load();
@@ -58,8 +56,6 @@ void ResourceGroup::loadSets( const String& subdirectory )
 			currentSet = new FrameSet( this, setPrefix );
 			
 			addFrameSet( currentSet, setPrefix );
-
-			DEBUG_MESSAGE( t.getElapsedTime() << " ms" );
 		}
 		
 		//create and load a new buffer
@@ -148,16 +144,12 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
-			Timer t;
-
 			String setPrefix = Utils::removeTag( name );
 			
 			//create a new set
 			currentSet = new SoundSet( setPrefix );
 			
 			addSound( currentSet, setPrefix );
-
-			DEBUG_MESSAGE( t.getElapsedTime() << " ms" );
 		}
 			
 		//create and load a new buffer
