@@ -138,17 +138,21 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	int totalRead = 0;
 	
 	//read all vorbis packets
+	int read = 0;
 	do 
 	{
-		int read = ov_read( &file, uncompressedData + totalRead, uncompressedSize - totalRead, 0, wordSize, 1, &section );
+		read = ov_read( &file, uncompressedData + totalRead, uncompressedSize - totalRead, 0, wordSize, 1, &section );
 				
+		if( read <= 0 )
+			break;
+
 		totalRead += read;
 	}
-	while( read > 0 && totalRead < uncompressedSize );
+	while( totalRead < uncompressedSize );
 	
 	DEBUG_ASSERT( totalRead > 0 );
 	
-	alBufferData( buffer, format, uncompressedData, uncompressedSize, info->rate );
+	alBufferData( buffer, format, uncompressedData, totalRead, info->rate );
 	
 	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
 	
