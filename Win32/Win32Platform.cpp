@@ -74,9 +74,11 @@ cursorPos( 0,0 ),
 frameStart( 1 ),
 frameInterval(0)
 {
+	/*
 #ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
+	*/
 
 	frameStart.wait();
 }
