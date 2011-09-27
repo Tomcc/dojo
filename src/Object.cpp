@@ -96,7 +96,7 @@ void Object::destroyChild( Object* o )
 	
 	int i = childs->getElementIndex( o );
 	
-	if( i )
+	if( i >= 0 )
 		destroyChild( i );
 }
 

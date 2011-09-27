@@ -140,6 +140,11 @@ bool Texture::loadFromPNG( const String& path )
 		enableTiling();
 		enableMipmaps();
 	}
+	else
+	{
+		disableTiling();
+		disableMipmaps();
+	}
 		
 	loadFromMemory( (byte*)imageData, width, height );
 

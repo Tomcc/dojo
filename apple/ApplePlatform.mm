@@ -109,14 +109,17 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
 	
 	//correct premultiplied alpha - only in the useful part of the image
+	///while doing this, extend the color to the pitch row to avoid artifacts at borders
 	byte* ptr = (byte*)imageData;
 	byte* rowptr = (byte*)imageData;
 	byte r, g, b;
-	for( uint i = 0; i < height; ++i )
+	
+	for( int i = 0; i < height; ++i )
 	{
 		ptr = rowptr;
 		
-		for( uint j = 0; j < width; ++j )
+		uint j = 0;
+		for( ; j < width; ++j )
 		{
 			byte alpha = ptr[3];
 				
@@ -138,9 +141,28 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 			ptr += 4;
 		}
 		
+		//extend the last known color to the border zone
+		for( ; j < width + 5 && j < internalWidth; ++j )
+		{
+			ptr[0] = r;
+			ptr[1] = g;
+			ptr[2] = b;
+			
+			ptr += 4;
+		}
+		
 		rowptr += pitch;
 	}
+
+	//stretch the last row to the rows at bottom
+	byte* lastRow = (byte*)imageData + (height-1)*pitch;
 	
+	for( int i = height; i < height+5 && i < internalHeight; ++i )
+	{
+		ptr = (byte*)imageData + i*pitch;
+		memcpy( ptr, lastRow, pitch );
+	}
+		
 	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
