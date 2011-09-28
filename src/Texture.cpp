@@ -3,7 +3,7 @@
 #include "Texture.h"
 #include "dojomath.h"
 #include "Platform.h"
-#include "Timer.h"
+#include "ResourceGroup.h"
 
 using namespace Dojo;
 
@@ -129,22 +129,26 @@ bool Texture::loadFromPNG( const String& path )
 	DEBUG_ASSERT( !loaded );
 	
 	void* imageData = NULL;
-
-	enableBilinearFiltering();
 	
 	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
 	
+	if( creator && creator->disableBilinear )	
+		disableBilinearFiltering();
+	else			
+		enableBilinearFiltering();
+	
+	bool isSurface = width == Math::nextPowerOfTwo( width ) && height == Math::nextPowerOfTwo( height );
+	
 	//guess if this is a texture or a sprite
-	if( width == Math::nextPowerOfTwo( width ) && height == Math::nextPowerOfTwo( height ) )
-	{
-		enableTiling();
-		enableMipmaps();
-	}
-	else
-	{
-		disableTiling();
+	if( !isSurface || (creator && creator->disableMipmaps ) )
 		disableMipmaps();
-	}
+	else
+		enableMipmaps();
+	
+	if( !isSurface || (creator && creator->disableTiling ) )
+		disableTiling();
+	else
+		enableTiling();
 		
 	loadFromMemory( (byte*)imageData, width, height );
 

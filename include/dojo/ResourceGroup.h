@@ -35,6 +35,9 @@ namespace Dojo {
 			RT_SOUND,
 			RT_TABLE
 		};
+				
+		//various resource properties TODO: refactor
+		bool disableBilinear, disableMipmaps, disableTiling;
 		
 		typedef std::map<String, FrameSet*> FrameSetMap;
 		typedef std::map<String, Font*> FontMap;
@@ -315,7 +318,7 @@ namespace Dojo {
 		
 		String locale, fallbackLocale;		
 		bool finalized;
-		
+				
 		FrameSet* empty;
 		
 		FrameSetMap frameSets;

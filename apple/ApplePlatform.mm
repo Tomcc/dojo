@@ -141,27 +141,20 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 			ptr += 4;
 		}
 		
-		//extend the last known color to the border zone
-		for( ; j < width + 5 && j < internalWidth; ++j )
+		//extend the last known color to the border
+		if( width < internalWidth )
 		{
 			ptr[0] = r;
 			ptr[1] = g;
 			ptr[2] = b;
-			
-			ptr += 4;
 		}
 		
 		rowptr += pitch;
 	}
-
-	//stretch the last row to the rows at bottom
-	byte* lastRow = (byte*)imageData + (height-1)*pitch;
 	
-	for( int i = height; i < height+5 && i < internalHeight; ++i )
-	{
-		ptr = (byte*)imageData + i*pitch;
-		memcpy( ptr, lastRow, pitch );
-	}
+	//copy last row in the row below to create a border
+	if( height < internalHeight )
+		memcpy( (byte*)imageData + height*pitch, (byte*)imageData + (height-1)*pitch, pitch );
 		
 	//free everything
 	CGContextRelease(context);	

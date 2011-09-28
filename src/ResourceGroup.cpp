@@ -8,7 +8,10 @@
 using namespace Dojo;
 
 ResourceGroup::ResourceGroup() :
-finalized( false )
+finalized( false ),
+disableBilinear( false ),
+disableMipmaps( false ),
+disableTiling( false )
 {
 	//link map array
 	mapArray[ RT_FRAMESET ] = &frameSets;
