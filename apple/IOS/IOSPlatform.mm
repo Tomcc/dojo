@@ -8,6 +8,14 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
+#import <GameKit/GKLocalPlayer.h>
+#import <GameKit/GKScore.h>
+#import <GameKit/GKLeaderboard.h>
+#import <GameKit/GKAchievement.h>
+#import <GameKit/GKLeaderboardViewController.h>
+
+#include <Poco/Semaphore.h>
+
 #include "Utils.h"
 #include "dojomath.h"
 #include "Email.h"
@@ -307,3 +315,128 @@ void IOSPlatform::setMp3FileVolume( float gain )
 	
 	player.volume = gain;
 }
+
+bool IOSPlatform::_checkGameCenterAvailability()
+{
+	// Check for presence of GKLocalPlayer class.
+    BOOL localPlayerClassAvailable = (NSClassFromString(@"GKLocalPlayer")) != nil;
+	
+    // The device must be running iOS 4.1 or later.
+    NSString *reqSysVer = @"4.1";
+    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+    BOOL osVersionSupported = ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending);
+	
+    return (localPlayerClassAvailable && osVersionSupported);
+}
+
+void IOSPlatform::loginToGameCenter( GameCenterListener* listener )
+{
+	DEBUG_ASSERT( listener );
+	
+	if( !_checkGameCenterAvailability() )
+	{
+		listener->onLogin( false, "" );
+	}
+	else
+	{		
+		GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+	    [localPlayer authenticateWithCompletionHandler:^(NSError *error) 
+		{
+			Dojo::String pname;
+			
+			if( error == nil && [[GKLocalPlayer localPlayer] alias] != nil )
+				pname = [[GKLocalPlayer localPlayer] alias];
+			
+			listener->onLogin( error != nil || !(localPlayer.isAuthenticated), pname );
+		}];
+	}
+}
+
+void IOSPlatform::postScore( unsigned int score, const Dojo::String& leaderboard, GameCenterListener* listener )
+{
+	DEBUG_ASSERT( listener );
+	
+	GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:leaderboard.toNSString()] autorelease];
+    scoreReporter.value = score;
+	
+    [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) 
+	{
+		listener->onPostCompletion( error != nil );
+    }];
+}
+
+
+void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListener* listener )
+{
+	DEBUG_ASSERT( listener );
+	
+	NSArray* players = [NSArray arrayWithObject: [[GKLocalPlayer localPlayer] playerID] ];
+	
+	GKLeaderboard *query = [[GKLeaderboard alloc] initWithPlayerIDs: players ];
+	
+    if (query != nil)
+    {
+		query.category = leaderboard.toNSString();
+		
+		__block String ld = leaderboard;
+		
+        [query loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
+						
+			if( error == nil )
+				listener->onHighScoreGet( ld, (int)[scores objectAtIndex:0], false );
+			else
+				listener->onHighScoreGet( ld, -1, true );
+        }];
+    }
+}
+
+void IOSPlatform::postAchievement( const Dojo::String& code, GameCenterListener* listener )
+{
+	DEBUG_ASSERT( listener );
+	
+	GKAchievement *achievement = [[[GKAchievement alloc] initWithIdentifier: code.toNSString() ] autorelease];
+    if (achievement)
+    {
+		achievement.percentComplete = 100;
+		[achievement reportAchievementWithCompletionHandler:^(NSError *error)
+		 {
+			 listener->onPostCompletion( error != nil );
+		 }];
+    }
+}
+
+
+void IOSPlatform::requestAchievements( GameCenterListener* listener)
+{
+	DEBUG_ASSERT( listener );
+	
+	[GKAchievement loadAchievementsWithCompletionHandler:^(NSArray *achievements, NSError *error) 
+	{
+		std::vector< String > codes;
+		
+		if (achievements != nil && error == nil )
+        {
+			//convert all the achievements
+			for( int i = 0; i < [achievements count]; ++i )
+				codes.push_back( String( ((GKAchievement*)[achievements objectAtIndex:i]).identifier ) );
+        }
+		
+		listener->onAchievementsGet( codes, error != nil );
+	}];
+}
+
+void IOSPlatform::showDefaultLeaderboard()
+{
+	GKLeaderboardViewController *leaderboardController = [[GKLeaderboardViewController alloc] init];
+    if (leaderboardController != nil)
+    {
+		[app addSubview: [leaderboardController view] ];
+		[[leaderboardController view] becomeFirstResponder];
+		
+        /*leaderboardController.leaderboardDelegate = self;
+        [self presentModalViewController: leaderboardController animated: YES];*/
+    }
+}
+
+
+

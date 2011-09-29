@@ -381,6 +381,18 @@ namespace Dojo
 		{
 			return getData( autoMemberName( idx ) );
 		}	
+		
+		///removes a member named key
+		inline void remove( const Dojo::String& key )
+		{
+			map.erase( key );
+		}
+		
+		///removes the unnamed member index idx
+		inline void remove( uint idx )
+		{
+			map.erase( autoMemberName( idx ) );
+		}
 
 		inline bool isEmpty() const
 		{

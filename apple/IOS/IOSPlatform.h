@@ -25,6 +25,27 @@ namespace Dojo
 	{
 	public:
 		
+		class GameCenterListener
+		{
+		public:
+			GameCenterListener()
+			{
+				
+			}
+			
+			virtual ~GameCenterListener()
+			{
+				
+			}
+			
+			virtual void onLogin( bool result, const Dojo::String& playerName )=0;			
+			virtual void onPostCompletion( bool error )=0;			
+			virtual void onHighScoreGet( const Dojo::String& leaderboard, int score, bool error )=0;			
+			virtual void onAchievementsGet( const std::vector< Dojo::String >& codes, bool error )=0;
+			
+		protected:
+		};
+		
 		IOSPlatform( const Table& config );
 		
 		virtual ~IOSPlatform();
@@ -40,7 +61,19 @@ namespace Dojo
 		virtual void loop( float frameTime );
 				
 		virtual bool isSystemSoundInUse();
-						
+		
+		///IOS SPECIFIC - checks game center availability and logins into it.
+		/** Returns true if no error occurred */
+		void loginToGameCenter( GameCenterListener* listener );
+		
+		void postScore( unsigned int score, const Dojo::String& leaderboard, GameCenterListener* listener );
+		void requestScore( const Dojo::String& leaderboard, GameCenterListener* listener );
+		
+		void postAchievement( const Dojo::String& code, GameCenterListener* listener );
+		void requestAchievements( GameCenterListener* listener);
+		
+		void showDefaultLeaderboard();
+		
 		void enableScreenSaver( bool s );
 		
 		///IOS SPECIFIC - copies the file from which the passed texture was created to the camera roll
@@ -80,6 +113,8 @@ namespace Dojo
 		typedef std::map< void*, Email::Listener* > SenderEmailListenerMap;
 		SenderEmailListenerMap senderEmailListenerMap;
 		*/
+		
+		bool _checkGameCenterAvailability();
 		
 #ifdef __OBJC__		
 		EAGLContext* context;

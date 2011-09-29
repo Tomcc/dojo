@@ -111,6 +111,11 @@ using namespace Dojo;
 	[self becomeFirstResponder];
 }
 
+- (Dojo::Game*) game
+{
+	return platform->getGame();
+}
+
 - (void)stopAnimation
 {
 	if (animating)

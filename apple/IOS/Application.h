@@ -18,6 +18,8 @@
 #include <dojo/InputSystem.h>
 #include <dojo/Timer.h>
 
+#include <dojo/Game.h>
+
 namespace Dojo {
 	class Game;
 	class IOSPlatform;
@@ -54,6 +56,8 @@ namespace Dojo {
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
+
+- (Dojo::Game*) game;
 
 - (void) initialise;
 - (void) startAnimation;

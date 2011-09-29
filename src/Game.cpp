@@ -14,8 +14,7 @@ name( gamename ),
 nativeWidth( w ),
 nativeHeight( h ),
 nativeOrientation( r ),
-nativeFrequency( freq ),
-focus( false )
+nativeFrequency( freq )
 {	
 	DEBUG_ASSERT( name.size() );
 	DEBUG_ASSERT( w > 0 );
@@ -23,6 +22,8 @@ focus( false )
 	DEBUG_ASSERT( r <= Render::RO_LANDSCAPE_RIGHT );
 
 	Math::seedRandom();
+	
+	focusListeners.add( this );
 }
 	
 Game::~Game()

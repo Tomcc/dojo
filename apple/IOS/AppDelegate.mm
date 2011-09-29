@@ -21,27 +21,37 @@
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
+	[glView game]->_fireFocusLost();
+	
 	[glView stopAnimation];
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
 {
 	[glView startAnimation];
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-	[glView stopAnimation];
+	
+	[glView game]->_fireFocusGained();
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	[glView stopAnimation];	
+	
+	[glView game]->_fireFreeze();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
-{
+{	
+	[glView game]->_fireDefreeze();
+	
 	[glView startAnimation];
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+	[glView stopAnimation];
+	
+	[glView game]->_fireTermination();
 }
 
 - (void) dealloc

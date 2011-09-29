@@ -18,20 +18,35 @@
 #include "SoundManager.h"
 #include "InputSystem.h"
 #include "StateInterface.h"
-
+#include "FocusListener.h"
 #include "Platform.h"
 
 #include "Render.h"
 
 namespace Dojo 
 {
-	class Game : public StateInterface
+	class Game : public StateInterface, public FocusListener
 	{
 	public:
-						
+			
 		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation, float nativeFrequency = 1.f/60.f );
 		
 		virtual ~Game();
+		
+		inline void addFocusListener( FocusListener* f )
+		{
+			DEBUG_ASSERT( f );
+			DEBUG_ASSERT( !focusListeners.exists( f ) );
+			
+			focusListeners.add( f );
+		}
+		
+		inline void removeFocusListener( FocusListener* f )
+		{
+			DEBUG_ASSERT( f  );
+			
+			focusListeners.remove( f );
+		}
 
 		inline const String& getName()
 		{
@@ -57,17 +72,21 @@ namespace Dojo
 		{
 			return nativeOrientation;
 		}
-								
-		virtual void onApplicationFocus()=0;		
-		virtual void onApplicationFocusLost()=0;
 		
-	protected:		
-		bool focus;
+		void _fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFocusLost();	}
+		void _fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFocusGained();	}
+		void _fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFreeze();	}
+		void _fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onDefreeze();	}
+		void _fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onTermination();	}
+		
+	protected:
 		
 		uint nativeWidth, nativeHeight;
 		float nativeFrequency;
 		
 		Render::RenderOrientation nativeOrientation;
+		
+		Dojo::Array< FocusListener* > focusListeners;
 
 		String name;
 	};
