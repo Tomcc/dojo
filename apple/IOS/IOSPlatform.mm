@@ -427,15 +427,7 @@ void IOSPlatform::requestAchievements( GameCenterListener* listener)
 
 void IOSPlatform::showDefaultLeaderboard()
 {
-	GKLeaderboardViewController *leaderboardController = [[GKLeaderboardViewController alloc] init];
-    if (leaderboardController != nil)
-    {
-		[app addSubview: [leaderboardController view] ];
-		[[leaderboardController view] becomeFirstResponder];
-		
-        /*leaderboardController.leaderboardDelegate = self;
-        [self presentModalViewController: leaderboardController animated: YES];*/
-    }
+	[[[UIApplication sharedApplication] delegate] showGameCenterLeaderboard];
 }
 
 

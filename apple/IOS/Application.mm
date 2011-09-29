@@ -28,28 +28,7 @@ using namespace Dojo;
 {    
     if ((self = [super initWithCoder:coder]))
 	{
-        // Get the layer
-        CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
-        
-        eaglLayer.opaque = TRUE;
-        eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
-				
-		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-				
-		displayVisible = TRUE;
-		
-		animating = FALSE;
-		displayLinkSupported = FALSE;
-		displayLink = nil;
-		renderImpl = NULL;
-		
-		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-		// class is used as fallback when it isn't available.
-		NSString *reqSysVer = @"3.1";
-		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
-			displayLinkSupported = TRUE;
+       
     }
 	
     return self;
@@ -85,6 +64,21 @@ using namespace Dojo;
 
 - (void) initialise
 {
+	// Get the layer
+	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
+	
+	eaglLayer.opaque = TRUE;
+	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+									[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+	
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+	
+	displayVisible = TRUE;
+	
+	animating = FALSE;
+	displayLink = nil;
+	renderImpl = NULL;
+
 	//initialise accelerometer
 	UIAccelerometer* accelerometer = [UIAccelerometer sharedAccelerometer];
 	accelerometer.delegate = self;

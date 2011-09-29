@@ -8,15 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+#import <GameKit/GKLeaderboardViewController.h>
+
 @class Application;
 
-@interface AppDelegate : NSObject <UIApplicationDelegate> {
+@interface AppDelegate : UIViewController <UIApplicationDelegate, GKLeaderboardViewControllerDelegate> {
     UIWindow *window;
-    Application *glView;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet Application *glView;
+
+- (void)showGameCenterLeaderboard;
+
+- (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController;
 
 @end
 

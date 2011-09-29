@@ -19,6 +19,14 @@
 	[glView initialise];
 }
 
+- (void) dealloc
+{
+	[window release];
+	[glView release];
+	
+	[super dealloc];
+}
+
 - (void) applicationWillResignActive:(UIApplication *)application
 {
 	[glView game]->_fireFocusLost();
@@ -54,12 +62,20 @@
 	[glView game]->_fireTermination();
 }
 
-- (void) dealloc
+- (void)showGameCenterLeaderboard
 {
-	[window release];
-	[glView release];
-	
-	[super dealloc];
+	GKLeaderboardViewController *leaderboardController = [[GKLeaderboardViewController alloc] init];
+    if (leaderboardController != nil)
+    {
+        leaderboardController.leaderboardDelegate = self;
+        [self presentModalViewController: leaderboardController animated: YES];
+    }
 }
+
+- (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
+{
+	[self dismissModalViewControllerAnimated:YES];
+}
+
 
 @end
