@@ -101,7 +101,9 @@ using namespace Dojo;
 		
 		animating = TRUE;
 	}
-	
+	//reset frametimer to avoid huge time differences after restoring!
+	frameTimer.reset();
+
 	[self becomeFirstResponder];
 }
 
@@ -119,6 +121,8 @@ using namespace Dojo;
 			
 		animating = FALSE;
 	}
+	
+	frameTimer.reset();
 }
 
 - (BOOL)canBecomeFirstResponder

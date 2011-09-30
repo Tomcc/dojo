@@ -62,6 +62,8 @@
 	[glView game]->_fireTermination();
 }
 
+#ifdef GAME_CENTER_ENABLED
+
 - (void)showGameCenterLeaderboard
 {
 	GKLeaderboardViewController *leaderboardController = [[GKLeaderboardViewController alloc] init];
@@ -77,5 +79,6 @@
 	[self dismissModalViewControllerAnimated:YES];
 }
 
+#endif
 
 @end

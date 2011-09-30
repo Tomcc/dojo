@@ -8,14 +8,6 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
-#import <GameKit/GKLocalPlayer.h>
-#import <GameKit/GKScore.h>
-#import <GameKit/GKLeaderboard.h>
-#import <GameKit/GKAchievement.h>
-#import <GameKit/GKLeaderboardViewController.h>
-
-#include <Poco/Semaphore.h>
-
 #include "Utils.h"
 #include "dojomath.h"
 #include "Email.h"
@@ -316,6 +308,18 @@ void IOSPlatform::setMp3FileVolume( float gain )
 	player.volume = gain;
 }
 
+//------------------------------------------------------------------------------------
+// GAME CENTER SUPPORT
+//------------------------------------------------------------------------------------
+
+#ifdef GAME_CENTER_ENABLED
+
+#import <GameKit/GKLocalPlayer.h>
+#import <GameKit/GKScore.h>
+#import <GameKit/GKLeaderboard.h>
+#import <GameKit/GKAchievement.h>
+#import <GameKit/GKLeaderboardViewController.h>
+
 bool IOSPlatform::_checkGameCenterAvailability()
 {
 	// Check for presence of GKLocalPlayer class.
@@ -377,15 +381,23 @@ void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListe
     if (query != nil)
     {
 		query.category = leaderboard.toNSString();
-		
-		__block String ld = leaderboard;
-		
+				
         [query loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
-						
+				
 			if( error == nil )
-				listener->onHighScoreGet( ld, (int)[scores objectAtIndex:0], false );
+			{	
+				int64_t value = [query localPlayerScore].value;
+				
+				if( scores == nil )
+					value = -1;
+				
+				listener->onHighScoreGet( query.category, value, false );
+			}
 			else
-				listener->onHighScoreGet( ld, -1, true );
+			{
+				NSLog(@"Error: %@ %@", error, [error userInfo]);
+				listener->onHighScoreGet( query.category, -1, true );
+			}
         }];
     }
 }
@@ -418,7 +430,12 @@ void IOSPlatform::requestAchievements( GameCenterListener* listener)
         {
 			//convert all the achievements
 			for( int i = 0; i < [achievements count]; ++i )
-				codes.push_back( String( ((GKAchievement*)[achievements objectAtIndex:i]).identifier ) );
+			{
+				GKAchievement* achievement = [achievements objectAtIndex:i];
+				
+				if( achievement.completed )				
+					codes.push_back( String( achievement.identifier ) );
+			}
         }
 		
 		listener->onAchievementsGet( codes, error != nil );
@@ -432,3 +449,5 @@ void IOSPlatform::showDefaultLeaderboard()
 
 
 
+
+#endif

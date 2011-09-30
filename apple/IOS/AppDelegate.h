@@ -8,20 +8,26 @@
 
 #import <UIKit/UIKit.h>
 
-#import <GameKit/GKLeaderboardViewController.h>
-
 @class Application;
 
-@interface AppDelegate : UIViewController <UIApplicationDelegate, GKLeaderboardViewControllerDelegate> {
+#ifdef GAME_CENTER_ENABLED
+	#import <GameKit/GKLeaderboardViewController.h>
+	@interface AppDelegate : UIViewController <UIApplicationDelegate, GKLeaderboardViewControllerDelegate> {
+#else
+	@interface AppDelegate : UIViewController <UIApplicationDelegate > {
+#endif
+		
     UIWindow *window;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet Application *glView;
 
+#ifdef GAME_CENTER_ENABLED
 - (void)showGameCenterLeaderboard;
 
 - (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController;
-
+#endif
+		
 @end
 

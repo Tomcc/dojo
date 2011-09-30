@@ -62,6 +62,7 @@ namespace Dojo
 				
 		virtual bool isSystemSoundInUse();
 		
+#ifdef GAME_CENTER_ENABLED
 		///IOS SPECIFIC - checks game center availability and logins into it.
 		/** Returns true if no error occurred */
 		void loginToGameCenter( GameCenterListener* listener );
@@ -73,6 +74,7 @@ namespace Dojo
 		void requestAchievements( GameCenterListener* listener);
 		
 		void showDefaultLeaderboard();
+#endif
 		
 		void enableScreenSaver( bool s );
 		
