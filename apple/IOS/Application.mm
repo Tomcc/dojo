@@ -46,10 +46,12 @@ using namespace Dojo;
 
 - (void) layoutSubviews
 {		
-	// Set the scale factor to be the same as the main screen
-	if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
+	//set the scale factor to 2 to support retina display, if available
+	
+	bool hasRetina = ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] && [[UIScreen mainScreen] scale] == 2);
+	
+	if ( hasRetina && [self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")])
 		[self setContentScaleFactor:2];
-	}	
 	
 	if( !renderImpl )
 	{

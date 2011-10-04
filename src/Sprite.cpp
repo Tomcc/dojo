@@ -19,8 +19,9 @@ AnimatedQuad( level, pos, pp )
 		setAnimation( registerAnimation( s, tpf ) );
 		
 		//set convenient size to fit the first frame			
-		setSize( screenSize );	
 		_updateScreenSize();
+
+		setSize( screenSize );	
 	}
 }
 

@@ -388,8 +388,9 @@ void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListe
 			{	
 				int64_t value = [query localPlayerScore].value;
 				
+				//no listed score
 				if( scores == nil )
-					value = -1;
+					value = 0;
 				
 				listener->onHighScoreGet( query.category, value, false );
 			}
