@@ -382,6 +382,16 @@ namespace Dojo
 			return getData( autoMemberName( idx ) );
 		}	
 		
+		inline const EntryMap::const_iterator begin() const
+		{
+			return map.begin();
+		}
+		
+		inline const EntryMap::const_iterator end() const
+		{
+			return map.end();
+		}
+		
 		///removes a member named key
 		inline void remove( const Dojo::String& key )
 		{
@@ -403,6 +413,15 @@ namespace Dojo
 		void serialize( String& buf, String indent = String::EMPTY ) const;
 
 		void deserialize( StringReader& buf );
+		
+		///diagnostic method that serializes the table in a string
+		String toString()
+		{
+			String str = getName() + '\n';
+			serialize( str );
+			
+			return str;
+		}
 		
 		inline void debug()
 		{

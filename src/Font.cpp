@@ -8,7 +8,7 @@
 
 using namespace Dojo;
 
-void blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
+void Font::_blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 {
 	DEBUG_ASSERT( dest );
 	DEBUG_ASSERT( bitmap );
@@ -48,7 +48,7 @@ void blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 	}
 }
 
-void blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
+void Font::_blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
 {
 	DEBUG_ASSERT( dest );
 	DEBUG_ASSERT( bitmap );
@@ -179,7 +179,7 @@ font( f )
 
 			//blit the bitmap if it was rendered
 			if( bitmap->buffer )
-				blit( buf, bitmap, x, y, sxp2 );
+				_blit( buf, bitmap, x, y, sxp2 );
 
 			if( font->border > 0 )
 			{			
@@ -198,7 +198,7 @@ font( f )
 
 				//blit the bitmap if it was rendered
 				if( bitmap->buffer )
-					blitborder( buf, bitmap, x, y, sxp2, font->borderColor );
+					_blitborder( buf, bitmap, x, y, sxp2, font->borderColor );
 			}
 		}
 	}

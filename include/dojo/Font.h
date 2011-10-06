@@ -220,6 +220,10 @@ namespace Dojo
 		void _prepareFace();
 		
 		Page* pages[ FONT_MAX_PAGES ]; 
+		
+		static void _blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
+		static void _blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
+
 	};
 }
 

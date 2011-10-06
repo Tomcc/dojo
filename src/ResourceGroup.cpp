@@ -266,7 +266,7 @@ void ResourceGroup::loadPrefabMeshes()
 	
 	addMesh( cube, "texturedCube" );
 	
-	//MEGA HACK -------------------------------------------
+	//create a cube
 	
 	cube = new Mesh( this );
 	

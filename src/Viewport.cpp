@@ -99,7 +99,6 @@ Vector Viewport::getRayDirecton( const Vector& screenSpacePos )
 
 void Viewport::makeScreenSize( Vector& dest, int w, int h )
 {	
-	//HACK
 	dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
 	dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
 }

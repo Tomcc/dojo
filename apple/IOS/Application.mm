@@ -132,6 +132,8 @@ using namespace Dojo;
 	return YES; 
 }
 
+Vector getInterfaceOrientatedPoint( int x, int y, Render* r );
+
 Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 {		
 	x *= r->getContentScale();

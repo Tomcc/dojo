@@ -226,9 +226,6 @@ void Render::startFrame()
 
 	viewportPixelRatio *= nativeToScreenRatio;
 	
-	//HACK - uncomment to get proportional pixel scale across resolutions
-	//viewportPixelRatio *= devicePixelScale;
-
 	frameStarted = true;
 	
 	//draw the backdrop
@@ -549,7 +546,7 @@ void Render::renderLayer( Layer* list )
 		{
 			s = list->at(i);
 
-			if( s->isVisible() ) //HACK && viewport->isContainedInFrustum( s ) )
+			if( s->isVisible() && viewport->isContainedInFrustum( s ) )
 				renderElement( s );
 		}
 	}
