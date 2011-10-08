@@ -33,7 +33,10 @@ Platform( config )
 {
     pool = [[NSAutoreleasePool alloc] init];
 	
-	locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
+	if( [[NSLocale preferredLanguages] count] )
+		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
+	else
+		locale = "en";
 }
 
 ApplePlatform::~ApplePlatform()
@@ -69,20 +72,16 @@ String ApplePlatform::getRootPath()
 void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& width, int& height )
 {
 	width = height = 0;
-	
-	NSString* imgPath = path.toNSString();
 		
-	//magic OBJC code
-	NSData *texData = [[NSData alloc] initWithContentsOfFile: imgPath ];
+	NSURL* url = [NSURL fileURLWithPath: path.toNSString() ];
 	
-	DEBUG_ASSERT( texData );
+	CGDataProviderRef prov = CGDataProviderCreateWithURL( (CFURLRef)url );
 	
-	CGDataProviderRef prov = CGDataProviderCreateWithData( 
-														  NULL, 
-														  [texData bytes], 
-														  [texData length], 
-														  NULL );
-	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, false, kCGRenderingIntentDefault );	
+	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
+	
+	/*UIImage* image = [[UIImage alloc] initWithContentsOfFile: path.toNSString() ];
+	
+	CGImageRef CGImage = image.CGImage;*/
 	
 	width = (int)CGImageGetWidth(CGImage);
 	height = (int)CGImageGetHeight(CGImage);	
@@ -159,10 +158,10 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
-	CGImageRelease( CGImage );
+
 	CGDataProviderRelease( prov );
-	
-	[texData release];
+	CGImageRelease( CGImage );
+	//[image release];
 }
 
 void ApplePlatform::_createApplicationDirectory()
