@@ -53,7 +53,7 @@
 #else
 
 	#define DEBUG_ASSERT( T )
-	#define DEBUG_TODO 0
+	#define DEBUG_TODO
 	#define DEBUG_OUT( T ) 
 	#define DEBUG_MESSAGE( T )
 

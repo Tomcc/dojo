@@ -415,7 +415,7 @@ namespace Dojo
 		void deserialize( StringReader& buf );
 		
 		///diagnostic method that serializes the table in a string
-		String toString()
+		inline String toString()
 		{
 			String str = getName() + '\n';
 			serialize( str );
@@ -423,13 +423,10 @@ namespace Dojo
 			return str;
 		}
 		
-		inline void debug()
+		inline void debugPrint()
 		{
-#ifdef _DEBUG
-			String buf;
-			serialize( buf );
-			
-			DEBUG_MESSAGE( buf.ASCII() );
+#ifdef _DEBUG			
+			DEBUG_MESSAGE( toString().ASCII() );
 #endif
 		}
 				

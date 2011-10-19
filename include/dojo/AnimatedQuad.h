@@ -85,7 +85,7 @@ namespace Dojo
 				if( timePerFrame == 0 )
 					return;
 				
-				if( frames->getFrameNumber() < 2 ) //can't set time on a void or one-frame animation
+				if( frames->getFrameNumber() <= 1 ) //can't set time on a void or one-frame animation
 					return;
 								
 				animationTime = t;

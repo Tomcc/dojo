@@ -31,17 +31,14 @@ using namespace std;
 ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
-    pool = [[NSAutoreleasePool alloc] init];
-	
-	if( [[NSLocale preferredLanguages] count] )
-		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
-	else
-		locale = "en";
+    //pool = [[NSAutoreleasePool alloc] init];
+		
+	locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
 }
 
 ApplePlatform::~ApplePlatform()
 {
-	[pool release];
+	//[pool release];
 }
 
 void ApplePlatform::step( float dt )
