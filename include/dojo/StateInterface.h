@@ -21,7 +21,8 @@ namespace Dojo
 		StateInterface( bool autoDelete = true ) :
 		currentState(-1),
 		currentStatePtr( NULL ),
-		autoDelete( autoDelete )
+		autoDelete( autoDelete ),
+		mLoopDisabled( false )
 		{
 			nextState = -1;
 			nextStatePtr = NULL;
@@ -51,10 +52,10 @@ namespace Dojo
 				_applyNextState();
 		}
 		
-		inline uint getCurrentState()					{	return currentState;	}
+		inline int getCurrentState()					{	return currentState;	}
 		inline StateInterface* getChildState()			{	return currentStatePtr;	}
 		
-		inline bool isCurrentState( uint state )		{	return currentState == state;	}
+		inline bool isCurrentState( int state )			{	return currentState == state;	}
 		inline bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
 		inline bool isAutoDeleted()						{	return autoDelete;				}
 
@@ -72,7 +73,8 @@ namespace Dojo
 		///loop the execution of this state (and its childs)
 		inline void loop( float dt )
 		{			
-			_subStateLoop( dt );
+			if( !mLoopDisabled )  //do not call a loop if the current state is not "active" (ie-transition in progress)
+				_subStateLoop( dt );
 		
 			onLoop( dt );
 			
@@ -98,6 +100,8 @@ namespace Dojo
 		bool autoDelete;
 		
 	private:
+		
+		bool mLoopDisabled;
 				
 		//------ state events
 		virtual void onBegin()
@@ -194,7 +198,10 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( hasNextState() );
 			
-			if( onTransition() )
+			bool transitionAllowed = onTransition();
+			mLoopDisabled = !transitionAllowed;  //disable the loop callback until the transition has been made
+			
+			if( transitionAllowed )
 			{
 				//they have to be cancelled before, because the state that is beginning
 				//could need to set them again
@@ -210,8 +217,7 @@ namespace Dojo
 				else if( temp != -1 )
 					_nextState( temp );
 			}
-		}
-		
+		}		
 	};
 }
 

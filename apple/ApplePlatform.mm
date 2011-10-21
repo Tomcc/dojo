@@ -45,6 +45,9 @@ void ApplePlatform::step( float dt )
 {
 	Timer frameTimer;
 	
+	//clamp to max dt to avoid crazy behaviour
+	dt = Math::max( dt, game->getMaximumFrameLength() );		
+	
     game->loop(dt);
     
     render->render();

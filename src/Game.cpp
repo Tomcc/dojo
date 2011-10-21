@@ -9,17 +9,20 @@
 
 using namespace Dojo;
 
-Game::Game( const String& gamename, uint w, uint h, Render::RenderOrientation r, float freq ) :
+Game::Game( const String& gamename, uint w, uint h, Render::RenderOrientation r, float nativedt, float maximumdt ) :
 name( gamename ),
 nativeWidth( w ),
 nativeHeight( h ),
 nativeOrientation( r ),
-nativeFrequency( freq )
+mNativeFrameLength( nativedt ),
+mMaxFrameLength( maximumdt )
 {	
 	DEBUG_ASSERT( name.size() );
 	DEBUG_ASSERT( w > 0 );
 	DEBUG_ASSERT( h > 0 );
 	DEBUG_ASSERT( r <= Render::RO_LANDSCAPE_RIGHT );
+	DEBUG_ASSERT( mNativeFrameLength > 0 );
+	DEBUG_ASSERT( mMaxFrameLength >= mNativeFrameLength );
 
 	Math::seedRandom();
 	

@@ -29,7 +29,7 @@ namespace Dojo
 	{
 	public:
 			
-		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation, float nativeFrequency = 1.f/60.f );
+		Game( const String& name, uint nativeWidth, uint nativeHeight, Render::RenderOrientation nativeOrientation, float nativeFrequency = 1.f/60.f, float maxFrameLength = 1.f/30.f );
 		
 		virtual ~Game();
 		
@@ -63,9 +63,14 @@ namespace Dojo
 			return nativeHeight;
 		}
 		
-		inline float getNativeFrequency()
+		inline float getNativeFrameLength()
 		{
-			return nativeFrequency;
+			return mNativeFrameLength;
+		}
+		
+		inline float getMaximumFrameLength()
+		{
+			return mMaxFrameLength;
 		}
 		
 		inline Render::RenderOrientation getNativeOrientation()
@@ -82,7 +87,7 @@ namespace Dojo
 	protected:
 		
 		uint nativeWidth, nativeHeight;
-		float nativeFrequency;
+		float mNativeFrameLength, mMaxFrameLength;
 		
 		Render::RenderOrientation nativeOrientation;
 		
