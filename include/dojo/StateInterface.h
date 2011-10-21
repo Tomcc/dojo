@@ -128,6 +128,15 @@ namespace Dojo
 		{
 			
 		}
+		
+		///this is called each time a transition will happen. 
+		/**
+		 returning false delays the transition to the next frame (with a new onTransition call)
+		*/
+		virtual bool onTransition()
+		{
+			return true;	
+		}
 				
 		inline void _subStateBegin()
 		{
@@ -178,27 +187,29 @@ namespace Dojo
 			currentState = -1;
 			currentStatePtr = child;
 			
-			_subStateBegin();			
+			_subStateBegin();
 		}
 		
 		inline void _applyNextState()
 		{
 			DEBUG_ASSERT( hasNextState() );
 			
-			//they have to be cancelled before, because the state that is beginning
-			//could need to set them again
-			int temp = nextState;
-			StateInterface* tempPtr = nextStatePtr;
+			if( onTransition() )
+			{
+				//they have to be cancelled before, because the state that is beginning
+				//could need to set them again
+				int temp = nextState;
+				StateInterface* tempPtr = nextStatePtr;
 			
-			nextState = -1;
-			nextStatePtr = NULL;
+				nextState = -1;
+				nextStatePtr = NULL;
 			
-			//change state
-			if( tempPtr )
-				_nextState( tempPtr );
-			else if( temp != -1 )
-				_nextState( temp );
-			
+				//change state
+				if( tempPtr )
+					_nextState( tempPtr );
+				else if( temp != -1 )
+					_nextState( temp );
+			}
 		}
 		
 	};

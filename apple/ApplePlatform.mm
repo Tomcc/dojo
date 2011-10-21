@@ -106,9 +106,9 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	
 	//correct premultiplied alpha - only in the useful part of the image
 	///while doing this, extend the color to the pitch row to avoid artifacts at borders
-	byte* ptr = (byte*)imageData;
+	byte* ptr;
 	byte* rowptr = (byte*)imageData;
-	byte r, g, b;
+	byte r = 0, g = 0, b = 0;
 	
 	for( int i = 0; i < height; ++i )
 	{

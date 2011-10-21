@@ -50,8 +50,7 @@ void IOSPlatform::initialise()
 	else
 		devicePixelScale = game->getNativeWidth() / bounds.size.width;
 	
-	uint width = [UIScreen mainScreen].bounds.size.height;
-	uint height = [UIScreen mainScreen].bounds.size.width;
+	uint width, height;
 		
 //RENDER
 	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
