@@ -31,14 +31,16 @@ using namespace std;
 ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
-    //pool = [[NSAutoreleasePool alloc] init];
+	//HACK
+    pool = [[NSAutoreleasePool alloc] init];
 		
 	locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
 }
 
 ApplePlatform::~ApplePlatform()
 {
-	//[pool release];
+	//HACK
+	[pool release];
 }
 
 void ApplePlatform::step( float dt )
@@ -46,7 +48,7 @@ void ApplePlatform::step( float dt )
 	Timer frameTimer;
 	
 	//clamp to max dt to avoid crazy behaviour
-	dt = Math::max( dt, game->getMaximumFrameLength() );		
+	dt = Math::min( dt, game->getMaximumFrameLength() );		
 	
     game->loop(dt);
     

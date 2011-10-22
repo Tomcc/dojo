@@ -22,7 +22,8 @@ namespace Dojo
 		currentState(-1),
 		currentStatePtr( NULL ),
 		autoDelete( autoDelete ),
-		mLoopDisabled( false )
+		mTransitionCompleted( true ),
+		mCanSetNextState( true )
 		{
 			nextState = -1;
 			nextStatePtr = NULL;
@@ -34,8 +35,21 @@ namespace Dojo
 				SAFE_DELETE( currentStatePtr );
 		}
 		
-		inline void setState( uint newState )		
+		///sets a new substate either immediately or at the next loop.
+		/**
+		 	-Immediately when there's no current state, eg. at begin
+		 	-at the next loop when it replaces a previous state
+		 
+		Warning, calling setState
+		 	-with a pending state change
+		 	-during a state change (onStateBegin, onTransition, onStateEnd)
+		 	is an error and a failed ASSERT.
+		*/
+		inline void setState( int newState )		
 		{			
+			DEBUG_ASSERT( mCanSetNextState );
+			DEBUG_ASSERT( !hasNextState() );
+			
 			nextState = newState;
 			
 			//start immediately if we have no current state
@@ -43,8 +57,21 @@ namespace Dojo
 				_applyNextState();
 		}
 		
+		///sets a new substate either immediately or at the next loop.
+		/**
+		 -Immediately when there's no current state, eg. at begin
+		 -at the next loop when it replaces a previous state
+		 
+		 Warning, calling setState
+		 -with a pending state change
+		 -during a state change (onStateBegin, onTransition, onStateEnd)
+		 is an error and a failed ASSERT.
+		 */
 		inline void setState( StateInterface* child )
 		{
+			DEBUG_ASSERT( mCanSetNextState );
+			DEBUG_ASSERT( !hasNextState() );
+			
 			nextStatePtr = child;
 						
 			//start immediately if we have no current state
@@ -64,6 +91,8 @@ namespace Dojo
 		inline bool hasCurrentState()					{	return currentStatePtr != NULL || currentState != -1; }
 		inline bool hasNextState()						{	return nextStatePtr != NULL || nextState != -1; }
 		
+		inline bool hasPendingTransition()				{	return !mTransitionCompleted;	}
+		
 		///begin the execution of this state
 		inline void begin()
 		{
@@ -73,7 +102,7 @@ namespace Dojo
 		///loop the execution of this state (and its childs)
 		inline void loop( float dt )
 		{			
-			if( !mLoopDisabled )  //do not call a loop if the current state is not "active" (ie-transition in progress)
+			if( mTransitionCompleted )  //do not call a loop if the current state is not "active" (ie-transition in progress)
 				_subStateLoop( dt );
 		
 			onLoop( dt );
@@ -101,7 +130,7 @@ namespace Dojo
 		
 	private:
 		
-		bool mLoopDisabled;
+		bool mTransitionCompleted, mCanSetNextState;
 				
 		//------ state events
 		virtual void onBegin()
@@ -168,54 +197,75 @@ namespace Dojo
 				
 		inline void _nextState( uint newState )		
 		{
-			_subStateEnd();
+			//first try, call substate end
+			if( mTransitionCompleted )
+			{
+				_subStateEnd();
 			
-			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
-				SAFE_DELETE( currentStatePtr );
+				if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+					SAFE_DELETE( currentStatePtr );
+			}
 			
-			currentState = newState;
-			currentStatePtr = NULL;
+			//now try the transition
+			mTransitionCompleted = onTransition();
+		
+			if( mTransitionCompleted )
+			{
+				currentState = newState;
+				currentStatePtr = NULL;
 			
-			_subStateBegin();
+				_subStateBegin();
+			}
 		}
 		
 		inline void _nextState( StateInterface* child )
 		{
 			DEBUG_ASSERT( child );
 			
-			_subStateEnd();
+			//first try, call substate end
+			if( mTransitionCompleted )
+			{
+				_subStateEnd();
 			
-			if( currentStatePtr && currentStatePtr->isAutoDeleted() )
-				SAFE_DELETE( currentStatePtr );
+				if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+					SAFE_DELETE( currentStatePtr );
+			}
 			
-			currentState = -1;
-			currentStatePtr = child;
+			//now try the transition
+			mTransitionCompleted = onTransition();
 			
-			_subStateBegin();
+			if( mTransitionCompleted )
+			{				
+				currentState = -1;
+				currentStatePtr = child;
+				
+				_subStateBegin();	
+			}			
 		}
 		
 		inline void _applyNextState()
 		{
 			DEBUG_ASSERT( hasNextState() );
+						
+			//they have to be cancelled before, because the state that is beginning
+			//could need to set them again
+			int temp = nextState;
+			StateInterface* tempPtr = nextStatePtr;
 			
-			bool transitionAllowed = onTransition();
-			mLoopDisabled = !transitionAllowed;  //disable the loop callback until the transition has been made
-			
-			if( transitionAllowed )
+			mCanSetNextState = false; //disable state setting - it can't be done while changing a state!
+				
+			//change state
+			if( tempPtr )
+				_nextState( tempPtr );
+			else if( temp != -1 )
+				_nextState( temp );
+
+			if( mTransitionCompleted )
 			{
-				//they have to be cancelled before, because the state that is beginning
-				//could need to set them again
-				int temp = nextState;
-				StateInterface* tempPtr = nextStatePtr;
-			
 				nextState = -1;
 				nextStatePtr = NULL;
-			
-				//change state
-				if( tempPtr )
-					_nextState( tempPtr );
-				else if( temp != -1 )
-					_nextState( temp );
+				
+				mCanSetNextState = true;
 			}
 		}		
 	};
