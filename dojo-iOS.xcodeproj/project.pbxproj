@@ -9,61 +9,61 @@
 /* Begin PBXBuildFile section */
 		4372C3B214562EBA00E80F20 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C3B114562EBA00E80F20 /* Foundation.framework */; };
 		4372C3C314562F2F00E80F20 /* dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3C214562F2F00E80F20 /* dojo-Prefix.pch */; };
-		4372C42814562F4D00E80F20 /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3C514562F4D00E80F20 /* ApplePlatform.h */; };
+		4372C42814562F4D00E80F20 /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3C514562F4D00E80F20 /* ApplePlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4372C42914562F4D00E80F20 /* ApplePlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4372C3C614562F4D00E80F20 /* ApplePlatform.mm */; };
-		4372C42A14562F4D00E80F20 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3C814562F4D00E80F20 /* AppDelegate.h */; };
+		4372C42A14562F4D00E80F20 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3C814562F4D00E80F20 /* AppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4372C42B14562F4D00E80F20 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4372C3C914562F4D00E80F20 /* AppDelegate.mm */; };
-		4372C42C14562F4D00E80F20 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3CA14562F4D00E80F20 /* Application.h */; };
+		4372C42C14562F4D00E80F20 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3CA14562F4D00E80F20 /* Application.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4372C42D14562F4D00E80F20 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4372C3CB14562F4D00E80F20 /* Application.mm */; };
-		4372C42E14562F4D00E80F20 /* IOSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3CC14562F4D00E80F20 /* IOSPlatform.h */; };
+		4372C42E14562F4D00E80F20 /* IOSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3CC14562F4D00E80F20 /* IOSPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4372C42F14562F4D00E80F20 /* IOSPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4372C3CD14562F4D00E80F20 /* IOSPlatform.mm */; };
-		4372C43514562F4D00E80F20 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3D814562F4D00E80F20 /* AnimatedQuad.h */; };
-		4372C43614562F4D00E80F20 /* Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3D914562F4D00E80F20 /* Array.h */; };
-		4372C43714562F4D00E80F20 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DA14562F4D00E80F20 /* Buffer.h */; };
-		4372C43814562F4D00E80F20 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DB14562F4D00E80F20 /* Color.h */; };
-		4372C43914562F4D00E80F20 /* dojo_common_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DC14562F4D00E80F20 /* dojo_common_header.h */; };
-		4372C43A14562F4D00E80F20 /* dojo_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DD14562F4D00E80F20 /* dojo_config.h */; };
-		4372C43B14562F4D00E80F20 /* dojomath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DE14562F4D00E80F20 /* dojomath.h */; };
-		4372C43C14562F4D00E80F20 /* dojostring.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DF14562F4D00E80F20 /* dojostring.h */; };
-		4372C43D14562F4D00E80F20 /* Email.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E014562F4D00E80F20 /* Email.h */; };
-		4372C43E14562F4D00E80F20 /* FocusListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E114562F4D00E80F20 /* FocusListener.h */; };
-		4372C43F14562F4D00E80F20 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E214562F4D00E80F20 /* Font.h */; };
-		4372C44014562F4D00E80F20 /* FontSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E314562F4D00E80F20 /* FontSystem.h */; };
-		4372C44114562F4D00E80F20 /* FrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E414562F4D00E80F20 /* FrameSet.h */; };
-		4372C44214562F4D00E80F20 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E514562F4D00E80F20 /* Game.h */; };
-		4372C44314562F4D00E80F20 /* GameState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E614562F4D00E80F20 /* GameState.h */; };
-		4372C44414562F4D00E80F20 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E714562F4D00E80F20 /* InputSystem.h */; };
-		4372C44514562F4D00E80F20 /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E814562F4D00E80F20 /* Light.h */; };
-		4372C44614562F4D00E80F20 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E914562F4D00E80F20 /* Mesh.h */; };
-		4372C44714562F4D00E80F20 /* Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EA14562F4D00E80F20 /* Model.h */; };
-		4372C44814562F4D00E80F20 /* Noise.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EB14562F4D00E80F20 /* Noise.h */; };
-		4372C44914562F4D00E80F20 /* Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EC14562F4D00E80F20 /* Object.h */; };
-		4372C44A14562F4D00E80F20 /* Particle.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3ED14562F4D00E80F20 /* Particle.h */; };
-		4372C44B14562F4D00E80F20 /* ParticlePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EE14562F4D00E80F20 /* ParticlePool.h */; };
-		4372C44C14562F4D00E80F20 /* Plane.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EF14562F4D00E80F20 /* Plane.h */; };
-		4372C44D14562F4D00E80F20 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F014562F4D00E80F20 /* Platform.h */; };
-		4372C44E14562F4D00E80F20 /* Render.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F114562F4D00E80F20 /* Render.h */; };
-		4372C44F14562F4D00E80F20 /* Renderable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F214562F4D00E80F20 /* Renderable.h */; };
-		4372C45014562F4D00E80F20 /* RenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F314562F4D00E80F20 /* RenderState.h */; };
-		4372C45114562F4D00E80F20 /* ResourceGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F414562F4D00E80F20 /* ResourceGroup.h */; };
-		4372C45214562F4D00E80F20 /* Serializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F514562F4D00E80F20 /* Serializable.h */; };
-		4372C45314562F4D00E80F20 /* SoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F614562F4D00E80F20 /* SoundBuffer.h */; };
-		4372C45414562F4D00E80F20 /* SoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F714562F4D00E80F20 /* SoundManager.h */; };
-		4372C45514562F4D00E80F20 /* SoundSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F814562F4D00E80F20 /* SoundSet.h */; };
-		4372C45614562F4D00E80F20 /* SoundSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F914562F4D00E80F20 /* SoundSource.h */; };
-		4372C45714562F4D00E80F20 /* Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FA14562F4D00E80F20 /* Sprite.h */; };
-		4372C45814562F4D00E80F20 /* StateInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FB14562F4D00E80F20 /* StateInterface.h */; };
-		4372C45914562F4D00E80F20 /* StringReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FC14562F4D00E80F20 /* StringReader.h */; };
-		4372C45A14562F4D00E80F20 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FD14562F4D00E80F20 /* Table.h */; };
-		4372C45B14562F4D00E80F20 /* TestUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FE14562F4D00E80F20 /* TestUnit.h */; };
-		4372C45C14562F4D00E80F20 /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FF14562F4D00E80F20 /* TextArea.h */; };
-		4372C45D14562F4D00E80F20 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40014562F4D00E80F20 /* Texture.h */; };
-		4372C45E14562F4D00E80F20 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40114562F4D00E80F20 /* Timer.h */; };
-		4372C45F14562F4D00E80F20 /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40214562F4D00E80F20 /* TouchSource.h */; };
-		4372C46014562F4D00E80F20 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40314562F4D00E80F20 /* Trail.h */; };
-		4372C46114562F4D00E80F20 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40414562F4D00E80F20 /* Utils.h */; };
-		4372C46214562F4D00E80F20 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40514562F4D00E80F20 /* Vector.h */; };
-		4372C46314562F4D00E80F20 /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40614562F4D00E80F20 /* Viewport.h */; };
+		4372C43514562F4D00E80F20 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3D814562F4D00E80F20 /* AnimatedQuad.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43614562F4D00E80F20 /* Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3D914562F4D00E80F20 /* Array.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43714562F4D00E80F20 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DA14562F4D00E80F20 /* Buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43814562F4D00E80F20 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DB14562F4D00E80F20 /* Color.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43914562F4D00E80F20 /* dojo_common_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DC14562F4D00E80F20 /* dojo_common_header.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43A14562F4D00E80F20 /* dojo_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DD14562F4D00E80F20 /* dojo_config.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43B14562F4D00E80F20 /* dojomath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DE14562F4D00E80F20 /* dojomath.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43C14562F4D00E80F20 /* dojostring.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3DF14562F4D00E80F20 /* dojostring.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43D14562F4D00E80F20 /* Email.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E014562F4D00E80F20 /* Email.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43E14562F4D00E80F20 /* FocusListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E114562F4D00E80F20 /* FocusListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C43F14562F4D00E80F20 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E214562F4D00E80F20 /* Font.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44014562F4D00E80F20 /* FontSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E314562F4D00E80F20 /* FontSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44114562F4D00E80F20 /* FrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E414562F4D00E80F20 /* FrameSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44214562F4D00E80F20 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E514562F4D00E80F20 /* Game.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44314562F4D00E80F20 /* GameState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E614562F4D00E80F20 /* GameState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44414562F4D00E80F20 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E714562F4D00E80F20 /* InputSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44514562F4D00E80F20 /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E814562F4D00E80F20 /* Light.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44614562F4D00E80F20 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3E914562F4D00E80F20 /* Mesh.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44714562F4D00E80F20 /* Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EA14562F4D00E80F20 /* Model.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44814562F4D00E80F20 /* Noise.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EB14562F4D00E80F20 /* Noise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44914562F4D00E80F20 /* Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EC14562F4D00E80F20 /* Object.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44A14562F4D00E80F20 /* Particle.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3ED14562F4D00E80F20 /* Particle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44B14562F4D00E80F20 /* ParticlePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EE14562F4D00E80F20 /* ParticlePool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44C14562F4D00E80F20 /* Plane.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3EF14562F4D00E80F20 /* Plane.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44D14562F4D00E80F20 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F014562F4D00E80F20 /* Platform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44E14562F4D00E80F20 /* Render.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F114562F4D00E80F20 /* Render.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C44F14562F4D00E80F20 /* Renderable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F214562F4D00E80F20 /* Renderable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45014562F4D00E80F20 /* RenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F314562F4D00E80F20 /* RenderState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45114562F4D00E80F20 /* ResourceGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F414562F4D00E80F20 /* ResourceGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45214562F4D00E80F20 /* Serializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F514562F4D00E80F20 /* Serializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45314562F4D00E80F20 /* SoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F614562F4D00E80F20 /* SoundBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45414562F4D00E80F20 /* SoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F714562F4D00E80F20 /* SoundManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45514562F4D00E80F20 /* SoundSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F814562F4D00E80F20 /* SoundSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45614562F4D00E80F20 /* SoundSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3F914562F4D00E80F20 /* SoundSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45714562F4D00E80F20 /* Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FA14562F4D00E80F20 /* Sprite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45814562F4D00E80F20 /* StateInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FB14562F4D00E80F20 /* StateInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45914562F4D00E80F20 /* StringReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FC14562F4D00E80F20 /* StringReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45A14562F4D00E80F20 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FD14562F4D00E80F20 /* Table.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45B14562F4D00E80F20 /* TestUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FE14562F4D00E80F20 /* TestUnit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45C14562F4D00E80F20 /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C3FF14562F4D00E80F20 /* TextArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45D14562F4D00E80F20 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40014562F4D00E80F20 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45E14562F4D00E80F20 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40114562F4D00E80F20 /* Timer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C45F14562F4D00E80F20 /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40214562F4D00E80F20 /* TouchSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C46014562F4D00E80F20 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40314562F4D00E80F20 /* Trail.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C46114562F4D00E80F20 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40414562F4D00E80F20 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C46214562F4D00E80F20 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40514562F4D00E80F20 /* Vector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4372C46314562F4D00E80F20 /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4372C40614562F4D00E80F20 /* Viewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4372C46414562F4D00E80F20 /* AnimatedQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C40814562F4D00E80F20 /* AnimatedQuad.cpp */; };
 		4372C46514562F4D00E80F20 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C40914562F4D00E80F20 /* Color.cpp */; };
 		4372C46614562F4D00E80F20 /* Email.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C40A14562F4D00E80F20 /* Email.cpp */; };
@@ -103,6 +103,7 @@
 		4372C48F1456313800E80F20 /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48A1456313800E80F20 /* libPocoFoundation.a */; };
 		4372C4901456313800E80F20 /* libvorbis_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48B1456313800E80F20 /* libvorbis_iphone.a */; };
 		4372C4911456313800E80F20 /* libvorbisfile_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48C1456313800E80F20 /* libvorbisfile_iphone.a */; };
+		4372C49F1456351C00E80F20 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C49E1456351C00E80F20 /* GameKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -203,6 +204,7 @@
 		4372C48A1456313800E80F20 /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = dependencies/lib/libPocoFoundation.a; sourceTree = "<group>"; };
 		4372C48B1456313800E80F20 /* libvorbis_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis_iphone.a; path = dependencies/lib/libvorbis_iphone.a; sourceTree = "<group>"; };
 		4372C48C1456313800E80F20 /* libvorbisfile_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile_iphone.a; path = dependencies/lib/libvorbisfile_iphone.a; sourceTree = "<group>"; };
+		4372C49E1456351C00E80F20 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +212,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4372C49F1456351C00E80F20 /* GameKit.framework in Frameworks */,
 				4372C4851456305200E80F20 /* OpenGLES.framework in Frameworks */,
 				4372C3B214562EBA00E80F20 /* Foundation.framework in Frameworks */,
 				4372C48D1456313800E80F20 /* libfreetype.a in Frameworks */,
@@ -250,6 +253,7 @@
 				4372C4881456313800E80F20 /* libfreetype.a */,
 				4372C4891456313800E80F20 /* libogg_iphone.a */,
 				4372C48A1456313800E80F20 /* libPocoFoundation.a */,
+				4372C49E1456351C00E80F20 /* GameKit.framework */,
 				4372C48B1456313800E80F20 /* libvorbis_iphone.a */,
 				4372C48C1456313800E80F20 /* libvorbisfile_iphone.a */,
 				4372C4841456305200E80F20 /* OpenGLES.framework */,
@@ -389,7 +393,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4372C3C314562F2F00E80F20 /* dojo-Prefix.pch in Headers */,
 				4372C42814562F4D00E80F20 /* ApplePlatform.h in Headers */,
 				4372C42A14562F4D00E80F20 /* AppDelegate.h in Headers */,
 				4372C42C14562F4D00E80F20 /* Application.h in Headers */,
@@ -441,6 +444,7 @@
 				4372C46114562F4D00E80F20 /* Utils.h in Headers */,
 				4372C46214562F4D00E80F20 /* Vector.h in Headers */,
 				4372C46314562F4D00E80F20 /* Viewport.h in Headers */,
+				4372C3C314562F2F00E80F20 /* dojo-Prefix.pch in Headers */,
 				4372C487145630DA00E80F20 /* stdafx.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -474,7 +478,7 @@
 				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = none;
 			};
-			buildConfigurationList = 4372C3A814562EBA00E80F20 /* Build configuration list for PBXProject "dojo-IOS" */;
+			buildConfigurationList = 4372C3A814562EBA00E80F20 /* Build configuration list for PBXProject "dojo-iOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -548,8 +552,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					GAME_CENTER_ENABLED,
 					DOJO_IOS,
-					DEBUG,
+					_DEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -569,7 +574,10 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = DOJO_IOS;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					GAME_CENTER_ENABLED,
+					DOJO_IOS,
+				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -628,7 +636,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4372C3A814562EBA00E80F20 /* Build configuration list for PBXProject "dojo-IOS" */ = {
+		4372C3A814562EBA00E80F20 /* Build configuration list for PBXProject "dojo-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4372C3B914562EBA00E80F20 /* Debug */,

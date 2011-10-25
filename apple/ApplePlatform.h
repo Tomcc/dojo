@@ -10,9 +10,9 @@
 #ifndef __ApplePlatform_h
 #define __ApplePlatform_h
 
-#include "dojo_common_header.h"
+#include "../include/dojo/dojo_common_header.h"
 
-#include "Platform.h"
+#include "../include/dojo/Platform.h"
 
 #ifdef __OBJC__
 	#import <Foundation/NSAutoreleasePool.h>

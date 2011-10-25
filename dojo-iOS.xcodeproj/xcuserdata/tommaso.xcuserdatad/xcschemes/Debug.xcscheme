@@ -16,7 +16,7 @@
                BlueprintIdentifier = "4372C3AD14562EBA00E80F20"
                BuildableName = "libdojo.a"
                BlueprintName = "dojo"
-               ReferencedContainer = "container:dojo-IOS.xcodeproj">
+               ReferencedContainer = "container:dojo-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
