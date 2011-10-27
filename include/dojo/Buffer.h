@@ -48,10 +48,8 @@ namespace Dojo
 			return loaded;
 		}
 		
-		inline uint getByteSize()
+		inline int getByteSize()
 		{
-			DEBUG_ASSERT( size );
-			
 			return size;
 		}
 		

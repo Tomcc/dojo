@@ -50,7 +50,7 @@ namespace Dojo
 		}
 
 		///registers the given animation and returns its handle
-		inline uint registerAnimation( FrameSet* set, float timePerFrame )
+		inline int registerAnimation( FrameSet* set, float timePerFrame )
 		{
 			DEBUG_ASSERT( set );
 			
@@ -61,11 +61,12 @@ namespace Dojo
 			return animations.size()-1;
 		}
 		
-		uint registerAnimation( const String& base, float timePerFrame );
+		int registerAnimation( const String& base, float timePerFrame );
 				
 		///sets the animation at the given index
-		inline void setAnimation( uint i ) 	
+		inline void setAnimation( int i ) 	
 		{				
+			DEBUG_ASSERT( i >= 0 );
 			DEBUG_ASSERT( animations.size() > i );
 			
 			animation = animations.at(i);

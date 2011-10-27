@@ -12,12 +12,14 @@ bool FrameSet::load()
 	if( isLoaded() )
 		return true;
 	
-	for( uint i = 0; i < frames.size(); ++i )
+	for( int i = 0; i < frames.size(); ++i )
 	{
-		if( frames.at(i)->load() )
-	
+		Texture* t = frames[i];
+		if( t->load() )
+		{
 			// count bytesize
-			size += frames.at(i)->getByteSize();
+			size += t->getByteSize();
+		}
 	}		
 		
 	loaded = true;		

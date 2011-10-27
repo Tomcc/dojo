@@ -80,7 +80,7 @@ namespace Dojo
 		
 		///IOS SPECIFIC - copies the file from which the passed texture was created to the camera roll
 		/**TODO - actually read the texture from VRAM, useful for auto screenshots*/
-		void copyImageIntoCameraRoll( Texture* tex );
+		void copyImageIntoCameraRoll( const Dojo::String& path );
 				
 		///IOS SPECIFIC - plays and loops an audio file using hardware system decompression
 		void playMp3File( const Dojo::String& relPath, bool loop );		

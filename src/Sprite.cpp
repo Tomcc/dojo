@@ -25,7 +25,7 @@ AnimatedQuad( level, pos, pp )
 	}
 }
 
-uint Sprite::registerAnimation( const String& base, float timePerFrame )
+int Sprite::registerAnimation( const String& base, float timePerFrame )
 {
 	FrameSet* s = gameState->getFrameSet( base );
 	

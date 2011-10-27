@@ -71,13 +71,16 @@ String ApplePlatform::getRootPath()
 	return String( [[NSBundle mainBundle] bundlePath] );
 }
 
-void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& width, int& height )
+bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& width, int& height )
 {
 	width = height = 0;
 		
 	NSURL* url = [NSURL fileURLWithPath: path.toNSString() ];
 	
 	CGDataProviderRef prov = CGDataProviderCreateWithURL( (CFURLRef)url );
+	
+	if( prov == nil )
+		return false;
 	
 	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
 	
@@ -164,6 +167,8 @@ void ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	CGDataProviderRelease( prov );
 	CGImageRelease( CGImage );
 	//[image release];
+	
+	return true;
 }
 
 void ApplePlatform::_createApplicationDirectory()

@@ -103,7 +103,7 @@
 		4372C48F1456313800E80F20 /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48A1456313800E80F20 /* libPocoFoundation.a */; };
 		4372C4901456313800E80F20 /* libvorbis_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48B1456313800E80F20 /* libvorbis_iphone.a */; };
 		4372C4911456313800E80F20 /* libvorbisfile_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C48C1456313800E80F20 /* libvorbisfile_iphone.a */; };
-		4372C49F1456351C00E80F20 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C49E1456351C00E80F20 /* GameKit.framework */; };
+		4372C49F1456351C00E80F20 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C49E1456351C00E80F20 /* GameKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

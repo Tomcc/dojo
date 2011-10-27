@@ -117,7 +117,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 		imageData);
 
 	err = glGetError();
-	loaded = err == GL_NO_ERROR;
+	loaded = (err == GL_NO_ERROR);
 
 	DEBUG_ASSERT( loaded );
 	
@@ -130,7 +130,9 @@ bool Texture::loadFromPNG( const String& path )
 	
 	void* imageData = NULL;
 	
-	Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+	bool loadSuccess = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+	
+	DEBUG_ASSERT( loadSuccess );
 	
 	if( creator && creator->disableBilinear )	
 		disableBilinearFiltering();

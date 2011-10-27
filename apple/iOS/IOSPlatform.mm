@@ -254,18 +254,14 @@ void IOSPlatform::enableScreenSaver( bool s )
 	[[UIApplication sharedApplication] setIdleTimerDisabled: !s ];
 }
 
-void IOSPlatform::copyImageIntoCameraRoll( Texture* tex )
+void IOSPlatform::copyImageIntoCameraRoll( const Dojo::String& path )
 {
-	//the image has to be created from a file
-	if( tex->getFilePath().size() == 0 )
-		return;
+	DEBUG_ASSERT( path.size() );
 	
 	//create an UIImage
-	UIImage* img = [[UIImage alloc] initWithContentsOfFile: tex->getFilePath().toNSString() ];
+	UIImage* img = [UIImage imageWithContentsOfFile: path.toNSString() ];
 	
 	UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil );
-	
-	//HACK release sometimes, but not before copying ends
 }
 
 void IOSPlatform::playMp3File( const Dojo::String& relPath, bool loop )
