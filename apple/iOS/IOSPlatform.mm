@@ -42,7 +42,6 @@ void IOSPlatform::initialise()
 	
 	CGRect bounds = [[UIScreen mainScreen] bounds];
 		
-	//HACK	
 	uint devicePixelScale;
 	
 	if( game->getNativeOrientation() == Render::RO_LANDSCAPE_LEFT || game->getNativeOrientation() == Render::RO_LANDSCAPE_RIGHT )

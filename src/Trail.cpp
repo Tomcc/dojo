@@ -78,7 +78,6 @@ void Trail::onAction( float dt )
 
 	if( autoUpdate )
 	{
-		//HACK
 		/*if( elapsedTime >= updateInterval )
 		{
 			addSegment( 
