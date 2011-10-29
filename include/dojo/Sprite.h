@@ -53,10 +53,14 @@ namespace Dojo
 		inline int registerAnimation( FrameSet* set, float timePerFrame )
 		{
 			DEBUG_ASSERT( set );
-			
+						
 			Animation* a = new Animation( set, timePerFrame );
 		
 			animations.add( a );		
+			
+			//if no current animation, set this as default
+			if( animations.size() == 1 )
+				setAnimation( 0 );
 			
 			return animations.size()-1;
 		}
