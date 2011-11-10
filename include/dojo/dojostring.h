@@ -83,6 +83,22 @@ namespace Dojo
 			appendFloat( f );
 		}
 		
+		///if found, replace the given substr with the given replacement - they can be of different lengths.
+		inline void replaceToken( const String& substring, const String& replacement )
+		{
+			DEBUG_ASSERT( substring.size() );
+			
+			size_t start = find( substring );
+			
+			if( start != String::npos )
+			{
+				String postfix = substr( start + substring.size() );				
+				resize( start );
+				append( replacement );
+				append( postfix );
+			}
+		}
+		
 		inline size_t byteSize()
 		{
 			return size() * sizeof( unichar );

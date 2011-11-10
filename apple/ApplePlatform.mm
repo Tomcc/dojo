@@ -33,8 +33,11 @@ Platform( config )
 {
 	//HACK
     //pool = [[NSAutoreleasePool alloc] init];
-		
-	locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
+
+	if( [[NSLocale preferredLanguages] count ] )
+		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
+	else
+		locale = "en";
 }
 
 ApplePlatform::~ApplePlatform()
@@ -100,12 +103,12 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	
 	memset( imageData, 0, internalWidth * pitch );
 	
-	CGContextRef context = CGBitmapContextCreate(imageData, 
-												 internalWidth, 
-												 internalHeight, 
-												 8, 
-												 pitch, 
-												 colorSpace, 
+	CGContextRef context = CGBitmapContextCreate(imageData,
+												 internalWidth,
+												 internalHeight,
+												 8,
+												 pitch,
+												 colorSpace,
 												 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
 	
 	CGContextClearRect( context, CGRectMake( 0, 0, internalWidth, internalHeight ) );
