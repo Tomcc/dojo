@@ -110,6 +110,11 @@ void OSXPlatform::shutdown()
 	delete fonts;
 }
 
+void OSXPlatform::prepareThreadContext()
+{
+	DEBUG_TODO;
+}
+
 void OSXPlatform::acquireContext()
 {    
     [[view openGLContext] makeCurrentContext];

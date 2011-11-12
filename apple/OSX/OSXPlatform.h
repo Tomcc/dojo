@@ -43,6 +43,7 @@ namespace Dojo
         virtual void initialise();
 		virtual void shutdown();
         
+		virtual void prepareThreadContext();
 		virtual void acquireContext();
 		virtual void present();
         
