@@ -3,6 +3,8 @@
 #include "Sprite.h"
 
 #include "Viewport.h"
+#include "FrameSet.h"
+#include "GameState.h"
 
 using namespace Dojo;
 

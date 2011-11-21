@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "Sprite.h"
 #include "Viewport.h"
+#include "Platform.h"
 
 using namespace Dojo;
 

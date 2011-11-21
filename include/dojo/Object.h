@@ -12,8 +12,6 @@
 
 #include "dojo_common_header.h"
 
-#include <stack>
-
 #include "Vector.h"
 #include "Array.h"
 #include "dojomath.h"

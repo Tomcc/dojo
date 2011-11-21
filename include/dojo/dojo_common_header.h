@@ -17,6 +17,10 @@
 #include <sstream>
 #include <fstream>
 
+#include <ogg/ogg.h>
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
+
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #endif

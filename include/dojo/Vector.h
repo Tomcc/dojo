@@ -11,8 +11,6 @@
 
 #include "dojo_common_header.h"
 
-#include <cmath>
-
 using namespace std;
 
 namespace Dojo	

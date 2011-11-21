@@ -31,12 +31,10 @@
 		431A99AF14781A8C007AEAAE /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41D14562F4D00E80F20 /* Sprite.cpp */; };
 		431A99B014781A8C007AEAAE /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41E14562F4D00E80F20 /* String.cpp */; };
 		431A99B114781A8C007AEAAE /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41F14562F4D00E80F20 /* Table.cpp */; };
-		431A99B214781A8C007AEAAE /* TestUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42014562F4D00E80F20 /* TestUnit.cpp */; };
 		431A99B314781A8C007AEAAE /* TextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42114562F4D00E80F20 /* TextArea.cpp */; };
 		431A99B414781A8C007AEAAE /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42214562F4D00E80F20 /* Texture.cpp */; };
 		431A99B514781A8C007AEAAE /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42314562F4D00E80F20 /* Timer.cpp */; };
 		431A99B614781A8C007AEAAE /* TouchSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42414562F4D00E80F20 /* TouchSource.cpp */; };
-		431A99B714781A8C007AEAAE /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42514562F4D00E80F20 /* Trail.cpp */; };
 		431A99B814781A8C007AEAAE /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42614562F4D00E80F20 /* Vector.cpp */; };
 		431A99B914781A8C007AEAAE /* Viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42714562F4D00E80F20 /* Viewport.cpp */; };
 		431A9A1D14782574007AEAAE /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4372C4881456313800E80F20 /* libfreetype.a */; };
@@ -83,12 +81,10 @@
 		4372C47914562F4D00E80F20 /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41D14562F4D00E80F20 /* Sprite.cpp */; };
 		4372C47A14562F4D00E80F20 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41E14562F4D00E80F20 /* String.cpp */; };
 		4372C47B14562F4D00E80F20 /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C41F14562F4D00E80F20 /* Table.cpp */; };
-		4372C47C14562F4D00E80F20 /* TestUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42014562F4D00E80F20 /* TestUnit.cpp */; };
 		4372C47D14562F4D00E80F20 /* TextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42114562F4D00E80F20 /* TextArea.cpp */; };
 		4372C47E14562F4D00E80F20 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42214562F4D00E80F20 /* Texture.cpp */; };
 		4372C47F14562F4D00E80F20 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42314562F4D00E80F20 /* Timer.cpp */; };
 		4372C48014562F4D00E80F20 /* TouchSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42414562F4D00E80F20 /* TouchSource.cpp */; };
-		4372C48114562F4D00E80F20 /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42514562F4D00E80F20 /* Trail.cpp */; };
 		4372C48214562F4D00E80F20 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42614562F4D00E80F20 /* Vector.cpp */; };
 		4372C48314562F4D00E80F20 /* Viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4372C42714562F4D00E80F20 /* Viewport.cpp */; };
 /* End PBXBuildFile section */
@@ -112,8 +108,8 @@
 		431A9A4C147829E8007AEAAE /* CustomOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomOpenGLView.h; sourceTree = "<group>"; };
 		431A9A4D147829E8007AEAAE /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
 		431A9A4E147829E8007AEAAE /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
-		431A9A5314782B2E007AEAAE /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libdojo-ios.a"; path = "/Users/tommaso/Documents/DEV/dojo/build/Release-iphoneos/libdojo-ios.a"; sourceTree = "<absolute>"; };
-		431A9A5514782B2E007AEAAE /* libdojo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libdojo-osx.a"; path = "/Users/tommaso/Documents/DEV/dojo/build/Release/libdojo-osx.a"; sourceTree = "<absolute>"; };
+		432946CF147A8AFA003006FD /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		432946D0147A8AFA003006FD /* libdojo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4372C3B114562EBA00E80F20 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4372C3C214562F2F00E80F20 /* dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "dojo-Prefix.pch"; sourceTree = "<group>"; };
 		4372C3D814562F4D00E80F20 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedQuad.h; sourceTree = "<group>"; };
@@ -154,12 +150,10 @@
 		4372C3FB14562F4D00E80F20 /* StateInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateInterface.h; sourceTree = "<group>"; };
 		4372C3FC14562F4D00E80F20 /* StringReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReader.h; sourceTree = "<group>"; };
 		4372C3FD14562F4D00E80F20 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Table.h; sourceTree = "<group>"; };
-		4372C3FE14562F4D00E80F20 /* TestUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUnit.h; sourceTree = "<group>"; };
 		4372C3FF14562F4D00E80F20 /* TextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextArea.h; sourceTree = "<group>"; };
 		4372C40014562F4D00E80F20 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		4372C40114562F4D00E80F20 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
 		4372C40214562F4D00E80F20 /* TouchSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchSource.h; sourceTree = "<group>"; };
-		4372C40314562F4D00E80F20 /* Trail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trail.h; sourceTree = "<group>"; };
 		4372C40414562F4D00E80F20 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		4372C40514562F4D00E80F20 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		4372C40614562F4D00E80F20 /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Viewport.h; sourceTree = "<group>"; };
@@ -187,12 +181,10 @@
 		4372C41D14562F4D00E80F20 /* Sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sprite.cpp; sourceTree = "<group>"; };
 		4372C41E14562F4D00E80F20 /* String.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = String.cpp; sourceTree = "<group>"; };
 		4372C41F14562F4D00E80F20 /* Table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Table.cpp; sourceTree = "<group>"; };
-		4372C42014562F4D00E80F20 /* TestUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestUnit.cpp; sourceTree = "<group>"; };
 		4372C42114562F4D00E80F20 /* TextArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextArea.cpp; sourceTree = "<group>"; };
 		4372C42214562F4D00E80F20 /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		4372C42314562F4D00E80F20 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		4372C42414562F4D00E80F20 /* TouchSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchSource.cpp; sourceTree = "<group>"; };
-		4372C42514562F4D00E80F20 /* Trail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trail.cpp; sourceTree = "<group>"; };
 		4372C42614562F4D00E80F20 /* Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector.cpp; sourceTree = "<group>"; };
 		4372C42714562F4D00E80F20 /* Viewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewport.cpp; sourceTree = "<group>"; };
 		4372C4841456305200E80F20 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -318,6 +310,8 @@
 				4372C40714562F4D00E80F20 /* src */,
 				4372C3B014562EBA00E80F20 /* Frameworks-IOS */,
 				431A9A2F14782591007AEAAE /* Frameworks-OSX */,
+				432946CF147A8AFA003006FD /* libdojo-ios.a */,
+				432946D0147A8AFA003006FD /* libdojo-osx.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -386,12 +380,10 @@
 				4372C3FB14562F4D00E80F20 /* StateInterface.h */,
 				4372C3FC14562F4D00E80F20 /* StringReader.h */,
 				4372C3FD14562F4D00E80F20 /* Table.h */,
-				4372C3FE14562F4D00E80F20 /* TestUnit.h */,
 				4372C3FF14562F4D00E80F20 /* TextArea.h */,
 				4372C40014562F4D00E80F20 /* Texture.h */,
 				4372C40114562F4D00E80F20 /* Timer.h */,
 				4372C40214562F4D00E80F20 /* TouchSource.h */,
-				4372C40314562F4D00E80F20 /* Trail.h */,
 				4372C40414562F4D00E80F20 /* Utils.h */,
 				4372C40514562F4D00E80F20 /* Vector.h */,
 				4372C40614562F4D00E80F20 /* Viewport.h */,
@@ -427,12 +419,10 @@
 				4372C41D14562F4D00E80F20 /* Sprite.cpp */,
 				4372C41E14562F4D00E80F20 /* String.cpp */,
 				4372C41F14562F4D00E80F20 /* Table.cpp */,
-				4372C42014562F4D00E80F20 /* TestUnit.cpp */,
 				4372C42114562F4D00E80F20 /* TextArea.cpp */,
 				4372C42214562F4D00E80F20 /* Texture.cpp */,
 				4372C42314562F4D00E80F20 /* Timer.cpp */,
 				4372C42414562F4D00E80F20 /* TouchSource.cpp */,
-				4372C42514562F4D00E80F20 /* Trail.cpp */,
 				4372C42614562F4D00E80F20 /* Vector.cpp */,
 				4372C42714562F4D00E80F20 /* Viewport.cpp */,
 			);
@@ -455,7 +445,7 @@
 			);
 			name = "dojo-osx";
 			productName = dojo;
-			productReference = 431A9A5514782B2E007AEAAE /* libdojo-osx.a */;
+			productReference = 432946D0147A8AFA003006FD /* libdojo-osx.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		4372C3AD14562EBA00E80F20 /* dojo-ios */ = {
@@ -471,7 +461,7 @@
 			);
 			name = "dojo-ios";
 			productName = dojo;
-			productReference = 431A9A5314782B2E007AEAAE /* libdojo-ios.a */;
+			productReference = 432946CF147A8AFA003006FD /* libdojo-ios.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -530,12 +520,10 @@
 				431A99AF14781A8C007AEAAE /* Sprite.cpp in Sources */,
 				431A99B014781A8C007AEAAE /* String.cpp in Sources */,
 				431A99B114781A8C007AEAAE /* Table.cpp in Sources */,
-				431A99B214781A8C007AEAAE /* TestUnit.cpp in Sources */,
 				431A99B314781A8C007AEAAE /* TextArea.cpp in Sources */,
 				431A99B414781A8C007AEAAE /* Texture.cpp in Sources */,
 				431A99B514781A8C007AEAAE /* Timer.cpp in Sources */,
 				431A99B614781A8C007AEAAE /* TouchSource.cpp in Sources */,
-				431A99B714781A8C007AEAAE /* Trail.cpp in Sources */,
 				431A99B814781A8C007AEAAE /* Vector.cpp in Sources */,
 				431A99B914781A8C007AEAAE /* Viewport.cpp in Sources */,
 				431A9A37147829B3007AEAAE /* ApplePlatform.mm in Sources */,
@@ -572,12 +560,10 @@
 				4372C47914562F4D00E80F20 /* Sprite.cpp in Sources */,
 				4372C47A14562F4D00E80F20 /* String.cpp in Sources */,
 				4372C47B14562F4D00E80F20 /* Table.cpp in Sources */,
-				4372C47C14562F4D00E80F20 /* TestUnit.cpp in Sources */,
 				4372C47D14562F4D00E80F20 /* TextArea.cpp in Sources */,
 				4372C47E14562F4D00E80F20 /* Texture.cpp in Sources */,
 				4372C47F14562F4D00E80F20 /* Timer.cpp in Sources */,
 				4372C48014562F4D00E80F20 /* TouchSource.cpp in Sources */,
-				4372C48114562F4D00E80F20 /* Trail.cpp in Sources */,
 				4372C48214562F4D00E80F20 /* Vector.cpp in Sources */,
 				4372C48314562F4D00E80F20 /* Viewport.cpp in Sources */,
 				431A9A36147829B3007AEAAE /* ApplePlatform.mm in Sources */,
@@ -690,11 +676,7 @@
 				DSTROOT = /tmp/dojo.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dependencies/lib\"",
-					"\"$(SRCROOT)/build/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = dependencies/lib;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -712,11 +694,7 @@
 				DSTROOT = /tmp/dojo.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dependencies/lib\"",
-					"\"$(SRCROOT)/build/Debug\"",
-				);
+				LIBRARY_SEARCH_PATHS = dependencies/lib;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

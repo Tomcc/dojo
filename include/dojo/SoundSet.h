@@ -4,12 +4,12 @@
 #include "dojo_common_header.h"
 
 #include "Array.h"
-#include "SoundBuffer.h"
 
 #include "dojomath.h"
 
 namespace Dojo
 {
+	class SoundBuffer;
 	
 	class SoundSet 
 	{

@@ -14,12 +14,6 @@
 
 #include "Array.h"
 
-#include "Texture.h"
-#include "Vector.h"
-#include "Renderable.h"
-#include "FrameSet.h"
-#include "Color.h"
-#include "Render.h"
 #include "AnimatedQuad.h"
 
 namespace Dojo

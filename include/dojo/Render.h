@@ -13,13 +13,12 @@
 #include "Array.h"
 #include "Color.h"
 #include "Vector.h"
-#include "RenderState.h"
-#include "Timer.h"
 
 #define RENDER_MAX_LIGHTS 8
 
 namespace Dojo {
 	
+	class RenderState;
 	class Renderable;
 	class Texture;
 	class Viewport;
@@ -71,10 +70,10 @@ namespace Dojo {
 		
 		void removeAllRenderables()
 		{
-			for( uint i = 0; i < negativeLayers.size(); ++i )
+			for( int i = 0; i < negativeLayers.size(); ++i )
 				negativeLayers.at(i)->clear();
 			
-			for( uint i = 0; i < positiveLayers.size(); ++i )
+			for( int i = 0; i < positiveLayers.size(); ++i )
 				positiveLayers.at(i)->clear();
 		}
 		
@@ -189,8 +188,6 @@ namespace Dojo {
 					renderLayer( negativeLayers.at(i) );
 			}
 
-			Timer t;
-
 			//then from 0 to the most positive
 			for( uint i = 0; i < positiveLayers.size(); ++i )
 				renderLayer( positiveLayers.at(i) );
@@ -219,7 +216,7 @@ namespace Dojo {
 		RenderState* currentRenderState, *firstRenderState;
 		Layer* currentLayer;
 
-		uint frameVertexCount, frameTriCount, frameBatchCount;
+		int frameVertexCount, frameTriCount, frameBatchCount;
 				
 		bool frameStarted;
 		

@@ -12,21 +12,20 @@
 
 #include "dojo_common_header.h"
 
+#include "Object.h"
+#include "Plane.h"
 #include "Vector.h"
 #include "Color.h"
-#include "Object.h"
-#include "Model.h"
-#include "Sprite.h"
-#include "Texture.h"
-#include "Platform.h"
 #include "Renderable.h"
-#include "Plane.h"
-#include "Game.h"
 
 namespace Dojo 
 {	
 	class Render;
-	
+	class GameState;
+	class AnimatedQuad;
+	class Model;
+	class Texture;
+		
 	class Viewport : public Object
 	{
 	public:
@@ -39,39 +38,8 @@ namespace Dojo
 			float _VFOV = 0, 
 			float _zNear = 0,
 			float _zFar = 100,
-			int fadeObjectLayer = 8 ) :
-		Object( level, pos, size ),
-		cullingEnabled( true ),
-		background( NULL ),
-		clearColor( clear ),
-		frustumCullingEnabled( false ),
-		VFOV( 0 ),
-		zNear( 0 ),
-		zFar( 1000 )
-		{
-			Render* render = Platform::getSingleton()->getRender();
-
-			nativeToScreenRatio = render->getNativeToScreenRatio();
-			
-			targetSize.x = (float)level->getGame()->getNativeWidth();
-			targetSize.y = (float)level->getGame()->getNativeHeight();
-
-			//create the fader object			
-			fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );
-			fadeObject->color = Color( 0, 0, 0, 0 );
-			
-			fadeObject->scale.x = size.x;
-			fadeObject->scale.y = size.y;
-			
-			fadeObject->setVisible( false );
-			fadeObject->inheritAngle = false;
-
-			addChild( fadeObject, fadeObjectLayer, false );
-
-			if( _VFOV > 0 )
-				enableFrustum( _VFOV, _zNear, _zFar );
-		}		
-						
+			int fadeObjectLayer = 8 );
+		
 		virtual ~Viewport()
 		{
 			
@@ -81,28 +49,7 @@ namespace Dojo
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum( float VFOV, float zNear, float zFar );
 		
-		inline void setBackgroundSprite( const String& name, float frameTime = 0 )
-		{			
-			DEBUG_ASSERT( name.size() );
-			
-			if( background )
-				destroyChild( background );
-			
-			background = new Sprite( gameState, Vector::ZERO, name, frameTime );
-			background->setRequiresAlpha( false );
-			background->setVisible( true );
-			background->inheritAngle = false;
-									
-			//force the proportions to fill screen
-			background->_updateScreenSize();
-			
-			//the background image must not be stretched on different aspect ratios
-			//so we just pick the pixel size for the horizontal			
-			background->pixelScale.x = (float)background->getTexture(0)->getWidth() / (float)targetSize.x;
-			background->pixelScale.y = background->pixelScale.x;	
-
-			addChild( background );
-		}
+		void setBackgroundSprite( const String& name, float frameTime = 0 );
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
 
@@ -149,13 +96,14 @@ namespace Dojo
 						  getWorldMin().x + ((float)x / targetSize.x) * size.x,
 						  getWorldMax().y - ((float)y / targetSize.y) * size.y );
 		}
-						
-		void makeScreenSize( Vector& dest, int w, int h );
-		
-		inline void makeScreenSize( Vector& dest, Texture* tex )
-		{
-			makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
+			
+		inline void makeScreenSize( Vector& dest, int w, int h )
+		{	
+			dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
+			dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
 		}
+		
+		void makeScreenSize( Vector& dest, Texture* tex );
 
 		virtual void onAction( float dt )
 		{

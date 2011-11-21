@@ -4,6 +4,7 @@
 #include "dojomath.h"
 #include "Platform.h"
 #include "ResourceGroup.h"
+#include "Mesh.h"
 
 using namespace Dojo;
 

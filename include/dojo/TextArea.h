@@ -12,12 +12,13 @@
 
 #include "dojo_common_header.h"
 
-#include "Sprite.h"
 #include "Font.h"
-#include "GameState.h"
+#include "Renderable.h"
 
 namespace Dojo 
 {	
+	class GameState;
+	
 	class TextArea : public Renderable 
 	{
 	public:
@@ -118,28 +119,10 @@ namespace Dojo
 
 		LayerList busyLayers, freeLayers;
 
-		inline void _centerLastLine( uint startingAt, float size )
-		{
-			if( mesh->getVertexCount() == 0 )
-				return;
-
-			float halfWidth = size * 0.5f;
-
-			for( uint i = startingAt; i < mesh->getVertexCount(); ++i )
-				*(mesh->_getVertex( i )) -= halfWidth;		
-		}
+		void _centerLastLine( uint startingAt, float size );
 
 		///create a mesh to be used for text
-		inline Mesh* _createMesh()
-		{
-			Mesh * mesh = new Mesh();
-			mesh->setDynamic( true );
-			mesh->setTriangleMode( Mesh::TM_LIST );
-			mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-			mesh->setVertexFieldEnabled( Mesh::VF_UV );
-
-			return mesh;
-		}
+		Mesh* _createMesh();
 
 		///create a Layer that uses the given Page
 		inline Renderable* _createLayer( Texture* t )
@@ -160,24 +143,7 @@ namespace Dojo
 		}
 
 		///get a layer for this page
-		inline Renderable* _enableLayer( Texture* tex )
-		{
-			if( freeLayers.size() == 0 )
-				_createLayer( tex );
-
-			Renderable* r = freeLayers.top();
-			freeLayers.pop();
-
-			r->setVisible( true );
-			r->setActive( true );
-			r->setTexture( tex );
-
-			r->getMesh()->begin( currentCharIdx * 2 );
-
-			busyLayers.add( r );
-
-			return r;
-		}
+		Renderable* _enableLayer( Texture* tex );
 
 		///get the layer assigned to this texture
 		inline Renderable* _getLayer( Texture* tex )
@@ -196,47 +162,12 @@ namespace Dojo
 		}
 
 		///finishes editing the layers
-		inline void _endLayers()
-		{
-			for( uint i = 0; i < busyLayers.size(); ++i )
-				busyLayers[i]->getMesh()->end();
-
-			//also end this
-			if( mesh->isEditing() )
-				mesh->end();
-		}
+		void _endLayers();
 
 		///Free any created layer			
-		inline void _hideLayers()
-		{
-			for( uint i = 0; i < busyLayers.size(); ++i )
-			{
-				Renderable* l = busyLayers[i];
+		void _hideLayers();
 
-				l->setVisible( false );
-				l->setActive( false );
-
-				freeLayers.add( l );
-			}
-
-			busyLayers.clear();
-		}
-
-		inline void _destroyLayer( Renderable* r )
-		{
-			DEBUG_ASSERT( r );
-
-			if( r == this )  //do not delete the TA itself, even if it is a layer
-				return;
-
-			delete r->getMesh();
-
-			removeChild( r );
-			busyLayers.remove( r );
-			freeLayers.remove( r );
-
-			SAFE_DELETE( r );
-		}
+		void _destroyLayer( Renderable* r );
 
 		inline void _destroyLayers()
 		{

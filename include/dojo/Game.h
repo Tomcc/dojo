@@ -14,14 +14,8 @@
 #include "Array.h"
 
 #include "Render.h"
-#include "InputSystem.h"
-#include "SoundManager.h"
-#include "InputSystem.h"
 #include "StateInterface.h"
 #include "FocusListener.h"
-#include "Platform.h"
-
-#include "Render.h"
 
 namespace Dojo 
 {

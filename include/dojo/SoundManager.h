@@ -10,8 +10,6 @@
 #include "SoundSet.h"
 #include "SoundSource.h"
 
-#include "Platform.h"
-
 #define MAX_SOURCES 32
 
 namespace Dojo {
@@ -113,12 +111,7 @@ namespace Dojo {
 					musicTrack->pause();
 			}
 			
-			inline void resumeMusic()
-			{
-				//resume music, but only if the user didn't enable itunes meanwhile!
-				if( musicTrack && !Platform::getSingleton()->isSystemSoundInUse() )
-					musicTrack->play();
-			}
+			void resumeMusic();
 
 			///interrompe la traccia corrente con un certo fade
 			inline void stopMusic( float stopFadeTime = 0 )

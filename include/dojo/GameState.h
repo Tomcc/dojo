@@ -12,17 +12,14 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
-
+#include "Object.h"
 #include "ResourceGroup.h"
 #include "InputSystem.h"
-#include "StateInterface.h"
 #include "Renderable.h"
-#include "Light.h"
-#include "Object.h"
+#include "StateInterface.h"
 
-namespace Dojo {
-	
+namespace Dojo 
+{	
 	class Viewport;
 	class SoundManager;
 	class Game;

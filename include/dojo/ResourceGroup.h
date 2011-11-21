@@ -12,16 +12,15 @@
 
 #include "dojo_common_header.h"
 
-#include <string>
-#include <map>
-
-#include "Font.h"
-#include "FrameSet.h"
-#include "Mesh.h"
-#include "SoundSet.h"
-#include "Table.h"
+#include "Array.h"
 
 namespace Dojo {
+	
+	class Font;
+	class FrameSet;
+	class Mesh;
+	class SoundSet;
+	class Table;
 	
 	class ResourceGroup 
 	{			
@@ -132,16 +131,7 @@ namespace Dojo {
 			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "sound" );
 		}
 		
-		inline void addTable( Table* t )
-		{
-			DEBUG_ASSERT( t );
-			DEBUG_ASSERT( !getTable( t->getName() ) );
-			DEBUG_ASSERT( !finalized );
-			
-			tables[ t->getName() ] = t;
-			
-			DEBUG_MESSAGE( "+" << t->getName().ASCII() << "\t\t" << "table" );
-		}
+		void addTable( Table* t );
 		
 		inline void addSubgroup( ResourceGroup* g )
 		{

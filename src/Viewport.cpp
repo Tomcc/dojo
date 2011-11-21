@@ -3,9 +3,77 @@
 #include "Viewport.h"
 
 #include "Render.h"
+#include "Platform.h"
+#include "Model.h"
+#include "Game.h"
+#include "AnimatedQuad.h"
+#include "Sprite.h"
 
 using namespace Dojo;
 
+Viewport::Viewport( 
+		 GameState* level, 
+		 const Vector& pos,
+		 const Vector& size, 
+		 const Color& clear, 
+		 float _VFOV, 
+		 float _zNear,
+		 float _zFar,
+		 int fadeObjectLayer ) :
+Object( level, pos, size ),
+cullingEnabled( true ),
+background( NULL ),
+clearColor( clear ),
+frustumCullingEnabled( false ),
+VFOV( 0 ),
+zNear( 0 ),
+zFar( 1000 )
+{
+	Render* render = Platform::getSingleton()->getRender();
+	
+	nativeToScreenRatio = render->getNativeToScreenRatio();
+	
+	targetSize.x = (float)level->getGame()->getNativeWidth();
+	targetSize.y = (float)level->getGame()->getNativeHeight();
+	
+	//create the fader object			
+	fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );
+	fadeObject->color = Color( 0, 0, 0, 0 );
+	
+	fadeObject->scale.x = size.x;
+	fadeObject->scale.y = size.y;
+	
+	fadeObject->setVisible( false );
+	fadeObject->inheritAngle = false;
+	
+	addChild( fadeObject, fadeObjectLayer, false );
+	
+	if( _VFOV > 0 )
+		enableFrustum( _VFOV, _zNear, _zFar );
+}	
+
+void Viewport::setBackgroundSprite( const String& name, float frameTime )
+{			
+	DEBUG_ASSERT( name.size() );
+	
+	if( background )
+		destroyChild( background );
+	
+	background = new Sprite( gameState, Vector::ZERO, name, frameTime );
+	background->setRequiresAlpha( false );
+	background->setVisible( true );
+	background->inheritAngle = false;
+	
+	//force the proportions to fill screen
+	background->_updateScreenSize();
+	
+	//the background image must not be stretched on different aspect ratios
+	//so we just pick the pixel size for the horizontal			
+	background->pixelScale.x = (float)background->getTexture(0)->getWidth() / (float)targetSize.x;
+	background->pixelScale.y = background->pixelScale.x;	
+	
+	addChild( background );
+}
 
 void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 {
@@ -97,9 +165,8 @@ Vector Viewport::getRayDirecton( const Vector& screenSpacePos )
 	return (a - getWorldPosition()).normalized();
 }
 
-void Viewport::makeScreenSize( Vector& dest, int w, int h )
-{	
-	dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
-	dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
+void Viewport::makeScreenSize( Vector& dest, Texture* tex )
+{
+	makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
 }
 

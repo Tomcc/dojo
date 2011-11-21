@@ -1,13 +1,10 @@
 #include "stdafx.h"
 
 #include "SoundBuffer.h"
+
 #include "SoundManager.h"
-
 #include "Utils.h"
-
-#include <ogg/ogg.h>
-#include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
+#include "Platform.h"
 
 using namespace Dojo;
 

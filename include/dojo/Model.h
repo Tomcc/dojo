@@ -14,9 +14,10 @@
 
 #include "Renderable.h"
 #include "GameState.h"
+#include "FrameSet.h"
 
 namespace Dojo 
-{
+{	
 	class Model : public Renderable
 	{
 	public:

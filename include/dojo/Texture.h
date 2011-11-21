@@ -12,14 +12,8 @@
 
 #include "dojo_common_header.h"
 
-#include <string>
-
-
-#include "Utils.h"
-#include "Vector.h"
-
 #include "Buffer.h"
-#include "Mesh.h"
+#include "Vector.h"
 
 namespace Dojo 
 {

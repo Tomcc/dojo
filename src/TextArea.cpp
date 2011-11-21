@@ -2,6 +2,8 @@
 
 #include "TextArea.h"
 #include "Game.h"
+#include "GameState.h"
+#include "Mesh.h"
 
 using namespace Dojo;
 
@@ -152,6 +154,68 @@ void TextArea::addText( uint n, char paddingChar, uint digits )
 	addText( number );
 }
 
+Renderable* TextArea::_enableLayer( Texture* tex )
+{
+	if( freeLayers.size() == 0 )
+		_createLayer( tex );
+	
+	Renderable* r = freeLayers.top();
+	freeLayers.pop();
+	
+	r->setVisible( true );
+	r->setActive( true );
+	r->setTexture( tex );
+	
+	r->getMesh()->begin( currentCharIdx * 2 );
+	
+	busyLayers.add( r );
+	
+	return r;
+}
+
+void TextArea::_endLayers()
+{
+	for( uint i = 0; i < busyLayers.size(); ++i )
+		busyLayers[i]->getMesh()->end();
+	
+	//also end this
+	if( mesh->isEditing() )
+		mesh->end();
+}
+
+///Free any created layer			
+void TextArea::_hideLayers()
+{
+	for( uint i = 0; i < busyLayers.size(); ++i )
+	{
+		Renderable* l = busyLayers[i];
+		
+		l->setVisible( false );
+		l->setActive( false );
+		
+		freeLayers.add( l );
+	}
+	
+	busyLayers.clear();
+}
+
+void TextArea::_destroyLayer( Renderable* r )
+{
+	DEBUG_ASSERT( r );
+	
+	if( r == this )  //do not delete the TA itself, even if it is a layer
+		return;
+	
+	delete r->getMesh();
+	
+	removeChild( r );
+	busyLayers.remove( r );
+	freeLayers.remove( r );
+	
+	SAFE_DELETE( r );
+}
+
+
 bool TextArea::prepare( const Vector& viewportPixelRatio )
 {
 	//not changed
@@ -261,4 +325,27 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	changed = false;
 
 	return true;
+}
+
+void TextArea::_centerLastLine( uint startingAt, float size )
+{
+	if( mesh->getVertexCount() == 0 )
+		return;
+	
+	float halfWidth = size * 0.5f;
+	
+	for( uint i = startingAt; i < mesh->getVertexCount(); ++i )
+		*(mesh->_getVertex( i )) -= halfWidth;		
+}
+
+///create a mesh to be used for text
+Mesh* TextArea::_createMesh()
+{
+	Mesh * mesh = new Mesh();
+	mesh->setDynamic( true );
+	mesh->setTriangleMode( Mesh::TM_LIST );
+	mesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+	mesh->setVertexFieldEnabled( Mesh::VF_UV );
+	
+	return mesh;
 }

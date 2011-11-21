@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "AnimatedQuad.h"
 
 #include "Game.h"
 

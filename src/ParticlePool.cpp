@@ -3,8 +3,22 @@
 #include "ParticlePool.h"
 
 #include "Viewport.h"
+#include "Platform.h"
+#include "Render.h"
+#include "GameState.h"
 
 using namespace Dojo;
+
+ParticlePool::~ParticlePool()
+{
+	for( uint i = 0; i < pool.size(); ++i )
+	{
+		
+		Platform::getSingleton()->getRender()->removeRenderable( pool.at(i) );
+		
+		SAFE_DELETE( pool.at(i) );
+	}
+}
 
 Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameSet* set, float timePerFrame )
 {
@@ -16,7 +30,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 
 		pool.add( p );
 		
-		_registerParticle( p );
+		Platform::getSingleton()->getRender()->addRenderable( p, destLayer );
 	}
 	else
 	{				

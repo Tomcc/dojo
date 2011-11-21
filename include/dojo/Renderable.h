@@ -12,16 +12,14 @@
 
 #include "dojo_common_header.h"
 
+#include "RenderState.h"
 #include "Object.h"
 #include "Color.h"
 
-#include "FrameSet.h"
-#include "Render.h"
-#include "RenderState.h"
-#include "InputSystem.h"
-
 namespace Dojo 
 {
+	class Render;
+	
 	class Renderable : public RenderState, public Object
 	{				
 	public:	

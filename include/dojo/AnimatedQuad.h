@@ -13,9 +13,10 @@
 #include "dojo_common_header.h"
 
 #include "Renderable.h"
+#include "FrameSet.h"
 
 namespace Dojo
-{
+{	
 	class AnimatedQuad : public Renderable
 	{
 	protected:

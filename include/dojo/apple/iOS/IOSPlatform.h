@@ -1,10 +1,10 @@
 #ifndef IOSPlatform_h__
 #define IOSPlatform_h__
 
-#include "../../include/dojo/dojo_common_header.h"
+#include "dojo_common_header.h"
 
 #include "ApplePlatform.h"
-#include "../../include/dojo/Utils.h"
+#include "Utils.h"
 
 #ifdef __OBJC__
 	#import <UIKit/UIKit.h>

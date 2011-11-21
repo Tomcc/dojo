@@ -5,8 +5,6 @@
 
 #include "Buffer.h"
 
-#include <ogg/ogg.h>
-
 namespace Dojo 
 {
 	class SoundManager;

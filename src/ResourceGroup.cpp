@@ -4,6 +4,12 @@
 
 #include "Platform.h"
 #include "Timer.h"
+#include "FrameSet.h"
+#include "Mesh.h"
+#include "Font.h"
+#include "Table.h"
+#include "SoundSet.h"
+#include "SoundBuffer.h"
 
 using namespace Dojo;
 
@@ -28,6 +34,17 @@ ResourceGroup::~ResourceGroup()
 	SAFE_DELETE( empty );
 	
 	unloadAll();
+}
+
+void ResourceGroup::addTable( Table* t )
+{
+	DEBUG_ASSERT( t );
+	DEBUG_ASSERT( !getTable( t->getName() ) );
+	DEBUG_ASSERT( !finalized );
+	
+	tables[ t->getName() ] = t;
+	
+	DEBUG_MESSAGE( "+" << t->getName().ASCII() << "\t\t" << "table" );
 }
 
 void ResourceGroup::loadSets( const String& subdirectory )

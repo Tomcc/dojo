@@ -12,14 +12,12 @@
 
 #include "dojo_common_header.h"
 
-#include "Sprite.h"
-#include "GameState.h"
-
-#include "Renderable.h"
+#include "AnimatedQuad.h"
 
 namespace Dojo 
 {
 	class ParticlePool;
+	class GameState;
 
 
 	///class tightly coupled to ParticlePool needed to create fast appearing/disappearing effects

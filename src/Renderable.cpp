@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "Viewport.h"
+#include "Mesh.h"
 
 using namespace Dojo;
 

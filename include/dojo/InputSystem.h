@@ -7,13 +7,12 @@
  *
  */
 
-#ifndef TouchListener_h__
-#define TouchListener_h__
+#ifndef InputSystem_h__
+#define InputSystem_h__
 
 #include "dojo_common_header.h"
 
 #include "Array.h"
-
 #include "Vector.h"
 
 namespace Dojo 

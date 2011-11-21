@@ -11,8 +11,8 @@
 #define Color_h__
 
 #include "dojo_common_header.h"
-#include "Vector.h"
 
+#include "Vector.h"
 
 namespace Dojo
 {

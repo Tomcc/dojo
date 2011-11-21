@@ -168,3 +168,9 @@ void SoundManager::update( float dt )
 	}
 }
 
+void SoundManager::resumeMusic()
+{
+	//resume music, but only if the user didn't enable itunes meanwhile!
+	if( musicTrack && !Platform::getSingleton()->isSystemSoundInUse() )
+		musicTrack->play();
+}

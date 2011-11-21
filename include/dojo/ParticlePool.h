@@ -12,12 +12,13 @@
 
 #include "dojo_common_header.h"
 
+#include "Array.h"
 #include "Particle.h"
-#include "Viewport.h"
-#include "Game.h"
 
 namespace Dojo 
 {		
+	class GameState;
+	
 	class ParticlePool 
 	{	
 	public:		
@@ -32,15 +33,7 @@ namespace Dojo
 			
 		}
 			
-		virtual ~ParticlePool()
-		{
-			for( uint i = 0; i < pool.size(); ++i )
-			{
-				_unregisterParticle( pool.at(i) );
-				
-				SAFE_DELETE( pool.at(i) );
-			}
-		}
+		virtual ~ParticlePool();
 		
 		virtual Particle* getParticle( const Vector& pos, float timeToLive, FrameSet* set, float timePerFrame = 0 );
 		
@@ -119,20 +112,9 @@ namespace Dojo
 		ParticleList pool;		
 		GameState* gameState;
 		
-		uint destLayer;		
-		uint firstIdleIdx;
-									
-		inline void _registerParticle( Particle* p )
-		{
-			//register the particle to updates and manually to the render system
-			Platform::getSingleton()->getRender()->addRenderable( p, destLayer );
-		}
-									
-		inline void _unregisterParticle( Particle* p )
-		{
-			Platform::getSingleton()->getRender()->removeRenderable( p );
-		}
-									
+		int destLayer;		
+		int firstIdleIdx;
+											
 		inline Particle* _getUnused()
 		{			
 			if( firstIdleIdx < pool.size() )

@@ -12,7 +12,6 @@ namespace Dojo
 	class InputSystem;
 	class FontSystem;
 	class Game;
-	class Table;
 	class Email;
 	
 	class Platform 

@@ -5,12 +5,10 @@
 
 #include "Vector.h"
 
-#include "SoundBuffer.h"
-
 namespace Dojo
 {
-		class Buffer;
 		class SoundManager;
+		class SoundBuffer;
 
 		///Mattone base dell'audio di eVolve. SoundSource e' un suono vero e proprio.
 		/**
