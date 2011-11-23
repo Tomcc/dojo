@@ -11,6 +11,14 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/NSLocale.h>
+#import <Foundation/NSURL.h>
+#import <Foundation/NSFileManager.h>
+
+#ifdef PLATFORM_OSX
+	#import <ApplicationServices/ApplicationServices.h>
+#else
+	#import <CoreGraphics/CoreGraphics.h>
+#endif
 
 #include "Timer.h"
 #include "Render.h"
