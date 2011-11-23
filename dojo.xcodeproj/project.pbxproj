@@ -108,6 +108,7 @@
 		431A9A4C147829E8007AEAAE /* CustomOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomOpenGLView.h; sourceTree = "<group>"; };
 		431A9A4D147829E8007AEAAE /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
 		431A9A4E147829E8007AEAAE /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
+		43206120147C7AC500B190B0 /* create_dojo_h.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = create_dojo_h.sh; sourceTree = "<group>"; };
 		432946CF147A8AFA003006FD /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		432946D0147A8AFA003006FD /* libdojo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4372C3B114562EBA00E80F20 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -304,6 +305,7 @@
 		4372C3A314562EBA00E80F20 = {
 			isa = PBXGroup;
 			children = (
+				43206120147C7AC500B190B0 /* create_dojo_h.sh */,
 				4372C3C214562F2F00E80F20 /* dojo-Prefix.pch */,
 				4372C486145630DA00E80F20 /* stdafx.h */,
 				4372C3D614562F4D00E80F20 /* include */,

@@ -236,9 +236,9 @@ namespace Dojo
 			map.clear();
 		}		
 		
-		inline uint size()
+		inline int size()
 		{
-			return map.size();
+			return (int)map.size();
 		}
 		
 		inline const String& getName() const

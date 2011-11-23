@@ -11,7 +11,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/NSLocale.h>
-#import <CoreImage/CoreImage.h>
 
 #include "Timer.h"
 #include "Render.h"

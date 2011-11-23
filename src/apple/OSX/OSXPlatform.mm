@@ -21,6 +21,7 @@
 #include "Utils.h"
 #include "Table.h"
 #include "FontSystem.h"
+#include "SoundManager.h"
 
 using namespace Dojo;
 
