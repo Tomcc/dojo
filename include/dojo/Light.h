@@ -60,6 +60,21 @@ namespace Dojo
 			return type;
 		}
 		
+		inline const Color& getDiffuse()
+		{
+			return diffuse;
+		}
+		
+		inline const Color& getSpecular()
+		{
+			return specular;
+		}
+		
+		inline const Color& getAmbient()
+		{
+			return ambient;
+		}
+		
 		inline bool hasAmbient()
 		{
 			return ambient.a + ambient.r + ambient.g + ambient.b > 0;

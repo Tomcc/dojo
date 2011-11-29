@@ -78,6 +78,13 @@ namespace Dojo
 				b*invs + c.b*s, 
 				a*invs + c.a*s );
 		}
+		
+		inline void operator *= ( float s )
+		{
+			r *= s;
+			g *= s;
+			b *= s;
+		}
 				
 	protected:
 	};

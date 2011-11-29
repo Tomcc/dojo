@@ -106,8 +106,6 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	byte* rowptr = (byte*)imageData;
 	byte r = 0, g = 0, b = 0;
 	
-	//HACK
-	/*
 	for( int i = 0; i < height; ++i )
 	{
 		ptr = rowptr;
@@ -136,8 +134,7 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 		
 		rowptr += pitch;
 	}
-		
-	 */
+	
 	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
