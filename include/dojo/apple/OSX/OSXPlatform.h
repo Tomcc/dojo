@@ -53,6 +53,11 @@ namespace Dojo
 		virtual String getAppDataPath();
 
 		virtual void openWebPage( const String& site );
+		
+		virtual bool isNPOTEnabled()
+		{
+			return true;	
+		}
 	
 	protected:
                 

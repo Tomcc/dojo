@@ -80,6 +80,8 @@ namespace Dojo
 
 		virtual bool loadPNGContent( void*& bufptr, const String& path, int& width, int& height )=0;
 		
+		virtual bool  isNPOTEnabled()=0;
+		
 		virtual String getAppDataPath()=0;
 		virtual String getRootPath()=0;
 		

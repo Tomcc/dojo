@@ -78,33 +78,26 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 		return false;
 	
 	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
-	
-	/*UIImage* image = [[UIImage alloc] initWithContentsOfFile: path.toNSString() ];
-	
-	CGImageRef CGImage = image.CGImage;*/
-	
+		
 	width = (int)CGImageGetWidth(CGImage);
 	height = (int)CGImageGetHeight(CGImage);	
 	
-	uint internalWidth = Math::nextPowerOfTwo( width );
-	uint internalHeight = Math::nextPowerOfTwo( height );
-	uint pitch = 4 * internalWidth;	
+	int pitch = 4 * width;
+	int size = pitch * height;
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	imageData = malloc( internalWidth * pitch );
-	
-	memset( imageData, 0, internalWidth * pitch );
+
+	imageData = malloc( size);
+	memset( imageData, 0, size );
 	
 	CGContextRef context = CGBitmapContextCreate(imageData,
-												 internalWidth,
-												 internalHeight,
+												 width,
+												 height,
 												 8,
 												 pitch,
 												 colorSpace,
 												 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
 	
-	CGContextClearRect( context, CGRectMake( 0, 0, internalWidth, internalHeight ) );
-	CGContextTranslateCTM( context, 0, internalHeight - height );
 	CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), CGImage );
 	
 	//correct premultiplied alpha - only in the useful part of the image
@@ -116,9 +109,8 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	for( int i = 0; i < height; ++i )
 	{
 		ptr = rowptr;
-		
-		uint j = 0;
-		for( ; j < width; ++j )
+				
+		for( int j = 0; j < width; ++j )
 		{
 			byte alpha = ptr[3];
 				
@@ -140,20 +132,8 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 			ptr += 4;
 		}
 		
-		//extend the last known color to the border
-		if( width < internalWidth )
-		{
-			ptr[0] = r;
-			ptr[1] = g;
-			ptr[2] = b;
-		}
-		
 		rowptr += pitch;
 	}
-	
-	//copy last row in the row below to create a border
-	if( height < internalHeight )
-		memcpy( (byte*)imageData + height*pitch, (byte*)imageData + (height-1)*pitch, pitch );
 		
 	//free everything
 	CGContextRelease(context);	

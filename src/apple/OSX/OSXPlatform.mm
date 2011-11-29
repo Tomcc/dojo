@@ -155,7 +155,10 @@ String OSXPlatform::getRootPath()
 
 String OSXPlatform::getAppDataPath()
 {
-	DEBUG_TODO;
+	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString* nspath = [nspaths objectAtIndex:0];
+	
+	return String( nspath );
 }
 
 void OSXPlatform::openWebPage( const String& site )

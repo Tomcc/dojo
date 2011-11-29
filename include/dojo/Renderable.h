@@ -33,8 +33,15 @@ namespace Dojo
 				
 			}
 
-			virtual void onButtonPressed( Renderable* r, const Vector& point )=0;
-			virtual void onButtonReleased( Renderable* r, const Vector& point )=0;
+			virtual void onButtonPressed( Renderable* r, const Vector& point )
+			{
+				
+			}
+			
+			virtual void onButtonReleased( Renderable* r, const Vector& point )
+			{
+				
+			}
 
 		protected:
 		private:

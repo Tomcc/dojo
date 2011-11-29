@@ -22,7 +22,8 @@ glhandle( 0 ),
 npot( false ),
 parentAtlas( NULL ),
 OBB( NULL ),
-ownerFrameSet( NULL )
+ownerFrameSet( NULL ),
+mMipmapsEnabled( true )
 {			
 	glGenTextures( 1, &glhandle );
 	
@@ -34,7 +35,8 @@ ownerFrameSet( NULL )
 void Texture::bind( uint index )
 {
 	DEBUG_ASSERT( index < 8 );
-
+	DEBUG_ASSERT( glhandle );
+	
 	glActiveTexture( GL_TEXTURE0 + index );
 	glEnable( GL_TEXTURE_2D );
 
@@ -73,38 +75,63 @@ void Texture::disableTiling()
 
 void Texture::enableMipmaps() 
 {
-	bind(0);
-
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+	mMipmapsEnabled = true;
+	
+	if( glhandle )
+	{
+		bind(0);		
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );	
+	}
 }
 
 void Texture::disableMipmaps() 
 {
-	bind(0);
+	mMipmapsEnabled = false;
 	
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	if( glhandle )
+	{
+		bind(0);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	}
 }
 
 bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 {
 	int err;
 	
-	DEBUG_ASSERT( !loaded );
 	DEBUG_ASSERT( imageData );
 
 	bind(0);
 	
-	internalWidth = Math::nextPowerOfTwo( width );
-	internalHeight = Math::nextPowerOfTwo( height );	
-
-	npot = ( internalWidth != width || internalHeight != height );
-
+	byte* paddedData = NULL;
+	
+	if( Platform::getSingleton()->isNPOTEnabled() )
+	{
+		internalWidth = width;
+		internalHeight = height;
+	}
+	else
+	{
+		internalWidth = Math::nextPowerOfTwo( width );
+		internalHeight = Math::nextPowerOfTwo( height );	
+		
+		//need to pad imageData to a POT buffer
+		paddedData = (byte*)malloc( internalWidth * internalHeight * 4 );
+		
+		memset( paddedData, 0, internalWidth * internalHeight * 4 );
+		for( int i = 0; i < height; ++i )
+			memcpy( paddedData + internalWidth*4, imageData + width*4, width*4 );
+		
+		imageData = paddedData;
+	}
+												
 	xRatio = (float)width/(float)internalWidth;
-	yRatio = (float)height/(float)internalHeight;
-
+	yRatio = (float)height/(float)internalHeight;	
+	npot = ( Math::nextPowerOfTwo( width ) != width || Math::nextPowerOfTwo( height ) != height );
+	
 	size = internalWidth * internalHeight * 4;
 
-	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 	
 	glTexImage2D(
 		GL_TEXTURE_2D, 
@@ -121,6 +148,10 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	loaded = (err == GL_NO_ERROR);
 
 	DEBUG_ASSERT( loaded );
+	
+	//aaand now, kill the temp padding buffer
+	if( paddedData )
+		free( paddedData );	
 	
 	return loaded;
 }

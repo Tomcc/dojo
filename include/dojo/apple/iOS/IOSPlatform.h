@@ -67,6 +67,11 @@ namespace Dojo
 				
 		virtual void openWebPage( const String& site );
 		
+		virtual bool isNPOTEnabled()
+		{
+			return false; //TODO: check if the model supports the extension	
+		}
+		
 #ifdef GAME_CENTER_ENABLED
 		///IOS SPECIFIC - checks game center availability and logins into it.
 		/** Returns true if no error occurred */

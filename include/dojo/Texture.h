@@ -109,7 +109,7 @@ namespace Dojo
 				
 	protected:
 				
-		bool npot;
+		bool npot, mMipmapsEnabled;
 		int width, height, internalWidth, internalHeight;
 		float xRatio, yRatio;
 		float xOffset, yOffset;

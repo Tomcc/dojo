@@ -17,7 +17,7 @@ namespace Dojo
 {
 	class Noise
 	{
-	public:		
+	public:
 		
 		Noise( long seed ) :
 		usedSeed( seed ),
