@@ -120,7 +120,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 		
 		memset( paddedData, 0, internalWidth * internalHeight * 4 );
 		for( int i = 0; i < height; ++i )
-			memcpy( paddedData + internalWidth*4, imageData + width*4, width*4 );
+			memcpy( paddedData + i*internalWidth*4, imageData + i*width*4, width*4 );
 		
 		imageData = paddedData;
 	}
