@@ -23,7 +23,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
-#include "WGL_ARB_multisample.h"
+#include "win32/WGL_ARB_multisample.h"
 
 namespace
 {

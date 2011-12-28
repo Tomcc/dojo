@@ -1,6 +1,6 @@
-#pragma once
-
 #include "dojo_common_header.h"
+
+#ifdef PLATFORM_LINUX
 
 #include <OIS/OIS.h>
 
@@ -94,3 +94,4 @@ namespace Dojo
 	};
 }
 
+#endif

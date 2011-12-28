@@ -37,7 +37,6 @@ namespace Dojo {
 
 			static bool alCheckError();
 
-			///Costruttore
 			SoundManager();
 			~SoundManager();
 			

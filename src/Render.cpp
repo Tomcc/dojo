@@ -51,7 +51,11 @@ backLayer( NULL )
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	glEnable( GL_COLOR_MATERIAL );
-	
+
+#ifdef DOJO_GAMMA_CORRECTION_ENABLED
+	glEnable( GL_FRAMEBUFFER_SRGB );
+#endif
+
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
 	glColorMaterial( GL_FRONT, GL_DIFFUSE );

@@ -12,12 +12,13 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Font.h"
 #include "FrameSet.h"
 #include "SoundSet.h"
 #include "Mesh.h"
 #include "Table.h"
+
+#undef RT_FONT
 
 namespace Dojo {
 		

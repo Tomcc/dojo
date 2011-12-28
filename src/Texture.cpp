@@ -133,10 +133,15 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 	
+	//HACK
 	glTexImage2D(
 		GL_TEXTURE_2D, 
 		0, 
-		GL_RGBA, 
+#ifdef DOJO_GAMMA_CORRECTION_ENABLED
+		GL_SRGB8_ALPHA8, 
+#else
+		GL_RGBA,
+#endif
 		internalWidth, 
 		internalHeight, 
 		0, 

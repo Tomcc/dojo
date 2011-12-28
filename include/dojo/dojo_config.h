@@ -10,9 +10,6 @@
 #ifndef DojoConfig_h__
 #define DojoConfig_h__
 
-//general configurations
-#define MESH_32BIT_INDICES 0
-
 //are we on windows?
 #if defined ( WIN32 )
     #define PLATFORM_WIN32
@@ -86,6 +83,13 @@
 	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
 
+#endif
+
+//general configurations
+#define MESH_32BIT_INDICES 0
+
+#ifndef PLATFORM_IPHONE
+	#define DOJO_GAMMA_CORRECTION_ENABLED
 #endif
 
 #endif

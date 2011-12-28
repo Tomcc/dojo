@@ -29,13 +29,18 @@ namespace Dojo
 			//do nothing
 		}
 
+		virtual bool isNPOTEnabled()
+		{
+			return true; //it always is on windows
+		}
+
 		virtual void acquireContext();
 		virtual void present();
 
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
+		virtual bool loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
 		
 		virtual String getAppDataPath();
 		virtual String getRootPath();

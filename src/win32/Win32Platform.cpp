@@ -1,7 +1,9 @@
 #include "stdafx.h"
 
-#include "Win32Platform.h"
+#include "win32/Win32Platform.h"
+#include "win32/WGL_ARB_multisample.h"
 
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <ShellAPI.h>
 #include <ShlObj.h>
@@ -19,8 +21,9 @@
 #include "Utils.h"
 #include "Table.h"
 #include "FontSystem.h"
-
-#include "WGL_ARB_multisample.h"
+#include "dojomath.h"
+#include "SoundManager.h"
+#include "InputSystem.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -415,11 +418,11 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-void Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
+bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
 	if( !Utils::hasExtension( ".png", path ) )
-		return;
+		return false;
 
 	void* data;
 
@@ -437,47 +440,45 @@ void Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& widt
 		fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
-		return;
+		return false;
 
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
 		dib = FreeImage_Load(fif, ansipath.c_str());
 	//if the image failed to load, return failure
 	if(!dib)
-		return;
+		return false;
 
 	//retrieve the image data
 	data = (void*)FreeImage_GetBits(dib);
 	//get the image width and height, and size per pixel
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
-
-	uint realWidth = Math::nextPowerOfTwo( width );
-	uint realHeight = Math::nextPowerOfTwo( height );
-
+	
 	uint pixelSize = FreeImage_GetBPP(dib)/8;
-	uint realSize = realWidth * realHeight * 4;
-
-	bufptr = malloc( realSize );
-	memset( bufptr, 0, realSize );
-
-	//converti a 4 canali e scambia R e B
-	byte* in = (byte*)data;
-	byte* out = (byte*)bufptr;
-	for( int i = height-1; i >= 0; --i )
+	
+	uint size = width*height*4;
+	bufptr = malloc( size );
+	
+	//swap R and B and invert image while copying
+	byte* in, *out;
+	for( int i = 0, ii = height-1; i < height ; ++i, --ii )
 	{
-		for( uint j = 0; j < width*4; j += 4 )
+		for( int j = 0; j < width; ++j )
 		{
-			out[ j + i*realWidth*4 + 3 ] = in[3];
- 			out[ j + i*realWidth*4 + 2 ] = in[0];
-			out[ j + i*realWidth*4 + 1 ] = in[1];
-			out[ j + i*realWidth*4 + 0 ] = in[2];
+			out = (byte*)bufptr + (j + i*width)*4;
+			in = (byte*)data + (j + ii*width)*pixelSize;
 
-			in += pixelSize;
+			out[3] = (pixelSize > 3) ? in[3] : 0;
+ 			out[2] = in[0];
+			out[1] = in[1];
+			out[0] = in[2];
 		}
 	}
-
+	
 	FreeImage_Unload( dib );
+
+	return true;
 }
 
 String Win32Platform::getAppDataPath()
