@@ -6,7 +6,7 @@
 #include "dojomath.h"
 
 #if defined (PLATFORM_WIN32)
-	#include "Win32Platform.h"
+	#include "win32/Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
     #include "OSXPlatform.h"
@@ -15,7 +15,7 @@
     #include "IOSPlatform.h"
 
 #elif defined( PLATFORM_LINUX )
-    #include "LinuxPlatform.h"
+    #include "linux/LinuxPlatform.h"
 
 #endif
 

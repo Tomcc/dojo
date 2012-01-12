@@ -128,7 +128,9 @@ namespace Dojo
 		
 		inline void appendASCII( const char* s )
 		{
-			for( uint i = 0; s[i] != 0; ++i )
+			DEBUG_ASSERT( s );
+
+			for( int i = 0; s[i] != 0; ++i )
 				append( 1, (unichar)s[i] );
 		}
 		

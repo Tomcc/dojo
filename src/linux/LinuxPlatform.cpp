@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
-#include "LinuxPlatform.h"
+#include "linux/LinuxPlatform.h"
+
+#ifdef PLATFORM_LINUX
 
 #include <Poco/DirectoryIterator.h>
 #include <FreeImage.h>
@@ -390,3 +392,5 @@ void LinuxPlatform::openWebPage( const std::string& site )
 {
 	ShellExecuteA(hwnd, "open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
+
+#endif
