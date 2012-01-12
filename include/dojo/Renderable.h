@@ -33,15 +33,8 @@ namespace Dojo
 				
 			}
 
-			virtual void onButtonPressed( Renderable* r, const Vector& point )
-			{
-				
-			}
-			
-			virtual void onButtonReleased( Renderable* r, const Vector& point )
-			{
-				
-			}
+			virtual void onButtonPressed( Renderable* r, const Vector& point )	{}			
+			virtual void onButtonReleased( Renderable* r, const Vector& point )	{}
 
 		protected:
 		private:
@@ -57,7 +50,8 @@ namespace Dojo
 		visible( true ),
 		layer(0),
 		renderingOrder(0),
-		currentFadeTime(0)		
+		currentFadeTime(0),
+		mCulled( false )
 		{
 			reset();
 		}
@@ -116,7 +110,11 @@ namespace Dojo
 		inline bool isFading()				{	return fading;			}
 		
 		inline bool isClickable() 			{	return clickListener != NULL;	}
-
+				
+		inline bool isInView()
+		{
+			return !mCulled;
+		}
 
 		inline bool contains( const Vector& p )
 		{
@@ -164,7 +162,12 @@ namespace Dojo
 			layer = layerID;
 			renderingOrder = renderIdx;
 		}
-				
+		
+		inline void _notifyCulled( bool culled )
+		{
+			mCulled = culled;
+		}
+		
 	protected:
 		
 		bool visible;
@@ -179,7 +182,11 @@ namespace Dojo
 		float currentFadeTime;
 		float fadeEndTime;
 		Color fadeStartColor;
-		Color fadeEndColor;		
+		Color fadeEndColor;	
+		
+	private:
+		
+		bool mCulled;
 	};
 }
 #endif

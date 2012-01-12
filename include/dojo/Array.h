@@ -132,10 +132,9 @@ namespace Dojo
 				vectorArray[ index ] = vectorArray[ elements ];					
 		}
 		
-		///Rimuove un elemento dal vettore.
+		///removes an element from the vector
 		/**
-		 Chiama semplicemente getElementIndex seguito da remove(unsigned int).
-		 Non chiama delte in caso di pointers.
+		 returns true if the remove is successful
 		 */
 		FV_INLINE bool remove( const T& e)
 		{

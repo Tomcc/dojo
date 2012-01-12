@@ -122,9 +122,9 @@ bool Viewport::isContainedInFrustum( Renderable* r )
 	//for each plane, check where the AABB is placed
 	for( uint i = 0; i < 5; ++i )
 	{
-		Vector bounds = r->getWorldMax() - r->getWorldMin();
+		Vector bounds = r->getAABBMax() - r->getAABBMin();
 
-		if( worldFrustumPlanes[i].getSide( r->getWorldPosition(), bounds * 0.5f ) == -1 )
+		if( worldFrustumPlanes[i].getSide( r->getWorldPosition(), bounds ) == -1 )
 			return false;
 	}
 

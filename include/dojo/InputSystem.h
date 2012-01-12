@@ -191,40 +191,19 @@ namespace Dojo
 			
 			inline InputSystem* getSource()	{	return source;	}
 			
-			virtual void onTouchBegan( const Vector& point )
-			{
-				
-			}
+			virtual void onTouchBegan( const Vector& point )	{}			
+			virtual void onTouchMove( const Vector& point, const Vector& trans )	{}
+			virtual void onTouchEnd( const Vector& point )	{}
 			
-			virtual void onTouchMove( const Vector& point, const Vector& trans )
-			{
-				
-			}
+			virtual void onMouseMove( const Vector& point, const Vector& trans )	{}			
+			virtual void onScrollWheel( float scroll )	{}
 			
-			virtual void onTouchEnd( const Vector& point )
-			{
-				
-			}
+			virtual void onShake()	{}
 			
-			virtual void onShake()
-			{
-				
-			}
-			
-			virtual void onAcceleration( float x, float y, float z, float roll )
-			{
-				
-			}
+			virtual void onAcceleration( float x, float y, float z, float roll )	{}
 
-			virtual void onKeyPressed( uint character, uint keyID )
-			{
-
-			}
-
-			virtual void onKeyReleased( uint character, uint keyID )
-			{
-
-			}
+			virtual void onKeyPressed( uint character, uint keyID )		{}
+			virtual void onKeyReleased( uint character, uint keyID )	{}
 
 			inline void _notifySource( InputSystem* src )	{	source = src;	}
 			
@@ -305,6 +284,26 @@ namespace Dojo
 					listeners.at(i)->onTouchEnd( point );
 			}
 		}	
+		
+		virtual void _fireMouseMoveEvent( const Vector& point )
+		{
+			if( !enabled )	return;
+		
+			lastMovePos -= point;
+			
+			for( int i = 0; i < listeners.size(); ++i )
+				listeners[i]->onMouseMove( point, lastMovePos );
+			
+			lastMovePos = point;
+		}
+		
+		virtual void _fireScrollWheelEvent( float scroll )
+		{
+			if( !enabled )	return;
+			
+			for( int i = 0; i < listeners.size(); ++i )
+				listeners[i]->onScrollWheel( scroll );
+		}
 		
 		virtual void _fireShakeEvent()
 		{

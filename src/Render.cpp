@@ -547,7 +547,9 @@ void Render::renderLayer( Layer* list )
 		{
 			s = list->at(i);
 
-			if( s->isVisible() && viewport->isContainedInFrustum( s ) )
+			s->_notifyCulled( !viewport->isContainedInFrustum( s ) );
+			
+			if( s->isVisible() && s->isInView() )
 				renderElement( s );
 		}
 	}

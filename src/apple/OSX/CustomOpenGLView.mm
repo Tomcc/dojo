@@ -201,7 +201,8 @@ using namespace Dojo;
 
 - (void)mouseMoved: (NSEvent *)theEvent
 {
-	
+	input->_fireMouseMoveEvent(Vector(	[theEvent locationInWindow].x, 
+										  platform->getGame()->getNativeHeight() - [theEvent locationInWindow].y ) );
 }
 
 - (void)rightMouseDown: (NSEvent *)theEvent
@@ -232,6 +233,11 @@ using namespace Dojo;
 - (void)otherMouseUp: (NSEvent *)theEvent
 {
 	
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+	input->_fireScrollWheelEvent( [theEvent deltaY] );
 }
 
 

@@ -174,7 +174,8 @@ namespace Dojo
 		
 		inline Vector lerp( float s, const Dojo::Vector& v )
 		{			
-			return (*this)*s + v*(1.f-s);
+			float invs = 1.f - s;			
+			return Vector( x*s + invs*v.x, y*s + invs*v.y, z*s + invs*v.z);
 		}
 
 		inline const Vector& reflect( const Dojo::Vector& normal )

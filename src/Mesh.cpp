@@ -74,12 +74,6 @@ void Mesh::_prepareVertex( float x, float y, float z )
 	if( z > max.z ) max.z = z;
 	else if( z < min.z ) min.z = z;
 
-	center.x = (max.x + min.x)*0.5f;
-	center.y = (max.y + min.y)*0.5f;
-	center.z = (max.z + min.z)*0.5f;
-
-	dimensions = max - min;
-
 	++vertexCount;
 }
 
@@ -147,6 +141,13 @@ bool Mesh::end()
 	//guess triangle count
 	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	triangleCount = (triangleMode == TM_LIST) ? elemCount / 3 : elemCount-2;
+	
+	//geometric hints
+	center.x = (max.x + min.x)*0.5f;
+	center.y = (max.y + min.y)*0.5f;
+	center.z = (max.z + min.z)*0.5f;
+	
+	dimensions = max - min;
 				
 	return loaded;
 }
@@ -234,12 +235,9 @@ bool Mesh::load()
 {
 	//load binary mesh
 	char* data;
-	uint r = Platform::getSingleton()->loadFileContent( data, filePath );
-	
-	DEBUG_MESSAGE( r );
-	
-	if( !data )
-		return false;
+	Platform::getSingleton()->loadFileContent( data, filePath );
+		
+	DEBUG_ASSERT( data );
 	
 	char* ptr = data;
 	

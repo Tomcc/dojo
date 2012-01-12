@@ -256,18 +256,6 @@
 		431CF7D7147D52300031CB4E /* libvorbis_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis_iphone.a; path = dependencies/lib/libvorbis_iphone.a; sourceTree = "<group>"; };
 		431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile_iphone.a; path = dependencies/lib/libvorbisfile_iphone.a; sourceTree = "<group>"; };
 		431CF7ED147D748E0031CB4E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		431CF80A147D77F40031CB4E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		431CF80D147D77F40031CB4E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		431CF80E147D77F40031CB4E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		431CF80F147D77F40031CB4E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		431CF812147D77F40031CB4E /* Ninja Training-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Ninja Training-Info.plist"; sourceTree = "<group>"; };
-		431CF814147D77F40031CB4E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		431CF816147D77F40031CB4E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		431CF818147D77F50031CB4E /* Ninja Training-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ninja Training-Prefix.pch"; sourceTree = "<group>"; };
-		431CF81A147D77F50031CB4E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		431CF81C147D77F50031CB4E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		431CF81D147D77F50031CB4E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		431CF820147D77F50031CB4E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,8 +298,6 @@
 				431CF69B147D4E5B0031CB4E /* src */,
 				431CF7C9147D51E50031CB4E /* Frameworks-OSX */,
 				431CF685147D4E0A0031CB4E /* Frameworks-iOS */,
-				431CF810147D77F40031CB4E /* Ninja Training */,
-				431CF809147D77F40031CB4E /* Frameworks */,
 				431CF684147D4E0A0031CB4E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -527,48 +513,6 @@
 				431CF7CE147D52050031CB4E /* libvorbisfile.a */,
 			);
 			name = "Frameworks-OSX";
-			sourceTree = "<group>";
-		};
-		431CF809147D77F40031CB4E /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				431CF80A147D77F40031CB4E /* Cocoa.framework */,
-				431CF80C147D77F40031CB4E /* Other Frameworks */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		431CF80C147D77F40031CB4E /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				431CF80D147D77F40031CB4E /* AppKit.framework */,
-				431CF80E147D77F40031CB4E /* CoreData.framework */,
-				431CF80F147D77F40031CB4E /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		431CF810147D77F40031CB4E /* Ninja Training */ = {
-			isa = PBXGroup;
-			children = (
-				431CF81C147D77F50031CB4E /* AppDelegate.h */,
-				431CF81D147D77F50031CB4E /* AppDelegate.m */,
-				431CF81F147D77F50031CB4E /* MainMenu.xib */,
-				431CF811147D77F40031CB4E /* Supporting Files */,
-			);
-			path = "Ninja Training";
-			sourceTree = "<group>";
-		};
-		431CF811147D77F40031CB4E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				431CF812147D77F40031CB4E /* Ninja Training-Info.plist */,
-				431CF813147D77F40031CB4E /* InfoPlist.strings */,
-				431CF816147D77F40031CB4E /* main.m */,
-				431CF818147D77F50031CB4E /* Ninja Training-Prefix.pch */,
-				431CF819147D77F50031CB4E /* Credits.rtf */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -794,33 +738,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		431CF813147D77F40031CB4E /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				431CF814147D77F40031CB4E /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		431CF819147D77F50031CB4E /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				431CF81A147D77F50031CB4E /* en */,
-			);
-			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		431CF81F147D77F50031CB4E /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				431CF820147D77F50031CB4E /* en */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		431CF692147D4E0B0031CB4E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -919,6 +836,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
@@ -944,6 +862,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
