@@ -56,6 +56,10 @@ backLayer( NULL )
 #ifndef PLATFORM_IOS
 	glColorMaterial( GL_FRONT, GL_DIFFUSE );
 #endif
+
+#ifdef DOJO_GAMMA_CORRECTION_ENABLED
+	glEnable( GL_FRAMEBUFFER_SRGB );
+#endif
 	
 	//projection is always the same
 	glMatrixMode(GL_PROJECTION);
