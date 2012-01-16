@@ -189,7 +189,7 @@ namespace Dojo {
 			}
 
 			//then from 0 to the most positive
-			for( uint i = 0; i < positiveLayers.size(); ++i )
+			for( int i = 0; i < positiveLayers.size(); ++i )
 				renderLayer( positiveLayers.at(i) );
 
 			endFrame();

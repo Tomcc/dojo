@@ -41,6 +41,10 @@
 		#include <crtdbg.h>
 
     #endif
+	
+	#define NOMINMAX
+	#define WIN32_LEAN_AND_MEAN
+	#include <windows.h>
 
 #elif defined( PLATFORM_OSX )
     #include <OpenAL/al.h>

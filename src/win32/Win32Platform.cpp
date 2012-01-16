@@ -235,12 +235,6 @@ void Win32Platform::initialise()
 
 	glewInit();
 
-	DEBUG_MESSAGE( "Creating OpenGL context...");
-	DEBUG_MESSAGE ("querying GL info... ");
-	DEBUG_MESSAGE ("vendor: " << glGetString (GL_VENDOR));
-	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
-	DEBUG_MESSAGE ("version: " << glGetString (GL_VERSION));
-
 	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
@@ -380,13 +374,17 @@ bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 
 bool Win32Platform::mouseMoved( const MouseEvent& arg )
 {
-	if( dragging )
+	cursorPos.x = (float)arg.state.X.abs;
+	cursorPos.y = (float)arg.state.Y.abs;
+	
+	if( arg.state.Z.rel == 0 ) //no scroll wheel
 	{
-		cursorPos.x = (float)arg.state.X.abs;
-		cursorPos.y = (float)arg.state.Y.abs;
-
-		input->_fireTouchMoveEvent( cursorPos );
+		if( dragging )	input->_fireTouchMoveEvent( cursorPos );
+		else			input->_fireMouseMoveEvent( cursorPos );
 	}
+	else
+		input->_fireScrollWheelEvent( arg.state.Z.rel*0.05 );
+		
 	return true;
 }
 

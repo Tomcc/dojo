@@ -32,7 +32,13 @@ backLayer( NULL )
 {	
 	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
 
-	platform = Platform::getSingleton();
+	platform = Platform::getSingleton();	
+
+	DEBUG_MESSAGE( "Creating OpenGL context...");
+	DEBUG_MESSAGE ("querying GL info... ");
+	DEBUG_MESSAGE ("vendor: " << glGetString (GL_VENDOR));
+	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
+	DEBUG_MESSAGE ("version: OpenGL " << glGetString (GL_VERSION));
 	
 	//clean errors
 	glGetError();

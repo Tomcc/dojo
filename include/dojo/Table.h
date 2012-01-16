@@ -246,7 +246,7 @@ namespace Dojo
 			return name;
 		}
 
-		inline uint getAutoMembers() const
+		inline int getAutoMembers() const
 		{
 			return unnamedMembers;
 		}

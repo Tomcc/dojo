@@ -69,6 +69,11 @@ namespace Dojo
 			return Color( r * c.r, g * c.g, b * c.b, a * c.a );
 		}
 
+		inline Color operator + ( float s ) const
+		{
+			return Color( r + s, g + s, b + s, a + s );
+		}
+
 		inline Color lerp( float s, const Color& c ) const
 		{
 			float invs = 1.f-s;
