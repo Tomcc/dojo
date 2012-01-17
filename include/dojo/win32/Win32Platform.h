@@ -11,6 +11,7 @@
 #include <Poco/Mutex.h>
 #include <Poco/Semaphore.h>
 #include <OIS/OIS.h>
+#include <queue>
 
 namespace Dojo
 {
@@ -24,10 +25,7 @@ namespace Dojo
 		virtual void initialise();
 		virtual void shutdown();
 
-		virtual void prepareThreadContext()
-		{
-			//do nothing
-		}
+		void prepareThreadContext();
 
 		virtual bool isNPOTEnabled()
 		{
@@ -102,9 +100,14 @@ namespace Dojo
 
 		bool dragging;
 
+		//context sharing stuff needed for multithread creation
+		typedef std::queue< HGLRC* > ContextRequestsQueue;
+		ContextRequestsQueue mContextRequestsQueue;
+		Poco::Mutex mCRQMutex;
+
 		bool _initialiseWindow( const String& caption, uint w, uint h );
 		void _initialiseOIS();
-
+		
 	private:
 
 		//hack needed because of OIS's bug

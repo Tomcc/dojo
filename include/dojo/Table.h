@@ -399,7 +399,7 @@ namespace Dojo
 		}
 		
 		///removes the unnamed member index idx
-		inline void remove( uint idx )
+		inline void remove( int idx )
 		{
 			map.erase( autoMemberName( idx ) );
 		}

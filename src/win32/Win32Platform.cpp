@@ -182,7 +182,7 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 		return false;
 
 	hglrc = wglCreateContext( hdc );
-
+	
 	return wglMakeCurrent( hdc, hglrc )>0;
 }
 
@@ -249,6 +249,22 @@ void Win32Platform::initialise()
 	game->begin();
 }
 
+void Win32Platform::prepareThreadContext()
+{
+	HGLRC context;
+
+	mCRQMutex.lock();
+
+	mContextRequestsQueue.push( &context );
+			
+	mCRQMutex.unlock();
+
+	//now busy-wait
+	//while( context == 0 );
+	Poco::Thread::sleep(1000);
+	
+	bool error = wglMakeCurrent( hdc, context )>0;
+}
 
 void Win32Platform::shutdown()
 {
@@ -287,6 +303,21 @@ void Win32Platform::step( float dt )
 {
 	Timer timer;
 	
+	//check if some other thread requested a new context
+	mCRQMutex.lock();
+	while( mContextRequestsQueue.size() )
+	{
+		HGLRC* glrc2 = mContextRequestsQueue.front();
+		mContextRequestsQueue.pop();
+
+		*glrc2=wglCreateContext(hdc);
+
+		bool success = wglShareLists(hglrc, *glrc2);
+
+		DEBUG_ASSERT( success );
+	}
+	mCRQMutex.unlock();
+
 	//cattura l'input prima del gameplay
 	keys->capture();
 	mouse->capture();

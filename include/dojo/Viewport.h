@@ -67,7 +67,7 @@ namespace Dojo
 		Vector getScreenPosition( const Vector& pos );
 		
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
-		Vector getRayDirecton( const Vector& screenSpacePos );
+		Vector getRayDirection( const Vector& screenSpacePos );
 
 		bool isContainedInFrustum( Renderable* r );
 

@@ -148,7 +148,7 @@ Vector Viewport::getScreenPosition( const Vector& pos )
 	return local;
 }
 
-Vector Viewport::getRayDirecton( const Vector& screenSpacePos )
+Vector Viewport::getRayDirection( const Vector& screenSpacePos )
 {
 	//frustum[0]: top left
 	//frustum[1]: bottom left

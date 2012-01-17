@@ -107,7 +107,9 @@ bool Mesh::end()
 	
 	glGetError();
 	if( !vertexHandle )
-		glGenBuffers(1, &vertexHandle );	
+		glGenBuffers(1, &vertexHandle );
+
+	int error = glGetError();
 
 	DEBUG_ASSERT( vertexHandle );
 	

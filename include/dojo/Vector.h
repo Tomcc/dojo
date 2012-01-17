@@ -134,6 +134,12 @@ namespace Dojo
 				x * v.y - y * v.x );	
 		}
 
+		inline Vector& operator - ()
+		{
+			*this *= -1;
+			return *this;
+		}
+
 		inline const Vector& set( float X, float Y, float Z )
 		{
 			x = X;
