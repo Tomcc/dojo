@@ -182,8 +182,10 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 		return false;
 
 	hglrc = wglCreateContext( hdc );
-	
-	return wglMakeCurrent( hdc, hglrc )>0;
+	bool err = wglMakeCurrent( hdc, hglrc )>0;
+	glewInit();
+
+	return err;
 }
 
 void Win32Platform::_initialiseOIS()
@@ -232,9 +234,7 @@ void Win32Platform::initialise()
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
 		return;
-
-	glewInit();
-
+	
 	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
@@ -251,7 +251,7 @@ void Win32Platform::initialise()
 
 void Win32Platform::prepareThreadContext()
 {
-	HGLRC context;
+	HGLRC context = 0;
 
 	mCRQMutex.lock();
 
@@ -260,10 +260,11 @@ void Win32Platform::prepareThreadContext()
 	mCRQMutex.unlock();
 
 	//now busy-wait
-	//while( context == 0 );
-	Poco::Thread::sleep(1000);
-	
+	while( context == 0 );
+			
 	bool error = wglMakeCurrent( hdc, context )>0;
+
+	glewInit();
 }
 
 void Win32Platform::shutdown()
@@ -307,14 +308,15 @@ void Win32Platform::step( float dt )
 	mCRQMutex.lock();
 	while( mContextRequestsQueue.size() )
 	{
-		HGLRC* glrc2 = mContextRequestsQueue.front();
-		mContextRequestsQueue.pop();
-
-		*glrc2=wglCreateContext(hdc);
-
-		bool success = wglShareLists(hglrc, *glrc2);
+		HGLRC c = wglCreateContext(hdc); 
+		
+		bool success = wglShareLists(hglrc, c);
 
 		DEBUG_ASSERT( success );
+
+		*(mContextRequestsQueue.front()) = c; //assing back to the caller thread
+
+		mContextRequestsQueue.pop();
 	}
 	mCRQMutex.unlock();
 
