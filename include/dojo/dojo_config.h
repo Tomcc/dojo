@@ -70,6 +70,10 @@
 
 	#define glOrthof glOrtho
 	#define glFrustumf glFrustum
+
+	#ifdef PLATFORM_OSX
+		#define GL_FRAMEBUFFER_SRGB GL_FRAMEBUFFER_SRGB_EXT
+	#endif
 #else
 	//iOS platform - OpenglES
 
@@ -82,7 +86,7 @@
 	#define glBindFramebuffer			glBindFramebufferOES
 	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
-
+	
 #endif
 
 //general configurations

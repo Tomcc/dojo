@@ -467,4 +467,9 @@ void IOSPlatform::showDefaultLeaderboard()
 	[[[UIApplication sharedApplication] delegate] showGameCenterLeaderboard];
 }
 
+bool IOSPlatform::isSmallScreen()
+{
+	return [[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad;
+}
+
 #endif

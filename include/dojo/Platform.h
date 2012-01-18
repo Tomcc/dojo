@@ -80,7 +80,16 @@ namespace Dojo
 
 		virtual bool loadPNGContent( void*& bufptr, const String& path, int& width, int& height )=0;
 		
-		virtual bool  isNPOTEnabled()=0;
+		virtual bool isNPOTEnabled()=0;
+		
+		///returns TRUE if the screen is physically "small", not dependent on resolution
+		/**
+			currently it is false on iPhone and iPod
+		*/
+		virtual bool isSmallScreen()
+		{
+			return false;
+		}
 		
 		virtual String getAppDataPath()=0;
 		virtual String getRootPath()=0;

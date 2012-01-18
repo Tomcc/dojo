@@ -110,6 +110,16 @@ namespace Dojo
 			return ( a >= 0 ) ? a : -a;
 		}
 		
+		static inline bool AABBContains( const Vector& max, const Vector& min, const Vector& point )
+		{
+			DEBUG_TODO;
+		}
+		
+		static inline bool AABBContainsAABB( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
+		{
+			return AABBContains( maxA, minA, maxB ) && AABBContains( maxA, minA, minB );
+		}
+		
 		static inline bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
 		{
 			float cx = maxA.x - minB.x;

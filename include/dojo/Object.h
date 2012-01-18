@@ -62,7 +62,7 @@ namespace Dojo {
 						
 			size.x = x;
 			size.y = y;
-			halfSize.x = size.x * 0.5f;
+			halfSize.x = size.x * 0.5;
 			halfSize.y = size.y * 0.5f;
 		}
 		
@@ -124,7 +124,7 @@ namespace Dojo {
 		{
 			return childs != NULL && childs->size() > 0;
 		}
-		
+				
 		//TODO use real transforms
 		inline const Vector& getWorldMax()				{	return max;	}
 		inline const Vector& getWorldMin()				{	return min;	}

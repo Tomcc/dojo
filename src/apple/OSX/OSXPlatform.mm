@@ -114,8 +114,12 @@ void OSXPlatform::shutdown()
 }
 
 void OSXPlatform::prepareThreadContext()
-{
-	DEBUG_TODO;
+{	
+	NSOpenGLContext* context = [[NSOpenGLContext alloc]
+								initWithFormat:[ view pixelFormat ]
+								shareContext:[view openGLContext] ];
+	
+    [context makeCurrentContext];
 }
 
 void OSXPlatform::acquireContext()

@@ -72,6 +72,8 @@ namespace Dojo
 			return false; //TODO: check if the model supports the extension	
 		}
 		
+		virtual bool isSmallScreen();
+		
 #ifdef GAME_CENTER_ENABLED
 		///IOS SPECIFIC - checks game center availability and logins into it.
 		/** Returns true if no error occurred */
