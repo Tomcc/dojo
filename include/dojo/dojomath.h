@@ -74,6 +74,8 @@ namespace Dojo
 
 		static inline float clamp( float n, float max, float min )
 		{
+			DEBUG_ASSERT( max >= min );
+			
 			if( n > max )	return max;
 			if( n < min )	return min;
 			return n;

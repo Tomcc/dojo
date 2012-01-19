@@ -92,7 +92,7 @@
 //general configurations
 #define MESH_32BIT_INDICES 0
 
-#ifndef PLATFORM_IPHONE
+#ifndef PLATFORM_IOS
 	#define DOJO_GAMMA_CORRECTION_ENABLED
 #endif
 

@@ -20,6 +20,8 @@ namespace Dojo
 	{
 	public:
 		
+		typedef unsigned int RGBAPixel;
+		
 		static const Color RED, GREEN, BLUE, BLACK, WHITE, GRAY, YELLOW, NIL;
 				
 		float r,g,b,a;
@@ -49,12 +51,31 @@ namespace Dojo
 			this->a = a;
 		}
 		
-		void setRGBA8( byte r, byte g, byte b, byte a = 255 )
+		void setRGBA( byte r, byte g, byte b, byte a = 255 )
 		{
-			this->r = (float)r/255.f;
-			this->g = (float)g/255.f;
-			this->b = (float)b/255.f;
-			this->a = (float)a/255.f;
+			r = (float)r/255.f;
+			g = (float)g/255.f;
+			b = (float)b/255.f;
+			a = (float)a/255.f;
+		}
+		
+		void setRGBA( RGBAPixel pixel )
+		{
+			byte* ch = (byte*)&pixel;
+			setRGBA( ch[0], ch[1], ch[2], ch[3] );
+		}
+				
+		inline RGBAPixel toRGBA()
+		{
+			RGBAPixel p;
+			byte* ch = (byte*)&p;
+			
+			ch[0] = r * 255;
+			ch[1] = g * 255;
+			ch[2] = b * 255;
+			ch[3] = a * 255;
+			
+			return p;
 		}
 
 		///scales the color
@@ -90,7 +111,7 @@ namespace Dojo
 			g *= s;
 			b *= s;
 		}
-				
+						
 	protected:
 	};
 }

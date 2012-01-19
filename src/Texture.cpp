@@ -95,7 +95,7 @@ void Texture::disableMipmaps()
 	}
 }
 
-bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
+bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height, GLenum sourceFormat, GLenum destFormat )
 {
 	int err;
 	
@@ -130,22 +130,18 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height )
 	npot = ( Math::nextPowerOfTwo( width ) != width || Math::nextPowerOfTwo( height ) != height );
 	
 	size = internalWidth * internalHeight * 4;
-
+	
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 	
 	//HACK
 	glTexImage2D(
 		GL_TEXTURE_2D, 
 		0, 
-#ifdef DOJO_GAMMA_CORRECTION_ENABLED
-		GL_SRGB8_ALPHA8, 
-#else
-		GL_RGBA,
-#endif
+		destFormat,
 		internalWidth, 
 		internalHeight, 
 		0, 
-		GL_RGBA, 
+		sourceFormat,
 		GL_UNSIGNED_BYTE, 
 		imageData);
 
@@ -188,8 +184,17 @@ bool Texture::loadFromPNG( const String& path )
 		disableTiling();
 	else
 		enableTiling();
+	
+	GLenum sourceFormat = GL_RGBA; //TODO don't use alpha if not needed
+	
+	GLenum destFormat = sourceFormat;
+	
+#ifdef DOJO_GAMMA_CORRECTION_ENABLED
+	if( sourceFormat == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
+	else if( sourceFormat == GL_RGB )	destFormat = GL_SRGB8;
+#endif
 		
-	loadFromMemory( (byte*)imageData, width, height );
+	loadFromMemory( (byte*)imageData, width, height, sourceFormat, destFormat );
 
 	free(imageData);
 

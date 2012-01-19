@@ -45,10 +45,11 @@ backLayer( NULL )
 	
 	glEnable( GL_BLEND );	
 
-	glEnable( GL_LIGHTING );
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_CULL_FACE );
+	
+	glEnable( GL_LIGHTING );
 
 	glCullFace( GL_BACK );
 	
@@ -56,13 +57,18 @@ backLayer( NULL )
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	glEnable( GL_COLOR_MATERIAL );
+	//HACK
+	//glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
-	glColorMaterial( GL_FRONT, GL_DIFFUSE );
+	//glColorMaterial( GL_FRONT, GL_DIFFUSE );
 #endif
-
+	
+	float white[] = {1,1,1,1};
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );
+	
+	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	glEnable( GL_FRAMEBUFFER_SRGB );
 #endif
@@ -296,6 +302,14 @@ void Render::renderElement( Renderable* s )
 		glMultMatrixf( s->customMatrix );
 	}
 	
+	//HACK
+#ifndef PLATFORM_IOS
+	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
+#endif
+	glEnable( GL_COLOR_MATERIAL );
+	
+	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );
+		
 	Mesh* m = currentRenderState->getMesh();
 
 	GLenum mode = (m->getTriangleMode() == Mesh::TM_STRIP) ? GL_TRIANGLE_STRIP : GL_TRIANGLES;
@@ -519,9 +533,7 @@ void Render::renderLayer( Layer* list )
 	
 	
 	if( list->lightingOn )	
-	{
-		glEnable( GL_LIGHTING );	
-		
+	{		
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
 		uint i = 0;
 		for( ; i < lights.size(); ++i )
@@ -533,7 +545,10 @@ void Render::renderLayer( Layer* list )
 		}
 	}
 	else
-		glDisable( GL_LIGHTING );
+	{		
+		for( int i = 0; i < lights.size(); ++i )
+			glDisable( GL_LIGHT0 + i );
+	}
 	
 	Renderable* s;
 

@@ -146,7 +146,7 @@ namespace Dojo
 				{
 					fading = false;
 					
-					if( color.a <= 0.f )
+					if( fadeEndColor.a == 0 )
 						setVisible( false );
 				}				
 				

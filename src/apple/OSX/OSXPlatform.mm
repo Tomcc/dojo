@@ -145,6 +145,7 @@ void OSXPlatform::loop( float frameTime )
 	
 	//listen the window
 	[window setDelegate:view];
+	[window setAcceptsMouseMovedEvents:YES];
 	
 	running = true;
 	
