@@ -107,7 +107,7 @@ namespace Dojo
 			return filternoise( x, y, scale, scale );
 		}
 				
-	protected:		
+	protected:
 		
 		int p[512];
 		unsigned int usedSeed, lastSeed;
