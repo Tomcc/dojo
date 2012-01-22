@@ -148,19 +148,14 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 
 void ApplePlatform::_createApplicationDirectory()
 {	
-	String dirname = "/" + game->getName();
-	
-	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString* nspath = [nspaths objectAtIndex:0];
-	NSString* nsgamedir = dirname.toNSString();	
-	NSString* nsdir = [nspath stringByAppendingString:nsgamedir];
-	
+	String dirname = getAppDataPath() + "/" + game->getName();
+			
 	//check if the directory exists, if not existing create it!
 	NSFileManager *fileManager= [NSFileManager defaultManager]; 
-	if(![ fileManager fileExistsAtPath:nsdir ])
+	if(![ fileManager fileExistsAtPath:dirname.toNSString() ])
 	{
 		bool success = [fileManager 
-						createDirectoryAtPath:nsdir
+						createDirectoryAtPath:dirname.toNSString()
 						withIntermediateDirectories:YES 
 						attributes:nil 
 						error:NULL];

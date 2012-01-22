@@ -25,7 +25,7 @@
 
 using namespace Dojo;
 
-void OSXPlatform::initialise()
+void OSXPlatform::initialise() 
 {	
 	DEBUG_ASSERT( game );
 	
@@ -33,6 +33,8 @@ void OSXPlatform::initialise()
 	
     pool = [[NSAutoreleasePool alloc] init];
 	
+	_createApplicationDirectory();
+		
 	//show menu bar
 	/*NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
 	 [[NSApplication sharedApplication] setMenu:menu];*/
