@@ -260,8 +260,13 @@ void Win32Platform::prepareThreadContext()
 	mCRQMutex.unlock();
 
 	//now busy-wait
+#ifdef _DEBUG
 	while( context == 0 );
-			
+#else
+	//HACK
+	Poco::Thread::sleep( 1000 );
+#endif
+
 	bool error = wglMakeCurrent( hdc, context )>0;
 
 	glewInit();
@@ -386,7 +391,10 @@ void Win32Platform::loop( float frameTime )
 			DispatchMessage( &msg );
 		}
 
-		step( (float)timer.deltaTime() );
+		//never send a dt lower than the minimum!
+		float dt = min( game->getMaximumFrameLength(), (float)timer.deltaTime() );
+
+		step( dt );
 	}
 
 	if( frameTime )

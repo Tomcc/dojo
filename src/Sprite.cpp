@@ -15,7 +15,7 @@ AnimatedQuad( level, pos, pp )
 	SAFE_DELETE( animation );
 	
 	if( defaultAnimName.size() )
-	{		
+	{
 		FrameSet* s = level->getFrameSet( defaultAnimName );
 		
 		setAnimation( registerAnimation( s, tpf ) );

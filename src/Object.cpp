@@ -157,8 +157,7 @@ void Object::updateWorldPosition()
 }
 
 void Object::updateChilds( float dt )
-{
-	
+{	
 	if( childs )
 	{
 		collectChilds();
