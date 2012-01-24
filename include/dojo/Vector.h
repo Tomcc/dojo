@@ -170,7 +170,7 @@ namespace Dojo
 			return l;
 		}	
 		
-		inline Vector normalized()
+		inline Vector normalized() const
 		{
 			Vector v = *this;
 			v.normalize();

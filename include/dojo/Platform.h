@@ -84,7 +84,7 @@ namespace Dojo
 		
 		///returns TRUE if the screen is physically "small", not dependent on resolution
 		/**
-			currently it is true on iPhone and iPod
+			currently it is false on iPhone and iPod
 		*/
 		virtual bool isSmallScreen()
 		{

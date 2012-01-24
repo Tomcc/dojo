@@ -48,7 +48,6 @@ namespace Dojo
 		inline void setState( int newState )		
 		{			
 			DEBUG_ASSERT( mCanSetNextState );
-			DEBUG_ASSERT( !hasNextState() );
 			
 			nextState = newState;
 			

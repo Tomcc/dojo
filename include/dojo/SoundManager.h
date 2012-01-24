@@ -141,11 +141,19 @@ namespace Dojo {
 			{	
 				DEBUG_ASSERT( volume >= 0 );
 				
-				masterVolume = volume;		
+				masterVolume = volume;
+				
+				if( !nextMusicTrack && musicTrack )
+					musicTrack->setVolume( masterVolume*musicVolume );
 			}
 			
 			inline float getMasterVolume()				{	return masterVolume;		}
 			inline float getMusicVolume()				{	return musicVolume;			}
+			
+			inline SoundSource* getMusicTrack()
+			{
+				return musicTrack;
+			}
 			
 			///metodo utile per mettere in pausa tutte le sources attive
 			void pauseAll()

@@ -206,12 +206,12 @@ namespace Dojo
 				
 			}
 
-			virtual void onKeyPressed( uint character, uint keyID )
+			virtual void onKeyPressed( int character, int keyID )
 			{
 
 			}	
 
-			virtual void onKeyReleased( uint character, uint keyID )
+			virtual void onKeyReleased( int character, int keyID )
 			{
 
 			}
