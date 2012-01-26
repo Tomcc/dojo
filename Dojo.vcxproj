@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AnimatedQuad.cpp" />
+    <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Email.cpp" />
+    <ClCompile Include="src\Font.cpp" />
+    <ClCompile Include="src\FrameSet.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\linux\LinuxPlatform.cpp" />
+    <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Noise.cpp" />
+    <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\ParticlePool.cpp" />
+    <ClCompile Include="src\Platform.cpp" />
+    <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Renderable.cpp" />
+    <ClCompile Include="src\RenderState.cpp" />
+    <ClCompile Include="src\ResourceGroup.cpp" />
+    <ClCompile Include="src\SoundBuffer.cpp" />
+    <ClCompile Include="src\SoundManager.cpp" />
+    <ClCompile Include="src\SoundSource.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\String.cpp" />
+    <ClCompile Include="src\Table.cpp" />
+    <ClCompile Include="src\TextArea.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\TouchSource.cpp" />
+    <ClCompile Include="src\Vector.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
+    <ClCompile Include="src\win32\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\win32\WGL_ARB_multisample.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\win32\Win32Platform.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\dojo\AnimatedQuad.h" />
+    <ClInclude Include="include\dojo\apple\ApplePlatform.h" />
+    <ClInclude Include="include\dojo\apple\iOS\AppDelegate.h" />
+    <ClInclude Include="include\dojo\apple\iOS\Application.h" />
+    <ClInclude Include="include\dojo\apple\iOS\IOSPlatform.h" />
+    <ClInclude Include="include\dojo\apple\OSX\CustomOpenGLView.h" />
+    <ClInclude Include="include\dojo\apple\OSX\OSXPlatform.h" />
+    <ClInclude Include="include\dojo\Array.h" />
+    <ClInclude Include="include\dojo\Buffer.h" />
+    <ClInclude Include="include\dojo\Color.h" />
+    <ClInclude Include="include\dojo\dojomath.h" />
+    <ClInclude Include="include\dojo\dojostring.h" />
+    <ClInclude Include="include\dojo\dojo_common_header.h" />
+    <ClInclude Include="include\dojo\dojo_config.h" />
+    <ClInclude Include="include\dojo\Email.h" />
+    <ClInclude Include="include\dojo\FocusListener.h" />
+    <ClInclude Include="include\dojo\Font.h" />
+    <ClInclude Include="include\dojo\FontSystem.h" />
+    <ClInclude Include="include\dojo\FrameSet.h" />
+    <ClInclude Include="include\dojo\Game.h" />
+    <ClInclude Include="include\dojo\GameState.h" />
+    <ClInclude Include="include\dojo\InputSystem.h" />
+    <ClInclude Include="include\dojo\Light.h" />
+    <ClInclude Include="include\dojo\linux\LinuxPlatform.h" />
+    <ClInclude Include="include\dojo\Mesh.h" />
+    <ClInclude Include="include\dojo\Model.h" />
+    <ClInclude Include="include\dojo\Noise.h" />
+    <ClInclude Include="include\dojo\Object.h" />
+    <ClInclude Include="include\dojo\Particle.h" />
+    <ClInclude Include="include\dojo\ParticlePool.h" />
+    <ClInclude Include="include\dojo\Plane.h" />
+    <ClInclude Include="include\dojo\Platform.h" />
+    <ClInclude Include="include\dojo\Render.h" />
+    <ClInclude Include="include\dojo\Renderable.h" />
+    <ClInclude Include="include\dojo\RenderState.h" />
+    <ClInclude Include="include\dojo\ResourceGroup.h" />
+    <ClInclude Include="include\dojo\Serializable.h" />
+    <ClInclude Include="include\dojo\SoundBuffer.h" />
+    <ClInclude Include="include\dojo\SoundManager.h" />
+    <ClInclude Include="include\dojo\SoundSet.h" />
+    <ClInclude Include="include\dojo\SoundSource.h" />
+    <ClInclude Include="include\dojo\Sprite.h" />
+    <ClInclude Include="include\dojo\StateInterface.h" />
+    <ClInclude Include="include\dojo\StringReader.h" />
+    <ClInclude Include="include\dojo\Table.h" />
+    <ClInclude Include="include\dojo\TextArea.h" />
+    <ClInclude Include="include\dojo\Texture.h" />
+    <ClInclude Include="include\dojo\Timer.h" />
+    <ClInclude Include="include\dojo\TouchSource.h" />
+    <ClInclude Include="include\dojo\Utils.h" />
+    <ClInclude Include="include\dojo\Vector.h" />
+    <ClInclude Include="include\dojo\Viewport.h" />
+    <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
+    <ClInclude Include="include\dojo\win32\Win32Platform.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>Dojo</ProjectName>
+    <ProjectGuid>{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}</ProjectGuid>
+    <RootNamespace>Dojo</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.;include/dojo;../include/dojo;Win32;dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>OIS_d.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)dojo_d.lib</OutputFile>
+      <AdditionalLibraryDirectories>dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>.;include/dojo;../include/dojo;Win32;dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;OIS.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)dojo.lib</OutputFile>
+      <AdditionalLibraryDirectories>dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

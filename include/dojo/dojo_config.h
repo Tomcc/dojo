@@ -40,7 +40,7 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#ifdef _DEBUG
+#ifndef _FINAL
 
 	#define DEBUG_ASSERT( T ) assert(T)
 	#define DEBUG_TODO assert( !"METHOD NOT IMPLEMENTED" ), 0

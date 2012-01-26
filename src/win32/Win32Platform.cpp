@@ -93,6 +93,8 @@ Win32Platform::~Win32Platform()
 
 bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
 {
+	DEBUG_MESSAGE( "Creating " << w << "x" << h << " window" );
+
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
 	WNDCLASS wc;
@@ -190,6 +192,8 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 
 void Win32Platform::_initialiseOIS()
 {
+	DEBUG_MESSAGE( "Initialising input" );
+
 	OIS::ParamList params;
 
 	//convert the hwnd to std strng
@@ -226,6 +230,8 @@ void Win32Platform::initialise()
 {
 	DEBUG_ASSERT( game );
 
+	DEBUG_MESSAGE( "Initializing Dojo Win32" );
+
 	//create user dir if not existing
 	String userDir = getAppDataPath() + '/' + game->getName();
 
@@ -244,6 +250,8 @@ void Win32Platform::initialise()
 
 	input = new InputSystem();
 	fonts = new FontSystem();
+
+	DEBUG_MESSAGE( "---- Game Launched!");
 
 	//start the game
 	game->begin();
