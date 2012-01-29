@@ -1,6 +1,10 @@
-//All credits for Perlin Noise implementation go to the original author
-//	Stefan Gustavson (stegu@itn.liu.se) @ http://staffwww.itn.liu.se/~stegu/aqsis/aqsis-newnoise/
-
+//
+//  Noiser.h
+//  dojo
+//
+//  Created by Tommaso Checchi on 7/4/11.
+//  Copyright 2011 none. All rights reserved.
+//
 
 #ifndef dojo_Noiser_h
 #define dojo_Noiser_h
@@ -9,35 +13,21 @@
 
 #include "dojomath.h"
 
-#define FADE(t) ( t * t * t * ( t * ( t * 6 - 15 ) + 10 ) )
-
-#define FASTFLOOR(x) ( ((x)>0) ? ((int)x) : ((int)x-1 ) )
-#define LERP(t, a, b) ((a) + (t)*((b)-(a)))
-
 namespace Dojo 
 {
 	class Noise
 	{
 	public:
-
+		
 		Noise( long seed ) :
 		usedSeed( seed ),
 		lastSeed( usedSeed )
 		{			
 			for( int i = 0; i < 256; ++i )
-				perm[i] = i;
-
-			for( int i = 0; i < 512; ++i )
-			{
-				int i1 = nextInt( 0, 256 );
-				int i2 = nextInt( 0, 256 );
-				char temp = perm[ i1 ];
-				perm[i1] = perm[ i2 ];
-				perm[i2] = temp;
-			}
-
-			for( int i = 0; i < 256; ++i )
-				perm[256+i] = perm[i];
+				p[i] = nextInt(0, 256);
+			
+			for (int i = 0; i < 256 ; i++) 
+				p[256+i] = p[i];
 		}
 			
 		long getUsedSeed() 
@@ -45,7 +35,7 @@ namespace Dojo
 			return usedSeed;
 		}
 		
-		bool chance( float d ) 
+		bool chance( double d ) 
 		{
 			return nextFloat() < d;
 		}	
@@ -70,78 +60,66 @@ namespace Dojo
 		float nextFloat( float min, float max )
 		{
 			return min + (max-min)*nextFloat();
-		}
-						
-		float noise( float x, float y, float scale ) 
+		}		
+		
+		double perlinNoise(double x, double y, double z) 
 		{
-			x /= scale*0.5;
-			y /= scale*0.5;
+			int X = (int)floor(x) & 255,                  // FIND UNIT CUBE THAT
+			Y = (int)floor(y) & 255,                  // CONTAINS POINT.
+			Z = (int)floor(z) & 255;
+			x -= floor(x);                                // FIND RELATIVE X,Y,Z
+			y -= floor(y);                                // OF POINT IN CUBE.
+			z -= floor(z);
 			
-			int ix0, iy0, ix1, iy1;
-			float fx0, fy0, fx1, fy1;
-			float s, t, nx0, nx1, n0, n1;
-
-			ix0 = FASTFLOOR( x ); // Integer part of x
-			iy0 = FASTFLOOR( y ); // Integer part of y
-			fx0 = x - ix0;        // Fractional part of x
-			fy0 = y - iy0;        // Fractional part of y
-			fx1 = fx0 - 1.0f;
-			fy1 = fy0 - 1.0f;
-			ix1 = (ix0 + 1) & 0xff;  // Wrap to 0..255
-			iy1 = (iy0 + 1) & 0xff;
-			ix0 = ix0 & 0xff;
-			iy0 = iy0 & 0xff;
-    
-			t = FADE( fy0 );
-			s = FADE( fx0 );
-
-			nx0 = grad(perm[ix0 + perm[iy0]], fx0, fy0);
-			nx1 = grad(perm[ix0 + perm[iy1]], fx0, fy1);
-			n0 = LERP( t, nx0, nx1 );
-
-			nx0 = grad(perm[ix1 + perm[iy0]], fx1, fy0);
-			nx1 = grad(perm[ix1 + perm[iy1]], fx1, fy1);
-			n1 = LERP(t, nx0, nx1);
-
-			return ( LERP( s, n0, n1 ) ) * 0.665664f * scale;
-		}
-				
-		float noise( float x, float y, float z, float scale ) 
+			double u = fade(x),                                // COMPUTE FADE CURVES
+			v = fade(y),                                // FOR EACH OF X,Y,Z.
+			w = fade(z);
+			int A = p[X  ]+Y, AA = p[A]+Z, AB = p[A+1]+Z,      // HASH COORDINATES OF
+			B = p[X+1]+Y, BA = p[B]+Z, BB = p[B+1]+Z;      // THE 8 CUBE CORNERS,
+			
+			return lerp(w, lerp(v, lerp(u, grad(p[AA  ], x  , y  , z   ),  // AND ADD
+										grad(p[BA  ], x-1.0, y  , z   )), // BLENDED
+								lerp(u, grad(p[AB  ], x  , y-1.0, z   ),  // RESULTS
+                                     grad(p[BB  ], x-1.0, y-1.0, z   ))),// FROM  8
+						lerp(v, lerp(u, grad(p[AA+1], x  , y  , z-1.0 ),  // CORNERS
+                                     grad(p[BA+1], x-1.0, y  , z-1.0 )), // OF CUBE
+                             lerp(u, grad(p[AB+1], x  , y-1.0, z-1.0 ),
+								  grad(p[BB+1], x-1.0, y-1.0, z-1.0 ))));
+		}   
+		
+		double noise( double x, double y, double z, double scale ) 
 		{
-			DEBUG_TODO;
-			return 0;
+			return 0.5 * scale * perlinNoise( x/scale, y/scale, z/scale );
 		}
 		
-		float filternoise( float x, float y, float z, float scale ) 
+		double noise( double x, double y, double scale ) 
 		{
-			DEBUG_TODO;
-			return 0;
+			return noise( x, y, scale, scale );
 		}
 		
-		float filternoise( float x, float y, float scale ) 
+		double filternoise( double x, double y, double z, double scale ) 
 		{
-			return (1.f + (noise( x, y, scale )/scale))*0.5f;
+			return 0.5 * ( 1.0 + perlinNoise( x/scale, y/scale, z/scale ) );
+		}
+		
+		double filternoise( double x, double y, double scale ) 
+		{
+			return filternoise( x, y, scale, scale );
 		}
 				
 	protected:
 		
-		char perm[512];
+		int p[512];
 		unsigned int usedSeed, lastSeed;
 		
-		float  grad( int hash, float x, float y ) {
-			int h = hash & 7;      // Convert low 3 bits of hash code
-			float u = h<4 ? x : y;  // into 8 simple gradient directions,
-			float v = h<4 ? y : x;  // and compute the dot product with (x,y).
-			return ((h&1)? -u : u) + ((h&2)? -2.f*v : 2.f*v);
+		double fade(double t) { return t * t * t * (t * (t * 6.0 - 15.0) + 10.0); }
+		double lerp(double t, double a, double b) { return a + t * (b - a); }
+		double grad(int hash, double x, double y, double z) {
+			int h = hash & 15;                      // CONVERT LO 4 BITS OF HASH CODE
+			double u = h<8 ? x : y,                 // INTO 12 GRADIENT DIRECTIONS.
+			v = h<4 ? y : h==12||h==14 ? x : z;
+			return ((h&1) == 0 ? u : -u) + ((h&2) == 0 ? v : -v);
 		}
-
-		float  grad( int hash, float x, float y , float z ) {
-			int h = hash & 15;     // Convert low 4 bits of hash code into 12 simple
-			float u = h<8 ? x : y; // gradient directions, and compute dot product.
-			float v = h<4 ? y : h==12||h==14 ? x : z; // Fix repeats at h = 12 to 15
-			return ((h&1)? -u : u) + ((h&2)? -v : v);
-		}
-
 	};
 }
 

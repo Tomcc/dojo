@@ -108,7 +108,7 @@ void Object::collectChilds()
 	{
 		for( uint i = 0; i < childs->size(); ++i )
 		{
- 			if( childs->at( i )->dispose )
+			if( childs->at( i )->dispose )
 				destroyChild( i-- );
 		}
 	}

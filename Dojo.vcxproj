@@ -108,6 +108,9 @@
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>Dojo</ProjectName>
     <ProjectGuid>{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}</ProjectGuid>
