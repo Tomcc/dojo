@@ -200,7 +200,7 @@ void ResourceGroup::loadTables( const String& folder )
 
 void ResourceGroup::loadPrefabMeshes()
 {
-	//create an empty texturedQuad
+//create an empty texturedQuad
 	Mesh* m = new Mesh( this );
 	m->setTriangleMode( Mesh::TM_STRIP );
 	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
@@ -224,6 +224,30 @@ void ResourceGroup::loadPrefabMeshes()
 	
 	addMesh( m, "texturedQuad" );
 	
+//textured quad xz
+	m = new Mesh( this );
+	m->setTriangleMode( Mesh::TM_STRIP );
+	m->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	m->setVertexFieldEnabled( Mesh::VF_UV );
+
+	m->begin(4);	
+
+	m->vertex( -0.5, 0, -0.5 );		
+	m->uv( 0,0 );
+
+	m->vertex( -0.5, 0, 0.5 );		
+	m->uv( 0,1 );
+
+	m->vertex( 0.5, 0, -0.5 );		
+	m->uv( 1,0 );
+
+	m->vertex( 0.5, 0, 0.5 );
+	m->uv( 1,1 );
+
+	m->end();
+
+	addMesh( m, "texturedQuadXZ" );
+
 	//create a texturedCube
 #define l 0.501f
 	

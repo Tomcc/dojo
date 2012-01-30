@@ -19,6 +19,7 @@ void Renderable::onAction( float dt )
 	
 	if( mesh )
 	{
+		//HACK this does not use rotation
 		worldUpperBound.x = worldPosition.x + mesh->getMax().x * abs( scale.x );
 		worldUpperBound.y = worldPosition.y + mesh->getMax().y * abs( scale.y );
 		worldUpperBound.z = worldPosition.z + mesh->getMax().z * abs( scale.z );
