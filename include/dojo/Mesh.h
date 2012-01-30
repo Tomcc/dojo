@@ -70,7 +70,8 @@ namespace Dojo
 		vertexHandle(0),
 		indexHandle(0),
 		dynamic( false ),
-		editing( false )		
+		editing( false ),
+		mDestroyBuffersOnEnd( true )
 		{
 			//set all fields to zero
 			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
@@ -140,9 +141,10 @@ namespace Dojo
 		void setIndexCap( uint count );
 		
 		///A dynamic mesh won't clear its CPU cache when loaded, and allows to call load() more than one time!
-		inline void setDynamic( bool d )
+		inline void setDynamic( bool d, bool destroyBuffersOnEnd = true )
 		{
 			dynamic = d;
+			mDestroyBuffersOnEnd = destroyBuffersOnEnd;
 		}		
 		
 		inline void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
@@ -395,6 +397,7 @@ namespace Dojo
 		uint vertexHandle, indexHandle;
 		
 		bool dynamic;
+		bool mDestroyBuffersOnEnd;
 		bool editing;
 				
 		void _buildFieldOffsets()
@@ -416,12 +419,14 @@ namespace Dojo
 			{
 				free( vertices );
 				vertices = NULL;
+				vertexMaxCount = 0;
 			}
 			
 			if( indices )
 			{
 				free( indices );
 				indices = NULL;
+				indexMaxCount = 0;
 			}
 		}
 
