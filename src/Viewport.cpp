@@ -60,7 +60,7 @@ void Viewport::setBackgroundSprite( const String& name, float frameTime )
 		destroyChild( background );
 	
 	background = new Sprite( gameState, Vector::ZERO, name, frameTime );
-	background->setRequiresAlpha( false );
+	background->setBlendingEnabled( false );
 	background->setVisible( true );
 	background->inheritAngle = false;
 	

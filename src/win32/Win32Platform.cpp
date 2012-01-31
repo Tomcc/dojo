@@ -323,7 +323,7 @@ void Win32Platform::step( float dt )
 	{
 		HGLRC c = wglCreateContext(hdc); 
 		
-		bool success = wglShareLists(hglrc, c);
+		bool success = wglShareLists(hglrc, c) != 0;
 
 		DEBUG_ASSERT( success );
 
@@ -432,7 +432,7 @@ bool Win32Platform::mouseMoved( const MouseEvent& arg )
 		else			input->_fireMouseMoveEvent( cursorPos );
 	}
 	else
-		input->_fireScrollWheelEvent( arg.state.Z.rel*0.05 );
+		input->_fireScrollWheelEvent( arg.state.Z.rel*0.05f );
 		
 	return true;
 }

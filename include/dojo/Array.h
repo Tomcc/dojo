@@ -16,9 +16,9 @@ namespace Dojo
 		/**
 		 E' opzionale specificare la grandezza delle pagine di memoria.
 		 */
-		Array(uint firstPageSize = 0, uint newPageSize = 0, uint validElements = 0)
+		Array(int firstPageSize = 0, int newPageSize = 0, int validElements = 0)
 		{
-			DEBUG_ASSERT( validElements*sizeof(T) <= firstPageSize );
+			DEBUG_ASSERT( validElements*sizeof(T) <= (size_t)firstPageSize );
 			
 			pageSize = (newPageSize == 0) ? 64 : newPageSize;
 			firstPageSize = ( firstPageSize == 0) ? pageSize : firstPageSize;
@@ -34,7 +34,7 @@ namespace Dojo
 		/**
 		 WARNING - buffer has to be created with malloc()
 		 */
-		Array( T* buffer, uint size ) :
+		Array( T* buffer, int size ) :
 		vectorArray( buffer ),
 		arraySize( size )
 		{
@@ -81,7 +81,7 @@ namespace Dojo
 		 \remark E' sensibilmente piu' lento di add(). Se index e' fuori del vettore
 		 l'elemento sara' aggiunto alla fine.
 		 */
-		FV_INLINE void add(const T& element, const size_t& index)
+		FV_INLINE void add(const T& element, int index)
 		{
 			//se l'index e' fuori dei limiti aggiungilo alla fine
 			if(index > size())
@@ -122,9 +122,10 @@ namespace Dojo
 		 WARNING - DEFAULT BEHAVIOUR IS "REMOVE UNORDERED"
 		 Use removeOrdered() if you need to keep relative ordering between elements
 		 */
-		FV_INLINE void remove(uint index)
+		FV_INLINE void remove(int index)
 		{
 			DEBUG_ASSERT( size() > index );
+			DEBUG_ASSERT( index >= 0 );
 			
 			--elements;
 			
@@ -147,9 +148,10 @@ namespace Dojo
 			else return false;
 		}
 		
-		FV_INLINE void removeOrdered( uint index )
+		FV_INLINE void removeOrdered( int index )
 		{
 			DEBUG_ASSERT( size() > index );
+			DEBUG_ASSERT( index >= 0 );
 			
 			if(index < size()-1)
 			{
@@ -192,7 +194,7 @@ namespace Dojo
 		 \param newPageSize la nuova grandezza della page per il vettore. Lasciare a 0 per non 
 		 modificare.
 		 */
-		FV_INLINE void clear( uint newPageSize = 0)
+		FV_INLINE void clear( int newPageSize = 0)
 		{
 			elements = 0;
 			
@@ -225,16 +227,18 @@ namespace Dojo
 		}	
 		
 		///restituisce l'elemento all'indice richiesto
-		FV_INLINE T& operator[] (const size_t index) const
+		FV_INLINE T& operator[] (int index) const
 		{
 			DEBUG_ASSERT( index < size() );
+			DEBUG_ASSERT( index >= 0 );
 			
 			return vectorArray[ index ];
 		}
 		///Metodo identico a [] utile se si ha un pointer al vettore
-		FV_INLINE T& at( const size_t index) const
+		FV_INLINE T& at( int index) const
 		{
 			DEBUG_ASSERT( index < size() );
+			DEBUG_ASSERT( index >= 0 );
 			
 			return vectorArray[ index ];
 		}
@@ -247,22 +251,22 @@ namespace Dojo
 		FV_INLINE int getElementIndex(const T& element)
 		{
 			//find the element index
-			for(uint i = 0; i < size(); ++i)
+			for(int i = 0; i < size(); ++i)
 			{
 				if(vectorArray[i] == element)
-					return (uint)i;
+					return i;
 			}
 			return -1;
 		}
 		
 		///Numero di elementi
-		FV_INLINE uint size() const	{	return elements;	}
+		FV_INLINE int size() const	{	return elements;	}
 		///Numero di bytes
-		FV_INLINE uint byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
+		FV_INLINE int byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
 		///Numero massimo di elementi prima di un nuovo realloc
-		FV_INLINE uint getArraySize()	const {	return arraySize;	}
+		FV_INLINE int getArraySize()	const {	return arraySize;	}
 		///Ottieni il numero massimo di elementi accettabili prima di riallocare
-		FV_INLINE uint getPageSize()	const {	return pageSize;	}
+		FV_INLINE int getPageSize()	const {	return pageSize;	}
 		
 		
 		///Posizione del vettore in memoria -uso avanzato-
@@ -270,7 +274,7 @@ namespace Dojo
 		
 	protected:
 		
-		uint elements, arraySize, pageSize;
+		int elements, arraySize, pageSize;
 		
 		//puntatore C-style alla memoria che contiene gli elementi.
 		T* vectorArray;

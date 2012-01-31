@@ -11,7 +11,7 @@ using namespace Dojo;
 
 ParticlePool::~ParticlePool()
 {
-	for( uint i = 0; i < pool.size(); ++i )
+	for( int i = 0; i < pool.size(); ++i )
 	{
 		
 		Platform::getSingleton()->getRender()->removeRenderable( pool.at(i) );

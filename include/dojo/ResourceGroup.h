@@ -80,7 +80,7 @@ namespace Dojo {
 			
 			//try in subgroups
 			R* f;
-			for( uint i = 0; i < subs.size(); ++i )
+			for( int i = 0; i < subs.size(); ++i )
 			{
 				f = subs[i]->find< R >( name, r );
 				

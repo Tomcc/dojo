@@ -70,10 +70,10 @@ currentFadeTime(0)
 SoundManager::~SoundManager()
 {
 	//trash sounds
-	for( unsigned int i = 0; i < busySoundPool.size(); ++i )
+	for( int i = 0; i < busySoundPool.size(); ++i )
 		SAFE_DELETE( busySoundPool.at(i) );
 	
-	for( unsigned int i = 0; i < idleSoundPool.size(); ++i )
+	for( int i = 0; i < idleSoundPool.size(); ++i )
 		SAFE_DELETE( idleSoundPool.at(i) );
 
 	SAFE_DELETE( fakeSource );
@@ -101,7 +101,7 @@ void SoundManager::update( float dt )
 {
 	SoundSource* current;
 	//sincronizza le sources con i nodes
-	for( unsigned int i = 0; i < busySoundPool.size(); ++i)
+	for( int i = 0; i < busySoundPool.size(); ++i)
 	{
 		current = busySoundPool[i];
 		current->_update();

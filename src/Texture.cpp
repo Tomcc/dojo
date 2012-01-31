@@ -95,11 +95,13 @@ void Texture::disableMipmaps()
 	}
 }
 
-bool Texture::loadFromMemory( Dojo::byte* imageData, uint width, uint height, GLenum sourceFormat, GLenum destFormat )
+bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLenum sourceFormat, GLenum destFormat )
 {
 	int err;
 	
 	DEBUG_ASSERT( imageData );
+	DEBUG_ASSERT( width > 0 );
+	DEBUG_ASSERT( height > 0 ); 
 
 	bind(0);
 	

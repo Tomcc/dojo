@@ -21,7 +21,7 @@ namespace Dojo
 		{
 		public:
 			void* data;
-			size_t size;
+			long size;
 			
 			long pointer;
 			

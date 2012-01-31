@@ -80,11 +80,11 @@ int SoundBuffer::VorbisSource::seek( void *source, ogg_int64_t offset, int whenc
 	VorbisSource* src = (VorbisSource*)source;
 	
 	if( whence == SEEK_SET )
-		src->pointer = offset;
+		src->pointer = (long)offset;
 	else if( whence == SEEK_END )
-		src->pointer = src->size - offset;
+		src->pointer = src->size - (long)offset;
 	else if( whence == SEEK_CUR )
-		src->pointer += offset;
+		src->pointer += (long)offset;
 	else
 	{
 		DEBUG_TODO;
@@ -128,7 +128,8 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
 	//guess uncompressed size (file should have only 1 stream)
-	uncompressedSize = info->channels * ov_pcm_total( &file, -1 );
+	//HACK redo this code as it munchs the end of sounds
+	uncompressedSize = (int)(info->channels * ov_pcm_total( &file, -1 ));
 	
 	char* uncompressedData = (char*)malloc( uncompressedSize );
 	int section = -1;

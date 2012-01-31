@@ -53,10 +53,10 @@ namespace Dojo
 		
 		void setRGBA( byte r, byte g, byte b, byte a = 255 )
 		{
-			r = (float)r/255.f;
-			g = (float)g/255.f;
-			b = (float)b/255.f;
-			a = (float)a/255.f;
+			this->r = (float)r/255.f;
+			this->g = (float)g/255.f;
+			this->b = (float)b/255.f;
+			this->a = (float)a/255.f;
 		}
 		
 		void setRGBA( RGBAPixel pixel )
@@ -70,10 +70,10 @@ namespace Dojo
 			RGBAPixel p;
 			byte* ch = (byte*)&p;
 			
-			ch[0] = r * 255;
-			ch[1] = g * 255;
-			ch[2] = b * 255;
-			ch[3] = a * 255;
+			ch[0] = (byte)(r * 255);
+			ch[1] = (byte)(g * 255);
+			ch[2] = (byte)(b * 255);
+			ch[3] = (byte)(a * 255);
 			
 			return p;
 		}

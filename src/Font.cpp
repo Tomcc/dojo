@@ -243,7 +243,7 @@ Font::Font( const String& path )
 		stroker = Platform::getSingleton()->getFontSystem()->getStroker( border );
 
 	Table* preload = t.getTable( "preloadedPages" );
-	for( uint i = 0; i < preload->getAutoMembers(); ++i )
+	for( int i = 0; i < preload->getAutoMembers(); ++i )
 		getPage( preload->getInt( i ) );
 }
 

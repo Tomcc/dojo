@@ -101,11 +101,11 @@ namespace Dojo
 		
 		String fontName;
 		float spaceWidth, interline, charSpacing;
-		uint maxChars;
-		uint maxLineLenght;
+		int maxChars;
+		int maxLineLenght;
 		bool centered;
 		
-		uint currentLineLength, lastSpace;
+		int currentLineLength, lastSpace;
 		
 		Font* font;
 				
@@ -113,7 +113,7 @@ namespace Dojo
 		bool changed;
 		
 		float *vertexBuffer, *uvBuffer;		
-		uint currentCharIdx, visibleCharsNumber;
+		int currentCharIdx, visibleCharsNumber;
 		
 		Vector cursorPosition, screenSize, lastScale;
 
@@ -151,7 +151,7 @@ namespace Dojo
 			DEBUG_ASSERT( tex );
 
 			//find this layer in the already assigned, or get new
-			for( uint i = 0; i < busyLayers.size(); ++i )
+			for( int i = 0; i < busyLayers.size(); ++i )
 			{
 				if( busyLayers[i]->getTexture() == tex )
 					return busyLayers[i];
@@ -171,10 +171,10 @@ namespace Dojo
 
 		inline void _destroyLayers()
 		{
-			for( uint i = 0; i < busyLayers.size(); ++i )
+			for( int i = 0; i < busyLayers.size(); ++i )
 				_destroyLayer( busyLayers[i] );
 
-			for( uint i = 0; i < freeLayers.size(); ++i )
+			for( int i = 0; i < freeLayers.size(); ++i )
 				_destroyLayer( freeLayers[i] );
 		}
 	};

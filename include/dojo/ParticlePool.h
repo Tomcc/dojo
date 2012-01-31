@@ -62,7 +62,7 @@ namespace Dojo
 		inline void releaseAll()
 		{
 			Particle* p;
-			for( uint i = 0; i < pool.size(); ++i )
+			for( int i = 0; i < pool.size(); ++i )
 			{			
 				p = pool.at(i);
 				
@@ -74,11 +74,11 @@ namespace Dojo
 		}
 							
 		inline GameState* getGameState()				{	return gameState;		}
-		inline Particle* getParticle( uint i )			
-		{	
-			DEBUG_ASSERT( pool.size() > i );
-			return pool.at( i );	
+		inline Particle* getParticle( int i )			
+		{
+			return pool.at( i );
 		}
+
 		inline uint getActiveParticleNumber()			{	return firstIdleIdx;	}
 					
 		inline void update( float dt )
@@ -88,7 +88,7 @@ namespace Dojo
 			Vector size;
 			
 			//cleanup
-			for( uint i = 0; i < firstIdleIdx; )
+			for( int i = 0; i < firstIdleIdx; )
 			{
 				for( i = 0; i < firstIdleIdx; ++i )
 				{
@@ -103,7 +103,7 @@ namespace Dojo
 			}
 			
 			//update active particles			
-			for( uint i = 0; i < firstIdleIdx; ++i )
+			for( int i = 0; i < firstIdleIdx; ++i )
 				pool.at(i)->move( dt );
 		}
 									

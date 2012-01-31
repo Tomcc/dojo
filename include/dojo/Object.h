@@ -62,7 +62,7 @@ namespace Dojo {
 						
 			size.x = x;
 			size.y = y;
-			halfSize.x = size.x * 0.5;
+			halfSize.x = size.x * 0.5f;
 			halfSize.y = size.y * 0.5f;
 		}
 		

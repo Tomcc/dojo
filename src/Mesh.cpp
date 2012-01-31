@@ -129,7 +129,7 @@ bool Mesh::end()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0 );
 	
-	if( !dynamic ) //won't be updated ever again
+	if( mDestroyBuffersOnEnd ) //won't be updated ever again
 		_destroyBuffers();
 	
 	loaded = glGetError() == GL_NO_ERROR;

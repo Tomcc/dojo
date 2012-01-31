@@ -43,8 +43,6 @@ backLayer( NULL )
 	//clean errors
 	glGetError();
 	
-	glEnable( GL_BLEND );	
-
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_CULL_FACE );
@@ -54,9 +52,11 @@ backLayer( NULL )
 	glCullFace( GL_BACK );
 	
 	glShadeModel( GL_SMOOTH );
-	
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
+	//default status for blending
+	glEnable( GL_BLEND );	
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	
 	//HACK
 	//glEnable( GL_COLOR_MATERIAL );
 	
@@ -120,7 +120,7 @@ Render::Layer* Render::getLayer( int layerID )
 	}
 	
 	//allocate the needed layers if layerID > layer size
-	while( layerList->size() <= (uint)layerID )
+	while( layerList->size() <= layerID )
 		layerList->add( new Layer() );	
 
 	if( !currentLayer ) //first layer!
@@ -153,7 +153,7 @@ void Render::addRenderable( Renderable* s, int layerID )
 	
 	uint distance;
 	uint lastDistance = firstRenderState->getDistance( s );
-	for( uint i = 0; i < layer->size(); ++i )
+	for( int i = 0; i < layer->size(); ++i )
 	{
 		distance = layer->at(i)->getDistance( s );
 		if( distance + lastDistance < bestDistanceSum )
@@ -535,7 +535,7 @@ void Render::renderLayer( Layer* list )
 	if( list->lightingOn )	
 	{		
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
-		uint i = 0;
+		int i = 0;
 		for( ; i < lights.size(); ++i )
 		{
 			lights[i]->bind( i );
@@ -555,7 +555,7 @@ void Render::renderLayer( Layer* list )
 	//2D layer
 	if( list->projectionOff )
 	{
-		for( uint i = 0; i < list->size(); ++i )
+		for( int i = 0; i < list->size(); ++i )
 		{
 			s = list->at(i);
 			
@@ -568,7 +568,7 @@ void Render::renderLayer( Layer* list )
 	//3D layer
 	else
 	{
-		for( uint i = 0; i < list->size(); ++i )
+		for( int i = 0; i < list->size(); ++i )
 		{
 			s = list->at(i);
 

@@ -78,7 +78,7 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 			++itr;
 		}
 	}
-	catch ( Poco::Exception& e )
+	catch ( ... )
 	{
 		
 	}	
@@ -93,7 +93,7 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 	if( !file.is_open() )
 		return 0;
 	
-	uint size = file.tellg();
+	int size = (int)file.tellg();
 	file.seekg(0);
 	
 	bufptr = (char*)malloc( size );

@@ -43,7 +43,7 @@ namespace Dojo {
 			///clear() destroys the sound pool - use wisely!
 			void clear()
 			{
-				for( uint i = 0; i < busySoundPool.size(); ++i )
+				for( int i = 0; i < busySoundPool.size(); ++i )
 				{
 					SoundSource* s = busySoundPool.top();
 					busySoundPool.pop();
@@ -159,7 +159,7 @@ namespace Dojo {
 			void pauseAll()
 			{
 				SoundSource* s;
-				for( uint i = 0; i < busySoundPool.size(); ++i )
+				for( int i = 0; i < busySoundPool.size(); ++i )
 				{
 					s = busySoundPool.at(i);
 					if( s != musicTrack )
@@ -170,7 +170,7 @@ namespace Dojo {
 			void resumeAll()
 			{
 				SoundSource* s;
-				for( uint i = 0; i < busySoundPool.size(); ++i )
+				for( int i = 0; i < busySoundPool.size(); ++i )
 				{
 					s = busySoundPool.at(i);
 					if( s != musicTrack )
@@ -182,7 +182,7 @@ namespace Dojo {
 			void stopAll()
 			{
 				SoundSource* s;
-				for( uint i = 0; i < busySoundPool.size(); ++i )
+				for( int i = 0; i < busySoundPool.size(); ++i )
 				{
 					s = busySoundPool.at(i);
 					if( s != musicTrack )

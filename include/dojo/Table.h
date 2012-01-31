@@ -335,7 +335,7 @@ namespace Dojo
 				return EMPTY_DATA;
 		}	
 		
-		inline String autoMemberName( uint idx ) const 
+		inline String autoMemberName( int idx ) const 
 		{
 			DEBUG_ASSERT( idx < getAutoMembers() );
 			

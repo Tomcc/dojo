@@ -106,7 +106,7 @@ void Object::collectChilds()
 {
 	if( childs )
 	{
-		for( uint i = 0; i < childs->size(); ++i )
+		for( int i = 0; i < childs->size(); ++i )
 		{
 			if( childs->at( i )->dispose )
 				destroyChild( i-- );
@@ -119,7 +119,7 @@ void Object::destroyAllChilds()
 {
 	if( childs )
 	{	
-		for( uint i = 0; i < childs->size(); ++i )
+		for( int i = 0; i < childs->size(); ++i )
 			childs->at(i)->dispose = true;
 	
 		collectChilds();
@@ -162,7 +162,7 @@ void Object::updateChilds( float dt )
 	{
 		collectChilds();
 		
-		for( uint i = 0; i < childs->size(); ++i )
+		for( int i = 0; i < childs->size(); ++i )
 		{
 			if( childs->at(i )->isActive() )
 				childs->at(i)->onAction(dt);

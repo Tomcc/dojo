@@ -34,10 +34,7 @@ visibleCharsNumber( 0xffffffff )
 
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
-
-	//a font always requires alpha
-	setRequiresAlpha( true );
-
+	
 	//allocate buffers			
 	mesh = _createMesh();
 	freeLayers.add( this ); //add itself to the free layers
@@ -84,7 +81,7 @@ void TextArea::clearText()
 void TextArea::setMaxLineLength( uint l )
 {		
 	//HACK PAZZESCOH
-	maxLineLenght = l * ((float)gameState->getGame()->getNativeWidth() / (float)640 );
+	maxLineLenght = (int)(l * ((float)gameState->getGame()->getNativeWidth() / (float)640 ));
 }
 
 void TextArea::addText( const String& text )
@@ -95,7 +92,7 @@ void TextArea::addText( const String& text )
 	unichar c;
 
 	//parse and setup characters
-	for( uint i = 0; i < text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
+	for( int i = 0; i < (int)text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
 	{
 		c = text[i];
 
@@ -175,7 +172,7 @@ Renderable* TextArea::_enableLayer( Texture* tex )
 
 void TextArea::_endLayers()
 {
-	for( uint i = 0; i < busyLayers.size(); ++i )
+	for( int i = 0; i < busyLayers.size(); ++i )
 		busyLayers[i]->getMesh()->end();
 	
 	//also end this
@@ -186,7 +183,7 @@ void TextArea::_endLayers()
 ///Free any created layer			
 void TextArea::_hideLayers()
 {
-	for( uint i = 0; i < busyLayers.size(); ++i )
+	for( int i = 0; i < busyLayers.size(); ++i )
 	{
 		Renderable* l = busyLayers[i];
 		
@@ -287,14 +284,14 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 			layer->vertex( x, y );
 			layer->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight );
 
- 			layer->vertex( x + rep->widthRatio, y );
- 			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight );
+			layer->vertex( x + rep->widthRatio, y );
+			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight );
  
- 			layer->vertex( x, y + rep->heightRatio );
- 			layer->uv( rep->uvPos.x, rep->uvPos.y );
+			layer->vertex( x, y + rep->heightRatio );
+			layer->uv( rep->uvPos.x, rep->uvPos.y );
  
- 			layer->vertex( x + rep->widthRatio, y + rep->heightRatio );
- 			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
+			layer->vertex( x + rep->widthRatio, y + rep->heightRatio );
+			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
 
 			layer->triangle( idx, idx+1, idx+2 );
 			layer->triangle( idx+1, idx+3, idx+2 );

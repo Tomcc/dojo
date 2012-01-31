@@ -47,7 +47,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( loaded );
 			
-			for( uint i = 0; i < frames.size(); ++i )
+			for( int i = 0; i < frames.size(); ++i )
 			{
 				if( frames.at(i)->getOwnerFrameSet() == this )
 					SAFE_DELETE( frames.at(i) );

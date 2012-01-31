@@ -11,7 +11,7 @@ using namespace Dojo;
 
 bool RenderState::isAlphaRequired()
 {
-	return alphaRequired || getTextureNumber() == 0;
+	return blendingEnabled || getTextureNumber() == 0;
 }
 
 void RenderState::_bindTextureSlot( int i )
@@ -66,17 +66,20 @@ void RenderState::commitChanges( RenderState* pastState )
 	if( mesh != pastState->mesh )
 		mesh->bind();
 	
-	//enable alpha
-	if( isAlphaRequired() && !pastState->isAlphaRequired() )
+	//change blending mode if blending is used
+	if( srcBlend != pastState->srcBlend ||
+		destBlend != pastState->destBlend )
 	{
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); //normal func				
-		glEnable(GL_BLEND);
+		glBlendFunc( srcBlend, destBlend );
 	}
-	//disable alpha
-	else if( !isAlphaRequired() && pastState->isAlphaRequired() )
+
+	//enable or disable blending
+	if( blendingEnabled != pastState->blendingEnabled )
 	{
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_BLEND);
+		if( blendingEnabled )
+			glEnable( GL_BLEND );
+		else
+			glDisable( GL_BLEND ); 
 	}
 
 	if( cullMode != pastState->cullMode )

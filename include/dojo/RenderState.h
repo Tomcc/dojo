@@ -32,7 +32,7 @@ namespace Dojo
 			CM_BACK,
 			CM_DISABLED
 		};
-
+		
 		typedef Array<Texture*> TextureList;
 				
 		Color color;
@@ -40,16 +40,20 @@ namespace Dojo
 		Vector textureOffset, textureScale;
 		float textureRotation;
 
+		GLenum srcBlend, destBlend;
+
 		CullMode cullMode;
 
 		RenderState() :
 		textureScale( 1,1 ),
 		textureRotation( 0 ),
 		cullMode( CM_BACK ),
-		alphaRequired( true ),
+		blendingEnabled( true ),
 		textureTransform( false ),
 		textures( 8 ),
-		mesh( NULL )
+		mesh( NULL ),
+		srcBlend( GL_SRC_ALPHA ),
+		destBlend( GL_ONE_MINUS_SRC_ALPHA )
 		{
 			
 		}
@@ -79,7 +83,7 @@ namespace Dojo
 			textures.at( ID ) = tex;
 		}
 
-		inline void setRequiresAlpha( bool required )	{	alphaRequired = required;	}
+		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
 		inline void setRequiresTextureTransform( bool req )
 		{
 			textureTransform = req;
@@ -123,7 +127,7 @@ namespace Dojo
 				
 	protected:
 			
-		bool alphaRequired;
+		bool blendingEnabled;
 		bool textureTransform;
 		
 		TextureList textures;

@@ -258,7 +258,7 @@ namespace Dojo
 			{
 				lastMovePos = point;
 				
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onTouchBegan( point );
 			}
 		}
@@ -269,7 +269,7 @@ namespace Dojo
 			{
 				lastMovePos -= point;
 				
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onTouchMove( point, lastMovePos );
 				
 				lastMovePos = point;
@@ -280,7 +280,7 @@ namespace Dojo
 		{
 			if( enabled )
 			{
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onTouchEnd( point );
 			}
 		}	
@@ -307,18 +307,16 @@ namespace Dojo
 		
 		virtual void _fireShakeEvent()
 		{
-			if( enabled )
-			{				
-				for( uint i = 0; i < listeners.size(); ++i )
+			if( enabled )	
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onShake();
-			}
 		}
 		
 		virtual void _fireAccelerationEvent( float x, float y, float z, float roll )
 		{
 			if( enabled )
 			{				
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onAcceleration( x,y,z,roll );
 			}
 		}
@@ -327,7 +325,7 @@ namespace Dojo
 		{
 			if( enabled )
 			{				
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onKeyPressed( character, keyID );
 			}
 		}
@@ -336,7 +334,7 @@ namespace Dojo
 		{
 			if( enabled )
 			{				
-				for( uint i = 0; i < listeners.size(); ++i )
+				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onKeyReleased( character, keyID );
 			}
 		}
