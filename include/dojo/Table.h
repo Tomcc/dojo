@@ -55,11 +55,9 @@ namespace Dojo
 		{
 		public:
 			FieldType type;
-			bool autoRelease;
 			
 			Entry( FieldType fieldType ) :
-			type( fieldType ),
-			autoRelease( false )
+			type( fieldType )
 			{
 				DEBUG_ASSERT( type <= FT_TABLE );
 			}
@@ -68,8 +66,10 @@ namespace Dojo
 			{
 				
 			}
-			
+								
 			virtual void* getValue()=0;
+
+			virtual Entry* clone()=0;
 		};
 		
 		template <class T>
@@ -88,19 +88,17 @@ namespace Dojo
 			
 			virtual ~TypedEntry()
 			{
-				if( autoRelease )
-				{
-					if( type == FT_TABLE ) //delete the table
-						delete *((Table**)(&value));
-					
-					else if( type == FT_DATA ) //delete data's payload
-						free( ((Data*)(&value))->ptr );
-				}
+				
 			}
 			
 			virtual void* getValue()
 			{
 				return &value;
+			}
+			
+			virtual Entry* clone()
+			{
+				return new TypedEntry<T>(type, value );
 			}
 		};
 
@@ -119,6 +117,19 @@ namespace Dojo
 		unnamedMembers( 0 )
 		{
 
+		}
+
+		///copy constructor
+		Table( const Table& t ) :
+		name( t.name ),
+		unnamedMembers( t.unnamedMembers )
+		{
+			EntryMap::const_iterator itr = t.map.begin(),
+								end = t.map.end();
+
+			//do a deep copy
+			for( ; itr != end; ++itr )
+				map[ itr->first ] = itr->second->clone();
 		}
 		
 		~Table()
@@ -191,21 +202,11 @@ namespace Dojo
 			DEBUG_ASSERT( size );
 
 			set(key, FT_DATA, Data( value, size ) );
-			
-			//set it managed
-			if( managed )
-				map[ key ]->autoRelease = true;
 		}
 		
-		inline void set( Table* value, bool managed = false )
-		{
-			DEBUG_ASSERT( value );
-						
-			set( value->getName(), FT_TABLE, value );
-						
-			//set it managed
-			if( managed )
-				map[ value->getName() ]->autoRelease = true;
+		inline void set( const Table& value )
+		{						
+			set( value.getName(), FT_TABLE, value );
 		}		
 		
 		inline Table* createTable( const String& key = String::EMPTY )
@@ -216,11 +217,10 @@ namespace Dojo
 				name = _getAutoName();
 			else
 				name = key;
+							
+			set( Table( name ) ); //always retain created tables
 			
-			Table* t = new Table( name );			
-			set( t, true ); //always retain created tables
-			
-			return t;
+			return getTable( name ); //TODO don't do another search
 		}
 		
 		void clear()
@@ -236,6 +236,31 @@ namespace Dojo
 			map.clear();
 		}		
 		
+		void inherit( Table* t )
+		{
+			DEBUG_ASSERT( t );
+
+			//for each map member of the other map
+			EntryMap::iterator itr = t->map.begin(),
+								end = t->map.end(),
+								existing;
+			for( ; itr != end; ++itr )
+			{
+				existing = map.find( itr->first ); //look for a local element with the same name
+
+				//element exists - do nothing except if it's a table
+				if( existing != map.end() )
+				{
+					//if it's a table in both tables, inherit
+					if( itr->second->type == FT_TABLE && existing->second->type == FT_TABLE )
+						((Table*)existing->second->getValue())->inherit( (Table*)itr->second->getValue() );
+				}
+				else //just clone
+					map[ itr->first ] = itr->second->clone();
+
+			}
+		}
+
 		inline int size()
 		{
 			return (int)map.size();
@@ -276,7 +301,7 @@ namespace Dojo
 		}
 		
 		inline Entry* get( const String& key ) const
-		{
+		{ 
 			return map.find( key )->second;
 		}
 		
@@ -322,7 +347,7 @@ namespace Dojo
 		inline Table* getTable( const String& key ) const
 		{			
 			if( existsAs(key, FT_TABLE ) )
-				return *( (Table**)get(key)->getValue());
+				return (Table*)get(key)->getValue();
 			else
 				return &EMPTY_TABLE;
 		}
@@ -409,7 +434,7 @@ namespace Dojo
 			return map.size() == 0;
 		}
 		
-		///scrive la tabella in un formato standard su stringa che inizia a pos
+		///write the table in string form over buf
 		void serialize( String& buf, String indent = String::EMPTY ) const;
 
 		void deserialize( StringReader& buf );

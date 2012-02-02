@@ -59,7 +59,7 @@ void Table::serialize( String& buf, String indent ) const
 			break;
 		case FT_TABLE:
 			buf += String( "{\n" );
-			(*(Table**)e->getValue())->serialize( buf, indent + '\t' );
+			((Table*)e->getValue())->serialize( buf, indent + '\t' );
 
 			buf += indent + '}';
 

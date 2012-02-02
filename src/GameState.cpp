@@ -21,7 +21,7 @@ camera(NULL)
 }
 
 GameState::~GameState()
-{	
+{
 	clear();
 }
 

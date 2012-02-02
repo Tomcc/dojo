@@ -109,6 +109,7 @@ bool Mesh::end()
 		glGenBuffers(1, &vertexHandle );
 
 	DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
+	DEBUG_ASSERT( vertexHandle );
 	
 	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	
@@ -153,7 +154,7 @@ bool Mesh::end()
 
 void Mesh::bind()
 {		
-	DEBUG_ASSERT( vertexHandle );
+	DEBUG_ASSERT( vertexHandle != 0 );
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
