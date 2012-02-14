@@ -248,6 +248,7 @@ namespace Dojo
 
 	inline Random::uint32 Random::randInt( const uint32 n )
 	{
+		/*
 		// Find which bits are used in n
 		// Optimized by Magnus Jonsson (magnus@smartelectronix.com)
 		uint32 used = n;
@@ -260,9 +261,12 @@ namespace Dojo
 		// Draw numbers until one is found in [0,n]
 		uint32 i;
 		do
-		i = randInt() & used;  // toss unused bits to shorten search
+			i = randInt() & used;  // toss unused bits to shorten search
 		while( i > n );
-		return i;
+		return i;*/
+
+		//HACK-  much faster while property-changing
+		return (uint32)rand( (double)n );
 	}
 
 	inline double Random::rand()
