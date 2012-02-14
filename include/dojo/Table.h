@@ -257,7 +257,6 @@ namespace Dojo
 				}
 				else //just clone
 					map[ itr->first ] = itr->second->clone();
-
 			}
 		}
 

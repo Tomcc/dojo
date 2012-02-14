@@ -12,6 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "dojomath.h"
+#include "Random.h"
 
 namespace Dojo 
 {
@@ -19,48 +20,15 @@ namespace Dojo
 	{
 	public:
 		
-		Noise( unsigned int seed ) :
-		usedSeed( seed ),
-		lastSeed( usedSeed )
+		Noise( Random& rand )
 		{
 			for( int i = 0; i < 256; ++i )
-				p[i] = nextInt(0, 256);
+				p[i] = rand.randInt( 255 );
 			
 			for (int i = 0; i < 256 ; i++) 
 				p[256+i] = p[i];
 		}
 			
-		long getUsedSeed() 
-		{
-			return usedSeed;
-		}
-		
-		bool chance( double d ) 
-		{
-			return nextFloat() < d;
-		}	
-		
-		///the "base" random - returns an int raging from 0 to RAND_MAX - and saves the context
-		int nextInt()
-		{
-			srand( lastSeed );			
-			return lastSeed = rand();
-		}
-		
-		int nextInt( int min, int max )
-		{
-			return min + (int)((float)(max-min)*nextFloat());
-		}
-		
-		float nextFloat()
-		{
-			return (float)nextInt()/(float)RAND_MAX;
-		}
-		
-		float nextFloat( float min, float max )
-		{
-			return min + (max-min)*nextFloat();
-		}		
 		
 		float perlinNoise(float x, float y, float z) 
 		{
@@ -110,7 +78,6 @@ namespace Dojo
 	protected:
 		
 		int p[512];
-		unsigned int usedSeed, lastSeed;
 		
 		float fade(float t) { return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f); }
 		float lerp(float t, float a, float b) { return a + t * (b - a); }

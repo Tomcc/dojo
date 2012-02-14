@@ -85,6 +85,7 @@
     <ClInclude Include="include\dojo\ParticlePool.h" />
     <ClInclude Include="include\dojo\Plane.h" />
     <ClInclude Include="include\dojo\Platform.h" />
+    <ClInclude Include="include\dojo\Random.h" />
     <ClInclude Include="include\dojo\Render.h" />
     <ClInclude Include="include\dojo\Renderable.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
