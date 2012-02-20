@@ -9,7 +9,8 @@
 using namespace Dojo;
 
 Sprite::Sprite( GameState* level, const Vector& pos, const String& defaultAnimName, float tpf, bool pp ) :
-AnimatedQuad( level, pos, pp )
+AnimatedQuad( level, pos, pp ),
+mAnimationIdx( -1 )
 {	
 	//get rid of default animation
 	SAFE_DELETE( animation );

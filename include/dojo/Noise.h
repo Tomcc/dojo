@@ -23,7 +23,17 @@ namespace Dojo
 		Noise( Random& rand )
 		{
 			for( int i = 0; i < 256; ++i )
-				p[i] = rand.randInt( 255 );
+				p[i] = i;
+
+			//switch numbers around
+			for( int i = 0; i < 256; ++i )
+			{	
+				int d = rand.randInt( 255 );
+
+				int t = p[i];
+				p[i] = p[d];
+				p[d] = t;
+			}
 			
 			for (int i = 0; i < 256 ; i++) 
 				p[256+i] = p[i];

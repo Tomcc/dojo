@@ -63,11 +63,13 @@ namespace Dojo
 				
 		///sets the animation at the given index
 		inline void setAnimation( int i ) 	
-		{				
-			DEBUG_ASSERT( i >= 0 );
-			DEBUG_ASSERT( animations.size() > i );
+		{
+			mAnimationIdx = i;
+
+			DEBUG_ASSERT( mAnimationIdx >= 0 );
+			DEBUG_ASSERT( animations.size() > mAnimationIdx );
 			
-			animation = animations.at(i);
+			animation = animations.at( mAnimationIdx );
 			
 			_setTexture( animation->getCurrentFrame() );
 			
@@ -79,9 +81,16 @@ namespace Dojo
 		{
 			return animations.getElementIndex( animation );
 		}
+
+		inline int getAnimationID()
+		{
+			return mAnimationIdx;
+		}
 		
 	protected:		
 		AnimationList animations;
+
+		int mAnimationIdx;
 	};
 }
 
