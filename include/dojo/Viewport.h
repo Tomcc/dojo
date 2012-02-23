@@ -102,8 +102,13 @@ namespace Dojo
 			dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
 			dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
 		}
-		
+				
 		void makeScreenSize( Vector& dest, Texture* tex );
+		
+		inline float getPixelSide()
+		{
+			return size.x / targetSize.x;
+		}
 
 		virtual void onAction( float dt )
 		{
