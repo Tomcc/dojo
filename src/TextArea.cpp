@@ -22,7 +22,7 @@ centered( center ),
 pixelScale( 1,1 ),
 currentLineLength( 0 ),
 lastSpace( 0 ),
-visibleCharsNumber( 0xffffffff )
+visibleCharsNumber( 0xfffffff )
 {		
 	setSize( bounds );
 	cullMode = CM_DISABLED;
@@ -73,7 +73,7 @@ void TextArea::clearText()
 
 	changed = true;
 	
-	visibleCharsNumber = 0xffffffff;
+	visibleCharsNumber = 0xfffffff;
 	currentLineLength = 0;
 	lastSpace = 0;
 }

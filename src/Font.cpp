@@ -91,8 +91,8 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 	character = c;
 	gliphIdx = f->getCharIndex( this );
 
-	pixelWidth = (uint)( (float)(metrics->width ) * FONT_PPI );
-	float pixelHeight = (float)metrics->height * FONT_PPI;
+	pixelWidth = page->getFont()->mCellWidth;
+	float pixelHeight = (float)metrics->height * FONT_PPI + page->getFont()->glowRadius*2;
 
 	uvWidth = (float)pixelWidth / fsx;
 	uvHeight = pixelHeight / fsy;
@@ -122,7 +122,9 @@ font( f )
 	int sxp2 = Math::nextPowerOfTwo( sx );
 	int syp2 = Math::nextPowerOfTwo( sy );
 
-	byte* buf = (byte*)malloc( sxp2 * syp2 * 4 );
+	int pixelNumber = sxp2 * syp2;
+	int bufsize = pixelNumber * 4;
+	byte* buf = (byte*)malloc( bufsize );
 	
 	unsigned int * ptr = (unsigned int*)buf;
 	//set alpha to 0 and colours to white
@@ -172,37 +174,49 @@ font( f )
 		}
 	}
 	
-	//glow?
-	unsigned int glowCol = font->glowColor.toRGBA();
-	byte* glowColChannel = (byte*)&glowCol;
-	
-	for( int iteration = 0; iteration < font->glowRadius; ++iteration )
+	//glow?	
+	if( font->glowRadius > 0 )
 	{
-		for( int i = 1; i < syp2-1; ++i )
-		{
-			for( int j = 1; j < sxp2-1; ++j )
-			{
-				byte* cur = buf + (j + i * sxp2) * 4;
-				byte* up = buf + (j + (i+1)*sxp2) * 4;
-				byte* down = buf + (j + (i-1)*sxp2) * 4;
-				byte* left = buf + (j+1 + i*sxp2) * 4;
-				byte* right = buf + (j-1 + i*sxp2) * 4;
-				
-				byte alpha = cur[3];
-				byte blur = (byte)((float)(up[3] + down[3] + left[3] + right[3]) * 0.25f);
+		unsigned int glowCol = font->glowColor.toRGBA();
+		byte* glowColChannel = (byte*)&glowCol;
 
-				if( blur > alpha )
-				{					
-					/*cur[0] = 255*(1.f-s) + s * glowColChannel[0];
-					cur[1] = 255*(1.f-s) + s * glowColChannel[1];
-					cur[2] = 255*(1.f-s) + s * glowColChannel[2];*/
+		//duplicate the buffer
+		byte* glowBuf = (byte*)malloc( bufsize );
+		memcpy( glowBuf, buf, bufsize );
+		
+		for( int iteration = 0; iteration < font->glowRadius; ++iteration )
+		{
+			for( int i = 1; i < syp2-1; ++i )
+			{
+				for( int j = 1; j < sxp2-1; ++j )
+				{
+					byte* cur = glowBuf + (j + i * sxp2) * 4;
+					byte* up = glowBuf + (j + (i+1)*sxp2) * 4;
+					byte* down = glowBuf + (j + (i-1)*sxp2) * 4;
+					byte* left = glowBuf + (j+1 + i*sxp2) * 4;
+					byte* right = glowBuf + (j-1 + i*sxp2) * 4;
 					
-					cur[0] = cur[1] = cur[2] = 10;
-					
-					cur[3] = blur;
+					cur[0] = glowColChannel[0];
+					cur[1] = glowColChannel[1];
+					cur[2] = glowColChannel[2];
+					cur[3] = (byte)((float)(up[3] + down[3] + left[3] + right[3]) * 0.25f);
 				}
 			}
 		}
+		
+		//now alpha-blend the blur over the original buffer
+		for( int i = 0; i < pixelNumber; ++i )
+		{
+			byte* orig = buf + i*4;
+			byte* glow = glowBuf + i*4;
+			
+			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
+			
+			for( int c = 0; c < 4; ++c )
+				orig[c] = orig[c] * s + glow[c] * (1.f-s);
+		}
+		
+		free( glowBuf );
 	}
 	
 	//drop the buffer in the texture
