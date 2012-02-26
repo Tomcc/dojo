@@ -167,7 +167,7 @@ namespace Dojo
 		*/
 		virtual bool onTransition()
 		{
-			return true;	
+			return true;
 		}
 				
 		inline void _subStateBegin()

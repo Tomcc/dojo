@@ -91,8 +91,8 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 	character = c;
 	gliphIdx = f->getCharIndex( this );
 
-	pixelWidth = (uint)( (float)(metrics->width ) * FONT_PPI + f->border*5.f );
-	float pixelHeight = (float)metrics->height * FONT_PPI + f->border*5.f;
+	pixelWidth = (uint)( (float)(metrics->width ) * FONT_PPI );
+	float pixelHeight = (float)metrics->height * FONT_PPI;
 
 	uvWidth = (float)pixelWidth / fsx;
 	uvHeight = pixelHeight / fsy;
@@ -116,11 +116,11 @@ font( f )
 	DEBUG_ASSERT( font );
 
 	//create the texture
-	uint sx = font->getFontWidth() * FONT_PAGE_SIDE;
-	uint sy = font->getFontHeight() * FONT_PAGE_SIDE;
+	int sx = font->mCellWidth * FONT_PAGE_SIDE;
+	int sy = font->mCellHeight * FONT_PAGE_SIDE;
 
-	uint sxp2 = Math::nextPowerOfTwo( sx );
-	uint syp2 = Math::nextPowerOfTwo( sy );
+	int sxp2 = Math::nextPowerOfTwo( sx );
+	int syp2 = Math::nextPowerOfTwo( sy );
 
 	byte* buf = (byte*)malloc( sxp2 * syp2 * 4 );
 	
@@ -132,13 +132,9 @@ font( f )
 	//render into buffer
 	FT_Render_Mode renderMode = ( font->isAntialiased() ) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
 	FT_GlyphSlot slot = font->face->glyph;
-	FT_Glyph glyph;
 	FT_Bitmap* bitmap;
-	FT_Vector vec = {0,0};
 	uint gliphidx;
 	int err;
-
-	FT_Stroker stroker = font->getStroker();
 
 	font->_prepareFace();
 
@@ -155,21 +151,14 @@ font( f )
 			gliphidx = FT_Get_Char_Index( font->face, c );
 			err = FT_Load_Glyph( font->face, gliphidx, FT_LOAD_DEFAULT );
 
-			x = j * font->getFontWidth();
-			y = i * font->getFontHeight();
-
-			//offset a bit
-			if( font->border > 0 )
-			{
-				x += (uint)(font->border + 0.4f); 
-				y += (uint)(font->border + 0.4f);
-			}
+			x = j * font->mCellWidth;
+			y = i * font->mCellHeight;
 
 			//load character data
 			character->init( 
 				this, 
 				c, 
-				x, y, 
+				x, y,
 				sxp2, syp2, 
 				&(slot->metrics) );
 
@@ -179,30 +168,43 @@ font( f )
 
 			//blit the bitmap if it was rendered
 			if( bitmap->buffer )
-				_blit( buf, bitmap, x, y, sxp2 );
+				_blit( buf, bitmap, x + font->glowRadius, y + font->glowRadius, sxp2 );
+		}
+	}
+	
+	//glow?
+	unsigned int glowCol = font->glowColor.toRGBA();
+	byte* glowColChannel = (byte*)&glowCol;
+	
+	for( int iteration = 0; iteration < font->glowRadius; ++iteration )
+	{
+		for( int i = 1; i < syp2-1; ++i )
+		{
+			for( int j = 1; j < sxp2-1; ++j )
+			{
+				byte* cur = buf + (j + i * sxp2) * 4;
+				byte* up = buf + (j + (i+1)*sxp2) * 4;
+				byte* down = buf + (j + (i-1)*sxp2) * 4;
+				byte* left = buf + (j+1 + i*sxp2) * 4;
+				byte* right = buf + (j-1 + i*sxp2) * 4;
+				
+				byte alpha = cur[3];
+				byte blur = (byte)((float)(up[3] + down[3] + left[3] + right[3]) * 0.25f);
 
-			if( font->border > 0 )
-			{			
-				x = j * font->getFontWidth();
-				y = i * font->getFontHeight();
-
-				//load, copy, stroke and draw to bitmap
-				err = FT_Load_Glyph( font->face, gliphidx, FT_LOAD_DEFAULT );
-				err += FT_Get_Glyph( slot, &glyph );
-				err += FT_Glyph_Stroke( &glyph, stroker, true );
-				err += FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, &vec, true );
-
-				DEBUG_ASSERT( err == 0 );
-
-				bitmap = &(((FT_BitmapGlyph)glyph)->bitmap);
-
-				//blit the bitmap if it was rendered
-				if( bitmap->buffer )
-					_blitborder( buf, bitmap, x, y, sxp2, font->borderColor );
+				if( blur > alpha )
+				{					
+					/*cur[0] = 255*(1.f-s) + s * glowColChannel[0];
+					cur[1] = 255*(1.f-s) + s * glowColChannel[1];
+					cur[2] = 255*(1.f-s) + s * glowColChannel[2];*/
+					
+					cur[0] = cur[1] = cur[2] = 10;
+					
+					cur[3] = blur;
+				}
 			}
 		}
 	}
-
+	
 	//drop the buffer in the texture
 	texture = new Texture( NULL, String::EMPTY );
 	texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
@@ -229,18 +231,17 @@ Font::Font( const String& path )
 	fontFile = Utils::getDirectory( path ) + '/' + t.getString( "truetype" );
 	fontWidth = fontHeight = t.getInt( "size" );	
 
-	border = t.getNumber( "border" );
-	borderColor = t.getColor( "border_color" );
-
 	antialias = t.getBool( "antialias" );
 	kerning = t.getBool( "kerning" );
 	spacing = t.getNumber( "spacing" );
+	
+	glowRadius = t.getInt( "glowRadius" );
+	glowColor = t.getColor( "glowColor" );
+	
+	mCellWidth = fontWidth + glowRadius * 2;
+	mCellHeight = fontHeight + glowRadius * 2;
 
 	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
-
-	//create stroker
-	if( border > 0 )
-		stroker = Platform::getSingleton()->getFontSystem()->getStroker( border );
 
 	Table* preload = t.getTable( "preloadedPages" );
 	for( int i = 0; i < preload->getAutoMembers(); ++i )
@@ -250,9 +251,6 @@ Font::Font( const String& path )
 Font::~Font()
 {
 	unload();
-
-	if( border > 0 )
-		FT_Stroker_Done( stroker );
 }
 
 float Font::getKerning( Character* next, Character* prev )

@@ -119,8 +119,8 @@ namespace Dojo
 			return fontName;
 		}
 		
-		inline uint getFontWidth()			{	return (uint)(fontWidth + border);	}
-		inline uint getFontHeight()			{	return (uint)(fontHeight + border);	}
+		inline uint getFontWidth()			{	return fontWidth;	}
+		inline uint getFontHeight()			{	return fontHeight;	}
 
 		inline Page* getPage( uint index )
 		{
@@ -162,11 +162,6 @@ namespace Dojo
 			return FT_Get_Char_Index( face, c->character );
 		}
 
-		inline FT_Stroker getStroker()
-		{
-			return stroker;
-		}
-
 		inline bool isAntialiased()
 		{
 			return antialias;
@@ -204,17 +199,17 @@ namespace Dojo
 		String fontName;
 		String fontFile;
 
-		float border;
-		Color borderColor;
-
 		bool antialias, kerning;
 
 		float spacing;
 
-		uint fontWidth, fontHeight; //measurements of the "character box"
+		int fontWidth, fontHeight; //clean measurements for the typeface
+		int mCellWidth, mCellHeight; //measurements of the "character box" 
+		
+		int glowRadius;
+		Color glowColor;
 
 		FT_Face face;
-		FT_Stroker stroker;
 
 		///this has to be called each time that we need to use the face
 		void _prepareFace();
