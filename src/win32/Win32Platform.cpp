@@ -465,11 +465,11 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
+GLenum Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
 {
 	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
 	if( !Utils::hasExtension( ".png", path ) )
-		return false;
+		return 0;
 
 	void* data;
 
@@ -487,14 +487,14 @@ bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& widt
 		fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
-		return false;
+		return 0;
 
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
 		dib = FreeImage_Load(fif, ansipath.c_str());
 	//if the image failed to load, return failure
 	if(!dib)
-		return false;
+		return 0;
 
 	//retrieve the image data
 	data = (void*)FreeImage_GetBits(dib);
@@ -502,9 +502,9 @@ bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& widt
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 	
-	uint pixelSize = FreeImage_GetBPP(dib)/8;
+	int pixelSize = FreeImage_GetBPP(dib)/8;
 	
-	uint size = width*height*4;
+	int size = width*height*pixelSize;
 	bufptr = malloc( size );
 	
 	//swap R and B and invert image while copying
@@ -513,11 +513,12 @@ bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& widt
 	{
 		for( int j = 0; j < width; ++j )
 		{
-			out = (byte*)bufptr + (j + i*width)*4;
+			out = (byte*)bufptr + (j + i*width)*pixelSize;
 			in = (byte*)data + (j + ii*width)*pixelSize;
 
-			out[3] = (pixelSize > 3) ? in[3] : 0;
- 			out[2] = in[0];
+			if( pixelSize > 3 )
+				out[3] = in[3];
+			out[2] = in[0];
 			out[1] = in[1];
 			out[0] = in[2];
 		}
@@ -525,7 +526,7 @@ bool Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& widt
 	
 	FreeImage_Unload( dib );
 
-	return true;
+	return (pixelSize == 4) ? GL_RGBA : GL_RGB;
 }
 
 String Win32Platform::getAppDataPath()

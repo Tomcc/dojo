@@ -38,7 +38,7 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual bool loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
+		virtual GLenum loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
 		
 		virtual String getAppDataPath();
 		virtual String getRootPath();

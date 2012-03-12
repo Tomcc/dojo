@@ -164,10 +164,10 @@ bool Texture::loadFromPNG( const String& path )
 	DEBUG_ASSERT( !loaded );
 	
 	void* imageData = NULL;
+
+	GLenum sourceFormat = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
 	
-	bool loadSuccess = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
-	
-	DEBUG_ASSERT( loadSuccess );
+	DEBUG_ASSERT( sourceFormat );
 	
 	if( creator && creator->disableBilinear )	
 		disableBilinearFiltering();
@@ -186,8 +186,6 @@ bool Texture::loadFromPNG( const String& path )
 		disableTiling();
 	else
 		enableTiling();
-	
-	GLenum sourceFormat = GL_RGBA; //TODO don't use alpha if not needed
 	
 	GLenum destFormat = sourceFormat;
 	
