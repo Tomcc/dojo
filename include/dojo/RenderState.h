@@ -32,8 +32,6 @@ namespace Dojo
 			CM_BACK,
 			CM_DISABLED
 		};
-		
-		typedef Array<Texture*> TextureList;
 				
 		Color color;
 
@@ -47,15 +45,15 @@ namespace Dojo
 		RenderState() :
 		textureScale( 1,1 ),
 		textureRotation( 0 ),
+		mTextureNumber( 0 ),
 		cullMode( CM_BACK ),
 		blendingEnabled( true ),
 		textureTransform( false ),
-		textures( 8 ),
 		mesh( NULL ),
 		srcBlend( GL_SRC_ALPHA ),
 		destBlend( GL_ONE_MINUS_SRC_ALPHA )
 		{
-			
+			memset( textures, 0, sizeof( textures ) ); //zero all the textures
 		}
 		
 		virtual ~RenderState()
@@ -74,31 +72,39 @@ namespace Dojo
 		/**
 		It can be NULL, which means that the slot is disabled.
 		*/
-		inline void setTexture( Texture* tex, uint ID = 0 )
+		inline void setTexture( Texture* tex, int ID = 0 )
 		{
-			//create missing textures for this renderstate
-			for( uint i = textures.size(); i <= ID; ++i )
-				textures.add( NULL );
+			DEBUG_ASSERT( ID >= 0 );
+			DEBUG_ASSERT( ID < 8 );
 
-			textures.at( ID ) = tex;
+			if( textures[ID] == NULL ) //adding a new one
+				++mTextureNumber;
+
+			textures[ID] = tex;
 		}
 
 		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
+
 		inline void setRequiresTextureTransform( bool req )
 		{
 			textureTransform = req;
 		}
 				
-		inline Texture* getTexture( uint ID = 0 )			
-		{	
-			return (getTextureNumber()) ? textures.at(ID) : NULL;	
-		}
-		inline Mesh* getMesh()								{	return mesh;			}
-		inline uint getTextureNumber()
+		inline Texture* getTexture( int ID = 0 )
 		{
-			return textures.size();
+			DEBUG_ASSERT( ID >= 0 );
+			DEBUG_ASSERT( ID < 8 );
+	
+			return textures[ID];
 		}
+
+		inline Mesh* getMesh()								{	return mesh;			}
 		
+		inline int getTextureNumber()
+		{
+			return mTextureNumber;
+		}
+
 		bool isAlphaRequired();
 		
 		///returns the "weight" of the changes needed to pass from "this" to "s"
@@ -111,11 +117,11 @@ namespace Dojo
 			if( s->mesh != mesh )
 				dist += 3;
 			
-			if( s->getTextureNumber() != s->getTextureNumber() )
-				dist += 2;
-
-			else if( s->getTexture() != getTexture() )
-				dist += 2;
+			for( int i = 0; i < 8; ++i )
+			{
+				if( textures[i] != s->textures[i] )
+					dist += 2;
+			}
 			
 			if( s->isAlphaRequired() != isAlphaRequired() )
 				dist += 1;
@@ -130,7 +136,8 @@ namespace Dojo
 		bool blendingEnabled;
 		bool textureTransform;
 		
-		TextureList textures;
+		Texture* textures[8];
+		int mTextureNumber;
 
 		Mesh* mesh;
 

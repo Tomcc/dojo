@@ -65,13 +65,6 @@ void RenderState::commitChanges( RenderState* pastState )
 	//bind the new mesh
 	if( mesh != pastState->mesh )
 		mesh->bind();
-	
-	//change blending mode if blending is used
-	if( srcBlend != pastState->srcBlend ||
-		destBlend != pastState->destBlend )
-	{
-		glBlendFunc( srcBlend, destBlend );
-	}
 
 	//enable or disable blending
 	if( blendingEnabled != pastState->blendingEnabled )
@@ -80,6 +73,13 @@ void RenderState::commitChanges( RenderState* pastState )
 			glEnable( GL_BLEND );
 		else
 			glDisable( GL_BLEND ); 
+	}
+
+	//change blending mode if blending is used
+	if( srcBlend != pastState->srcBlend ||
+		destBlend != pastState->destBlend )
+	{
+		glBlendFunc( srcBlend, destBlend );
 	}
 
 	if( cullMode != pastState->cullMode )

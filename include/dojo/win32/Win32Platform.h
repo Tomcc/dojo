@@ -42,7 +42,7 @@ namespace Dojo
 		
 		virtual String getAppDataPath();
 		virtual String getRootPath();
-
+		
 		virtual void openWebPage( const String& site );
 
 		virtual bool mouseMoved( const OIS::MouseEvent& arg );
