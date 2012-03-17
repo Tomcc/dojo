@@ -224,35 +224,6 @@ void ResourceGroup::loadPrefabMeshes()
 	
 	addMesh( m, "texturedQuad" );
 	
-	//textured quad with 2 UVS
-	m = new Mesh( this );
-	m->setTriangleMode( Mesh::TM_STRIP );
-	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-	m->setVertexFieldEnabled( Mesh::VF_UV );
-	m->setVertexFieldEnabled( Mesh::VF_UV_1 );
-
-	m->begin(4);	
-
-	m->vertex( -0.5, -0.5 );		
-	m->uv( 0,1 );
-	m->uv( 0,1, 1 );
-
-	m->vertex( 0.5, -0.5 );		
-	m->uv( 1,1 );
-	m->uv( 1,1, 1 );
-
-	m->vertex( -0.5, 0.5 );		
-	m->uv( 0,0 );
-	m->uv( 0,0, 1 );
-
-	m->vertex( 0.5, 0.5 );
-	m->uv( 1,0 );
-	m->uv( 1,0, 1 );
-
-	m->end();
-
-	addMesh( m, "texturedQuad2" );
-
 //textured quad xz
 	m = new Mesh( this );
 	m->setTriangleMode( Mesh::TM_STRIP );

@@ -176,6 +176,12 @@ void Render::removeRenderable( Renderable* s )
 		getLayer( s->getLayer() )->remove( s );
 	
 	s->_notifyRenderInfo( NULL, 0, 0 );
+
+	if( s == currentRenderState )
+	{
+		//firstRenderState->commitChanges( currentRenderState );
+		currentRenderState = firstRenderState;
+	}
 }
 
 void Render::setViewport( Viewport* v )		
