@@ -217,7 +217,7 @@ namespace Dojo
 			vertex( v.x, v.y, v.z );
 		}
 				
-		///sets the uv of the last set vertex				
+		///sets the uv of the given UV set				
 		inline void uv( float u, float v, byte set = 0 )
 		{			
 			DEBUG_ASSERT( isEditing() );
