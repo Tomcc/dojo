@@ -26,6 +26,81 @@ namespace Dojo
 	{
 	public:
 
+		class TextureUnit
+		{
+		public:
+
+			Texture* texture;
+
+			TextureUnit() :
+			scale( 1,1 ),
+			rotation( 0 ),
+			offset( 0,0 ),
+			texture( NULL ),
+			requiresTransform( false )
+			{
+
+			}
+
+			void applyTransform()
+			{
+				DEBUG_ASSERT( requiresTransform );
+
+				glMatrixMode( GL_TEXTURE );
+				glLoadIdentity();
+
+				glScalef( scale.x, scale.y, 1 );
+				glRotatef( rotation, 0, 0, 1.f );
+				glTranslatef( offset.x, offset.y, 0 );
+			}
+
+			inline void setOffset( const Vector& v )
+			{
+				offset = v;
+				requiresTransform = true;
+			}
+
+			inline void setScale( const Vector& v )
+			{
+				scale = v;
+				requiresTransform = true;
+			}
+
+			inline void setRotation( const float r )
+			{
+				rotation = r;
+				requiresTransform = true;
+			}
+
+			inline const Vector& getOffset()
+			{
+				return offset;
+			}
+
+			inline const Vector& getScale()
+			{
+				return scale;
+			}
+
+			inline float getRotation()
+			{
+				return rotation;
+			}
+
+			inline bool isTransformRequired()
+			{
+				return requiresTransform;
+			}
+
+		protected:
+
+			Vector offset, scale;
+			float rotation;
+
+			bool requiresTransform;
+
+		};
+
 		enum CullMode
 		{
 			CM_FRONT,
@@ -35,20 +110,14 @@ namespace Dojo
 				
 		Color color;
 
-		Vector textureOffset, textureScale;
-		float textureRotation;
-
 		GLenum srcBlend, destBlend;
 
 		CullMode cullMode;
 
 		RenderState() :
-		textureScale( 1,1 ),
-		textureRotation( 0 ),
 		mTextureNumber( 0 ),
 		cullMode( CM_BACK ),
 		blendingEnabled( true ),
-		textureTransform( false ),
 		mesh( NULL ),
 		srcBlend( GL_SRC_ALPHA ),
 		destBlend( GL_ONE_MINUS_SRC_ALPHA )
@@ -58,7 +127,8 @@ namespace Dojo
 		
 		virtual ~RenderState()
 		{
-			
+			for( int i = 0; i < 8; ++i )
+				delete textures[i];
 		}
 		
 		inline void setMesh( Mesh* m )
@@ -78,23 +148,34 @@ namespace Dojo
 			DEBUG_ASSERT( ID < 8 );
 
 			if( textures[ID] == NULL ) //adding a new one
+			{
 				++mTextureNumber;
+				textures[ID] = new TextureUnit();
+			}
+			else if( tex == NULL )
+				delete textures[ID];
 
-			textures[ID] = tex;
+			textures[ID]->texture = tex;
 		}
 
 		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
-
-		inline void setRequiresTextureTransform( bool req )
-		{
-			textureTransform = req;
-		}
 				
 		inline Texture* getTexture( int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0 );
 			DEBUG_ASSERT( ID < 8 );
 	
+			if( textures[ID] )
+				return textures[ID]->texture;
+			else
+				return NULL;
+		}
+
+		inline TextureUnit* getTextureUnit( int ID )
+		{
+			DEBUG_ASSERT( ID >= 0 );
+			DEBUG_ASSERT( ID < 8 );
+
 			return textures[ID];
 		}
 
@@ -117,6 +198,7 @@ namespace Dojo
 			if( s->mesh != mesh )
 				dist += 3;
 			
+			//TODO - this needs to be fixed for texture units
 			for( int i = 0; i < 8; ++i )
 			{
 				if( textures[i] != s->textures[i] )
@@ -134,9 +216,8 @@ namespace Dojo
 	protected:
 			
 		bool blendingEnabled;
-		bool textureTransform;
 		
-		Texture* textures[8];
+		TextureUnit* textures[8];
 		int mTextureNumber;
 
 		Mesh* mesh;

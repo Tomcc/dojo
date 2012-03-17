@@ -14,54 +14,45 @@ bool RenderState::isAlphaRequired()
 	return blendingEnabled || getTextureNumber() == 0;
 }
 
-void RenderState::_bindTextureSlot( int i )
-{
-	if( getTexture(i) )
-		getTexture(i)->bind(i);
-	else
-	{
-		//bind nothing
-		glActiveTexture( GL_TEXTURE0 + i );
-		glBindTexture( GL_TEXTURE_2D, NULL );
-		glDisable( GL_TEXTURE_2D );
-	}
-}
-
 void RenderState::commitChanges( RenderState* pastState )
 {
 	DEBUG_ASSERT( pastState );
 	DEBUG_ASSERT( mesh );
 		
 	//bind the new textures
-	uint i = 0;
-	for( ; i < getTextureNumber(); ++i )
+	for( int i = 0; i < 8; ++i )
 	{
-		_bindTextureSlot( i );
-	}
-	//bind remaining slots
-	for( ; i < 8; ++i )
-	{
-		//bind nothing
-		glActiveTexture( GL_TEXTURE0 + i );
-		glBindTexture( GL_TEXTURE_2D, NULL );
-		glDisable( GL_TEXTURE_2D );
-	}
-	
-	if( !getTextureNumber() )
-		_bindTextureSlot(0);
+		//different from previous?
+		if( (pastState->textures[i] == NULL && textures[i] != NULL) ||
+			(pastState->textures[i] != NULL && textures[i] == NULL) ||
+			((pastState->textures[i] && textures[i]) && pastState->textures[i]->texture != textures[i]->texture ) )
+		{
+			//select current slot
+			glActiveTexture( GL_TEXTURE0 + i );
 
-	//apply transform?
-	//past state had texture transform, but we dont' need it
-	if( textureTransform )
-	{
-		glMatrixMode( GL_TEXTURE );
-		glLoadIdentity();
-		
-		glScalef( textureScale.x, textureScale.y, 1 );
-		glRotatef( textureRotation, 0, 0, 1.f );
-		glTranslatef( textureOffset.x, textureOffset.y, 0 );
+			if( textures[i] )
+			{
+				textures[i]->texture->bind(i);
+
+				if( textures[i]->isTransformRequired() )
+				{
+					textures[i]->applyTransform();
+				}
+				else if( pastState->textures[i] && pastState->textures[i]->isTransformRequired() ) //override with null trans
+				{
+					glMatrixMode( GL_TEXTURE );
+					glLoadIdentity();
+				}
+			}
+			else
+			{
+				//override the previous bound texture with nothing
+				glBindTexture( GL_TEXTURE_2D, NULL );
+				glDisable( GL_TEXTURE_2D );
+			}
+		}
 	}
-	
+
 	//bind the new mesh
 	if( mesh != pastState->mesh )
 		mesh->bind();
