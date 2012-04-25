@@ -699,11 +699,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				431CF7C8147D51850031CB4E /* AnimatedQuad.cpp in Sources */,
 				431CF7A3147D50430031CB4E /* ApplePlatform.mm in Sources */,
 				431CF7A4147D50430031CB4E /* AppDelegate.mm in Sources */,
 				431CF7A5147D50430031CB4E /* Application.mm in Sources */,
 				431CF7A6147D50430031CB4E /* IOSPlatform.mm in Sources */,
-				431CF7C8147D51850031CB4E /* AnimatedQuad.cpp in Sources */,
 				431CF7A7147D50430031CB4E /* Color.cpp in Sources */,
 				431CF7A8147D50430031CB4E /* Email.cpp in Sources */,
 				431CF7A9147D50430031CB4E /* Font.cpp in Sources */,
@@ -796,6 +796,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
+				HEADER_SEARCH_PATHS = "dependencies-OSX/include";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/dependencies-OSX/lib\"",
@@ -810,6 +811,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
+				HEADER_SEARCH_PATHS = "dependencies-OSX/include";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/dependencies-OSX/lib\"",

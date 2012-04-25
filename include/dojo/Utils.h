@@ -73,7 +73,7 @@ namespace Dojo
 			size_t end = getLastOf( str, '.' );
 			size_t start = getLastOf( str, '/' )+1;
 
-			if( end < start ) //there isn't a file execption
+			if( end < start ) //there isn't a file extension
 				end = str.size();
 
 			String res;
@@ -129,18 +129,37 @@ namespace Dojo
 			
 			return -1;
 		}
+        
+        inline static int getVersionIdx( const String& str )
+        {
+            int idx = (int)str.size()-1;
+            
+            //look for a single digit
+            for( ; idx >= 0 && !isNumber( str.at( idx ) ); --idx );
+            
+            return ( idx > 1 && str.at( idx-1 ) == '@' ) ? idx-1 : -1;
+        }
+        
+        ///returns the version of the given name, or 0 if not found
+        inline static int getVersion( const String& str )
+        {
+            int vidx = getVersionIdx( str )+1;
+            
+            return (vidx >= 0) ? (str.at( vidx ) - '0') : 0;
+        }
 		
 		inline static int getTag( const String& str )
 		{
 			int tidx = getTagIdx( str );
 			
 			if( tidx != -1 )
-				return toInt( str, getTagIdx( str ) );
+				return toInt( str, tidx );
 			else
 				return -1; //no tag
 		}
-				
-		inline static String removeTag( String& str )
+        				
+        ///removes extra info appended to file name: "filename_3@2" -> "filename"
+		inline static String removeTags( String& str )
 		{
 			String res = str;
 			
@@ -148,6 +167,11 @@ namespace Dojo
 			
 			if( tidx != -1 )
 				res.resize( tidx );  //tag found, remove
+            
+            int vidx = getVersionIdx( str );
+            
+            if( vidx != -1 )
+                res.resize( vidx );
 			
 			return res;
 		}

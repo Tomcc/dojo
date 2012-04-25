@@ -214,26 +214,26 @@ namespace Dojo {
 			return this->locale.size() > 0;
 		}
 		
-		void loadSets( const String& folder );		
-		void loadFonts( const String& folder );
+		void loadSets( const String& folder, int version = 0 );		
+		void loadFonts( const String& folder, int version = 0 );
 		void loadMeshes( const String& folder );
 		void loadSounds( const String& folder );
 		void loadTables( const String& folder );
 		
 		void loadPrefabMeshes();
 		
-		void loadFolder( const String& folder )
+		void loadFolder( const String& folder, int version = 0 )
 		{
 			DEBUG_MESSAGE( "[" << folder.ASCII() << "]" );
 			
-			loadSets( folder );
-			loadFonts( folder );
+			loadSets( folder, version );
+			loadFonts( folder, version );
 			loadMeshes( folder );
 			loadSounds( folder );
 			loadTables( folder );
 		}
 		
-		void loadLocalizedFolder( const String& basefolder )
+		void loadLocalizedFolder( const String& basefolder, int version = 0 )
 		{
 			String lid = basefolder;
 				
@@ -245,13 +245,13 @@ namespace Dojo {
 			loadFolder( lid );
 		}
 
-		void loadResources( const String& folder )
+		void loadResources( const String& folder, int version = 0 )
 		{
-			loadFolder( folder );
+			loadFolder( folder, version );
 			
 			//localized loading
 			if( isLocalizationRequired() )		
-				loadLocalizedFolder( folder );
+				loadLocalizedFolder( folder, version );
 		}
 		
 		///asserts that this group will not load more resources in the future, useful for task-based loading

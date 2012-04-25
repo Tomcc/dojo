@@ -67,6 +67,7 @@ void SoundSource::play( float volume )
 			//set global parameters
 			alSourcef (source, AL_REFERENCE_DISTANCE,    1.0f );
 
+            //TODO - request 3 chunks to the buffer
 			alSourcei (source, AL_BUFFER,   buffer->_getOpenALBuffer()  );
 		}
 		else
@@ -131,6 +132,9 @@ void SoundSource::_update()
 		positionChanged = false;
 	}
 	
+    //TODO - stop if the buffer tells there will be no more chunks
+    //pause if there are no more chunks but the buffer is still "open" 
+    
 	alGetSourcei(source, AL_SOURCE_STATE, &playState);
 
 	if( autoRemove && !looping && state == SS_PLAYING && playState == AL_STOPPED )

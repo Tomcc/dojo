@@ -66,7 +66,7 @@ void ApplePlatform::step( float dt )
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& width, int& height )
+GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
 {
 	width = height = 0;
 		
@@ -75,7 +75,7 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	CGDataProviderRef prov = CGDataProviderCreateWithURL( (CFURLRef)url );
 	
 	if( prov == nil )
-		return false;
+		return 0;
 	
 	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
 		
@@ -87,10 +87,10 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
-	imageData = malloc( size);
-	memset( imageData, 0, size );
+	bufptr = malloc( size);
+	memset( bufptr, 0, size );
 	
-	CGContextRef context = CGBitmapContextCreate(imageData,
+	CGContextRef context = CGBitmapContextCreate(bufptr,
 												 width,
 												 height,
 												 8,
@@ -103,7 +103,7 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	//correct premultiplied alpha - only in the useful part of the image
 	///while doing this, extend the color to the pitch row to avoid artifacts at borders
 	byte* ptr;
-	byte* rowptr = (byte*)imageData;
+	byte* rowptr = (byte*)bufptr;
 	byte r = 0, g = 0, b = 0;
 	
 	for( int i = 0; i < height; ++i )
@@ -143,7 +143,7 @@ bool ApplePlatform::loadPNGContent( void*& imageData, const String& path, int& w
 	CGImageRelease( CGImage );
 	//[image release];
 	
-	return true;
+	return GL_RGBA;
 }
 
 void ApplePlatform::_createApplicationDirectory()

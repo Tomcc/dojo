@@ -37,7 +37,7 @@ namespace Dojo
 		virtual void initialise()=0;        
 		virtual void step( float dt );
 						
-		virtual bool loadPNGContent( void*& imageData, const String& path, int& width, int& height );		
+		virtual GLenum loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
 		        
     protected:
 		

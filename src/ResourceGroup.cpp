@@ -47,11 +47,12 @@ void ResourceGroup::addTable( Table* t )
 	DEBUG_MESSAGE( "+" << t->getName().ASCII() << "\t\t" << "table" );
 }
 
-void ResourceGroup::loadSets( const String& subdirectory )
+void ResourceGroup::loadSets( const String& subdirectory, int version )
 {
 	//load all the sets in the given folder
 	
 	DEBUG_ASSERT( subdirectory.size() );
+    DEBUG_ASSERT( version >= 0 );
 	
 	std::vector< String > paths;
 	String name, lastName;
@@ -60,9 +61,12 @@ void ResourceGroup::loadSets( const String& subdirectory )
 	
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
 		
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 	{
-		name = Utils::getFileName( paths[i] ); 
+		name = Utils::getFileName( paths[i] );
+        
+        //skip wrong versions
+        if( Utils::getVersion( name ) != version ) continue;
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
@@ -70,7 +74,7 @@ void ResourceGroup::loadSets( const String& subdirectory )
 			if( currentSet )
 				currentSet->load();
 			
-			String setPrefix = Utils::removeTag( name );
+			String setPrefix = Utils::removeTags( name );
 			
 			//create a new set
 			currentSet = new FrameSet( this, setPrefix );
@@ -97,6 +101,10 @@ void ResourceGroup::loadSets( const String& subdirectory )
 	for(uint  i = 0; i < paths.size(); ++i)
 	{
 		name = Utils::getFileName( paths[i] ); 
+        
+        //skip wrong versions
+        if( Utils::getVersion( name ) != version ) continue;
+        name = Utils::removeTags( name );
 
 		Platform::getSingleton()->load( &def, paths[i] );
 			
@@ -109,10 +117,11 @@ void ResourceGroup::loadSets( const String& subdirectory )
 	}
 }
 
-void ResourceGroup::loadFonts( const String& subdirectory )
+void ResourceGroup::loadFonts( const String& subdirectory, int version )
 {
 	//load all the sets in the given folder
 	DEBUG_ASSERT( subdirectory.size() );
+    DEBUG_ASSERT( version >= 0 );
 	
 	String name;
 	std::vector<String> paths;
@@ -123,6 +132,10 @@ void ResourceGroup::loadFonts( const String& subdirectory )
 	for( uint i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] ); 
+        
+        //skip wrong versions
+        if( Utils::getVersion( name ) != version ) continue;
+        name = Utils::removeTags( name );
 						
 		addFont( new Font( paths[i] ), name );
 	}
@@ -164,7 +177,7 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
-			String setPrefix = Utils::removeTag( name );
+			String setPrefix = Utils::removeTags( name );
 			
 			//create a new set
 			currentSet = new SoundSet( setPrefix );
