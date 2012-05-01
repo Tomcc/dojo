@@ -93,7 +93,7 @@
 #define MESH_32BIT_INDICES 0
 
 #ifndef PLATFORM_IOS
-	#define DOJO_GAMMA_CORRECTION_ENABLED
+	//#define DOJO_GAMMA_CORRECTION_ENABLED
 #endif
 
 #endif

@@ -124,6 +124,7 @@ void Table::deserialize( StringReader& buf )
 	Vector vec;
 	Data data;
 	Table* table;
+    Color col;
 
 	//clear old
 	clear();
@@ -174,11 +175,30 @@ void Table::deserialize( StringReader& buf )
 		switch( target )
 		{
 		case PT_NUMBER:
-			buf.back();
-
-			number = buf.readFloat();
-
-			set( curName, number );
+                
+            //check if next char is x, that is, really we have an hex color!
+            if( buf.get() == 'x' )
+            {
+                buf.back();
+                buf.back();
+                
+                DEBUG_MESSAGE( curName.ASCII() );
+                
+                //create a color using the hex
+                col.setRGBA( buf.readHex() );
+                
+                set( curName, col );
+            }
+            else
+            {
+                buf.back();
+                buf.back();
+                    
+                number = buf.readFloat();
+                    
+                set( curName, number );
+            }
+                
 			break;
 		case PT_STRING:
 

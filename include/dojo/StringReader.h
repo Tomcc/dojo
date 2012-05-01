@@ -25,11 +25,15 @@ namespace Dojo
 		
 		inline unichar get()
 		{
+            DEBUG_ASSERT( !eof() );
+            
 			return str[ idx++ ];
 		}
 		
 		inline void back()
 		{
+            DEBUG_ASSERT( idx > 0 );
+            
 			--idx;
 		}
 		
@@ -37,6 +41,11 @@ namespace Dojo
 		{
 			return c >= '0' && c <= '9';
 		}
+        
+        inline static bool isHex( unichar c )
+        {
+            return isNumber( c ) || ( c >= 'a' && c <= 'f' );
+        }
 
 		inline static bool isWhiteSpace( unichar c )
 		{
@@ -49,6 +58,35 @@ namespace Dojo
 
 			back(); //put back first non whitespace char
 		}
+        
+        inline byte getHexValue( unichar c )
+        {
+            if( isNumber( c ) )
+                return c - '0';
+            else if( isHex( c ) )
+                return 10 + c - 'a';
+            else
+            {
+                DEBUG_ASSERT( "WRONG HEX VALUE" );
+                return 0;
+            }
+        }
+        
+        ///reads a formatted hex
+        unsigned int readHex()
+        {
+            //skip 0x
+            get();
+            get();
+            
+            unsigned int n = 0;
+                        
+            //read exactly 8 digits - could crash if not enough are available
+            for( int i = 0; i < 8; ++i )
+                n += getHexValue( get() ) * (1 << ((7-i)*4));
+                       
+            return n;
+        }
 		
 		float readFloat()
 		{

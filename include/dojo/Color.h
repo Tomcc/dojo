@@ -62,7 +62,7 @@ namespace Dojo
 		void setRGBA( RGBAPixel pixel )
 		{
 			byte* ch = (byte*)&pixel;
-			setRGBA( ch[0], ch[1], ch[2], ch[3] );
+			setRGBA( ch[2], ch[1], ch[0], ch[3] );
 		}
 				
 		inline RGBAPixel toRGBA()

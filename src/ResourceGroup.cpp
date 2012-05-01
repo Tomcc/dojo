@@ -98,7 +98,7 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 	
 	//now load atlases!		
 	Table def;
-	for(uint  i = 0; i < paths.size(); ++i)
+	for( int  i = 0; i < paths.size(); ++i)
 	{
 		name = Utils::getFileName( paths[i] ); 
         
@@ -191,7 +191,7 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 		
 		currentSet->addBuffer( b );
 		
-		lastName = name;
+		lastName = name; 
 	}
 }
 
