@@ -36,9 +36,9 @@ namespace Dojo
 		///loads the texture from a memory area with RGBA8 format
 		bool loadFromMemory( byte* buf, int width, int height, GLenum sourceFormat, GLenum destFormat  );
 
-		///loads the texture from the png pointed by the filename
-		bool loadFromPNG( const String& path );
-		
+		///loads the texture from the image pointed by the filename
+		bool loadFromFile( const String& path );
+        		
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
 

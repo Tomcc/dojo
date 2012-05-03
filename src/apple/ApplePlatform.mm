@@ -66,10 +66,10 @@ void ApplePlatform::step( float dt )
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
+GLenum ApplePlatform::loadImageContent( void*& bufptr, const String& path, int& width, int& height, CGImageType type, bool correctPremult )
 {
-	width = height = 0;
-		
+    width = height = 0;
+    
 	NSURL* url = [NSURL fileURLWithPath: path.toNSString() ];
 	
 	CGDataProviderRef prov = CGDataProviderCreateWithURL( (CFURLRef)url );
@@ -77,8 +77,17 @@ GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& wi
 	if( prov == nil )
 		return 0;
 	
-	CGImageRef CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
-		
+	CGImageRef CGImage;
+    
+    if( type == CGIT_PNG )
+        CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
+    else if( type == CGIT_JPG )
+        CGImage = CGImageCreateWithJPEGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
+    else
+    {
+        DEBUG_TODO;
+    }
+    
 	width = (int)CGImageGetWidth(CGImage);
 	height = (int)CGImageGetHeight(CGImage);	
 	
@@ -86,7 +95,7 @@ GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& wi
 	int size = pitch * height;
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-
+    
 	bufptr = malloc( size);
 	memset( bufptr, 0, size );
 	
@@ -102,48 +111,60 @@ GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& wi
 	
 	//correct premultiplied alpha - only in the useful part of the image
 	///while doing this, extend the color to the pitch row to avoid artifacts at borders
-	byte* ptr;
-	byte* rowptr = (byte*)bufptr;
-	byte r = 0, g = 0, b = 0;
-	
-	for( int i = 0; i < height; ++i )
-	{
-		ptr = rowptr;
-				
-		for( int j = 0; j < width; ++j )
-		{
-			byte alpha = ptr[3];
-				
-			if( alpha < 5 )
-			{
-				ptr[0] = r;
-				ptr[1] = g;
-				ptr[2] = b;
-			}
-			else if( alpha < 255 )
-			{
-				float a = ((float)(alpha)/255.f);
-				
-				r = (ptr[0] = ((float)ptr[0]) / a);
-				g = (ptr[1] = ((float)ptr[1]) / a);
-				b = (ptr[2] = ((float)ptr[2]) / a);
-			}
-			
-			ptr += 4;
-		}
-		
-		rowptr += pitch;
-	}
+    if( correctPremult )
+    {
+        byte* ptr;
+        byte* rowptr = (byte*)bufptr;
+        byte r = 0, g = 0, b = 0;
+        
+        for( int i = 0; i < height; ++i )
+        {
+            ptr = rowptr;
+            
+            for( int j = 0; j < width; ++j )
+            {
+                byte alpha = ptr[3];
+                
+                if( alpha < 5 )
+                {
+                    ptr[0] = r;
+                    ptr[1] = g;
+                    ptr[2] = b;
+                }
+                else if( alpha < 255 )
+                {
+                    float a = ((float)(alpha)/255.f);
+                    
+                    r = (ptr[0] = ((float)ptr[0]) / a);
+                    g = (ptr[1] = ((float)ptr[1]) / a);
+                    b = (ptr[2] = ((float)ptr[2]) / a);
+                }
+                
+                ptr += 4;
+            }
+            
+            rowptr += pitch;
+        }
+    }
 	
 	//free everything
 	CGContextRelease(context);	
 	CGColorSpaceRelease( colorSpace );
-
+    
 	CGDataProviderRelease( prov );
 	CGImageRelease( CGImage );
-	//[image release];
 	
 	return GL_RGBA;
+}
+
+GLenum ApplePlatform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
+{
+    return loadImageContent( bufptr, path, width, height, CGIT_PNG, true );
+}
+
+GLenum ApplePlatform::loadJPGContent( void*& bufptr, const String& path, int& width, int& height )
+{
+    return loadImageContent( bufptr, path, width, height, CGIT_JPG, false );
 }
 
 void ApplePlatform::_createApplicationDirectory()

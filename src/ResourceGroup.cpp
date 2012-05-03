@@ -59,7 +59,9 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 	
 	FrameSet* currentSet = NULL;
 	
+    //load pngs and jpgs
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
+    Platform::getSingleton()->getFilePathsForType( "jpg", subdirectory, paths );
 		
 	for( int i = 0; i < paths.size(); ++i )
 	{

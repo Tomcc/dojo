@@ -79,6 +79,7 @@ namespace Dojo
 		virtual void loop( float frameTime )=0;
 
 		virtual GLenum loadPNGContent( void*& bufptr, const String& path, int& width, int& height )=0;
+        virtual GLenum loadJPGContent( void*& bufptr, const String& path, int& width, int& height )=0;
 		
 		virtual bool isNPOTEnabled()=0;
 		

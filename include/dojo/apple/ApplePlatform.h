@@ -38,13 +38,23 @@ namespace Dojo
 		virtual void step( float dt );
 						
 		virtual GLenum loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
-		        
+        virtual GLenum loadJPGContent( void*& bufptr, const String& path, int& width, int& height );
+        		        
     protected:
+        
+        enum CGImageType
+        {
+            CGIT_PNG,
+            CGIT_JPG
+        };
 		
 		void _createApplicationDirectory();
 		
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
        	NSAutoreleasePool* pool;
+        
+        
+        GLenum loadImageContent( void*& bufptr, const String& path, int& width, int& height, CGImageType type, bool correctPremult );
     };
 }
 

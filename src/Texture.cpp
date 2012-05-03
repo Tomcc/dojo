@@ -159,19 +159,26 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLen
 	return loaded;
 }
 
-bool Texture::loadFromPNG( const String& path )
+bool Texture::loadFromFile( const String& path )
 {
 	DEBUG_ASSERT( !loaded );
 	
 	void* imageData = NULL;
 
-	GLenum sourceFormat = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+	GLenum sourceFormat = 0, destFormat;
+    
+    String ext = Utils::getFileExtension( path );
+    
+    if( ext == String( "png" ) )
+        sourceFormat = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
+    else if( ext == String( "jpg" ) )
+        sourceFormat = Platform::getSingleton()->loadJPGContent( imageData, path, width, height );        
 	
 	DEBUG_ASSERT( sourceFormat );
 	
 	if( creator && creator->disableBilinear )	
 		disableBilinearFiltering();
-	else			
+	else
 		enableBilinearFiltering();
 	
 	bool isSurface = width == Math::nextPowerOfTwo( width ) && height == Math::nextPowerOfTwo( height );
@@ -187,7 +194,7 @@ bool Texture::loadFromPNG( const String& path )
 	else
 		enableTiling();
 	
-	GLenum destFormat = sourceFormat;
+	destFormat = sourceFormat;
 	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	if( sourceFormat == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
@@ -205,7 +212,7 @@ bool Texture::load()
 {	
 	DEBUG_ASSERT( !loaded );
 	
-	return loadFromPNG( filePath );
+	return loadFromFile( filePath );
 }
 
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
