@@ -465,12 +465,8 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-GLenum Win32Platform::loadPNGContent( void*& bufptr, const String& path, int& width, int& height )
+GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height )
 {
-	//puo' caricare tutto ma per coerenza meglio limitarsi alle PNG (TODO: usare freeimage su iPhone?)
-	if( !Utils::hasExtension( ".png", path ) )
-		return 0;
-
 	void* data;
 
 	//image format

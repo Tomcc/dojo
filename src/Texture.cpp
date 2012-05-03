@@ -107,22 +107,32 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLen
 	
 	byte* paddedData = NULL;
 	
-	if( Platform::getSingleton()->isNPOTEnabled() )
+	//Assume formats are either GL_RGB or GL_RGBA
+	int sourcePixelSize = (sourceFormat == GL_RGBA) ? 4 : 3;
+	int destPixelSize = (destFormat == GL_RGBA) ? 4 : 3;
+
+	int POTwidth = Math::nextPowerOfTwo( width );
+	int POTheight = Math::nextPowerOfTwo( height );
+
+	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
+	if( (width == POTwidth && height == POTheight ) || Platform::getSingleton()->isNPOTEnabled() )
 	{
 		internalWidth = width;
 		internalHeight = height;
 	}
 	else
 	{
-		internalWidth = Math::nextPowerOfTwo( width );
-		internalHeight = Math::nextPowerOfTwo( height );	
+		internalWidth = POTwidth;
+		internalHeight = POTheight;
 		
 		//need to pad imageData to a POT buffer
-		paddedData = (byte*)malloc( internalWidth * internalHeight * 4 );
+		paddedData = (byte*)malloc( internalWidth * internalHeight * sourcePixelSize );
 		
-		memset( paddedData, 0, internalWidth * internalHeight * 4 );
+		memset( paddedData, 0, internalWidth * internalHeight * sourcePixelSize );
 		for( int i = 0; i < height; ++i )
-			memcpy( paddedData + i*internalWidth*4, imageData + i*width*4, width*4 );
+			memcpy( paddedData + i*internalWidth*sourcePixelSize, 
+					imageData + i*width*sourcePixelSize, 
+					width*sourcePixelSize );
 		
 		imageData = paddedData;
 	}
@@ -131,7 +141,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLen
 	yRatio = (float)height/(float)internalHeight;	
 	npot = ( Math::nextPowerOfTwo( width ) != width || Math::nextPowerOfTwo( height ) != height );
 	
-	size = internalWidth * internalHeight * 4;
+	size = internalWidth * internalHeight * destPixelSize;
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 	
@@ -166,14 +176,8 @@ bool Texture::loadFromFile( const String& path )
 	void* imageData = NULL;
 
 	GLenum sourceFormat = 0, destFormat;
+    sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height );
     
-    String ext = Utils::getFileExtension( path );
-    
-    if( ext == String( "png" ) )
-        sourceFormat = Platform::getSingleton()->loadPNGContent( imageData, path, width, height );
-    else if( ext == String( "jpg" ) )
-        sourceFormat = Platform::getSingleton()->loadJPGContent( imageData, path, width, height );        
-	
 	DEBUG_ASSERT( sourceFormat );
 	
 	if( creator && creator->disableBilinear )	
