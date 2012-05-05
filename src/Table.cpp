@@ -75,6 +75,7 @@ enum ParseState
 	PS_TABLE,
 	PS_NAME,
 	PS_EQUAL,
+    PS_COMMENT,
 	PS_END,
 	PS_ERROR
 };
@@ -130,7 +131,7 @@ void Table::deserialize( StringReader& buf )
 	clear();
 
 	//feed one char at a time and do things
-	unichar c;
+	unichar c, c2;
 	while( !buf.eof() && state != PS_END && state != PS_ERROR )
 	{
 		c = buf.get();
@@ -140,6 +141,7 @@ void Table::deserialize( StringReader& buf )
 		case PS_TABLE: //wait for either a name, or an anon value	
 				 if( c == '}' )				state = PS_END;
 			else if( isNameStarter( c ) )	state = PS_NAME;
+            
 
 			else if( c == '"' )		target = PT_STRING;
 			else if( c == '(' )		target = PT_VECTOR;			
@@ -177,7 +179,8 @@ void Table::deserialize( StringReader& buf )
 		case PT_NUMBER:
                 
             //check if next char is x, that is, really we have an hex color!
-            if( buf.get() == 'x' )
+            c2 = buf.get();
+            if( c == '0' && c2 == 'x' )
             {
                 buf.back();
                 buf.back();
@@ -185,9 +188,14 @@ void Table::deserialize( StringReader& buf )
                 DEBUG_MESSAGE( curName.ASCII() );
                 
                 //create a color using the hex
-                col.setRGBA( buf.readHex() );
+                col.set( buf.readHex() );
                 
                 set( curName, col );
+            }
+            else if( c == '-' && c2 == '-' ) //or, well, a comment! (LIKE A HACK)
+            {
+                //just skip until newline
+                while( buf.get() != '\n' && !buf.eof() );
             }
             else
             {

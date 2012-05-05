@@ -50,8 +50,13 @@ namespace Dojo
 			this->b = v.z;
 			this->a = a;
 		}
+        
+        Color( RGBAPixel p )
+        {
+            set( p );
+        }
 		
-		void setRGBA( byte r, byte g, byte b, byte a = 255 )
+		void set( byte r, byte g, byte b, byte a = 255 )
 		{
 			this->r = (float)r/255.f;
 			this->g = (float)g/255.f;
@@ -59,10 +64,10 @@ namespace Dojo
 			this->a = (float)a/255.f;
 		}
 		
-		void setRGBA( RGBAPixel pixel )
+		void set( RGBAPixel pixel )
 		{
 			byte* ch = (byte*)&pixel;
-			setRGBA( ch[2], ch[1], ch[0], ch[3] );
+			set( ch[2], ch[1], ch[0], ch[3] );
 		}
 				
 		inline RGBAPixel toRGBA()
