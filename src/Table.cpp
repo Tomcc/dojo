@@ -178,6 +178,9 @@ void Table::deserialize( StringReader& buf )
 		{
 		case PT_NUMBER:
                 
+            if( buf.eof() ) //the number we read could actually be the last char in a file
+                break;
+                
             //check if next char is x, that is, really we have an hex color!
             c2 = buf.get();
             if( c == '0' && c2 == 'x' )
