@@ -34,12 +34,14 @@ namespace Dojo {
 		class Layer : public Dojo::Array< Renderable* >
 		{
 		public:
+            bool visible;
 			bool depthCheck;
 			bool lightingOn;
 			bool projectionOff;
 			bool depthClear;
 
 			Layer() :
+            visible( true ),
 			depthCheck( false ),
 			lightingOn( false ),
 			projectionOff( true ),

@@ -511,7 +511,7 @@ void Render::_setupFrustumProjection()
 
 void Render::renderLayer( Layer* list )
 {
-	if( !list->size() )
+	if( !list->size() || !list->visible )
 		return;
 
 	//make state changes
