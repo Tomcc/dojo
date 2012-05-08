@@ -513,6 +513,10 @@ void Render::renderLayer( Layer* list )
 {
 	if( !list->size() || !list->visible )
 		return;
+    
+#ifdef DOJO_WIREFRAME_AVAILABLE
+    setWireframe( list->wireframe );
+#endif
 
 	//make state changes
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );

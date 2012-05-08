@@ -90,10 +90,11 @@
 #endif
 
 //general configurations
-#define MESH_32BIT_INDICES 0
-
-#ifndef PLATFORM_IOS
+#ifdef PLATFORM_IOS
+    #define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
+#else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
+    #define DOJO_WIREFRAME_AVAILABLE
 #endif
 
 #endif
