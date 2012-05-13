@@ -131,7 +131,7 @@ void ResourceGroup::loadFonts( const String& subdirectory, int version )
 	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
 	
 	///just load a Font for any .ttf file found
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] ); 
         

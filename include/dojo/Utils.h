@@ -131,7 +131,7 @@ namespace Dojo
 		}
         
         inline static int getVersionIdx( const String& str )
-        {
+        {            
             int idx = (int)str.size()-1;
             
             //look for a single digit
@@ -143,9 +143,9 @@ namespace Dojo
         ///returns the version of the given name, or 0 if not found
         inline static int getVersion( const String& str )
         {
-            int vidx = getVersionIdx( str )+1;
+            int vidx = getVersionIdx( str );
             
-            return (vidx >= 0) ? (str.at( vidx ) - '0') : 0;
+            return (vidx >= 0) ? (str.at( vidx+1 ) - '0') : 0;
         }
 		
 		inline static int getTag( const String& str )

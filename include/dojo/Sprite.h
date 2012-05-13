@@ -21,7 +21,7 @@ namespace Dojo
 	class Sprite : public AnimatedQuad
 	{	
 		
-	public:		
+	public:
 				
 		typedef Array<Animation*> AnimationList;
 														
