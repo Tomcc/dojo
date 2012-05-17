@@ -110,7 +110,7 @@ namespace Dojo
 				
 		Color color;
 
-		GLenum srcBlend, destBlend;
+		GLenum srcBlend, destBlend, blendEquation;
 
 		CullMode cullMode;
 
@@ -120,7 +120,8 @@ namespace Dojo
 		blendingEnabled( true ),
 		mesh( NULL ),
 		srcBlend( GL_SRC_ALPHA ),
-		destBlend( GL_ONE_MINUS_SRC_ALPHA )
+		destBlend( GL_ONE_MINUS_SRC_ALPHA ),
+		blendEquation( GL_FUNC_ADD )
 		{
 			memset( textures, 0, sizeof( textures ) ); //zero all the textures
 		}

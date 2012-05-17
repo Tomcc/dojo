@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'dojo' target in the 'dojo' project
+//
+
+#ifdef __OBJC__
+	#import <Foundation/Foundation.h>
+#endif
+
+#include "dojo_common_header.h"

@@ -66,12 +66,13 @@ void RenderState::commitChanges( RenderState* pastState )
 			glDisable( GL_BLEND ); 
 	}
 
-	//change blending mode if blending is used
-	if( srcBlend != pastState->srcBlend ||
-		destBlend != pastState->destBlend )
-	{
+	//change blending mode
+	if( srcBlend != pastState->srcBlend || destBlend != pastState->destBlend )
 		glBlendFunc( srcBlend, destBlend );
-	}
+
+	//change blending equation
+	if( blendEquation != pastState->blendEquation )
+		glBlendEquation( blendEquation );
 
 	if( cullMode != pastState->cullMode )
 	{
