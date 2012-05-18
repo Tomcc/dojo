@@ -86,6 +86,9 @@
 	#define glBindFramebuffer			glBindFramebufferOES
 	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
+    #define glBlendEquation             glBlendEquationOES
+
+    #define GL_FUNC_ADD GL_FUNC_ADD_OES
 	
 #endif
 
@@ -96,5 +99,8 @@
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
     #define DOJO_WIREFRAME_AVAILABLE
 #endif
+
+//do not use the differential state commit //HACK
+#define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
 #endif

@@ -106,8 +106,9 @@ namespace Dojo {
 			
 			inline void pauseMusic()
 			{
-				if( musicTrack )
-					musicTrack->pause();
+                DEBUG_ASSERT( isMusicPlaying() );
+                
+				musicTrack->pause();
 			}
 			
 			void resumeMusic();
@@ -192,6 +193,8 @@ namespace Dojo {
 			
 			//c'e' gia' un fade in corso?
 			inline bool isMusicFading()		{	return fadeState != FS_NONE;	}
+            ///is the music already playing?
+            inline bool isMusicPlaying()    {   return musicTrack != NULL;      }
 			
 			inline void setListenerPosition( const Vector& pos )
 			{				
