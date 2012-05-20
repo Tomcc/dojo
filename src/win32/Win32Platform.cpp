@@ -453,14 +453,14 @@ bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
 {
 	lastPressedText = arg.text; 
 	
-	input->_fireKeyPressedEvent( arg.text, arg.key );
+	input->_fireKeyPressedEvent( arg.text, (InputSystem::KeyCode)arg.key );
 
 	return true;
 }
 
 bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 {
-	input->_fireKeyReleasedEvent( lastPressedText, arg.key );
+	input->_fireKeyReleasedEvent( lastPressedText, (InputSystem::KeyCode)arg.key );
 
 	return true;
 }
