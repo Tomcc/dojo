@@ -170,7 +170,9 @@ namespace Dojo
 			KC_WEBBACK     = 0xEA,    // Web Back
 			KC_MYCOMPUTER  = 0xEB,    // My Computer
 			KC_MAIL        = 0xEC,    // Mail
-			KC_MEDIASELECT = 0xED     // Media Select
+			KC_MEDIASELECT = 0xED,     // Media Select
+            
+            KC_KEY_COUNT               //not a real key, tells the number of existing keys
 		};
 			
 		class Listener
@@ -217,7 +219,8 @@ namespace Dojo
 		InputSystem( bool enable = true ) :
 		enabled(enable)
 		{
-			
+			//init keycodes to false
+            memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
 		}
 		
 		virtual ~InputSystem()
@@ -251,6 +254,11 @@ namespace Dojo
 		{
 			enabled = e;
 		}
+        
+        inline bool isKeyPressed( KeyCode key )
+        {
+            return mKeyPressedMap[ key ];
+        }
 		
 		virtual void _fireTouchBeginEvent( const Vector& point )
 		{
@@ -321,19 +329,23 @@ namespace Dojo
 			}
 		}
 
-		virtual void _fireKeyPressedEvent(uint character, uint keyID )
+		virtual void _fireKeyPressedEvent( unichar character, KeyCode keyID )
 		{
 			if( enabled )
-			{				
+			{
+                mKeyPressedMap[ keyID ] = true;
+                
 				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onKeyPressed( character, keyID );
 			}
 		}
 
-		virtual void _fireKeyReleasedEvent(uint character, uint keyID )
+		virtual void _fireKeyReleasedEvent( unichar character, KeyCode keyID )
 		{
 			if( enabled )
-			{				
+			{
+                mKeyPressedMap[ keyID ] = false;
+                
 				for( int i = 0; i < listeners.size(); ++i )
 					listeners.at(i)->onKeyReleased( character, keyID );
 			}
@@ -343,7 +355,9 @@ namespace Dojo
 		
 		bool enabled;
 		
-		ListenerList listeners;		
+		ListenerList listeners;
+        
+        bool mKeyPressedMap[ KC_KEY_COUNT ];
 		
 		Vector lastMovePos;
 	};
