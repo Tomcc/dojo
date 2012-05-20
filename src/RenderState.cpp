@@ -14,25 +14,20 @@ bool RenderState::isAlphaRequired()
 	return blendingEnabled || getTextureNumber() == 0;
 }
 
-void RenderState::commitChanges( RenderState* pastState )
+void RenderState::applyState()
 {
-	DEBUG_ASSERT( pastState );
-	DEBUG_ASSERT( mesh );
-	    
-#ifdef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
-    
-	for( int i = 0; i < 8; ++i )
+    for( int i = 0; i < 8; ++i )
 	{
 		//select current slot
 		glActiveTexture( GL_TEXTURE0 + i );
-            
+        
 		if( textures[i] )
 		{
 			textures[i]->texture->bind(i);
-                
+            
 			if( textures[i]->isTransformRequired() )
 				textures[i]->applyTransform();
-			else if( pastState->textures[i] && pastState->textures[i]->isTransformRequired() ) //override with null trans
+			else
 			{
 				glMatrixMode( GL_TEXTURE );
 				glLoadIdentity();
@@ -43,6 +38,9 @@ void RenderState::commitChanges( RenderState* pastState )
 			//override the previous bound texture with nothing
 			glBindTexture( GL_TEXTURE_2D, NULL );
 			glDisable( GL_TEXTURE_2D );
+            
+            glMatrixMode( GL_TEXTURE );
+            glLoadIdentity();
 		}
 	}
     
@@ -50,7 +48,7 @@ void RenderState::commitChanges( RenderState* pastState )
     
 	if( blendingEnabled )	glEnable( GL_BLEND );
 	else                    glDisable( GL_BLEND );
-        
+    
 	glBlendFunc( srcBlend, destBlend );
     glBlendEquation( blendEquation );
     
@@ -59,17 +57,27 @@ void RenderState::commitChanges( RenderState* pastState )
         case CM_DISABLED:
             glDisable( GL_CULL_FACE );
             break;
-                
+            
         case CM_BACK:
             glEnable( GL_CULL_FACE );
             glCullFace( GL_BACK );
             break;
-                
+            
         case CM_FRONT:
             glEnable( GL_CULL_FACE );
             glCullFace( GL_FRONT );
             break;
 	}
+}
+
+void RenderState::commitChanges( RenderState* pastState )
+{
+	DEBUG_ASSERT( pastState );
+	DEBUG_ASSERT( mesh );
+	    
+#ifdef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
+    
+	applyState();
     
 #else
     	
