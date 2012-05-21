@@ -94,6 +94,9 @@ void IOSPlatform::initialise()
 	
 	//some local configs
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    
+    const char* extensions = (char*) glGetString(GL_EXTENSIONS); 
+    mNPOTEnabled = strstr(extensions, "GL_APPLE_texture_2D_limited_npot") != 0;
 	
 //SOUND MANAGER
 

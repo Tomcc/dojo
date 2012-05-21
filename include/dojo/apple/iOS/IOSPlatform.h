@@ -69,7 +69,7 @@ namespace Dojo
 		
 		virtual bool isNPOTEnabled()
 		{
-			return false; //TODO: check if the model supports the extension	
+			return mNPOTEnabled; //TODO: check if the model supports the extension	
 		}
 		
 		virtual bool isSmallScreen();
@@ -128,6 +128,8 @@ namespace Dojo
 		SenderEmailListenerMap senderEmailListenerMap;
 		*/
 		
+        bool mNPOTEnabled;
+        
 		bool _checkGameCenterAvailability();
 		
 #ifdef __OBJC__		
