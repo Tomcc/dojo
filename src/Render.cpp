@@ -41,7 +41,7 @@ backLayer( NULL )
 	DEBUG_MESSAGE ("version: OpenGL " << glGetString (GL_VERSION));
 	
 	//clean errors
-	DEBUG_ASSERT( glGetError() == GL_NONE );
+	DEBUG_ASSERT( glGetError() == 0 );
     glGetError();
 	
 	glEnable( GL_RESCALE_NORMAL );

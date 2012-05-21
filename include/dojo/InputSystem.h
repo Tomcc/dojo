@@ -204,8 +204,8 @@ namespace Dojo
 			
 			virtual void onAcceleration( float x, float y, float z, float roll )	{}
 
-			virtual void onKeyPressed( int character, int keyID )		{}
-			virtual void onKeyReleased( int character, int keyID )	{}
+			virtual void onKeyPressed( int character, Dojo::InputSystem::KeyCode keyID )		{}
+			virtual void onKeyReleased( int character, Dojo::InputSystem::KeyCode keyID )	{}
 
 			inline void _notifySource( InputSystem* src )	{	source = src;	}
 			
