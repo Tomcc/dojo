@@ -71,6 +71,16 @@ namespace Dojo
 		{
 			return (a > b) ? a : b;
 		}
+        
+        static inline Vector max( const Vector& a, const Vector& b ) 
+        {
+            return Vector( max( a.x,b.x ), max( a.y,b.y ), max( a.z, b.z ) );
+        }
+        
+        static inline Vector min( const Vector& a, const Vector& b )
+        {
+            return Vector( min( a.x,b.x ), min( a.y,b.y ), min( a.z, b.z ) );
+        }
 
 		static inline float clamp( float n, float max, float min )
 		{

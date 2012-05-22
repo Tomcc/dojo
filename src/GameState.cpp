@@ -48,11 +48,11 @@ Renderable* GameState::getClickableAtPoint( const Vector& point )
 	Vector pointer = getViewport()->makeWorldCoordinates( point );
 	
 	//look into layers
-	Render* r = Platform::getSingleton()->getRender();
+	Render* render = Platform::getSingleton()->getRender();
 	
-	for( int i = r->getLastLayerID()-1; i >= r->getFirstLayerID(); --i )
+	for( int i = render->getLastLayerID()-1; i >= render->getFirstLayerID(); --i )
 	{
-		Render::Layer* l = r->getLayer( i );
+		Render::Layer* l = render->getLayer( i );
 		
 		for( int j = 0; j < l->size(); ++j )
 		{

@@ -184,6 +184,13 @@ namespace Dojo
 			
 			return t1 >= 0 && t2 >= 0 && t1+1 == t2;
 		}
+        
+        inline static void swap( float& a, float& b )
+        {
+            float temp = a;
+            a = b;
+            b = temp;
+        }
 	};	
 }
 

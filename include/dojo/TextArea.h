@@ -93,6 +93,8 @@ namespace Dojo
 			screenSize.y = ss.y;
 		}		
 		
+        virtual void onAction( float dt );
+        
 	protected:
 		
 		typedef Array< Renderable* > LayerList;
@@ -116,6 +118,7 @@ namespace Dojo
 		int currentCharIdx, visibleCharsNumber;
 		
 		Vector cursorPosition, screenSize, lastScale;
+        Vector mLayersLowerBound, mLayersUpperBound;
 
 		LayerList busyLayers, freeLayers;
 

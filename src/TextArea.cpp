@@ -310,15 +310,20 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	//if centered move every character of this line along x of 1/2 size
 	if( centered )
 		_centerLastLine( lastLineVertexID, cursorPosition.x );
-
-	//set new size
-	newSize.x *= screenSize.x;
-	newSize.y = -cursorPosition.y+1 * screenSize.y * 1.5f;
-	setSize(newSize);
-
 	//push any active layer on the GPU
 	_endLayers();
+   
+    //find real mesh bounds
+    mLayersLowerBound = mesh->getMin();
+    mLayersUpperBound = mesh->getMax();
+    for( int i = 0; i < busyLayers.size(); ++i )
+    {
+        mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
+        mLayersLowerBound = Math::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
+    }
 
+    setSize( mLayersUpperBound - mLayersLowerBound );
+   
 	changed = false;
 
 	return true;
@@ -346,3 +351,13 @@ Mesh* TextArea::_createMesh()
 	
 	return mesh;
 }
+
+void TextArea::onAction(float dt)
+{
+    Renderable::onAction(dt);
+    
+    //set the real world bounds
+    worldLowerBound = worldPosition + mLayersLowerBound;
+    worldUpperBound = worldPosition + mLayersUpperBound;
+}
+

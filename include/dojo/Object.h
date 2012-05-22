@@ -136,6 +136,11 @@ namespace Dojo {
 			
 			return childs->at( i );
 		}
+        
+        inline Object* getParent()
+        {
+            return parent;
+        }
 		
 		inline int getChildNumber()
 		{

@@ -206,15 +206,10 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	}	
 }
 
-- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {	
 	if (motion == UIEventSubtypeMotionShake)
 		touchSource->_fireShakeEvent();
-}
-
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
-{
-	
 }
 
 #define kFilteringFactor 0.05
@@ -229,9 +224,9 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	lastRoll = lastAccelerationY;
 	
 	touchSource->_fireAccelerationEvent( 
-										(float)acceleration.x,
+										Dojo::Vector( (float)acceleration.x,
 										(float)acceleration.y,
-										(float)acceleration.z,
+										(float)acceleration.z ),
 										relativeRoll);
 }
 /*

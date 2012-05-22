@@ -202,7 +202,7 @@ namespace Dojo
 			
 			virtual void onShake()	{}
 			
-			virtual void onAcceleration( float x, float y, float z, float roll )	{}
+			virtual void onAcceleration( const Dojo::Vector& accel, float roll )	{}
 
 			virtual void onKeyPressed( int character, Dojo::InputSystem::KeyCode keyID )		{}
 			virtual void onKeyReleased( int character, Dojo::InputSystem::KeyCode keyID )	{}
@@ -320,12 +320,12 @@ namespace Dojo
 					listeners.at(i)->onShake();
 		}
 		
-		virtual void _fireAccelerationEvent( float x, float y, float z, float roll )
+		virtual void _fireAccelerationEvent( const Dojo::Vector& accel, float roll )
 		{
 			if( enabled )
 			{				
 				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onAcceleration( x,y,z,roll );
+					listeners.at(i)->onAcceleration( accel,roll );
 			}
 		}
 
