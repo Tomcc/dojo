@@ -140,8 +140,13 @@ bool Mesh::end()
 
 	//guess triangle count
 	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();
-	triangleCount = (triangleMode == TM_LIST) ? elemCount / 3 : elemCount-2;
-	
+    
+    switch ( triangleMode ) {
+        case TM_LIST:       triangleCount = elemCount / 3;  break;
+        case TM_STRIP:      triangleCount = elemCount-2;    break;
+        case TM_LINE_STRIP: triangleCount = 0;
+    }
+    
 	//geometric hints
 	center.x = (max.x + min.x)*0.5f;
 	center.y = (max.y + min.y)*0.5f;

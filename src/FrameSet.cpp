@@ -36,9 +36,6 @@ bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 	if( isLoaded() )
 		return true;
 	
-	//get atlas texture
-    data->debugPrint();
-    
 	FrameSet* atlasSet = atlasTextureProvider->getFrameSet( data->getString( "texture" ) );	
 
     DEBUG_MESSAGE( data->getString( "texture" ).ASCII());

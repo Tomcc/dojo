@@ -149,12 +149,12 @@ namespace Dojo
 			DEBUG_ASSERT( ID < 8 );
 
 			if( textures[ID] == NULL ) //adding a new one
-			{
+			{                
 				++mTextureNumber;
 				textures[ID] = new TextureUnit();
 			}
 			else if( tex == NULL )
-				delete textures[ID];
+				SAFE_DELETE( textures[ID] );
 
 			textures[ID]->texture = tex;
 		}

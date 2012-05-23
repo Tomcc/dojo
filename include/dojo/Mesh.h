@@ -48,8 +48,9 @@ namespace Dojo
 		
 		enum TriangleMode
 		{
-			TM_STRIP = 0,
-			TM_LIST = 1
+			TM_STRIP,
+			TM_LIST,
+            TM_LINE_STRIP
 		};
 				
 		Mesh( ResourceGroup* creator = NULL, const String& filePath = String::EMPTY ) :

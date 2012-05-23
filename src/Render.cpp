@@ -320,7 +320,13 @@ void Render::renderElement( Renderable* s )
 		
 	Mesh* m = currentRenderState->getMesh();
 
-	GLenum mode = (m->getTriangleMode() == Mesh::TM_STRIP) ? GL_TRIANGLE_STRIP : GL_TRIANGLES;
+    GLenum mode;
+	switch( m->getTriangleMode() )
+    {
+        case Mesh::TM_LIST:         mode = GL_TRIANGLES;        break;
+        case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
+        case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
+    }
 
 	if( !m->isIndexed() )
 		glDrawArrays( mode, 0, m->getVertexCount() );

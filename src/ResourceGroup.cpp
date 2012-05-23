@@ -444,4 +444,28 @@ void ResourceGroup::loadPrefabMeshes()
 	cube->end();
 	
 	addMesh( cube, "prefabSkybox_6");
+    
+    
+    //add cube for wireframe use
+    m = new Mesh( this );
+	m->setTriangleMode( Mesh::TM_LINE_STRIP );
+	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+    
+    m->begin(4);	
+	
+	m->vertex( 0.5, 0.5 );	
+	m->vertex( -0.5, 0.5 );	
+	m->vertex( 0.5, -0.5 );	
+	m->vertex( -0.5, -0.5 );
+    
+    m->index( 0 );
+    m->index( 1 );
+    m->index( 3 );
+    m->index( 2 );
+    m->index( 0 );
+    m->index( 3 );
+	
+	m->end();
+    
+    addMesh( m, "wireframeQuad" );
 }

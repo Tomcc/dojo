@@ -178,6 +178,13 @@ namespace Dojo {
 		{
 			return find< FrameSet >( name, RT_FRAMESET );
 		}
+        
+        inline Texture* getTexture( const String& name )
+        {
+            FrameSet* s = getFrameSet( name );
+            
+            return s ? s->getFrame(0) : NULL;
+        }
 		
 		inline Font* getFont( const String& name )
 		{
