@@ -181,14 +181,17 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	CGPoint loc;
+    CGPoint prevLoc;
 	
 	for( uint i = 0; i < [[touches allObjects] count]; ++i )
 	{ 		
 		loc = [[[touches allObjects] objectAtIndex:i ] locationInView:self ];
+        prevLoc = [[[touches allObjects] objectAtIndex:i ] previousLocationInView:self ];
 		
-		Vector pos = getInterfaceOrientatedPoint( loc.x, loc.y, renderImpl );	
+		Vector pos = getInterfaceOrientatedPoint( loc.x, loc.y, renderImpl );
+        Vector prevPos = getInterfaceOrientatedPoint( prevLoc.x, prevLoc.y, renderImpl );
 		
-		touchSource->_fireTouchMoveEvent( pos );	
+		touchSource->_fireTouchMoveEvent( pos, prevPos );	
 	}	
 }	
 

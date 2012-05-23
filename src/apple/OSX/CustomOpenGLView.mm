@@ -180,29 +180,38 @@ using namespace Dojo;
 
 - (void)mouseDown: (NSEvent *)theEvent
 {
-	input->_fireTouchBeginEvent( Vector( 
-										[theEvent locationInWindow].x, 
-										platform->getGame()->getNativeHeight() - [theEvent locationInWindow].y ) );
+    lastMousePos = [theEvent locationInWindow];    
+	input->_fireTouchBeginEvent( Vector( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y ) );
 }
 
 - (void)mouseDragged: (NSEvent *)theEvent
 {
-	input->_fireTouchMoveEvent( Vector( 
-									   [theEvent locationInWindow].x, 
-									   platform->getGame()->getNativeHeight() - [theEvent locationInWindow].y ) );
+	NSPoint loc = [theEvent locationInWindow]; 
+    
+    Vector last( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y );
+    Vector cur( loc.x, platform->getGame()->getNativeHeight() - loc.y );
+    
+    lastMousePos = loc;
+    
+	input->_fireTouchMoveEvent( last, cur );
 }
 
 - (void)mouseUp: (NSEvent *)theEvent
 {
-	input->_fireTouchEndEvent( Vector( 
-									  [theEvent locationInWindow].x, 
-									  platform->getGame()->getNativeHeight() - [theEvent locationInWindow].y ) );	
+	lastMousePos = [theEvent locationInWindow];    
+	input->_fireTouchEndEvent( Vector( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y ) );
 }
 
 - (void)mouseMoved: (NSEvent *)theEvent
 {
-	input->_fireMouseMoveEvent(Vector(	[theEvent locationInWindow].x, 
-										  platform->getGame()->getNativeHeight() - [theEvent locationInWindow].y ) );
+	NSPoint loc = [theEvent locationInWindow]; 
+    
+    Vector last( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y );
+    Vector cur( loc.x, platform->getGame()->getNativeHeight() - loc.y );
+    
+    lastMousePos = loc;
+    
+	input->_fireMouseMoveEvent( last, cur );
 }
 
 - (void)rightMouseDown: (NSEvent *)theEvent

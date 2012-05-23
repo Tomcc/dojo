@@ -57,7 +57,6 @@
 		431CF735147D4E5B0031CB4E /* TextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6C6147D4E5B0031CB4E /* TextArea.h */; };
 		431CF736147D4E5B0031CB4E /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6C7147D4E5B0031CB4E /* Texture.h */; };
 		431CF737147D4E5B0031CB4E /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6C8147D4E5B0031CB4E /* Timer.h */; };
-		431CF738147D4E5B0031CB4E /* TouchSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6C9147D4E5B0031CB4E /* TouchSource.h */; };
 		431CF739147D4E5B0031CB4E /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6CA147D4E5B0031CB4E /* Utils.h */; };
 		431CF73A147D4E5B0031CB4E /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6CB147D4E5B0031CB4E /* Vector.h */; };
 		431CF73B147D4E5B0031CB4E /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF6CC147D4E5B0031CB4E /* Viewport.h */; };
@@ -191,7 +190,6 @@
 		431CF6C6147D4E5B0031CB4E /* TextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextArea.h; sourceTree = "<group>"; };
 		431CF6C7147D4E5B0031CB4E /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		431CF6C8147D4E5B0031CB4E /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
-		431CF6C9147D4E5B0031CB4E /* TouchSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchSource.h; sourceTree = "<group>"; };
 		431CF6CA147D4E5B0031CB4E /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		431CF6CB147D4E5B0031CB4E /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		431CF6CC147D4E5B0031CB4E /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Viewport.h; sourceTree = "<group>"; };
@@ -417,7 +415,6 @@
 				431CF6C6147D4E5B0031CB4E /* TextArea.h */,
 				431CF6C7147D4E5B0031CB4E /* Texture.h */,
 				431CF6C8147D4E5B0031CB4E /* Timer.h */,
-				431CF6C9147D4E5B0031CB4E /* TouchSource.h */,
 				431CF6CA147D4E5B0031CB4E /* Utils.h */,
 				431CF6CB147D4E5B0031CB4E /* Vector.h */,
 				431CF6CC147D4E5B0031CB4E /* Viewport.h */,
@@ -571,7 +568,6 @@
 				431CF735147D4E5B0031CB4E /* TextArea.h in Headers */,
 				431CF736147D4E5B0031CB4E /* Texture.h in Headers */,
 				431CF737147D4E5B0031CB4E /* Timer.h in Headers */,
-				431CF738147D4E5B0031CB4E /* TouchSource.h in Headers */,
 				431CF739147D4E5B0031CB4E /* Utils.h in Headers */,
 				431CF73A147D4E5B0031CB4E /* Vector.h in Headers */,
 				431CF73B147D4E5B0031CB4E /* Viewport.h in Headers */,

@@ -29,6 +29,8 @@ namespace Dojo
 	
 	Dojo::InputSystem::KeyCode keymap[0x80];
 	bool repetition[0x80];
+    
+    NSPoint lastMousePos;
 }
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform;

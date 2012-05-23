@@ -66,22 +66,22 @@ Renderable* GameState::getClickableAtPoint( const Vector& point )
 	return NULL;
 }
 
-void GameState::onTouchBegan( const Vector& point )
+void GameState::onTouchBegan( const InputSystem::Touch& touch )
 {
-	Renderable* click = getClickableAtPoint( point );
+	Renderable* click = getClickableAtPoint( touch.point );
 
 	if( click )
-		click->clickListener->onButtonPressed( click , point );
+		click->clickListener->onButtonPressed( click , touch.point );
 	else
-		onButtonPressed( NULL, point );
+		onButtonPressed( NULL, touch.point );
 }
 
-void GameState::onTouchEnd(const Dojo::Vector &point)
+void GameState::onTouchEnd( const InputSystem::Touch& touch )
 {
-	Renderable* click = getClickableAtPoint( point );
+	Renderable* click = getClickableAtPoint( touch.point );
 
 	if( click )
-		click->clickListener->onButtonReleased( click , point );
+		click->clickListener->onButtonReleased( click , touch.point );
 	else
-		onButtonReleased( NULL, point );
+		onButtonReleased( NULL, touch.point );
 }

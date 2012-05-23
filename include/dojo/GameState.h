@@ -44,8 +44,8 @@ namespace Dojo
 		
 		Renderable* getClickableAtPoint( const Vector& point );
 
-		virtual void onTouchBegan( const Vector& point );
-		virtual void onTouchEnd( const Vector& point );
+		virtual void onTouchBegan( const InputSystem::Touch& touch );
+		virtual void onTouchEnd( const InputSystem::Touch& touch );
 		
 	protected:
 		
