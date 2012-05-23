@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "Viewport.h"
 #include "Platform.h"
+#include "TouchArea.h"
 
 using namespace Dojo;
 
@@ -43,45 +44,40 @@ void GameState::setViewport( Viewport* v )
 	Platform::getSingleton()->getRender()->setViewport( v );
 }
 
-Renderable* GameState::getClickableAtPoint( const Vector& point )
-{	
+void GameState::touchAreaAtPoint( const Vector& point )
+{
 	Vector pointer = getViewport()->makeWorldCoordinates( point );
-	
-	//look into layers
-	Render* render = Platform::getSingleton()->getRender();
-	
-	for( int i = render->getLastLayerID()-1; i >= render->getFirstLayerID(); --i )
-	{
-		Render::Layer* l = render->getLayer( i );
 		
-		for( int j = 0; j < l->size(); ++j )
-		{
-			Renderable* r = l->at(j);
-			
-			if( r->isClickable() && r->isVisible() && r->isActive() && r->contains( pointer ) )
-				return r;
-		}
+    TouchArea* topMost = NULL;
+    int topMostLayer = INT32_MIN;
+    
+	for( int i = 0; i < mTouchAreas.size(); ++i )
+	{
+        TouchArea* t = mTouchAreas[i];
+        
+        if( t->isActive() && t->getLayer() > topMostLayer && t->contains( pointer ) )
+        {
+            topMost = t;
+            topMostLayer = t->getLayer();
+        }
 	}
-	
-	return NULL;
+    
+    if( topMost )
+        topMost->_incrementTouches();
 }
 
-void GameState::onTouchBegan( const InputSystem::Touch& touch )
+void GameState::updateClickableState()
 {
-	Renderable* click = getClickableAtPoint( touch.point );
-
-	if( click )
-		click->clickListener->onButtonPressed( click , touch.point );
-	else
-		onButtonPressed( NULL, touch.point );
-}
-
-void GameState::onTouchEnd( const InputSystem::Touch& touch )
-{
-	Renderable* click = getClickableAtPoint( touch.point );
-
-	if( click )
-		click->clickListener->onButtonReleased( click , touch.point );
-	else
-		onButtonReleased( NULL, touch.point );
+    if( !childs )
+        return;
+    
+    const InputSystem::TouchList& touches = Platform::getSingleton()->getInput()->getTouchList();
+        
+    //"touch" all the touchareas active in this frame
+    for( int i = 0; i < touches.size(); ++i )
+        touchAreaAtPoint( touches[i]->point );
+    
+    ///launch events
+    for( int i = 0; i < mTouchAreas.size(); ++i )
+        mTouchAreas[i]->_fireOnTouchUsingCurrentTouches();
 }

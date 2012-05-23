@@ -24,29 +24,10 @@ namespace Dojo
 	{				
 	public:	
 
-		class Listener
-		{
-		public:
-			
-			virtual ~Listener()
-			{
-				
-			}
-
-			virtual void onButtonPressed( Renderable* r, const Vector& point )	{}			
-			virtual void onButtonReleased( Renderable* r, const Vector& point )	{}
-
-		protected:
-		private:
-		};	
-		
-		Listener* clickListener;		
-			
 		Vector uvOffset;
 				
 		Renderable( GameState* level, const Vector& pos ) :
 		Object( level, pos, Vector::ONE ),
-		clickListener( NULL ),
 		visible( true ),
 		layer(0),
 		renderingOrder(0),
@@ -67,7 +48,7 @@ namespace Dojo
 			color.r = color.g = color.b = color.a = 1.f;
 			fading = false;
 			scale.x = scale.y = 1;
-		}	
+		}
 				
 		inline void setVisible( bool v )				{	visible = v;		}
 		
@@ -101,28 +82,14 @@ namespace Dojo
 		
 		inline int getLayer()				{	return layer;			}
 		inline uint getRenderingOrder()		{	return renderingOrder;	}
-
-		inline const Vector& getAABBMax()	{	return worldUpperBound;	}
-		inline const Vector& getAABBMin()	{	return worldLowerBound;	}
 		
 		///tells if the object is either visible or has a mesh
 		inline bool isVisible()				{	return visible && mesh;	}
 		inline bool isFading()				{	return fading;			}
-		
-		inline bool isClickable() 			{	return clickListener != NULL;	}
-				
+                    
 		inline bool isInView()
 		{
 			return !mCulled;
-		}
-
-		inline bool contains( const Vector& p )
-		{
-			return 
-				p.x < worldUpperBound.x && 
-				p.x > worldLowerBound.x && 
-				p.y < worldUpperBound.y && 
-				p.y > worldLowerBound.y;
 		}
 
 		virtual bool prepare( const Vector& viewportPixelSize )
@@ -167,12 +134,12 @@ namespace Dojo
 		{
 			mCulled = culled;
 		}
+        
+        
 		
 	protected:
 		
 		bool visible;
-
-		Vector worldUpperBound, worldLowerBound;
 		
 		Render* render;
 		int layer;

@@ -82,7 +82,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( r );
 
-			return Math::AABBsCollide( r->getAABBMax(), r->getAABBMin(), getWorldMax(), getWorldMin() );
+			return Math::AABBsCollide( r->getWorldMax(), r->getWorldMin(), getWorldMax(), getWorldMin() );
 		}
 		
 		inline Vector makeWorldCoordinates( const Vector& screenPoint )

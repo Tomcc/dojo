@@ -273,105 +273,28 @@ namespace Dojo
 			enabled = e;
 		}
         
+        inline const TouchList& getTouchList()
+        {
+            return mTouchList;
+        }
+        
         inline bool isKeyPressed( KeyCode key )
         {
             return mKeyPressedMap[ key ];
         }
 				
-        virtual void _fireTouchBeginEvent( const Vector& point )
-		{
-			if( enabled )
-			{
-                //create a new Touch
-                Touch* t = _registertouch( point );
-				
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onTouchBegan( *t );
-			}
-		}
-		
-		virtual void _fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos )
-		{
-			if( enabled )
-			{
-                Touch* t = _getExistingTouch( prevPos );
-                
-                t->point = currentPos;
-				t->speed = prevPos - currentPos; //get translation
-				
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onTouchMove( *t );
-			}
-		}
-		
-		virtual void _fireTouchEndEvent( const Vector& point )
-		{
-			if( enabled )
-			{
-                Touch* t = _popExistingTouch( point );
-                
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onTouchEnd( *t );
-                
-                delete t;
-			}
-		}	
-		
-		virtual void _fireMouseMoveEvent( const Vector& currentPos, const Vector& prevPos )
-		{
-			if( enabled )
-			{				
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onMouseMove( currentPos, prevPos );
-			}
-		}
-		
-		virtual void _fireScrollWheelEvent( float scroll )
-		{
-			if( !enabled )	return;
-			
-			for( int i = 0; i < listeners.size(); ++i )
-				listeners[i]->onScrollWheel( scroll );
-		}
-		
-		virtual void _fireShakeEvent()
-		{
-			if( enabled )	
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onShake();
-		}
-		
-		virtual void _fireAccelerationEvent( const Dojo::Vector& accel, float roll )
-		{
-			if( enabled )
-			{				
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onAcceleration( accel,roll );
-			}
-		}
-
-		virtual void _fireKeyPressedEvent( unichar character, KeyCode keyID )
-		{
-			if( enabled )
-			{
-                mKeyPressedMap[ keyID ] = true;
-                
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onKeyPressed( character, keyID );
-			}
-		}
-
-		virtual void _fireKeyReleasedEvent( unichar character, KeyCode keyID )
-		{
-			if( enabled )
-			{
-                mKeyPressedMap[ keyID ] = false;
-                
-				for( int i = 0; i < listeners.size(); ++i )
-					listeners.at(i)->onKeyReleased( character, keyID );
-			}
-		}
-	
+        void _fireTouchBeginEvent( const Vector& point );		
+		void _fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos );		
+		void _fireTouchEndEvent( const Vector& point );		
+        
+		void _fireMouseMoveEvent( const Vector& currentPos, const Vector& prevPos );		
+		void _fireScrollWheelEvent( float scroll );		
+        
+		void _fireShakeEvent();		
+		void _fireAccelerationEvent( const Dojo::Vector& accel, float roll );
+        
+		void _fireKeyPressedEvent( unichar character, KeyCode keyID );
+		void _fireKeyReleasedEvent( unichar character, KeyCode keyID );	
 	protected:
 		
 		bool enabled;

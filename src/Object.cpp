@@ -40,17 +40,11 @@ void Object::addChild( Object* o )
 	o->_notifyParent( this );
 }
 
-void Object::addChild( Renderable* o, uint layer, bool clickable )
+void Object::addChild( Renderable* o, int layer )
 {
 	addChild( o );
 
 	Platform::getSingleton()->getRender()->addRenderable( o, layer );
-	
-	//compatibility utility - either set listener to NULL if not clickable, or to gameState if clickable AND not defined
-	if( !clickable )
-		o->clickListener = NULL;
-	else if( clickable && !o->clickListener )
-		o->clickListener = gameState;
 }
 
 void Object::removeChild( int i )
@@ -152,8 +146,8 @@ void Object::updateWorldPosition()
 	}	
 	
 	//update max and min TODO - real transforms
-	max = worldPosition + halfSize;
-	min = worldPosition - halfSize;
+	worldUpperBound = worldPosition + halfSize.mulComponents( scale.absComponents() );
+	worldLowerBound = worldPosition - halfSize.mulComponents( scale.absComponents() );
 }
 
 void Object::updateChilds( float dt )

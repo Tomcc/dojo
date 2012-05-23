@@ -201,6 +201,18 @@ namespace Dojo
 
 			return *this;
 		}
+        
+        ///returns a vector with abs componenents
+        inline Vector absComponents()
+        {
+            return Vector( abs(x), abs(y), abs(z) );
+        }
+        
+        ///multiplies component by component
+        inline Vector mulComponents( const Vector& v )
+        {
+            return Vector( x*v.x, y*v.y, z*v.z );
+        }
 
 		///rotate the vector around side axis
 		/**

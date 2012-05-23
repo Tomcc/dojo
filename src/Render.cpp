@@ -547,10 +547,9 @@ void Render::renderLayer( Layer* list )
 	if( list->depthClear )
 		glClear( GL_DEPTH_BUFFER_BIT );
 
-	currentLayer = list;	
+	currentLayer = list;
 	
-	
-	if( list->lightingOn )	
+	if( list->lightingOn )
 	{		
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
 		int i = 0;

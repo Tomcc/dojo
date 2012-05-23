@@ -143,6 +143,12 @@
 		431CF7DC147D52300031CB4E /* libvorbis_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D7147D52300031CB4E /* libvorbis_iphone.a */; };
 		431CF7DD147D52300031CB4E /* libvorbisfile_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */; };
 		431CF7EE147D748E0031CB4E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7ED147D748E0031CB4E /* CoreGraphics.framework */; };
+		43A106B6156D1E960021F274 /* TouchArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A106B5156D1E960021F274 /* TouchArea.h */; };
+		43A106B7156D1E960021F274 /* TouchArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A106B5156D1E960021F274 /* TouchArea.h */; };
+		43A106BA156D2DEA0021F274 /* TouchArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A106B9156D2DEA0021F274 /* TouchArea.cpp */; };
+		43A106BB156D2DEA0021F274 /* TouchArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A106B9156D2DEA0021F274 /* TouchArea.cpp */; };
+		43A106BD156D3ECA0021F274 /* InputSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A106BC156D3ECA0021F274 /* InputSystem.cpp */; };
+		43A106BE156D3ECA0021F274 /* InputSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A106BC156D3ECA0021F274 /* InputSystem.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -254,6 +260,9 @@
 		431CF7D7147D52300031CB4E /* libvorbis_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis_iphone.a; path = dependencies/lib/libvorbis_iphone.a; sourceTree = "<group>"; };
 		431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile_iphone.a; path = dependencies/lib/libvorbisfile_iphone.a; sourceTree = "<group>"; };
 		431CF7ED147D748E0031CB4E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		43A106B5156D1E960021F274 /* TouchArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchArea.h; sourceTree = "<group>"; };
+		43A106B9156D2DEA0021F274 /* TouchArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchArea.cpp; sourceTree = "<group>"; };
+		43A106BC156D3ECA0021F274 /* InputSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputSystem.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +374,8 @@
 				431CF6F7147D4E5B0031CB4E /* TouchSource.cpp */,
 				431CF6F8147D4E5B0031CB4E /* Vector.cpp */,
 				431CF6F9147D4E5B0031CB4E /* Viewport.cpp */,
+				43A106B9156D2DEA0021F274 /* TouchArea.cpp */,
+				43A106BC156D3ECA0021F274 /* InputSystem.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -414,6 +425,7 @@
 				431CF6C5147D4E5B0031CB4E /* Table.h */,
 				431CF6C6147D4E5B0031CB4E /* TextArea.h */,
 				431CF6C7147D4E5B0031CB4E /* Texture.h */,
+				43A106B5156D1E960021F274 /* TouchArea.h */,
 				431CF6C8147D4E5B0031CB4E /* Timer.h */,
 				431CF6CA147D4E5B0031CB4E /* Utils.h */,
 				431CF6CB147D4E5B0031CB4E /* Vector.h */,
@@ -576,6 +588,7 @@
 				431CF73E147D4E5B0031CB4E /* dojo.h in Headers */,
 				431CF76B147D4E680031CB4E /* stdafx.h in Headers */,
 				431CF76C147D4E680031CB4E /* dojo-Prefix.pch in Headers */,
+				43A106B6156D1E960021F274 /* TouchArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +596,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43A106B7156D1E960021F274 /* TouchArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,6 +702,8 @@
 				431CF78B147D4E940031CB4E /* TouchSource.cpp in Sources */,
 				431CF78C147D4E940031CB4E /* Vector.cpp in Sources */,
 				431CF78D147D4E940031CB4E /* Viewport.cpp in Sources */,
+				43A106BA156D2DEA0021F274 /* TouchArea.cpp in Sources */,
+				43A106BD156D3ECA0021F274 /* InputSystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -729,6 +745,8 @@
 				431CF7C1147D50430031CB4E /* TouchSource.cpp in Sources */,
 				431CF7C2147D50430031CB4E /* Vector.cpp in Sources */,
 				431CF7C3147D50430031CB4E /* Viewport.cpp in Sources */,
+				43A106BB156D2DEA0021F274 /* TouchArea.cpp in Sources */,
+				43A106BE156D3ECA0021F274 /* InputSystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

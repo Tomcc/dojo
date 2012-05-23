@@ -46,7 +46,7 @@ zFar( 1000 )
 	fadeObject->setVisible( false );
 	fadeObject->inheritAngle = false;
 	
-	addChild( fadeObject, fadeObjectLayer, false );
+	addChild( fadeObject, fadeObjectLayer );
 	
 	if( _VFOV > 0 )
 		enableFrustum( _VFOV, _zNear, _zFar );
@@ -122,7 +122,7 @@ bool Viewport::isContainedInFrustum( Renderable* r )
 	//for each plane, check where the AABB is placed
 	for( uint i = 0; i < 5; ++i )
 	{
-		Vector bounds = r->getAABBMax() - r->getAABBMin();
+		Vector bounds = r->getWorldMax() - r->getWorldMin();
 
 		if( worldFrustumPlanes[i].getSide( r->getWorldPosition(), bounds ) == -1 )
 			return false;

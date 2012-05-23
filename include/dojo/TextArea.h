@@ -139,7 +139,7 @@ namespace Dojo
 			r->setVisible( false );
 			r->setActive( false );
 
-			addChild( r, getLayer(), false );
+			addChild( r, getLayer() );
 			freeLayers.add( r );
 
 			return r;

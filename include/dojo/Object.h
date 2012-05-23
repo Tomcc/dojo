@@ -14,6 +14,7 @@
 
 #include "Vector.h"
 #include "Array.h"
+
 #include "dojomath.h"
 
 namespace Dojo {
@@ -126,8 +127,8 @@ namespace Dojo {
 		}
 				
 		//TODO use real transforms
-		inline const Vector& getWorldMax()				{	return max;	}
-		inline const Vector& getWorldMin()				{	return min;	}
+		inline const Vector& getWorldMax()	{	return worldUpperBound;	}
+		inline const Vector& getWorldMin()	{	return worldLowerBound;	}
 
 		inline Object* getChild( int i )				
 		{
@@ -148,7 +149,7 @@ namespace Dojo {
 		}
 		
 		void addChild( Object* o );
-		void addChild( Renderable* o, uint layer, bool clickable = false );
+		void addChild( Renderable* o, int layer );
 
 		void removeChild( int idx );
 		void removeChild( Object* o );
@@ -162,6 +163,15 @@ namespace Dojo {
 		void destroyAllChilds();
 		
 		void updateChilds( float dt );
+        
+        inline bool contains( const Vector& p )
+		{
+			return 
+            p.x < worldUpperBound.x && 
+            p.x > worldLowerBound.x && 
+            p.y < worldUpperBound.y && 
+            p.y > worldLowerBound.y;
+		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{			
@@ -193,10 +203,12 @@ namespace Dojo {
 		
 		GameState* gameState;
 		
-		Vector size, halfSize, max, min;
+		Vector size, halfSize;
 		
 		Vector worldPosition;
 		Vector worldRotation;
+                
+		Vector worldUpperBound, worldLowerBound;
 				
 		bool active;
 

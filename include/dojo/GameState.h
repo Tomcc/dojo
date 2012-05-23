@@ -23,14 +23,29 @@ namespace Dojo
 	class Viewport;
 	class SoundManager;
 	class Game;
+    class TouchArea;
 	
-	class GameState : public Object, public ResourceGroup, public InputSystem::Listener, public Renderable::Listener, public StateInterface
+	class GameState : public Object, public ResourceGroup, public StateInterface
 	{
 	public:
 		
 		GameState( Game* parentGame );
 		
 		virtual ~GameState();
+        
+        inline void addTouchArea( TouchArea* t )
+        {
+            DEBUG_ASSERT( t );
+            
+            mTouchAreas.add( t );
+        }
+        
+        inline void removeTouchArea( TouchArea* t )
+        {
+            DEBUG_ASSERT( t );
+            
+            mTouchAreas.remove( t );
+        }
 				
 		///clear and prepare for a new initialise
 		virtual void clear();
@@ -42,12 +57,21 @@ namespace Dojo
 		
 		void setViewport( Viewport* v );
 		
-		Renderable* getClickableAtPoint( const Vector& point );
-
-		virtual void onTouchBegan( const InputSystem::Touch& touch );
-		virtual void onTouchEnd( const InputSystem::Touch& touch );
+		void touchAreaAtPoint( const Vector& point );        
+        void updateClickableState();
+        
+        virtual void onLoop( float dt )
+        {
+            updateClickableState();
+            
+            updateChilds( dt );
+        }
 		
 	protected:
+        
+        typedef Array< TouchArea* > TouchAreaList;
+        
+        TouchAreaList mTouchAreas;
 		
 		Game* game;
 		
