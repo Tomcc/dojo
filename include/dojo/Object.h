@@ -30,7 +30,7 @@ namespace Dojo {
 		
 		bool dispose;
 		
-		Vector position, speed, angle, rotationSpeed, scale;
+		Vector position, speed, scale;
 		
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  );
 		
@@ -43,14 +43,11 @@ namespace Dojo {
 		{
 			active = true;
 			speed.x = speed.y = 0;
-			
-			angle = Vector::ZERO;
-			rotationSpeed = Vector::ZERO;
-			
-			updateWorldPose();
+						
+			updateWorldTransform();
 		}
 		
-		void updateWorldPose();
+		void updateWorldTransform();
 		
 		inline void setSize( float x, float y )
 		{						
@@ -74,17 +71,21 @@ namespace Dojo {
 		
 		inline GameState* getGameState()	{	return gameState;	}
 
-		inline const Vector& getWorldPosition()
-		{
-			return worldPosition;
-		}
-
 		///returns the world position of the given local point
 		inline Vector getWorldPosition( const Vector& localPos )
 		{
-            DEBUG_TODO;
-
-			return localPos;
+            if( parent )
+            {
+                glm::vec4 pos = mWorldTransform * glm::vec4(localPos.x, localPos.y, localPos.y, 0);
+                return Vector( pos.x , pos.y, pos.z );                
+            }
+            else
+                return localPos;
+		}
+                
+		inline const Vector getWorldPosition()
+		{
+            return getWorldPosition( position );
 		}
 
 		inline Vector getLocalPosition( const Vector& worldPos )
@@ -92,11 +93,6 @@ namespace Dojo {
             DEBUG_TODO;            
 
 			return worldPos;
-		}
-
-		inline const Vector& getWorldRotation()
-		{
-			return worldRotation;
 		}
 
 		inline Vector getWorldDirection()
@@ -114,6 +110,11 @@ namespace Dojo {
 		//TODO use real transforms
 		inline const Vector& getWorldMax()	{	return worldUpperBound;	}
 		inline const Vector& getWorldMin()	{	return worldLowerBound;	}
+        
+        inline const Matrix& getWorldTransform()    
+        {  
+            return mWorldTransform; 
+        }
 
 		inline Object* getChild( int i )				
 		{
@@ -190,8 +191,9 @@ namespace Dojo {
 		
 		Vector size, halfSize;
 		
-		Vector worldPosition;
-		Vector worldRotation;
+		Quaternion rotation;
+        
+        Matrix mWorldTransform;
                 
 		Vector worldUpperBound, worldLowerBound;
 				

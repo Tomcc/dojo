@@ -96,8 +96,9 @@ void Light::bind( uint i )
 			glLightfv( light, GL_POSITION, fv );
 		}
 		else
-		{			
-			toFV( fv, worldPosition, 0 );
+		{	
+            DEBUG_TODO; //lights need to use the matrix too
+			//toFV( fv, worldPosition, 0 );
 			
 			glLightfv( light, GL_POSITION, fv );
 			

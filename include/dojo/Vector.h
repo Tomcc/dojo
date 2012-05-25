@@ -15,6 +15,10 @@ using namespace std;
 
 namespace Dojo	
 {
+    typedef glm::mat4x4 Matrix;
+    typedef glm::quat Quaternion;
+    
+    ///attempt to some backwards compatibility and general interface decency for Vector
 	class Vector : public glm::vec3
 	{
 	public:
@@ -198,7 +202,7 @@ namespace Dojo
 		///returns the distance of this vector from the given plane
 		inline float distanceFromPlane( const Vector& normal, float d ) const 
 		{
-			return glm::dot((const glm::vec3&)(*this), (const glm::vec3&)normal) + d;
+			return (*this) * normal + d;
 		}
 
 		inline bool isNear( const Vector& v, float threshold = 0.1 )

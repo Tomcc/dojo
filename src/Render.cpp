@@ -286,30 +286,8 @@ void Render::renderElement( Renderable* s )
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();	
 	
-	if( !s->customMatrix )
-	{		
-		//move
-		glTranslatef(
-					 s->getWorldPosition().x,
-					 s->getWorldPosition().y,
-					 s->getWorldPosition().z );
+	glMultMatrixf( glm::value_ptr( s->getWorldTransform() ) );
 		
-		//rotate
-		glRotatef( s->getWorldRotation().z, 0,0,1 );
-		glRotatef( s->getWorldRotation().y, 0,1,0 );
-		glRotatef( s->getWorldRotation().x, 1,0,0 );
-		
-		//and then scale
-		glScalef( 
-				 s->scale.x,
-				 s->scale.y, 
-				 s->scale.z );
-	}
-	else
-	{
-		glMultMatrixf( s->customMatrix );
-	}
-	
 	//HACK
 #ifndef PLATFORM_IOS
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );

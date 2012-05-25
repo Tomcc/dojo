@@ -43,7 +43,9 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	p->setActive( true );
 	p->setVisible( true );
 	
-	p->worldPosition = pos;			
+    DEBUG_TODO;
+	//p->worldPosition = pos;			
+    
 	p->lifeTime = timeToLive;
 	
 	//default time per frame

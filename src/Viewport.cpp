@@ -44,7 +44,6 @@ zFar( 1000 )
 	fadeObject->scale.y = size.y;
 	
 	fadeObject->setVisible( false );
-	fadeObject->inheritAngle = false;
 	
 	addChild( fadeObject, fadeObjectLayer );
 	
@@ -62,7 +61,6 @@ void Viewport::setBackgroundSprite( const String& name, float frameTime )
 	background = new Sprite( gameState, Vector::ZERO, name, frameTime );
 	background->setBlendingEnabled( false );
 	background->setVisible( true );
-	background->inheritAngle = false;
 	
 	//force the proportions to fill screen
 	background->_updateScreenSize();
@@ -106,6 +104,8 @@ void Viewport::_updateFrustum()
 	worldFrustumVertices[1] = getWorldPosition( localFrustumVertices[1] );
 	worldFrustumVertices[2] = getWorldPosition( localFrustumVertices[2] );
 	worldFrustumVertices[3] = getWorldPosition( localFrustumVertices[3] );
+    
+    Vector worldPosition = getWorldPosition();
 
 	worldFrustumPlanes[0].setup( worldFrustumVertices[1], worldFrustumVertices[0], worldPosition );
 	worldFrustumPlanes[1].setup( worldFrustumVertices[2], worldFrustumVertices[1], worldPosition );

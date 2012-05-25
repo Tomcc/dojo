@@ -8,19 +8,17 @@
 #include "Platform.h"
 
 using namespace Dojo;
+using namespace glm;
 
 Object::Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
 position( pos ),
 gameState( parentLevel ),
 speed(0,0,0),
 active( true ),
-angle( 0,0,0 ),
-rotationSpeed( 0,0,0 ),
 scale( 1,1,1 ),
 childs( NULL ),
 parent( NULL ),
-dispose( false ),
-customMatrix( NULL )
+dispose( false )
 {
 	DEBUG_ASSERT( parentLevel );
 	
@@ -121,41 +119,21 @@ void Object::destroyAllChilds()
 	}
 }
 
-void Object::updateWorldPose()
-{
-	/*if( parent )  //add parent world transform
-	{
-		if( inheritAngle )
-		{		
-			worldPosition = parent->getWorldPosition( position );
-			
-			//TODO also rotate angle
-			worldRotation = angle;
-		}
-		else
-		{
-			worldPosition = parent->getWorldPosition() + position;
-			worldRotation = angle;
-		}
-	}
-	else 
-	{
-		worldPosition = position;
-		worldRotation = angle;
-	}	
-	
-	//update max and min TODO - real transforms
-	worldUpperBound = worldPosition + halfSize.mulComponents( scale.absComponents() );
-	worldLowerBound = worldPosition - halfSize.mulComponents( scale.absComponents() );*/
+void Object::updateWorldTransform()
+{	
+    //compute local matrix from position and orientation
+    mWorldTransform = Matrix(1);
     
-    //compute matrix
-    if( parent )
-    {
-        
-    }
-    else {
-        <#statements#>
-    }
+    mWorldTransform = glm::translate( mWorldTransform, position );
+    mWorldTransform *= mat4_cast( rotation );    
+    mWorldTransform = glm::scale( mWorldTransform, scale );
+    
+    if( parent )  //combine with parent transform
+        mWorldTransform *= parent->getWorldTransform();     
+     
+    //update max and min
+    worldUpperBound = getWorldPosition( halfSize );
+    worldLowerBound = getWorldPosition( halfSize );
 }
 
 void Object::updateChilds( float dt )
@@ -175,9 +153,11 @@ void Object::updateChilds( float dt )
 void Object::onAction( float dt )
 {	
 	position += speed * dt;	
-	angle += rotationSpeed * dt;
+	
+    //HACK
+    //angle += rotationSpeed * dt;
 
-	updateWorldPosition();
+	updateWorldTransform();
 	
 	updateChilds( dt );
 }

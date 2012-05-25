@@ -26,7 +26,6 @@ visibleCharsNumber( 0xfffffff )
 {		
 	setSize( bounds );
 	cullMode = CM_DISABLED;
-	inheritAngle = false;
 
 	font = gameState->getFont( fontName );
 
@@ -357,7 +356,7 @@ void TextArea::onAction(float dt)
     Renderable::onAction(dt);
     
     //set the real world bounds
-    worldLowerBound = worldPosition + mLayersLowerBound;
-    worldUpperBound = worldPosition + mLayersUpperBound;
+    worldLowerBound = getWorldPosition( mLayersLowerBound );
+    worldUpperBound = getWorldPosition( mLayersUpperBound );
 }
 

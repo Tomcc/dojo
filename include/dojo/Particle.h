@@ -60,9 +60,6 @@ namespace Dojo
 			
 			spriteSizeScaleSpeed = 0;
 			listener = NULL;
-
-			worldPosition = Vector::ZERO;
-			worldRotation = Vector::ZERO;
 		}
 		
 		inline void setTimedEvent( EventListener* l, float lifeTime )
@@ -79,15 +76,16 @@ namespace Dojo
 		
 		inline EventListener* getListener()		{	return listener;	}
 		
-		inline bool launchTimedEvent()
-		
+		inline bool launchTimedEvent()		
 		{
 			return listener && lifeTime < eventTime;
 		}
 		
 		void move( float dt )
 		{
-			advanceAnim( dt );
+            DEBUG_TODO; //particles need to be updated to ogl2.0
+            
+			/*advanceAnim( dt );
 			advanceFade( dt );
 
 			worldPosition.x += speed.x * dt;
@@ -96,7 +94,8 @@ namespace Dojo
 			speed.x += acceleration.x * dt;
 			speed.y += acceleration.y * dt; 
 
-			worldRotation += rotationSpeed * dt;
+            //HACK
+			//worldRotation += rotationSpeed * dt;
 
 			pixelScale.x += spriteSizeScaleSpeed * dt;
 			pixelScale.y += spriteSizeScaleSpeed * dt;
@@ -105,14 +104,13 @@ namespace Dojo
 			{
 				getListener()->onTimedEvent( this );
 				removeTimedEvent();
-			}
+			}*/
 		}
 		
 		inline void _setPoolIdx( uint i )	{	index = i;			}
 		inline uint _getPoolIdx()			{	return index;		}
 		
 	protected:
-		
 
 		uint index;
 		
