@@ -29,19 +29,14 @@ namespace Dojo {
 		typedef Dojo::Array< Object* > ChildList;
 		
 		bool dispose;
-
-		bool inheritAngle;
 		
 		Vector position, speed, angle, rotationSpeed, scale;
-		
-		float* customMatrix;
 		
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  );
 		
 		virtual ~Object()
 		{
-			if(childs)
-				destroyAllChilds();
+            destroyAllChilds();
 		}
 		
 		virtual void reset()
@@ -52,10 +47,10 @@ namespace Dojo {
 			angle = Vector::ZERO;
 			rotationSpeed = Vector::ZERO;
 			
-			updateWorldPosition();
-		}		
+			updateWorldPose();
+		}
 		
-		void updateWorldPosition();
+		void updateWorldPose();
 		
 		inline void setSize( float x, float y )
 		{						
@@ -87,26 +82,16 @@ namespace Dojo {
 		///returns the world position of the given local point
 		inline Vector getWorldPosition( const Vector& localPos )
 		{
-			Vector pos = localPos;
+            DEBUG_TODO;
 
-			pos.scale( scale );
-			pos.pitch( worldRotation.x );
-			pos.yaw( worldRotation.y );
-
-			return pos + worldPosition;
+			return localPos;
 		}
 
 		inline Vector getLocalPosition( const Vector& worldPos )
 		{
-			Vector localPos = worldPos;
+            DEBUG_TODO;            
 
-			localPos -= worldPosition;
-			localPos.roll( -worldRotation.z );
-			localPos.yaw( -worldRotation.y );
-			localPos.pitch( -worldRotation.x );
-			localPos.scale( Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
-
-			return localPos;
+			return worldPos;
 		}
 
 		inline const Vector& getWorldRotation()
@@ -116,7 +101,7 @@ namespace Dojo {
 
 		inline Vector getWorldDirection()
 		{
-			return worldRotation.directionFromAngle();
+			DEBUG_TODO;
 		}
 						
 		inline bool isActive()				{	return active;	}

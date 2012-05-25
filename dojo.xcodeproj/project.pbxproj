@@ -95,7 +95,6 @@
 		431CF788147D4E940031CB4E /* TextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F4147D4E5B0031CB4E /* TextArea.cpp */; };
 		431CF789147D4E940031CB4E /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F5147D4E5B0031CB4E /* Texture.cpp */; };
 		431CF78A147D4E940031CB4E /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F6147D4E5B0031CB4E /* Timer.cpp */; };
-		431CF78B147D4E940031CB4E /* TouchSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F7147D4E5B0031CB4E /* TouchSource.cpp */; };
 		431CF78C147D4E940031CB4E /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F8147D4E5B0031CB4E /* Vector.cpp */; };
 		431CF78D147D4E940031CB4E /* Viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F9147D4E5B0031CB4E /* Viewport.cpp */; };
 		431CF7A3147D50430031CB4E /* ApplePlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6FB147D4E5B0031CB4E /* ApplePlatform.mm */; };
@@ -128,7 +127,6 @@
 		431CF7BE147D50430031CB4E /* TextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F4147D4E5B0031CB4E /* TextArea.cpp */; };
 		431CF7BF147D50430031CB4E /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F5147D4E5B0031CB4E /* Texture.cpp */; };
 		431CF7C0147D50430031CB4E /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F6147D4E5B0031CB4E /* Timer.cpp */; };
-		431CF7C1147D50430031CB4E /* TouchSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F7147D4E5B0031CB4E /* TouchSource.cpp */; };
 		431CF7C2147D50430031CB4E /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F8147D4E5B0031CB4E /* Vector.cpp */; };
 		431CF7C3147D50430031CB4E /* Viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6F9147D4E5B0031CB4E /* Viewport.cpp */; };
 		431CF7C8147D51850031CB4E /* AnimatedQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431CF6DA147D4E5B0031CB4E /* AnimatedQuad.cpp */; };
@@ -236,7 +234,6 @@
 		431CF6F4147D4E5B0031CB4E /* TextArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextArea.cpp; sourceTree = "<group>"; };
 		431CF6F5147D4E5B0031CB4E /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		431CF6F6147D4E5B0031CB4E /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
-		431CF6F7147D4E5B0031CB4E /* TouchSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchSource.cpp; sourceTree = "<group>"; };
 		431CF6F8147D4E5B0031CB4E /* Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector.cpp; sourceTree = "<group>"; };
 		431CF6F9147D4E5B0031CB4E /* Viewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Viewport.cpp; sourceTree = "<group>"; };
 		431CF6FB147D4E5B0031CB4E /* ApplePlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePlatform.mm; sourceTree = "<group>"; };
@@ -371,7 +368,6 @@
 				431CF6F4147D4E5B0031CB4E /* TextArea.cpp */,
 				431CF6F5147D4E5B0031CB4E /* Texture.cpp */,
 				431CF6F6147D4E5B0031CB4E /* Timer.cpp */,
-				431CF6F7147D4E5B0031CB4E /* TouchSource.cpp */,
 				431CF6F8147D4E5B0031CB4E /* Vector.cpp */,
 				431CF6F9147D4E5B0031CB4E /* Viewport.cpp */,
 				43A106B9156D2DEA0021F274 /* TouchArea.cpp */,
@@ -699,7 +695,6 @@
 				431CF788147D4E940031CB4E /* TextArea.cpp in Sources */,
 				431CF789147D4E940031CB4E /* Texture.cpp in Sources */,
 				431CF78A147D4E940031CB4E /* Timer.cpp in Sources */,
-				431CF78B147D4E940031CB4E /* TouchSource.cpp in Sources */,
 				431CF78C147D4E940031CB4E /* Vector.cpp in Sources */,
 				431CF78D147D4E940031CB4E /* Viewport.cpp in Sources */,
 				43A106BA156D2DEA0021F274 /* TouchArea.cpp in Sources */,
@@ -742,7 +737,6 @@
 				431CF7BE147D50430031CB4E /* TextArea.cpp in Sources */,
 				431CF7BF147D50430031CB4E /* Texture.cpp in Sources */,
 				431CF7C0147D50430031CB4E /* Timer.cpp in Sources */,
-				431CF7C1147D50430031CB4E /* TouchSource.cpp in Sources */,
 				431CF7C2147D50430031CB4E /* Vector.cpp in Sources */,
 				431CF7C3147D50430031CB4E /* Viewport.cpp in Sources */,
 				43A106BB156D2DEA0021F274 /* TouchArea.cpp in Sources */,

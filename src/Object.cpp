@@ -20,7 +20,6 @@ scale( 1,1,1 ),
 childs( NULL ),
 parent( NULL ),
 dispose( false ),
-inheritAngle( true ),
 customMatrix( NULL )
 {
 	DEBUG_ASSERT( parentLevel );
@@ -122,9 +121,9 @@ void Object::destroyAllChilds()
 	}
 }
 
-void Object::updateWorldPosition()
+void Object::updateWorldPose()
 {
-	if( parent )  //add parent world transform
+	/*if( parent )  //add parent world transform
 	{
 		if( inheritAngle )
 		{		
@@ -147,7 +146,16 @@ void Object::updateWorldPosition()
 	
 	//update max and min TODO - real transforms
 	worldUpperBound = worldPosition + halfSize.mulComponents( scale.absComponents() );
-	worldLowerBound = worldPosition - halfSize.mulComponents( scale.absComponents() );
+	worldLowerBound = worldPosition - halfSize.mulComponents( scale.absComponents() );*/
+    
+    //compute matrix
+    if( parent )
+    {
+        
+    }
+    else {
+        <#statements#>
+    }
 }
 
 void Object::updateChilds( float dt )

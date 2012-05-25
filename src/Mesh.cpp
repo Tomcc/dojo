@@ -267,7 +267,7 @@ bool Mesh::load()
 	ptr += sizeof( Vector );
 		
 	//center and dimensions
-	center = (max+min)*0.5;
+	center = (max+min)*0.5f;
 	dimensions = (max-min);
 	
 	//vertex count

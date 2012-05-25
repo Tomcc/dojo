@@ -44,7 +44,7 @@ namespace Dojo
 			n = (A-center) ^ (B-center);
 			n.normalize();
 			
-			d = -(center * n);
+			d = -( center * n);
 		}
 		
 		inline float distance( const Vector& center )

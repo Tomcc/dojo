@@ -21,6 +21,8 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
+#include "glm/glm.hpp"
+
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #endif

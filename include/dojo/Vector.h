@@ -15,7 +15,7 @@ using namespace std;
 
 namespace Dojo	
 {
-	class Vector 
+	class Vector : public glm::vec3
 	{
 	public:
 		
@@ -29,36 +29,34 @@ namespace Dojo
 		static const Vector ONE;
 		static const Vector MAX, MIN;
 		
-		float x, y, z;
-		
-		Vector() 
+		Vector( float f = 0 ) : glm::vec3(f)
 		{
-			x = y = z = 0;
+            
 		}
-		
-		Vector( float X, float Y ) 
+        		
+		Vector( float X, float Y ) : glm::vec3( X, Y, 0 )
 		{
-			x = X;
-			y = Y;
-			z = 0;
+            
 		}
-
-		///still available in 2D for compatibility
-		Vector( float X, float Y, float Z ) 
-		{
-			x = X;
-			y = Y;
-			z = Z;
-		}	
+        
+        Vector( float x, float y, float z ) : glm::vec3( x,y,z )
+        {
+            
+        }
+        
+        Vector( const glm::vec3& v ) : glm::vec3( v )
+        {
+            
+        }
 		
-		inline const Vector& operator = ( const Vector& v )
+		/*inline const Vector& operator = ( const Vector& v )
 		{
 			x = v.x;
 			y = v.y;
 			z = v.z;
 			
 			return *this;
-		}
+		}*/
 				
 		inline const Vector& operator += ( const Vector& v )
 		{
@@ -78,7 +76,7 @@ namespace Dojo
 			return *this;
 		}
 		
-		inline const Vector& operator *= ( float s )
+		/*inline const Vector& operator *= ( float s )
 		{
 			x *= s;
 			y *= s;
@@ -104,7 +102,7 @@ namespace Dojo
 		inline Vector operator + ( const Vector& v ) const 
 		{
 				return Vector( x + v.x, y + v.y, z + v.z );
-		}
+		}*/
 
 		inline Vector operator - ( const Vector& v ) const 
 		{
@@ -116,46 +114,19 @@ namespace Dojo
 			return Vector( x * s, y * s, z * s );
 		}
 
-		inline Vector operator / ( float s ) const 
+		/*inline Vector operator / ( float s ) const 
 		{
 			return Vector( x/s, y/s, z/s );
-		}
+		}*/
 
 		inline float operator * ( const Vector& v ) const 
 		{
-			return x*v.x + y*v.y + z*v.z;
+			return glm::dot( (const glm::vec3&)(*this), (const glm::vec3&)v );
 		}
 
 		inline Vector operator ^ ( const Vector& v ) const 
 		{
-			return Vector( 
-				y * v.z - z * v.y,
-				z * v.x - x * v.z,
-				x * v.y - y * v.x );	
-		}
-
-		inline Vector operator - ()
-		{
-			return *this * -1.f;
-		}
-
-		inline const Vector& set( float X, float Y, float Z )
-		{
-			x = X;
-			y = Y;
-			z = Z;
-
-			return *this;
-		}
-
-		inline float length() const 
-		{
-			return sqrtf( lengthSquared() );
-		}
-
-		inline float lengthSquared() const 
-		{
-			return x*x+y*y+z*z;
+			return glm::cross( *this, v );
 		}
 		
 		inline const float normalize()
@@ -183,7 +154,7 @@ namespace Dojo
 			return Vector( x*s + invs*v.x, y*s + invs*v.y, z*s + invs*v.z);
 		}
 
-		inline const Vector& reflect( const Dojo::Vector& normal )
+		/*inline const Vector& reflect( const Dojo::Vector& normal )
 		{
 			float dot = 2.f * ( *this * normal );
 			x -= dot * normal.x;
@@ -191,7 +162,7 @@ namespace Dojo
 			z -= dot * normal.z;
 
 			return *this;
-		}
+		}*/
 
 		inline const Vector& scale( const Vector& scale )
 		{
@@ -214,74 +185,6 @@ namespace Dojo
             return Vector( x*v.x, y*v.y, z*v.z );
         }
 
-		///rotate the vector around side axis
-		/**
-		http://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
-		*/
-		inline const Vector& pitch( float angle )
-		{
-			float c = cos( angle * 0.0174f );
-			float s = sin( angle * 0.0174f ); 
-			//Vector cross( 0, -z, y )
-			
-			//x is not varied
-			set( x, y*c - z*s, z*c + y*s);
-			
-			return *this;
-		}
-
-		//rotate the vector around up axis
-		inline const Vector& yaw( float angle )
-		{
-			float c = cos( angle * 0.0174f );
-			float s = sin( angle * 0.0174f ); 
-			//vector cross( z, 0, -x )
-
-			set( x*c + z*s, y, z*c - x*s );
-			
-			return *this;
-		}
-
-		///rotation along the forward axis
-		inline const Vector& roll( float angle )
-		{
-			float c = cos( angle * 0.0174f );
-			float s = sin( angle * 0.0174f ); 
-			//vector cross( -y, x, 0 )
-
-			set( x*c - y*s, y*c + x*s, z );
-
-			return *this;
-		}
-		
-		inline const Vector& rotate( const Vector& angles )
-		{
-			yaw( angles.y );
-			pitch( angles.x );
-
-			return *this;
-		}
-
-		///uses the current vector as three euler angles and returns their direction
-		inline Vector directionFromAngle()
-		{
-			Vector forward( 0,0,1 );
-
-			return forward.rotate( *this );
-		}
-
-		///uses the current vector to return three (two, really) euler angles that give its rotation
-		/**
-		Rotation is relative to the "forward" vector (0,0,1)
-		*/
-		inline Vector angleFromDirection() const
-		{
-			return Vector(
-					57.47f * atan2(x, y),
-					57.47f * atan2(z,sqrt((x*x) + (y*y)) ),
-					0 );
-		}
-
 		inline float distance( const Vector& v ) const 
 		{
 			return sqrt( distanceSquared(v) );
@@ -295,7 +198,7 @@ namespace Dojo
 		///returns the distance of this vector from the given plane
 		inline float distanceFromPlane( const Vector& normal, float d ) const 
 		{
-			return *this * normal + d;
+			return glm::dot((const glm::vec3&)(*this), (const glm::vec3&)normal) + d;
 		}
 
 		inline bool isNear( const Vector& v, float threshold = 0.1 )

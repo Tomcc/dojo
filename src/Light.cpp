@@ -36,7 +36,8 @@ void Light::initDirectional( const Vector& dir )
 	type = LT_DIRECTIONAL;
 	
 	//set the direction
-	angle = dir.angleFromDirection();
+    DEBUG_TODO;
+	//angle = dir.angleFromDirection();
 }
 
 ///setups this light to be a spotlight
@@ -48,7 +49,8 @@ void Light::initSpotlight( const Vector& dir, float fov, float exponent, float a
 	spotExponent = exponent;
 	attenuation = a;
 	
-	angle = dir.angleFromDirection();
+    DEBUG_TODO;
+    //angle = dir.angleFromDirection();
 }
 
 inline void toFV( float* fv, const Vector& v, float w )
