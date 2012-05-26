@@ -115,6 +115,28 @@ void Viewport::_updateFrustum()
 	worldFrustumPlanes[0].setup( worldFrustumVertices[1], worldFrustumVertices[2], worldFrustumVertices[0] );
 }
 
+void Viewport::_updateTransforms()
+{
+    //compute view, that is the inverse of our world matrix    
+    mViewTransform = Matrix(1);
+    
+    Vector worldPos = getWorldPosition();
+    
+    glm::vec3 t( -worldPos.x, - worldPos.y, - worldPos.z );
+    
+    mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
+    mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );
+    mViewTransform = glm::translate( mViewTransform, t );
+    
+    //compute ortho projection
+    mOrthoTransform = glm::ortho(-getHalfSize().x, 
+                              getHalfSize().x,
+                              -getHalfSize().y,
+                              getHalfSize().y ) * mViewTransform;
+       
+    //compute frustum projection
+}
+
 bool Viewport::isContainedInFrustum( Renderable* r )
 {
 	DEBUG_ASSERT( r );

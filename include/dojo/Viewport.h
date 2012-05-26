@@ -68,6 +68,15 @@ namespace Dojo
 		
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
 		Vector getRayDirection( const Vector& screenSpacePos );
+        
+        inline const Matrix& getViewProjOrtho()
+        {
+            return mOrthoTransform;
+        }
+        inline const Matrix& getViewProjFrustum()
+        {
+            return mFrustumTransform;
+        }
 
 		bool isContainedInFrustum( Renderable* r );
 
@@ -113,6 +122,8 @@ namespace Dojo
 		virtual void onAction( float dt )
 		{
 			Object::onAction(dt);
+            
+            _updateTransforms();
 
 			//do not call if not explicitly required
 			if( frustumCullingEnabled )
@@ -129,6 +140,8 @@ namespace Dojo
 		Model* fadeObject;
 				
 		Color clearColor;
+        
+        Matrix mViewTransform, mOrthoTransform, mFrustumTransform;
 
 		float nativeToScreenRatio;
 
@@ -144,6 +157,7 @@ namespace Dojo
 		Vector farPlaneSide;
 
 		void _updateFrustum();
+        void _updateTransforms();
 	};
 }
 

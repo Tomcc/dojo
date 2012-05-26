@@ -230,16 +230,7 @@ namespace Dojo {
 		LightList lights;
 		Color defaultAmbient;
 		
-		//precomputed matrices
-		float orthoProj[16], orthoView[16], frustumProj[16], frustumView[16];
-
-		void _setupOrthoProjection();
-		void _setupFrustumProjection();
-		
-		void _gluPerspectiveClone( float fovy, float aspect, float zNear, float zFar);
-		void _gluLookAtClone(float eyex, float eyey, float eyez,							 
-							 float centerx, float centery, float centerz,							 
-							 float upx, float upy, float upz);
+        Matrix mCurrentViewProj, mRenderRotation;
 	};		
 }
 

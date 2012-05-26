@@ -211,6 +211,9 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 		viewportWidth = height;
 		viewportHeight = width;
 	}
+    
+    //compute matrix
+    mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, renderRotation ) ) );
 }
 
 void Render::startFrame()
@@ -232,10 +235,6 @@ void Render::startFrame()
 				 viewport->getClearColor().a );
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	///TODO only execute these if relevant parameters are changed
-	_setupOrthoProjection();
-	_setupFrustumProjection();
 				
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -284,9 +283,7 @@ void Render::renderElement( Renderable* s )
 	
 	//clone the view matrix on the top of the stack		
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();	
-	
-	glMultMatrixf( glm::value_ptr( s->getWorldTransform() ) );
+    glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
 		
 	//HACK
 #ifndef PLATFORM_IOS
@@ -310,9 +307,6 @@ void Render::renderElement( Renderable* s )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
-
-	//reset original view on the top of the stack
-	glPopMatrix();
 }
 
 void Render::endFrame()
@@ -324,135 +318,7 @@ void Render::endFrame()
 	frameStarted = false;
 }
 
-void Render::_gluPerspectiveClone( float fovy, float aspect, float zNear, float zFar)
-{
-	float xmin, xmax, ymin, ymax;
-	
-	ymax = zNear * tan(fovy * Math::PI / 360.f);
-	ymin = -ymax;
-	xmin = ymin * aspect;
-	xmax = ymax * aspect;
-	
-	
-	glFrustumf(xmin, xmax, ymin, ymax, zNear, zFar);
-}
-
-void Render::_gluLookAtClone(float eyex, float eyey, float eyez,							 
-							 float centerx, float centery, float centerz,							 
-							 float upx, float upy, float upz)
-{
-	GLfloat m[16];	
-	GLfloat x[3], y[3], z[3];
-	GLfloat mag;	
-	
-	/* Make rotation matrix */
-		
-	z[0] = eyex - centerx;	
-	z[1] = eyey - centery;	
-	z[2] = eyez - centerz;
-	
-	mag = sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
-	
-	if (mag) 
-	{                   /* mpichler, 19950515 */
-		z[0] /= mag;		
-		z[1] /= mag;		
-		z[2] /= mag;		
-	}
-		
-	y[0] = upx;	
-	y[1] = upy;	
-	y[2] = upz;
-	
-	/* X vector = Y cross Z */	
-	x[0] = y[1] * z[2] - y[2] * z[1];	
-	x[1] = -y[0] * z[2] + y[2] * z[0];	
-	x[2] = y[0] * z[1] - y[1] * z[0];
-	
-	/* Recompute Y = Z cross X */
-	
-	y[0] = z[1] * x[2] - z[2] * x[1];	
-	y[1] = -z[0] * x[2] + z[2] * x[0];	
-	y[2] = z[0] * x[1] - z[1] * x[0];		
-	
-	mag = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-	
-	if (mag) 
-	{		
-		x[0] /= mag;		
-		x[1] /= mag;		
-		x[2] /= mag;		
-	}
-	
-	mag = sqrt(y[0] * y[0] + y[1] * y[1] + y[2] * y[2]);	
-	if (mag) 
-	{		
-		y[0] /= mag;		
-		y[1] /= mag;		
-		y[2] /= mag;		
-	}
-	
-#define M(row,col)  m[col*4+row]
-	
-	M(0, 0) = x[0];	
-	M(0, 1) = x[1];	
-	M(0, 2) = x[2];	
-	M(0, 3) = 0.0;	
-	M(1, 0) = y[0];	
-	M(1, 1) = y[1];	
-	M(1, 2) = y[2];	
-	M(1, 3) = 0.0;	
-	M(2, 0) = z[0];	
-	M(2, 1) = z[1];	
-	M(2, 2) = z[2];	
-	M(2, 3) = 0.0;	
-	M(3, 0) = 0.0;	
-	M(3, 1) = 0.0;	
-	M(3, 2) = 0.0;	
-	M(3, 3) = 1.0;
-	
-#undef M
-	
-	glMultMatrixf(m);
-	
-	/* Translate Eye to Origin */
-	
-	glTranslatef(-eyex, -eyey, -eyez);
-}
-
-void Render::_setupOrthoProjection()
-{	
-	DEBUG_ASSERT( viewport );
-
-	//setup ortho projection
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
-		
-	glRotatef( renderRotation, 0,0,1 );	
-	
-	glOrthof( 
-		-viewport->getHalfSize().x, 
-		viewport->getHalfSize().x,
-		-viewport->getHalfSize().y,
-		viewport->getHalfSize().y,
-		-viewport->getZFar(),
-		viewport->getZFar() );
-
-	glGetFloatv( GL_PROJECTION_MATRIX, orthoProj );
-
-	//setup ortho view
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-
-	//move
-	glTranslatef(
-		-viewport->getWorldPosition().x,
-		-viewport->getWorldPosition().y,
-		0 );
-		
-	glGetFloatv( GL_MODELVIEW_MATRIX, orthoView );
-}
-
+/*
 void Render::_setupFrustumProjection()
 {
 	DEBUG_ASSERT( viewport );
@@ -492,7 +358,7 @@ void Render::_setupFrustumProjection()
 		up.z );
 
 	glGetFloatv( GL_MODELVIEW_MATRIX, frustumView );
-}
+}*/
 
 void Render::renderLayer( Layer* list )
 {
@@ -507,20 +373,8 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-	if( list->projectionOff )	
-	{
-		glMatrixMode( GL_MODELVIEW );
-		glLoadMatrixf( orthoView );
-		glMatrixMode( GL_PROJECTION );
-		glLoadMatrixf( orthoProj );
-	}
-	else
-	{
-		glMatrixMode( GL_MODELVIEW );
-		glLoadMatrixf( frustumView );
-		glMatrixMode( GL_PROJECTION );
-		glLoadMatrixf( frustumProj );
-	}
+	mCurrentViewProj =  mRenderRotation * (list->projectionOff ? viewport->getViewProjOrtho() : viewport->getViewProjFrustum());
+    
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )
 		glClear( GL_DEPTH_BUFFER_BIT );
