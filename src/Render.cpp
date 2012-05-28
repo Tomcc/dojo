@@ -213,7 +213,7 @@ void Render::setInterfaceOrientation( RenderOrientation o )
 	}
     
     //compute matrix
-    mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, renderRotation ) ) );
+    mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
 void Render::startFrame()

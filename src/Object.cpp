@@ -138,14 +138,6 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
         worldUpperBound = Math::max( worldUpperBound, vertex );
         worldLowerBound = Math::min( worldLowerBound, vertex );
     }
-    
-    Vector center = (localMax + localMin) * 0.5f;
-    Vector size = localMax - localMin;
-    Vector worldCenter = (worldUpperBound + worldLowerBound) * 0.5f;
-    Vector worldSize = worldUpperBound - worldLowerBound;
-        
-    DEBUG_MESSAGE( "size: " << size.toString().ASCII() << " -> " << worldSize.toString().ASCII() );
-    DEBUG_MESSAGE( "center: " << center.toString().ASCII() << " -> " << worldCenter.toString().ASCII() );
 }
 
 void Object::updateWorldTransform()
