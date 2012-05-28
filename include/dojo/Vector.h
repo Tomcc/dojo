@@ -223,6 +223,11 @@ namespace Dojo
 
 			return a + b + c;
 		}
+        
+        inline String toString() const
+        {
+            return "(" + String( x ) + "," + String( y ) + "," + String( z ) + ")";
+        }
 				
 	protected:
 	};

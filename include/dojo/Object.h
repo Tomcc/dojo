@@ -86,7 +86,7 @@ namespace Dojo {
 		{
             if( parent )
             {
-                glm::vec4 pos = mWorldTransform * glm::vec4(localPos.x, localPos.y, localPos.z, 0);
+                glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f );
                 return Vector( pos.x , pos.y, pos.z );                
             }
             else

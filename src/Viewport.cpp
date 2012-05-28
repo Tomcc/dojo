@@ -124,7 +124,7 @@ void Viewport::_updateTransforms()
     
     Vector worldPos = getWorldPosition();
     
-    glm::vec3 t( -worldPos.x, - worldPos.y, - worldPos.z );
+    glm::vec3 t( -worldPos.x, -worldPos.y, -worldPos.z );
     
     mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
     mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );
@@ -134,7 +134,9 @@ void Viewport::_updateTransforms()
     mOrthoTransform = glm::ortho(-getHalfSize().x, 
                               getHalfSize().x,
                               -getHalfSize().y,
-                              getHalfSize().y ) * mViewTransform;
+                              getHalfSize().y,
+                                 zNear,
+                                 zFar ) * mViewTransform;
        
     //compute frustum projection
 }
