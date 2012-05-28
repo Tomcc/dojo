@@ -15,6 +15,7 @@ mLayer( layer )
 {
     DEBUG_ASSERT( listener );
     
+    mNeedsAABB = true;
     state->addTouchArea( this );
 }
 
@@ -27,6 +28,7 @@ mLayer( r->getLayer() )
 {
     DEBUG_ASSERT( listener );
     
+    mNeedsAABB = true;
     getGameState()->addTouchArea( this );
 }
 

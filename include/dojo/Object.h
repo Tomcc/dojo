@@ -63,6 +63,16 @@ namespace Dojo {
 		{
 			setSize( bbSize.x, bbSize.y );
 		}
+        
+        inline void setRotation( const Quaternion& quat )
+        {
+            rotation = quat;
+        }
+        
+        inline void setRotation( const Vector& eulerAngles )
+        {
+            setRotation( Quaternion( eulerAngles ) );
+        }
 				
 		inline void setActive( bool a )		{	active = a;	}
 				
@@ -76,7 +86,7 @@ namespace Dojo {
 		{
             if( parent )
             {
-                glm::vec4 pos = mWorldTransform * glm::vec4(localPos.x, localPos.y, localPos.y, 0);
+                glm::vec4 pos = mWorldTransform * glm::vec4(localPos.x, localPos.y, localPos.z, 0);
                 return Vector( pos.x , pos.y, pos.z );                
             }
             else
@@ -106,11 +116,7 @@ namespace Dojo {
 		{
 			return childs != NULL && childs->size() > 0;
 		}
-				
-		//TODO use real transforms
-		inline const Vector& getWorldMax()	{	return worldUpperBound;	}
-		inline const Vector& getWorldMin()	{	return worldLowerBound;	}
-        
+
         inline const Matrix& getWorldTransform()    
         {  
             return mWorldTransform; 
@@ -123,6 +129,20 @@ namespace Dojo {
 			
 			return childs->at( i );
 		}
+        
+        inline Vector& getWorldMax()
+        {
+            DEBUG_ASSERT( mNeedsAABB );
+            
+            return worldUpperBound;
+        }
+        
+        inline Vector& getWorldMin()
+        {
+            DEBUG_ASSERT( mNeedsAABB );
+            
+            return worldLowerBound;
+        }
         
         inline Object* getParent()
         {
@@ -152,7 +172,10 @@ namespace Dojo {
         
         inline bool contains( const Vector& p )
 		{
-			return 
+            DEBUG_ASSERT( mNeedsAABB );
+            
+            ///HACK only works in 2D!
+            return 
             p.x < worldUpperBound.x && 
             p.x > worldLowerBound.x && 
             p.y < worldUpperBound.y && 
@@ -160,13 +183,16 @@ namespace Dojo {
 		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
-		{			
+		{		
+            DEBUG_ASSERT( mNeedsAABB );
+            
 			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
 		}
 		
 		inline bool collidesWith( Object * t )
 		{			
 			DEBUG_ASSERT( t );
+            DEBUG_ASSERT( mNeedsAABB );            
 
 			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}
@@ -197,10 +223,12 @@ namespace Dojo {
                 
 		Vector worldUpperBound, worldLowerBound;
 				
-		bool active;
+		bool active, mNeedsAABB;
 
 		Object* parent;
 		ChildList* childs;
+        
+        void _updateWorldAABB( const Vector& min, const Vector& max );
 	};
 }
 

@@ -14,14 +14,14 @@ Renderable::~Renderable()
 }
 
 void Renderable::onAction( float dt )
-{
+{    
+    bool previousAABBSetting = mNeedsAABB;
+    mNeedsAABB = false; //override the setting
+        
 	Object::onAction( dt );
 	
-	if( mesh )
-	{
-        worldUpperBound = getWorldPosition( mesh->getMax() );
-        worldLowerBound = getWorldPosition( mesh->getMin() );
-	}
+	if( mesh && (mNeedsAABB = previousAABBSetting) )
+        _updateWorldAABB( mesh->getMin(), mesh->getMax() );
 	
 	advanceFade(dt);
 }

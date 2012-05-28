@@ -29,6 +29,8 @@ VFOV( 0 ),
 zNear( 0 ),
 zFar( 1000 )
 {
+    mNeedsAABB = true;
+    
 	Render* render = Platform::getSingleton()->getRender();
 	
 	nativeToScreenRatio = render->getNativeToScreenRatio();

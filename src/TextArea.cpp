@@ -315,6 +315,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
     //find real mesh bounds
     mLayersLowerBound = mesh->getMin();
     mLayersUpperBound = mesh->getMax();
+    
     for( int i = 0; i < busyLayers.size(); ++i )
     {
         mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
@@ -353,10 +354,12 @@ Mesh* TextArea::_createMesh()
 
 void TextArea::onAction(float dt)
 {
+    bool previousAABBSetting = mNeedsAABB;
+    mNeedsAABB = false; //do not trigger the update
+    
     Renderable::onAction(dt);
     
-    //set the real world bounds
-    worldLowerBound = getWorldPosition( mLayersLowerBound );
-    worldUpperBound = getWorldPosition( mLayersUpperBound );
+    if( (mNeedsAABB = previousAABBSetting) )
+        _updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
 }
 

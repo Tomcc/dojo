@@ -18,7 +18,8 @@ active( true ),
 scale( 1,1,1 ),
 childs( NULL ),
 parent( NULL ),
-dispose( false )
+dispose( false ),
+mNeedsAABB( false )
 {
 	DEBUG_ASSERT( parentLevel );
 	
@@ -119,21 +120,38 @@ void Object::destroyAllChilds()
 	}
 }
 
+void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
+{
+    //get the eight world-position corners and transform them
+    worldUpperBound = Vector::MIN;
+    worldLowerBound = Vector::MAX;
+    
+    Vector vertex;    
+    
+    for( int i = 0; i < 8; ++i )
+    {
+        for( int j = 0; j < 3; ++j )
+            vertex[j] = Math::getBit( i, j ) ? localMax[j] : localMin[j];
+        
+        vertex = getWorldPosition( vertex );
+        
+        worldUpperBound = Math::max( worldUpperBound, vertex );
+        worldLowerBound = Math::min( worldLowerBound, vertex );
+    }
+}
+
 void Object::updateWorldTransform()
 {	
     //compute local matrix from position and orientation
-    mWorldTransform = Matrix(1);
+    mWorldTransform = parent ? parent->getWorldTransform() : Matrix( 1 );
     
     mWorldTransform = glm::translate( mWorldTransform, position );
-    mWorldTransform *= mat4_cast( rotation );    
+    mWorldTransform *= mat4_cast( rotation );
     mWorldTransform = glm::scale( mWorldTransform, scale );
     
-    if( parent )  //combine with parent transform
-        mWorldTransform *= parent->getWorldTransform();     
-     
-    //update max and min
-    worldUpperBound = getWorldPosition( halfSize );
-    worldLowerBound = getWorldPosition( halfSize );
+    //update AABB if needed
+    if( mNeedsAABB )
+        _updateWorldAABB( -halfSize, halfSize );
 }
 
 void Object::updateChilds( float dt )

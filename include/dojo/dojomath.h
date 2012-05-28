@@ -90,6 +90,14 @@ namespace Dojo
 			if( n < min )	return min;
 			return n;
 		}
+        
+        ///gets the nth bit
+        static inline bool getBit( int i, byte n )
+        {
+            DEBUG_ASSERT( n < 32 );
+            
+            return (i >> n) & 0x1;
+        }
 		
 		static inline float saturate( float n )
 		{
