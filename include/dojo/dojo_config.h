@@ -103,4 +103,16 @@
 //do not use the differential state commit //HACK
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
+//common enums
+namespace Dojo
+{
+    enum Orientation
+    {
+        DO_PORTRAIT,
+        DO_PORTRAIT_REVERSE,
+        DO_LANDSCAPE_LEFT,
+        DO_LANDSCAPE_RIGHT
+    };
+}
+
 #endif

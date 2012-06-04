@@ -14,6 +14,7 @@
 #import <AppKit/NSImage.h>
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSOpenGL.h>
+#import <AppKit/NSScreen.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSURL.h>
 
@@ -24,6 +25,15 @@
 #include "SoundManager.h"
 
 using namespace Dojo;
+
+OSXPlatform::OSXPlatform( const Table& config ) :
+ApplePlatform( config )
+{
+    screenWidth = [[NSScreen mainScreen] frame].size.width;
+    screenHeight = [[NSScreen mainScreen] frame].size.height;
+    screenOrientation = DO_LANDSCAPE_LEFT; //always
+}
+
 
 void OSXPlatform::initialise() 
 {	
@@ -77,7 +87,7 @@ void OSXPlatform::initialise()
 	[window makeKeyAndOrderFront:nil];
 	
     //create render
-    render = new Render( frame.size.width, frame.size.height, 1, Render::RO_LANDSCAPE_LEFT );
+    render = new Render( frame.size.width, frame.size.height, screenOrientation );
 	
 	//enable MSAA?
 	if( config.getInt( "MSAA" ) )

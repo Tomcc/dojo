@@ -7,6 +7,7 @@
 #import <AudioToolbox/AudioToolbox.h>	
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#import <UIKit/UIScreen.h>
 
 #include "Utils.h"
 #include "dojomath.h"
@@ -27,7 +28,10 @@ ApplePlatform( config ),
 app( NULL ),
 player( NULL )
 {
-	
+	screenWidth = [[UIScreen mainScreen] bounds].size.width * [[UIScreen mainScreen] scale];
+    screenHeight = [[UIScreen mainScreen] bounds].size.height * [[UIScreen mainScreen] scale];
+    
+    screenOrientation = DO_PORTRAIT; //screen is in portrait mode by default
 }
 
 IOSPlatform::~IOSPlatform()
@@ -39,17 +43,8 @@ IOSPlatform::~IOSPlatform()
 void IOSPlatform::initialise()
 {
 	DEBUG_ASSERT( app );
-	
-	CGRect bounds = [[UIScreen mainScreen] bounds];
-		
-	uint devicePixelScale;
-	
-	if( game->getNativeOrientation() == Render::RO_LANDSCAPE_LEFT || game->getNativeOrientation() == Render::RO_LANDSCAPE_RIGHT )
-		devicePixelScale = game->getNativeWidth() / bounds.size.height;
-	else
-		devicePixelScale = game->getNativeWidth() / bounds.size.width;
-	
-	uint width, height;
+			
+    uint width, height;
 		
 //RENDER
 	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
@@ -90,7 +85,7 @@ void IOSPlatform::initialise()
 	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER, depthRenderbuffer );
 	
-	render = new Render( width, height, devicePixelScale, Render::RO_PORTRAIT );
+	render = new Render( width, height, screenOrientation );
 	
 	//some local configs
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

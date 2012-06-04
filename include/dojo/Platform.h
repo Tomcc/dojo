@@ -64,6 +64,12 @@ namespace Dojo
 		inline double getRealFrameTime()		{	return realFrameTime;	}
 		inline const String& getLocale()		{	return locale;	}
 		
+        inline int getScreenWidth()             {   return screenWidth;     }
+        inline int getScreenHeight()            {   return screenHeight;    }
+        inline int getScreenOrientation()       {   return screenOrientation;   }
+        
+        bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
+        
 		inline bool isRunning()					{	return running; }
 		
 		virtual void initialise()=0;
@@ -117,6 +123,9 @@ namespace Dojo
 
 		static Platform* singleton;
 		
+        int screenWidth, screenHeight;
+        Orientation screenOrientation;
+        
 		String locale;
 
 		Table config;

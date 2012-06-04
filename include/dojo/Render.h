@@ -52,19 +52,11 @@ namespace Dojo {
 
 			}
 		};
-		
-		enum RenderOrientation
-		{
-			RO_PORTRAIT,
-			RO_PORTRAIT_REVERSE,
-			RO_LANDSCAPE_LEFT,
-			RO_LANDSCAPE_RIGHT
-		};
 						
 		typedef Array< Layer* > LayerList;
 		typedef Array< Light* > LightList;
 		
-		Render( uint width, uint height, uint devicePixelScale, RenderOrientation);		
+		Render( uint width, uint height, Orientation renderOrientation );		
 		
 		~Render();		
 						
@@ -115,7 +107,7 @@ namespace Dojo {
 		
 		void setViewport( Viewport* v );
 						
-		void setInterfaceOrientation( RenderOrientation o );
+		void setInterfaceOrientation( Orientation o );
 
 		void setWireframe( bool wireframe );
 		
@@ -125,7 +117,7 @@ namespace Dojo {
 			defaultAmbient.a = 1;
 		}
 		
-		inline RenderOrientation getInterfaceOrientation()
+		inline Orientation getInterfaceOrientation()
 		{
 			return renderOrientation;
 		}
@@ -162,7 +154,6 @@ namespace Dojo {
 			return viewportHeight;
 		}
 		
-		inline float getContentScale()				{	return devicePixelScale;	}
 		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
 		inline Viewport* getViewport()				{	return viewport;	}
 
@@ -207,10 +198,9 @@ namespace Dojo {
 						
 		// The pixel dimensions of the CAEAGLLayer
 		int width, height, viewportWidth, viewportHeight;
-		float devicePixelScale;
 		
 		float renderRotation;
-		RenderOrientation renderOrientation, deviceOrientation;
+		Orientation renderOrientation, deviceOrientation;
 		
 		float nativeToScreenRatio;
 						

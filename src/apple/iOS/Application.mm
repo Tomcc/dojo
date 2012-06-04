@@ -140,25 +140,26 @@ using namespace Dojo;
 Vector getInterfaceOrientatedPoint( int x, int y, Render* r );
 
 Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
-{		
-	x *= r->getContentScale();
-	y *= r->getContentScale();
+{	
+	//HACK
+	/*x *= r->getContentScale();
+	y *= r->getContentScale();*/
 	
 	int sx = Platform::getSingleton()->getGame()->getNativeWidth();
 	int sy = Platform::getSingleton()->getGame()->getNativeHeight();
 	
 	switch( r->getInterfaceOrientation() )
 	{
-		case Render::RO_PORTRAIT:
+		case DO_PORTRAIT:
 			return Vector( x, y );
 			
-		case Render::RO_PORTRAIT_REVERSE:
+		case DO_PORTRAIT_REVERSE:
 			return Vector( sx - x, sy - y );
 			
-		case Render::RO_LANDSCAPE_RIGHT:		
+		case DO_LANDSCAPE_RIGHT:		
 			return Vector( y, sy - x );
 			
-		case Render::RO_LANDSCAPE_LEFT:			
+		case DO_LANDSCAPE_LEFT:			
 			return Vector( sx - y, x );
 	}
 	return Vector::ZERO;

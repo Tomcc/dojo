@@ -15,23 +15,20 @@
 
 using namespace Dojo;
 
-Render::Render( uint w, uint h, uint dps, RenderOrientation deviceOr ) :
+Render::Render( uint w, uint h, Orientation deviceOr ) :
 frameStarted( false ),
 viewport( NULL ),
 valid( true ),
 width( w ),
 height( h ),
-devicePixelScale( (float)dps ),
-renderOrientation( RO_LANDSCAPE_RIGHT ),
+renderOrientation( DO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr ),
 currentLayer( NULL ),
 frameVertexCount(0),
 frameTriCount(0),
 frameBatchCount(0),
 backLayer( NULL )
-{	
-	DEBUG_ASSERT( deviceOrientation <= RO_LANDSCAPE_RIGHT );
-
+{
 	platform = Platform::getSingleton();	
 
 	DEBUG_MESSAGE( "Creating OpenGL context...");
@@ -192,7 +189,7 @@ void Render::setViewport( Viewport* v )
 	viewport = v;
 }	
 
-void Render::setInterfaceOrientation( RenderOrientation o )		
+void Render::setInterfaceOrientation( Orientation o )		
 {	
 	renderOrientation = o;
 	
