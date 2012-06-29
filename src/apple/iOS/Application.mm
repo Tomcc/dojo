@@ -137,17 +137,18 @@ using namespace Dojo;
 	return YES; 
 }
 
-Vector getInterfaceOrientatedPoint( int x, int y, Render* r );
-
-Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
-{	
+Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
+{
 	//HACK
 	/*x *= r->getContentScale();
 	y *= r->getContentScale();*/
-	
-	int sx = Platform::getSingleton()->getGame()->getNativeWidth();
-	int sy = Platform::getSingleton()->getGame()->getNativeHeight();
-	
+    
+    int scale = [v contentScaleFactor];
+    int x = pos.x * scale;
+    int y = pos.y * scale;	
+	int sx = [[UIScreen mainScreen] bounds].size.width * scale;
+	int sy = [[UIScreen mainScreen] bounds].size.height * scale;
+    	
 	switch( r->getInterfaceOrientation() )
 	{
 		case DO_PORTRAIT:
@@ -157,10 +158,10 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 			return Vector( sx - x, sy - y );
 			
 		case DO_LANDSCAPE_RIGHT:		
-			return Vector( y, sy - x );
+			return Vector( y, sx - x );
 			
 		case DO_LANDSCAPE_LEFT:			
-			return Vector( sx - y, x );
+			return Vector( sy - y, x );
 	}
 	return Vector::ZERO;
 }
@@ -173,7 +174,7 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	{ 		
 		loc = [[[touches allObjects] objectAtIndex:i ] locationInView:self ];
 		
-		Vector pos = getInterfaceOrientatedPoint( loc.x, loc.y, renderImpl );	
+		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );	
 		
 		touchSource->_fireTouchBeginEvent( pos );		
 	}	
@@ -189,8 +190,8 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 		loc = [[[touches allObjects] objectAtIndex:i ] locationInView:self ];
         prevLoc = [[[touches allObjects] objectAtIndex:i ] previousLocationInView:self ];
 		
-		Vector pos = getInterfaceOrientatedPoint( loc.x, loc.y, renderImpl );
-        Vector prevPos = getInterfaceOrientatedPoint( prevLoc.x, prevLoc.y, renderImpl );
+		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );
+        Vector prevPos = getInterfaceOrientatedPoint( prevLoc, renderImpl, self );
 		
 		touchSource->_fireTouchMoveEvent( pos, prevPos );	
 	}	
@@ -204,7 +205,7 @@ Vector getInterfaceOrientatedPoint( int x, int y, Render* r )
 	{ 		
 		loc = [[[touches allObjects] objectAtIndex:i ] locationInView:self ];
 				
-		Vector pos = getInterfaceOrientatedPoint( loc.x, loc.y, renderImpl );
+		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );
 		
 		touchSource->_fireTouchEndEvent( pos );		
 	}	

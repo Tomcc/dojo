@@ -346,31 +346,6 @@ void Win32Platform::step( float dt )
 	realFrameTime = (float)timer.getElapsedTime();
 }
 
-void stepCallback( void* platform )
-{
-	Win32Platform* self = (Win32Platform*)platform;
-
-	self->_callbackThread( self->getFrameInterval() );
-}
-
-void Win32Platform::_callbackThread( float frameLength )
-{
-	while( running )
-	{
-		try
-		{
-			frameStart.set();
-
-		}
-		catch( Poco::SystemException e )
-		{
-
-		}
-
-		Poco::Thread::sleep( (long)(frameLength * 1000.f) );
-	}
-}
-
 void Win32Platform::loop( float frameTime )
 {
 	frameInterval = frameTime;
@@ -378,9 +353,8 @@ void Win32Platform::loop( float frameTime )
 	frameTimer.reset();
 
 	//start timer thread
-	Poco::Thread t;
-	if( frameInterval )
-		t.start( stepCallback, this );
+	Poco::Timer frameCaller( 0, frameInterval * 1000.f );
+    frameCaller.start( *this ); 
 
 	Timer timer;
 	running = true;
@@ -388,7 +362,6 @@ void Win32Platform::loop( float frameTime )
 	{
 		if( frameInterval > 0 )
 			frameStart.wait();
-
 
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
@@ -404,9 +377,13 @@ void Win32Platform::loop( float frameTime )
 
 		step( dt );
 	}
+}
 
-	if( frameTime )
-		t.join();
+
+///this function is called by Poco::Timer on the timer thread
+void invoke( void* platform )
+{
+    frameStart.set(); //enable the main loop to run again
 }
 
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
