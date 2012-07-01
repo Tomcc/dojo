@@ -27,11 +27,11 @@ mNeedsAABB( false )
 }
 
 void Object::addChild( Object* o )
-{
-	if( !childs )
-		childs = new ChildList(10,10);
-
+{    
 	DEBUG_ASSERT( o );
+	
+    if( !childs )
+		childs = new ChildList(10,10);
 
 	childs->add( o );
 
@@ -45,6 +45,15 @@ void Object::addChild( Renderable* o, int layer )
 	Platform::getSingleton()->getRender()->addRenderable( o, layer );
 }
 
+void Object::_unregisterChild( Object* child )
+{
+    DEBUG_ASSERT( child );
+    
+    child->_notifyParent( NULL );
+    
+	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
+}
+
 void Object::removeChild( int i )
 {	
 	DEBUG_ASSERT( hasChilds() );
@@ -52,11 +61,9 @@ void Object::removeChild( int i )
 	
 	Object* child = childs->at( i );
 	
-	child->_notifyParent( NULL );
-	
+	_unregisterChild( child );
+    
 	childs->remove( i );
-		
-	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
 }
 
 void Object::removeChild( Object* o )
@@ -112,10 +119,12 @@ void Object::destroyAllChilds()
 	if( childs )
 	{	
 		for( int i = 0; i < childs->size(); ++i )
-			childs->at(i)->dispose = true;
-	
-		collectChilds();
-	
+        {
+            //_unregisterChild( childs->at(i) );
+            DEBUG_ASSERT( childs->at(i) );
+			SAFE_DELETE( childs->at(i) );
+        }
+		
 		SAFE_DELETE( childs );
 	}
 }

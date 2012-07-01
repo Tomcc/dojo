@@ -229,6 +229,8 @@ namespace Dojo {
 		ChildList* childs;
         
         void _updateWorldAABB( const Vector& min, const Vector& max );
+        
+        void _unregisterChild( Object* child );
 	};
 }
 

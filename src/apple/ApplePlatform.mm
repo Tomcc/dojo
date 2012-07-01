@@ -37,7 +37,7 @@ ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
 	//HACK
-    //pool = [[NSAutoreleasePool alloc] init];
+    pool = [[NSAutoreleasePool alloc] init];
 
 	if( [[NSLocale preferredLanguages] count ] )
 		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
@@ -48,7 +48,7 @@ Platform( config )
 ApplePlatform::~ApplePlatform()
 {
 	//HACK
-	//[pool release];
+	[pool release];
 }
 
 void ApplePlatform::step( float dt )
