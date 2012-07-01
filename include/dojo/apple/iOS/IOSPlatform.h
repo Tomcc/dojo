@@ -131,15 +131,19 @@ namespace Dojo
         bool mNPOTEnabled;
         
 		bool _checkGameCenterAvailability();
+
+		GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
 		
 #ifdef __OBJC__		
 		EAGLContext* context;
 		
 		Application* app;		
-		
-		GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;
-		
+	
 		AVAudioPlayer* player;
+#else
+        
+        void* a, *b, *c; //dummy pointers to keep size consistent
+        
 #endif
 		
 	};

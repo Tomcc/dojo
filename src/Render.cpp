@@ -144,7 +144,9 @@ void Render::addRenderable( Renderable* s, int layerID )
 {				
 	//get the needed layer	
 	Layer* layer = getLayer( layerID );
-
+    
+#ifndef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
+    
 	//insert this object in the place where the distances from its neighbours are a minimum.	
 	uint bestIndex = 0;
 	uint bestDistanceSum = 0xffffffff;
@@ -166,6 +168,10 @@ void Render::addRenderable( Renderable* s, int layerID )
 	s->_notifyRenderInfo( this, layerID, bestIndex );
 		
 	layer->add( s, bestIndex );
+#else
+    //append at the end
+    layer->add( s );
+#endif
 }
 
 void Render::removeRenderable( Renderable* s )
