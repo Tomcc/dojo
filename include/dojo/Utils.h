@@ -43,7 +43,7 @@ namespace Dojo
 		static uint toInt( const String& str, uint startPos = 0 )
 		{
 			uint num = 0; 
-			char c;
+			unichar c;
 			for( uint i = startPos; i < str.size(); ++i )
 			{
 				c = (char)str[i];
@@ -114,7 +114,11 @@ namespace Dojo
 		
 		inline static int getTagIdx( const String& str )
 		{			
-			int tagIdx = (int)str.size()-1;
+            int tagIdx = getVersionIdx( str )-1; //get version idx
+            
+            if( tagIdx < 0 )
+                tagIdx = (int)str.size()-1;
+            
 			unichar c;
 			for( ; tagIdx >= 0; --tagIdx )
 			{
@@ -151,29 +155,31 @@ namespace Dojo
 		inline static int getTag( const String& str )
 		{
 			int tidx = getTagIdx( str );
+            int end = getVersionIdx( str );
 			
+            if( end == -1 )
+                end = str.size();
+            
 			if( tidx != -1 )
-				return toInt( str, tidx );
+				return toInt( str.substr( tidx+1, end - tidx - 1 ) );
 			else
 				return -1; //no tag
 		}
         				
         ///removes extra info appended to file name: "filename_3@2" -> "filename"
-		inline static String removeTags( String& str )
-		{
-			String res = str;
-			
+		inline static String removeTags( const String& str )
+		{            
 			int tidx = getTagIdx( str );
-			
-			if( tidx != -1 )
-				res.resize( tidx );  //tag found, remove
+            
+            //if a tag is found, just remove everything after
+            if( tidx != -1 )
+                return str.substr( 0, tidx );
             
             int vidx = getVersionIdx( str );
+            if( vidx != -1 ) //else remove just the version
+                return str.substr( 0, vidx );
             
-            if( vidx != -1 )
-                res.resize( vidx );
-			
-			return res;
+            return str;
 		}
 		
 		inline static bool areStringsNearInSequence( const String& first, const String& second )
