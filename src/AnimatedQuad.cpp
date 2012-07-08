@@ -15,7 +15,7 @@ Renderable( level, pos ),
 animation( NULL ),
 animationTime( 0 ),
 pixelScale( 1,1 ),
-autoAdvancement( true ),
+animationSpeedMultiplier( 1 ),
 pixelPerfect( pp )
 {
 	cullMode = CM_DISABLED;
@@ -57,8 +57,7 @@ void AnimatedQuad::onAction( float dt )
 {
 	Renderable::onAction( dt );
 		
-	if( autoAdvancement )
-		advanceAnim(dt);
+    advanceAnim(dt);
 }
 
 bool AnimatedQuad::prepare( const Vector& viewportPixelRatio )

@@ -182,15 +182,15 @@ namespace Dojo
 		inline void advanceAnim( float dt )		
 		{				
 			DEBUG_ASSERT( animation );
-			
+            		
 			//active animation?
-			if( animation->getTimePerFrame() > 0 )		
+			if( animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0 )		
 			{			
 				DEBUG_ASSERT( animation->frames ); 
 				DEBUG_ASSERT( animation->frames->getFrameNumber() );
 				
 				//update the renderState using the animation
-				animation->advance(dt);				
+				animation->advance( dt * animationSpeedMultiplier );				
 				
 				_setTexture( animation->getCurrentFrame() );
 			}
@@ -206,10 +206,12 @@ namespace Dojo
 			_setTexture( animation->getCurrentFrame() );
 		}
 		
-		inline void setAutoAdvancement( bool a )
-		{
-			autoAdvancement = a;
-		}
+        inline float setAnimationSpeedMultiplier( float m )
+        {
+            DEBUG_ASSERT( m >= 0 );
+            
+            animationSpeedMultiplier = m;
+        }
 		
 		virtual void onAction( float dt );
 		
@@ -219,8 +221,7 @@ namespace Dojo
 		
 	protected:
 		
-		bool autoAdvancement;
-		
+        float animationSpeedMultiplier;		
 		float animationTime;
 		
 		//animated quads are tied to a precise screen size
