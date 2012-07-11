@@ -48,11 +48,16 @@ namespace Dojo
             
         }
         
-        Vector( const glm::vec3& v ) : glm::vec3( v )
+        Vector( const glm::vec3 & v ) : glm::vec3( v.x, v.y, v.z )
         {
             
         }
-		
+
+		Vector( const Vector& v ) : glm::vec3( v.x, v.y, v.z )
+		{
+
+		}
+
 		/*inline const Vector& operator = ( const Vector& v )
 		{
 			x = v.x;
@@ -135,7 +140,7 @@ namespace Dojo
 		
 		inline const float normalize()
 		{
-			float l = length();
+			float l = (float)length();
 			float s = 1.f / l;
 			x *= s;
 			y *= s;

@@ -55,7 +55,7 @@ void LinuxPlatform::initialise()
 
 	glewInit();
 
-	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
+	render = new Render( width, height, 1, Orientation::DO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
 

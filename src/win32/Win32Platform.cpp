@@ -15,6 +15,7 @@
 #include <gl/wglext.h>
 
 #include <Poco/Path.h>
+#include <Poco/Timer.h>
 
 #include "Render.h"
 #include "Game.h"
@@ -241,7 +242,7 @@ void Win32Platform::initialise()
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
 		return;
 	
-	render = new Render( width, height, 1, Render::RO_LANDSCAPE_LEFT );
+	render = new Render( width, height, Orientation::DO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
 
@@ -313,6 +314,19 @@ void Win32Platform::present()
 	SwapBuffers( hdc );
 }
 
+///this function is called by Poco::Timer on the timer thread
+void Win32Platform::_invoke( Poco::Timer& timer )
+{
+	try 
+	{
+		frameStart.set(); //enable the main loop to run again
+	}
+	catch(...)
+	{
+
+	}
+}
+
 void Win32Platform::step( float dt )
 {
 	Timer timer;
@@ -353,8 +367,9 @@ void Win32Platform::loop( float frameTime )
 	frameTimer.reset();
 
 	//start timer thread
-	Poco::Timer frameCaller( 0, frameInterval * 1000.f );
-    frameCaller.start( *this ); 
+	Poco::Timer frameCaller( 0, (long)(frameInterval * 1000.f) );
+	Poco::TimerCallback< Win32Platform > callback( *this, &Win32Platform::_invoke );
+    frameCaller.start( callback );
 
 	Timer timer;
 	running = true;
@@ -379,13 +394,6 @@ void Win32Platform::loop( float frameTime )
 	}
 }
 
-
-///this function is called by Poco::Timer on the timer thread
-void invoke( void* platform )
-{
-    frameStart.set(); //enable the main loop to run again
-}
-
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 {
 	dragging = true;
@@ -400,13 +408,15 @@ bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 
 bool Win32Platform::mouseMoved( const MouseEvent& arg )
 {
-	cursorPos.x = (float)arg.state.X.abs;
-	cursorPos.y = (float)arg.state.Y.abs;
-	
 	if( arg.state.Z.rel == 0 ) //no scroll wheel
 	{
-		if( dragging )	input->_fireTouchMoveEvent( cursorPos );
-		else			input->_fireMouseMoveEvent( cursorPos );
+		cursorPos.x = (float)arg.state.X.abs;
+		cursorPos.y = (float)arg.state.Y.abs;
+
+		if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos );
+		else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
+
+		prevCursorPos = cursorPos;
 	}
 	else
 		input->_fireScrollWheelEvent( arg.state.Z.rel*0.05f );

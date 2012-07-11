@@ -4,11 +4,13 @@
 #include "dojo_config.h"
 
 #include <cmath>
-#include <assert.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <float.h>
+#include <cassert>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#include <cfloat>
+#include <climits>
+#include <cstdint>
 
 #include <map>
 #include <string>

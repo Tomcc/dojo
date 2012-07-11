@@ -11,48 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AnimatedQuad.cpp" />
-    <ClCompile Include="src\Color.cpp" />
-    <ClCompile Include="src\Email.cpp" />
-    <ClCompile Include="src\Font.cpp" />
-    <ClCompile Include="src\FrameSet.cpp" />
-    <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\GameState.cpp" />
-    <ClCompile Include="src\Light.cpp" />
-    <ClCompile Include="src\linux\LinuxPlatform.cpp" />
-    <ClCompile Include="src\Math.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Noise.cpp" />
-    <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\ParticlePool.cpp" />
-    <ClCompile Include="src\Platform.cpp" />
-    <ClCompile Include="src\Render.cpp" />
-    <ClCompile Include="src\Renderable.cpp" />
-    <ClCompile Include="src\RenderState.cpp" />
-    <ClCompile Include="src\ResourceGroup.cpp" />
-    <ClCompile Include="src\SoundBuffer.cpp" />
-    <ClCompile Include="src\SoundManager.cpp" />
-    <ClCompile Include="src\SoundSource.cpp" />
-    <ClCompile Include="src\Sprite.cpp" />
-    <ClCompile Include="src\String.cpp" />
-    <ClCompile Include="src\Table.cpp" />
-    <ClCompile Include="src\TextArea.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
-    <ClCompile Include="src\TouchSource.cpp" />
-    <ClCompile Include="src\Vector.cpp" />
-    <ClCompile Include="src\Viewport.cpp" />
-    <ClCompile Include="src\win32\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\win32\WGL_ARB_multisample.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\win32\Win32Platform.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\apple\ApplePlatform.h" />
     <ClInclude Include="include\dojo\apple\iOS\AppDelegate.h" />
@@ -111,6 +69,46 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AnimatedQuad.cpp" />
+    <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Email.cpp" />
+    <ClCompile Include="src\Font.cpp" />
+    <ClCompile Include="src\FrameSet.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\InputSystem.cpp" />
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Noise.cpp" />
+    <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\ParticlePool.cpp" />
+    <ClCompile Include="src\Platform.cpp" />
+    <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Renderable.cpp" />
+    <ClCompile Include="src\RenderState.cpp" />
+    <ClCompile Include="src\ResourceGroup.cpp" />
+    <ClCompile Include="src\SoundBuffer.cpp" />
+    <ClCompile Include="src\SoundManager.cpp" />
+    <ClCompile Include="src\SoundSource.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\String.cpp" />
+    <ClCompile Include="src\Table.cpp" />
+    <ClCompile Include="src\TextArea.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\TouchArea.cpp" />
+    <ClCompile Include="src\Vector.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
+    <ClCompile Include="src\win32\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\win32\WGL_ARB_multisample.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\win32\Win32Platform.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>Dojo</ProjectName>

@@ -10,6 +10,7 @@
 #include <Poco/Thread.h>
 #include <Poco/Mutex.h>
 #include <Poco/Semaphore.h>
+#include <Poco/Timer.h>
 #include <OIS/OIS.h>
 #include <queue>
 
@@ -77,6 +78,9 @@ namespace Dojo
 			}
 		}
 
+		///invoke function called by the frame timer
+		void _invoke( Poco::Timer& timer );
+
 	protected:
 
 		HINSTANCE hInstance;    // window app instance
@@ -96,7 +100,7 @@ namespace Dojo
 		OIS::Mouse* mouse;
 		OIS::Keyboard* keys;
 
-		Vector cursorPos;
+		Vector cursorPos, prevCursorPos;
 
 		bool dragging;
 

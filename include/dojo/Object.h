@@ -108,6 +108,8 @@ namespace Dojo {
 		inline Vector getWorldDirection()
 		{
 			DEBUG_TODO;
+
+			return Vector::ZERO;
 		}
 						
 		inline bool isActive()				{	return active;	}
