@@ -53,7 +53,7 @@ namespace Dojo
 			animations.add( a );		
 			
 			//if no current animation, set this as default
-			if( animations.size() == 1 )
+			if( mAnimationIdx == -1 )
 				setAnimation( 0 );
 			
 			return animations.size()-1;

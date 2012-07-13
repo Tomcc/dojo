@@ -76,7 +76,9 @@ namespace Dojo
 				DEBUG_ASSERT( frames );
 				DEBUG_ASSERT( frames->getFrameNumber() > i );
 				
-				currentFrame = frames->getFrame( i );	
+				currentFrame = frames->getFrame( i );
+                
+                animationTime = i * timePerFrame;
 			}
 			
 			inline void setAnimationTime( float t )
@@ -206,7 +208,7 @@ namespace Dojo
 			_setTexture( animation->getCurrentFrame() );
 		}
 		
-        inline float setAnimationSpeedMultiplier( float m )
+        inline void setAnimationSpeedMultiplier( float m )
         {
             DEBUG_ASSERT( m >= 0 );
             

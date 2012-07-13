@@ -10,7 +10,7 @@
 #include <cstring>
 #include <cfloat>
 #include <climits>
-#include <cstdint>
+#include <stdint.h>
 
 #include <map>
 #include <string>
