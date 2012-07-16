@@ -104,13 +104,20 @@ namespace Dojo {
 
 			return worldPos;
 		}
-
-		inline Vector getWorldDirection()
-		{
-			DEBUG_TODO;
-
-			return Vector::ZERO;
-		}
+        
+        ///returns a local direction in world space
+        inline Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
+        {
+            glm::vec4 dir( dir3, 0 );
+            dir = getWorldTransform() * dir;
+            
+			return Vector( dir.x, dir.y, dir.z );
+        }
+        
+        inline const Quaternion getRotation()
+        {
+            return rotation;
+        }
 						
 		inline bool isActive()				{	return active;	}
 		
@@ -158,7 +165,6 @@ namespace Dojo {
 		
 		void addChild( Object* o );
 		void addChild( Renderable* o, int layer );
-
 		void removeChild( int idx );
 		void removeChild( Object* o );
 		

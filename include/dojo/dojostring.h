@@ -164,7 +164,7 @@ namespace Dojo
 		
 		inline void appendFloat( float f )
 		{
-			//HACK this is really slow
+			//TODO this is really slow
 			std::stringstream str;
 			str << f;
 			

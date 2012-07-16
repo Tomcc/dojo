@@ -63,8 +63,8 @@ backLayer( NULL )
 	//glColorMaterial( GL_FRONT, GL_DIFFUSE );
 #endif
 	
-	float white[] = {1,1,1,1};
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );
+	/*float white[] = {1,1,1,1};
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );*/
 	
 	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
@@ -166,12 +166,16 @@ void Render::addRenderable( Renderable* s, int layerID )
 	}
 		
 	s->_notifyRenderInfo( this, layerID, bestIndex );
-		
+
 	layer->add( s, bestIndex );
 #else
+    
+    s->_notifyRenderInfo( this, layerID, layer->size() );
+    
     //append at the end
-    layer->add( s );
-#endif
+    layer->add( s );    
+    
+#endif 
 }
 
 void Render::removeRenderable( Renderable* s )
@@ -390,7 +394,7 @@ void Render::renderLayer( Layer* list )
 		int i = 0;
 		for( ; i < lights.size(); ++i )
 		{
-			lights[i]->bind( i );
+			lights[i]->bind( i, mCurrentViewProj );
 			
 			if( !lights[i]->hasAmbient() )
 				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );

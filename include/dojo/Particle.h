@@ -25,7 +25,6 @@ namespace Dojo
 	{
 	public:	
 
-		//HACK
 		friend class ParticlePool;
 
 		class EventListener
@@ -94,7 +93,6 @@ namespace Dojo
 			speed.x += acceleration.x * dt;
 			speed.y += acceleration.y * dt; 
 
-            //HACK
 			//worldRotation += rotationSpeed * dt;
 
 			pixelScale.x += spriteSizeScaleSpeed * dt;

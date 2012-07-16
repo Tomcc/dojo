@@ -259,7 +259,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 		}
 		else if( rep->character == '\t' )
 		{
-			cursorPosition.x += spaceWidth*4;
+			cursorPosition.x += spaceWidth*4; //TODO align to nearest tab
 			lastRep = NULL;
 		}
 		else if( rep->character == ' ' )

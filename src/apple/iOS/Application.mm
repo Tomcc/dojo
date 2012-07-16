@@ -139,10 +139,6 @@ using namespace Dojo;
 
 Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 {
-	//HACK
-	/*x *= r->getContentScale();
-	y *= r->getContentScale();*/
-    
     int scale = [v contentScaleFactor];
     int x = pos.x * scale;
     int y = pos.y * scale;	

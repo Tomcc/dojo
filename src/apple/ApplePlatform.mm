@@ -36,7 +36,6 @@ using namespace std;
 ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
-	//HACK
     pool = [[NSAutoreleasePool alloc] init];
 
 	if( [[NSLocale preferredLanguages] count ] )
@@ -47,7 +46,6 @@ Platform( config )
 
 ApplePlatform::~ApplePlatform()
 {
-	//HACK
 	[pool release];
 }
 

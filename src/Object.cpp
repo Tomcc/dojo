@@ -19,7 +19,7 @@ scale( 1,1,1 ),
 childs( NULL ),
 parent( NULL ),
 dispose( false ),
-mNeedsAABB( false )
+mNeedsAABB( true )
 {
 	DEBUG_ASSERT( parentLevel );
 	
@@ -180,9 +180,6 @@ void Object::updateChilds( float dt )
 void Object::onAction( float dt )
 {	
 	position += speed * dt;	
-	
-    //HACK
-    //angle += rotationSpeed * dt;
 
 	updateWorldTransform();
 	

@@ -138,13 +138,17 @@ void Viewport::_updateTransforms()
                                  zNear,
                                  zFar ) * mViewTransform;
        
-    //compute frustum projection
+    //compute frustum projection - HACK could be faster reusing mViewTransform?    
+    mFrustumTransform = glm::perspective( 
+                                         VFOV, targetSize.x / targetSize.y, 
+                                         zNear, 
+                                         zFar ) * mViewTransform;
 }
 
 bool Viewport::isContainedInFrustum( Renderable* r )
 {
 	DEBUG_ASSERT( r );
-
+    
 	//for each plane, check where the AABB is placed
 	for( uint i = 0; i < 5; ++i )
 	{

@@ -18,7 +18,7 @@ game( parentGame ),
 timeElapsed(0),
 camera(NULL)
 {
-	
+	mNeedsAABB = true;
 }
 
 GameState::~GameState()

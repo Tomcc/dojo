@@ -61,7 +61,7 @@ inline void toFV( float* fv, const Vector& v, float w )
 	fv[3] = w;
 }
 
-void Light::bind( uint i )
+void Light::bind( uint i, const Matrix& viewProj )
 {
 	GLenum light = GL_LIGHT0 + i;
 	
@@ -90,29 +90,33 @@ void Light::bind( uint i )
 		
 		if( type == LT_DIRECTIONAL )
 		{
+            DEBUG_TODO;
+            /*
 			Vector worldDirection = getWorldDirection();			
 			toFV( fv, worldDirection, 1 );
 			
-			glLightfv( light, GL_POSITION, fv );
+			glLightfv( light, GL_POSITION, fv );*/
 		}
 		else
-		{	
-            DEBUG_TODO; //lights need to use the matrix too
-			//toFV( fv, worldPosition, 0 );
-			
-			glLightfv( light, GL_POSITION, fv );
+		{            
+            Matrix m = viewProj * getWorldTransform();			
+            glm::vec4 v = m * glm::vec4(0,0,0,1);
+                       
+			glLightfv( light, GL_POSITION, glm::value_ptr( v ) );
 			
 			glLightf( light, GL_LINEAR_ATTENUATION, attenuation );
 			
 			if( type == LT_SPOT )
 			{
+                DEBUG_TODO;
+                /*
 				glLightf( light, GL_SPOT_CUTOFF, spotFOV );
 				glLightf( light, GL_SPOT_EXPONENT, spotExponent );
 								
 				Vector worldDirection = getWorldDirection();			
 				toFV( fv, worldDirection, 1 );
 				
-				glLightfv( light, GL_SPOT_DIRECTION, fv );
+				glLightfv( light, GL_SPOT_DIRECTION, fv );*/
 			}
 		}		
 	}	
