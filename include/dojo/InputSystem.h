@@ -343,6 +343,9 @@ namespace Dojo
         inline Touch* _popExistingTouch( const Vector& point )
         {
             int idx = _getExistingTouchID( point );
+
+			DEBUG_ASSERT( idx >= 0 );
+
             Touch* t = mTouchList[idx];
             
             mTouchList.remove( idx );

@@ -84,6 +84,9 @@ frameInterval(0)
 #endif
 	*/
 
+	screenWidth = GetSystemMetrics( SM_CXSCREEN );
+	screenHeight = GetSystemMetrics( SM_CYSCREEN );
+
 	frameStart.wait();
 }
 
@@ -369,7 +372,7 @@ void Win32Platform::loop( float frameTime )
 	//start timer thread
 	Poco::Timer frameCaller( 0, (long)(frameInterval * 1000.f) );
 	Poco::TimerCallback< Win32Platform > callback( *this, &Win32Platform::_invoke );
-    frameCaller.start( callback );
+	frameCaller.start( callback );
 
 	Timer timer;
 	running = true;

@@ -63,8 +63,8 @@ backLayer( NULL )
 	//glColorMaterial( GL_FRONT, GL_DIFFUSE );
 #endif
 	
-	/*float white[] = {1,1,1,1};
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );*/
+	float white[] = {1,1,1,1};
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );
 	
 	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
