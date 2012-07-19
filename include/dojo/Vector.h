@@ -15,10 +15,10 @@ using namespace std;
 
 namespace Dojo	
 {
-    typedef glm::mat4x4 Matrix;
-    typedef glm::quat Quaternion;
-    
-    ///attempt to some backwards compatibility and general interface decency for Vector
+	typedef glm::mat4x4 Matrix;
+	typedef glm::quat Quaternion;
+	
+	///attempt to some backwards compatibility and general interface decency for Vector
 	class Vector : public glm::vec3
 	{
 	public:
@@ -35,23 +35,23 @@ namespace Dojo
 		
 		Vector( float f = 0 ) : glm::vec3(f)
 		{
-            
+			
 		}
-        		
+				
 		Vector( float X, float Y ) : glm::vec3( X, Y, 0 )
 		{
-            
+			
 		}
-        
-        Vector( float x, float y, float z ) : glm::vec3( x,y,z )
-        {
-            
-        }
-        
-        Vector( const glm::vec3 & v ) : glm::vec3( v.x, v.y, v.z )
-        {
-            
-        }
+		
+		Vector( float x, float y, float z ) : glm::vec3( x,y,z )
+		{
+			
+		}
+		
+		Vector( const glm::vec3 & v ) : glm::vec3( v.x, v.y, v.z )
+		{
+			
+		}
 
 		Vector( const Vector& v ) : glm::vec3( v.x, v.y, v.z )
 		{
@@ -181,18 +181,18 @@ namespace Dojo
 
 			return *this;
 		}
-        
-        ///returns a vector with abs componenents
-        inline Vector absComponents()
-        {
-            return Vector( abs(x), abs(y), abs(z) );
-        }
-        
-        ///multiplies component by component
-        inline Vector mulComponents( const Vector& v )
-        {
-            return Vector( x*v.x, y*v.y, z*v.z );
-        }
+		
+		///returns a vector with abs componenents
+		inline Vector absComponents()
+		{
+			return Vector( abs(x), abs(y), abs(z) );
+		}
+		
+		///multiplies component by component
+		inline Vector mulComponents( const Vector& v )
+		{
+			return Vector( x*v.x, y*v.y, z*v.z );
+		}
 
 		inline float distance( const Vector& v ) const 
 		{
@@ -228,11 +228,11 @@ namespace Dojo
 
 			return a + b + c;
 		}
-        
-        inline String toString() const
-        {
-            return "(" + String( x ) + "," + String( y ) + "," + String( z ) + ")";
-        }
+		
+		inline String toString() const
+		{
+			return "(" + String( x ) + "," + String( y ) + "," + String( z ) + ")";
+		}
 				
 	protected:
 	};

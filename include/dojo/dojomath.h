@@ -71,16 +71,16 @@ namespace Dojo
 		{
 			return (a > b) ? a : b;
 		}
-        
-        static inline Vector max( const Vector& a, const Vector& b ) 
-        {
-            return Vector( max( a.x,b.x ), max( a.y,b.y ), max( a.z, b.z ) );
-        }
-        
-        static inline Vector min( const Vector& a, const Vector& b )
-        {
-            return Vector( min( a.x,b.x ), min( a.y,b.y ), min( a.z, b.z ) );
-        }
+		
+		static inline Vector max( const Vector& a, const Vector& b ) 
+		{
+			return Vector( max( a.x,b.x ), max( a.y,b.y ), max( a.z, b.z ) );
+		}
+		
+		static inline Vector min( const Vector& a, const Vector& b )
+		{
+			return Vector( min( a.x,b.x ), min( a.y,b.y ), min( a.z, b.z ) );
+		}
 
 		static inline float clamp( float n, float max, float min )
 		{
@@ -90,14 +90,14 @@ namespace Dojo
 			if( n < min )	return min;
 			return n;
 		}
-        
-        ///gets the nth bit
-        static inline bool getBit( int i, byte n )
-        {
-            DEBUG_ASSERT( n < 32 );
-            
-            return (i >> n) & 0x1;
-        }
+		
+		///gets the nth bit
+		static inline bool getBit( int i, byte n )
+		{
+			DEBUG_ASSERT( n < 32 );
+			
+			return (i >> n) & 0x1;
+		}
 		
 		static inline float saturate( float n )
 		{

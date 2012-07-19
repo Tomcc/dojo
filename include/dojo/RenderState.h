@@ -211,8 +211,8 @@ namespace Dojo
 			
 			return dist;
 		}
-        
-        void applyState();
+		
+		void applyState();
 		
 		void commitChanges( RenderState* nextState );
 				

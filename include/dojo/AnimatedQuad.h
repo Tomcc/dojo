@@ -77,8 +77,8 @@ namespace Dojo
 				DEBUG_ASSERT( frames->getFrameNumber() > i );
 				
 				currentFrame = frames->getFrame( i );
-                
-                animationTime = i * timePerFrame;
+				
+				animationTime = i * timePerFrame;
 			}
 			
 			inline void setAnimationTime( float t )
@@ -184,7 +184,7 @@ namespace Dojo
 		inline void advanceAnim( float dt )		
 		{				
 			DEBUG_ASSERT( animation );
-            		
+					
 			//active animation?
 			if( animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0 )		
 			{			
@@ -208,12 +208,12 @@ namespace Dojo
 			_setTexture( animation->getCurrentFrame() );
 		}
 		
-        inline void setAnimationSpeedMultiplier( float m )
-        {
-            DEBUG_ASSERT( m >= 0 );
-            
-            animationSpeedMultiplier = m;
-        }
+		inline void setAnimationSpeedMultiplier( float m )
+		{
+			DEBUG_ASSERT( m >= 0 );
+			
+			animationSpeedMultiplier = m;
+		}
 		
 		virtual void onAction( float dt );
 		
@@ -223,7 +223,7 @@ namespace Dojo
 		
 	protected:
 		
-        float animationSpeedMultiplier;		
+		float animationSpeedMultiplier;		
 		float animationTime;
 		
 		//animated quads are tied to a precise screen size

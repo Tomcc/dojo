@@ -34,31 +34,31 @@
 
 #if defined(PLATFORM_WIN32)
 
-    #include <al.h>
-    #include <alc.h>
+	#include <al.h>
+	#include <alc.h>
 
-    #include <GL/glew.h>
-    #include <GL/glext.h>
-    #include <GL/gl.h>
+	#include <GL/glew.h>
+	#include <GL/glext.h>
+	#include <GL/gl.h>
 
-    //this cant be in config.h as it breaks successive system includes
-    #ifdef _DEBUG
+	//this cant be in config.h as it breaks successive system includes
+	#ifdef _DEBUG
 
 		#define _CRTDBG_MAP_ALLOC
 		#include <crtdbg.h>
 
-    #endif
+	#endif
 	
 	#define NOMINMAX
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 
 #elif defined( PLATFORM_OSX )
-    #include <OpenAL/al.h>
-    #include <OpenAL/alc.h>
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
 
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glext.h>
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glext.h>
 
 #elif defined( PLATFORM_LINUX )
 	#include <AL/al.h>
@@ -69,14 +69,14 @@
 	#include <GL/gl.h>
 
 #elif defined( PLATFORM_IOS )
-    #include <OpenGLES/ES1/gl.h>
-    #include <OpenGLES/ES1/glext.h>
+	#include <OpenGLES/ES1/gl.h>
+	#include <OpenGLES/ES1/glext.h>
 
-    #include <OpenAL/al.h>
-    #include <OpenAL/alc.h>
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
 
 #else
-    #error "No Platform defined!"
+	#error "No Platform defined!"
 
 #endif
 
