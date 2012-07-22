@@ -37,3 +37,14 @@ Vector Math::randomVector( const Vector& min, const Vector& max )
 		rangeRandom( min.y,max.y ), 
 		rangeRandom( min.z,max.z ) );
 }
+
+Vector Math::randomVector2D( const Vector& min, const Vector& max, float z )
+{
+	DEBUG_ASSERT( min.x < max.x );
+	DEBUG_ASSERT( min.y < max.y );
+
+	return Vector(
+		rangeRandom( min.x,max.x ), 
+		rangeRandom( min.y,max.y ), 
+		z );
+}

@@ -137,6 +137,11 @@ namespace Dojo
 		{
 			return glm::cross( *this, v );
 		}
+
+		inline const float length()
+		{
+			return sqrtf( x*x + y*y + z*z );
+		}
 		
 		inline const float normalize()
 		{

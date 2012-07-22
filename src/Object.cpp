@@ -30,7 +30,7 @@ void Object::addChild( Object* o )
 {    
 	DEBUG_ASSERT( o );
 	
-    if( !childs )
+	if( !childs )
 		childs = new ChildList(10,10);
 
 	childs->add( o );
@@ -47,10 +47,10 @@ void Object::addChild( Renderable* o, int layer )
 
 void Object::_unregisterChild( Object* child )
 {
-    DEBUG_ASSERT( child );
-    
-    child->_notifyParent( NULL );
-    
+	DEBUG_ASSERT( child );
+	
+	child->_notifyParent( NULL );
+	
 	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
 }
 
@@ -62,7 +62,7 @@ void Object::removeChild( int i )
 	Object* child = childs->at( i );
 	
 	_unregisterChild( child );
-    
+	
 	childs->remove( i );
 }
 
@@ -119,11 +119,11 @@ void Object::destroyAllChilds()
 	if( childs )
 	{	
 		for( int i = 0; i < childs->size(); ++i )
-        {
-            //_unregisterChild( childs->at(i) );
-            DEBUG_ASSERT( childs->at(i) );
+		{
+			//_unregisterChild( childs->at(i) );
+			DEBUG_ASSERT( childs->at(i) );
 			SAFE_DELETE( childs->at(i) );
-        }
+		}
 		
 		SAFE_DELETE( childs );
 	}
@@ -131,36 +131,36 @@ void Object::destroyAllChilds()
 
 void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 {
-    //get the eight world-position corners and transform them
-    worldUpperBound = Vector::MIN;
-    worldLowerBound = Vector::MAX;
-    
-    Vector vertex;    
-    
-    for( int i = 0; i < 8; ++i )
-    {
-        for( int j = 0; j < 3; ++j )
-            vertex[j] = Math::getBit( i, j ) ? localMax[j] : localMin[j];
-        
-        vertex = getWorldPosition( vertex );
-        
-        worldUpperBound = Math::max( worldUpperBound, vertex );
-        worldLowerBound = Math::min( worldLowerBound, vertex );
-    }
+	//get the eight world-position corners and transform them
+	worldUpperBound = Vector::MIN;
+	worldLowerBound = Vector::MAX;
+	
+	Vector vertex;    
+	
+	for( int i = 0; i < 8; ++i )
+	{
+		for( int j = 0; j < 3; ++j )
+			vertex[j] = Math::getBit( i, j ) ? localMax[j] : localMin[j];
+		
+		vertex = getWorldPosition( vertex );
+		
+		worldUpperBound = Math::max( worldUpperBound, vertex );
+		worldLowerBound = Math::min( worldLowerBound, vertex );
+	}
 }
 
 void Object::updateWorldTransform()
 {	
-    //compute local matrix from position and orientation
-    mWorldTransform = parent ? parent->getWorldTransform() : Matrix( 1 );
-    
-    mWorldTransform = glm::translate( mWorldTransform, position );
-    mWorldTransform *= mat4_cast( rotation );
-    mWorldTransform = glm::scale( mWorldTransform, scale );
-    
-    //update AABB if needed
-    if( mNeedsAABB )
-        _updateWorldAABB( -halfSize, halfSize );    
+	//compute local matrix from position and orientation
+	mWorldTransform = parent ? parent->getWorldTransform() : Matrix( 1 );
+	
+	mWorldTransform = glm::translate( mWorldTransform, position );
+	mWorldTransform *= mat4_cast( rotation );
+	mWorldTransform = glm::scale( mWorldTransform, scale );
+	
+	//update AABB if needed
+	if( mNeedsAABB )
+		_updateWorldAABB( -halfSize, halfSize );    
 }
 
 void Object::updateChilds( float dt )

@@ -42,6 +42,8 @@ namespace Dojo
 			return randomVector( Vector(min,min,min), Vector(max,max,max) );
 		}
 		
+		static Vector randomVector2D( const Vector& min, const Vector& max, float z = 0 );
+
 		static inline float toRadian( float euler )
 		{
 			return euler * EULER_TO_RADIANS;

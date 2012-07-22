@@ -86,7 +86,7 @@ namespace Dojo
 		///tells if the object is either visible or has a mesh
 		inline bool isVisible()				{	return visible && mesh;	}
 		inline bool isFading()				{	return fading;			}
-                    
+					
 		inline bool isInView()
 		{
 			return !mCulled;
@@ -134,8 +134,8 @@ namespace Dojo
 		{
 			mCulled = culled;
 		}
-        
-        
+		
+		
 		
 	protected:
 		

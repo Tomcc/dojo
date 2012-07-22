@@ -39,7 +39,7 @@ backLayer( NULL )
 	
 	//clean errors
 	DEBUG_ASSERT( glGetError() == 0 );
-    glGetError();
+	glGetError();
 	
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
@@ -144,9 +144,9 @@ void Render::addRenderable( Renderable* s, int layerID )
 {				
 	//get the needed layer	
 	Layer* layer = getLayer( layerID );
-    
+	
 #ifndef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
-    
+	
 	//insert this object in the place where the distances from its neighbours are a minimum.	
 	uint bestIndex = 0;
 	uint bestDistanceSum = 0xffffffff;
@@ -169,12 +169,12 @@ void Render::addRenderable( Renderable* s, int layerID )
 
 	layer->add( s, bestIndex );
 #else
-    
-    s->_notifyRenderInfo( this, layerID, layer->size() );
-    
-    //append at the end
-    layer->add( s );    
-    
+	
+	s->_notifyRenderInfo( this, layerID, layer->size() );
+	
+	//append at the end
+	layer->add( s );    
+	
 #endif 
 }
 
@@ -218,9 +218,9 @@ void Render::setInterfaceOrientation( Orientation o )
 		viewportWidth = height;
 		viewportHeight = width;
 	}
-    
-    //compute matrix
-    mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
+	
+	//compute matrix
+	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
 void Render::startFrame()
@@ -290,7 +290,7 @@ void Render::renderElement( Renderable* s )
 	
 	//clone the view matrix on the top of the stack		
 	glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
+	glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
 		
 	//HACK
 #ifndef PLATFORM_IOS
@@ -302,13 +302,13 @@ void Render::renderElement( Renderable* s )
 		
 	Mesh* m = currentRenderState->getMesh();
 
-    GLenum mode;
+	GLenum mode;
 	switch( m->getTriangleMode() )
-    {
-        case Mesh::TM_LIST:         mode = GL_TRIANGLES;        break;
-        case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
-        case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
-    }
+	{
+		case Mesh::TM_LIST:         mode = GL_TRIANGLES;        break;
+		case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
+		case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
+	}
 
 	if( !m->isIndexed() )
 		glDrawArrays( mode, 0, m->getVertexCount() );
@@ -371,9 +371,9 @@ void Render::renderLayer( Layer* list )
 {
 	if( !list->size() || !list->visible )
 		return;
-    
+	
 #ifdef DOJO_WIREFRAME_AVAILABLE
-    setWireframe( list->wireframe );
+	setWireframe( list->wireframe );
 #endif
 
 	//make state changes
@@ -381,7 +381,7 @@ void Render::renderLayer( Layer* list )
 	else					glDisable( GL_DEPTH_TEST );
 
 	mCurrentViewProj =  mRenderRotation * (list->projectionOff ? viewport->getViewProjOrtho() : viewport->getViewProjFrustum());
-    
+	
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )
 		glClear( GL_DEPTH_BUFFER_BIT );
