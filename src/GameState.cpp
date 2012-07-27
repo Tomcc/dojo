@@ -47,37 +47,43 @@ void GameState::setViewport( Viewport* v )
 void GameState::touchAreaAtPoint( const Vector& point )
 {
 	Vector pointer = getViewport()->makeWorldCoordinates( point );
-		
-    TouchArea* topMost = NULL;
-    int topMostLayer = INT32_MIN;
-    
+
+	Dojo::Array< TouchArea* > layer;
+	int topMostLayer = INT32_MIN;
+	
 	for( int i = 0; i < mTouchAreas.size(); ++i )
 	{
-        TouchArea* t = mTouchAreas[i];
-        
-        if( t->isActive() && t->getLayer() > topMostLayer && t->contains( pointer ) )
-        {
-            topMost = t;
-            topMostLayer = t->getLayer();
-        }
+		TouchArea* t = mTouchAreas[i];
+		
+		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains( pointer ) )
+		{
+			//new highest layer - discard lowest layers found
+			if( t->getLayer() > topMostLayer )
+				layer.clear();
+
+			layer.add( t );
+
+			topMostLayer = t->getLayer();
+		}
 	}
-    
-    if( topMost )
-        topMost->_incrementTouches();
+	
+	//trigger all the areas overlapping in the topmost layer 
+	for( int i = 0; i < layer.size(); ++i )
+		layer[i]->_incrementTouches();	
 }
 
 void GameState::updateClickableState()
 {
-    if( !childs )
-        return;
-    
-    const InputSystem::TouchList& touches = Platform::getSingleton()->getInput()->getTouchList();
-        
-    //"touch" all the touchareas active in this frame
-    for( int i = 0; i < touches.size(); ++i )
-        touchAreaAtPoint( touches[i]->point );
-    
-    ///launch events
-    for( int i = 0; i < mTouchAreas.size(); ++i )
-        mTouchAreas[i]->_fireOnTouchUsingCurrentTouches();
+	if( !childs )
+		return;
+	
+	const InputSystem::TouchList& touches = Platform::getSingleton()->getInput()->getTouchList();
+		
+	//"touch" all the touchareas active in this frame
+	for( int i = 0; i < touches.size(); ++i )
+		touchAreaAtPoint( touches[i]->point );
+	
+	///launch events
+	for( int i = 0; i < mTouchAreas.size(); ++i )
+		mTouchAreas[i]->_fireOnTouchUsingCurrentTouches();
 }

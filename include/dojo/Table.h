@@ -304,38 +304,41 @@ namespace Dojo
 			return map.find( key )->second;
 		}
 		
-		inline float getNumber( const String& key ) const
+		inline float getNumber( const String& key, float default = 0 ) const
 		{			
 			if( existsAs( key, FT_NUMBER ) )
 				return *( (float*)get(key)->getValue() );
 			else
-				return 0;
+				return default;
 		}
 		
-		inline int getInt( const String& key ) const
+		inline int getInt( const String& key, int default = 0 ) const
 		{
-			return (int)getNumber(key);
+			return (int)getNumber(key , default);
 		}
 		
-		inline bool getBool( const String& key ) const
+		inline bool getBool( const String& key, bool default = false ) const
 		{
-			return getNumber(key) > 0.f;
+			if( existsAs( key, FT_NUMBER ) )
+				return (bool)(*( (float*)get(key)->getValue() ));
+			else
+				return default;
 		}
 		
-		inline const String& getString( const String& key ) const
+		inline const String& getString( const String& key, const String& default = String::EMPTY ) const
 		{
 			if( existsAs(key, FT_STRING ) )
 				return *( (String*)get(key)->getValue() );
 			else
-				return String::EMPTY;
+				return default;
 		}
 		
-		inline const Dojo::Vector& getVector( const String& key ) const
+		inline const Dojo::Vector& getVector( const String& key, const Dojo::Vector& default = Vector::ZERO ) const
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
 				return *( (Vector*)get(key)->getValue() );
 			else
-				return Vector::ZERO;
+				return default;
 		}
 		
 		inline const Dojo::Color getColor( const String& key, float alpha = 1.f ) const

@@ -171,27 +171,27 @@ namespace Dojo
 			KC_MYCOMPUTER  = 0xEB,    // My Computer
 			KC_MAIL        = 0xEC,    // Mail
 			KC_MEDIASELECT = 0xED,     // Media Select
-            
-            KC_KEY_COUNT               //not a real key, tells the number of existing keys
+			
+			KC_KEY_COUNT               //not a real key, tells the number of existing keys
 		};
-        
-        class Touch
-        {
-        public:
-            
-            int ID;
-            Vector point, speed;
-            
-            Touch( int _ID, const Vector& _point ) :
-            ID( _ID ),
-            point( _point ),
-            speed( Vector::ZERO )
-            {
-                
-            }
-        };
-        
-        typedef Array< Touch* > TouchList;
+		
+		class Touch
+		{
+		public:
+			
+			int ID;
+			Vector point, speed;
+			
+			Touch( int _ID, const Vector& _point ) :
+			ID( _ID ),
+			point( _point ),
+			speed( Vector::ZERO )
+			{
+				
+			}
+		};
+		
+		typedef Array< Touch* > TouchList;
 			
 		class Listener
 		{
@@ -238,7 +238,7 @@ namespace Dojo
 		enabled(enable)
 		{
 			//init keycodes to false
-            memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
+			memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
 		}
 		
 		virtual ~InputSystem()
@@ -272,27 +272,27 @@ namespace Dojo
 		{
 			enabled = e;
 		}
-        
-        inline const TouchList& getTouchList()
-        {
-            return mTouchList;
-        }
-        
-        inline bool isKeyPressed( KeyCode key )
-        {
-            return mKeyPressedMap[ key ];
-        }
+		
+		inline const TouchList& getTouchList()
+		{
+			return mTouchList;
+		}
+		
+		inline bool isKeyPressed( KeyCode key )
+		{
+			return mKeyPressedMap[ key ];
+		}
 				
-        void _fireTouchBeginEvent( const Vector& point );		
+		void _fireTouchBeginEvent( const Vector& point );		
 		void _fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos );		
 		void _fireTouchEndEvent( const Vector& point );		
-        
+		
 		void _fireMouseMoveEvent( const Vector& currentPos, const Vector& prevPos );		
 		void _fireScrollWheelEvent( float scroll );		
-        
+		
 		void _fireShakeEvent();		
 		void _fireAccelerationEvent( const Dojo::Vector& accel, float roll );
-        
+		
 		void _fireKeyPressedEvent( unichar character, KeyCode keyID );
 		void _fireKeyReleasedEvent( unichar character, KeyCode keyID );	
 	protected:
@@ -300,58 +300,58 @@ namespace Dojo
 		bool enabled;
 		
 		ListenerList listeners;
-        
-        bool mKeyPressedMap[ KC_KEY_COUNT ];
 		
-        TouchList mTouchList;        
-        int mAssignedTouches;
-                
-        inline Touch* _registertouch( const Vector& point )
-        {
-            Touch* t = new Touch( mAssignedTouches++, point );
-            
-            mTouchList.add( t );
-            
-            return t;
-        }
-        
-        inline int _getExistingTouchID( const Vector& point )
-        {
-            //find the nearest touch to this position
-            float minDist = FLT_MAX;
-            int nearest = -1;
-            
-            for( int i = 0; i < mTouchList.size(); ++i )
-            {
-                float d = mTouchList[i]->point.distance( point );
-                
-                if( d < minDist )
-                {
-                    nearest = i;
-                    minDist = d;
-                }
-            }
-            
-            return nearest;
-        }
-        
-        inline Touch* _getExistingTouch( const Vector& point )
-        {
-            return mTouchList[ _getExistingTouchID( point ) ];
-        }
-        
-        inline Touch* _popExistingTouch( const Vector& point )
-        {
-            int idx = _getExistingTouchID( point );
+		bool mKeyPressedMap[ KC_KEY_COUNT ];
+		
+		TouchList mTouchList;        
+		int mAssignedTouches;
+				
+		inline Touch* _registertouch( const Vector& point )
+		{
+			Touch* t = new Touch( mAssignedTouches++, point );
+			
+			mTouchList.add( t );
+			
+			return t;
+		}
+		
+		inline int _getExistingTouchID( const Vector& point )
+		{
+			//find the nearest touch to this position
+			float minDist = FLT_MAX;
+			int nearest = -1;
+			
+			for( int i = 0; i < mTouchList.size(); ++i )
+			{
+				float d = mTouchList[i]->point.distance( point );
+				
+				if( d < minDist )
+				{
+					nearest = i;
+					minDist = d;
+				}
+			}
+			
+			return nearest;
+		}
+		
+		inline Touch* _getExistingTouch( const Vector& point )
+		{
+			return mTouchList[ _getExistingTouchID( point ) ];
+		}
+		
+		inline Touch* _popExistingTouch( const Vector& point )
+		{
+			int idx = _getExistingTouchID( point );
 
 			DEBUG_ASSERT( idx >= 0 );
 
-            Touch* t = mTouchList[idx];
-            
-            mTouchList.remove( idx );
-            
-            return t;
-        }
+			Touch* t = mTouchList[idx];
+			
+			mTouchList.remove( idx );
+			
+			return t;
+		}
 
 	};
 }

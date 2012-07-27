@@ -221,8 +221,10 @@ font( f )
 	
 	//drop the buffer in the texture
 	texture = new Texture( NULL, String::EMPTY );
-	texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
+	texture->disableBilinearFiltering();
+	texture->disableMipmaps();
 	texture->disableTiling();
+	texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
 
 	free( buf );
 }

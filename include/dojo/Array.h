@@ -252,6 +252,7 @@ namespace Dojo
 		{
 			//find the element index
 			for(int i = 0; i < size(); ++i)
+
 			{
 				if(vectorArray[i] == element)
 					return i;
