@@ -5,20 +5,26 @@
 
 using namespace Dojo;
 
-bool SoundSet::load()
+bool SoundSet::onLoad()
 {
 	for( int i = 0; i < buffers.size(); ++i )
-		buffers[i]->load();
+	{
+		if( !buffers[i]->isLoaded() )
+			buffers[i]->onLoad();
+	}
 
 	loaded = true;
 
 	return true;
 }
 
-void SoundSet::unload()
+void SoundSet::onUnload( bool soft )
 {
 	for( int i = 0; i < buffers.size(); ++i )
-		buffers[i]->unload();
+	{
+		if( buffers[i]->isLoaded() )
+			buffers[i]->onUnload( soft );
+	}
 
 	loaded = false;
 }

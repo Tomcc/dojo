@@ -119,7 +119,7 @@ texture( NULL )
 	DEBUG_ASSERT( font );
 }
 
-bool Font::Page::load()
+bool Font::Page::onLoad()
 {
 	//create the texture
 	int sx = font->mCellWidth * FONT_PAGE_SIDE;

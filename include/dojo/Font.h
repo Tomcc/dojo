@@ -77,17 +77,11 @@ namespace Dojo
 				SAFE_DELETE( texture );
 			}
 
-			virtual bool load();
+			virtual bool onLoad();
 
-			virtual void unload()
+			virtual void onUnload( bool soft )
 			{
-				texture->unload();
-			}
-
-			//always reloadable
-			virtual bool isReloadable()
-			{
-				return true;
+				texture->onUnload( soft );
 			}
 
 			inline Texture* getTexture() 
@@ -127,7 +121,7 @@ namespace Dojo
 		
 		virtual ~Font();
 
-		virtual bool load()
+		virtual bool onLoad()
 		{
 			DEBUG_ASSERT( !isLoaded() );
 
@@ -135,19 +129,19 @@ namespace Dojo
 			for( int i = 0; i < FONT_MAX_PAGES; ++i )
 			{
 				if( pages[i] )
-					pages[i]->load();
+					pages[i]->onLoad();
 			}
 
 			return loaded = true;
 		}
 
 		///purges all the loaded pages from memory and prompts a rebuild
-		virtual void unload()
+		virtual void onUnload( bool soft )
 		{
 			for( uint i = 0; i < FONT_MAX_PAGES; ++i )
 			{
 				if( pages[i] )
-					pages[i]->unload();
+					pages[i]->onUnload( soft );
 			}
 
 			loaded = false;
@@ -170,7 +164,7 @@ namespace Dojo
 			if( !res )
 			{
 				pages[ index ] = res = new Page( this, index );
-				res->load();
+				res->onLoad();
 			}
 
 			return res;

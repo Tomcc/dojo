@@ -45,9 +45,8 @@ namespace Dojo
 		///Distruttore
 		~SoundBuffer();
 
-		virtual bool load();
-
-		virtual void unload();
+		virtual bool onLoad();
+		virtual void onUnload( bool soft = false );
 
 		///Ottieni la dimensione in memoria di questo buffer.
 		inline int getSize()					{	return size;	}

@@ -149,13 +149,16 @@ namespace Dojo
 			clear();
 		}
 
-		virtual bool load();
+		virtual bool onLoad();
 
-		virtual void unload()
+		virtual void onUnload( bool soft = false )
 		{
-			clear();
+			if( !soft || isFileBased() )
+			{
+				clear();
 
-			loaded = false;
+				loaded = false;
+			}
 		}
 		
 		inline void setName( const String& newName )

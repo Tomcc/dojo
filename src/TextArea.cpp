@@ -48,7 +48,8 @@ TextArea::~TextArea()
 {			
 	if( mesh )
 	{
-		mesh->unload();				
+		if( mesh->isLoaded() )
+			mesh->onUnload();				
 		SAFE_DELETE( mesh );
 	}
 

@@ -25,7 +25,7 @@ SoundBuffer::~SoundBuffer()
 
 }
 
-bool SoundBuffer::load()
+bool SoundBuffer::onLoad()
 {
 	DEBUG_ASSERT( isLoaded() == false );
 
@@ -55,12 +55,15 @@ bool SoundBuffer::load()
 }
 
 
-void SoundBuffer::unload()
+void SoundBuffer::onUnload(bool soft)
 {
 	DEBUG_ASSERT( isLoaded() );
 
-	alDeleteBuffers(1, &buffer);
-	buffer = AL_NONE;
+	if( !soft || isFileBased() )
+	{
+		alDeleteBuffers(1, &buffer);
+		buffer = AL_NONE;
+	}
 }
 
 ////-------------------------------------////-------------------------------------////------------------------------------

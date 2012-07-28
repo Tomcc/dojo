@@ -8,17 +8,17 @@ using namespace Dojo;
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
-bool Table::load()
+bool Table::onLoad()
 {
 	//loads itself from file
 	DEBUG_ASSERT( !loaded );
-	DEBUG_ASSERT( filePath.size() );
+
+	if( !isFileBased() )
+		return false;
 
 	Platform::getSingleton()->load( this, filePath );
 
-	loaded = true;
-
-	return !isEmpty();
+	return (loaded = !isEmpty());
 }
 
 void Table::serialize( String& buf, String indent ) const

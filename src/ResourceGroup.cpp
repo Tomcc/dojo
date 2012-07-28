@@ -33,7 +33,7 @@ ResourceGroup::~ResourceGroup()
 {
 	SAFE_DELETE( empty );
 	
-	unload();
+	unloadResources( false );
 }
 
 void ResourceGroup::addTable( Table* t )
@@ -47,9 +47,9 @@ void ResourceGroup::addTable( Table* t )
 	DEBUG_MESSAGE( "+" << t->getName().ASCII() << "\t\t" << "table" );
 }
 
-void ResourceGroup::loadSets( const String& subdirectory, int version )
+void ResourceGroup::addSets( const String& subdirectory, int version )
 {
-	//load all the sets in the given folder
+	//add all the sets in the given folder
 	
 	DEBUG_ASSERT( subdirectory.size() );
 	DEBUG_ASSERT( version >= 0 );
@@ -59,7 +59,7 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 	
 	FrameSet* currentSet = NULL;
 	
-	//load pngs and jpgs
+	//find pngs and jpgs
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
 	Platform::getSingleton()->getFilePathsForType( "jpg", subdirectory, paths );
 		
@@ -71,11 +71,7 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 		if( Utils::getVersion( name ) != version ) continue;
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
-		{
-			//load last set
-			if( currentSet )
-				currentSet->load();
-			
+		{	
 			String setPrefix = Utils::removeTags( name );
 			
 			//create a new set
@@ -84,44 +80,41 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 			addFrameSet( currentSet, setPrefix );
 		}
 		
-		//create and load a new buffer
+		//create a new buffer
 		Texture* t = new Texture( this, paths[i] );
 		currentSet->addTexture( t, true );
 		
 		lastName = name;
-	}	
-	
-	//load last set
-	if( currentSet )
-		currentSet->load();
-	
+	}
+
 	paths.clear();
 	Platform::getSingleton()->getFilePathsForType( "atlasinfo", subdirectory, paths );
 	
-	//now load atlases!		
+	//now add atlases!		
 	Table def;
 	for( int  i = 0; i < paths.size(); ++i)
 	{
 		name = Utils::getFileName( paths[i] ); 
 		
 		//skip wrong versions
-		if( Utils::getVersion( name ) != version ) continue;
+		if( Utils::getVersion( name ) != version ) 
+			continue;
 		name = Utils::removeTags( name );
 
 		Platform::getSingleton()->load( &def, paths[i] );
 			
 		currentSet = new FrameSet( this, name );
-
-		if( currentSet->loadAtlas( &def, this ) )
-			addFrameSet( currentSet, name );
+		currentSet->setAtlas( &def, this );
+		
+		addFrameSet( currentSet, name );
 
 		def.clear();
 	}
 }
 
-void ResourceGroup::loadFonts( const String& subdirectory, int version )
+void ResourceGroup::addFonts( const String& subdirectory, int version )
 {
-	//load all the sets in the given folder
+	//add all the sets in the given folder
 	DEBUG_ASSERT( subdirectory.size() );
 	DEBUG_ASSERT( version >= 0 );
 	
@@ -130,7 +123,7 @@ void ResourceGroup::loadFonts( const String& subdirectory, int version )
 	
 	Platform::getSingleton()->getFilePathsForType( "font", subdirectory, paths );
 	
-	///just load a Font for any .ttf file found
+	///just add a Font for any .ttf file found
 	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] ); 
@@ -145,7 +138,7 @@ void ResourceGroup::loadFonts( const String& subdirectory, int version )
 	}
 }
 
-void ResourceGroup::loadMeshes( const String& subdirectory )
+void ResourceGroup::addMeshes( const String& subdirectory )
 {
 	std::vector<String> paths;
 	String name;
@@ -159,17 +152,11 @@ void ResourceGroup::loadMeshes( const String& subdirectory )
 	{
 		name = Utils::getFileName( paths[i] );
 		
-		Mesh* mesh = new Mesh( this, paths[i] );
-
-		mesh->load();
-
-		DEBUG_ASSERT( mesh->isLoaded() );
-
-		addMesh( mesh, name );
+		addMesh( new Mesh( this, paths[i] ), name );
 	}
 }
 
-void ResourceGroup::loadSounds( const String& subdirectory )
+void ResourceGroup::addSounds( const String& subdirectory )
 {
 	//ask all the sound files to the main bundle
 	std::vector< String > paths;
@@ -185,48 +172,30 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
-			//load current set
-			if( currentSet )
-				currentSet->load();
-
+			//create a new set		
 			String setPrefix = Utils::removeTags( name );
-			
-			//create a new set
 			currentSet = new SoundSet( setPrefix );
-			
 			addSound( currentSet, setPrefix );
 		}
 			
-		//create a new buffer
-		SoundBuffer* b = new SoundBuffer( this, paths[i] );
-		
-		currentSet->addBuffer( b );
+		//create a new buffer		
+		currentSet->addBuffer( new SoundBuffer( this, paths[i] ) );
 		
 		lastName = name; 
 	}
-
-	if( currentSet )	currentSet->load();
 }
 
-void ResourceGroup::loadTables( const String& folder )
+void ResourceGroup::addTables( const String& folder )
 {
 	std::vector< String > paths;
 	
 	Platform::getSingleton()->getFilePathsForType("ds", folder, paths );
 	
 	for( uint i = 0; i < paths.size(); ++i )
-	{
-		Table* t = new Table( this, paths[i] );
-		
-		t->load();
-
-		DEBUG_ASSERT( t->isLoaded() );
-		
-		addTable( t );
-	}
+		addTable( new Table( this, paths[i] ) );
 }
 
-void ResourceGroup::loadPrefabMeshes()
+void ResourceGroup::addPrefabMeshes()
 {
 //create an empty texturedQuad
 	Mesh* m = new Mesh( this );

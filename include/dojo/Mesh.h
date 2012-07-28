@@ -313,22 +313,26 @@ namespace Dojo
 		bool end();
 		
 		///loads the whole file passed in the constructor
-		virtual bool load();
+		virtual bool onLoad();
 		
-		virtual void unload()
+		virtual void onUnload( bool soft = false )
 		{
 			DEBUG_ASSERT( isLoaded() );
 
-			glDeleteBuffers( 1, &vertexHandle );
-			glDeleteBuffers( 1, &indexHandle );
+			//when soft unloading, only unload file-based meshes
+			if( !soft || isFileBased() )
+			{
+				glDeleteBuffers( 1, &vertexHandle );
+				glDeleteBuffers( 1, &indexHandle );
 
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-				
-			vertexHandle = indexHandle = 0;
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			_destroyBuffers(); //free CPU side memory
-				
-			loaded = false;
+				vertexHandle = indexHandle = 0;
+
+				_destroyBuffers(); //free CPU side memory
+
+				loaded = false;
+			}
 		}
 				
 		///binds all the pointers for the needed client states

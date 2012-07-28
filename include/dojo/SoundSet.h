@@ -23,14 +23,8 @@ namespace Dojo
 			
 		}
 
-		virtual bool load();
-		virtual void unload();
-
-		///always reloadable as it's a proxy
-		virtual bool isReloadable()
-		{
-			return true;
-		}
+		virtual bool onLoad();
+		virtual void onUnload( bool soft = true );
 
 		///returns a random buffer (-1) or the one at index i
 		inline SoundBuffer* getBuffer( int i = -1 )

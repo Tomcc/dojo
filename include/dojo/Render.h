@@ -34,20 +34,20 @@ namespace Dojo {
 		class Layer : public Dojo::Array< Renderable* >
 		{
 		public:
-            bool visible,
-                depthCheck,
-                lightingOn,
+			bool visible,
+				depthCheck,
+				lightingOn,
 				projectionOff,
 				depthClear,
-            	wireframe;
+				wireframe;
 
 			Layer() :
-            visible( true ),
+			visible( true ),
 			depthCheck( false ),
 			lightingOn( false ),
 			projectionOff( true ),
 			depthClear( true ),
-            wireframe( false )
+			wireframe( false )
 			{
 
 			}
@@ -220,7 +220,7 @@ namespace Dojo {
 		LightList lights;
 		Color defaultAmbient;
 		
-        Matrix mCurrentViewProj, mRenderRotation;
+		Matrix mCurrentViewProj, mRenderRotation;
 	};		
 }
 

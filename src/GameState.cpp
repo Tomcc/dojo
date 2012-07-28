@@ -32,7 +32,7 @@ void GameState::clear()
 	destroyAllChilds();
 		
 	//flush resources
-	unload();
+	unloadResources( false );
 }
 
 void GameState::setViewport( Viewport* v )

@@ -143,6 +143,6 @@ void SoundSource::_update()
 
 		//unload the used buffer!
 		if(flush)
-			buffer->unload();
+			buffer->onUnload();
 	}
 }

@@ -210,7 +210,7 @@ namespace Dojo {
 		{
 			return locale;
 		}
-		
+
 		inline bool isFinalized()
 		{
 			return finalized;
@@ -221,26 +221,27 @@ namespace Dojo {
 			return this->locale.size() > 0;
 		}
 		
-		void loadSets( const String& folder, int version = 0 );		
-		void loadFonts( const String& folder, int version = 0 );
-		void loadMeshes( const String& folder );
-		void loadSounds( const String& folder );
-		void loadTables( const String& folder );
+		void addSets( const String& folder, int version = 0 );		
+		void addFonts( const String& folder, int version = 0 );
+		void addMeshes( const String& folder );
+		void addSounds( const String& folder );
+		void addTables( const String& folder );
 		
-		void loadPrefabMeshes();
+		void addPrefabMeshes();
 		
-		void loadFolder( const String& folder, int version = 0 )
+		///adds all the file inside a folder
+		void addFolderSimple( const String& folder, int version = 0 )
 		{
 			DEBUG_MESSAGE( "[" << folder.ASCII() << "]" );
 			
-			loadSets( folder, version );
-			loadFonts( folder, version );
-			loadMeshes( folder );
-			loadSounds( folder );
-			loadTables( folder );
+			addSets( folder, version );
+			addFonts( folder, version );
+			addMeshes( folder );
+			addSounds( folder );
+			addTables( folder );
 		}
 		
-		void loadLocalizedFolder( const String& basefolder, int version = 0 )
+		void addLocalizedFolder( const String& basefolder, int version = 0 )
 		{
 			String lid = basefolder;
 				
@@ -249,16 +250,17 @@ namespace Dojo {
 			
 			lid += locale;
 			
-			loadFolder( lid );
+			addFolderSimple( lid );
 		}
 
-		void loadResources( const String& folder, int version = 0 )
+		///adds all the resources and the localized resources in a folder
+		void addFolder( const String& folder, int version = 0 )
 		{
-			loadFolder( folder, version );
+			addFolderSimple( folder, version );
 			
 			//localized loading
 			if( isLocalizationRequired() )		
-				loadLocalizedFolder( folder, version );
+				addFolderSimple( folder, version );
 		}
 		
 		///asserts that this group will not load more resources in the future, useful for task-based loading
@@ -266,55 +268,50 @@ namespace Dojo {
 		{
 			finalized = true;
 		}
-				
-		inline void unloadSets( bool softUnload = false )
-		{	
-			unload< FrameSet >( frameSets, softUnload );
-		}
-		
-		inline void unloadFonts( bool softUnload = false )
+
+		///loads all the resources that are in the group but aren't loaded
+		void loadResources( bool recursive = true )
 		{
-			unload< Font >( fonts, softUnload );
-		}
-		
-		inline void unloadMeshes( bool softUnload = false )
-		{
-			unload< Mesh >( meshes, softUnload );
-		}
-		
-		inline void unloadSounds( bool softUnload = false )
-		{
-			unload< SoundSet >( sounds, softUnload );
-		}
-		
-		inline void unloadTables( bool softUnload = false )
-		{
-			unload< Table >( tables, softUnload );
-		}
-		
-		
-		///empties the group
-		/**
-		It can be used to completely purge the resources from memory, 
-		or it can also try to soft-unload them (without deleting the actual Dojo resource object),
-		It can be used to purge file-based resources from memory when the application is suspended
-		*/
-		inline void unload( bool softUnload = false )
-		{
-			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
-			unloadFonts( softUnload );
-			unloadSets( softUnload );
-			unloadMeshes( softUnload );
-			unloadSounds( softUnload );
-			unloadTables( softUnload );
+			_load< FrameSet >( frameSets );
+			_load< Font >( fonts );
+			_load< Mesh >( meshes );
+			_load< SoundSet >( sounds );
+			_load< Table >( tables );
+
+			//load sets again to load missing atlases!
+			_load< FrameSet >( frameSets );
+
+			if( recursive)
+				for( int i = 0; i < subs.size(); ++i )	subs[i]->loadResources( recursive );
 		}
 
-		//loads all the resources that are in the group but aren't loaded
-		void loadExistingResources()
+		///empties the group destroying all the resources
+		inline void unloadResources( bool recursive = true )
 		{
-			DEBUG_TODO;
+			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
+			_unload< Font >( fonts, false );
+			_unload< FrameSet >( frameSets, false );
+			_unload< Mesh >( meshes, false );
+			_unload< SoundSet >( sounds, false );
+			_unload< Table >( tables, false );
+
+			if( recursive )
+				for( int i = 0; i < subs.size(); ++i )	subs[i]->unloadResources( recursive );
 		}
-		
+
+		///unloads re-loadable resources without actually destroying resource objects
+		inline void softUnloadResources( bool recursive = true )
+		{
+			_unload< Font >( fonts, true );
+			_unload< FrameSet >( frameSets, true );
+			_unload< Mesh >( meshes, true );
+			_unload< SoundSet >( sounds, true );
+			_unload< Table >( tables, true );
+
+			if( recursive )
+				for( int i = 0; i < subs.size(); ++i )	subs[i]->softUnloadResources( recursive );
+		}
+			
 		inline FrameSetMap::const_iterator getFrameSets() const
 		{
 			return frameSets.begin();
@@ -340,9 +337,24 @@ namespace Dojo {
 		void* mapArray[5];
 		
 		SubgroupList subs;
+
+		///load all unloaded registered resources
+		template< class T>
+		void _load( std::map< String, T* >& map )
+		{
+			typedef std::map< String, T* > ResourceMap;
+			ResourceMap::iterator itr = map.begin();
+			ResourceMap::iterator end = map.end();
+			for( ; itr != end; ++itr )
+			{
+				//unload either if reloadable or if we're purging memory
+				if( !itr->second->isLoaded() )
+					itr->second->onLoad();
+			}
+		}
 				
 		template <class T> 
-		void unload( std::map< String, T* >& map, bool softUnload )
+		void _unload( std::map< String, T* >& map, bool softUnload )
 		{
 			//unload all the resources
 			typedef std::map< String, T* > ResourceMap;
@@ -351,14 +363,17 @@ namespace Dojo {
 			for( ; itr != end; ++itr )
 			{
 				//unload either if reloadable or if we're purging memory
-				if( itr->second->isReloadable() || !softUnload )
-					itr->second->unload();
+				itr->second->onUnload( softUnload );
 
 				//delete too?
 				if( !softUnload )
 				{
-					DEBUG_MESSAGE( "~" << map.begin()->first.ASCII() );
+					DEBUG_MESSAGE( "-" << itr->first.ASCII() );
 					SAFE_DELETE( itr->second );
+				}
+				else if( !itr->second->isLoaded() )
+				{
+					DEBUG_MESSAGE( "~" << itr->first.ASCII() );
 				}
 			}
 

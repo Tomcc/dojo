@@ -28,8 +28,7 @@ namespace Dojo
 		//crea un set di frames col nome dato + _1, _2, _3...
 		FrameSet( ResourceGroup* creator, const String& prefixName ) :
 		Resource( creator, String::EMPTY ),
-		name( prefixName ),
-		loadedFromAtlas( false )
+		name( prefixName )
 		{
 			
 		}
@@ -41,21 +40,20 @@ namespace Dojo
 				SAFE_DELETE( frames[i] );
 		}
 		
-		virtual bool load();
+		void setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider );
+
+		virtual bool onLoad();
 		
-		///loads an atlas table
-		bool loadAtlas( Table* table, ResourceGroup* atlasTextureProvider );
-		
-		virtual void unload() //unload all of the content
+		virtual void onUnload( bool soft ) //unload all of the content
 		{
 			DEBUG_ASSERT( loaded );
 			
 			for( int i = 0; i < frames.size(); ++i )
-				frames.at(i)->unload();
+				frames.at(i)->onUnload( soft );
 			
 			loaded = false;
 		}
-		
+				
 		///adds a texture to this frame set, specifying if this frameset is the only owner
 		inline void addTexture( Texture* t, bool owner = false )
 		{
@@ -93,8 +91,6 @@ namespace Dojo
 		String name;
 
 		TextureList frames;
-
-		bool loadedFromAtlas;
 	};
 }
 

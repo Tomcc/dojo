@@ -7,42 +7,17 @@
 
 using namespace Dojo;
 
-bool FrameSet::load()
-{			
-	DEBUG_ASSERT( !isLoaded() );
-	
-	for( int i = 0; i < frames.size(); ++i )
-	{
-		Texture* t = frames[i];
-		if( !t->isLoaded() )
-		{
-			t->load();
-
-			DEBUG_ASSERT( t->isLoaded() );
-
-			// count bytesize
-			size += t->getByteSize();
-		}
-	}
-		
-	return (loaded = true);	
-}
-
-
-bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
+void FrameSet::setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider )
 {
-	DEBUG_ASSERT( data );
-	DEBUG_ASSERT( atlasTextureProvider );
 	DEBUG_ASSERT( !isLoaded() );
-	
-	FrameSet* atlasSet = atlasTextureProvider->getFrameSet( data->getString( "texture" ) );	
 
-	DEBUG_MESSAGE( data->getString( "texture" ).ASCII());
+	FrameSet* atlasSet = atlasTextureProvider->getFrameSet( atlasTable->getString( "texture" ) );	
+
 	DEBUG_ASSERT( atlasSet );
 
 	Texture* atlas = atlasSet->getFrame(0);
 
-	Table* tiles = data->getTable( "tiles" );
+	Table* tiles = atlasTable->getTable( "tiles" );
 
 	uint x, y, sx, sy;
 	for( int i = 0; i < tiles->getAutoMembers(); ++i )
@@ -56,16 +31,33 @@ bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 
 		Texture* tiletex = new Texture( NULL, String::EMPTY );
 
-		if( tiletex->loadFromAtlas( atlas, x,y, sx,sy ) )			
-			addTexture( tiletex, true );
+		tiletex->loadFromAtlas( atlas, x,y, sx,sy );
+
+		addTexture( tiletex, true );
 	}
-
-	//loaded at least one?
-	loaded = frames.size() > 0;
-
-	if( loaded )
-		loadedFromAtlas = true;
-
-	return loaded;
 }
+
+bool FrameSet::onLoad()
+{			
+	DEBUG_ASSERT( !isLoaded() );
+	
+	loaded = true;
+	for( int i = 0; i < frames.size(); ++i )
+	{
+		Texture* t = frames[i];
+		if( !t->isLoaded() )
+		{
+			t->onLoad();
+
+			loaded &= t->isLoaded();
+
+			// count bytesize
+			if( t->isLoaded() )
+				size += t->getByteSize();
+		}
+	}
+		
+	return loaded;	
+}
+
 

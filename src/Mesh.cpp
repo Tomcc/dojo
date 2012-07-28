@@ -236,9 +236,12 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 	3 * sizeof( GLfloat )
 };
 
-bool Mesh::load()
+bool Mesh::onLoad()
 {
 	DEBUG_ASSERT( !isLoaded() );
+
+	if( !isFileBased() )
+		return false;
 
 	//load binary mesh
 	char* data;

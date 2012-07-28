@@ -38,9 +38,9 @@ namespace Dojo
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
 
 		///loads the texture with the given parameters
-		virtual bool load();
+		virtual bool onLoad();
 
-		virtual void unload();
+		virtual void onUnload( bool soft = false );
 		
 		bool isLoaded()			{	return loaded;			}
 						
@@ -111,6 +111,7 @@ namespace Dojo
 		
 		Texture* parentAtlas;
 		FrameSet* ownerFrameSet;
+		int mAtlasOriginX, mAtlasOriginY;
 		
 		Mesh* OBB;
 		
@@ -120,6 +121,8 @@ namespace Dojo
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _buildOptimalBillboard();
+
+		bool _setupAtlas();
 	};
 }
 

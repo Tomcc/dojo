@@ -25,11 +25,7 @@ OBB( NULL ),
 ownerFrameSet( NULL ),
 mMipmapsEnabled( true )
 {			
-	glGenTextures( 1, &glhandle );
-	
-	DEBUG_ASSERT( glhandle );
-	
-	glGetError();
+
 }
 
 Texture::~Texture()
@@ -41,8 +37,15 @@ Texture::~Texture()
 void Texture::bind( uint index )
 {
 	DEBUG_ASSERT( index < 8 );
-	DEBUG_ASSERT( glhandle );
 	
+	//create the gl texture if still not created!
+	if( !glhandle )
+	{
+		glGenTextures( 1, &glhandle );
+		glGetError();
+		DEBUG_ASSERT( glhandle );
+	}
+
 	glActiveTexture( GL_TEXTURE0 + index );
 	glEnable( GL_TEXTURE_2D );
 
@@ -218,62 +221,82 @@ bool Texture::loadFromFile( const String& path )
 	return loaded;
 }
 
+bool Texture::_setupAtlas()
+{
+	DEBUG_ASSERT( parentAtlas );
+
+	if( !parentAtlas->isLoaded() )
+		return (loaded = false);
+
+	internalWidth = parentAtlas->getInternalWidth();
+	internalHeight = parentAtlas->getInternalHeight();
+
+	DEBUG_ASSERT( width && height && internalWidth && internalHeight );
+
+	//copy bind handle
+	glhandle = parentAtlas->glhandle;
+
+	//find uv coordinates
+	xOffset = (float)mAtlasOriginX/(float)internalWidth;
+	yOffset = (float)mAtlasOriginY/(float)internalHeight;
+
+	//find uv size
+	xRatio = (float)width/(float)internalWidth;
+	yRatio = (float)height/(float)internalHeight;
+
+	return (loaded = true);
+}
+
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 {
 	DEBUG_ASSERT( tex );
-	DEBUG_ASSERT( tex->isLoaded() );
 	DEBUG_ASSERT( !isLoaded() );	
 
-	loaded = true;
 	parentAtlas = tex;
 
 	width = sx;
 	height = sy;
-	internalWidth = tex->internalWidth;
-	internalHeight = tex->internalHeight;
 
-	DEBUG_ASSERT( sx && sy && internalWidth && internalHeight );
+	mAtlasOriginX = x;
+	mAtlasOriginY = y;
 
-	//copy bind handle
-	glhandle = tex->glhandle;
-
-	//find uv coordinates
-	xOffset = (float)x/(float)internalWidth;
-	yOffset = (float)y/(float)internalHeight;
-
-	//find uv size
-	xRatio = (float)sx/(float)internalWidth;
-	yRatio = (float)sy/(float)internalHeight;
-
-	return true;
+	//actual lazy loading is in _setupAtlas
+	
+	return false;
 }
 
-bool Texture::load()
+bool Texture::onLoad()
 {	
 	DEBUG_ASSERT( !loaded );
 
 	if( OBB )  //rebuild and reload the OBB if it was purged
 		_buildOptimalBillboard();
 	
-	return loadFromFile( filePath );
+	if( isFileBased() )
+		return loadFromFile( filePath );
+	else if( parentAtlas )
+		return _setupAtlas();
 }
 
-void Texture::unload()
+void Texture::onUnload( bool soft )
 {		
 	DEBUG_ASSERT( loaded );
 	
-	if( OBB )
-		OBB->unload();
-	
-	if( !parentAtlas ) //don't unload parent texture!
+	if( !soft || isFileBased() )
 	{
-		DEBUG_ASSERT( glhandle );
-		glDeleteTextures(1, &glhandle );
+		if( OBB )
+			OBB->onUnload(); //always destroy the OBB
+
+		if( !parentAtlas ) //don't unload parent texture!
+		{
+			DEBUG_ASSERT( glhandle );
+			glDeleteTextures(1, &glhandle );
 		
-		glhandle = 0;
-	}			
-			
-	loaded = false;
+			glhandle = 0;
+		}
+
+		loaded = false;
+	}
 }
 
 
