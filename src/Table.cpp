@@ -1,11 +1,25 @@
 #include "stdafx.h"
 
 #include "Table.h"
+#include "Platform.h"
 
 using namespace Dojo;
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
 const Table::Data Table::EMPTY_DATA = Data(0,0);
+
+bool Table::load()
+{
+	//loads itself from file
+	DEBUG_ASSERT( !loaded );
+	DEBUG_ASSERT( filePath.size() );
+
+	Platform::getSingleton()->load( this, filePath );
+
+	loaded = true;
+
+	return !isEmpty();
+}
 
 void Table::serialize( String& buf, String indent ) const
 {	
@@ -75,7 +89,7 @@ enum ParseState
 	PS_TABLE,
 	PS_NAME,
 	PS_EQUAL,
-    PS_COMMENT,
+	PS_COMMENT,
 	PS_END,
 	PS_ERROR
 };
@@ -125,7 +139,7 @@ void Table::deserialize( StringReader& buf )
 	Vector vec;
 	Data data;
 	Table* table;
-    Color col;
+	Color col;
 
 	//clear old
 	clear();
@@ -141,7 +155,7 @@ void Table::deserialize( StringReader& buf )
 		case PS_TABLE: //wait for either a name, or an anon value	
 				 if( c == '}' )				state = PS_END;
 			else if( isNameStarter( c ) )	state = PS_NAME;
-            
+			
 
 			else if( c == '"' )		target = PT_STRING;
 			else if( c == '(' )		target = PT_VECTOR;			
@@ -177,38 +191,38 @@ void Table::deserialize( StringReader& buf )
 		switch( target )
 		{
 		case PT_NUMBER:
-              
-            //check if next char is x, that is, really we have an hex color!
-            if( !buf.eof() )    c2 = buf.get();
-            else                c2 = 0;
-                
-            if( c == '0' && c2 == 'x' )
-            {
-                buf.back();
-                buf.back();
-                
-                DEBUG_MESSAGE( curName.ASCII() );
-                
-                //create a color using the hex
-                col.set( buf.readHex() );
-                
-                set( curName, col );
-            }
-            else if( c == '-' && c2 == '-' ) //or, well, a comment! (LIKE A HACK)
-            {
-                //just skip until newline
-                while( buf.get() != '\n' && !buf.eof() );
-            }
-            else
-            {
-                buf.back();
-                buf.back();
-                    
-                number = buf.readFloat();
-                    
-                set( curName, number );
-            }
-                
+			  
+			//check if next char is x, that is, really we have an hex color!
+			if( !buf.eof() )    c2 = buf.get();
+			else                c2 = 0;
+				
+			if( c == '0' && c2 == 'x' )
+			{
+				buf.back();
+				buf.back();
+				
+				DEBUG_MESSAGE( curName.ASCII() );
+				
+				//create a color using the hex
+				col.set( buf.readHex() );
+				
+				set( curName, col );
+			}
+			else if( c == '-' && c2 == '-' ) //or, well, a comment! (LIKE A HACK)
+			{
+				//just skip until newline
+				while( buf.get() != '\n' && !buf.eof() );
+			}
+			else
+			{
+				buf.back();
+				buf.back();
+					
+				number = buf.readFloat();
+					
+				set( curName, number );
+			}
+				
 			break;
 		case PT_STRING:
 

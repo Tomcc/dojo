@@ -74,6 +74,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 Win32Platform::Win32Platform( const Table& config ) :
 Platform( config ),
 dragging( false ),
+mMousePressed( false ),
 cursorPos( 0,0 ),
 frameStart( 1 ),
 frameInterval(0)
@@ -166,13 +167,13 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 		PFD_TYPE_RGBA,								// Request An RGBA Format
 		32, 										// Select Our Color Depth
 		0, 0, 0, 0, 0, 0,							// Color Bits Ignored
-		0,											// No Alpha Buffer
+		0,											// No Alpha Resource
 		0,											// Shift Bit Ignored
-		0,											// No Accumulation Buffer
+		0,											// No Accumulation Resource
 		0, 0, 0, 0,									// Accumulation Bits Ignored
-		16,											// 16Bit Z-Buffer (Depth Buffer)  
-		0,											// No Stencil Buffer
-		0,											// No Auxiliary Buffer
+		16,											// 16Bit Z-Resource (Depth Resource)  
+		0,											// No Stencil Resource
+		0,											// No Auxiliary Resource
 		PFD_MAIN_PLANE,								// Main Drawing Layer
 		0,											// Reserved
 		0, 0, 0										// Layer Masks Ignored
@@ -399,6 +400,7 @@ void Win32Platform::loop( float frameTime )
 
 bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
 {
+	mMousePressed = true;
 	dragging = true;
 
 	cursorPos.x = (float)arg.state.X.abs;
@@ -429,6 +431,12 @@ bool Win32Platform::mouseMoved( const MouseEvent& arg )
 
 bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
 {
+	//windows can actually send "released" messages whose "pressed" event was sent to another window
+	//or used to awake the current one - send a fake mousePressed event if this happens!
+	if( !mMousePressed  )
+		mousePressed( arg, id );
+
+	mMousePressed  = false;
 	dragging = false;
 
 	cursorPos.x = (float)arg.state.X.abs;

@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 
-#include "Buffer.h"
+#include "Resource.h"
 
 namespace Dojo 
 {
@@ -13,7 +13,7 @@ namespace Dojo
 	/**
 	Non dovrebbe essere utilizzato all'esterno di SoundManager.
 	*/
-	class SoundBuffer : public Buffer
+	class SoundBuffer : public Resource
 	{
 	public:
 		
@@ -45,13 +45,9 @@ namespace Dojo
 		///Distruttore
 		~SoundBuffer();
 
-		bool load();
-		void unload();
+		virtual bool load();
 
-		virtual void bind()
-		{
-
-		}
+		virtual void unload();
 
 		///Ottieni la dimensione in memoria di questo buffer.
 		inline int getSize()					{	return size;	}

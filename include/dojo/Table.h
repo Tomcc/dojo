@@ -8,10 +8,11 @@
 #include "Utils.h"
 #include "StringReader.h"
 #include "dojostring.h"
+#include "Resource.h"
 
 namespace Dojo
 {
-	class Table  
+	class Table : public Resource
 	{
 	public:
 
@@ -113,6 +114,7 @@ namespace Dojo
 		}
 		
 		Table( const String& tablename = String::EMPTY ) :
+		Resource( NULL, String::EMPTY ),
 		name( tablename ),
 		unnamedMembers( 0 )
 		{
@@ -121,6 +123,7 @@ namespace Dojo
 
 		///copy constructor
 		Table( const Table& t ) :
+		Resource( NULL, String::EMPTY ),
 		name( t.name ),
 		unnamedMembers( t.unnamedMembers )
 		{
@@ -131,10 +134,28 @@ namespace Dojo
 			for( ; itr != end; ++itr )
 				map[ itr->first ] = itr->second->clone();
 		}
-		
+
+		//resource constructor
+		Table( ResourceGroup* creator, const String& path ) :
+		Resource( creator, path ),
+		name( Utils::getFileName( path ) ),
+		unnamedMembers( 0 )
+		{
+
+		}
+
 		~Table()
 		{
 			clear();
+		}
+
+		virtual bool load();
+
+		virtual void unload()
+		{
+			clear();
+
+			loaded = false;
 		}
 		
 		inline void setName( const String& newName )
@@ -273,6 +294,11 @@ namespace Dojo
 		inline int getAutoMembers() const
 		{
 			return unnamedMembers;
+		}
+
+		inline bool isEmpty()
+		{
+			return map.empty();
 		}
 
 		inline bool hasName() const

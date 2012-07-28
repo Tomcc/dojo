@@ -36,7 +36,7 @@ namespace Dojo {
 		
 		virtual ~Object()
 		{
-            destroyAllChilds();
+			destroyAllChilds();
 		}
 		
 		virtual void reset()
@@ -63,16 +63,16 @@ namespace Dojo {
 		{
 			setSize( bbSize.x, bbSize.y );
 		}
-        
-        inline void setRotation( const Quaternion& quat )
-        {
-            rotation = quat;
-        }
-        
-        inline void setRotation( const Vector& eulerAngles )
-        {
-            setRotation( Quaternion( eulerAngles ) );
-        }
+		
+		inline void setRotation( const Quaternion& quat )
+		{
+			rotation = quat;
+		}
+		
+		inline void setRotation( const Vector& eulerAngles )
+		{
+			setRotation( Quaternion( eulerAngles ) );
+		}
 				
 		inline void setActive( bool a )		{	active = a;	}
 				
@@ -84,40 +84,40 @@ namespace Dojo {
 		///returns the world position of the given local point
 		inline Vector getWorldPosition( const Vector& localPos )
 		{
-            if( parent )
-            {
-                glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f );
-                return Vector( pos.x , pos.y, pos.z );                
-            }
-            else
-                return localPos;
+			if( parent )
+			{
+				glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f );
+				return Vector( pos.x , pos.y, pos.z );                
+			}
+			else
+				return localPos;
 		}
-                
+				
 		inline const Vector getWorldPosition()
 		{
-            return getWorldPosition( position );
+			return getWorldPosition( position );
 		}
 
 		inline Vector getLocalPosition( const Vector& worldPos )
 		{
-            DEBUG_TODO;            
+			DEBUG_TODO;            
 
 			return worldPos;
 		}
-        
-        ///returns a local direction in world space
-        inline Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
-        {
-            glm::vec4 dir( dir3, 0 );
-            dir = getWorldTransform() * dir;
-            
+		
+		///returns a local direction in world space
+		inline Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
+		{
+			glm::vec4 dir( dir3, 0 );
+			dir = getWorldTransform() * dir;
+			
 			return Vector( dir.x, dir.y, dir.z );
-        }
-        
-        inline const Quaternion getRotation()
-        {
-            return rotation;
-        }
+		}
+		
+		inline const Quaternion getRotation()
+		{
+			return rotation;
+		}
 						
 		inline bool isActive()				{	return active;	}
 		
@@ -126,10 +126,10 @@ namespace Dojo {
 			return childs != NULL && childs->size() > 0;
 		}
 
-        inline const Matrix& getWorldTransform()    
-        {  
-            return mWorldTransform; 
-        }
+		inline const Matrix& getWorldTransform()    
+		{  
+			return mWorldTransform; 
+		}
 
 		inline Object* getChild( int i )				
 		{
@@ -138,25 +138,25 @@ namespace Dojo {
 			
 			return childs->at( i );
 		}
-        
-        inline Vector& getWorldMax()
-        {
-            DEBUG_ASSERT( mNeedsAABB );
-            
-            return worldUpperBound;
-        }
-        
-        inline Vector& getWorldMin()
-        {
-            DEBUG_ASSERT( mNeedsAABB );
-            
-            return worldLowerBound;
-        }
-        
-        inline Object* getParent()
-        {
-            return parent;
-        }
+		
+		inline Vector& getWorldMax()
+		{
+			DEBUG_ASSERT( mNeedsAABB );
+			
+			return worldUpperBound;
+		}
+		
+		inline Vector& getWorldMin()
+		{
+			DEBUG_ASSERT( mNeedsAABB );
+			
+			return worldLowerBound;
+		}
+		
+		inline Object* getParent()
+		{
+			return parent;
+		}
 		
 		inline int getChildNumber()
 		{
@@ -177,30 +177,30 @@ namespace Dojo {
 		void destroyAllChilds();
 		
 		void updateChilds( float dt );
-        
-        inline bool contains( const Vector& p )
+		
+		inline bool contains( const Vector& p )
 		{
-            DEBUG_ASSERT( mNeedsAABB );
-            
-            ///HACK only works in 2D!
-            return 
-            p.x < worldUpperBound.x && 
-            p.x > worldLowerBound.x && 
-            p.y < worldUpperBound.y && 
-            p.y > worldLowerBound.y;
+			DEBUG_ASSERT( mNeedsAABB );
+			
+			///HACK only works in 2D!
+			return 
+			p.x < worldUpperBound.x && 
+			p.x > worldLowerBound.x && 
+			p.y < worldUpperBound.y && 
+			p.y > worldLowerBound.y;
 		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{		
-            DEBUG_ASSERT( mNeedsAABB );
-            
+			DEBUG_ASSERT( mNeedsAABB );
+			
 			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
 		}
 		
 		inline bool collidesWith( Object * t )
 		{			
 			DEBUG_ASSERT( t );
-            DEBUG_ASSERT( mNeedsAABB );            
+			DEBUG_ASSERT( mNeedsAABB );            
 
 			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}
@@ -226,19 +226,19 @@ namespace Dojo {
 		Vector size, halfSize;
 		
 		Quaternion rotation;
-        
-        Matrix mWorldTransform;
-                
+		
+		Matrix mWorldTransform;
+				
 		Vector worldUpperBound, worldLowerBound;
 				
 		bool active, mNeedsAABB;
 
 		Object* parent;
 		ChildList* childs;
-        
-        void _updateWorldAABB( const Vector& min, const Vector& max );
-        
-        void _unregisterChild( Object* child );
+		
+		void _updateWorldAABB( const Vector& min, const Vector& max );
+		
+		void _unregisterChild( Object* child );
 	};
 }
 

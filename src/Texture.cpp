@@ -9,7 +9,7 @@
 using namespace Dojo;
 
 Texture::Texture( ResourceGroup* creator, const String& path ) :
-Buffer( creator, path ),
+Resource( creator, path ),
 width(0),
 height(0),
 internalWidth(0),
@@ -30,6 +30,12 @@ mMipmapsEnabled( true )
 	DEBUG_ASSERT( glhandle );
 	
 	glGetError();
+}
+
+Texture::~Texture()
+{
+	if( OBB )
+		SAFE_DELETE( OBB );
 }
 
 void Texture::bind( uint index )
@@ -164,7 +170,7 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLen
 	
 	//aaand now, kill the temp padding buffer
 	if( paddedData )
-		free( paddedData );	
+		free( paddedData );
 	
 	return loaded;
 }
@@ -176,8 +182,8 @@ bool Texture::loadFromFile( const String& path )
 	void* imageData = NULL;
 
 	GLenum sourceFormat = 0, destFormat;
-    sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height );
-    
+	sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height );
+	
 	DEBUG_ASSERT( sourceFormat );
 	
 	if( creator && creator->disableBilinear )	
@@ -212,41 +218,44 @@ bool Texture::loadFromFile( const String& path )
 	return loaded;
 }
 
-bool Texture::load()
-{	
-	DEBUG_ASSERT( !loaded );
-	
-	return loadFromFile( filePath );
-}
-
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 {
 	DEBUG_ASSERT( tex );
 	DEBUG_ASSERT( tex->isLoaded() );
 	DEBUG_ASSERT( !isLoaded() );	
-			
+
 	loaded = true;
 	parentAtlas = tex;
-	
+
 	width = sx;
 	height = sy;
 	internalWidth = tex->internalWidth;
 	internalHeight = tex->internalHeight;
-	
+
 	DEBUG_ASSERT( sx && sy && internalWidth && internalHeight );
-		
+
 	//copy bind handle
 	glhandle = tex->glhandle;
-	
+
 	//find uv coordinates
 	xOffset = (float)x/(float)internalWidth;
 	yOffset = (float)y/(float)internalHeight;
-	
+
 	//find uv size
 	xRatio = (float)sx/(float)internalWidth;
 	yRatio = (float)sy/(float)internalHeight;
-	
+
 	return true;
+}
+
+bool Texture::load()
+{	
+	DEBUG_ASSERT( !loaded );
+
+	if( OBB )  //rebuild and reload the OBB if it was purged
+		_buildOptimalBillboard();
+	
+	return loadFromFile( filePath );
 }
 
 void Texture::unload()
@@ -254,11 +263,7 @@ void Texture::unload()
 	DEBUG_ASSERT( loaded );
 	
 	if( OBB )
-	{
 		OBB->unload();
-		
-		SAFE_DELETE( OBB );
-	}
 	
 	if( !parentAtlas ) //don't unload parent texture!
 	{
@@ -274,10 +279,14 @@ void Texture::unload()
 
 void Texture::_buildOptimalBillboard()
 {
-	OBB = new Mesh();
+	if( !OBB )
+	{
+		OBB = new Mesh();
 	
-	OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-	OBB->setVertexFieldEnabled( Mesh::VF_UV );
+		//build or rebuild the OBB
+		OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+		OBB->setVertexFieldEnabled( Mesh::VF_UV );
+	}
 	
 	OBB->begin( 4 );
 	

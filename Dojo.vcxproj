@@ -19,7 +19,7 @@
     <ClInclude Include="include\dojo\apple\OSX\CustomOpenGLView.h" />
     <ClInclude Include="include\dojo\apple\OSX\OSXPlatform.h" />
     <ClInclude Include="include\dojo\Array.h" />
-    <ClInclude Include="include\dojo\Buffer.h" />
+    <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
@@ -92,6 +92,7 @@
     <ClCompile Include="src\ResourceGroup.cpp" />
     <ClCompile Include="src\SoundBuffer.cpp" />
     <ClCompile Include="src\SoundManager.cpp" />
+    <ClCompile Include="src\SoundSet.cpp" />
     <ClCompile Include="src\SoundSource.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\String.cpp" />

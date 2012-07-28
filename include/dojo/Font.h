@@ -26,7 +26,9 @@
 
 namespace Dojo 
 {
-	class Font 
+	class ResourceGroup;
+
+	class Font : public Dojo::Resource
 	{
 	public:
 
@@ -63,7 +65,7 @@ namespace Dojo
 			}
 		};
 		
-		class Page
+		class Page : public Resource
 		{
 		public:
 			
@@ -72,9 +74,20 @@ namespace Dojo
 
 			virtual ~Page()
 			{
-				texture->unload();
-
 				SAFE_DELETE( texture );
+			}
+
+			virtual bool load();
+
+			virtual void unload()
+			{
+				texture->unload();
+			}
+
+			//always reloadable
+			virtual bool isReloadable()
+			{
+				return true;
 			}
 
 			inline Texture* getTexture() 
@@ -110,10 +123,36 @@ namespace Dojo
 			}
 		};
 		
-		Font( const String& path );
+		Font( ResourceGroup* creator, const String& path );
 		
 		virtual ~Font();
-		
+
+		virtual bool load()
+		{
+			DEBUG_ASSERT( !isLoaded() );
+
+			//load existing pages that were trimmed during a previous unload
+			for( int i = 0; i < FONT_MAX_PAGES; ++i )
+			{
+				if( pages[i] )
+					pages[i]->load();
+			}
+
+			return loaded = true;
+		}
+
+		///purges all the loaded pages from memory and prompts a rebuild
+		virtual void unload()
+		{
+			for( uint i = 0; i < FONT_MAX_PAGES; ++i )
+			{
+				if( pages[i] )
+					pages[i]->unload();
+			}
+
+			loaded = false;
+		}
+
 		inline const String& getName()
 		{
 			return fontName;
@@ -129,7 +168,10 @@ namespace Dojo
 			Page* res = pages[ index ];
 
 			if( !res )
+			{
 				pages[ index ] = res = new Page( this, index );
+				res->load();
+			}
 
 			return res;
 		}
@@ -177,21 +219,6 @@ namespace Dojo
 		{
 			for( uint i = 0; i < n; ++i )
 				getPage( pages[i] );
-		}
-
-		///unload, remove and destroy the given page
-		inline void destroyPage( uint idx )
-		{
-			DEBUG_ASSERT( idx < FONT_MAX_PAGES );
-
-			if( pages[idx] ) 
-				SAFE_DELETE( pages[idx] );
-		}
-		
-		void unload()
-		{
-			for( uint i = 0; i < FONT_MAX_PAGES; ++i )
-				destroyPage(i);
 		}
 		
 	protected:

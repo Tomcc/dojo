@@ -312,17 +312,17 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	//push any active layer on the GPU
 	_endLayers();
    
-    //find real mesh bounds
-    mLayersLowerBound = mesh->getMin();
-    mLayersUpperBound = mesh->getMax();
-    
-    for( int i = 0; i < busyLayers.size(); ++i )
-    {
-        mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
-        mLayersLowerBound = Math::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
-    }
+	//find real mesh bounds
+	mLayersLowerBound = mesh->getMin();
+	mLayersUpperBound = mesh->getMax();
+	
+	for( int i = 0; i < busyLayers.size(); ++i )
+	{
+		mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
+		mLayersLowerBound = Math::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
+	}
 
-    setSize( mLayersUpperBound - mLayersLowerBound );
+	setSize( mLayersUpperBound - mLayersLowerBound );
    
 	changed = false;
 
@@ -354,12 +354,12 @@ Mesh* TextArea::_createMesh()
 
 void TextArea::onAction(float dt)
 {
-    bool previousAABBSetting = mNeedsAABB;
-    mNeedsAABB = false; //do not trigger the update
-    
-    Renderable::onAction(dt);
-    
-    if( (mNeedsAABB = previousAABBSetting) )
-        _updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
+	bool previousAABBSetting = mNeedsAABB;
+	mNeedsAABB = false; //do not trigger the update
+	
+	Renderable::onAction(dt);
+	
+	if( (mNeedsAABB = previousAABBSetting) )
+		_updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
 }
 

@@ -4,22 +4,32 @@
 #include "dojo_common_header.h"
 
 #include "Array.h"
-
+#include "Resource.h"
 #include "dojomath.h"
 
 namespace Dojo
 {
 	class SoundBuffer;
 	
-	class SoundSet 
+	class SoundSet : public Resource
 	{
 	public:
 
 		SoundSet( const String& setName ) :
+		Resource( NULL, String::EMPTY ),
 		name( setName ),
 		buffers( 1,1 )	//pagina minima, il vettore e' statico
 		{
 			
+		}
+
+		virtual bool load();
+		virtual void unload();
+
+		///always reloadable as it's a proxy
+		virtual bool isReloadable()
+		{
+			return true;
 		}
 
 		///returns a random buffer (-1) or the one at index i
@@ -39,7 +49,7 @@ namespace Dojo
 			return buffers.at(i);
 		}
 
-		inline uint getBufferNb()	{	return buffers.size();	 }
+		inline uint getResourceNb()	{	return buffers.size();	 }
 
 		inline const String& getName()	{	return name;	}
 

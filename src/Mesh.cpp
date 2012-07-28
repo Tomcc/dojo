@@ -140,13 +140,13 @@ bool Mesh::end()
 
 	//guess triangle count
 	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();
-    
-    switch ( triangleMode ) {
-        case TM_LIST:       triangleCount = elemCount / 3;  break;
-        case TM_STRIP:      triangleCount = elemCount-2;    break;
-        case TM_LINE_STRIP: triangleCount = 0;
-    }
-    
+	
+	switch ( triangleMode ) {
+		case TM_LIST:       triangleCount = elemCount / 3;  break;
+		case TM_STRIP:      triangleCount = elemCount-2;    break;
+		case TM_LINE_STRIP: triangleCount = 0;
+	}
+	
 	//geometric hints
 	center.x = (max.x + min.x)*0.5f;
 	center.y = (max.y + min.y)*0.5f;
@@ -238,6 +238,8 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 
 bool Mesh::load()
 {
+	DEBUG_ASSERT( !isLoaded() );
+
 	//load binary mesh
 	char* data;
 	Platform::getSingleton()->loadFileContent( data, filePath );

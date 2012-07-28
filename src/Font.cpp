@@ -5,6 +5,7 @@
 #include "Table.h"
 #include "FontSystem.h"
 #include "Timer.h"
+#include "ResourceGroup.h"
 
 using namespace Dojo;
 
@@ -109,12 +110,17 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 
 
 Font::Page::Page( Font* f, int idx ) :
+Resource( NULL, String::EMPTY ),
 index( idx ),
 firstCharIdx( index * FONT_CHARS_PER_PAGE ),
-font( f )
+font( f ),
+texture( NULL )
 {
 	DEBUG_ASSERT( font );
+}
 
+bool Font::Page::load()
+{
 	//create the texture
 	int sx = font->mCellWidth * FONT_PAGE_SIDE;
 	int sy = font->mCellHeight * FONT_PAGE_SIDE;
@@ -125,7 +131,7 @@ font( f )
 	int pixelNumber = sxp2 * syp2;
 	int bufsize = pixelNumber * 4;
 	byte* buf = (byte*)malloc( bufsize );
-	
+
 	unsigned int * ptr = (unsigned int*)buf;
 	//set alpha to 0 and colours to white
 	for( int i = sxp2*syp2-1; i >= 0; --i )
@@ -173,7 +179,7 @@ font( f )
 				_blit( buf, bitmap, x + font->glowRadius, y + font->glowRadius, sxp2 );
 		}
 	}
-	
+
 	//glow?	
 	if( font->glowRadius > 0 )
 	{
@@ -183,7 +189,7 @@ font( f )
 		//duplicate the buffer
 		byte* glowBuf = (byte*)malloc( bufsize );
 		memcpy( glowBuf, buf, bufsize );
-		
+
 		for( int iteration = 0; iteration < font->glowRadius; ++iteration )
 		{
 			for( int i = 1; i < syp2-1; ++i )
@@ -195,7 +201,7 @@ font( f )
 					byte* down = glowBuf + (j + (i-1)*sxp2) * 4;
 					byte* left = glowBuf + (j+1 + i*sxp2) * 4;
 					byte* right = glowBuf + (j-1 + i*sxp2) * 4;
-					
+
 					cur[0] = glowColChannel[0];
 					cur[1] = glowColChannel[1];
 					cur[2] = glowColChannel[2];
@@ -203,37 +209,45 @@ font( f )
 				}
 			}
 		}
-		
+
 		//now alpha-blend the blur over the original buffer
 		for( int i = 0; i < pixelNumber; ++i )
 		{
 			byte* orig = buf + i*4;
 			byte* glow = glowBuf + i*4;
-			
+
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
-			
+
 			for( int c = 0; c < 4; ++c )
 				orig[c] = orig[c] * s + glow[c] * (1.f-s);
 		}
-		
+
 		free( glowBuf );
 	}
-	
+
+	//the texture already exists? is this a reload?
+	if( !texture )
+	{
+		texture = new Texture( NULL, String::EMPTY );
+		texture->disableBilinearFiltering();
+		texture->disableMipmaps();
+		texture->disableTiling();
+	}
+
 	//drop the buffer in the texture
-	texture = new Texture( NULL, String::EMPTY );
-	texture->disableBilinearFiltering();
-	texture->disableMipmaps();
-	texture->disableTiling();
 	texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
 
 	free( buf );
+
+	return loaded = true;
 }
 
 /// --------------------------------------------------------------------------------
 
 /// --------------------------------------------------------------------------------
 
-Font::Font( const String& path )
+Font::Font( ResourceGroup* creator, const String& path ) :
+Resource( creator, path )
 {			
 	//miss all the pages
 	memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
@@ -266,7 +280,7 @@ Font::Font( const String& path )
 
 Font::~Font()
 {
-	unload();
+
 }
 
 float Font::getKerning( Character* next, Character* prev )

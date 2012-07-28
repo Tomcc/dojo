@@ -12,7 +12,7 @@
 
 #include "dojo_common_header.h"
 
-#include "Buffer.h"
+#include "Resource.h"
 #include "Vector.h"
 #include "Color.h"
 
@@ -20,7 +20,7 @@
 
 namespace Dojo 
 {
-	class Mesh : public Buffer 
+	class Mesh : public Resource 
 	{
 	public:
 		
@@ -50,11 +50,11 @@ namespace Dojo
 		{
 			TM_STRIP,
 			TM_LIST,
-            TM_LINE_STRIP
+			TM_LINE_STRIP
 		};
 				
 		Mesh( ResourceGroup* creator = NULL, const String& filePath = String::EMPTY ) :
-		Buffer( creator, filePath ),
+		Resource( creator, filePath ),
 		vertexSize(0),
 		vertexCount( 0 ),		
 		vertexMaxCount( 0 ),
@@ -84,11 +84,7 @@ namespace Dojo
 		
 		virtual ~Mesh()
 		{
-			//destroy CPU mem
-			_destroyBuffers();
-			
-			//and GPU mem
-			unload();
+
 		}
 
 		///sets the dimension of a single index in this mesh
@@ -321,17 +317,18 @@ namespace Dojo
 		
 		virtual void unload()
 		{
-			if( loaded )
-			{
-				glDeleteBuffers( 1, &vertexHandle );
-				glDeleteBuffers( 1, &indexHandle );
+			DEBUG_ASSERT( isLoaded() );
 
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glDeleteBuffers( 1, &vertexHandle );
+			glDeleteBuffers( 1, &indexHandle );
+
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 				
-				vertexHandle = indexHandle = 0;
+			vertexHandle = indexHandle = 0;
+
+			_destroyBuffers(); //free CPU side memory
 				
-				loaded = false;
-			}
+			loaded = false;
 		}
 				
 		///binds all the pointers for the needed client states

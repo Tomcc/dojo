@@ -33,7 +33,7 @@ ResourceGroup::~ResourceGroup()
 {
 	SAFE_DELETE( empty );
 	
-	unloadAll();
+	unload();
 }
 
 void ResourceGroup::addTable( Table* t )
@@ -52,23 +52,23 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 	//load all the sets in the given folder
 	
 	DEBUG_ASSERT( subdirectory.size() );
-    DEBUG_ASSERT( version >= 0 );
+	DEBUG_ASSERT( version >= 0 );
 	
 	std::vector< String > paths;
 	String name, lastName;
 	
 	FrameSet* currentSet = NULL;
 	
-    //load pngs and jpgs
+	//load pngs and jpgs
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
-    Platform::getSingleton()->getFilePathsForType( "jpg", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "jpg", subdirectory, paths );
 		
 	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] );
-        
-        //skip wrong versions
-        if( Utils::getVersion( name ) != version ) continue;
+		
+		//skip wrong versions
+		if( Utils::getVersion( name ) != version ) continue;
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
@@ -103,10 +103,10 @@ void ResourceGroup::loadSets( const String& subdirectory, int version )
 	for( int  i = 0; i < paths.size(); ++i)
 	{
 		name = Utils::getFileName( paths[i] ); 
-        
-        //skip wrong versions
-        if( Utils::getVersion( name ) != version ) continue;
-        name = Utils::removeTags( name );
+		
+		//skip wrong versions
+		if( Utils::getVersion( name ) != version ) continue;
+		name = Utils::removeTags( name );
 
 		Platform::getSingleton()->load( &def, paths[i] );
 			
@@ -123,7 +123,7 @@ void ResourceGroup::loadFonts( const String& subdirectory, int version )
 {
 	//load all the sets in the given folder
 	DEBUG_ASSERT( subdirectory.size() );
-    DEBUG_ASSERT( version >= 0 );
+	DEBUG_ASSERT( version >= 0 );
 	
 	String name;
 	std::vector<String> paths;
@@ -134,12 +134,14 @@ void ResourceGroup::loadFonts( const String& subdirectory, int version )
 	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] ); 
-        
-        //skip wrong versions
-        if( Utils::getVersion( name ) != version ) continue;
-        name = Utils::removeTags( name );
+		
+		//skip wrong versions
+		if( Utils::getVersion( name ) != version ) 
+			continue;
+
+		name = Utils::removeTags( name );
 						
-		addFont( new Font( paths[i] ), name );
+		addFont( new Font( this, paths[i] ), name );
 	}
 }
 
@@ -158,8 +160,12 @@ void ResourceGroup::loadMeshes( const String& subdirectory )
 		name = Utils::getFileName( paths[i] );
 		
 		Mesh* mesh = new Mesh( this, paths[i] );
-		if( mesh->load() )
-			addMesh( mesh, name );
+
+		mesh->load();
+
+		DEBUG_ASSERT( mesh->isLoaded() );
+
+		addMesh( mesh, name );
 	}
 }
 
@@ -179,6 +185,10 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 		
 		if( !Utils::areStringsNearInSequence( lastName, name ) )
 		{
+			//load current set
+			if( currentSet )
+				currentSet->load();
+
 			String setPrefix = Utils::removeTags( name );
 			
 			//create a new set
@@ -187,14 +197,15 @@ void ResourceGroup::loadSounds( const String& subdirectory )
 			addSound( currentSet, setPrefix );
 		}
 			
-		//create and load a new buffer
+		//create a new buffer
 		SoundBuffer* b = new SoundBuffer( this, paths[i] );
-		b->load();
 		
 		currentSet->addBuffer( b );
 		
 		lastName = name; 
 	}
+
+	if( currentSet )	currentSet->load();
 }
 
 void ResourceGroup::loadTables( const String& folder )
@@ -205,9 +216,11 @@ void ResourceGroup::loadTables( const String& folder )
 	
 	for( uint i = 0; i < paths.size(); ++i )
 	{
-		Table* t = new Table( Utils::getFileName( paths[i] ) );
+		Table* t = new Table( this, paths[i] );
 		
-		Platform::getSingleton()->load( t, paths[i] );
+		t->load();
+
+		DEBUG_ASSERT( t->isLoaded() );
 		
 		addTable( t );
 	}
@@ -444,28 +457,28 @@ void ResourceGroup::loadPrefabMeshes()
 	cube->end();
 	
 	addMesh( cube, "prefabSkybox_6");
-    
-    
-    //add cube for wireframe use
-    m = new Mesh( this );
+	
+	
+	//add cube for wireframe use
+	m = new Mesh( this );
 	m->setTriangleMode( Mesh::TM_LINE_STRIP );
 	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-    
-    m->begin(4);	
+	
+	m->begin(4);	
 	
 	m->vertex( 0.5, 0.5 );	
 	m->vertex( -0.5, 0.5 );	
 	m->vertex( 0.5, -0.5 );	
 	m->vertex( -0.5, -0.5 );
-    
-    m->index( 0 );
-    m->index( 1 );
-    m->index( 3 );
-    m->index( 2 );
-    m->index( 0 );
-    m->index( 3 );
+	
+	m->index( 0 );
+	m->index( 1 );
+	m->index( 3 );
+	m->index( 2 );
+	m->index( 0 );
+	m->index( 3 );
 	
 	m->end();
-    
-    addMesh( m, "wireframeQuad" );
+	
+	addMesh( m, "wireframeQuad" );
 }

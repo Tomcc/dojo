@@ -19,7 +19,7 @@
 
 namespace Dojo 
 {
-	class FrameSet : public Buffer
+	class FrameSet : public Resource
 	{
 	public:
 		
@@ -27,15 +27,18 @@ namespace Dojo
 		
 		//crea un set di frames col nome dato + _1, _2, _3...
 		FrameSet( ResourceGroup* creator, const String& prefixName ) :
-		Buffer( creator, prefixName )
+		Resource( creator, String::EMPTY ),
+		name( prefixName ),
+		loadedFromAtlas( false )
 		{
 			
 		}
 		
 		virtual ~FrameSet()
 		{
-			if( loaded )
-				unload();
+			//destroy child textures
+			for( int i = 0; i < frames.size(); ++i )
+				SAFE_DELETE( frames[i] );
 		}
 		
 		virtual bool load();
@@ -43,15 +46,12 @@ namespace Dojo
 		///loads an atlas table
 		bool loadAtlas( Table* table, ResourceGroup* atlasTextureProvider );
 		
-		virtual void unload() //delete all of the content
+		virtual void unload() //unload all of the content
 		{
 			DEBUG_ASSERT( loaded );
 			
 			for( int i = 0; i < frames.size(); ++i )
-			{
-				if( frames.at(i)->getOwnerFrameSet() == this )
-					SAFE_DELETE( frames.at(i) );
-			}				
+				frames.at(i)->unload();
 			
 			loaded = false;
 		}
@@ -90,7 +90,11 @@ namespace Dojo
 		
 		
 	protected:
+		String name;
+
 		TextureList frames;
+
+		bool loadedFromAtlas;
 	};
 }
 

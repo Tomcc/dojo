@@ -12,7 +12,7 @@
 
 #include "dojo_common_header.h"
 
-#include "Buffer.h"
+#include "Resource.h"
 #include "Vector.h"
 
 namespace Dojo 
@@ -20,32 +20,27 @@ namespace Dojo
 	class Mesh;
 	class FrameSet;
 	
-	class Texture : public Buffer
+	class Texture : public Resource
 	{
 	public:
 		 
 		Texture( ResourceGroup* creator, const String& path );
 		
-		virtual ~Texture()
-		{
-			if( loaded )
-				unload();
-		}
-		
+		virtual ~Texture();
 
 		///loads the texture from a memory area with RGBA8 format
 		bool loadFromMemory( byte* buf, int width, int height, GLenum sourceFormat, GLenum destFormat  );
 
 		///loads the texture from the image pointed by the filename
 		bool loadFromFile( const String& path );
-        		
+				
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
 
 		///loads the texture with the given parameters
-		bool load();
+		virtual bool load();
 
-		void unload();
+		virtual void unload();
 		
 		bool isLoaded()			{	return loaded;			}
 						

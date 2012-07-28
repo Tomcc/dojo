@@ -9,22 +9,23 @@ using namespace Dojo;
 
 bool FrameSet::load()
 {			
-	if( isLoaded() )
-		return true;
+	DEBUG_ASSERT( !isLoaded() );
 	
 	for( int i = 0; i < frames.size(); ++i )
 	{
 		Texture* t = frames[i];
-		if( t->load() )
+		if( !t->isLoaded() )
 		{
+			t->load();
+
+			DEBUG_ASSERT( t->isLoaded() );
+
 			// count bytesize
 			size += t->getByteSize();
 		}
-	}		
+	}
 		
-	loaded = true;		
-		
-	return true;	
+	return (loaded = true);	
 }
 
 
@@ -32,13 +33,11 @@ bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 {
 	DEBUG_ASSERT( data );
 	DEBUG_ASSERT( atlasTextureProvider );
-
-	if( isLoaded() )
-		return true;
+	DEBUG_ASSERT( !isLoaded() );
 	
 	FrameSet* atlasSet = atlasTextureProvider->getFrameSet( data->getString( "texture" ) );	
 
-    DEBUG_MESSAGE( data->getString( "texture" ).ASCII());
+	DEBUG_MESSAGE( data->getString( "texture" ).ASCII());
 	DEBUG_ASSERT( atlasSet );
 
 	Texture* atlas = atlasSet->getFrame(0);
@@ -60,10 +59,13 @@ bool FrameSet::loadAtlas( Table* data, ResourceGroup* atlasTextureProvider )
 		if( tiletex->loadFromAtlas( atlas, x,y, sx,sy ) )			
 			addTexture( tiletex, true );
 	}
-		
+
 	//loaded at least one?
 	loaded = frames.size() > 0;
-	
-	return true;
+
+	if( loaded )
+		loadedFromAtlas = true;
+
+	return loaded;
 }
 

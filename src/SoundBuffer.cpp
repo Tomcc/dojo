@@ -13,7 +13,7 @@ using namespace Dojo;
 ///////////////////////////////////////
 
 SoundBuffer::SoundBuffer( ResourceGroup* creator, const String& path ) :
-Buffer( creator, path ),
+Resource( creator, path ),
 size(0),
 buffer( AL_NONE )
 {
@@ -22,12 +22,12 @@ buffer( AL_NONE )
 
 SoundBuffer::~SoundBuffer()
 {
-	unload();
+
 }
 
 bool SoundBuffer::load()
 {
-	if( isLoaded() )	return false;
+	DEBUG_ASSERT( isLoaded() == false );
 
 	alGenBuffers(1,&buffer);
 	
@@ -52,6 +52,15 @@ bool SoundBuffer::load()
 	}
 
 	return error != AL_NO_ERROR;
+}
+
+
+void SoundBuffer::unload()
+{
+	DEBUG_ASSERT( isLoaded() );
+
+	alDeleteBuffers(1, &buffer);
+	buffer = AL_NONE;
 }
 
 ////-------------------------------------////-------------------------------------////------------------------------------
@@ -174,12 +183,3 @@ int SoundBuffer::_loadOggFromFile()
 }
 
 ////-------------------------------------////-------------------------------------////-------------------------------------
-
-void SoundBuffer::unload()
-{
-	if( isLoaded() )
-	{
-		alDeleteBuffers(1, &buffer);
-		buffer = AL_NONE;
-	}
-}

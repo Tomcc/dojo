@@ -103,6 +103,7 @@ namespace Dojo
 		Vector cursorPos, prevCursorPos;
 
 		bool dragging;
+		bool mMousePressed;
 
 		//context sharing stuff needed for multithread creation
 		typedef std::queue< HGLRC* > ContextRequestsQueue;

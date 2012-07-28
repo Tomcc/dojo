@@ -32,7 +32,7 @@ void GameState::clear()
 	destroyAllChilds();
 		
 	//flush resources
-	unloadAll();
+	unload();
 }
 
 void GameState::setViewport( Viewport* v )
@@ -55,7 +55,8 @@ void GameState::touchAreaAtPoint( const Vector& point )
 	{
 		TouchArea* t = mTouchAreas[i];
 		
-		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains( pointer ) )
+		bool c = t->contains( pointer );
+		if( t->isActive() && t->getLayer() >= topMostLayer && c )
 		{
 			//new highest layer - discard lowest layers found
 			if( t->getLayer() > topMostLayer )
@@ -66,7 +67,7 @@ void GameState::touchAreaAtPoint( const Vector& point )
 			topMostLayer = t->getLayer();
 		}
 	}
-	
+
 	//trigger all the areas overlapping in the topmost layer 
 	for( int i = 0; i < layer.size(); ++i )
 		layer[i]->_incrementTouches();	

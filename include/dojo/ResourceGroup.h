@@ -178,13 +178,13 @@ namespace Dojo {
 		{
 			return find< FrameSet >( name, RT_FRAMESET );
 		}
-        
-        inline Texture* getTexture( const String& name )
-        {
-            FrameSet* s = getFrameSet( name );
-            
-            return s ? s->getFrame(0) : NULL;
-        }
+		
+		inline Texture* getTexture( const String& name )
+		{
+			FrameSet* s = getFrameSet( name );
+			
+			return s ? s->getFrame(0) : NULL;
+		}
 		
 		inline Font* getFont( const String& name )
 		{
@@ -267,39 +267,52 @@ namespace Dojo {
 			finalized = true;
 		}
 				
-		inline void unloadSets()
+		inline void unloadSets( bool softUnload = false )
 		{	
-			unload< FrameSet >( frameSets );
+			unload< FrameSet >( frameSets, softUnload );
 		}
 		
-		inline void unloadFonts()
+		inline void unloadFonts( bool softUnload = false )
 		{
-			unload< Font >( fonts );
+			unload< Font >( fonts, softUnload );
 		}
 		
-		inline void unloadMeshes()
+		inline void unloadMeshes( bool softUnload = false )
 		{
-			unload< Mesh >( meshes );
+			unload< Mesh >( meshes, softUnload );
 		}
 		
-		inline void unloadSounds()
+		inline void unloadSounds( bool softUnload = false )
 		{
-			unload< SoundSet >( sounds );
+			unload< SoundSet >( sounds, softUnload );
 		}
 		
-		inline void unloadTables()
+		inline void unloadTables( bool softUnload = false )
 		{
-			unload< Table >( tables );
+			unload< Table >( tables, softUnload );
 		}
 		
-		inline void unloadAll()
+		
+		///empties the group
+		/**
+		It can be used to completely purge the resources from memory, 
+		or it can also try to soft-unload them (without deleting the actual Dojo resource object),
+		It can be used to purge file-based resources from memory when the application is suspended
+		*/
+		inline void unload( bool softUnload = false )
 		{
 			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
-			unloadFonts();
-			unloadSets();
-			unloadMeshes();
-			unloadSounds();
-			unloadTables();
+			unloadFonts( softUnload );
+			unloadSets( softUnload );
+			unloadMeshes( softUnload );
+			unloadSounds( softUnload );
+			unloadTables( softUnload );
+		}
+
+		//loads all the resources that are in the group but aren't loaded
+		void loadExistingResources()
+		{
+			DEBUG_TODO;
 		}
 		
 		inline FrameSetMap::const_iterator getFrameSets() const
@@ -329,16 +342,28 @@ namespace Dojo {
 		SubgroupList subs;
 				
 		template <class T> 
-		void unload( std::map< String, T* >& map )
+		void unload( std::map< String, T* >& map, bool softUnload )
 		{
-			while( !map.empty() )
+			//unload all the resources
+			typedef std::map< String, T* > ResourceMap;
+			ResourceMap::iterator itr = map.begin();
+			ResourceMap::iterator end = map.end();
+			for( ; itr != end; ++itr )
 			{
-				DEBUG_MESSAGE( "~" << map.begin()->first.ASCII() );
-				
-				SAFE_DELETE( map.begin()->second );
-				
-				map.erase( map.begin() );
+				//unload either if reloadable or if we're purging memory
+				if( itr->second->isReloadable() || !softUnload )
+					itr->second->unload();
+
+				//delete too?
+				if( !softUnload )
+				{
+					DEBUG_MESSAGE( "~" << map.begin()->first.ASCII() );
+					SAFE_DELETE( itr->second );
+				}
 			}
+
+			if( !softUnload )
+				map.clear();
 		}
 	};
 }
