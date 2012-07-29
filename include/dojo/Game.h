@@ -15,11 +15,11 @@
 
 #include "Render.h"
 #include "StateInterface.h"
-#include "FocusListener.h"
+#include "ApplicationListener.h"
 
 namespace Dojo 
 {
-	class Game : public StateInterface, public FocusListener
+	class Game : public StateInterface, public ApplicationListener
 	{
 	public:
 			
@@ -27,7 +27,7 @@ namespace Dojo
 		
 		virtual ~Game();
 		
-		inline void addFocusListener( FocusListener* f )
+		inline void addFocusListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f );
 			DEBUG_ASSERT( !focusListeners.exists( f ) );
@@ -35,7 +35,7 @@ namespace Dojo
 			focusListeners.add( f );
 		}
 		
-		inline void removeFocusListener( FocusListener* f )
+		inline void removeFocusListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f  );
 			
@@ -72,11 +72,11 @@ namespace Dojo
 			return nativeOrientation;
 		}
 		
-		void _fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFocusLost();	}
-		void _fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFocusGained();	}
-		void _fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onFreeze();	}
-		void _fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onDefreeze();	}
-		void _fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onTermination();	}
+		void _fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusLost();	}
+		void _fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusGained();	}
+		void _fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFreeze();	}
+		void _fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationDefreeze();	}
+		void _fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationTermination();	}
 		
 	protected:
 		
@@ -85,7 +85,7 @@ namespace Dojo
 		
 		Orientation nativeOrientation;
 		
-		Dojo::Array< FocusListener* > focusListeners;
+		Dojo::Array< ApplicationListener* > focusListeners;
 
 		String name;
 	};

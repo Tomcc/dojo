@@ -270,7 +270,7 @@ namespace Dojo {
 		}
 
 		///loads all the resources that are in the group but aren't loaded
-		void loadResources( bool recursive = true )
+		void loadResources( bool recursive = false )
 		{
 			_load< FrameSet >( frameSets );
 			_load< Font >( fonts );
@@ -286,7 +286,7 @@ namespace Dojo {
 		}
 
 		///empties the group destroying all the resources
-		inline void unloadResources( bool recursive = true )
+		inline void unloadResources( bool recursive = false )
 		{
 			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
 			_unload< Font >( fonts, false );
@@ -300,7 +300,7 @@ namespace Dojo {
 		}
 
 		///unloads re-loadable resources without actually destroying resource objects
-		inline void softUnloadResources( bool recursive = true )
+		inline void softUnloadResources( bool recursive = false )
 		{
 			_unload< Font >( fonts, true );
 			_unload< FrameSet >( frameSets, true );

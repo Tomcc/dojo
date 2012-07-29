@@ -6,7 +6,7 @@
 #include <dojo/Resource.h>
 #include <dojo/Color.h>
 #include <dojo/Email.h>
-#include <dojo/FocusListener.h>
+#include <dojo/ApplicationListener.h>
 #include <dojo/Font.h>
 #include <dojo/FontSystem.h>
 #include <dojo/FrameSet.h>

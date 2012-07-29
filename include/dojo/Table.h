@@ -370,9 +370,12 @@ namespace Dojo
 				return default;
 		}
 		
-		inline const Dojo::Color getColor( const String& key, float alpha = 1.f ) const
+		inline const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& default = Color::BLACK ) const
 		{
-			return Color( getVector( key ), alpha );
+			if( existsAs( key, FT_VECTOR ) )
+				return Color( *( (Vector*)get(key)->getValue() ), alpha );
+			else
+				return default;
 		}
 		
 		inline Table* getTable( const String& key ) const

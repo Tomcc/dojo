@@ -34,6 +34,8 @@ using namespace OIS;
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
+	Game* game = Platform::getSingleton()->getGame();
+
 	switch( message )
 	{
 	case WM_CREATE:
@@ -65,6 +67,17 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	case WM_DESTROY:
 		PostQuitMessage( 0 ) ;
 		return 0;
+		break;
+
+	//enter / exit unfocused state
+	case WM_ACTIVATEAPP:
+	case WM_ACTIVATE:
+	case WM_SHOWWINDOW:	
+		if( wparam == false ) //minimized or defocused
+			game->_fireFocusLost();
+		else 
+			game->_fireFocusGained();
+
 		break;
 	}
 
@@ -385,7 +398,10 @@ void Win32Platform::loop( float frameTime )
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
 			if( msg.message == WM_QUIT )
+			{
+				game->_fireTermination();
 				running = false;
+			}
 
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );

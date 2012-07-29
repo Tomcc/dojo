@@ -11,27 +11,27 @@
 ///an interruption listener is able to listen interruptions to gameplay's flow
 namespace Dojo
 {	
-	class FocusListener
+	class ApplicationListener
 	{
 	public:
 		
-		FocusListener()
+		ApplicationListener()
 		{
 			
 		}
 		
-		virtual ~FocusListener() {}
+		virtual ~ApplicationListener() {}
 		
 		///called in any non-fatal loss of focus case
-		virtual void onFocusLost() {}			
-		virtual void onFocusGained() {}
+		virtual void onApplicationFocusLost() {}			
+		virtual void onApplicationFocusGained() {}
 		
 		///called on a "fatal" application freeze to serialize the current state
-		virtual void onFreeze() {}
+		virtual void onApplicationFreeze() {}
 		///called when a freezed app is defreezed
-		virtual void onDefreeze() {}			
+		virtual void onApplicationDefreeze() {}			
 		
-		virtual void onTermination() {}
+		virtual void onApplicationTermination() {}
 	};
 }
 
