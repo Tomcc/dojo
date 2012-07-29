@@ -163,6 +163,11 @@ namespace Dojo
 		{
 			return animation->getCurrentFrameNumber();
 		}
+
+		inline float getCurrentAnimationLength()
+		{
+			return animation->getTotalTime();
+		}
 		
 		inline void setAnimationTime( float t )
 		{

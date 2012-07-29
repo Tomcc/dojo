@@ -114,11 +114,11 @@ namespace Dojo
 		
 		inline static int getTagIdx( const String& str )
 		{			
-            int tagIdx = getVersionIdx( str )-1; //get version idx
-            
-            if( tagIdx < 0 )
-                tagIdx = (int)str.size()-1;
-            
+			int tagIdx = getVersionIdx( str )-1; //get version idx
+			
+			if( tagIdx < 0 )
+				tagIdx = (int)str.size()-1;
+			
 			unichar c;
 			for( ; tagIdx >= 0; --tagIdx )
 			{
@@ -133,53 +133,62 @@ namespace Dojo
 			
 			return -1;
 		}
-        
-        inline static int getVersionIdx( const String& str )
-        {            
-            int idx = (int)str.size()-1;
-            
-            //look for a single digit
-            for( ; idx >= 0 && !isNumber( str.at( idx ) ); --idx );
-            
-            return ( idx > 1 && str.at( idx-1 ) == '@' ) ? idx-1 : -1;
-        }
-        
-        ///returns the version of the given name, or 0 if not found
-        inline static int getVersion( const String& str )
-        {
-            int vidx = getVersionIdx( str );
-            
-            return (vidx >= 0) ? (str.at( vidx+1 ) - '0') : 0;
-        }
+		
+		inline static int getVersionIdx( const String& str )
+		{            
+			int idx = (int)str.size()-1;
+			
+			//look for a single digit
+			for( ; idx >= 0 && !isNumber( str.at( idx ) ); --idx );
+			
+			return ( idx > 1 && str.at( idx-1 ) == '@' ) ? idx-1 : -1;
+		}
+		
+		///returns the version of the given name, or 0 if not found
+		inline static int getVersion( const String& str )
+		{
+			int vidx = getVersionIdx( str );
+			
+			return (vidx >= 0) ? (str.at( vidx+1 ) - '0') : 0;
+		}
 		
 		inline static int getTag( const String& str )
 		{
 			int tidx = getTagIdx( str );
-            int end = getVersionIdx( str );
+			int end = getVersionIdx( str );
 			
-            if( end == -1 )
-                end = str.size();
-            
+			if( end == -1 )
+				end = str.size();
+			
 			if( tidx != -1 )
 				return toInt( str.substr( tidx+1, end - tidx - 1 ) );
 			else
 				return -1; //no tag
 		}
-        				
-        ///removes extra info appended to file name: "filename_3@2" -> "filename"
+						
+		///removes extra info appended to file name: "filename_3@2" -> "filename"
 		inline static String removeTags( const String& str )
 		{            
 			int tidx = getTagIdx( str );
-            
-            //if a tag is found, just remove everything after
-            if( tidx != -1 )
-                return str.substr( 0, tidx );
-            
-            int vidx = getVersionIdx( str );
-            if( vidx != -1 ) //else remove just the version
-                return str.substr( 0, vidx );
-            
-            return str;
+			
+			//if a tag is found, just remove everything after
+			if( tidx != -1 )
+				return str.substr( 0, tidx );
+			
+			int vidx = getVersionIdx( str );
+			if( vidx != -1 ) //else remove just the version
+				return str.substr( 0, vidx );
+			
+			return str;
+		}
+
+		inline static String removeVersion( const String& str )
+		{
+			int vidx = getVersionIdx( str );
+			if( vidx != -1 ) //else remove just the version
+				return str.substr( 0, vidx );
+
+			return str;
 		}
 		
 		inline static bool areStringsNearInSequence( const String& first, const String& second )
@@ -190,13 +199,13 @@ namespace Dojo
 			
 			return t1 >= 0 && t2 >= 0 && t1+1 == t2;
 		}
-        
-        inline static void swap( float& a, float& b )
-        {
-            float temp = a;
-            a = b;
-            b = temp;
-        }
+		
+		inline static void swap( float& a, float& b )
+		{
+			float temp = a;
+			a = b;
+			b = temp;
+		}
 	};	
 }
 

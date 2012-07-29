@@ -99,14 +99,29 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 		//skip wrong versions
 		if( Utils::getVersion( name ) != version ) 
 			continue;
-		name = Utils::removeTags( name );
+
+		name = Utils::removeVersion( name );
 
 		Platform::getSingleton()->load( &def, paths[i] );
-			
-		currentSet = new FrameSet( this, name );
-		currentSet->setAtlas( &def, this );
+
+		//standard flat atlasinfo
+		if( def.getAutoMembers() == 0 )
+		{			
+			currentSet = new FrameSet( this, name );
+			currentSet->setAtlas( &def, this );
 		
-		addFrameSet( currentSet, name );
+			addFrameSet( currentSet, name );
+		}
+		else for( int i = 0; i < def.getAutoMembers(); ++i )
+		{
+			Table* sub = def.getTable(i);
+			const String& name = sub->getString("name");
+
+			currentSet = new FrameSet( this, name );
+			currentSet->setAtlas( sub, this );
+
+			addFrameSet( currentSet, name );
+		}
 
 		def.clear();
 	}
