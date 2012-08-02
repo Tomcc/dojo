@@ -8,8 +8,6 @@
 
 #include "OSXPlatform.h"
 
-#include <OIS/OIS.h>
-
 #import <ApplicationServices/ApplicationServices.h>
 #import <AppKit/NSImage.h>
 #import <AppKit/NSApplication.h>

@@ -333,49 +333,49 @@ namespace Dojo
 			return map.find( key )->second;
 		}
 		
-		inline float getNumber( const String& key, float default = 0 ) const
+		inline float getNumber( const String& key, float defaultValue = 0 ) const
 		{			
 			if( existsAs( key, FT_NUMBER ) )
 				return *( (float*)get(key)->getValue() );
 			else
-				return default;
+				return defaultValue;
 		}
 		
-		inline int getInt( const String& key, int default = 0 ) const
+		inline int getInt( const String& key, int defaultValue = 0 ) const
 		{
-			return (int)getNumber(key , default);
+			return (int)getNumber(key , defaultValue);
 		}
 		
-		inline bool getBool( const String& key, bool default = false ) const
+		inline bool getBool( const String& key, bool defaultValue = false ) const
 		{
 			if( existsAs( key, FT_NUMBER ) )
 				return (bool)(*( (float*)get(key)->getValue() ));
 			else
-				return default;
+				return defaultValue;
 		}
 		
-		inline const String& getString( const String& key, const String& default = String::EMPTY ) const
+		inline const String& getString( const String& key, const String& defaultValue = String::EMPTY ) const
 		{
 			if( existsAs(key, FT_STRING ) )
 				return *( (String*)get(key)->getValue() );
 			else
-				return default;
+				return defaultValue;
 		}
 		
-		inline const Dojo::Vector& getVector( const String& key, const Dojo::Vector& default = Vector::ZERO ) const
+		inline const Dojo::Vector& getVector( const String& key, const Dojo::Vector& defaultValue = Vector::ZERO ) const
 		{
 			if( existsAs( key, FT_VECTOR ) ) 
 				return *( (Vector*)get(key)->getValue() );
 			else
-				return default;
+				return defaultValue;
 		}
 		
-		inline const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& default = Color::BLACK ) const
+		inline const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& defaultValue = Color::BLACK ) const
 		{
 			if( existsAs( key, FT_VECTOR ) )
 				return Color( *( (Vector*)get(key)->getValue() ), alpha );
 			else
-				return default;
+				return defaultValue;
 		}
 		
 		inline Table* getTable( const String& key ) const

@@ -343,8 +343,8 @@ namespace Dojo {
 		void _load( std::map< String, T* >& map )
 		{
 			typedef std::map< String, T* > ResourceMap;
-			ResourceMap::iterator itr = map.begin();
-			ResourceMap::iterator end = map.end();
+			typename ResourceMap::iterator itr = map.begin();
+			typename ResourceMap::iterator end = map.end();
 			for( ; itr != end; ++itr )
 			{
 				//unload either if reloadable or if we're purging memory
@@ -358,8 +358,8 @@ namespace Dojo {
 		{
 			//unload all the resources
 			typedef std::map< String, T* > ResourceMap;
-			ResourceMap::iterator itr = map.begin();
-			ResourceMap::iterator end = map.end();
+			typename ResourceMap::iterator itr = map.begin();
+			typename ResourceMap::iterator end = map.end();
 			for( ; itr != end; ++itr )
 			{
 				//unload either if reloadable or if we're purging memory
