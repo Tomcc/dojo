@@ -37,13 +37,13 @@ namespace Dojo
 		
 		///sets a new substate either immediately or at the next loop.
 		/**
-		 	-Immediately when there's no current state, eg. at begin
-		 	-at the next loop when it replaces a previous state
+			-Immediately when there's no current state, eg. at begin
+			-at the next loop when it replaces a previous state
 		 
 		Warning, calling setState
-		 	-with a pending state change
-		 	-during a state change (onStateBegin, onTransition, onStateEnd)
-		 	is an error and a failed ASSERT.
+			-with a pending state change
+			-during a state change (onStateBegin, onTransition, onStateEnd)
+			is an error and a failed ASSERT.
 		*/
 		inline void setState( int newState )		
 		{			
@@ -55,23 +55,23 @@ namespace Dojo
 			if( !hasCurrentState() )
 				_applyNextState();
 		}
-        
-        ///sets a new substate immediately
+		
+		///sets a new substate immediately
 		/**
-         beware - this can cause MANY unexpected behaviours
-         
-         Warning, calling setState
-         -with a pending state change
-         -during a state change (onStateBegin, onTransition, onStateEnd)
-         is an error and a failed ASSERT.
-         */
+		 beware - this can cause MANY unexpected behaviours
+		 
+		 Warning, calling setState
+		 -with a pending state change
+		 -during a state change (onStateBegin, onTransition, onStateEnd)
+		 is an error and a failed ASSERT.
+		 */
 		inline void setStateImmediate( int newState )		
 		{			
 			DEBUG_ASSERT( mCanSetNextState );
 			
 			nextState = newState;
 			
-            _applyNextState();
+			_applyNextState();
 		}
 		
 		///sets a new substate either immediately or at the next loop.

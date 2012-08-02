@@ -114,7 +114,7 @@ namespace Dojo
 		}
 		
 		Table( const String& tablename = String::EMPTY ) :
-		Resource( NULL, String::EMPTY ),
+		Resource(),
 		name( tablename ),
 		unnamedMembers( 0 )
 		{
@@ -123,7 +123,7 @@ namespace Dojo
 
 		///copy constructor
 		Table( const Table& t ) :
-		Resource( NULL, String::EMPTY ),
+		Resource(),
 		name( t.name ),
 		unnamedMembers( t.unnamedMembers )
 		{
@@ -153,7 +153,7 @@ namespace Dojo
 
 		virtual void onUnload( bool soft = false )
 		{
-			if( !soft || isFileBased() )
+			if( !soft || isReloadable() )
 			{
 				clear();
 

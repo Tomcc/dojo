@@ -33,7 +33,6 @@ int Sprite::registerAnimation( const String& base, float timePerFrame )
 	FrameSet* s = gameState->getFrameSet( base );
 	
 	DEBUG_ASSERT( s );
-	DEBUG_ASSERT( timePerFrame >= 0 );
 	
 	return registerAnimation( s, timePerFrame );	
 }

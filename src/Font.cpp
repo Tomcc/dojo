@@ -110,13 +110,18 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 
 
 Font::Page::Page( Font* f, int idx ) :
-Resource( NULL, String::EMPTY ),
+Resource(),
 index( idx ),
 firstCharIdx( index * FONT_CHARS_PER_PAGE ),
 font( f ),
 texture( NULL )
 {
 	DEBUG_ASSERT( font );
+
+	texture = new Texture();
+	texture->disableBilinearFiltering();
+	texture->disableMipmaps();
+	texture->disableTiling();
 }
 
 bool Font::Page::onLoad()
@@ -125,8 +130,9 @@ bool Font::Page::onLoad()
 	int sx = font->mCellWidth * FONT_PAGE_SIDE;
 	int sy = font->mCellHeight * FONT_PAGE_SIDE;
 
-	int sxp2 = Math::nextPowerOfTwo( sx );
-	int syp2 = Math::nextPowerOfTwo( sy );
+	bool npot = Platform::getSingleton()->isNPOTEnabled();
+	int sxp2 = npot ? sx : Math::nextPowerOfTwo( sx );
+	int syp2 = npot ? sy : Math::nextPowerOfTwo( sy );
 
 	int pixelNumber = sxp2 * syp2;
 	int bufsize = pixelNumber * 4;
@@ -225,21 +231,12 @@ bool Font::Page::onLoad()
 		free( glowBuf );
 	}
 
-	//the texture already exists? is this a reload?
-	if( !texture )
-	{
-		texture = new Texture( NULL, String::EMPTY );
-		texture->disableBilinearFiltering();
-		texture->disableMipmaps();
-		texture->disableTiling();
-	}
-
 	//drop the buffer in the texture
-	texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
+	loaded = texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
 
 	free( buf );
 
-	return loaded = true;
+	return loaded;
 }
 
 /// --------------------------------------------------------------------------------
@@ -251,23 +248,30 @@ Resource( creator, path )
 {			
 	//miss all the pages
 	memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
+}
 
-	//load table
+Font::~Font()
+{
+
+}
+
+bool Font::onLoad()
+{
 	Table t;
-	Platform::getSingleton()->load( &t, path );
-	
+	Platform::getSingleton()->load( &t, filePath );
+
 	fontName = t.getName();
 
-	fontFile = Utils::getDirectory( path ) + '/' + t.getString( "truetype" );
+	fontFile = Utils::getDirectory( filePath ) + '/' + t.getString( "truetype" );
 	fontWidth = fontHeight = t.getInt( "size" );	
 
 	antialias = t.getBool( "antialias" );
 	kerning = t.getBool( "kerning" );
 	spacing = t.getNumber( "spacing" );
-	
+
 	glowRadius = t.getInt( "glowRadius" );
 	glowColor = t.getColor( "glowColor" );
-	
+
 	mCellWidth = fontWidth + glowRadius * 2;
 	mCellHeight = fontHeight + glowRadius * 2;
 
@@ -276,11 +280,28 @@ Resource( creator, path )
 	Table* preload = t.getTable( "preloadedPages" );
 	for( int i = 0; i < preload->getAutoMembers(); ++i )
 		getPage( preload->getInt( i ) );
+
+	DEBUG_ASSERT( !isLoaded() );
+
+	//load existing pages that were trimmed during a previous unload
+	for( int i = 0; i < FONT_MAX_PAGES; ++i )
+	{
+		if( pages[i] && !pages[i]->isLoaded() )
+			pages[i]->onLoad();
+	}
+
+	return loaded = true;
 }
 
-Font::~Font()
+void Font::onUnload( bool soft )
 {
+	for( uint i = 0; i < FONT_MAX_PAGES; ++i )
+	{
+		if( pages[i] && pages[i]->isLoaded() )
+			pages[i]->onUnload( soft );
+	}
 
+	loaded = false;
 }
 
 float Font::getKerning( Character* next, Character* prev )

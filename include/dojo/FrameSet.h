@@ -27,8 +27,9 @@ namespace Dojo
 		
 		//crea un set di frames col nome dato + _1, _2, _3...
 		FrameSet( ResourceGroup* creator, const String& prefixName ) :
-		Resource( creator, String::EMPTY ),
-		name( prefixName )
+		Resource( creator ),
+		name( prefixName ),
+		mPreferredAnimationTime( 0 )
 		{
 			
 		}
@@ -38,6 +39,13 @@ namespace Dojo
 			//destroy child textures
 			for( int i = 0; i < frames.size(); ++i )
 				SAFE_DELETE( frames[i] );
+		}
+
+		inline void setPreferredAnimationTime( float t )
+		{
+			DEBUG_ASSERT( t > 0 );
+
+			mPreferredAnimationTime = t;
 		}
 		
 		void setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider );
@@ -78,6 +86,16 @@ namespace Dojo
 		{
 			return frames.at( (int)Math::rangeRandom( 0, (float)frames.size() ) );
 		}
+
+		inline float getPreferredAnimationTime()
+		{
+			return mPreferredAnimationTime;
+		}
+
+		inline bool hasPreferredAnimationTime()
+		{
+			return mPreferredAnimationTime >= 0;
+		}
 		
 		uint getFrameNumber()				{	return frames.size();	}
 		
@@ -89,6 +107,8 @@ namespace Dojo
 		
 	protected:
 		String name;
+
+		float mPreferredAnimationTime;
 
 		TextureList frames;
 	};

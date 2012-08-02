@@ -59,7 +59,7 @@ void SoundBuffer::onUnload(bool soft)
 {
 	DEBUG_ASSERT( isLoaded() );
 
-	if( !soft || isFileBased() )
+	if( !soft || isReloadable() )
 	{
 		alDeleteBuffers(1, &buffer);
 		buffer = AL_NONE;

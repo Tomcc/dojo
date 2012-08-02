@@ -15,8 +15,8 @@ namespace Dojo
 	{
 	public:
 
-		SoundSet( const String& setName ) :
-		Resource( NULL, String::EMPTY ),
+		SoundSet( ResourceGroup* creator, const String& setName ) :
+		Resource( creator ),
 		name( setName ),
 		buffers( 1,1 )	//pagina minima, il vettore e' statico
 		{

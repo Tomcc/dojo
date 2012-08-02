@@ -128,7 +128,7 @@ namespace Dojo
 		
 		virtual ~RenderState()
 		{
-			for( int i = 0; i < 8; ++i )
+			for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 				delete textures[i];
 		}
 		
@@ -146,7 +146,7 @@ namespace Dojo
 		inline void setTexture( Texture* tex, int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < 8 );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
 
 			if( textures[ID] == NULL ) //adding a new one
 			{                
@@ -164,7 +164,7 @@ namespace Dojo
 		inline Texture* getTexture( int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < 8 );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
 	
 			if( textures[ID] )
 				return textures[ID]->texture;
@@ -175,7 +175,7 @@ namespace Dojo
 		inline TextureUnit* getTextureUnit( int ID )
 		{
 			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < 8 );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
 
 			return textures[ID];
 		}
@@ -200,7 +200,7 @@ namespace Dojo
 				dist += 3;
 			
 			//TODO - this needs to be fixed for texture units
-			for( int i = 0; i < 8; ++i )
+			for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 			{
 				if( textures[i] != s->textures[i] )
 					dist += 2;
@@ -220,7 +220,7 @@ namespace Dojo
 			
 		bool blendingEnabled;
 		
-		TextureUnit* textures[8];
+		TextureUnit* textures[ DOJO_MAX_TEXTURE_UNITS ];
 		int mTextureNumber;
 
 		Mesh* mesh;

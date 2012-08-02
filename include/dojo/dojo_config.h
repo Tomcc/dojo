@@ -12,7 +12,7 @@
 
 //are we on windows?
 #if defined ( WIN32 )
-    #define PLATFORM_WIN32
+	#define PLATFORM_WIN32
 	#define NOMINMAX  //Y U NO LEAVE STL ALONE
 
 //are we on mac?
@@ -29,10 +29,10 @@
 
 //are we on GNU/Linux?
 #elif defined( LINUX )
-    #define PLATFORM_LINUX
+	#define PLATFORM_LINUX
 
 #else 
-    #error "Platform unrecognized"
+	#error "Platform unrecognized"
 
 #endif
 
@@ -86,33 +86,35 @@
 	#define glBindFramebuffer			glBindFramebufferOES
 	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
-    #define glBlendEquation             glBlendEquationOES
+	#define glBlendEquation             glBlendEquationOES
 
-    #define GL_FUNC_ADD GL_FUNC_ADD_OES
+	#define GL_FUNC_ADD GL_FUNC_ADD_OES
 	
 #endif
 
 //general configurations
 #ifdef PLATFORM_IOS
-    #define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
+	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
 #else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
-    #define DOJO_WIREFRAME_AVAILABLE
+	#define DOJO_WIREFRAME_AVAILABLE
 #endif
 
 //do not use the differential state commit //HACK
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
+#define DOJO_MAX_TEXTURE_UNITS 2
+
 //common enums
 namespace Dojo
 {
-    enum Orientation
-    {
-        DO_PORTRAIT,
-        DO_PORTRAIT_REVERSE,
-        DO_LANDSCAPE_LEFT,
-        DO_LANDSCAPE_RIGHT
-    };
+	enum Orientation
+	{
+		DO_PORTRAIT,
+		DO_PORTRAIT_REVERSE,
+		DO_LANDSCAPE_LEFT,
+		DO_LANDSCAPE_RIGHT
+	};
 }
 
 #endif

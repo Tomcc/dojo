@@ -79,9 +79,17 @@ namespace Dojo
 
 			virtual bool onLoad();
 
-			virtual void onUnload( bool soft )
+			virtual void onUnload( bool soft = false )
 			{
-				texture->onUnload( soft );
+				//a font page can always unload
+				texture->onUnload(); //force unload
+
+				loaded = false;
+			}
+
+			virtual bool isReloadable()
+			{
+				return true; //always reloadable
 			}
 
 			inline Texture* getTexture() 
@@ -121,31 +129,9 @@ namespace Dojo
 		
 		virtual ~Font();
 
-		virtual bool onLoad()
-		{
-			DEBUG_ASSERT( !isLoaded() );
-
-			//load existing pages that were trimmed during a previous unload
-			for( int i = 0; i < FONT_MAX_PAGES; ++i )
-			{
-				if( pages[i] )
-					pages[i]->onLoad();
-			}
-
-			return loaded = true;
-		}
-
+		virtual bool onLoad();
 		///purges all the loaded pages from memory and prompts a rebuild
-		virtual void onUnload( bool soft )
-		{
-			for( uint i = 0; i < FONT_MAX_PAGES; ++i )
-			{
-				if( pages[i] )
-					pages[i]->onUnload( soft );
-			}
-
-			loaded = false;
-		}
+		virtual void onUnload( bool soft = false );
 
 		inline const String& getName()
 		{

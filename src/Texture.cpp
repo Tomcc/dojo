@@ -8,6 +8,26 @@
 
 using namespace Dojo;
 
+Texture::Texture( ResourceGroup* creator ) :
+Resource( creator ),
+	width(0),
+	height(0),
+	internalWidth(0),
+	internalHeight(0),
+	xRatio(0),
+	yRatio(0),
+	xOffset(0),
+	yOffset(0),
+	glhandle( 0 ),
+	npot( false ),
+	parentAtlas( NULL ),
+	OBB( NULL ),
+	ownerFrameSet( NULL ),
+	mMipmapsEnabled( true )
+{			
+
+}
+
 Texture::Texture( ResourceGroup* creator, const String& path ) :
 Resource( creator, path ),
 width(0),
@@ -36,7 +56,7 @@ Texture::~Texture()
 
 void Texture::bind( uint index )
 {
-	DEBUG_ASSERT( index < 8 );
+	DEBUG_ASSERT( index < DOJO_MAX_TEXTURE_UNITS );
 	
 	//create the gl texture if still not created!
 	if( !glhandle )
@@ -272,7 +292,7 @@ bool Texture::onLoad()
 	if( OBB )  //rebuild and reload the OBB if it was purged
 		_buildOptimalBillboard();
 	
-	if( isFileBased() )
+	if( isReloadable() )
 		return loadFromFile( filePath );
 	else if( parentAtlas )
 		return _setupAtlas();
@@ -282,7 +302,7 @@ void Texture::onUnload( bool soft )
 {		
 	DEBUG_ASSERT( loaded );
 	
-	if( !soft || isFileBased() )
+	if( !soft || isReloadable() )
 	{
 		if( OBB )
 			OBB->onUnload(); //always destroy the OBB

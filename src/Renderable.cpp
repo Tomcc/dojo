@@ -15,13 +15,13 @@ Renderable::~Renderable()
 
 void Renderable::onAction( float dt )
 {    
-    bool previousAABBSetting = mNeedsAABB;
-    mNeedsAABB = false; //override the setting
-        
+	bool previousAABBSetting = mNeedsAABB;
+	mNeedsAABB = false; //override the setting
+		
 	Object::onAction( dt );
 	
 	if( mesh && (mNeedsAABB = previousAABBSetting) )
-        _updateWorldAABB( mesh->getMin(), mesh->getMax() );
+		_updateWorldAABB( mesh->getMin(), mesh->getMax() );
 	
 	advanceFade(dt);
 }

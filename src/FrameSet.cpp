@@ -17,6 +17,8 @@ void FrameSet::setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider 
 
 	Texture* atlas = atlasSet->getFrame(0);
 
+	mPreferredAnimationTime = atlasTable->getNumber( "animationFrameTime" );
+
 	Table* tiles = atlasTable->getTable( "tiles" );
 
 	uint x, y, sx, sy;
@@ -29,7 +31,7 @@ void FrameSet::setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider 
 		sx = tile->getInt( 2 );
 		sy = tile->getInt( 3 );
 
-		Texture* tiletex = new Texture( NULL, String::EMPTY );
+		Texture* tiletex = new Texture();
 
 		tiletex->loadFromAtlas( atlas, x,y, sx,sy );
 

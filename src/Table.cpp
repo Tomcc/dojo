@@ -13,7 +13,7 @@ bool Table::onLoad()
 	//loads itself from file
 	DEBUG_ASSERT( !loaded );
 
-	if( !isFileBased() )
+	if( !isReloadable() )
 		return false;
 
 	Platform::getSingleton()->load( this, filePath );

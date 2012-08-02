@@ -189,7 +189,7 @@ void ResourceGroup::addSounds( const String& subdirectory )
 		{
 			//create a new set		
 			String setPrefix = Utils::removeTags( name );
-			currentSet = new SoundSet( setPrefix );
+			currentSet = new SoundSet( this, setPrefix );
 			addSound( currentSet, setPrefix );
 		}
 			

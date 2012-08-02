@@ -25,7 +25,7 @@ namespace Dojo
 				
 		typedef Array<Animation*> AnimationList;
 														
-		Sprite( GameState* level, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = 1, bool pixelPerfect = true );
+		Sprite( GameState* level, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = -1, bool pixelPerfect = true );
 				
 		virtual ~Sprite()
 		{
@@ -44,9 +44,17 @@ namespace Dojo
 		}
 
 		///registers the given animation and returns its handle
-		inline int registerAnimation( FrameSet* set, float timePerFrame )
+		/**
+		If timePerFrame is not specified, the animation tries to use the frameset's preferred
+		*/
+		inline int registerAnimation( FrameSet* set, float timePerFrame = -1 )
 		{
 			DEBUG_ASSERT( set );
+
+			if( timePerFrame < 0 )
+				timePerFrame = set->getPreferredAnimationTime();
+
+			DEBUG_ASSERT( timePerFrame >= 0 );
 						
 			Animation* a = new Animation( set, timePerFrame );
 		
@@ -59,7 +67,7 @@ namespace Dojo
 			return animations.size()-1;
 		}
 		
-		int registerAnimation( const String& base, float timePerFrame );
+		int registerAnimation( const String& base, float timePerFrame = -1 );
 				
 		///sets the animation at the given index
 		inline void setAnimation( int i ) 	

@@ -182,7 +182,7 @@ void Mesh::bind()
 	else
 		glDisableClientState( GL_COLOR_ARRAY );
 
-	for( uint i = 0; i < 8; ++i )
+	for( uint i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 	{
 		if( vertexFields[ VF_UV + i ] )
 		{
@@ -240,7 +240,7 @@ bool Mesh::onLoad()
 {
 	DEBUG_ASSERT( !isLoaded() );
 
-	if( !isFileBased() )
+	if( !isReloadable() )
 		return false;
 
 	//load binary mesh

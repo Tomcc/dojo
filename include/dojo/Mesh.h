@@ -52,8 +52,37 @@ namespace Dojo
 			TM_LIST,
 			TM_LINE_STRIP
 		};
-				
-		Mesh( ResourceGroup* creator = NULL, const String& filePath = String::EMPTY ) :
+		
+		Mesh( ResourceGroup* creator = NULL ) :
+		Resource( creator ),
+			vertexSize(0),
+			vertexCount( 0 ),		
+			vertexMaxCount( 0 ),
+			currentVertex( NULL ),
+			vertices( NULL ),
+			indexCount( 0 ),
+			indexMaxCount( 0 ),
+			indexByteSize(0),
+			indexMaxValue(0),
+			indexGLType(0),
+			indices( NULL ),
+			triangleCount(0),
+			triangleMode( TM_STRIP ),
+			vertexHandle(0),
+			indexHandle(0),
+			dynamic( false ),
+			editing( false ),
+			mDestroyBuffersOnEnd( true )
+		{
+			//set all fields to zero
+			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
+			memset( vertexFieldOffset, 0, sizeof(uint) * FIELDS_NUMBER );
+
+			//default index size is 16
+			setIndexByteSize( sizeof(GLushort) );
+		}
+
+		Mesh( ResourceGroup* creator, const String& filePath ) :
 		Resource( creator, filePath ),
 		vertexSize(0),
 		vertexCount( 0 ),		
@@ -80,7 +109,7 @@ namespace Dojo
 
 			//default index size is 16
 			setIndexByteSize( sizeof(GLushort) );
-		}		
+		}
 		
 		virtual ~Mesh()
 		{
@@ -320,7 +349,7 @@ namespace Dojo
 			DEBUG_ASSERT( isLoaded() );
 
 			//when soft unloading, only unload file-based meshes
-			if( !soft || isFileBased() )
+			if( !soft || isReloadable() )
 			{
 				glDeleteBuffers( 1, &vertexHandle );
 				glDeleteBuffers( 1, &indexHandle );

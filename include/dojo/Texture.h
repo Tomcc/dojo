@@ -24,6 +24,8 @@ namespace Dojo
 	{
 	public:
 		 
+		Texture( ResourceGroup* creator = NULL );
+
 		Texture( ResourceGroup* creator, const String& path );
 		
 		virtual ~Texture();
