@@ -28,7 +28,8 @@ namespace Dojo
 			FrameSet* frames;
 			
 			Animation( FrameSet* set, float timePerFrame ) :
-			currentFrame( NULL )
+			currentFrame( NULL ),
+			mElapsedLoops(0)
 			{
 				setup( set, timePerFrame );
 			}			
@@ -70,6 +71,12 @@ namespace Dojo
 			{
 				return totalTime;
 			}
+
+			///returns how many loops have elapsed since the last setup
+			inline int getElapsedLoops()
+			{
+				return mElapsedLoops;
+			}
 			
 			inline void setFrame( uint i )
 			{
@@ -95,7 +102,10 @@ namespace Dojo
 				
 				//clamp in the time interval
 				while( animationTime >= totalTime )
+				{
+					++mElapsedLoops;
 					animationTime -= totalTime;
+				}
 				
 				while( animationTime < 0 )
 					animationTime += totalTime;
@@ -112,7 +122,7 @@ namespace Dojo
 			
 			Texture* currentFrame;
 			
-			float animationTime, totalTime, timePerFrame;
+			float animationTime, totalTime, timePerFrame, mElapsedLoops;
 		};
 		
 	public:
@@ -167,6 +177,11 @@ namespace Dojo
 		inline float getCurrentAnimationLength()
 		{
 			return animation->getTotalTime();
+		}
+
+		inline int getAnimationElapsedLoops()
+		{
+			return animation->getElapsedLoops();
 		}
 		
 		inline void setAnimationTime( float t )
@@ -235,7 +250,7 @@ namespace Dojo
 		Vector screenSize;
 		
 		//assigned animation
-		Animation* animation;	
+		Animation* animation;
 				
 		inline void _setTexture( Texture* t )
 		{			

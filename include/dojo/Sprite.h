@@ -83,14 +83,9 @@ namespace Dojo
 			
 			_updateScreenSize();
 		}
-		
-		///returns the current animation index. TODO don't use a linear search
-		inline int getAnimation()
-		{
-			return animations.getElementIndex( animation );
-		}
 
-		inline int getAnimationID()
+		///returns the current animation Index
+		inline int getAnimationIndex()
 		{
 			return mAnimationIdx;
 		}
