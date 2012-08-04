@@ -34,7 +34,7 @@ using namespace OIS;
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
-	Game* game = Platform::getSingleton()->getGame();
+	Platform* app = Platform::getSingleton();
 
 	switch( message )
 	{
@@ -74,9 +74,10 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	case WM_ACTIVATE:
 	case WM_SHOWWINDOW:	
 		if( wparam == false ) //minimized or defocused
-			game->_fireFocusLost();
+			app->_fireFocusLost();
+
 		else 
-			game->_fireFocusGained();
+			app->_fireFocusGained();
 
 		break;
 	}
@@ -399,7 +400,7 @@ void Win32Platform::loop( float frameTime )
 		{
 			if( msg.message == WM_QUIT )
 			{
-				game->_fireTermination();
+				this->_fireTermination();
 				running = false;
 			}
 

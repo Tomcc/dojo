@@ -13,8 +13,9 @@ namespace Dojo
 	class FontSystem;
 	class Game;
 	class Email;
+	class ApplicationListener;
 	
-	class Platform 
+	class Platform
 	{
 	public:
 
@@ -86,6 +87,21 @@ namespace Dojo
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height )=0;
 		
+		inline void addFocusListener( ApplicationListener* f )
+		{
+			DEBUG_ASSERT( f );
+			DEBUG_ASSERT( !focusListeners.exists( f ) );
+
+			focusListeners.add( f );
+		}
+
+		inline void removeFocusListener( ApplicationListener* f )
+		{
+			DEBUG_ASSERT( f  );
+
+			focusListeners.remove( f );
+		}
+
 		virtual bool isNPOTEnabled()=0;
 		
 		///returns TRUE if the screen is physically "small", not dependent on resolution
@@ -119,6 +135,13 @@ namespace Dojo
 			DEBUG_TODO;
 		}
 
+		///application listening stuff
+		void _fireFocusLost();
+		void _fireFocusGained();
+		void _fireFreeze();
+		void _fireDefreeze();
+		void _fireTermination();
+
 	protected:
 
 		static Platform* singleton;
@@ -140,7 +163,9 @@ namespace Dojo
 		FontSystem* fonts;
 		
 		float realFrameTime;
-		
+
+		Dojo::Array< ApplicationListener* > focusListeners;
+
 		String _getTablePath( Table* dest, const String& absPath );
 	};
 }

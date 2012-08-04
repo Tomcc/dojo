@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "Sprite.h"
 #include "dojomath.h"
+#include "Platform.h"
 
 using namespace Dojo;
 
@@ -25,7 +26,7 @@ mMaxFrameLength( maximumdt )
 
 	Math::seedRandom();
 	
-	focusListeners.add( this );
+	Platform::getSingleton()->addFocusListener( this ); //always listen to the app
 }
 	
 Game::~Game()

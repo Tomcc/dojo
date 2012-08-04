@@ -4,6 +4,7 @@
 
 #include "Utils.h"
 #include "dojomath.h"
+#include "ApplicationListener.h"
 
 #if defined (PLATFORM_WIN32)
 	#include "win32/Win32Platform.h"
@@ -176,3 +177,9 @@ void Platform::save( Table* src, const String& absPath )
 	
 	fclose( f );
 }
+
+void Platform::_fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusLost();	}
+void Platform::_fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusGained();	}
+void Platform::_fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFreeze();	}
+void Platform::_fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationDefreeze();	}
+void Platform::_fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationTermination();	}

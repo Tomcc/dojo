@@ -14,13 +14,14 @@
 
 #include "Array.h"
 #include "Vector.h"
+#include "ApplicationListener.h"
 
 namespace Dojo 
 {
 	class Renderable;
 	
 	///keycodes, thanks to OIS Library
-	class InputSystem
+	class InputSystem : public ApplicationListener
 	{
 	public:
 		
@@ -234,12 +235,7 @@ namespace Dojo
 				
 		typedef Array<Listener*> ListenerList;
 		
-		InputSystem( bool enable = true ) :
-		enabled(enable)
-		{
-			//init keycodes to false
-			memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
-		}
+		InputSystem( bool enable = true );
 		
 		virtual ~InputSystem()
 		{
@@ -282,7 +278,19 @@ namespace Dojo
 		{
 			return mKeyPressedMap[ key ];
 		}
-				
+
+		virtual void onApplicationFocusLost()
+		{
+			//flush buffered state
+			//TODO
+		}
+
+		virtual void onApplicationFocusGained()
+		{
+			//fill in buffered state
+			//TODO
+		}
+
 		void _fireTouchBeginEvent( const Vector& point );		
 		void _fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos );		
 		void _fireTouchEndEvent( const Vector& point );		
@@ -295,6 +303,7 @@ namespace Dojo
 		
 		void _fireKeyPressedEvent( unichar character, KeyCode keyID );
 		void _fireKeyReleasedEvent( unichar character, KeyCode keyID );	
+
 	protected:
 		
 		bool enabled;

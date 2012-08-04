@@ -3,8 +3,18 @@
 #include "InputSystem.h"
 
 #include "GameState.h"
+#include "Platform.h"
 
 using namespace Dojo;
+
+InputSystem::InputSystem( bool enable ) :
+enabled(enable)
+{
+	//init keycodes to false
+	memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
+
+	Platform::getSingleton()->addFocusListener( this );
+}
 
 void InputSystem::_fireTouchBeginEvent( const Vector& point )
 {

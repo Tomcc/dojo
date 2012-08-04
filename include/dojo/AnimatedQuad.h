@@ -19,7 +19,7 @@ namespace Dojo
 {	
 	class AnimatedQuad : public Renderable
 	{
-	protected:
+	public:
 		
 		class Animation
 		{
@@ -70,6 +70,11 @@ namespace Dojo
 			inline float getTotalTime()
 			{
 				return totalTime;
+			}
+
+			inline float getCurrentTime()
+			{
+				return animationTime;
 			}
 
 			///returns how many loops have elapsed since the last setup
@@ -124,8 +129,6 @@ namespace Dojo
 			
 			float animationTime, totalTime, timePerFrame, mElapsedLoops;
 		};
-		
-	public:
 		
 		Vector pixelScale;
 		bool pixelPerfect;
@@ -182,6 +185,11 @@ namespace Dojo
 		inline int getAnimationElapsedLoops()
 		{
 			return animation->getElapsedLoops();
+		}
+
+		inline Animation* getAnimation()
+		{
+			return animation;
 		}
 		
 		inline void setAnimationTime( float t )

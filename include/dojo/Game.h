@@ -26,21 +26,6 @@ namespace Dojo
 		Game( const String& name, uint nativeWidth, uint nativeHeight, Orientation nativeOrientation, float nativeFrequency = 1.f/60.f, float maxFrameLength = 1.f/30.f );
 		
 		virtual ~Game();
-		
-		inline void addFocusListener( ApplicationListener* f )
-		{
-			DEBUG_ASSERT( f );
-			DEBUG_ASSERT( !focusListeners.exists( f ) );
-			
-			focusListeners.add( f );
-		}
-		
-		inline void removeFocusListener( ApplicationListener* f )
-		{
-			DEBUG_ASSERT( f  );
-			
-			focusListeners.remove( f );
-		}
 
 		inline const String& getName()
 		{
@@ -72,20 +57,12 @@ namespace Dojo
 			return nativeOrientation;
 		}
 		
-		void _fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusLost();	}
-		void _fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusGained();	}
-		void _fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFreeze();	}
-		void _fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationDefreeze();	}
-		void _fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationTermination();	}
-		
 	protected:
 		
 		uint nativeWidth, nativeHeight;
 		float mNativeFrameLength, mMaxFrameLength;
 		
 		Orientation nativeOrientation;
-		
-		Dojo::Array< ApplicationListener* > focusListeners;
 
 		String name;
 	};

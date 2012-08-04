@@ -10,11 +10,14 @@
 #import "Application.h"
 
 #include "Game.h"
+#include "Platform.h"
 
 @implementation AppDelegate
 
 @synthesize window;
 @synthesize glView;
+
+using namespace Dojo;
 
 - (void) applicationDidFinishLaunching:(UIApplication *)application
 {
@@ -31,7 +34,7 @@
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
-	[glView game]->_fireFocusLost();
+	Platform::getSingleton()->_fireFocusLost();
 	
 	[glView stopAnimation];
 }
@@ -40,19 +43,19 @@
 {
 	[glView startAnimation];
 	
-	[glView game]->_fireFocusGained();
+	Platform::getSingleton()->_fireFocusGained();
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	[glView stopAnimation];	
 	
-	[glView game]->_fireFreeze();
+	Platform::getSingleton()->_fireFreeze();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {	
-	[glView game]->_fireDefreeze();
+	Platform::getSingleton()->_fireDefreeze();
 	
 	[glView startAnimation];
 }
@@ -61,7 +64,7 @@
 {
 	[glView stopAnimation];
 	
-	[glView game]->_fireTermination();
+	Platform::getSingleton()->_fireTermination();
 }
 
 -(void)didReceiveMemoryWarning

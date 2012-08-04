@@ -8,7 +8,9 @@
 #ifndef Dojo_FocusListener_h
 #define Dojo_FocusListener_h
 
-///an interruption listener is able to listen interruptions to gameplay's flow
+#include "dojo_common_header.h"
+
+///an interruption listener is able to listen interruptions to game's flow
 namespace Dojo
 {	
 	class ApplicationListener
