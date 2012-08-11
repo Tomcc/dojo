@@ -16,10 +16,8 @@ mAnimationIdx( -1 )
 	SAFE_DELETE( animation );
 	
 	if( defaultAnimName.size() )
-	{
-		FrameSet* s = level->getFrameSet( defaultAnimName );
-		
-		setAnimation( registerAnimation( s, tpf ) );
+	{		
+		setAnimation( registerAnimation( defaultAnimName, tpf ) );
 		
 		//set convenient size to fit the first frame			
 		_updateScreenSize();
@@ -30,9 +28,7 @@ mAnimationIdx( -1 )
 
 int Sprite::registerAnimation( const String& base, float timePerFrame )
 {
-	FrameSet* s = gameState->getFrameSet( base );
-	
-	DEBUG_ASSERT( s );
-	
-	return registerAnimation( s, timePerFrame );	
+	return registerAnimation( 
+		gameState->getFrameSet( base ), 
+		timePerFrame );	
 }

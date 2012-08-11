@@ -343,13 +343,13 @@ namespace Dojo
 		
 		inline int getInt( const String& key, int defaultValue = 0 ) const
 		{
-			return (int)getNumber(key , defaultValue);
+			return (int)getNumber(key , (float)defaultValue);
 		}
 		
 		inline bool getBool( const String& key, bool defaultValue = false ) const
 		{
 			if( existsAs( key, FT_NUMBER ) )
-				return (bool)(*( (float*)get(key)->getValue() ));
+				return (*( (float*)get(key)->getValue() )) > 0;
 			else
 				return defaultValue;
 		}

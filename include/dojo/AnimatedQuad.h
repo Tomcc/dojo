@@ -127,7 +127,8 @@ namespace Dojo
 			
 			Texture* currentFrame;
 			
-			float animationTime, totalTime, timePerFrame, mElapsedLoops;
+			float animationTime, totalTime, timePerFrame;
+			int mElapsedLoops;
 		};
 		
 		Vector pixelScale;

@@ -260,7 +260,7 @@ void Win32Platform::initialise()
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
 		return;
 	
-	render = new Render( width, height, Orientation::DO_LANDSCAPE_LEFT );
+	render = new Render( width, height, DO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
 

@@ -286,6 +286,8 @@ namespace Dojo
 			arraySize += pageSize;
 			//reallocate the memory
 			vectorArray = (T*)realloc( vectorArray, sizeof(T) * arraySize );
+
+			DEBUG_ASSERT( vectorArray );
 		}
 		
 	};
