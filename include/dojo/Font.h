@@ -81,15 +81,21 @@ namespace Dojo
 
 			virtual void onUnload( bool soft = false )
 			{
+				//TODO make texts soft-unloadable
 				//a font page can always unload
-				texture->onUnload(); //force unload
+				if( !soft )
+				{
+					texture->onUnload(); //force unload
 
-				loaded = false;
+					loaded = false;
+				}
 			}
 
 			virtual bool isReloadable()
 			{
-				return true; //always reloadable
+				//HACK //TODO make font pages reloadable
+				//return true; //always reloadable
+				return false;
 			}
 
 			inline Texture* getTexture() 
