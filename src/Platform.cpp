@@ -112,7 +112,7 @@ String Platform::_getTablePath( Table* dest, const String& absPath )
 	{
 		DEBUG_ASSERT( dest->hasName() );
 		
-		//cerca tra le user prefs un file con lo stesso nome
+		//look for this file inside the prefs
 		return getAppDataPath() + '/' + game->getName() + '/' + dest->getName() + ".ds";
 	}
 	else
@@ -128,29 +128,7 @@ void Platform::load( Table* dest, const String& absPath )
 	String buf;
 	String path = _getTablePath( dest, absPath );
 	
-	FILE* file = fopen( path.ASCII().c_str(), "rb" );
-	
-	if( !file )
-	{
-		DEBUG_MESSAGE( "WARNING: Cannot load table " << path.ASCII() );
-		return;
-	}
-	
-	fseek( file, 0, SEEK_END);
-	uint uchars = ftell (file)/ sizeof( unichar );
-	
-	fseek( file, 0, SEEK_SET );
-	
-	buf.resize( uchars, 0 ); //reserve actual bytes
-	
-	fread( (void*)buf.data(), sizeof( unichar ), uchars, file );
-	
-	fclose( file );
-	
-	dest->setName( Utils::getFileName( path ) );
-	
-	StringReader reader( buf );
-	dest->deserialize( reader );
+	Table::loadFromFile( dest, path );
 }
 
 void Platform::save( Table* src, const String& absPath )

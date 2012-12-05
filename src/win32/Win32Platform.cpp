@@ -32,6 +32,8 @@
 using namespace Dojo;
 using namespace OIS;
 
+#define WINDOWMODE_PROPERTIES (WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)
+
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
 	Platform* app = Platform::getSingleton();
@@ -103,11 +105,39 @@ frameInterval(0)
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
 
 	frameStart.wait();
+
+	mFullscreen = false; //windows creates... windows by default
 }
 
 Win32Platform::~Win32Platform()
 {
+	setFullscreen( false ); //get out of fullscreen
+}
 
+void Win32Platform::_adjustWindow()
+{
+	RECT clientSize;
+    //GetClientRect(HWnd, &clientSize);
+    clientSize.top = 0;
+    clientSize.left = 0;
+    clientSize.right = game->getNativeWidth();
+    clientSize.bottom = game->getNativeHeight();
+
+    AdjustWindowRect(&clientSize, WINDOWMODE_PROPERTIES, FALSE);
+
+    int realWidth = clientSize.right - clientSize.left;
+    int realHeight = clientSize.bottom - clientSize.top;
+
+    int windowLeft = (GetSystemMetrics(SM_CXSCREEN) - realWidth) / 2;
+    int windowTop = (GetSystemMetrics(SM_CYSCREEN) - realHeight) / 2;
+
+    // Make any window in the background repaint themselves
+    InvalidateRect( NULL, NULL, false );
+
+    SetWindowPos(hwnd, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight, 
+        SWP_SHOWWINDOW);
+
+    MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 }
 
 bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
@@ -132,15 +162,14 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	RegisterClass(&wc);
 
 	RECT rect;
-	rect.top = 10;
-	rect.left = 100;
+	rect.top = rect.left = 0;
 	rect.bottom = rect.top + h + 7;
 	rect.right = rect.left + w;
 
 	width = w;
 	height = h;
 
-	DWORD dwstyle = WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU;
+	DWORD dwstyle = WINDOWMODE_PROPERTIES;
 	
 	AdjustWindowRect( &rect, dwstyle, true);
 
@@ -164,9 +193,6 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 
 	if( hwnd == NULL )
 		return false;
-
-	// and show.
-	ShowWindow( hwnd, SW_SHOWNORMAL );
 
 	hdc = GetDC( hwnd );
 	// CREATE PFD:
@@ -206,7 +232,50 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	bool err = wglMakeCurrent( hdc, hglrc )>0;
 	glewInit();
 
+// and show.
+	ShowWindow( hwnd, SW_SHOWNORMAL );
+
+	_adjustWindow();
+
 	return err;
+}
+
+void Win32Platform::setFullscreen( bool fullscreen )
+{
+	if( fullscreen == mFullscreen )
+		return;
+
+	//set window style
+	DWORD style = fullscreen ? (WS_POPUP | WS_VISIBLE) : WINDOWMODE_PROPERTIES;
+	SetWindowLong(hwnd, GWL_STYLE, style);
+
+	if( !fullscreen )
+	{
+		ChangeDisplaySettings( NULL, 0 );
+
+		_adjustWindow(); //reset back
+	}
+	else
+	{
+		DEVMODE dm;
+		memset(&dm, 0, sizeof(dm));
+		dm.dmSize = sizeof(dm);
+		dm.dmPelsWidth = game->getNativeWidth();
+		dm.dmPelsHeight	= game->getNativeHeight();
+		dm.dmBitsPerPel	= 32;
+		dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+		LONG ret = ChangeDisplaySettings( &dm, CDS_FULLSCREEN );
+
+		DEBUG_ASSERT( ret == DISP_CHANGE_SUCCESSFUL );
+
+		//WARNING MoveWindow can change backbuffer size
+		MoveWindow(hwnd, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
+	}
+
+	ShowCursor( !fullscreen );
+
+	mFullscreen = fullscreen;
 }
 
 void Win32Platform::_initialiseOIS()
@@ -368,7 +437,6 @@ void Win32Platform::step( float dt )
 	//cattura l'input prima del gameplay
 	keys->capture();
 	mouse->capture();
-
 	game->loop( dt);
 
 	render->render();
@@ -467,7 +535,7 @@ bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
 bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
 {
 	lastPressedText = arg.text; 
-	
+
 	input->_fireKeyPressedEvent( arg.text, (InputSystem::KeyCode)arg.key );
 
 	return true;
@@ -480,7 +548,7 @@ bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height )
+GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
 	void* data;
 
@@ -513,7 +581,7 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 	
-	int pixelSize = FreeImage_GetBPP(dib)/8;
+	pixelSize = FreeImage_GetBPP(dib)/8;
 	
 	int size = width*height*pixelSize;
 	bufptr = malloc( size );
@@ -527,17 +595,26 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 			out = (byte*)bufptr + (j + i*width)*pixelSize;
 			in = (byte*)data + (j + ii*width)*pixelSize;
 
-			if( pixelSize > 3 )
+			if( pixelSize >= 4 )
 				out[3] = in[3];
-			out[2] = in[0];
-			out[1] = in[1];
-			out[0] = in[2];
+			
+			if( pixelSize >= 3 )
+			{
+				out[2] = in[0];
+				out[1] = in[1];
+				out[0] = in[2];
+			}
+			else
+			{
+				out[0] = in[0];
+			}
 		}
 	}
 	
 	FreeImage_Unload( dib );
 
-	return (pixelSize == 4) ? GL_RGBA : GL_RGB;
+	static const GLenum formatsForSize[] = { GL_NONE, GL_UNSIGNED_BYTE, GL_RG, GL_RGB, GL_RGBA };
+	return formatsForSize[ pixelSize ];
 }
 
 String Win32Platform::getAppDataPath()

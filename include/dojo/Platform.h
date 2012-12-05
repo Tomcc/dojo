@@ -37,7 +37,8 @@ namespace Dojo
 		sound( NULL ),
 		render( NULL ),
 		input( NULL ),
-		realFrameTime( 0 )
+		realFrameTime( 0 ),
+		mFullscreen( 0 )
 		{
 
 		}		
@@ -70,6 +71,7 @@ namespace Dojo
 		inline int getScreenOrientation()       {   return screenOrientation;   }
 		
 		bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
+		bool isFullscreen()		{	return mFullscreen; }
 		
 		inline bool isRunning()					{	return running; }
 		
@@ -79,13 +81,16 @@ namespace Dojo
 		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
 		virtual void prepareThreadContext()=0;
 
+		///switches the game to windowed, if supported
+		virtual void setFullscreen( bool enabled ) = 0;
+
 		virtual void acquireContext()=0;
 		virtual void present()=0;
 
 		virtual void step( float dt )=0;
 		virtual void loop( float frameTime )=0;
 
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height )=0;
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
 		inline void addFocusListener( ApplicationListener* f )
 		{
@@ -116,6 +121,11 @@ namespace Dojo
 		virtual String getAppDataPath()=0;
 		virtual String getRootPath()=0;
 		
+		const Table& getUserConfiguration()
+		{
+			return config;
+		}
+
 		uint loadFileContent( char*& bufptr, const String& path );
 				
 		void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );		
@@ -153,7 +163,7 @@ namespace Dojo
 
 		Table config;
 
-		bool running;
+		bool running, mFullscreen;
 
 		Game* game;
 

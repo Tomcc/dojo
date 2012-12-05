@@ -83,7 +83,7 @@ namespace Dojo
 			KC_SLASH       = 0x35,    // / on main keyboard
 			KC_RSHIFT      = 0x36,
 			KC_MULTIPLY    = 0x37,    // * on numeric keypad
-			KC_LMENU       = 0x38,    // left Alt
+			KC_LEFT_ALT   = 0x38,    // left Alt
 			KC_SPACE       = 0x39,
 			KC_CAPITAL     = 0x3A,
 			KC_F1          = 0x3B,
@@ -145,7 +145,7 @@ namespace Dojo
 			KC_NUMPADCOMMA = 0xB3,    // , on numeric keypad (NEC PC98)
 			KC_DIVIDE      = 0xB5,    // / on numeric keypad
 			KC_SYSRQ       = 0xB7,
-			KC_RMENU       = 0xB8,    // right Alt
+			KC_RIGHT_ALT   = 0xB8,    // right Alt
 			KC_PAUSE       = 0xC5,    // Pause
 			KC_HOME        = 0xC7,    // Home on arrow keypad
 			KC_UP          = 0xC8,    // UpArrow on arrow keypad

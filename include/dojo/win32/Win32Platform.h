@@ -28,6 +28,8 @@ namespace Dojo
 
 		void prepareThreadContext();
 
+		virtual void setFullscreen( bool fullscreen );
+
 		virtual bool isNPOTEnabled()
 		{
 			return true; //it always is on windows
@@ -39,7 +41,7 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height );
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
 		
 		virtual String getAppDataPath();
 		virtual String getRootPath();
@@ -120,6 +122,8 @@ namespace Dojo
 		float frameInterval;
 
 		FT_Library freeType;
+
+		void _adjustWindow();
 	};
 }
 

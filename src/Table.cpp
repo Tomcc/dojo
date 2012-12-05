@@ -5,8 +5,42 @@
 
 using namespace Dojo;
 
+#define EOF 0
+
+void Table::loadFromFile( Table* dest, const String& path )
+{
+	DEBUG_ASSERT( path.size() );
+
+	FILE* file = fopen( path.ASCII().c_str(), "rb" );
+
+	if( !file )
+	{
+		DEBUG_MESSAGE( "WARNING: Cannot load table " << path.ASCII() );
+		return;
+	}
+
+	fseek( file, 0, SEEK_END);
+	uint size = ftell (file);
+
+	fseek( file, 0, SEEK_SET );
+
+	std::string buf;
+	buf.resize( size );
+
+	fread( (void*)buf.data(), sizeof( unichar ), size, file );
+
+	fclose( file );
+
+	dest->setName( Utils::getFileName( path ) );
+
+	StringReader reader( buf );
+	dest->deserialize( reader );
+}
+
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
+
 const Table::Data Table::EMPTY_DATA = Data(0,0);
+
 
 bool Table::onLoad()
 {
@@ -88,6 +122,7 @@ enum ParseState
 {
 	PS_TABLE,
 	PS_NAME,
+	PS_NAME_ENDED,
 	PS_EQUAL,
 	PS_COMMENT,
 	PS_END,
@@ -145,10 +180,13 @@ void Table::deserialize( StringReader& buf )
 	clear();
 
 	//feed one char at a time and do things
-	unichar c, c2;
-	while( !buf.eof() && state != PS_END && state != PS_ERROR )
+	unichar c = 1, c2;
+	while( (!buf.eof() || c != EOF ) && state != PS_END && state != PS_ERROR )
 	{
-		c = buf.get();
+		if( buf.eof() && c != EOF )
+			c = EOF; //do check EOF conditions
+		else
+			c = buf.get();
 		
 		switch( state )
 		{
@@ -175,7 +213,21 @@ void Table::deserialize( StringReader& buf )
 				curName += c;
 			else if( c == '=' )
 				state = PS_EQUAL;
+			else
+				state = PS_NAME_ENDED;
 
+			break;
+
+		case PS_NAME_ENDED:
+			if( c == '=' )
+				state = PS_EQUAL;
+			else if( isNameStarter( c ) || c == EOF )
+			{
+				//compact bool!
+				set( curName, (int)1 );
+				state = PS_TABLE;
+				buf.back(); //put back the read char because it belongs to another name
+			}
 			break;
 
 		case PS_EQUAL: //wait for value start

@@ -205,7 +205,8 @@ bool Texture::loadFromFile( const String& path )
 	void* imageData = NULL;
 
 	GLenum sourceFormat = 0, destFormat;
-	sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height );
+	int pixelSize;
+	sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height, pixelSize );
 	
 	DEBUG_ASSERT( sourceFormat );
 	

@@ -112,6 +112,8 @@ namespace Dojo
 		{
 			return '_' + String(i);
 		}
+
+		static void loadFromFile( Table* dest, const String& path );
 		
 		Table( const String& tablename = String::EMPTY ) :
 		Resource(),
@@ -474,7 +476,7 @@ namespace Dojo
 		void deserialize( StringReader& buf );
 		
 		///diagnostic method that serializes the table in a string
-		inline String toString()
+		inline String toString() const
 		{
 			String str = getName() + '\n';
 			serialize( str );
@@ -482,7 +484,7 @@ namespace Dojo
 			return str;
 		}
 		
-		inline void debugPrint()
+		inline void debugPrint() const
 		{
 #ifdef _DEBUG			
 			DEBUG_MESSAGE( toString().ASCII() );

@@ -12,22 +12,45 @@ namespace Dojo
 	public:
 
 		StringReader( const String& string ) :
-		str( string ),
-		  idx( 0 )
+		wcharStr( &string ),
+		utf8Str( NULL ),
+		idx( 0 ),
+		mEOF( false )
+		{
+
+		}
+
+		StringReader( const std::string& string ) :
+		utf8Str( &string ),
+		wcharStr( NULL ),
+		idx( 0 ),
+		mEOF( false )
 		{
 
 		}
 
 		inline bool eof()
 		{
-			return idx >= str.size();
+			return mEOF;
 		}
 		
 		inline unichar get()
 		{
             DEBUG_ASSERT( !eof() );
-            
-			return str[ idx++ ];
+            DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );
+
+			if( wcharStr )
+			{
+				mEOF = idx + 1 >= wcharStr->size();
+				return (*wcharStr)[ idx++ ];
+			}
+			else
+			{
+				//make a wchar using an UTF8 sequence
+				//HACK this doesn't care about UTF8
+				mEOF = idx + 1 >= utf8Str->size();
+				return (unichar)(*utf8Str)[ idx++ ];
+			}
 		}
 		
 		inline void back()
@@ -173,24 +196,34 @@ namespace Dojo
 			return sign * res;
 		}
 
-		inline void readBytes( void* dest, uint sz )
+
+		inline void readBytes( void* dest, int sizeBytes )
 		{
-			sz /= sizeof( unichar );
+			DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );
+
+			//load format data
+			int elemSize = wcharStr ? sizeof( unichar ) : 1;
+			byte * buf = wcharStr ? (byte*)wcharStr->data() : (byte*)utf8Str->data();
+			int startingByte = idx * elemSize;
+			buf += startingByte; //go to current element
+			int size = (wcharStr ? wcharStr->size() : utf8Str->size()) * elemSize;
 
 			//clamp into string
-			if( idx + sz > str.size() )
-				sz = (uint)str.size() - idx;
+			if( startingByte + sizeBytes > size  )
+				sizeBytes = size - startingByte;
 
-			byte* data = (byte*)str.data() + idx * sizeof( unichar );
+			memcpy( dest, buf, sizeBytes );
 
-			memcpy( dest, data, sz * sizeof( unichar ) );
-
-			idx += sz;
+			idx += sizeBytes / elemSize;
 		}
 
 	protected:
 
-		const String& str;
+		bool mEOF;
+
+		const String* wcharStr;
+		const std::string* utf8Str;
+
 		uint idx;
 	};
 }

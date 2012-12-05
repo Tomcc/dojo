@@ -15,7 +15,7 @@ namespace Dojo
 	typedef unsigned int uint;
 #endif
 	typedef unsigned char byte;
-	typedef unsigned short unichar;
+	typedef wchar_t unichar;
 
 	//define the unicode stuff
 	typedef std::basic_stringstream< unichar > StringStream;
