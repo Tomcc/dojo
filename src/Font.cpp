@@ -225,7 +225,7 @@ bool Font::Page::onLoad()
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
 
 			for( int c = 0; c < 4; ++c )
-				orig[c] = orig[c] * s + glow[c] * (1.f-s);
+				orig[c] = (byte)(orig[c] * s + glow[c] * (1.f-s));
 		}
 
 		free( glowBuf );

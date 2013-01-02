@@ -72,8 +72,6 @@ void Light::bind( uint i, const Matrix& viewProj )
 	else
 	{
 		//setup all the lighting parameters
-		float fv[4];
-		
 		glEnable( light );
 		
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );

@@ -5,7 +5,7 @@
 
 using namespace Dojo;
 
-#define EOF 0
+#define EOF_CHAR 0
 
 void Table::loadFromFile( Table* dest, const String& path )
 {
@@ -181,10 +181,10 @@ void Table::deserialize( StringReader& buf )
 
 	//feed one char at a time and do things
 	unichar c = 1, c2;
-	while( (!buf.eof() || c != EOF ) && state != PS_END && state != PS_ERROR )
+	while( (!buf.eof() || c != EOF_CHAR ) && state != PS_END && state != PS_ERROR )
 	{
-		if( buf.eof() && c != EOF )
-			c = EOF; //do check EOF conditions
+		if( buf.eof() && c != EOF_CHAR )
+			c = EOF_CHAR; //do check EOF_CHAR conditions
 		else
 			c = buf.get();
 		
@@ -221,7 +221,7 @@ void Table::deserialize( StringReader& buf )
 		case PS_NAME_ENDED:
 			if( c == '=' )
 				state = PS_EQUAL;
-			else if( isNameStarter( c ) || c == EOF )
+			else if( isNameStarter( c ) || c == EOF_CHAR )
 			{
 				//compact bool!
 				set( curName, (int)1 );

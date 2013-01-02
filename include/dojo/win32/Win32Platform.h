@@ -11,12 +11,11 @@
 #include <Poco/Mutex.h>
 #include <Poco/Semaphore.h>
 #include <Poco/Timer.h>
-#include <OIS/OIS.h>
 #include <queue>
 
 namespace Dojo
 {
-	class Win32Platform : public Platform, public OIS::MouseListener, public OIS::KeyListener
+	class Win32Platform : public Platform
 	{
 	public:
 
@@ -48,12 +47,13 @@ namespace Dojo
 		
 		virtual void openWebPage( const String& site );
 
-		virtual bool mouseMoved( const OIS::MouseEvent& arg );
-		virtual bool mousePressed( const OIS::MouseEvent& arg, OIS::MouseButtonID id );
-		virtual bool mouseReleased(	const OIS::MouseEvent& arg, OIS::MouseButtonID id );
+		void mouseMoved( int cursorX, int cursorY );
+		void mouseWheelMoved( int wheelZ );
+		void mousePressed( int cursorX, int cursorY, int id );
+		void mouseReleased(	int cursorX, int cursorY, int id );
 
-		virtual bool keyPressed(const OIS::KeyEvent &arg);
-		virtual bool keyReleased(const OIS::KeyEvent &arg);	
+		void keyPressed( int kc );
+		void keyReleased( int kc );	
 
 		void _callbackThread( float frameLength );
 
@@ -98,10 +98,6 @@ namespace Dojo
 
 		Poco::Semaphore frameStart;
 
-		OIS::InputManager* inputManager;
-		OIS::Mouse* mouse;
-		OIS::Keyboard* keys;
-
 		Vector cursorPos, prevCursorPos;
 
 		bool dragging;
@@ -113,7 +109,6 @@ namespace Dojo
 		Poco::Mutex mCRQMutex;
 
 		bool _initialiseWindow( const String& caption, uint w, uint h );
-		void _initialiseOIS();
 		
 	private:
 

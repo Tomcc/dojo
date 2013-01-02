@@ -3,20 +3,6 @@
 #include "win32/Win32Platform.h"
 #include "win32/WGL_ARB_multisample.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <ShellAPI.h>
-#include <ShlObj.h>
-
-#include <Freeimage.h>
-#include <al/alut.h>
-#include <gl/glu.h>
-
-#include <gl/wglext.h>
-
-#include <Poco/Path.h>
-#include <Poco/Timer.h>
-
 #include "Render.h"
 #include "Game.h"
 #include "Utils.h"
@@ -30,13 +16,12 @@
 #pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
-using namespace OIS;
 
 #define WINDOWMODE_PROPERTIES (WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
-	Platform* app = Platform::getSingleton();
+	Win32Platform* app = (Win32Platform*)Platform::getSingleton();
 
 	switch( message )
 	{
@@ -55,21 +40,9 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		return 0;
 		break;
 
-	case WM_KEYDOWN:
-		switch( wparam )
-		{
-		case VK_ESCAPE:
-			PostQuitMessage( 0 );
-			break;
-		default:
-			break;
-		}
-		return 0;
-
 	case WM_DESTROY:
 		PostQuitMessage( 0 ) ;
 		return 0;
-		break;
 
 	//enter / exit unfocused state
 	case WM_ACTIVATEAPP:
@@ -81,7 +54,107 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		else 
 			app->_fireFocusGained();
 
-		break;
+		return 0;
+
+    case WM_MOUSEWHEEL: //mouse wheel moved
+		app->mouseWheelMoved( (float)((short)HIWORD(wparam)) / (float)WHEEL_DELTA );
+        return 0;
+
+    case WM_LBUTTONDOWN:  //left down
+	case WM_RBUTTONDOWN: //right up
+	case WM_MBUTTONDOWN:
+
+		app->mousePressed( LOWORD( lparam ), HIWORD( lparam ), WM_LBUTTONDOWN - message );
+        return 0;
+
+    case WM_LBUTTONUP:   //left up
+    case WM_RBUTTONUP:
+    case WM_MBUTTONUP:
+
+		app->mouseReleased( LOWORD( lparam ), HIWORD( lparam ), WM_LBUTTONUP - message );
+        return 0;
+
+    case WM_MOUSEMOVE:
+		app->mouseMoved( LOWORD( lparam ), HIWORD( lparam ) );
+        return 0;
+
+    case WM_KEYDOWN:
+
+		switch( wparam )
+		{
+#ifdef _DEBUG  //close with ESC automagically
+		case VK_ESCAPE:
+			PostQuitMessage( 0 );
+			break;
+#endif
+		default:
+
+			app->keyPressed( wparam );
+			break;
+		}
+        return 0;
+
+    case WM_SYSKEYDOWN:
+		if( wparam == VK_F4 ) //listen for Alt+F4
+		{
+			PostQuitMessage(1);
+			return 0;
+		}
+        break;
+
+    case WM_KEYUP:
+
+		app->keyReleased( wparam );
+        return 0;
+
+    case WM_CHAR:
+        return 0;
+
+    case WM_SIZE:
+
+        return 0;
+
+    case WM_ENTERSIZEMOVE: //this message is sent when the window is about to lose control in live resize
+        //start a timer to keep getting updates at 30 fps
+        //SetTimer( getWin32Window(), 1, 1./30., NULL );
+        //_isInModalLoop = true;
+
+        return 0;
+
+    case WM_TIMER:
+        //the window is currently in live resize, manually update the game!
+        //if( pGame && pGame->isRunning() )
+        //	pGame->update();
+
+        return 0;
+
+    case WM_EXITSIZEMOVE:
+        //_isInModalLoop = false;
+        //KillTimer( getWin32Window(), 1 );
+
+        return 0;
+
+    case WM_KILLFOCUS:
+        //if we were fullscreen in OpenGL, we need to reset the original setup
+        /*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
+        {
+            bool success = _changeDisplayMode( false, ox::TDimension() );
+            //hide window
+            ShowWindow( hWnd, FALSE );
+
+            DEBUG_ASSERT( success );
+        }*/
+        return 0;
+
+    case WM_SETFOCUS:
+        //if we are fullscreen in OpenGL, we need to change the res again
+        /*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
+        {
+            bool success = _changeDisplayMode( true, WindowSize );
+            ShowWindow( hWnd, TRUE );
+            DEBUG_ASSERT( success );
+        }*/
+        return 0;
 	}
 
 	return DefWindowProc( hwnd, message, wparam, lparam );
@@ -91,7 +164,7 @@ Win32Platform::Win32Platform( const Table& config ) :
 Platform( config ),
 dragging( false ),
 mMousePressed( false ),
-cursorPos( 0,0 ),
+cursorPos( Vector::ZERO ),
 frameStart( 1 ),
 frameInterval(0)
 {
@@ -278,42 +351,6 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	mFullscreen = fullscreen;
 }
 
-void Win32Platform::_initialiseOIS()
-{
-	DEBUG_MESSAGE( "Initialising input" );
-
-	OIS::ParamList params;
-
-	//convert the hwnd to std strng
-	std::stringstream tostring;
-	tostring << (uint)hwnd;
-	params.insert( std::make_pair( "WINDOW", tostring.str() ) );
-
-	//avoid cursor grab
-	params.insert( std::make_pair( "w32_mouse", "DISCL_FOREGROUND" ) );
-	params.insert( std::make_pair( "w32_mouse", "DISCL_NONEXCLUSIVE" ) );
-
-	inputManager = InputManager::createInputSystem( params );
-
-	if( inputManager->getNumberOfDevices( OISKeyboard ) > 0)
-	{
-		keys = (Keyboard*)inputManager->createInputObject( OISKeyboard, true );
-		keys->setEventCallback( this );
-
-		keys->setTextTranslation( OIS::Keyboard::Unicode );
-	}
-
-	if( inputManager->getNumberOfDevices( OISMouse ) > 0 )
-	{
-		mouse = (Mouse*)inputManager->createInputObject( OISMouse, true );
-		mouse->setEventCallback( this );
-		mouse->getMouseState().width = width;
-		mouse->getMouseState().height = height;
-	}
-
-	setVSync( !config.getBool( "disable_vsync" ) );		
-}
-
 void Win32Platform::initialise()
 {
 	DEBUG_ASSERT( game );
@@ -328,13 +365,12 @@ void Win32Platform::initialise()
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
 		return;
+
+	setVSync( !config.getBool( "disable_vsync" ) );		
 	
 	render = new Render( width, height, DO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
-
-	//initialize OIS to emulate the touch
-	_initialiseOIS();
 
 	input = new InputSystem();
 	fonts = new FontSystem();
@@ -380,12 +416,6 @@ void Win32Platform::shutdown()
 	delete sound;
 	delete input;
 	delete fonts;
-
-	//clean OIS
-	inputManager->destroyInputObject( mouse );
-	inputManager->destroyInputObject( keys );
-
-	OIS::InputManager::destroyInputSystem( inputManager );
 
 	// and a cheesy fade exit
 	AnimateWindow( hwnd, 200, AW_HIDE | AW_BLEND );
@@ -434,9 +464,6 @@ void Win32Platform::step( float dt )
 	}
 	mCRQMutex.unlock();
 
-	//cattura l'input prima del gameplay
-	keys->capture();
-	mouse->capture();
 	game->loop( dt);
 
 	render->render();
@@ -483,69 +510,65 @@ void Win32Platform::loop( float frameTime )
 	}
 }
 
-bool Win32Platform::mousePressed( const MouseEvent& arg, MouseButtonID id )
+void Win32Platform::mousePressed( int cx, int cy, int id )
 {
+	//TODO use the button ID!
 	mMousePressed = true;
 	dragging = true;
 
-	cursorPos.x = (float)arg.state.X.abs;
-	cursorPos.y = (float)arg.state.Y.abs;
+	cursorPos.x = (float)cx;
+	cursorPos.y = (float)cy;
 
 	input->_fireTouchBeginEvent( cursorPos );
-
-	return true;
 }
 
-bool Win32Platform::mouseMoved( const MouseEvent& arg )
+void Win32Platform::mouseWheelMoved( int wheelZ )
 {
-	if( arg.state.Z.rel == 0 ) //no scroll wheel
-	{
-		cursorPos.x = (float)arg.state.X.abs;
-		cursorPos.y = (float)arg.state.Y.abs;
+	cursorPos.z = (float)wheelZ;
 
-		if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos );
-		else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
+	input->_fireScrollWheelEvent( cursorPos.z - prevCursorPos.z );
 
-		prevCursorPos = cursorPos;
-	}
-	else
-		input->_fireScrollWheelEvent( arg.state.Z.rel*0.05f );
-		
-	return true;
+	prevCursorPos.z = cursorPos.z;
 }
 
-bool Win32Platform::mouseReleased( const MouseEvent& arg, MouseButtonID id )
+void Win32Platform::mouseMoved(  int cx, int cy  )
+{
+	cursorPos.x = (float)cx;
+	cursorPos.y = (float)cy;
+
+	if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos );
+	else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
+
+	prevCursorPos = cursorPos;
+}
+
+void Win32Platform::mouseReleased( int cx, int cy, int id )
 {
 	//windows can actually send "released" messages whose "pressed" event was sent to another window
 	//or used to awake the current one - send a fake mousePressed event if this happens!
 	if( !mMousePressed  )
-		mousePressed( arg, id );
+		mousePressed( cx, cy, id );
 
 	mMousePressed  = false;
 	dragging = false;
 
-	cursorPos.x = (float)arg.state.X.abs;
-	cursorPos.y = (float)arg.state.Y.abs;
+	cursorPos.x = (float)cx;
+	cursorPos.y = (float)cy;
 
 	input->_fireTouchEndEvent( cursorPos );
-
-	return true;
 }
 
-bool Win32Platform::keyPressed(const OIS::KeyEvent &arg)
+void Win32Platform::keyPressed( int kc )
 {
-	lastPressedText = arg.text; 
+	//TODO reimplement text!
+	lastPressedText = 0; 
 
-	input->_fireKeyPressedEvent( arg.text, (InputSystem::KeyCode)arg.key );
-
-	return true;
+	input->_fireKeyPressedEvent( 0, (InputSystem::KeyCode)kc );
 }
 
-bool Win32Platform::keyReleased(const OIS::KeyEvent &arg)
+void Win32Platform::keyReleased( int kc )
 {
-	input->_fireKeyReleasedEvent( lastPressedText, (InputSystem::KeyCode)arg.key );
-
-	return true;
+	input->_fireKeyReleasedEvent( lastPressedText, (InputSystem::KeyCode)kc );
 }
 
 GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )

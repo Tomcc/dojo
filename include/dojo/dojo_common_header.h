@@ -28,6 +28,9 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <Poco/Path.h>
+#include <Poco/Timer.h>
+
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #endif
@@ -40,6 +43,8 @@
 	#include <GL/glew.h>
 	#include <GL/glext.h>
 	#include <GL/gl.h>
+	#include <gl/glu.h>
+	#include <gl/wglext.h>
 
 	//this cant be in config.h as it breaks successive system includes
 	#ifdef _DEBUG
@@ -52,6 +57,10 @@
 	#define NOMINMAX
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
+	#include <ShellAPI.h>
+	#include <ShlObj.h>
+
+	#include <FreeImage.h>
 
 #elif defined( PLATFORM_OSX )
 	#include <OpenAL/al.h>
