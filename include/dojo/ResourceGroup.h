@@ -342,14 +342,11 @@ namespace Dojo {
 		template< class T>
 		void _load( std::map< String, T* >& map )
 		{
-			typedef std::map< String, T* > ResourceMap;
-			typename ResourceMap::iterator itr = map.begin();
-			typename ResourceMap::iterator end = map.end();
-			for( ; itr != end; ++itr )
+			for( auto resourcePair : map )
 			{
 				//unload either if reloadable or if we're purging memory
-				if( !itr->second->isLoaded() )
-					itr->second->onLoad();
+				if( !resourcePair.second->isLoaded() )
+					resourcePair.second->onLoad();
 			}
 		}
 				
@@ -357,23 +354,20 @@ namespace Dojo {
 		void _unload( std::map< String, T* >& map, bool softUnload )
 		{
 			//unload all the resources
-			typedef std::map< String, T* > ResourceMap;
-			typename ResourceMap::iterator itr = map.begin();
-			typename ResourceMap::iterator end = map.end();
-			for( ; itr != end; ++itr )
+			for( auto resourcePair : map )
 			{
 				//unload either if reloadable or if we're purging memory
-				itr->second->onUnload( softUnload );
+				resourcePair.second->onUnload( softUnload );
 
 				//delete too?
 				if( !softUnload )
 				{
-					DEBUG_MESSAGE( "-" << itr->first.ASCII() );
-					SAFE_DELETE( itr->second );
+					DEBUG_MESSAGE( "-" << resourcePair.first.ASCII() );
+					SAFE_DELETE( resourcePair.second );
 				}
-				else if( !itr->second->isLoaded() )
+				else if( !resourcePair.second->isLoaded() )
 				{
-					DEBUG_MESSAGE( "~" << itr->first.ASCII() );
+					DEBUG_MESSAGE( "~" << resourcePair.first.ASCII() );
 				}
 			}
 

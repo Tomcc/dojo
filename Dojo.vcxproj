@@ -80,9 +80,9 @@
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\dojo\DebugUtils.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Email.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />

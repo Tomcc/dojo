@@ -254,10 +254,8 @@ namespace Dojo
 			unnamedMembers = 0;
 			
 			//clean up every entry
-			EntryMap::iterator itr = map.begin();
-			
-			for( ; itr != map.end(); ++itr )
-				SAFE_DELETE( itr->second );
+			for( auto entry : map )
+				SAFE_DELETE( entry.second );
 			
 			map.clear();
 		}		
