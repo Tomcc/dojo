@@ -6,6 +6,7 @@
 #include "Platform.h"
 #include "Vector.h"
 #include "Timer.h"
+#include "InputSystem.h"
 
 #include <Poco/Thread.h>
 #include <Poco/Mutex.h>
@@ -117,6 +118,10 @@ namespace Dojo
 		float frameInterval;
 
 		FT_Library freeType;
+
+		InputSystem::KeyCode mKeyMap[ 256 ];
+
+		void _initKeyMap();
 
 		void _adjustWindow();
 	};

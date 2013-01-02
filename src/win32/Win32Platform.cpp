@@ -180,6 +180,8 @@ frameInterval(0)
 	frameStart.wait();
 
 	mFullscreen = false; //windows creates... windows by default
+
+	_initKeyMap();
 }
 
 Win32Platform::~Win32Platform()
@@ -563,12 +565,12 @@ void Win32Platform::keyPressed( int kc )
 	//TODO reimplement text!
 	lastPressedText = 0; 
 
-	input->_fireKeyPressedEvent( 0, (InputSystem::KeyCode)kc );
+	input->_fireKeyPressedEvent( 0, mKeyMap[ kc ] );
 }
 
 void Win32Platform::keyReleased( int kc )
 {
-	input->_fireKeyReleasedEvent( lastPressedText, (InputSystem::KeyCode)kc );
+	input->_fireKeyReleasedEvent( lastPressedText, mKeyMap[ kc ] );
 }
 
 GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
@@ -642,9 +644,9 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 
 String Win32Platform::getAppDataPath()
 {
-	char szPath[MAX_PATH];
+	TCHAR szPath[MAX_PATH];
 
-	SHGetFolderPathA(
+	SHGetFolderPathW(
 		hwnd, 
 		CSIDL_LOCAL_APPDATA|CSIDL_FLAG_CREATE, 
 		NULL, 
@@ -665,5 +667,157 @@ String Win32Platform::getRootPath()
 
 void Win32Platform::openWebPage( const String& site )
 {
-	ShellExecuteA(hwnd, "open", site.ASCII().c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteW(hwnd, L"open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
+}
+
+
+//init key map
+void Win32Platform::_initKeyMap()
+{
+	mKeyMap[ 0 ] = InputSystem::KC_UNASSIGNED;
+
+	mKeyMap[ VK_ESCAPE ] = InputSystem::KC_ESCAPE;
+	mKeyMap[ VK_BACK ] = InputSystem::KC_BACK;
+	mKeyMap[ VK_TAB ] = InputSystem::KC_TAB;
+
+	mKeyMap[ 0x30 ] = InputSystem::KC_0;
+	mKeyMap[ 0x31 ] = InputSystem::KC_1;
+	mKeyMap[ 0x32 ] = InputSystem::KC_2;
+	mKeyMap[ 0x33 ] = InputSystem::KC_3;
+	mKeyMap[ 0x34 ] = InputSystem::KC_4;
+	mKeyMap[ 0x35 ] = InputSystem::KC_5;
+	mKeyMap[ 0x36 ] = InputSystem::KC_6;
+	mKeyMap[ 0x37 ] = InputSystem::KC_7;
+	mKeyMap[ 0x38 ] = InputSystem::KC_8;
+	mKeyMap[ 0x39 ] = InputSystem::KC_9;
+
+	mKeyMap[ 0x41 ] = InputSystem::KC_A;
+	mKeyMap[ 0x42 ] = InputSystem::KC_B;
+	mKeyMap[ 0x43 ] = InputSystem::KC_C;
+	mKeyMap[ 0x44 ] = InputSystem::KC_D;
+	mKeyMap[ 0x45 ] = InputSystem::KC_E;
+	mKeyMap[ 0x46 ] = InputSystem::KC_F;
+	mKeyMap[ 0x47 ] = InputSystem::KC_G;
+	mKeyMap[ 0x48 ] = InputSystem::KC_H;
+	mKeyMap[ 0x49 ] = InputSystem::KC_I;
+	mKeyMap[ 0x4A ] = InputSystem::KC_J;
+	mKeyMap[ 0x4B ] = InputSystem::KC_K;
+	mKeyMap[ 0x4C ] = InputSystem::KC_L;
+	mKeyMap[ 0x4D ] = InputSystem::KC_M;
+	mKeyMap[ 0x4E ] = InputSystem::KC_N;
+	mKeyMap[ 0x4F ] = InputSystem::KC_O;
+	mKeyMap[ 0x50 ] = InputSystem::KC_P;
+	mKeyMap[ 0x51 ] = InputSystem::KC_Q;
+	mKeyMap[ 0X52 ] = InputSystem::KC_R;
+	mKeyMap[ 0X53 ] = InputSystem::KC_S;
+	mKeyMap[ 0X54 ] = InputSystem::KC_T;
+	mKeyMap[ 0X55 ] = InputSystem::KC_U;
+	mKeyMap[ 0X56 ] = InputSystem::KC_V;
+	mKeyMap[ 0X57 ] = InputSystem::KC_W;
+	mKeyMap[ 0X58 ] = InputSystem::KC_X;
+	mKeyMap[ 0X59 ] = InputSystem::KC_Y;
+	mKeyMap[ 0X5A ] = InputSystem::KC_Z;
+
+	mKeyMap[ VK_NUMPAD0 ] = InputSystem::KC_NUMPAD0;
+	mKeyMap[ VK_NUMPAD1 ] = InputSystem::KC_NUMPAD1;
+	mKeyMap[ VK_NUMPAD2 ] = InputSystem::KC_NUMPAD2;
+	mKeyMap[ VK_NUMPAD3 ] = InputSystem::KC_NUMPAD3;
+	mKeyMap[ VK_NUMPAD4 ] = InputSystem::KC_NUMPAD4;
+	mKeyMap[ VK_NUMPAD5 ] = InputSystem::KC_NUMPAD5;
+	mKeyMap[ VK_NUMPAD6 ] = InputSystem::KC_NUMPAD6;
+	mKeyMap[ VK_NUMPAD7 ] = InputSystem::KC_NUMPAD7;
+	mKeyMap[ VK_NUMPAD8 ] = InputSystem::KC_NUMPAD8;
+	mKeyMap[ VK_NUMPAD9 ] = InputSystem::KC_NUMPAD9;
+
+	mKeyMap[ VK_F1 ] = InputSystem::KC_F1;
+	mKeyMap[ VK_F2 ] = InputSystem::KC_F2;
+	mKeyMap[ VK_F3 ] = InputSystem::KC_F3;
+	mKeyMap[ VK_F4 ] = InputSystem::KC_F4;
+	mKeyMap[ VK_F5 ] = InputSystem::KC_F5;
+	mKeyMap[ VK_F6 ] = InputSystem::KC_F6;
+	mKeyMap[ VK_F7 ] = InputSystem::KC_F7;
+	mKeyMap[ VK_F8 ] = InputSystem::KC_F8;
+	mKeyMap[ VK_F9 ] = InputSystem::KC_F9;
+	mKeyMap[ VK_F10 ] = InputSystem::KC_F10;
+	mKeyMap[ VK_F11 ] = InputSystem::KC_F11;
+	mKeyMap[ VK_F12 ] = InputSystem::KC_F12;
+	mKeyMap[ VK_F13 ] = InputSystem::KC_F13;
+	mKeyMap[ VK_F14 ] = InputSystem::KC_F14;
+	mKeyMap[ VK_F15 ] = InputSystem::KC_F15;
+
+	mKeyMap[ VK_OEM_MINUS ] = InputSystem::KC_MINUS;
+	mKeyMap[ 0 ] = InputSystem::KC_EQUALS;
+
+	mKeyMap[ 0 ] = InputSystem::KC_LBRACKET;
+	mKeyMap[ 0 ] = InputSystem::KC_RBRACKET;
+	mKeyMap[ VK_RETURN ] = InputSystem::KC_RETURN;
+	mKeyMap[ VK_LCONTROL ] = InputSystem::KC_LCONTROL;
+
+	mKeyMap[ 0 ] = InputSystem::KC_SEMICOLON;
+	mKeyMap[ 0 ] = InputSystem::KC_APOSTROPHE;
+	mKeyMap[ 0 ] = InputSystem::KC_GRAVE;
+	mKeyMap[ VK_SHIFT ] = InputSystem::KC_LSHIFT;
+	mKeyMap[ 0 ] = InputSystem::KC_BACKSLASH;
+
+	mKeyMap[ 0 ] = InputSystem::KC_COMMA;
+	mKeyMap[ VK_OEM_PERIOD ] = InputSystem::KC_PERIOD;
+	mKeyMap[ 0 ] = InputSystem::KC_SLASH;
+	mKeyMap[ VK_RSHIFT ] = InputSystem::KC_RSHIFT;
+	mKeyMap[ VK_MULTIPLY ] = InputSystem::KC_MULTIPLY;
+	mKeyMap[ VK_LMENU ] = InputSystem::KC_LEFT_ALT;
+	mKeyMap[ VK_SPACE ] = InputSystem::KC_SPACE;
+	mKeyMap[ VK_CAPITAL ] = InputSystem::KC_CAPITAL;
+
+
+	mKeyMap[ VK_NUMLOCK ] = InputSystem::KC_NUMLOCK;
+	mKeyMap[ VK_SCROLL ] = InputSystem::KC_SCROLL;
+
+
+	mKeyMap[ VK_SUBTRACT ] = InputSystem::KC_SUBTRACT;
+	mKeyMap[ VK_ADD ] = InputSystem::KC_ADD;
+	mKeyMap[ VK_DECIMAL ] = InputSystem::KC_DECIMAL;
+
+	mKeyMap[ VK_OEM_102 ] = InputSystem::KC_OEM_102;
+
+
+	mKeyMap[ 0 ] = InputSystem::KC_KANA;
+	mKeyMap[ 0 ] = InputSystem::KC_ABNT_C1;
+	mKeyMap[ 0 ] = InputSystem::KC_CONVERT;
+	mKeyMap[ 0 ] = InputSystem::KC_NOCONVERT;
+	mKeyMap[ 0 ] = InputSystem::KC_YEN;
+	mKeyMap[ 0 ] = InputSystem::KC_ABNT_C2;
+	mKeyMap[ 0 ] = InputSystem::KC_NUMPADEQUALS;
+
+	mKeyMap[ 0 ] = InputSystem::KC_PREVTRACK;
+	mKeyMap[ 0 ] = InputSystem::KC_AT;
+	mKeyMap[ 0 ] = InputSystem::KC_COLON;
+	mKeyMap[ VK_CANCEL ] = InputSystem::KC_STOP;
+	mKeyMap[ 0 ] = InputSystem::KC_NUMPADENTER;
+	mKeyMap[ 0 ] = InputSystem::KC_RCONTROL;
+
+	mKeyMap[ VK_VOLUME_MUTE ] = InputSystem::KC_MUTE;
+	mKeyMap[ VK_VOLUME_DOWN ] = InputSystem::KC_VOLUMEDOWN;
+	mKeyMap[ VK_VOLUME_UP ] = InputSystem::KC_VOLUMEUP;
+	mKeyMap[ VK_OEM_COMMA ] = InputSystem::KC_NUMPADCOMMA;
+	mKeyMap[ VK_DIVIDE ] = InputSystem::KC_DIVIDE;
+	mKeyMap[ VK_RMENU ] = InputSystem::KC_RIGHT_ALT;
+	mKeyMap[ VK_PAUSE ] = InputSystem::KC_PAUSE;
+
+	mKeyMap[ VK_HOME ] = InputSystem::KC_HOME;
+	mKeyMap[ VK_PRIOR] = InputSystem::KC_PGUP;
+	mKeyMap[ VK_NEXT ] = InputSystem::KC_PGDOWN;
+	mKeyMap[ VK_INSERT ] = InputSystem::KC_INSERT;
+	mKeyMap[ VK_DELETE ] = InputSystem::KC_DELETE;
+
+	mKeyMap[ VK_UP ] = InputSystem::KC_UP;
+	mKeyMap[ VK_LEFT ] = InputSystem::KC_LEFT;
+	mKeyMap[ VK_RIGHT ] = InputSystem::KC_RIGHT;
+	mKeyMap[ VK_DOWN ] = InputSystem::KC_DOWN;
+
+	mKeyMap[ VK_END ] = InputSystem::KC_END;
+
+	mKeyMap[ VK_LWIN ] = InputSystem::KC_LWIN;
+	mKeyMap[ VK_RWIN ] = InputSystem::KC_RWIN;
+	mKeyMap[ VK_APPS ] = InputSystem::KC_APPS;
+	mKeyMap[ VK_SLEEP ] = InputSystem::KC_SLEEP;
 }

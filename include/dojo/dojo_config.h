@@ -40,23 +40,7 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#ifndef _FINAL
-
-	#define DEBUG_ASSERT( T ) assert(T)
-	#define DEBUG_TODO assert( !"METHOD NOT IMPLEMENTED" ), 0
-	#define DEBUG_OUT( T ) std::cout << T << ' '
-	#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
-
-#else
-
-	#define DEBUG_ASSERT( T )
-	#define DEBUG_TODO
-	#define DEBUG_OUT( T ) 
-	#define DEBUG_MESSAGE( T )
-
-#endif
-
-#define SAFE_DELETE( T ) { DEBUG_ASSERT( T ); delete T; T = NULL; }
+#include "DebugUtils.h"
 
 #ifdef PLATFORM_IOS
 	#define BIG_ENDIAN 1
