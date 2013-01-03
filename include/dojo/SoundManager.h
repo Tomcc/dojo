@@ -138,15 +138,7 @@ namespace Dojo {
 					musicTrack->setVolume( musicVolume );
 			}
 			
-			inline void setMasterVolume( float volume )	
-			{	
-				DEBUG_ASSERT( volume >= 0 );
-				
-				masterVolume = volume;
-				
-				if( !nextMusicTrack && musicTrack )
-					musicTrack->setVolume( masterVolume*musicVolume );
-			}
+			void setMasterVolume( float volume );
 			
 			inline float getMasterVolume()				{	return masterVolume;		}
 			inline float getMusicVolume()				{	return musicVolume;			}
@@ -159,35 +151,29 @@ namespace Dojo {
 			///metodo utile per mettere in pausa tutte le sources attive
 			void pauseAll()
 			{
-				SoundSource* s;
-				for( int i = 0; i < busySoundPool.size(); ++i )
+				for( SoundSource* s : busySoundPool )
 				{
-					s = busySoundPool.at(i);
 					if( s != musicTrack )
-						busySoundPool.at(i)->pause();
+						s->pause();
 				}
 			}
 			
 			void resumeAll()
 			{
-				SoundSource* s;
-				for( int i = 0; i < busySoundPool.size(); ++i )
+				for( SoundSource* s : busySoundPool )
 				{
-					s = busySoundPool.at(i);
 					if( s != musicTrack )
-						busySoundPool.at(i)->play();
+						s->play();
 				}
 			}
 			
 			///sopts all playing sounds
 			void stopAll()
 			{
-				SoundSource* s;
-				for( int i = 0; i < busySoundPool.size(); ++i )
+				for( SoundSource* s : busySoundPool )
 				{
-					s = busySoundPool.at(i);
 					if( s != musicTrack )
-						busySoundPool.at(i)->stop();
+						s->stop();
 				}
 			}
 			

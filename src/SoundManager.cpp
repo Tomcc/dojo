@@ -97,6 +97,21 @@ void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 	fadeState = FS_FADE_OUT;
 }
 
+void SoundManager::setMasterVolume( float volume )
+{	
+	DEBUG_ASSERT( volume >= 0 );
+
+	masterVolume = volume;
+
+	//update volumes (masterVolume is used inside setVolume!)
+	if( !nextMusicTrack && musicTrack )
+		musicTrack->setVolume( musicVolume );
+
+	//update all the existing sounds
+	for( SoundSource* s : busySoundPool )
+		s->setVolume( s->getVolume() );
+}
+
 void SoundManager::update( float dt )
 {
 	SoundSource* current;

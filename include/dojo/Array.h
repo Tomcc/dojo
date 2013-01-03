@@ -11,6 +11,45 @@ namespace Dojo
 	class Array 
 	{
 	public:
+
+		class iterator
+		{
+		public:
+			iterator( const Array<T>& a, int initialPos ) :
+			base( a ),
+			pos( initialPos )
+			{
+
+			}
+
+			// these three methods form the basis of an iterator for use with
+			// a range-based for loop
+			bool operator!= (const iterator& other) const
+			{
+				return pos != other.pos;
+			}
+
+			const T& operator* () const
+			{
+				return base[ pos ];
+			}
+
+			const iterator& operator++ ()
+			{
+				//don't allow to increase after the end
+				DEBUG_ASSERT( pos < base.size() );
+
+				++pos;
+				// although not strictly necessary for a range-based for loop
+				// following the normal convention of returning a value from
+				// operator++ is a good idea.
+				return *this;
+			}
+
+		private:
+			int pos;
+			const Array<T>& base;
+		};
 		
 		///Costruttore
 		/**
@@ -269,6 +308,15 @@ namespace Dojo
 		///Ottieni il numero massimo di elementi accettabili prima di riallocare
 		FV_INLINE int getPageSize()	const {	return pageSize;	}
 		
+		FV_INLINE iterator begin()
+		{
+			return iterator( *this, 0 );
+		}
+
+		FV_INLINE iterator end()
+		{
+			return iterator( *this, size() );
+		}
 		
 		///Posizione del vettore in memoria -uso avanzato-
 		FV_INLINE T* _getArrayPointer()	const {	return vectorArray;	}
