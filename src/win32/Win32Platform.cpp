@@ -160,8 +160,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	return DefWindowProc( hwnd, message, wparam, lparam );
 }
 
-Win32Platform::Win32Platform( const Table& config ) :
-Platform( config ),
+Win32Platform::Win32Platform( const Table& configTable ) :
+Platform( configTable ),
 dragging( false ),
 mMousePressed( false ),
 cursorPos( Vector::ZERO ),
@@ -173,6 +173,8 @@ frameInterval(0)
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
 	*/
+
+	//if no config is supplied, try to load it from an user file
 
 	screenWidth = GetSystemMetrics( SM_CXSCREEN );
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
@@ -195,8 +197,8 @@ void Win32Platform::_adjustWindow()
     //GetClientRect(HWnd, &clientSize);
     clientSize.top = 0;
     clientSize.left = 0;
-    clientSize.right = game->getNativeWidth();
-    clientSize.bottom = game->getNativeHeight();
+    clientSize.right = windowWidth;
+    clientSize.bottom = windowHeight;
 
     AdjustWindowRect(&clientSize, WINDOWMODE_PROPERTIES, FALSE);
 
@@ -258,8 +260,8 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 	// that adjusted RECT structure to
 	// specify the width and height of the window.
 
-	hwnd = CreateWindowA("DojoOpenGLWindow",
-		windowCaption.ASCII().c_str(),
+	hwnd = CreateWindowW(L"DojoOpenGLWindow",
+		windowCaption.c_str(),
 		dwstyle,  //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -335,8 +337,8 @@ void Win32Platform::setFullscreen( bool fullscreen )
 		DEVMODE dm;
 		memset(&dm, 0, sizeof(dm));
 		dm.dmSize = sizeof(dm);
-		dm.dmPelsWidth = game->getNativeWidth();
-		dm.dmPelsHeight	= game->getNativeHeight();
+		dm.dmPelsWidth = windowWidth;
+		dm.dmPelsHeight	= windowHeight;
 		dm.dmBitsPerPel	= 32;
 		dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -362,10 +364,18 @@ void Win32Platform::initialise()
 	//create user dir if not existing
 	String userDir = getAppDataPath() + '/' + game->getName();
 
-	CreateDirectoryA( userDir.ASCII().c_str(), NULL );
+	CreateDirectoryW( userDir.c_str(), NULL );
+
+	//load settings
+	if( config.isEmpty() )
+		Table::loadFromFile( &config, getAppDataPath() + "/" + game->getName() + "/config.ds" );
+
+	Vector windowSize = config.getVector("windowSize", Vector( screenWidth, screenHeight ) );
+	windowWidth = windowSize.x;
+	windowHeight = windowSize.y;
 
 	//just use the game's preferred settings
-	if( !_initialiseWindow( game->getName(), game->getNativeWidth(), game->getNativeHeight() ) )
+	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )
 		return;
 
 	setVSync( !config.getBool( "disable_vsync" ) );		

@@ -69,6 +69,9 @@ namespace Dojo
 		inline int getScreenWidth()             {   return screenWidth;     }
 		inline int getScreenHeight()            {   return screenHeight;    }
 		inline int getScreenOrientation()       {   return screenOrientation;   }
+
+		inline int getWindowWidth()             {   return windowWidth;     }
+		inline int getWindowHeight()            {   return windowHeight;    }
 		
 		bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
 		bool isFullscreen()		{	return mFullscreen; }
@@ -156,7 +159,7 @@ namespace Dojo
 
 		static Platform* singleton;
 		
-		int screenWidth, screenHeight;
+		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
 		
 		String locale;
