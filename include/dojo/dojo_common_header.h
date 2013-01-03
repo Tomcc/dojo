@@ -12,7 +12,7 @@
 #include <climits>
 #include <stdint.h>
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <iostream>

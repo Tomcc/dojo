@@ -38,11 +38,11 @@ namespace Dojo {
 		//various resource properties TODO: refactor
 		bool disableBilinear, disableMipmaps, disableTiling;
 		
-		typedef std::map<String, FrameSet*> FrameSetMap;
-		typedef std::map<String, Font*> FontMap;
-		typedef std::map<String, Mesh*> MeshMap;
-		typedef std::map<String, SoundSet*> SoundMap;
-		typedef std::map<String, Table*> TableMap;
+		typedef std::unordered_map<String, FrameSet*> FrameSetMap;
+		typedef std::unordered_map<String, Font*> FontMap;
+		typedef std::unordered_map<String, Mesh*> MeshMap;
+		typedef std::unordered_map<String, SoundSet*> SoundMap;
+		typedef std::unordered_map<String, Table*> TableMap;
 		typedef Array< ResourceGroup* > SubgroupList;
 		
 		ResourceGroup();
@@ -59,17 +59,18 @@ namespace Dojo {
 			fallbackLocale = fallbackLocaleID;
 		}
 		
+		///returns the map containing the required resource type
 		template < class R >
-		inline std::map< String, R* >* getResourceMap( ResourceType r ) const
+		inline std::unordered_map< String, R* >* getResourceMap( ResourceType r ) const
 		{
-			return (std::map< String, R* >*)mapArray[ (uint)r ];
+			return (std::unordered_map< String, R* >*)mapArray[ (uint)r ];
 		}
 		
-		
+		///finds a named resource of type R
 		template < class R >
 		inline R* find( const String& name, ResourceType r )
 		{
-			typedef std::map< String, R* > RMap;
+			typedef std::unordered_map< String, R* > RMap;
 			
 			RMap* map = getResourceMap< R >( r );
 			
@@ -340,7 +341,7 @@ namespace Dojo {
 
 		///load all unloaded registered resources
 		template< class T>
-		void _load( std::map< String, T* >& map )
+		void _load( std::unordered_map< String, T* >& map )
 		{
 			for( auto resourcePair : map )
 			{
@@ -351,7 +352,7 @@ namespace Dojo {
 		}
 				
 		template <class T> 
-		void _unload( std::map< String, T* >& map, bool softUnload )
+		void _unload( std::unordered_map< String, T* >& map, bool softUnload )
 		{
 			//unload all the resources
 			for( auto resourcePair : map )

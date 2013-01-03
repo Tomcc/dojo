@@ -231,6 +231,25 @@ namespace Dojo
 	{
 		return lhs + String( rhs );
 	}
+
 }
+
+namespace std
+{
+	///hash specialization for unordered_maps
+	template<>
+	struct hash<Dojo::String>
+		: public unary_function<Dojo::String, size_t>
+	{	// hash functor for basic_string
+		typedef Dojo::String _Kty;
+
+		size_t operator()(const _Kty& _Keyval) const
+		{	// hash _Keyval to size_t value by pseudorandomizing transform
+			return (_Hash_seq((const unsigned char *)_Keyval.c_str(),
+				_Keyval.size() * sizeof ( Dojo::unichar )));
+		}
+	};
+}
+
 
 #endif // String_h__

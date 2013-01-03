@@ -11,7 +11,7 @@ namespace Dojo
 	{
 	public:
 
-		typedef std::map< String, FT_Face > FaceMap;
+		typedef std::unordered_map< String, FT_Face > FaceMap;
 
 		FontSystem()
 		{

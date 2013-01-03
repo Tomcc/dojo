@@ -103,7 +103,7 @@ namespace Dojo
 			}
 		};
 
-		typedef std::map< String, Entry* > EntryMap;
+		typedef std::unordered_map< String, Entry* > EntryMap;
 
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
