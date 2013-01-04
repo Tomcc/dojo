@@ -684,7 +684,7 @@ void Win32Platform::openWebPage( const String& site )
 //init key map
 void Win32Platform::_initKeyMap()
 {
-	mKeyMap[ 0 ] = InputSystem::KC_UNASSIGNED;
+	ZeroMemory( mKeyMap, sizeof( mKeyMap ) );
 
 	mKeyMap[ VK_ESCAPE ] = InputSystem::KC_ESCAPE;
 	mKeyMap[ VK_BACK ] = InputSystem::KC_BACK;
@@ -830,4 +830,6 @@ void Win32Platform::_initKeyMap()
 	mKeyMap[ VK_RWIN ] = InputSystem::KC_RWIN;
 	mKeyMap[ VK_APPS ] = InputSystem::KC_APPS;
 	mKeyMap[ VK_SLEEP ] = InputSystem::KC_SLEEP;
+
+	mKeyMap[ 0 ] = InputSystem::KC_UNASSIGNED;
 }

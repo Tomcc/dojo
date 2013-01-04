@@ -35,8 +35,9 @@ zFar( 1000 )
 	
 	nativeToScreenRatio = render->getNativeToScreenRatio();
 	
-	targetSize.x = (float)level->getGame()->getNativeWidth();
-	targetSize.y = (float)level->getGame()->getNativeHeight();
+	//default size is window size
+	targetSize.x = (float)Platform::getSingleton()->getWindowWidth();
+	targetSize.y = (float)Platform::getSingleton()->getWindowHeight();
 	
 	//create the fader object			
 	fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );

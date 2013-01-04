@@ -31,7 +31,7 @@ namespace Dojo
 		String() :
 		_ustring()
 		{
-			
+
 		}
 		
 		String( const String& s ) :
@@ -171,10 +171,10 @@ namespace Dojo
 			appendASCII( str.str().c_str() );
 		}
 		
-		///appends data to this string. It has to be 2 bytes aligned!
+		///appends raw data to this string. It has to be wchar_t bytes aligned!
 		inline void appendRaw( void* data, uint sz )
 		{
-			DEBUG_ASSERT( sz % sizeof( unichar ) == 0 );
+			DEBUG_ASSERT_MSG( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
 			
 			append( (unichar*)data, sz / sizeof( unichar ) );
 		}

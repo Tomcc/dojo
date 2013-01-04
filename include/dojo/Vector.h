@@ -199,6 +199,12 @@ namespace Dojo
 			return Vector( x*v.x, y*v.y, z*v.z );
 		}
 
+		///divides component by component
+		inline Vector divideComponents( const Vector& v )
+		{
+			return Vector( x/v.x, y/v.y, z/v.z );
+		}
+
 		inline float distance( const Vector& v ) const 
 		{
 			return sqrt( distanceSquared(v) );

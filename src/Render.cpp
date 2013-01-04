@@ -86,7 +86,7 @@ backLayer( NULL )
 
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
-	nativeToScreenRatio = (float)viewportHeight / (float)platform->getGame()->getNativeHeight();
+	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
 	
 	setDefaultAmbient( Color::BLACK );
 }
@@ -245,14 +245,14 @@ void Render::startFrame()
 				
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
-		viewportPixelRatio.x = viewport->getSize().x / width;
-		viewportPixelRatio.y = viewport->getSize().y / height;
+		viewportPixelRatio.x = viewport->getSize().x / viewport->getTargetSize().x;
+		viewportPixelRatio.y = viewport->getSize().y / viewport->getTargetSize().y;
 	}
 	else 
 	{
 		//swap
-		viewportPixelRatio.x = viewport->getSize().y / width;
-		viewportPixelRatio.y = viewport->getSize().x / height;
+		viewportPixelRatio.x = viewport->getSize().y / viewport->getTargetSize().x;
+		viewportPixelRatio.y = viewport->getSize().x / viewport->getTargetSize().y;
 	}
 
 	viewportPixelRatio *= nativeToScreenRatio;

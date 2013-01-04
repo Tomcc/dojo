@@ -136,7 +136,8 @@ enum ParseTarget
 	PT_STRING,
 	PT_DATA,
 	PT_VECTOR,
-	PT_CHILD
+	PT_CHILD,
+	PT_IMPLICITTRUE
 };
 
 inline bool isNameStarter( unichar c )
@@ -218,16 +219,12 @@ void Table::deserialize( StringReader& buf )
 
 			break;
 
-		case PS_NAME_ENDED:
+		case PS_NAME_ENDED:  //wait for an equal; drop whitespace and fall back if other is found
 			if( c == '=' )
 				state = PS_EQUAL;
-			else if( isNameStarter( c ) || c == EOF_CHAR )
-			{
-				//compact bool!
-				set( curName, (int)1 );
-				state = PS_TABLE;
-				buf.back(); //put back the read char because it belongs to another name
-			}
+			else if( !isWhiteSpace(c) ) //it is something else - store this as an implicit bool and reset the parser
+				target = PT_IMPLICITTRUE;
+
 			break;
 
 		case PS_EQUAL: //wait for value start
@@ -242,6 +239,11 @@ void Table::deserialize( StringReader& buf )
 
 		switch( target )
 		{
+		case PT_IMPLICITTRUE:
+			buf.back();
+			set( curName, (int)1 );
+			break;
+
 		case PT_NUMBER:
 			  
 			//check if next char is x, that is, really we have an hex color!

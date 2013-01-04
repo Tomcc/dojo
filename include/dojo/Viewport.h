@@ -53,6 +53,8 @@ namespace Dojo
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
 
+		inline void setTargetSize( const Vector& size )		{ targetSize = size; }
+
 		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 		
 		inline const Color& getClearColor()				{	return clearColor;	}
@@ -63,6 +65,7 @@ namespace Dojo
 		inline float getZNear()							{	return zNear;		}
 		inline const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
+		inline const Vector& getTargetSize()			{   return targetSize;  }
 
 		Vector getScreenPosition( const Vector& pos );
 		
