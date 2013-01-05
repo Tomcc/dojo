@@ -11,7 +11,7 @@ source( src ),
 mgr( manager ),
 pos(0,0),
 positionChanged( true )
-{	
+{
 	_reset();
 }
 
@@ -34,7 +34,8 @@ void SoundSource::_reset()
 
 SoundSource::~SoundSource()
 {
-
+	//the SoundSource takes ownership on the AL src
+	alDeleteBuffers( 1, &source );
 }
 
 void SoundSource::setVolume( float v )

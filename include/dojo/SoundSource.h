@@ -96,6 +96,17 @@ namespace Dojo
 
 			///Restituisce il volume a cui il suono sta suonando
 			float getVolume();	
+
+			///returns the elapsed time since source play 
+			inline float getElapsedTime()
+			{
+				float elapsed = 0;
+				alGetSourcef( source, AL_SEC_OFFSET, &elapsed );
+				
+				DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
+
+				return elapsed;
+			}
 			
 			///Metodo che dice se il suono e' valido, cioe' play() avra' un effetto
 			bool isValid()

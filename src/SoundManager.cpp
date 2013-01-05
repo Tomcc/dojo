@@ -12,20 +12,6 @@ using namespace Dojo;
 
 const float SoundManager::m = 100;
 
-bool SoundManager::alCheckError()
-{
-	bool foundError = false;
-	ALenum error;
-
-	error = alGetError();
-	if(error != AL_NO_ERROR)
-	{
-		foundError = true;
-	}
-
-	return foundError;
-}
-
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
@@ -36,35 +22,45 @@ musicVolume( 1 ),
 masterVolume( 1 ),
 currentFadeTime(0)
 {		
+	alGetError();
+
 	// Initialization
 	device = alcOpenDevice(NULL); // select the "preferred device"
 	
 	DEBUG_ASSERT( device );
-	
-	int error = alCheckError();
-	
-	if (device) 
-	{
-		context = alcCreateContext(device,NULL);
-		
-		error = alCheckError();
-		
-		alcMakeContextCurrent(context);
-	}
-    // Clear Error Code
-    alCheckError();
 
-	alGenSources( MAX_SOURCES, sources );
+	context = alcCreateContext(device,NULL);
+		
+	DEBUG_ASSERT( context );
+		
+	alcMakeContextCurrent(context);
+
+	alGetError();
 
 	//preload sounds
-	for( unsigned int i = 0; i < MAX_SOURCES; ++i )
-		idleSoundPool.add( new SoundSource( this, sources[i] ) );
+	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN );
+
+	//create at least MIN sources, the rest will be lazy-loaded
+	for( int i = 0; i < NUM_SOURCES_MIN; ++i )
+	{
+		ALuint src;
+		alGenSources(1, &src );
+
+		if( alGetError() == AL_NO_ERROR )
+			idleSoundPool.add( new SoundSource( this, src ) );
+		else
+			break;
+	}
+
+	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN ); //ensure at least MIN sources have been built
 
 	//dummy source to manage source shortage
 	fakeSource = new SoundSource( this, NULL );
 
 	setListenerPosition( Vector::ZERO );
-	setListenerOrientation( 0,0,1,0,1,0 );
+	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
+
+	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
 }
 
 SoundManager::~SoundManager()
@@ -77,8 +73,34 @@ SoundManager::~SoundManager()
 		SAFE_DELETE( idleSoundPool.at(i) );
 
 	SAFE_DELETE( fakeSource );
+}
 
-	alDeleteSources( MAX_SOURCES, sources );
+SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
+{
+	DEBUG_ASSERT( set );
+
+	//try to lazy-create a new source, if allowed
+	if( idleSoundPool.isEmpty() && busySoundPool.size() < NUM_SOURCES_MAX )
+	{
+		ALuint src;
+		alGenSources( 1, & src );
+		if( alGetError() == AL_NO_ERROR )
+			idleSoundPool.add( new SoundSource( this, src ) );
+	}
+
+	//is there a source now?
+	if( !idleSoundPool.isEmpty() )
+	{
+		SoundSource* s = idleSoundPool.top();
+		idleSoundPool.pop();
+		busySoundPool.add(s);
+
+		s->_setup( set->getBuffer( i ) );
+
+		return s;
+	}
+	//failed, return mute source
+	return fakeSource;
 }
 
 void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )

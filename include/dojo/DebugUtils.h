@@ -1,18 +1,6 @@
 #ifndef DebugUtils_h__
 #define DebugUtils_h__
 
-namespace Dojo
-{
-	//define the handler type
-	typedef void (*AssertHandlerPtr)(const char*, const char*, int, const char*);
-
-	//the handler pointer
-	extern AssertHandlerPtr gp_assert_handler;
-
-	//and the default handler
-	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file );
-}
-
 #ifndef _FINAL //release versions DO have enabled asserts!
 
 	#define DEBUG_ASSERT_MSG( T, MSG ) {if( !(T) ) { Dojo::gp_assert_handler( MSG, #T, __LINE__, __FILE__ ); }}
@@ -39,5 +27,19 @@ namespace Dojo
 
 //synonyms
 #define DEBUG_DEPRECATED DEBUG_TODO
+
+
+namespace Dojo
+{
+	//define the handler type
+	typedef void (*AssertHandlerPtr)(const char*, const char*, int, const char*);
+
+	//the handler pointer
+	extern AssertHandlerPtr gp_assert_handler;
+
+	//and the default handler
+	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file );
+
+}
 
 #endif // DebugUtils_h__

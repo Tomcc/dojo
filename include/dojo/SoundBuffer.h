@@ -50,6 +50,7 @@ namespace Dojo
 
 		///Ottieni la dimensione in memoria di questo buffer.
 		inline int getSize()					{	return size;	}
+		inline float getDuration()				{	return mDuration;}
 
 		inline bool isLoaded()					{	return buffer != AL_NONE;	}
 
@@ -66,6 +67,8 @@ namespace Dojo
 		ALsizei	size;
 
 		ALuint buffer;
+
+		float mDuration;
 		
 		int _loadOggFromMemory( void* buf, int sz );
 		int _loadOggFromFile();

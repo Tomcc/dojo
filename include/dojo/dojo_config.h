@@ -40,8 +40,6 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#include "DebugUtils.h"
-
 #ifdef PLATFORM_IOS
 	#define BIG_ENDIAN 1
 #else

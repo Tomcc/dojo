@@ -15,7 +15,8 @@ using namespace Dojo;
 SoundBuffer::SoundBuffer( ResourceGroup* creator, const String& path ) :
 Resource( creator, path ),
 size(0),
-buffer( AL_NONE )
+buffer( AL_NONE ),
+mDuration( 0 )
 {
 	DEBUG_ASSERT( creator );
 }
@@ -128,7 +129,7 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	OggVorbis_File file;
 	vorbis_info* info;
 	ALenum format;
-	int uncompressedSize;
+	int uncompressedSize, totalRead = 0;
 	
 	int error = ov_open_callbacks( &src, &file, NULL, 0, callbacks );
 	
@@ -139,30 +140,39 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	int wordSize = 2;
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
-	//guess uncompressed size (file should have only 1 stream)
-	//HACK redo this code as it munchs the end of sounds
-	uncompressedSize = (int)(info->channels * ov_pcm_total( &file, -1 ));
-	
+	int bitrate = info->rate;// * info->channels;
+	int pcm = (int)ov_pcm_total( &file, -1 );
+	uncompressedSize = pcm * wordSize * info->channels;
+
+	mDuration = (float)pcm / (float)info->rate;
+
 	char* uncompressedData = (char*)malloc( uncompressedSize );
 	int section = -1;
-	int totalRead = 0;
-	
-	//read all vorbis packets
-	int read = 0;
-	do 
+
+	//read all vorbis packets in the same buffer (TODO: don't allocate the whole compressed buffer)
+	long read = 0;
+
+	bool corrupt = false;
+	do
 	{
 		read = ov_read( &file, uncompressedData + totalRead, uncompressedSize - totalRead, 0, wordSize, 1, &section );
-				
-		if( read <= 0 )
+
+		if( read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL )
+			corrupt = true;
+
+		else if( read == 0 )
 			break;
 
-		totalRead += read;
-	}
-	while( totalRead < uncompressedSize );
+		else
+			totalRead += read;
+
+		DEBUG_ASSERT( totalRead <= uncompressedSize ); //this should always be true
+
+	} while( !corrupt );
 	
 	DEBUG_ASSERT( totalRead > 0 );
 	
-	alBufferData( buffer, format, uncompressedData, totalRead, info->rate );
+	alBufferData( buffer, format, uncompressedData, totalRead, bitrate );
 	
 	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
 	

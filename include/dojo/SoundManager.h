@@ -10,7 +10,8 @@
 #include "SoundSet.h"
 #include "SoundSource.h"
 
-#define MAX_SOURCES 32
+#define NUM_SOURCES_MIN 16
+#define NUM_SOURCES_MAX 256
 
 namespace Dojo {
 
@@ -35,8 +36,6 @@ namespace Dojo {
 				*ALpos = 0;
 			}
 
-			static bool alCheckError();
-
 			SoundManager();
 			~SoundManager();
 			
@@ -56,22 +55,7 @@ namespace Dojo {
 			}
 
 			///restituisce una fonte sonora con il suono dato
-			inline SoundSource* getSoundSource( SoundSet* set, int i = -1 )
-			{
-				DEBUG_ASSERT( set );
-
-				if( idleSoundPool.size() > 0 && set )
-				{
-					SoundSource* s = idleSoundPool.top();
-					idleSoundPool.pop();
-					busySoundPool.add(s);
-
-					s->_setup( set->getBuffer( i ) );
-
-					return s;
-				}
-				return fakeSource;
-			}
+			SoundSource* getSoundSource( SoundSet* set, int i = -1 );
 
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
 			{
@@ -86,7 +70,7 @@ namespace Dojo {
 			inline SoundSource* playSound( SoundSet* set )
 			{
 				DEBUG_ASSERT( set );
-				
+				 
 				SoundSource* s = getSoundSource( set );
 				s->play();
 				return s;
@@ -189,14 +173,14 @@ namespace Dojo {
 				alListenerfv(AL_POSITION, listenerPos);
 			}
 			
-			inline void setListenerOrientation( float fx, float fy, float fz, float ux, float uy, float uz )
+			inline void setListenerOrientation( const Vector& forward, const Vector& up )
 			{				
-				orientation[0] = fx;
-				orientation[1] = fy;
-				orientation[2] = fz;
-				orientation[3] = ux;
-				orientation[4] = uy;
-				orientation[5] = uz;
+				orientation[0] = forward.x;
+				orientation[1] = forward.y;
+				orientation[2] = forward.z;
+				orientation[3] = up.x;
+				orientation[4] = up.y;
+				orientation[5] = up.z;
 				
 				alListenerfv(AL_ORIENTATION, orientation);
 			}
@@ -218,8 +202,6 @@ namespace Dojo {
 
 			ALfloat listenerPos[3];					
 			ALfloat orientation[6];
-
-			ALuint sources[ MAX_SOURCES ];
 
 			//pool di suoni
 			SoundList idleSoundPool;

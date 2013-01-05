@@ -57,7 +57,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		return 0;
 
     case WM_MOUSEWHEEL: //mouse wheel moved
-		app->mouseWheelMoved( (float)((short)HIWORD(wparam)) / (float)WHEEL_DELTA );
+		app->mouseWheelMoved( (int)((float)HIWORD(wparam)) / (float)WHEEL_DELTA );
         return 0;
 
     case WM_LBUTTONDOWN:  //left down
@@ -370,9 +370,9 @@ void Win32Platform::initialise()
 	if( config.isEmpty() )
 		Table::loadFromFile( &config, getAppDataPath() + "/" + game->getName() + "/config.ds" );
 
-	Vector windowSize = config.getVector("windowSize", Vector( screenWidth, screenHeight ) );
-	windowWidth = windowSize.x;
-	windowHeight = windowSize.y;
+	Vector windowSize = config.getVector("windowSize", Vector( (float)screenWidth, (float)screenHeight ) );
+	windowWidth = (int)windowSize.x;
+	windowHeight = (int)windowSize.y;
 
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )

@@ -93,7 +93,10 @@
 #include FT_FREETYPE_H
 #include FT_STROKER_H
 
+#include "DebugUtils.h"
+
 //string has to be included here!
 #include "dojostring.h"
+
 
 #endif // dojo_common_headers_h__
