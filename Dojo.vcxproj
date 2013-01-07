@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\dojo.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\apple\ApplePlatform.h" />
     <ClInclude Include="include\dojo\apple\iOS\AppDelegate.h" />
@@ -23,6 +24,7 @@
     <ClInclude Include="include\dojo\apple\OSX\CustomOpenGLView.h" />
     <ClInclude Include="include\dojo\apple\OSX\OSXPlatform.h" />
     <ClInclude Include="include\dojo\Array.h" />
+    <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
@@ -77,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimatedQuad.cpp" />
+    <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Email.cpp" />

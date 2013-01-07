@@ -247,6 +247,16 @@ namespace Dojo
 				
 	protected:
 	};
+}	
+
+namespace std
+	{
+		///hash specialization for unordered_maps
+		template<>
+		struct hash<Dojo::Vector>
+			: public _Bitwise_hash<Dojo::Vector>
+		{	// hash functor for char
+		};
 }
 
 #endif

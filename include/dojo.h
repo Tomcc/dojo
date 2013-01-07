@@ -3,6 +3,7 @@
 
 #include <dojo/AnimatedQuad.h>
 #include <dojo/Array.h>
+#include <dojo/AStar.h>
 #include <dojo/Resource.h>
 #include <dojo/Color.h>
 #include <dojo/Email.h>
