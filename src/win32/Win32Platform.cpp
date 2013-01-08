@@ -166,7 +166,8 @@ dragging( false ),
 mMousePressed( false ),
 cursorPos( Vector::ZERO ),
 frameStart( 1 ),
-frameInterval(0)
+frameInterval(0),
+mFramesToAdvance( 0 )
 {
 	/*
 #ifdef _DEBUG
@@ -518,7 +519,13 @@ void Win32Platform::loop( float frameTime )
 		//never send a dt lower than the minimum!
 		float dt = min( game->getMaximumFrameLength(), (float)timer.deltaTime() );
 
-		step( dt );
+		if( !mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0 ) )
+		{
+			step( dt );
+
+			if( mFrameSteppingEnabled )
+				--mFramesToAdvance;
+		}
 	}
 }
 
@@ -575,7 +582,25 @@ void Win32Platform::keyPressed( int kc )
 	//TODO reimplement text!
 	lastPressedText = 0; 
 
-	input->_fireKeyPressedEvent( 0, mKeyMap[ kc ] );
+	Dojo::InputSystem::KeyCode key = mKeyMap[ kc ];
+
+#ifndef _FINAL
+	if( key == InputSystem::KC_DIVIDE )	
+		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
+	else if( mFrameSteppingEnabled )
+	{
+		if( key == InputSystem::KC_NUMPAD0 )		mFramesToAdvance = 1;
+		else if( key == InputSystem::KC_NUMPAD1 )	mFramesToAdvance = 5;
+		else if( key == InputSystem::KC_NUMPAD2 )	mFramesToAdvance = 10;
+		else if( key == InputSystem::KC_NUMPAD3 )	mFramesToAdvance = 20;
+		else if( key == InputSystem::KC_NUMPAD4 )	mFramesToAdvance = 50;
+		else if( key == InputSystem::KC_NUMPAD5 )	mFramesToAdvance = 100;
+		else if( key == InputSystem::KC_NUMPAD6 )	mFramesToAdvance = 200;
+		else if( key == InputSystem::KC_NUMPAD7 )	mFramesToAdvance = 500;
+	}
+#endif
+	
+	input->_fireKeyPressedEvent( 0, key );
 }
 
 void Win32Platform::keyReleased( int kc )

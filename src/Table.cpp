@@ -24,10 +24,12 @@ void Table::loadFromFile( Table* dest, const String& path )
 
 	fseek( file, 0, SEEK_SET );
 
-	std::string buf;
+	std::string buf; //this is a classic UTF8 string
 	buf.resize( size );
 
-	fread( (void*)buf.data(), sizeof( unichar ), size, file );
+	size_t read = fread( (void*)buf.data(), sizeof( char ), size, file );
+
+	DEBUG_ASSERT( read == size );
 
 	fclose( file );
 
@@ -35,6 +37,8 @@ void Table::loadFromFile( Table* dest, const String& path )
 
 	StringReader reader( buf );
 	dest->deserialize( reader );
+
+	DEBUG_ASSERT( dest->size() ); //HACK
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );

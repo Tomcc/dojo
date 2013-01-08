@@ -116,6 +116,7 @@ namespace Dojo
 		uint lastPressedText;
 
 		float frameInterval;
+		int mFramesToAdvance;
 
 		FT_Library freeType;
 

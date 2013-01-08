@@ -21,6 +21,7 @@ namespace Dojo
 	public:
 		
 		static const float PI;
+		static const float TAU; //2pi
 		static const float EULER_TO_RADIANS;
 		static const float RADIANS_TO_EULER;
 		

@@ -38,7 +38,8 @@ namespace Dojo
 		render( NULL ),
 		input( NULL ),
 		realFrameTime( 0 ),
-		mFullscreen( 0 )
+		mFullscreen( 0 ),
+		mFrameSteppingEnabled( false )
 		{
 
 		}		
@@ -166,7 +167,7 @@ namespace Dojo
 
 		Table config;
 
-		bool running, mFullscreen;
+		bool running, mFullscreen, mFrameSteppingEnabled;
 
 		Game* game;
 
