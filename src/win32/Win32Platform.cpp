@@ -2,6 +2,7 @@
 
 #include "win32/Win32Platform.h"
 #include "win32/WGL_ARB_multisample.h"
+#include "win32/XInputJoystick.h"
 
 #include "Render.h"
 #include "Game.h"
@@ -78,6 +79,16 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		app->mouseMoved( LOWORD( lparam ), HIWORD( lparam ) );
         return 0;
 
+
+	case WM_SYSKEYDOWN:
+		if( wparam == VK_F4 ) //listen for Alt+F4
+		{
+			PostQuitMessage(1);
+			return 0;
+		}
+
+		//continues after the jump!!
+
     case WM_KEYDOWN:
 
 		switch( wparam )
@@ -94,14 +105,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		}
         return 0;
 
-    case WM_SYSKEYDOWN:
-		if( wparam == VK_F4 ) //listen for Alt+F4
-		{
-			PostQuitMessage(1);
-			return 0;
-		}
-        break;
-
+	case WM_SYSKEYUP: //needed to catch ALT separately
     case WM_KEYUP:
 
 		app->keyReleased( wparam );
@@ -185,11 +189,18 @@ mFramesToAdvance( 0 )
 	mFullscreen = false; //windows creates... windows by default
 
 	_initKeyMap();
+
+	//create xinput persistent joysticks
+	for( int i = 0; i < 4; ++i )
+		mXInputJoystick[ i ] = new XInputJoystick( i );
 }
 
 Win32Platform::~Win32Platform()
 {
 	setFullscreen( false ); //get out of fullscreen
+
+	for( int i = 0; i < 4; ++i )
+		delete mXInputJoystick[ i ];
 }
 
 void Win32Platform::_adjustWindow()
@@ -457,6 +468,14 @@ void Win32Platform::_invoke( Poco::Timer& timer )
 	}
 }
 
+void Win32Platform::_pollDevices( float dt )
+{
+	for( int i = 0; i < 4; ++i )
+		mXInputJoystick[ i ]->poll( dt );
+
+	//TODO poll DInput too
+}
+
 void Win32Platform::step( float dt )
 {
 	Timer timer;
@@ -476,6 +495,9 @@ void Win32Platform::step( float dt )
 		mContextRequestsQueue.pop();
 	}
 	mCRQMutex.unlock();
+
+	//update pads
+	_pollDevices( dt );
 
 	game->loop( dt);
 
@@ -799,7 +821,7 @@ void Win32Platform::_initKeyMap()
 	mKeyMap[ 0 ] = InputSystem::KC_SLASH;
 	mKeyMap[ VK_RSHIFT ] = InputSystem::KC_RSHIFT;
 	mKeyMap[ VK_MULTIPLY ] = InputSystem::KC_MULTIPLY;
-	mKeyMap[ VK_LMENU ] = InputSystem::KC_LEFT_ALT;
+	mKeyMap[ 18 ] = InputSystem::KC_LEFT_ALT;
 	mKeyMap[ VK_SPACE ] = InputSystem::KC_SPACE;
 	mKeyMap[ VK_CAPITAL ] = InputSystem::KC_CAPITAL;
 
@@ -835,7 +857,7 @@ void Win32Platform::_initKeyMap()
 	mKeyMap[ VK_VOLUME_UP ] = InputSystem::KC_VOLUMEUP;
 	mKeyMap[ VK_OEM_COMMA ] = InputSystem::KC_NUMPADCOMMA;
 	mKeyMap[ VK_DIVIDE ] = InputSystem::KC_DIVIDE;
-	mKeyMap[ VK_RMENU ] = InputSystem::KC_RIGHT_ALT;
+	mKeyMap[ 17 ] = InputSystem::KC_RIGHT_ALT;
 	mKeyMap[ VK_PAUSE ] = InputSystem::KC_PAUSE;
 
 	mKeyMap[ VK_HOME ] = InputSystem::KC_HOME;

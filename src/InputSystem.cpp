@@ -91,7 +91,7 @@ void InputSystem::_fireAccelerationEvent( const Dojo::Vector& accel, float roll 
 
 void InputSystem::_fireKeyPressedEvent( unichar character, KeyCode keyID )
 {
-    if( enabled )
+    if( enabled && mKeyPressedMap[ keyID ] != true )  //be sure not to trigger this more than once (eg. WM_KEYDOWN being spammed)
     {
         mKeyPressedMap[ keyID ] = true;
         
@@ -102,11 +102,37 @@ void InputSystem::_fireKeyPressedEvent( unichar character, KeyCode keyID )
 
 void InputSystem::_fireKeyReleasedEvent( unichar character, KeyCode keyID )
 {
-    if( enabled )
+    if( enabled && mKeyPressedMap[ keyID ] != false  )
     {
         mKeyPressedMap[ keyID ] = false;
         
         for( int i = 0; i < listeners.size(); ++i )
             listeners.at(i)->onKeyReleased( character, keyID );
     }
+}
+
+void InputSystem::_fireJoystickConnected( Dojo::Joystick* j )
+{
+	DEBUG_ASSERT( !mJoystickList.exists(j) );
+
+	//add it to the list
+	mJoystickList.add( j );
+
+	//notify listeners
+	for( Listener* l : listeners )
+		l->onJoystickConnected( j );
+
+	DEBUG_MESSAGE( "Connected a joystick!" );
+}
+
+void InputSystem::_removeJoystick( Dojo::Joystick* j )
+{
+	DEBUG_ASSERT( mJoystickList.exists(j) );
+
+	//first notify this to all the listeners
+	for( Listener* l : listeners )
+		l->onJoystickDisconnected( j );
+
+	//then destroy our client side object
+	mJoystickList.remove( j );
 }

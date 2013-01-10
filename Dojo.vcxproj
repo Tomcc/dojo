@@ -26,6 +26,7 @@
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
+    <ClInclude Include="include\dojo\Joystick.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="include\dojo\Viewport.h" />
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
+    <ClInclude Include="include\dojo\win32\XInputJoystick.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
@@ -186,7 +188,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>OpenGL32.lib;glew32.lib;FreeImage.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)dojo_d.lib</OutputFile>
       <AdditionalLibraryDirectories>dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
@@ -209,7 +211,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)dojo.lib</OutputFile>
       <AdditionalLibraryDirectories>dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
@@ -232,7 +234,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)dojo.lib</OutputFile>
       <AdditionalLibraryDirectories>dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>

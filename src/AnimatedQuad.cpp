@@ -58,35 +58,35 @@ void AnimatedQuad::onAction( float dt )
 	Renderable::onAction( dt );
 		
     advanceAnim(dt);
+
+	_updateScreenSize();
+
+	if( pixelPerfect )
+		scale = screenSize;
 }
 
 bool AnimatedQuad::prepare( const Vector& viewportPixelRatio )
 {
-	if( getTexture(0) && pixelPerfect )
-	{		
-		//compute the pixel occupied by the first texture on the screen				
-		scale.x = getTexture()->getWidth() * viewportPixelRatio.x * pixelScale.x;
-		scale.y = getTexture()->getHeight() * viewportPixelRatio.y * pixelScale.y;	
-
-		screenSize.x = scale.x;
-		screenSize.y = scale.y;	
-	}
-	else
-	{
-		screenSize.x = mesh->getDimensions().x * scale.x;
-		screenSize.y = mesh->getDimensions().y * scale.y;
-	}
+	//TODO remove as it's useless?
 
 	return true;
 }
 
 void AnimatedQuad::_updateScreenSize()
 {
-	DEBUG_ASSERT( getTextureNumber() );
-	
-	gameState->getViewport()->makeScreenSize( screenSize, getTexture() );
-	screenSize.x *= pixelScale.x;
-	screenSize.y *= pixelScale.y;
+	if( pixelPerfect )
+	{
+		DEBUG_ASSERT( getTexture() );
+
+		gameState->getViewport()->makeScreenSize( screenSize, getTexture() );
+		screenSize.x *= pixelScale.x;
+		screenSize.y *= pixelScale.y;
+	}
+	else
+	{
+		screenSize.x = mesh->getDimensions().x * scale.x;
+		screenSize.y = mesh->getDimensions().y * scale.y;
+	}
 }
 
 

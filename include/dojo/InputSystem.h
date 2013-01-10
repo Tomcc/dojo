@@ -19,6 +19,7 @@
 namespace Dojo 
 {
 	class Renderable;
+	class Joystick;
 	
 	///keycodes, thanks to OIS Library
 	class InputSystem : public ApplicationListener
@@ -193,6 +194,7 @@ namespace Dojo
 		};
 		
 		typedef Array< Touch* > TouchList;
+		typedef Array< Joystick* > JoystickList;
 			
 		class Listener
 		{
@@ -225,6 +227,9 @@ namespace Dojo
 
 			virtual void onKeyPressed( int character, Dojo::InputSystem::KeyCode keyID )		{}
 			virtual void onKeyReleased( int character, Dojo::InputSystem::KeyCode keyID )	{}
+
+			virtual void onJoystickConnected( Dojo::Joystick* j ) {};
+			virtual void onJoystickDisconnected( Dojo::Joystick* j ) {};
 
 			inline void _notifySource( InputSystem* src )	{	source = src;	}
 			
@@ -273,6 +278,11 @@ namespace Dojo
 		{
 			return mTouchList;
 		}
+
+		inline const JoystickList& getJoystickList() const
+		{
+			return mJoystickList;
+		}
 		
 		inline bool isKeyPressed( KeyCode key )
 		{
@@ -304,6 +314,9 @@ namespace Dojo
 		void _fireKeyPressedEvent( unichar character, KeyCode keyID );
 		void _fireKeyReleasedEvent( unichar character, KeyCode keyID );	
 
+		void _fireJoystickConnected( Dojo::Joystick* j );
+		void _removeJoystick( Dojo::Joystick* j );
+
 	protected:
 		
 		bool enabled;
@@ -314,6 +327,8 @@ namespace Dojo
 		
 		TouchList mTouchList;        
 		int mAssignedTouches;
+
+		JoystickList mJoystickList;
 				
 		inline Touch* _registertouch( const Vector& point )
 		{

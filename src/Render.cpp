@@ -325,48 +325,6 @@ void Render::endFrame()
 	frameStarted = false;
 }
 
-/*
-void Render::_setupFrustumProjection()
-{
-	DEBUG_ASSERT( viewport );
-
-	//compute frustum
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
-	
-	glRotatef( renderRotation, 0,0,1 );
-	
-	float f = (renderRotation == 0 || renderRotation == 180 ) ? (float)width/(float)height : (float)height/(float)width;
-	
-	_gluPerspectiveClone( 
-		viewport->getVFOV(), 
-		f, 
-		viewport->getZNear(), 
-		viewport->getZFar() );
-
-	glGetFloatv( GL_PROJECTION_MATRIX, frustumProj );
-
-	//add camera orientation to the modelview
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-
-	Vector center = viewport->getWorldPosition( Vector::UNIT_Z );
-	Vector up = viewport->getWorldPosition( Vector::UNIT_Y ) - viewport->getWorldPosition();
-
-	_gluLookAtClone( 
-		viewport->getWorldPosition().x, 
-		viewport->getWorldPosition().y, 
-		viewport->getWorldPosition().z,
-		center.x,
-		center.y,
-		center.z,
-		up.x,
-		up.y,
-		up.z );
-
-	glGetFloatv( GL_MODELVIEW_MATRIX, frustumView );
-}*/
-
 void Render::renderLayer( Layer* list )
 {
 	if( !list->size() || !list->visible )

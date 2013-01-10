@@ -16,6 +16,8 @@
 
 namespace Dojo
 {
+	class XInputJoystick;
+
 	class Win32Platform : public Platform
 	{
 	public:
@@ -122,9 +124,13 @@ namespace Dojo
 
 		InputSystem::KeyCode mKeyMap[ 256 ];
 
+		XInputJoystick* mXInputJoystick[ 4 ];
+
 		void _initKeyMap();
 
 		void _adjustWindow();
+
+		void _pollDevices( float dt );
 	};
 }
 

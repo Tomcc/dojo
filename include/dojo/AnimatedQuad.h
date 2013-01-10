@@ -153,8 +153,6 @@ namespace Dojo
 			animation->setup( s, timePerFrame );
 			
 			_setTexture( animation->getCurrentFrame() );
-			
-			_updateScreenSize();
 		}
 		
 		void immediateAnimation( const String& name, float timePerFrame );
@@ -266,6 +264,8 @@ namespace Dojo
 			setTexture( t, 0 );
 
 			mesh = t->getOptimalBillboard();
+
+			_updateScreenSize();
 		}		
 	};
 }
