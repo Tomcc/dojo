@@ -141,17 +141,22 @@ void Platform::save( Table* src, const String& absPath )
 	
 	src->serialize( buf );
 	
-	std::string path = _getTablePath(src, absPath).ASCII();
-	FILE* f = fopen( path.c_str(), "wb" );
+	String path = _getTablePath(src, absPath);
+	FILE* f = fopen( path.ASCII().c_str(), "w" );
 	
 	if( !f )
 	{
 		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
-		DEBUG_MESSAGE( path );
+		DEBUG_MESSAGE( path.c_str() );
 	}
 	DEBUG_ASSERT( f );
 	
-	fwrite( buf.data(), sizeof( unichar ), buf.size(), f );
+	std::string utf8; //TODO a real UTF8 conversion
+
+	for( unichar c : buf )
+		utf8 += (char)c;
+
+	fwrite( utf8.c_str(), sizeof( char ), utf8.size(), f );
 	
 	fclose( f );
 }

@@ -48,6 +48,7 @@ namespace Dojo
 		{
 			memset( mAxis, 0, sizeof( mAxis ) );
 			memset( mButton, 0, sizeof( mButton ) );
+			memset( mDeadZone, 0, sizeof( mDeadZone ) );
 		}
 
 		virtual bool isKeyDown( int keyNumber )
@@ -100,6 +101,10 @@ namespace Dojo
 
 		inline void _notifyAxis( Axis a, float state)
 		{
+			//apply the dead zone
+			if( abs(state) < mDeadZone[a] )
+				state = 0;
+
 			if( mAxis[a] != state )
 			{
 				float change = mAxis[ a ] - state;
@@ -124,6 +129,8 @@ namespace Dojo
 
 		bool mButton[ BUTTON_MAX ];
 		float mAxis[ _AI_COUNT ];
+
+		float mDeadZone[ _AI_COUNT ];
 
 		int mID;
 	};

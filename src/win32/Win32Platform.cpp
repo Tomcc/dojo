@@ -186,8 +186,6 @@ mFramesToAdvance( 0 )
 
 	frameStart.wait();
 
-	mFullscreen = false; //windows creates... windows by default
-
 	_initKeyMap();
 
 	//create xinput persistent joysticks
@@ -197,7 +195,7 @@ mFramesToAdvance( 0 )
 
 Win32Platform::~Win32Platform()
 {
-	setFullscreen( false ); //get out of fullscreen
+	_setFullscreen( false ); //get out of fullscreen
 
 	for( int i = 0; i < 4; ++i )
 		delete mXInputJoystick[ i ];
@@ -324,16 +322,13 @@ bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint
 // and show.
 	ShowWindow( hwnd, SW_SHOWNORMAL );
 
-	_adjustWindow();
+	_setFullscreen( mFullscreen );
 
 	return err;
 }
 
-void Win32Platform::setFullscreen( bool fullscreen )
+void Win32Platform::_setFullscreen( bool fullscreen )
 {
-	if( fullscreen == mFullscreen )
-		return;
-
 	//set window style
 	DWORD style = fullscreen ? (WS_POPUP | WS_VISIBLE) : WINDOWMODE_PROPERTIES;
 	SetWindowLong(hwnd, GWL_STYLE, style);
@@ -363,8 +358,20 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	}
 
 	ShowCursor( !fullscreen );
+}
+
+void Win32Platform::setFullscreen( bool fullscreen )
+{
+	if( fullscreen == mFullscreen )
+		return;
+
+	_setFullscreen( fullscreen );
 
 	mFullscreen = fullscreen;
+
+	//store the new setting into config.ds
+	config.setBoolean( "fullscreen", mFullscreen );
+	save( &config );
 }
 
 void Win32Platform::initialise()
@@ -385,6 +392,8 @@ void Win32Platform::initialise()
 	Vector windowSize = config.getVector("windowSize", Vector( (float)screenWidth, (float)screenHeight ) );
 	windowWidth = (int)windowSize.x;
 	windowHeight = (int)windowSize.y;
+
+	mFullscreen = config.getBool( "fullscreen" );
 
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )
@@ -501,11 +510,11 @@ void Win32Platform::step( float dt )
 
 	game->loop( dt);
 
-	render->render();
-	
 	sound->update( dt );
-	
-	realFrameTime = (float)timer.getElapsedTime();
+
+	render->render();
+
+	realFrameTime = (float)timer.getElapsedTime();	
 }
 
 void Win32Platform::loop( float frameTime )

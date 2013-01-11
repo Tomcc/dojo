@@ -26,11 +26,11 @@
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
+    <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\Joystick.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />
-    <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_common_header.h" />
     <ClInclude Include="include\dojo\dojo_config.h" />
     <ClInclude Include="include\dojo\Email.h" />

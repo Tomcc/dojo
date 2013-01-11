@@ -82,6 +82,12 @@ namespace Dojo
 		{
 			appendFloat( f );
 		}
+
+		String( float f, byte digits ) :
+			_ustring()
+		{
+			appendFloat( f, digits );
+		}
 		
 		///if found, replace the given substr with the given replacement - they can be of different lengths.
 		inline void replaceToken( const String& substring, const String& replacement )
@@ -162,13 +168,28 @@ namespace Dojo
 			
 		}
 		
-		inline void appendFloat( float f )
+		inline void appendFloat( float f, byte digits = 4 )
 		{
-			//TODO this is really slow
-			std::stringstream str;
-			str << f;
-			
-			appendASCII( str.str().c_str() );
+			appendInt((int)f);
+
+			f -= floor( f );
+
+			if( f == 0 )
+				return;
+
+			*this += '.';
+
+			int n;
+			unichar c;
+			for( int i = 0; i < digits && f != 0; ++i )
+			{
+				//append the remainder
+				f *= 10;
+				n = (int)f;
+				*this += (unichar)('0' + n);
+
+				f -= floor( f );
+			} 
 		}
 		
 		///appends raw data to this string. It has to be wchar_t bytes aligned!

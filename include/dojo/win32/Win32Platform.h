@@ -131,6 +131,8 @@ namespace Dojo
 		void _adjustWindow();
 
 		void _pollDevices( float dt );
+
+		void _setFullscreen( bool f );
 	};
 }
 

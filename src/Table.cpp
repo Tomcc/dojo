@@ -37,8 +37,6 @@ void Table::loadFromFile( Table* dest, const String& path )
 
 	StringReader reader( buf );
 	dest->deserialize( reader );
-
-	DEBUG_ASSERT( dest->size() ); //HACK
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
@@ -65,9 +63,6 @@ void Table::serialize( String& buf, String indent ) const
 
 	Data* data;
 	Vector* v;
-	
-	//write 0xFFFE or they won't get this is unicode!
-	buf += (unichar)0xfeff;
 
 	//serialize to the Table Format	
 	EntryMap::const_iterator itr = map.begin();

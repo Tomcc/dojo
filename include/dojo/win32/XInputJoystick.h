@@ -22,7 +22,11 @@ namespace Dojo
 		mConnectionCheckTimer( 0 ),
 		mConnected( false )
 		{
-
+			//set default dead zones
+			mDeadZone[ AI_LX ] = 
+			mDeadZone[ AI_LY ] =
+			mDeadZone[ AI_RX ] =
+			mDeadZone[ AI_RY ] = 0.15;
 		}
 
 		///polls the joystick and launches events - note: XInput pads are actually created at startup, even if Dojo treats them client-side as new objects created on connection!
