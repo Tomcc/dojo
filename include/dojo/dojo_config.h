@@ -31,10 +31,13 @@
 #elif defined( LINUX )
 	#define PLATFORM_LINUX
 
+#elif defined( ANDROID )
+	#define PLATFORM_ANDROID
+
 #else 
 	#error "Platform unrecognized"
-
 #endif
+
 
 #if !defined( _DEBUG ) && !defined( NDEBUG )
 #define NDEBUG  //to be sure!

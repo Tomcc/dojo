@@ -12,12 +12,13 @@
 #include <climits>
 #include <stdint.h>
 
-#include <unordered_map>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <unordered_map>
+#include <bitset>
 
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
@@ -97,6 +98,9 @@
 
 //string has to be included here!
 #include "dojostring.h"
+
+//keycode.h is a plain enum
+#include "KeyCode.h"
 
 
 #endif // dojo_common_headers_h__

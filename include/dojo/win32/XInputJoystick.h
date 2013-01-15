@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 
-#include "Joystick.h"
+#include "InputDevice.h"
 #include "dojomath.h"
 #include "InputSystem.h"
 
@@ -13,12 +13,12 @@
 
 namespace Dojo
 {
-	class XInputJoystick : public Joystick
+	class XInputJoystick : public InputDevice
 	{
 	public:
 
 		XInputJoystick( int n ) : 
-		Joystick( n ),
+		InputDevice( DT_XBOX_JOYSTICK, n, 16, 8 ),
 		mConnectionCheckTimer( 0 ),
 		mConnected( false )
 		{
@@ -30,7 +30,7 @@ namespace Dojo
 		}
 
 		///polls the joystick and launches events - note: XInput pads are actually created at startup, even if Dojo treats them client-side as new objects created on connection!
-		void poll( float dt )
+		virtual void poll( float dt )
 		{
 			XINPUT_STATE state;
 			
@@ -50,12 +50,13 @@ namespace Dojo
 			if( connected )
 			{
 				if( !mConnected ) //yeeeee we're connected!
-					Platform::getSingleton()->getInput()->_fireJoystickConnected( this );
+					Platform::getSingleton()->getInput()->_fireDeviceConnected( this );
 
 				int buttonMask = state.Gamepad.wButtons; //wButtons is a mask where each bit represents a button state
 
-				for (int b = 0; b < sizeof( WORD ) * 8 && b < Joystick::BUTTON_MAX; ++b)
-					_notifyButtonState( b, Math::getBit( buttonMask, b ) );
+				int kc = (int)KC_JOYPAD_1;
+				for (int b = 0; b < mButtonNumber; ++b )
+					_notifyButtonState( (KeyCode)(kc + b), Math::getBit( buttonMask, b ) );
 
 				_notifyAxis( AI_LX, (float)state.Gamepad.sThumbLX * (1.0f / (float)0x7fff));
 				_notifyAxis( AI_LY, (float)state.Gamepad.sThumbLY * (-1.0f / (float)0x7fff));
@@ -71,7 +72,7 @@ namespace Dojo
 			{
 				//notify disconnection to listeners and to the input system
 				_fireDisconnected();
-				Platform::getSingleton()->getInput()->_removeJoystick( this );
+				Platform::getSingleton()->getInput()->_removeDevice( this );
 
 				//clear the listeners because dojo's contract is to create a *new* joystick object for each connection
 				pListeners.clear();

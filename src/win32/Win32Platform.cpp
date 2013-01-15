@@ -13,6 +13,8 @@
 #include "SoundManager.h"
 #include "InputSystem.h"
 
+#include "Keyboard.h"
+
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
@@ -406,6 +408,9 @@ void Win32Platform::initialise()
 	sound = new SoundManager();
 
 	input = new InputSystem();
+	//add the keyboard
+	input->addDevice( &mKeyboard );
+
 	fonts = new FontSystem();
 
 	DEBUG_MESSAGE( "---- Game Launched!");
@@ -479,10 +484,12 @@ void Win32Platform::_invoke( Poco::Timer& timer )
 
 void Win32Platform::_pollDevices( float dt )
 {
-	for( int i = 0; i < 4; ++i )
-		mXInputJoystick[ i ]->poll( dt );
+	mKeyboard.poll( dt );
 
-	//TODO poll DInput too
+	for( auto j : mXInputJoystick )
+		j->poll( dt );
+
+	//TODO DInput joysticks
 }
 
 void Win32Platform::step( float dt )
@@ -505,7 +512,7 @@ void Win32Platform::step( float dt )
 	}
 	mCRQMutex.unlock();
 
-	//update pads
+	//update input
 	_pollDevices( dt );
 
 	game->loop( dt);
@@ -613,30 +620,30 @@ void Win32Platform::keyPressed( int kc )
 	//TODO reimplement text!
 	lastPressedText = 0; 
 
-	Dojo::InputSystem::KeyCode key = mKeyMap[ kc ];
+	Dojo::KeyCode key = mKeyMap[ kc ];
 
 #ifndef _FINAL
-	if( key == InputSystem::KC_DIVIDE )	
+	if( key == KC_DIVIDE )	
 		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
 	else if( mFrameSteppingEnabled )
 	{
-		if( key == InputSystem::KC_NUMPAD0 )		mFramesToAdvance = 1;
-		else if( key == InputSystem::KC_NUMPAD1 )	mFramesToAdvance = 5;
-		else if( key == InputSystem::KC_NUMPAD2 )	mFramesToAdvance = 10;
-		else if( key == InputSystem::KC_NUMPAD3 )	mFramesToAdvance = 20;
-		else if( key == InputSystem::KC_NUMPAD4 )	mFramesToAdvance = 50;
-		else if( key == InputSystem::KC_NUMPAD5 )	mFramesToAdvance = 100;
-		else if( key == InputSystem::KC_NUMPAD6 )	mFramesToAdvance = 200;
-		else if( key == InputSystem::KC_NUMPAD7 )	mFramesToAdvance = 500;
+		if( key == KC_NUMPAD0 )		mFramesToAdvance = 1;
+		else if( key == KC_NUMPAD1 )	mFramesToAdvance = 5;
+		else if( key == KC_NUMPAD2 )	mFramesToAdvance = 10;
+		else if( key == KC_NUMPAD3 )	mFramesToAdvance = 20;
+		else if( key == KC_NUMPAD4 )	mFramesToAdvance = 50;
+		else if( key == KC_NUMPAD5 )	mFramesToAdvance = 100;
+		else if( key == KC_NUMPAD6 )	mFramesToAdvance = 200;
+		else if( key == KC_NUMPAD7 )	mFramesToAdvance = 500;
 	}
 #endif
 	
-	input->_fireKeyPressedEvent( 0, key );
+	mKeyboard._notifyButtonState( key, true );
 }
 
 void Win32Platform::keyReleased( int kc )
 {
-	input->_fireKeyReleasedEvent( lastPressedText, mKeyMap[ kc ] );
+	mKeyboard._notifyButtonState( mKeyMap[ kc ], false );
 }
 
 GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
@@ -714,7 +721,7 @@ String Win32Platform::getAppDataPath()
 
 	SHGetFolderPathW(
 		hwnd, 
-		CSIDL_LOCAL_APPDATA|CSIDL_FLAG_CREATE, 
+		CSIDL_APPDATA|CSIDL_FLAG_CREATE, 
 		NULL, 
 		0, 
 		szPath);
@@ -742,150 +749,150 @@ void Win32Platform::_initKeyMap()
 {
 	ZeroMemory( mKeyMap, sizeof( mKeyMap ) );
 
-	mKeyMap[ VK_ESCAPE ] = InputSystem::KC_ESCAPE;
-	mKeyMap[ VK_BACK ] = InputSystem::KC_BACK;
-	mKeyMap[ VK_TAB ] = InputSystem::KC_TAB;
+	mKeyMap[ VK_ESCAPE ] = KC_ESCAPE;
+	mKeyMap[ VK_BACK ] = KC_BACK;
+	mKeyMap[ VK_TAB ] = KC_TAB;
 
-	mKeyMap[ 0x30 ] = InputSystem::KC_0;
-	mKeyMap[ 0x31 ] = InputSystem::KC_1;
-	mKeyMap[ 0x32 ] = InputSystem::KC_2;
-	mKeyMap[ 0x33 ] = InputSystem::KC_3;
-	mKeyMap[ 0x34 ] = InputSystem::KC_4;
-	mKeyMap[ 0x35 ] = InputSystem::KC_5;
-	mKeyMap[ 0x36 ] = InputSystem::KC_6;
-	mKeyMap[ 0x37 ] = InputSystem::KC_7;
-	mKeyMap[ 0x38 ] = InputSystem::KC_8;
-	mKeyMap[ 0x39 ] = InputSystem::KC_9;
+	mKeyMap[ 0x30 ] = KC_0;
+	mKeyMap[ 0x31 ] = KC_1;
+	mKeyMap[ 0x32 ] = KC_2;
+	mKeyMap[ 0x33 ] = KC_3;
+	mKeyMap[ 0x34 ] = KC_4;
+	mKeyMap[ 0x35 ] = KC_5;
+	mKeyMap[ 0x36 ] = KC_6;
+	mKeyMap[ 0x37 ] = KC_7;
+	mKeyMap[ 0x38 ] = KC_8;
+	mKeyMap[ 0x39 ] = KC_9;
 
-	mKeyMap[ 0x41 ] = InputSystem::KC_A;
-	mKeyMap[ 0x42 ] = InputSystem::KC_B;
-	mKeyMap[ 0x43 ] = InputSystem::KC_C;
-	mKeyMap[ 0x44 ] = InputSystem::KC_D;
-	mKeyMap[ 0x45 ] = InputSystem::KC_E;
-	mKeyMap[ 0x46 ] = InputSystem::KC_F;
-	mKeyMap[ 0x47 ] = InputSystem::KC_G;
-	mKeyMap[ 0x48 ] = InputSystem::KC_H;
-	mKeyMap[ 0x49 ] = InputSystem::KC_I;
-	mKeyMap[ 0x4A ] = InputSystem::KC_J;
-	mKeyMap[ 0x4B ] = InputSystem::KC_K;
-	mKeyMap[ 0x4C ] = InputSystem::KC_L;
-	mKeyMap[ 0x4D ] = InputSystem::KC_M;
-	mKeyMap[ 0x4E ] = InputSystem::KC_N;
-	mKeyMap[ 0x4F ] = InputSystem::KC_O;
-	mKeyMap[ 0x50 ] = InputSystem::KC_P;
-	mKeyMap[ 0x51 ] = InputSystem::KC_Q;
-	mKeyMap[ 0X52 ] = InputSystem::KC_R;
-	mKeyMap[ 0X53 ] = InputSystem::KC_S;
-	mKeyMap[ 0X54 ] = InputSystem::KC_T;
-	mKeyMap[ 0X55 ] = InputSystem::KC_U;
-	mKeyMap[ 0X56 ] = InputSystem::KC_V;
-	mKeyMap[ 0X57 ] = InputSystem::KC_W;
-	mKeyMap[ 0X58 ] = InputSystem::KC_X;
-	mKeyMap[ 0X59 ] = InputSystem::KC_Y;
-	mKeyMap[ 0X5A ] = InputSystem::KC_Z;
+	mKeyMap[ 0x41 ] = KC_A;
+	mKeyMap[ 0x42 ] = KC_B;
+	mKeyMap[ 0x43 ] = KC_C;
+	mKeyMap[ 0x44 ] = KC_D;
+	mKeyMap[ 0x45 ] = KC_E;
+	mKeyMap[ 0x46 ] = KC_F;
+	mKeyMap[ 0x47 ] = KC_G;
+	mKeyMap[ 0x48 ] = KC_H;
+	mKeyMap[ 0x49 ] = KC_I;
+	mKeyMap[ 0x4A ] = KC_J;
+	mKeyMap[ 0x4B ] = KC_K;
+	mKeyMap[ 0x4C ] = KC_L;
+	mKeyMap[ 0x4D ] = KC_M;
+	mKeyMap[ 0x4E ] = KC_N;
+	mKeyMap[ 0x4F ] = KC_O;
+	mKeyMap[ 0x50 ] = KC_P;
+	mKeyMap[ 0x51 ] = KC_Q;
+	mKeyMap[ 0X52 ] = KC_R;
+	mKeyMap[ 0X53 ] = KC_S;
+	mKeyMap[ 0X54 ] = KC_T;
+	mKeyMap[ 0X55 ] = KC_U;
+	mKeyMap[ 0X56 ] = KC_V;
+	mKeyMap[ 0X57 ] = KC_W;
+	mKeyMap[ 0X58 ] = KC_X;
+	mKeyMap[ 0X59 ] = KC_Y;
+	mKeyMap[ 0X5A ] = KC_Z;
 
-	mKeyMap[ VK_NUMPAD0 ] = InputSystem::KC_NUMPAD0;
-	mKeyMap[ VK_NUMPAD1 ] = InputSystem::KC_NUMPAD1;
-	mKeyMap[ VK_NUMPAD2 ] = InputSystem::KC_NUMPAD2;
-	mKeyMap[ VK_NUMPAD3 ] = InputSystem::KC_NUMPAD3;
-	mKeyMap[ VK_NUMPAD4 ] = InputSystem::KC_NUMPAD4;
-	mKeyMap[ VK_NUMPAD5 ] = InputSystem::KC_NUMPAD5;
-	mKeyMap[ VK_NUMPAD6 ] = InputSystem::KC_NUMPAD6;
-	mKeyMap[ VK_NUMPAD7 ] = InputSystem::KC_NUMPAD7;
-	mKeyMap[ VK_NUMPAD8 ] = InputSystem::KC_NUMPAD8;
-	mKeyMap[ VK_NUMPAD9 ] = InputSystem::KC_NUMPAD9;
+	mKeyMap[ VK_NUMPAD0 ] = KC_NUMPAD0;
+	mKeyMap[ VK_NUMPAD1 ] = KC_NUMPAD1;
+	mKeyMap[ VK_NUMPAD2 ] = KC_NUMPAD2;
+	mKeyMap[ VK_NUMPAD3 ] = KC_NUMPAD3;
+	mKeyMap[ VK_NUMPAD4 ] = KC_NUMPAD4;
+	mKeyMap[ VK_NUMPAD5 ] = KC_NUMPAD5;
+	mKeyMap[ VK_NUMPAD6 ] = KC_NUMPAD6;
+	mKeyMap[ VK_NUMPAD7 ] = KC_NUMPAD7;
+	mKeyMap[ VK_NUMPAD8 ] = KC_NUMPAD8;
+	mKeyMap[ VK_NUMPAD9 ] = KC_NUMPAD9;
 
-	mKeyMap[ VK_F1 ] = InputSystem::KC_F1;
-	mKeyMap[ VK_F2 ] = InputSystem::KC_F2;
-	mKeyMap[ VK_F3 ] = InputSystem::KC_F3;
-	mKeyMap[ VK_F4 ] = InputSystem::KC_F4;
-	mKeyMap[ VK_F5 ] = InputSystem::KC_F5;
-	mKeyMap[ VK_F6 ] = InputSystem::KC_F6;
-	mKeyMap[ VK_F7 ] = InputSystem::KC_F7;
-	mKeyMap[ VK_F8 ] = InputSystem::KC_F8;
-	mKeyMap[ VK_F9 ] = InputSystem::KC_F9;
-	mKeyMap[ VK_F10 ] = InputSystem::KC_F10;
-	mKeyMap[ VK_F11 ] = InputSystem::KC_F11;
-	mKeyMap[ VK_F12 ] = InputSystem::KC_F12;
-	mKeyMap[ VK_F13 ] = InputSystem::KC_F13;
-	mKeyMap[ VK_F14 ] = InputSystem::KC_F14;
-	mKeyMap[ VK_F15 ] = InputSystem::KC_F15;
+	mKeyMap[ VK_F1 ] = KC_F1;
+	mKeyMap[ VK_F2 ] = KC_F2;
+	mKeyMap[ VK_F3 ] = KC_F3;
+	mKeyMap[ VK_F4 ] = KC_F4;
+	mKeyMap[ VK_F5 ] = KC_F5;
+	mKeyMap[ VK_F6 ] = KC_F6;
+	mKeyMap[ VK_F7 ] = KC_F7;
+	mKeyMap[ VK_F8 ] = KC_F8;
+	mKeyMap[ VK_F9 ] = KC_F9;
+	mKeyMap[ VK_F10 ] = KC_F10;
+	mKeyMap[ VK_F11 ] = KC_F11;
+	mKeyMap[ VK_F12 ] = KC_F12;
+	mKeyMap[ VK_F13 ] = KC_F13;
+	mKeyMap[ VK_F14 ] = KC_F14;
+	mKeyMap[ VK_F15 ] = KC_F15;
 
-	mKeyMap[ VK_OEM_MINUS ] = InputSystem::KC_MINUS;
-	mKeyMap[ 0 ] = InputSystem::KC_EQUALS;
+	mKeyMap[ VK_OEM_MINUS ] = KC_MINUS;
+	mKeyMap[ 0 ] = KC_EQUALS;
 
-	mKeyMap[ 0 ] = InputSystem::KC_LBRACKET;
-	mKeyMap[ 0 ] = InputSystem::KC_RBRACKET;
-	mKeyMap[ VK_RETURN ] = InputSystem::KC_RETURN;
-	mKeyMap[ VK_LCONTROL ] = InputSystem::KC_LCONTROL;
+	mKeyMap[ 0 ] = KC_LBRACKET;
+	mKeyMap[ 0 ] = KC_RBRACKET;
+	mKeyMap[ VK_RETURN ] = KC_RETURN;
+	mKeyMap[ VK_LCONTROL ] = KC_LCONTROL;
 
-	mKeyMap[ 0 ] = InputSystem::KC_SEMICOLON;
-	mKeyMap[ 0 ] = InputSystem::KC_APOSTROPHE;
-	mKeyMap[ 0 ] = InputSystem::KC_GRAVE;
-	mKeyMap[ VK_SHIFT ] = InputSystem::KC_LSHIFT;
-	mKeyMap[ 0 ] = InputSystem::KC_BACKSLASH;
+	mKeyMap[ 0 ] = KC_SEMICOLON;
+	mKeyMap[ 0 ] = KC_APOSTROPHE;
+	mKeyMap[ 0 ] = KC_GRAVE;
+	mKeyMap[ VK_SHIFT ] = KC_LSHIFT;
+	mKeyMap[ 0 ] = KC_BACKSLASH;
 
-	mKeyMap[ 0 ] = InputSystem::KC_COMMA;
-	mKeyMap[ VK_OEM_PERIOD ] = InputSystem::KC_PERIOD;
-	mKeyMap[ 0 ] = InputSystem::KC_SLASH;
-	mKeyMap[ VK_RSHIFT ] = InputSystem::KC_RSHIFT;
-	mKeyMap[ VK_MULTIPLY ] = InputSystem::KC_MULTIPLY;
-	mKeyMap[ 18 ] = InputSystem::KC_LEFT_ALT;
-	mKeyMap[ VK_SPACE ] = InputSystem::KC_SPACE;
-	mKeyMap[ VK_CAPITAL ] = InputSystem::KC_CAPITAL;
-
-
-	mKeyMap[ VK_NUMLOCK ] = InputSystem::KC_NUMLOCK;
-	mKeyMap[ VK_SCROLL ] = InputSystem::KC_SCROLL;
+	mKeyMap[ 0 ] = KC_COMMA;
+	mKeyMap[ VK_OEM_PERIOD ] = KC_PERIOD;
+	mKeyMap[ 0 ] = KC_SLASH;
+	mKeyMap[ VK_RSHIFT ] = KC_RSHIFT;
+	mKeyMap[ VK_MULTIPLY ] = KC_MULTIPLY;
+	mKeyMap[ 18 ] = KC_LEFT_ALT;
+	mKeyMap[ VK_SPACE ] = KC_SPACE;
+	mKeyMap[ VK_CAPITAL ] = KC_CAPITAL;
 
 
-	mKeyMap[ VK_SUBTRACT ] = InputSystem::KC_SUBTRACT;
-	mKeyMap[ VK_ADD ] = InputSystem::KC_ADD;
-	mKeyMap[ VK_DECIMAL ] = InputSystem::KC_DECIMAL;
-
-	mKeyMap[ VK_OEM_102 ] = InputSystem::KC_OEM_102;
+	mKeyMap[ VK_NUMLOCK ] = KC_NUMLOCK;
+	mKeyMap[ VK_SCROLL ] = KC_SCROLL;
 
 
-	mKeyMap[ 0 ] = InputSystem::KC_KANA;
-	mKeyMap[ 0 ] = InputSystem::KC_ABNT_C1;
-	mKeyMap[ 0 ] = InputSystem::KC_CONVERT;
-	mKeyMap[ 0 ] = InputSystem::KC_NOCONVERT;
-	mKeyMap[ 0 ] = InputSystem::KC_YEN;
-	mKeyMap[ 0 ] = InputSystem::KC_ABNT_C2;
-	mKeyMap[ 0 ] = InputSystem::KC_NUMPADEQUALS;
+	mKeyMap[ VK_SUBTRACT ] = KC_SUBTRACT;
+	mKeyMap[ VK_ADD ] = KC_ADD;
+	mKeyMap[ VK_DECIMAL ] = KC_DECIMAL;
 
-	mKeyMap[ 0 ] = InputSystem::KC_PREVTRACK;
-	mKeyMap[ 0 ] = InputSystem::KC_AT;
-	mKeyMap[ 0 ] = InputSystem::KC_COLON;
-	mKeyMap[ VK_CANCEL ] = InputSystem::KC_STOP;
-	mKeyMap[ 0 ] = InputSystem::KC_NUMPADENTER;
-	mKeyMap[ 0 ] = InputSystem::KC_RCONTROL;
+	mKeyMap[ VK_OEM_102 ] = KC_OEM_102;
 
-	mKeyMap[ VK_VOLUME_MUTE ] = InputSystem::KC_MUTE;
-	mKeyMap[ VK_VOLUME_DOWN ] = InputSystem::KC_VOLUMEDOWN;
-	mKeyMap[ VK_VOLUME_UP ] = InputSystem::KC_VOLUMEUP;
-	mKeyMap[ VK_OEM_COMMA ] = InputSystem::KC_NUMPADCOMMA;
-	mKeyMap[ VK_DIVIDE ] = InputSystem::KC_DIVIDE;
-	mKeyMap[ 17 ] = InputSystem::KC_RIGHT_ALT;
-	mKeyMap[ VK_PAUSE ] = InputSystem::KC_PAUSE;
 
-	mKeyMap[ VK_HOME ] = InputSystem::KC_HOME;
-	mKeyMap[ VK_PRIOR] = InputSystem::KC_PGUP;
-	mKeyMap[ VK_NEXT ] = InputSystem::KC_PGDOWN;
-	mKeyMap[ VK_INSERT ] = InputSystem::KC_INSERT;
-	mKeyMap[ VK_DELETE ] = InputSystem::KC_DELETE;
+	mKeyMap[ 0 ] = KC_KANA;
+	mKeyMap[ 0 ] = KC_ABNT_C1;
+	mKeyMap[ 0 ] = KC_CONVERT;
+	mKeyMap[ 0 ] = KC_NOCONVERT;
+	mKeyMap[ 0 ] = KC_YEN;
+	mKeyMap[ 0 ] = KC_ABNT_C2;
+	mKeyMap[ 0 ] = KC_NUMPADEQUALS;
 
-	mKeyMap[ VK_UP ] = InputSystem::KC_UP;
-	mKeyMap[ VK_LEFT ] = InputSystem::KC_LEFT;
-	mKeyMap[ VK_RIGHT ] = InputSystem::KC_RIGHT;
-	mKeyMap[ VK_DOWN ] = InputSystem::KC_DOWN;
+	mKeyMap[ 0 ] = KC_PREVTRACK;
+	mKeyMap[ 0 ] = KC_AT;
+	mKeyMap[ 0 ] = KC_COLON;
+	mKeyMap[ VK_CANCEL ] = KC_STOP;
+	mKeyMap[ 0 ] = KC_NUMPADENTER;
+	mKeyMap[ 0 ] = KC_RCONTROL;
 
-	mKeyMap[ VK_END ] = InputSystem::KC_END;
+	mKeyMap[ VK_VOLUME_MUTE ] = KC_MUTE;
+	mKeyMap[ VK_VOLUME_DOWN ] = KC_VOLUMEDOWN;
+	mKeyMap[ VK_VOLUME_UP ] = KC_VOLUMEUP;
+	mKeyMap[ VK_OEM_COMMA ] = KC_NUMPADCOMMA;
+	mKeyMap[ VK_DIVIDE ] = KC_DIVIDE;
+	mKeyMap[ 17 ] = KC_RIGHT_ALT;
+	mKeyMap[ VK_PAUSE ] = KC_PAUSE;
 
-	mKeyMap[ VK_LWIN ] = InputSystem::KC_LWIN;
-	mKeyMap[ VK_RWIN ] = InputSystem::KC_RWIN;
-	mKeyMap[ VK_APPS ] = InputSystem::KC_APPS;
-	mKeyMap[ VK_SLEEP ] = InputSystem::KC_SLEEP;
+	mKeyMap[ VK_HOME ] = KC_HOME;
+	mKeyMap[ VK_PRIOR] = KC_PGUP;
+	mKeyMap[ VK_NEXT ] = KC_PGDOWN;
+	mKeyMap[ VK_INSERT ] = KC_INSERT;
+	mKeyMap[ VK_DELETE ] = KC_DELETE;
 
-	mKeyMap[ 0 ] = InputSystem::KC_UNASSIGNED;
+	mKeyMap[ VK_UP ] = KC_UP;
+	mKeyMap[ VK_LEFT ] = KC_LEFT;
+	mKeyMap[ VK_RIGHT ] = KC_RIGHT;
+	mKeyMap[ VK_DOWN ] = KC_DOWN;
+
+	mKeyMap[ VK_END ] = KC_END;
+
+	mKeyMap[ VK_LWIN ] = KC_LWIN;
+	mKeyMap[ VK_RWIN ] = KC_RWIN;
+	mKeyMap[ VK_APPS ] = KC_APPS;
+	mKeyMap[ VK_SLEEP ] = KC_SLEEP;
+
+	mKeyMap[ 0 ] = KC_UNASSIGNED;
 }

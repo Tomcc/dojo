@@ -14,7 +14,7 @@
 #include <dojo/Game.h>
 #include <dojo/GameState.h>
 #include <dojo/InputSystem.h>
-#include <dojo/Joystick.h>
+#include <dojo/InputDevice.h>
 #include <dojo/Light.h>
 #include <dojo/Mesh.h>
 #include <dojo/Model.h>

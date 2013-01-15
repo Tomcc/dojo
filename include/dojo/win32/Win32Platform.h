@@ -7,6 +7,7 @@
 #include "Vector.h"
 #include "Timer.h"
 #include "InputSystem.h"
+#include "Keyboard.h"
 
 #include <Poco/Thread.h>
 #include <Poco/Mutex.h>
@@ -17,6 +18,7 @@
 namespace Dojo
 {
 	class XInputJoystick;
+	class Keyboard;
 
 	class Win32Platform : public Platform
 	{
@@ -122,7 +124,9 @@ namespace Dojo
 
 		FT_Library freeType;
 
-		InputSystem::KeyCode mKeyMap[ 256 ];
+		KeyCode mKeyMap[ 256 ];
+
+		Keyboard mKeyboard;
 
 		XInputJoystick* mXInputJoystick[ 4 ];
 
@@ -130,9 +134,9 @@ namespace Dojo
 
 		void _adjustWindow();
 
-		void _pollDevices( float dt );
-
 		void _setFullscreen( bool f );
+
+		void _pollDevices( float dt );
 	};
 }
 

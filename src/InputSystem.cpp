@@ -4,15 +4,13 @@
 
 #include "GameState.h"
 #include "Platform.h"
+#include "InputDevice.h"
 
 using namespace Dojo;
 
 InputSystem::InputSystem( bool enable ) :
 enabled(enable)
 {
-	//init keycodes to false
-	memset( mKeyPressedMap, 0, sizeof( bool ) * KC_KEY_COUNT );
-
 	Platform::getSingleton()->addFocusListener( this );
 }
 
@@ -89,50 +87,28 @@ void InputSystem::_fireAccelerationEvent( const Dojo::Vector& accel, float roll 
     }
 }
 
-void InputSystem::_fireKeyPressedEvent( unichar character, KeyCode keyID )
+void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 {
-    if( enabled && mKeyPressedMap[ keyID ] != true )  //be sure not to trigger this more than once (eg. WM_KEYDOWN being spammed)
-    {
-        mKeyPressedMap[ keyID ] = true;
-        
-        for( int i = 0; i < listeners.size(); ++i )
-            listeners.at(i)->onKeyPressed( character, keyID );
-    }
-}
-
-void InputSystem::_fireKeyReleasedEvent( unichar character, KeyCode keyID )
-{
-    if( enabled && mKeyPressedMap[ keyID ] != false  )
-    {
-        mKeyPressedMap[ keyID ] = false;
-        
-        for( int i = 0; i < listeners.size(); ++i )
-            listeners.at(i)->onKeyReleased( character, keyID );
-    }
-}
-
-void InputSystem::_fireJoystickConnected( Dojo::Joystick* j )
-{
-	DEBUG_ASSERT( !mJoystickList.exists(j) );
+	DEBUG_ASSERT( !mDeviceList.exists(j) );
 
 	//add it to the list
-	mJoystickList.add( j );
+	mDeviceList.add( j );
 
 	//notify listeners
 	for( Listener* l : listeners )
-		l->onJoystickConnected( j );
+		l->onDeviceConnected( j );
 
 	DEBUG_MESSAGE( "Connected a joystick!" );
 }
 
-void InputSystem::_removeJoystick( Dojo::Joystick* j )
+void InputSystem::_removeDevice( Dojo::InputDevice* j )
 {
-	DEBUG_ASSERT( mJoystickList.exists(j) );
+	DEBUG_ASSERT( mDeviceList.exists(j) );
 
 	//first notify this to all the listeners
 	for( Listener* l : listeners )
-		l->onJoystickDisconnected( j );
+		l->onDeviceDisconnected( j );
 
 	//then destroy our client side object
-	mJoystickList.remove( j );
+	mDeviceList.remove( j );
 }

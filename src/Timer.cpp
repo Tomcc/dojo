@@ -1,9 +1,5 @@
 #include "stdafx.h"
 
-#ifdef PLATFORM_WIN32
-#include <Windows.h>
-#endif
-
 #include "Timer.h"
 
 using namespace Dojo;
