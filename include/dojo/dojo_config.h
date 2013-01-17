@@ -33,7 +33,7 @@
 
 #elif defined( __ANDROID__ )
 	#define PLATFORM_ANDROID
-
+	
 #else 
 	#error "Platform unrecognized"
 #endif

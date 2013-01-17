@@ -1,13 +1,22 @@
 #ifndef ANDROIDPLATFORM_H
 #define ANDROIDPLATFORM_H
 
+#include "Platform.h"
+#include "Vector.h"
+
+#ifdef PLATFORM_ANDROID
+
+#include <string>
 #include <EGL/egl.h>
 #include <GLES/gl.h>
+#include <GLES/glext.h>
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android/native_activity.h>
 #include <android_native_app_glue.h>
+#include "Timer.h"
 
 
 namespace Dojo
@@ -48,7 +57,8 @@ namespace Dojo
 
 	protected:
 	
-		int32_t width, height;			
+		int32_t width, height;	
+		Timer frameTimer;		
 		//android	
 		//app manager
 		struct android_app* app;
@@ -57,7 +67,7 @@ namespace Dojo
 		ASensorEventQueue* sensorEventQueue;
 		
 		//openGL EGL
-		int animating;
+		int running;
 		int isInPause;
 		EGLDisplay display;
 		EGLSurface surface;
@@ -67,5 +77,7 @@ namespace Dojo
 	private:
 	};
 }
+
+#endif
 
 #endif

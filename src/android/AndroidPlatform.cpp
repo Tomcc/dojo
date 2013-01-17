@@ -1,5 +1,11 @@
 #include "android/AndroidPlatform.h"
 
+#include <jni.h>
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android/native_activity.h>
+#include <android_native_app_glue.h>
+
 #include "Render.h"
 #include "Game.h"
 #include "Utils.h"
@@ -13,104 +19,46 @@
 using namespace Dojo;
 
 /* ANDROID */
-
-//OPENAL CALL
-bool ANDROID_VALID_DEVICE;
-extern jint JNI_OnLoad(JavaVM* vm, void* reserved);
-
+//status app
+extern "C" int ANDROID_VALID_DEVICE;
 //EVENT APP
-static int32_t android_handle_input(struct android_app* app, AInputEvent* event) {
-    if(app->userData){
-		struct OsWindow* win = (OsWindow*)app->userData;
-		input_android(win->input,event);
-	}
-    return 0;
-}
-static void android_handle_cmd(struct android_app* app, int32_t cmd) {
-	if( cmd==APP_CMD_INIT_WINDOW ){
-        ANDROID_VALID_DEVICE=1; //enable Window_Flip()
-		//init
-	}
-	else
-	if(cmd==APP_CMD_RESUME){
-	}
-	else
-	if( cmd==APP_CMD_TERM_WINDOW ){
-		ANDROID_VALID_DEVICE=0; //disable Window_Flip()
-        //delete
-	}
-	else
-	if(cmd==APP_CMD_PAUSE  && I_CAN_RENDER ){
-		ANDROID_VALID_DEVICE=0; //disable Window_Flip()
-		//waiting
-	}
-	if(app->userData){
-			struct OsWindow* win = (OsWindow*)app->userData;
-			cmd_android(win->input,cmd);
-	}
-}
-
-/*********************************
-Android MAIN
-**********************************/
-void android_main(struct android_app* state) {
-    //
-	/////////////////////////////////
-    // Make sure glue isn't stripped.
-    app_dummy();
-    /////////////////////////////////
-	//Call main
-	LOGE("!android_main!");
-    //Init state
-	Init_GlobalValue(state);
-	state->onAppCmd = android_handle_cmd;
-    state->onInputEvent = android_handle_input;
-	bool ANDROID_VALID_DEVICE=false;
-
-	int ident;
-	int events;
-	struct android_poll_source* source;
-	//waiting get window
-	while (!ANDROID_VALID_DEVICE){
-		while ((ident = ALooper_pollAll(0, NULL, &events,(void**)&source)) >= 0){
-			if (source != NULL)
-					source->process(state, source);
-			if (state->destroyRequested != 0) return;
+extern "C" int32_t android_handle_input(struct android_app* app, AInputEvent* event) {
+		if(app->userData){
+			//struct OsWindow* win = (OsWindow*)app->userData;
+			//input_android(win->input,event);
 		}
-		usleep( 16 );
-	 }
-	////////////////////////////
-	//GET APK (ZIP FILE)
-    ANativeActivity* activity = state->activity;
-    JNIEnv* env;
-	(*(activity->vm))->AttachCurrentThread(activity->vm, &env, NULL);
-    jclass clazz = (*env)->GetObjectClass(env, activity->clazz);
-    jmethodID methodID = (*env)->GetMethodID(env, clazz, "getPackageCodePath", "()Ljava/lang/String;");
-    jobject result = (*env)->CallObjectMethod(env, activity->clazz, methodID);
-    const char* str;
-    jboolean isCopy;
-    str = (*env)->GetStringUTFChars(env, (jstring)result, &isCopy);
-	////////////////////////////
-    //INIT openAL/backend
-    JNI_OnLoad(activity->vm,0);
-    ////////////////////////
-	//OPEN ZIP (APK ASSETs)
-	_apk_Open(str);
-	//
-	char *argv[2];
-	argv[0] = strdup("Dojo");
-	argv[1] = NULL;
-	int out=main(1, argv);
-	//CLOSE ZIP (APK ASSETs)
-	_apk_Close();
-	//
+		return 0;
+	}
+extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
+		if( cmd==APP_CMD_INIT_WINDOW ){
+			ANDROID_VALID_DEVICE=1; //enable Window_Flip()
+			//init
+		}
+		else
+		if(cmd==APP_CMD_RESUME){
+		}
+		else
+		if( cmd==APP_CMD_TERM_WINDOW ){
+			ANDROID_VALID_DEVICE=0; //disable Window_Flip()
+			//delete
+		}
+		else
+		if(cmd==APP_CMD_PAUSE  && ANDROID_VALID_DEVICE ){
+			ANDROID_VALID_DEVICE=0; //disable Window_Flip()
+			//waiting
+		}
+		if(app->userData){
+				//struct OsWindow* win = (OsWindow*)app->userData;
+				//cmd_android(win->input,cmd);
+		}
+	}
+extern "C" int main(int argc, char *argv[]){
+	return 0;
 }
 
 /* DOJO */
 AndroidPlatform::AndroidPlatform(const Table& table) :
-Platform(table),
-dragging( false ),
-cursorPos( 0,0 ){
+Platform(table){
 
 }
 
@@ -159,12 +107,12 @@ void AndroidPlatform::initialise()
 	isInPause=false;
 
 	//dojo object
-	render = new Render( width, height, 1, Orientation::DO_LANDSCAPE_LEFT );
-	sound  = new SoundManager();
-	input  = new TouchSource();
+	render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
+	//sound  = new SoundManager();
+	//input  = new TouchSource();
 
 	//start the game
-	game->onBegin();
+	game->begin();
 }
 
 void AndroidPlatform::shutdown()
@@ -187,36 +135,28 @@ void AndroidPlatform::present()
 	if ( !isInPause ){
 		return;
 	} // No display or in pause....
-    eglSwapBuffers(ANDWIN->display, ANDWIN->surface);
+    eglSwapBuffers( display, surface);
 }
 
 void AndroidPlatform::step( float dt )
 {
 	DEBUG_ASSERT( running );
 
-	game->onLoop( dt);
+	game->loop( dt);
 	render->render();	
-	sound->update( dt );
+	//sound->update( dt );
 
 }
 
 
-void LinuxPlatform::loop( float frameTime )
+void AndroidPlatform::loop( float frameTime )
 {
 	frameTimer.reset();
 
 	float dt;
 	while( running )
 	{
-		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
-		{
-			if( msg.message == WM_QUIT )
-				running = false;
-
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-		}
-
+		
 		dt = frameTimer.getElapsedTime();
 
 		if( dt > frameTime )

@@ -101,7 +101,7 @@ Render::~Render()
 
 void Render::setWireframe( bool wireframe )
 {
-#ifndef PLATFORM_IOS
+#if !defined( PLATFORM_IOS ) && !defined( PLATFORM_ANDROID ) 
 	glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
 #else
 	DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );
@@ -291,7 +291,7 @@ void Render::renderElement( Renderable* s )
 	glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
 		
 	//HACK
-#ifndef PLATFORM_IOS
+#if !defined( PLATFORM_IOS ) && !defined( PLATFORM_ANDROID ) 
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
 #endif
 	glEnable( GL_COLOR_MATERIAL );

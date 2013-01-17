@@ -162,8 +162,8 @@ namespace Dojo
 	protected:
 
 		typedef Dojo::Array< Listener* > ListenerList;
-		typedef unordered_map< KeyCode, int > KeyActionMap;
-		typedef unordered_map< KeyCode, bool > KeyPressedMap;
+		typedef unordered_map< KeyCode, int, std::hash< int > >KeyActionMap;
+		typedef unordered_map< KeyCode, int, std::hash< int > > KeyPressedMap;
 		typedef Dojo::Array< float > FloatList;
 
 		Type mType;
