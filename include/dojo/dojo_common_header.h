@@ -85,9 +85,18 @@
 	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
 
+#elif defined( PLATFORM_ANDROID )
+	#include <EGL/egl.h>
+	#include <GLES/gl.h>
+	#include <GLES2/gl2.h>
+	#include <AL/al.h>
+	#include <AL/alc.h>
+	#include <android/log.h>
+	#include <android/native_activity.h>
+	#include <android_native_app_glue.h>
 #else
 	#error "No Platform defined!"
-
+	
 #endif
 
 #include <ft2build.h>

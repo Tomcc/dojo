@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 
 #include "Platform.h"
@@ -8,7 +9,7 @@
 
 #if defined (PLATFORM_WIN32)
 	#include "win32/Win32Platform.h"
-
+	
 #elif defined( PLATFORM_OSX )
     #include "OSXPlatform.h"
 
@@ -17,6 +18,9 @@
 
 #elif defined( PLATFORM_LINUX )
     #include "linux/LinuxPlatform.h"
+	
+#elif defined ( PLATFORM_ANDROID )
+	#include "android/AndroidPlatform.h"
 
 #endif
 

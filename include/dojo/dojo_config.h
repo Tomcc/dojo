@@ -31,7 +31,7 @@
 #elif defined( LINUX )
 	#define PLATFORM_LINUX
 
-#elif defined( ANDROID )
+#elif defined( __ANDROID__ )
 	#define PLATFORM_ANDROID
 
 #else 
@@ -78,7 +78,7 @@
 #endif
 
 //general configurations
-#ifdef PLATFORM_IOS
+#if defined( PLATFORM_IOS ) || defined( PLATFORM_ANDROID )
 	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
 #else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
