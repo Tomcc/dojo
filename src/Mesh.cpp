@@ -7,6 +7,42 @@
 
 using namespace Dojo;
 
+const GLuint glFeatureStateMap[] =
+{
+	GL_VERTEX_ARRAY, //VF_POSITION2D,
+	GL_VERTEX_ARRAY, //VF_POSITION3D,
+	GL_COLOR_ARRAY, //VF_COLOR,
+	GL_NORMAL_ARRAY, //VF_NORMAL,
+	GL_TEXTURE_COORD_ARRAY, //VF_UV,
+	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
+};
+
+inline void checkGLError()
+{
+	String err;
+	GLenum g = glGetError();
+
+	switch(g)
+	{
+	case GL_NO_ERROR:
+		return;
+	case GL_INVALID_ENUM:           err = "GL_INVALID_ENUM";        break;
+	case GL_INVALID_VALUE:          err = "GL_INVALID_VALUE";       break;
+	case GL_INVALID_OPERATION:		err = "GL_INVALID_OPERATION";   break;
+	case GL_STACK_OVERFLOW:         err = "GL_STACK_OVERFLOW";      break;
+	case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
+	case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
+	};
+
+	DEBUG_ASSERT_MSG( g == GL_NO_ERROR, ( "OpenGL encountered an error: " + err ).ASCII().c_str() );
+}
+
+#ifndef _FINAL
+	#define CHECK_GL_ERROR	checkGLError()
+#else
+	#define CHECK_GL_ERROR
+#endif
+
 ///Tells the buffer to allocate at least "vertices" vertices
 void Mesh::setVertexCap( uint count )
 {
@@ -105,30 +141,73 @@ bool Mesh::end()
 	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
 		return false;
 
+	//create the VAO
+	if( vertexArrayDesc )
+		glDeleteVertexArrays( 1, &vertexArrayDesc );
+
+	glGenVertexArrays( 1, &vertexArrayDesc );
+	glBindVertexArray( vertexArrayDesc );
+
+	CHECK_GL_ERROR;
+
+	//create the VBO
 	if( !vertexHandle )
 		glGenBuffers(1, &vertexHandle );
 
-	DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
-	DEBUG_ASSERT( vertexHandle );
-	
 	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
-	
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
-							
+
+	CHECK_GL_ERROR;
+
+	//create the IBO
 	if( isIndexed() ) //we support unindexed meshes
 	{				
 		if( !indexHandle )
 			glGenBuffers(1, &indexHandle );
-		
-		DEBUG_ASSERT( indexHandle );
-						
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexByteSize * indexCount, indices, usage);							
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexByteSize * indexCount, indices, usage);
+
+		CHECK_GL_ERROR;						
 	}
-	
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	//construct attributes
+	for( int i = 0; i < _VF_COUNT; ++i )
+	{
+		GLenum state = glFeatureStateMap[i];
+		VertexField ft = (VertexField)i;
+
+		if( ft == VF_UV )			glClientActiveTexture( GL_TEXTURE0 );
+		else if( ft == VF_UV_1 )	glClientActiveTexture( GL_TEXTURE1 );
+
+		if( isVertexFieldEnabled( ft ) )	//bind data and client states
+		{
+			glEnableClientState( state );
+			CHECK_GL_ERROR;
+
+			void* fieldOffset = (void*)vertexFieldOffset[ ft ];
+
+			switch( ft )
+			{
+			case VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset );	break;
+			case VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset ); break;
+			case VF_NORMAL:				glNormalPointer( GL_FLOAT, vertexSize, fieldOffset );	break;
+				//TODO switch to BGRA to reduce bandwidth use
+			case VF_COLOR:				glColorPointer( 4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset );	break;
+
+			case VF_UV:	
+			case VF_UV_1:	
+				glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset );	break;
+			};
+
+			CHECK_GL_ERROR;
+		}
+	}
+
+	CHECK_GL_ERROR;
+
+	glBindVertexArray( 0 );
 	
 	if( mDestroyBuffersOnEnd ) //won't be updated ever again
 		_destroyBuffers();
@@ -153,72 +232,18 @@ bool Mesh::end()
 	center.z = (max.z + min.z)*0.5f;
 	
 	dimensions = max - min;
-				
+
 	return loaded;
 }
 
 void Mesh::bind()
 {		
-	DEBUG_ASSERT( vertexHandle != 0 );
+	DEBUG_ASSERT( vertexHandle );
+	DEBUG_ASSERT( vertexArrayDesc );
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+	glBindVertexArray( vertexArrayDesc );
 
-	if( vertexFields[ VF_POSITION2D ] )
-		glVertexPointer( 2, GL_FLOAT, vertexSize, 0 );
-
-	else if( vertexFields[ VF_POSITION3D ] )
-		glVertexPointer( 3, GL_FLOAT, vertexSize, 0 );
-
-	if( vertexFields[ VF_COLOR ] )
-	{
-		glColorPointer(
-			4, 
-			GL_UNSIGNED_BYTE, 
-			vertexSize, 
-			(void*)vertexFieldOffset[ VF_COLOR ] );
-
-		glEnableClientState(GL_COLOR_ARRAY);
-	}
-	else
-		glDisableClientState( GL_COLOR_ARRAY );
-
-	for( uint i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
-	{
-		if( vertexFields[ VF_UV + i ] )
-		{
-			glClientActiveTexture( GL_TEXTURE0 + i );
-
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
-			glTexCoordPointer(
-				2, 
-				GL_FLOAT, 
-				vertexSize, 
-				(void*)vertexFieldOffset[ VF_UV + i ] );
-
-		}
-		else
-		{
-			glClientActiveTexture( GL_TEXTURE0 + i );
-			glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-		}
-	}
-
-	if( vertexFields[ VF_NORMAL ] )
-	{
-		glNormalPointer(
-			GL_FLOAT, 
-			vertexSize, 
-			(void*)vertexFieldOffset[ VF_NORMAL ] );
-
-		glEnableClientState(GL_NORMAL_ARRAY);
-	}
-	else
-		glDisableClientState( GL_NORMAL_ARRAY );
-
-	if( isIndexed() )			
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
-	else
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL );
+	DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
 }
 
 const uint Mesh::VERTEX_FIELD_SIZES[] = { 
@@ -258,7 +283,7 @@ bool Mesh::onLoad()
 	setTriangleMode( (TriangleMode)*ptr++ );
 	
 	//fields
-	for( uint i = 0; i < FIELDS_NUMBER; ++i )
+	for( int i = 0; i < _VF_COUNT; ++i )
 	{
 		if( *ptr++ )
 			setVertexFieldEnabled( (VertexField)i );

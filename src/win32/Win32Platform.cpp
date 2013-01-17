@@ -189,10 +189,6 @@ mFramesToAdvance( 0 )
 	frameStart.wait();
 
 	_initKeyMap();
-
-	//create xinput persistent joysticks
-	for( int i = 0; i < 4; ++i )
-		mXInputJoystick[ i ] = new XInputJoystick( i );
 }
 
 Win32Platform::~Win32Platform()
@@ -408,8 +404,15 @@ void Win32Platform::initialise()
 	sound = new SoundManager();
 
 	input = new InputSystem();
+
 	//add the keyboard
 	input->addDevice( &mKeyboard );
+	//create xinput persistent joysticks
+	for( int i = 0; i < 4; ++i ) 
+	{
+		mXInputJoystick[ i ] = new XInputJoystick( i );
+		mXInputJoystick[i]->poll( 1 ); //force detection of already connected pads
+	}
 
 	fonts = new FontSystem();
 
@@ -466,6 +469,9 @@ void Win32Platform::acquireContext()
 
 void Win32Platform::present()
 {
+	//take the time before swapBuffers because on some implementations it is blocking
+	realFrameTime = (float)mStepTimer.getElapsedTime();	
+
 	SwapBuffers( hdc );
 }
 
@@ -494,7 +500,7 @@ void Win32Platform::_pollDevices( float dt )
 
 void Win32Platform::step( float dt )
 {
-	Timer timer;
+	mStepTimer.reset();
 	
 	//check if some other thread requested a new context
 	mCRQMutex.lock();
@@ -520,8 +526,6 @@ void Win32Platform::step( float dt )
 	sound->update( dt );
 
 	render->render();
-
-	realFrameTime = (float)timer.getElapsedTime();	
 }
 
 void Win32Platform::loop( float frameTime )

@@ -51,6 +51,7 @@ namespace Dojo
 			this->a = a;
 		}
         
+		///creates from a single A8R8G8B8 32-bit value
         Color( RGBAPixel p )
         {
             set( p );
@@ -63,13 +64,15 @@ namespace Dojo
 			this->b = (float)b/255.f;
 			this->a = (float)a/255.f;
 		}
-		
+
+		///creates from a single A8R8G8B8 32-bit value
 		void set( RGBAPixel pixel )
 		{
 			byte* ch = (byte*)&pixel;
 			set( ch[2], ch[1], ch[0], ch[3] );
 		}
-				
+			
+		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)
 		inline RGBAPixel toRGBA()
 		{
 			RGBAPixel p;
@@ -83,23 +86,25 @@ namespace Dojo
 			return p;
 		}
 
-		///scales the color
-		/** ALPHA IS UNAFFECTED */
+		///scales each color's component except alpha
 		inline Color operator * ( float s ) const 
 		{			
 			return Color( r * s, g * s, b * s, a );
 		}
 		
+		///multiplies two colors component-wise
 		inline Color operator * ( const Color& c ) const 
 		{			
 			return Color( r * c.r, g * c.g, b * c.b, a * c.a );
 		}
 
+		///sums two colors component-wise
 		inline Color operator + ( float s ) const
 		{
 			return Color( r + s, g + s, b + s, a + s );
 		}
 
+		///linearly interpolates two colors
 		inline Color lerp( float s, const Color& c ) const
 		{
 			float invs = 1.f-s;

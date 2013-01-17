@@ -26,21 +26,16 @@ namespace Dojo
 		
 		enum VertexField
 		{
-			VF_POSITION2D = 0,
-			VF_POSITION3D = 1,
-			VF_UV = 2,
-			VF_UV_1 = 3,
-			VF_UV_2 = 4,
-			VF_UV_3 = 5,
-			VF_UV_4 = 6,
-			VF_UV_5 = 7,
-			VF_UV_6 = 8,
-			VF_UV_7 = 9,
-			VF_COLOR = 10,
-			VF_NORMAL = 11
+			VF_POSITION2D,
+			VF_POSITION3D,
+			VF_COLOR,
+			VF_NORMAL,
+			VF_UV,
+			VF_UV_1,
+
+			_VF_COUNT
 		};
-				
-		static const uint FIELDS_NUMBER = VF_NORMAL+1;	
+		
 		static const uint VERTEX_PAGE_SIZE = 256;
 		static const uint INDEX_PAGE_SIZE = 256;
 		
@@ -72,11 +67,12 @@ namespace Dojo
 			indexHandle(0),
 			dynamic( false ),
 			editing( false ),
-			mDestroyBuffersOnEnd( true )
+			mDestroyBuffersOnEnd( true ),
+			vertexArrayDesc( 0 )
 		{
 			//set all fields to zero
-			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
-			memset( vertexFieldOffset, 0, sizeof(uint) * FIELDS_NUMBER );
+			memset( vertexFields, 0, sizeof( vertexFields ) );
+			memset( vertexFieldOffset, 0, sizeof( vertexFieldOffset ) );
 
 			//default index size is 16
 			setIndexByteSize( sizeof(GLushort) );
@@ -104,8 +100,8 @@ namespace Dojo
 		mDestroyBuffersOnEnd( true )
 		{
 			//set all fields to zero
-			memset( vertexFields, 0, sizeof( bool ) * FIELDS_NUMBER );
-			memset( vertexFieldOffset, 0, sizeof(uint) * FIELDS_NUMBER );
+			memset( vertexFields, 0, sizeof( vertexFields ) );
+			memset( vertexFieldOffset, 0, sizeof( vertexFieldOffset ) );
 
 			//default index size is 16
 			setIndexByteSize( sizeof(GLushort) );
@@ -418,10 +414,12 @@ namespace Dojo
 		GLenum indexGLType;
 		byte* indices;//indices have varying size
 
+		GLuint vertexArrayDesc;
+
 		uint triangleCount;
 		
-		bool vertexFields[ FIELDS_NUMBER ];		
-		uint vertexFieldOffset[ FIELDS_NUMBER ];
+		bool vertexFields[ _VF_COUNT ];		
+		uint vertexFieldOffset[ _VF_COUNT ];
 		
 		TriangleMode triangleMode;
 		
@@ -434,7 +432,7 @@ namespace Dojo
 		void _buildFieldOffsets()
 		{
 			uint offset = 0;
-			for( uint i = 0; i < FIELDS_NUMBER; ++i )
+			for( uint i = 0; i < _VF_COUNT; ++i )
 			{
 				if( isVertexFieldEnabled( (VertexField)i ) )
 				{

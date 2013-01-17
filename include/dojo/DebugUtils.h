@@ -31,13 +31,13 @@
 
 namespace Dojo
 {
-	//define the handler type
+	///the assertion handler type
 	typedef void (*AssertHandlerPtr)(const char*, const char*, int, const char*);
 
-	//the handler pointer
+	///the globally define assertion handler pointer
 	extern AssertHandlerPtr gp_assert_handler;
 
-	//and the default handler
+	///the default assertion handler
 	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file );
 
 }

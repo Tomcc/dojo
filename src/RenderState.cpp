@@ -44,8 +44,6 @@ void RenderState::applyState()
 		}
 	}
 	
-	mesh->bind();
-	
 	if( blendingEnabled )	glEnable( GL_BLEND );
 	else                    glDisable( GL_BLEND );
 	
@@ -68,12 +66,17 @@ void RenderState::applyState()
 			glCullFace( GL_FRONT );
 			break;
 	}
+
+	mesh->bind();
 }
 
 void RenderState::commitChanges( RenderState* pastState )
 {
 	DEBUG_ASSERT( pastState );
 	DEBUG_ASSERT( mesh );
+
+	//always bind color as it is just not expensive
+	glColor4f( color.r, color.g, color.b, color.a );
 		
 #ifdef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 	
@@ -156,6 +159,4 @@ void RenderState::commitChanges( RenderState* pastState )
 	}
 #endif
 	
-	//always bind color as it is just not expensive
-	glColor4f( color.r, color.g, color.b, color.a );
 }

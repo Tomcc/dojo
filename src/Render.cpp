@@ -284,8 +284,6 @@ void Render::renderElement( Renderable* s )
 	++frameBatchCount;
 	
 	//change the renderstate
-	s->commitChanges( currentRenderState );
-
 	currentRenderState = s;
 	
 	//clone the view matrix on the top of the stack		
@@ -299,7 +297,9 @@ void Render::renderElement( Renderable* s )
 	glEnable( GL_COLOR_MATERIAL );
 	
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );
-		
+
+	s->commitChanges( currentRenderState );
+
 	Mesh* m = currentRenderState->getMesh();
 
 	GLenum mode;
@@ -314,6 +314,8 @@ void Render::renderElement( Renderable* s )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
+
+	glBindVertexArray( 0 ); //HACK
 }
 
 void Render::endFrame()

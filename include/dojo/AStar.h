@@ -52,18 +52,22 @@ namespace Dojo
 			}
 		};
 
+		///AStar::Graph defines a Graph on which AStar can operate
+		/** each Node is identified by its unique position vector */
 		class Graph : public std::unordered_map< Vector, Node* >
 		{
 		public:
 
 			Graph()	{}
 
+			///gets a node at the given position
 			Node* getNode(  const Vector& pos  ) const
 			{
 				const_iterator elem = find( pos );
 				return (elem != end()) ? elem->second : nullptr;
 			}
 
+			///adds a new node at the given position
 			Node* addNode( const Vector& pos )
 			{
 				iterator elem = find( pos );
@@ -170,6 +174,7 @@ namespace Dojo
 			}
 		}
 
+		///returns the total length of the solved path
 		inline float getLength()
 		{
 			return mTotalLength;

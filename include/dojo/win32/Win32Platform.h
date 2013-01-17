@@ -130,6 +130,8 @@ namespace Dojo
 
 		XInputJoystick* mXInputJoystick[ 4 ];
 
+		Timer mStepTimer;
+
 		void _initKeyMap();
 
 		void _adjustWindow();

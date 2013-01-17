@@ -51,17 +51,16 @@ namespace Dojo
 			const Array<T>& base;
 		};
 		
-		///Costruttore
+		///Constructor
 		/**
-		 E' opzionale specificare la grandezza delle pagine di memoria.
+		 \param firstPageSize the size of the first page, in element count (not bytes)
+		 \param newPageSize the size of all the newly created pages, in element count
 		 */
-		Array(int firstPageSize = 0, int newPageSize = 0, int validElements = 0)
+		Array(int firstPageSize = 64, int newPageSize = 64, int validElements = 0)
 		{
 			DEBUG_ASSERT( validElements*sizeof(T) <= (size_t)firstPageSize );
 			
-			pageSize = (newPageSize == 0) ? 64 : newPageSize;
-			firstPageSize = ( firstPageSize == 0) ? pageSize : firstPageSize;
-			
+			pageSize = newPageSize;			
 			elements = validElements;
 			arraySize = firstPageSize;
 			
@@ -85,7 +84,7 @@ namespace Dojo
 			pageSize = 64;
 		}
 		
-		///Costruttore copia - permette di evitare l'allocazione dovuta al costruttore.
+		///copy constructor
 		Array( const Array<T>& fv ) :
 		elements( fv.elements ),
 		arraySize( fv.arraySize ),
@@ -102,7 +101,7 @@ namespace Dojo
 			if(vectorArray)	free(vectorArray);
 		}
 		
-		///Aggiunge un elemento al termine del vettore
+		///adds an element to the back of the vector
 		FV_INLINE void add(const T& element)
 		{
 			//se nel vettore non entra un'altra pagina di memoria
@@ -111,14 +110,13 @@ namespace Dojo
 			vectorArray[ elements ] = element;
 			elements++;
 		}
-		///Inserisce un elemento in un punto del vettore
+		///adds an element to a given vector index, moving the rest
 		/**
-		 \param element Elemento da inserire;
-		 \param index Indirizzo del nuovo elemento
+		 \param element element to insert
+		 \param index new element index
 		 
-		 Tutti gli elementi successivi saranno spostati di 1 per fare spazio al nuovo.
-		 \remark E' sensibilmente piu' lento di add(). Se index e' fuori del vettore
-		 l'elemento sara' aggiunto alla fine.
+		 All the elements with index > i will be shifted (copied) to make room for the new one.
+		 \remark it is O(n) except in the case where index == size, where it is O(1)
 		 */
 		FV_INLINE void add(const T& element, int index)
 		{
@@ -139,7 +137,7 @@ namespace Dojo
 			}
 		}
 		
-		///Copia in questo vettore un altro vettore
+		///Copy operator
 		FV_INLINE void operator= (const Array<T>& fv)
 		{
 			//libera la memoria che non serve piu'
@@ -156,9 +154,10 @@ namespace Dojo
 			memcpy( vectorArray, fv._getArrayPointer(), sizeof(T) * elements);
 		}
 		
-		///removes an element at the given index
+		///removes in an *unordered* way an element at the given index
 		/**
 		 WARNING - DEFAULT BEHAVIOUR IS "REMOVE UNORDERED"
+		 the back element is used to replace this one, then the vector is shrink by 1
 		 Use removeOrdered() if you need to keep relative ordering between elements
 		 */
 		FV_INLINE void remove(int index)
@@ -172,9 +171,9 @@ namespace Dojo
 				vectorArray[ index ] = vectorArray[ elements ];					
 		}
 		
-		///removes an element from the vector
+		///removes in an *unordered* way a given element, if found
 		/**
-		 returns true if the remove is successful
+		 \returns true if the remove is successful
 		 */
 		FV_INLINE bool remove( const T& e)
 		{
@@ -187,6 +186,7 @@ namespace Dojo
 			else return false;
 		}
 		
+		///removes an element at index shifting each other subsequent element by 1
 		FV_INLINE void removeOrdered( int index )
 		{
 			DEBUG_ASSERT( size() > index );
@@ -205,6 +205,7 @@ namespace Dojo
 				elements--;
 		}
 		
+		///removes an element shifting each other subsequent element by 1
 		FV_INLINE void removeOrdered( const T& e )
 		{
 			int i = getElementIndex(e);
@@ -212,7 +213,7 @@ namespace Dojo
 				removeOrdered(i);
 		}
 		
-		///Rimuove l'elemento in coda del vettore
+		///removes the back (top if used like a stack) element of the vector
 		FV_INLINE void pop()
 		{
 			DEBUG_ASSERT( size() );
@@ -220,6 +221,7 @@ namespace Dojo
 			elements--;
 		}
 		
+		///returns the top/back element of the vector
 		FV_INLINE T& top()
 		{
 			DEBUG_ASSERT( size() );
@@ -227,12 +229,7 @@ namespace Dojo
 			return vectorArray[ elements-1 ];
 		}
 		
-		///Rimuove qualsiasi elemento dal vettore
-		/**
-		 Non chiama delete.
-		 \param newPageSize la nuova grandezza della page per il vettore. Lasciare a 0 per non 
-		 modificare.
-		 */
+		///removes all the elements from the Array and optionally resizes the page size
 		FV_INLINE void clear( int newPageSize = 0)
 		{
 			elements = 0;
@@ -247,7 +244,6 @@ namespace Dojo
 			vectorArray = (T*)malloc(sizeof(T) * arraySize);
 		}
 		
-		///Dice se i vettori sono identici
 		FV_INLINE bool operator== (const Array<T>& f)
 		{
 			if(f.size() != size())
@@ -256,16 +252,14 @@ namespace Dojo
 			return ( memcmp(vectorArray, f._getArrayPointer(), sizeof(T) * elements) == 0);
 		}
 		
-		///Dice se il vettore ha 0 elementi
 		FV_INLINE bool isEmpty()	{	return (elements == 0);	}
 		
-		///Dice se questo elemento esiste nel vettore
+		///returns true if this element is found in the Array - linear search
 		FV_INLINE bool exists(T& e)
 		{
 			return (getElementIndex(e) != -1);
 		}	
 		
-		///restituisce l'elemento all'indice richiesto
 		FV_INLINE T& operator[] (int index) const
 		{
 			DEBUG_ASSERT( index < size() );
@@ -273,20 +267,14 @@ namespace Dojo
 			
 			return vectorArray[ index ];
 		}
-		///Metodo identico a [] utile se si ha un pointer al vettore
+
+		///a wrapper for operator []
 		FV_INLINE T& at( int index) const
 		{
-			DEBUG_ASSERT( index < size() );
-			DEBUG_ASSERT( index >= 0 );
-			
 			return vectorArray[ index ];
 		}
 		
-		///Restituisce la posizione nel vettore dell'elemento dato
-		/**
-		 Non chiama delete.
-		 \returns 0...n se l'elemento e' stato trovato; -1 se l'elemento non esiste.
-		 */
+		///returns the index of the given element or -1 if it isn't found
 		FV_INLINE int getElementIndex(const T& element)
 		{
 			//find the element index
@@ -299,26 +287,28 @@ namespace Dojo
 			return -1;
 		}
 		
-		///Numero di elementi
 		FV_INLINE int size() const	{	return elements;	}
-		///Numero di bytes
+		///total size in bytes, non comprehensive of Array structures size
 		FV_INLINE int byteSize()		const {	return elements * sizeof(T) + sizeof(vectorArray);	}
-		///Numero massimo di elementi prima di un nuovo realloc
+		
+		///capacity of the vector
 		FV_INLINE int getArraySize()	const {	return arraySize;	}
-		///Ottieni il numero massimo di elementi accettabili prima di riallocare
+
+		///the size of a single page
 		FV_INLINE int getPageSize()	const {	return pageSize;	}
 		
+		///returns a C++11-foreach-compliant vector to the front element
 		FV_INLINE iterator begin()
 		{
 			return iterator( *this, 0 );
 		}
 
+		///returns a C++11-foreach-compliant vector past the back element
 		FV_INLINE iterator end()
 		{
 			return iterator( *this, size() );
 		}
 		
-		///Posizione del vettore in memoria -uso avanzato-
 		FV_INLINE T* _getArrayPointer()	const {	return vectorArray;	}
 		
 	protected:
