@@ -84,34 +84,6 @@ namespace Dojo
 			
 			return *this;
 		}
-		
-		/*inline const Vector& operator *= ( float s )
-		{
-			x *= s;
-			y *= s;
-			z *= s;
-			
-			return *this;
-		}
-		
-		inline const Vector& operator /= ( float s )
-		{
-			x /= s;
-			y /= s;
-			z /= s;
-					
-			return *this;
-		}
-		
-		inline bool operator == ( const Vector& v ) const
-		{
-			return x == v.x && y == v.y && z == v.z;
-		}
-		
-		inline Vector operator + ( const Vector& v ) const 
-		{
-				return Vector( x + v.x, y + v.y, z + v.z );
-		}*/
 
 		inline Vector operator - ( const Vector& v ) const 
 		{
@@ -245,6 +217,11 @@ namespace Dojo
 			return "(" + String( x ) + "," + String( y ) + "," + String( z ) + ")";
 		}
 				
+		inline size_t getHash() const
+		{
+			return (((size_t)x) * 73856093) ^ (((size_t)y) * 19349663) ^ (((size_t)z) * 83492791);
+		}
+
 	protected:
 	};
 }	
@@ -254,8 +231,11 @@ namespace std
 		///hash specialization for unordered_maps
 		template<>
 		struct hash<Dojo::Vector>
-			: public _Bitwise_hash<Dojo::Vector>
-		{	// hash functor for char
+		{	// hash functor for vector
+			size_t operator()(const Dojo::Vector& _Keyval) const
+			{
+				return _Keyval.getHash();
+			}
 		};
 }
 
