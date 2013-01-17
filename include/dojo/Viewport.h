@@ -23,7 +23,7 @@ namespace Dojo
 	class Render;
 	class GameState;
 	class AnimatedQuad;
-	class Model;
+	class Renderable;
 	class Texture;
 		
 	class Viewport : public Object
@@ -59,7 +59,7 @@ namespace Dojo
 		
 		inline const Color& getClearColor()				{	return clearColor;	}
 		inline AnimatedQuad* getBackgroundSprite()		{	return background;	}
-		inline Model* getFader()						{	return fadeObject;	}
+		inline Renderable* getFader()					{	return fadeObject;	}
 		inline float getVFOV()							{	return VFOV;		}
 		inline float getZFar()							{	return zFar;		}
 		inline float getZNear()							{	return zNear;		}
@@ -140,7 +140,7 @@ namespace Dojo
 		bool cullingEnabled;	
 		
 		AnimatedQuad* background;
-		Model* fadeObject;
+		Renderable* fadeObject;
 				
 		Color clearColor;
         

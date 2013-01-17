@@ -50,7 +50,7 @@ namespace Dojo
 			if( connected )
 			{
 				if( !mConnected ) //yeeeee we're connected!
-					Platform::getSingleton()->getInput()->_fireDeviceConnected( this );
+					Platform::getSingleton()->getInput()->addDevice( this );
 
 				int buttonMask = state.Gamepad.wButtons; //wButtons is a mask where each bit represents a button state
 
@@ -72,7 +72,7 @@ namespace Dojo
 			{
 				//notify disconnection to listeners and to the input system
 				_fireDisconnected();
-				Platform::getSingleton()->getInput()->_removeDevice( this );
+				Platform::getSingleton()->getInput()->removeDevice( this );
 
 				//clear the listeners because dojo's contract is to create a *new* joystick object for each connection
 				pListeners.clear();

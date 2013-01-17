@@ -8,7 +8,6 @@
 #include "Viewport.h"
 #include "Light.h"
 #include "Mesh.h"
-#include "Model.h"
 #include "AnimatedQuad.h"
 
 #include "Game.h"
@@ -315,7 +314,7 @@ void Render::renderElement( Renderable* s )
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
 
-	glBindVertexArray( 0 ); //HACK
+	glBindVertexArray( 0 );
 }
 
 void Render::endFrame()

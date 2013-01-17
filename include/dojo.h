@@ -17,7 +17,6 @@
 #include <dojo/InputDevice.h>
 #include <dojo/Light.h>
 #include <dojo/Mesh.h>
-#include <dojo/Model.h>
 #include <dojo/Noise.h>
 #include <dojo/Object.h>
 #include <dojo/Particle.h>

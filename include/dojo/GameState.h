@@ -25,21 +25,30 @@ namespace Dojo
 	class Game;
     class TouchArea;
 	
+	///GameState is the Dojo's Level class
+	/**
+	each GameState is in itself an Object, and represents the root node of its Object tree;
+	it is also a ResourceGroup, meaning that a GameState can be associated easily with the Resources it loads;
+	and it is implements StateInterface, so that it can easily become a substate of Game, and manage its own (often complex) internal states.
+	*/
 	class GameState : public Object, public ResourceGroup, public StateInterface
 	{
 	public:
 		
+		///Creates a new GameState with a parent Game
 		GameState( Game* parentGame );
 		
 		virtual ~GameState();
         
+		///Registers an existing TouchArea in this GameState
         inline void addTouchArea( TouchArea* t )
         {
             DEBUG_ASSERT( t );
             
             mTouchAreas.add( t );
         }
-        
+
+        ///Unregisters an existing TouchArea in this GameState
         inline void removeTouchArea( TouchArea* t )
         {
             DEBUG_ASSERT( t );
@@ -47,19 +56,29 @@ namespace Dojo
             mTouchAreas.remove( t );
         }
 				
-		///clear and prepare for a new initialise
+		///Clears this GameState to a pre-initialization state
 		virtual void clear();
 		
+		///returns the parent Game
 		inline Game* getGame()				{	return game;			}
 				
-		inline float getCurrentTime()		{	return timeElapsed;		}		
+		///returns the Viewport that is active on this GameState
 		inline Viewport* getViewport()		{	return camera;			}
 		
+		///sets the active Viewport (ie. camera) on this GameState
 		void setViewport( Viewport* v );
 		
+		///"touches" all the touchAreas at the given point in the level
+		/**touched TouchAreas will fire onTouchAreaPressed() on their listeners as soon as updateClickableState() is called*/
 		void touchAreaAtPoint( const Vector& point );        
+
+		///triggers all the TouchAreas to send their events if they were touched before the last updateClickableState call
         void updateClickableState();
         
+		///default implementation for the GameState, with TouchAreas and child objects update
+		/**
+		\remark remember to call GameState::onLoop() if you override this method!
+		*/
         virtual void onLoop( float dt )
         {
             updateClickableState();

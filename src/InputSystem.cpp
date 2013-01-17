@@ -89,11 +89,6 @@ void InputSystem::_fireAccelerationEvent( const Dojo::Vector& accel, float roll 
 
 void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 {
-	DEBUG_ASSERT( !mDeviceList.exists(j) );
-
-	//add it to the list
-	mDeviceList.add( j );
-
 	//notify listeners
 	for( Listener* l : listeners )
 		l->onDeviceConnected( j );
@@ -101,14 +96,11 @@ void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 	DEBUG_MESSAGE( "Connected a joystick!" );
 }
 
-void InputSystem::_removeDevice( Dojo::InputDevice* j )
+void InputSystem::_fireDeviceDisconnected( Dojo::InputDevice* j )
 {
 	DEBUG_ASSERT( mDeviceList.exists(j) );
 
 	//first notify this to all the listeners
 	for( Listener* l : listeners )
 		l->onDeviceDisconnected( j );
-
-	//then destroy our client side object
-	mDeviceList.remove( j );
 }

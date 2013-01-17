@@ -46,7 +46,6 @@
     <ClInclude Include="include\dojo\Light.h" />
     <ClInclude Include="include\dojo\linux\LinuxPlatform.h" />
     <ClInclude Include="include\dojo\Mesh.h" />
-    <ClInclude Include="include\dojo\Model.h" />
     <ClInclude Include="include\dojo\Noise.h" />
     <ClInclude Include="include\dojo\Object.h" />
     <ClInclude Include="include\dojo\Particle.h" />

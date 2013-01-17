@@ -8,6 +8,7 @@
 
 namespace Dojo
 {
+	///A Light affects a single Render::Layer which has its lighting enabled, and can be set to different color and types (point, spot and specular)
 	class Light : public Object
 	{
 	public:
@@ -30,6 +31,7 @@ namespace Dojo
 			  const Color& specular = Color::WHITE, 
 			  const Color& ambient = Color::NIL );
 		
+		///sets the light diffuse, specular and ambient colors
 		void setColors(	const Color& diffuse, const Color& specular, const Color& ambient );
 		
 		void setSpecularExponent( float exponent )
@@ -47,13 +49,6 @@ namespace Dojo
 		
 		///setups this light to be a spotlight
 		void initSpotlight( const Vector& dir, float fov, float exponent, float attenuation );
-		
-		void disable()
-		{
-			type = LT_NONE;
-		}
-		
-		void bind( uint slot, const Matrix& viewProj ); //updates light for rendering in the assigned slot
 		
 		inline Type getType()
 		{
@@ -79,6 +74,9 @@ namespace Dojo
 		{
 			return ambient.a + ambient.r + ambient.g + ambient.b > 0;
 		}
+
+		///binds this light to the given slot for OpenGL rendering
+		void bind( uint slot, const Matrix& viewProj );
 		
 	protected:
 		

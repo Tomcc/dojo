@@ -35,6 +35,7 @@ namespace Dojo
 		class Page;
 		class Character;
 		
+		///A Character defines a single Unicode point, its Page, and its texture rect in the Page
 		class Character
 		{
 		public:			
@@ -65,6 +66,7 @@ namespace Dojo
 			}
 		};
 		
+		///A Page is a single texture which contains FONT_PAGE_SIDE^2 Characters in Unicode
 		class Page : public Resource
 		{
 		public:
@@ -131,6 +133,11 @@ namespace Dojo
 			}
 		};
 		
+		///A Font represents a single .font file, and is bound to a .ttf TrueType font definition
+		/**
+		\param creator the ResourceGroup which created this Resource
+		\path the path to the .font definition file
+		*/
 		Font( ResourceGroup* creator, const String& path );
 		
 		virtual ~Font();
@@ -144,9 +151,12 @@ namespace Dojo
 			return fontName;
 		}
 		
+		///returns the maximum width of a character (cell height)
 		inline uint getFontWidth()			{	return fontWidth;	}
+		///returns the maximum height of a character (cell width)
 		inline uint getFontHeight()			{	return fontHeight;	}
 
+		///returns (and lazy-loads) the character Page with the given index
 		inline Page* getPage( uint index )
 		{
 			DEBUG_ASSERT( index < FONT_MAX_PAGES );
@@ -162,17 +172,19 @@ namespace Dojo
 			return res;
 		}
 
+		///returns (and lazy-loads) the Page containing this Unicode character
 		inline Page* getPageForChar( unichar c )
 		{
 			return getPage( c / FONT_CHARS_PER_PAGE );
 		}
 
-		///returns the texture page and the uv min and max for that character
+		///returns (and lazy-loads) the Character internal representation of this Unicode character
 		inline Character* getCharacter( unichar c )
 		{
 			return getPageForChar( c )->getChar( c );
 		}
 
+		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
 		inline Texture* getTexture( unichar c )
 		{
 			return getPageForChar( c )->getTexture();
@@ -200,7 +212,7 @@ namespace Dojo
 			return kerning;
 		}
 
-		///make sure that the pages at the given indices are loaded
+		///forces the loading of the given pages without waiting for lazy-loading
 		inline void preloadPages( const char pages[], uint n ) 
 		{
 			for( uint i = 0; i < n; ++i )

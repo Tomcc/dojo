@@ -17,7 +17,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, 
 #elif defined( PLATFORM_WIN32 )
 	DebugBreak();
 #elif defined( PLATFORM_LINUX )
-	raise( SIGTRAP ); //TODO implement something
+	raise( SIGTRAP );
 #else
 	#error unsupported platform
 #endif
