@@ -30,7 +30,7 @@ using namespace Dojo;
 
 Platform * Platform::singleton = NULL;
 
-Platform* Platform::createNativePlatform( const Table & config )
+Platform* Platform::create( const Table & config )
 { 
 #if defined (PLATFORM_WIN32)
     singleton = new Win32Platform( config );

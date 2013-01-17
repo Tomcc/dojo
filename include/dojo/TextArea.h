@@ -19,6 +19,7 @@ namespace Dojo
 {	
 	class GameState;
 	
+	///TextArea is a Renderable used to display Unicode text
 	class TextArea : public Renderable 
 	{
 	public:
@@ -27,10 +28,16 @@ namespace Dojo
 		
 		Vector pixelScale;
 		
+		///Creates a new TextArea
+		/**\param l the parent level
+		\param fontSetName the name of the .font definition file
+		\param pos bottom right corner position (unless centered)
+		\param center the position is at the center of the string
+		\param bounds TextArea's AABB
+		*/
 		TextArea( GameState* l, 
 				 const String& fontSetName, 
 				 const Vector& pos, 
-				 uint chars, 
 				 bool center = false,
 				 const Vector& bounds = Vector::ONE );
 		
@@ -56,22 +63,30 @@ namespace Dojo
 			setVisibleCharacters( getVisibleCharacters() + 1 );
 		}
 				
-		///sets the max pixel lenght for this line.
+		///sets the max pixel length for this line.
 		void setMaxLineLength( uint l );
 		
+		///sets the space between lines
 		inline void setInterline( float i )		{	interline = i;		}
+
+		///sets an additional spacing between chars (default 0)
 		inline void setCharSpacing( float c )	{	charSpacing = c;	}
 		
 		inline float getInterline()				{	return interline;	}
+
+		///returns the number of characters that are currently shown
 		inline uint getVisibleCharacters()		{	return visibleCharsNumber;	}
 		
+		///empties this text area
 		void clearText();
 							
-		///async text update
+		///adds text to this TextArea
 		void addText( const String& text );
 		
+		///adds a number to this TextArea
 		void addText( uint n, char paddingChar = 0, uint digits = 0 );
 					
+		///adds a Time string using a number of seconds
 		inline void addTimeSeconds( uint n )
 		{		
 			addText( n / 60 );
@@ -80,9 +95,14 @@ namespace Dojo
 		}
 		
 		inline Font* getFont()					{	return font;			}		
-		inline uint getLenght()					{	return currentCharIdx;	}
-		inline const String& getContent()	{	return content;			}
+
+		///returns the number of added chars
+		inline uint getLenght()					{	return characters.size();	}
+
+		///returns the text content in String format
+		inline const String& getContent()		{	return content;			}
 				
+		///returns the size in screen coordinates for UI
 		inline const Vector& getScreenSize()	{	return screenSize;		}	
 		
 		bool prepare( const Vector& viewportPixelRatio );
@@ -98,12 +118,12 @@ namespace Dojo
 	protected:
 		
 		typedef Array< Renderable* > LayerList;
+		typedef Array< Font::Character* > CharacterList;
 
 		String content;
 		
 		String fontName;
 		float spaceWidth, interline, charSpacing;
-		int maxChars;
 		int maxLineLenght;
 		bool centered;
 		
@@ -111,11 +131,11 @@ namespace Dojo
 		
 		Font* font;
 				
-		Font::Character** characters;
+		CharacterList characters;
 		bool changed;
 		
 		float *vertexBuffer, *uvBuffer;		
-		int currentCharIdx, visibleCharsNumber;
+		int visibleCharsNumber;
 		
 		Vector cursorPosition, screenSize, lastScale;
 		Vector mLayersLowerBound, mLayersUpperBound;

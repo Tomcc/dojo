@@ -372,8 +372,9 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	save( &config );
 }
 
-void Win32Platform::initialise()
+void Win32Platform::initialise( Game* g )
 {
+	game = g;
 	DEBUG_ASSERT( game );
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );

@@ -57,7 +57,6 @@
     <ClInclude Include="include\dojo\Renderable.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
     <ClInclude Include="include\dojo\ResourceGroup.h" />
-    <ClInclude Include="include\dojo\Serializable.h" />
     <ClInclude Include="include\dojo\SoundBuffer.h" />
     <ClInclude Include="include\dojo\SoundManager.h" />
     <ClInclude Include="include\dojo\SoundSet.h" />

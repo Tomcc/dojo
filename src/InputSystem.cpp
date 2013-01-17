@@ -11,7 +11,7 @@ using namespace Dojo;
 InputSystem::InputSystem( bool enable ) :
 enabled(enable)
 {
-	Platform::getSingleton()->addFocusListener( this );
+	Platform::getSingleton()->addApplicationListener( this );
 }
 
 void InputSystem::_fireTouchBeginEvent( const Vector& point )

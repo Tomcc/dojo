@@ -20,8 +20,17 @@
 
 #undef RT_FONT
 
-namespace Dojo {
-		
+namespace Dojo 
+{
+	///A ResourceGroup manages all of the Resources in Dojo
+	/** Resources and folders are first added to a ResourceGroup via add* methods, but they are NOT loaded;
+	actual loading happens when loadResources() is called.
+	This allows to unload and reload the resources without breaking the game's state, by keeping the "empty" Resource objects as placeholders.
+
+	A ResourceGroup will load all the Tables, FrameSets, Sounds, Fonts and Meshes found in the folder that are added to it,
+	and individual Resources are referenced by their name, eg: "data/graphics/ninja.png" is retrieved with getFrameSet( "ninja" )
+	
+	A ResourceGroup can be attached to one or more "sub" ResourceGroups to share their resources. */
 	class ResourceGroup 
 	{			
 	public:	
@@ -45,6 +54,7 @@ namespace Dojo {
 		typedef std::unordered_map<String, Table*> TableMap;
 		typedef Array< ResourceGroup* > SubgroupList;
 		
+		///Create a new empty ResourceGroup
 		ResourceGroup();
 		
 		virtual ~ResourceGroup();
@@ -91,7 +101,7 @@ namespace Dojo {
 			
 			return NULL;
 		}
-				
+		
 		inline void addFrameSet( FrameSet* set, const String& name )
 		{
 			DEBUG_ASSERT( !getFrameSet( name ) );
@@ -134,6 +144,7 @@ namespace Dojo {
 		
 		void addTable( Table* t );
 		
+		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		inline void addSubgroup( ResourceGroup* g )
 		{
 			DEBUG_ASSERT( g );
@@ -141,6 +152,7 @@ namespace Dojo {
 			subs.add( g );
 		}
 		
+		///removes a subgroup
 		inline void removeSubgroup( ResourceGroup* g )
 		{
 			DEBUG_ASSERT( g );
@@ -173,6 +185,7 @@ namespace Dojo {
 			tables.erase( name );
 		}
 
+		///returns a dummy empty FrameSet
 		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
 
 		inline FrameSet* getFrameSet( const String& name )
@@ -207,30 +220,46 @@ namespace Dojo {
 			return find< Table >( name, RT_TABLE );
 		}
 		
+		///return the locale of this ResourceGroup, eg: en, it, de, se
 		inline const String& getLocale()
 		{
 			return locale;
 		}
 
+		///returns if this group is finalized, meaning that its loading is finished
+		/**\remark useful for loading subgroups in the background! */
 		inline bool isFinalized()
 		{
 			return finalized;
 		}
 		
+		///true if localization-specific folders will be added too when adding a folder
 		inline bool isLocalizationRequired()
 		{
 			return this->locale.size() > 0;
 		}
 		
+		///add all the Sets in a folder
+		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
+		\remark all the assets without a version are by default version 0*/
 		void addSets( const String& folder, int version = 0 );		
+		///add all the Fonts in a folder
+		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
+		\remark all the assets without a version are by default version 0*/
 		void addFonts( const String& folder, int version = 0 );
+		///add all the Meshes in a folder
 		void addMeshes( const String& folder );
+		///add all the Sounds in a folder
 		void addSounds( const String& folder );
+		///add all the Tables in a folder
 		void addTables( const String& folder );
 		
+		///adds the prefab meshes, like quads, cubes, skyboxes...
 		void addPrefabMeshes();
 		
 		///adds all the file inside a folder
+		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
+		\remark all the assets without a version are by default version 0*/
 		void addFolderSimple( const String& folder, int version = 0 )
 		{
 			DEBUG_MESSAGE( "[" << folder.ASCII() << "]" );
@@ -242,6 +271,9 @@ namespace Dojo {
 			addTables( folder );
 		}
 		
+		///adds a localization folder located in baseFolder, choosing it using the current locale
+		/** 
+		for example, "base/en" if en; "base/it" if it, etc */
 		void addLocalizedFolder( const String& basefolder, int version = 0 )
 		{
 			String lid = basefolder;
