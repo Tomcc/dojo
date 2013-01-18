@@ -68,7 +68,7 @@
     <ClInclude Include="include\dojo\TextArea.h" />
     <ClInclude Include="include\dojo\Texture.h" />
     <ClInclude Include="include\dojo\Timer.h" />
-    <ClInclude Include="include\dojo\TouchSource.h" />
+    <ClInclude Include="include\dojo\TouchArea.h" />
     <ClInclude Include="include\dojo\Utils.h" />
     <ClInclude Include="include\dojo\Vector.h" />
     <ClInclude Include="include\dojo\Viewport.h" />

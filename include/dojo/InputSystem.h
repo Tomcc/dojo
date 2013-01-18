@@ -101,7 +101,8 @@ namespace Dojo
 		}
 
 		///registers a new device to this InputSystem
-		/** and sends an event about its connection to the listeners */
+		/** 
+		and sends an event about its connection to the listeners */
 		inline void addDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( !mDeviceList.exists( device ) );
@@ -112,7 +113,8 @@ namespace Dojo
 		}
 
 		///unregisters a new device to this InputSystem
-		/** and sends an event about its disconnection to the listeners */
+		/** 
+		and sends an event about its disconnection to the listeners */
 		inline void removeDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( mDeviceList.exists( device ) );

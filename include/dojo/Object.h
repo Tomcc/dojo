@@ -23,7 +23,8 @@ namespace Dojo {
 	class Renderable;
 	
 	///Object is the base class of any object that can be placed and moved in a GameState
-	/** it has a position, a speed, a rotation and a scale that are used to determine its world transform.
+	/** 
+	it has a position, a speed, a rotation and a scale that are used to determine its world transform.
 	When other Objects are attached to a single root Object as children, they share their parent's
 	world transform and move in its local space
 

@@ -18,6 +18,13 @@ namespace Dojo
     class GameState;
     class Renderable;
     
+	///A TouchArea is an Object used as the basic building block for UI buttons
+	/**
+	When added to a GameState, a TouchArea will send Pressed and Released events to its listeners,
+	each time that the touch count on it change from 0 to one or more.
+	
+	Touching again an already touched TouchArea *will not* spawn new Pressed and Released events.
+	*/
     class TouchArea : public Object
     {
     public:
@@ -26,7 +33,9 @@ namespace Dojo
         {
         public:
             
-            virtual void onTouchAreaPressed( Dojo::TouchArea* )     {}			
+			///Pressed is sent when a previously untouched area is tapped
+            virtual void onTouchAreaPressed( Dojo::TouchArea* )     {}	
+			///Released is sent when a previously touched (one or more touches) is released
             virtual void onTouchAreaReleased( Dojo::TouchArea* )	{}
             
         protected:            
@@ -50,11 +59,6 @@ namespace Dojo
         inline int getLayer()
         {
             return mLayer;
-        }
-        
-        void onTouch( bool touch )
-        {
-           
         }
         
         inline void _incrementTouches()

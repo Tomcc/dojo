@@ -46,8 +46,7 @@ namespace Dojo
 		///Creates a plane centered in C and passing from points A and B
 		inline void setup( const Vector& center, const Vector& A, const Vector& B )
 		{
-			n = (A-center) ^ (B-center);
-			n.normalize();
+			n = ((A-center) ^ (B-center)).normalized();
 			
 			d = -( center * n);
 		}

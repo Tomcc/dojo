@@ -84,7 +84,8 @@ namespace Dojo
 			}
 
 			///gets the current animation time
-			/** \remark goes back to 0 when the animation loops! */
+			/** 
+			\remark goes back to 0 when the animation loops! */
 			inline float getCurrentTime()
 			{
 				return animationTime;
@@ -178,7 +179,8 @@ namespace Dojo
 		}
 		
 		///forces an animation with the given FrameSet
-		/** \remark the FrameSet named "name" has to exist in the GameState used to create the AnimatedQuad*/
+		/**
+		 \remark the FrameSet named "name" has to exist in the GameState used to create the AnimatedQuad*/
 		void immediateAnimation( const String& name, float timePerFrame );
 		
 		///returns the default screen size for the current animation frame
@@ -228,7 +230,8 @@ namespace Dojo
 		}
 		
 		///forces the animation to a given time ratio
-		/** \param t a ratio value where 0 is animation start and 1 is animation end; a value outside [0..1] will make the animation loop. */
+		/** 
+		\param t a ratio value where 0 is animation start and 1 is animation end; a value outside [0..1] will make the animation loop. */
 		inline void setAnimationPercent( float t )
 		{
 			DEBUG_ASSERT( animation );

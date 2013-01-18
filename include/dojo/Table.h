@@ -13,7 +13,8 @@
 namespace Dojo
 {
 	///Table is the internal representation of the Dojo Script data definition format
-	/** a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, String, Color, Raw Data and Table itself.
+	/** 
+	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, String, Color, Raw Data and Table itself.
 	
 	set( key, value ) sets a value to the given key;
 	get*( key, defaultValue ) gets the value of the given key, or returns defaultValue if the key was not found 
@@ -249,7 +250,8 @@ namespace Dojo
 		}		
 		
 		///creates a new nested table named key
-		/** nested Tables always have name == key */
+		/** 
+		nested Tables always have name == key */
 		inline Table* createTable( const String& key = String::EMPTY )
 		{	
 			String name;
@@ -277,7 +279,8 @@ namespace Dojo
 		}		
 		
 		///Inherits all the member in table t
-		/** After the call, this Table contains a copy of all the field defined in t but not here. 
+		/** 
+		After the call, this Table contains a copy of all the field defined in t but not here. 
 		Nested Tables are an exception as if they're defined in both, the local nested table will
 		recursively inherit the other nested table.
 		*/

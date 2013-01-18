@@ -57,7 +57,8 @@ namespace Dojo
 		inline FontSystem* getFontSystem()		{	return fonts;	}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
-		/** useful to evaluate performance when FPS are locked by the fixed run loop.
+		/**
+		useful to evaluate performance when FPS are locked by the fixed run loop.
 		*/
 		inline double getRealFrameTime()		{	return realFrameTime;	}
 

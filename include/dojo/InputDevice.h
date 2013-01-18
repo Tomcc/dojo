@@ -120,7 +120,8 @@ namespace Dojo
 		}
 
 		///returns the action bound to this KeyCode
-		/** /remark the default action for unassigned keys is the key number itself */
+		/** 
+		/remark the default action for unassigned keys is the key number itself */
 		inline int getActionForKey( KeyCode key )
 		{
 			KeyActionMap::iterator elem = mBindings.find( key );

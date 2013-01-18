@@ -20,7 +20,8 @@
 namespace Dojo 
 {
 	///A FrameSet represents a sequence of Textures, with an unique "prefix name" used by Animations and ResourceGroups (which do not manage Textures directly)
-	/** there are two ways to specify a FrameSet:
+	/** 
+	there are two ways to specify a FrameSet:
 
 	-the easier one is to name more than one image with a common prefix and a sequential tag, ie:
 	ninja_walk_1.png
@@ -108,7 +109,8 @@ namespace Dojo
 		}
 		
 		///returns the (looped!) frame at index i
-		/** if i > number of frames, i is looped over n as in i % size() */
+		/** 
+		if i > number of frames, i is looped over n as in i % size() */
 		inline Texture* getFrame( uint i )			
 		{	
 			return frames.at( i%frames.size() );	

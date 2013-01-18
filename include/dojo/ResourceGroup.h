@@ -23,7 +23,8 @@
 namespace Dojo 
 {
 	///A ResourceGroup manages all of the Resources in Dojo
-	/** Resources and folders are first added to a ResourceGroup via add* methods, but they are NOT loaded;
+	/** 
+	Resources and folders are first added to a ResourceGroup via add* methods, but they are NOT loaded;
 	actual loading happens when loadResources() is called.
 	This allows to unload and reload the resources without breaking the game's state, by keeping the "empty" Resource objects as placeholders.
 

@@ -58,7 +58,8 @@ namespace Dojo
 				if( source ) alSourcef (source, AL_PITCH,  pitch);			
 			}
 			///if true, the buffer attached to this source will be destroyed when the playback ends!
-			/** useful for big one-shot sounds such as dialogue */
+			/** 
+			useful for big one-shot sounds such as dialogue */
 			inline void setFlushMemoryWhenRemoved(bool f)	{		flush = f;		}
 			
 			///if autoremove is disabled, SoundManager won't garbage collect this Source

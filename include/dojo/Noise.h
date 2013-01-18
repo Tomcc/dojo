@@ -22,7 +22,8 @@ namespace Dojo
 	public:
 		
 		///Creates a Noise object drawing numbers from the given Random generator
-		/** this allows to use the same random to obtain the same Perlin distribution */
+		/** 
+		this allows to use the same random to obtain the same Perlin distribution */
 		Noise( Random& rand )
 		{
 			for( int i = 0; i < 256; ++i )
@@ -69,14 +70,16 @@ namespace Dojo
 		}   
 		
 		///returns the Perlin noise at position x,y,z with an octave given by "scale"
-		/** a bigger scale will generate bigger Perlin features */
+		/** 
+		a bigger scale will generate bigger Perlin features */
 		float noise( float x, float y, float z, float scale ) 
 		{
 			return 0.5f * scale * perlinNoise( x/scale, y/scale, z/scale );
 		}
 		
 		///returns the Perlin noise at position x,y with an octave given by "scale"
-		/** a bigger scale will generate bigger Perlin features;
+		/** 
+		a bigger scale will generate bigger Perlin features;
 		z is used to return different "planes" at different scales, generating completely different 2D slices at each scale.*/
 		float noise( float x, float y, float scale ) 
 		{

@@ -171,7 +171,8 @@ namespace Dojo
 		}
 		
 		///reserves count elements on the vertex buffer, to avoid costly reallocations
-		/** only effective after the right vertex fields have been enabled! */
+		/** 
+		only effective after the right vertex fields have been enabled! */
 		void setVertexCap( uint count );
 
 		///reserves count indices on the index buffer, to avoid costly reallocations
