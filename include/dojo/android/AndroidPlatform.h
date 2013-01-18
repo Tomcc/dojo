@@ -2,6 +2,8 @@
 #define ANDROIDPLATFORM_H
 
 #include "Platform.h"
+#include "InputSystem.h"
+#include "SoundManager.h"
 #include "Vector.h"
 
 #ifdef PLATFORM_ANDROID
@@ -14,7 +16,7 @@
 #include <GLES2/gl2ext.h>
 #include <android/sensor.h>
 #include <android/log.h>
-#include <android/native_activity.h>
+#include <android_native_app_glue.h>
 #include <android_native_app_glue.h>
 #include "Timer.h"
 

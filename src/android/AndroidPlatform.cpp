@@ -34,22 +34,27 @@ extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* e
 
 			int count = AMotionEvent_getPointerCount(event);
 			for(int i = 0;i < count ; i++) 
-					input->_fireTouchBeginEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-							                         AMotionEvent_getY(event, i)));
+					self->input->_fireTouchBeginEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                               AMotionEvent_getY(event, i)));
 
 		} else if (flags == AMOTION_EVENT_ACTION_UP || flags == AMOTION_EVENT_ACTION_POINTER_UP) { //up
 
 			int count = AMotionEvent_getPointerCount(event);
 			for(int i = 0;i < count ; i++) 
-					input->_fireTouchEndEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-							                       AMotionEvent_getY(event, i)));
+					self->input->_fireTouchEndEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                             AMotionEvent_getY(event, i)));
 
 		} else if (flags == AMOTION_EVENT_ACTION_MOVE) {                                           //move
 
 			int count = AMotionEvent_getPointerCount(event);
-			for(int i = 0;i < count ; i++) 
-					input->_fireTouchMoveEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-							                        AMotionEvent_getY(event, i)));
+			Dojo::Vector tmp;
+			if(count) tmp=Dojo::Vector(AMotionEvent_getX(event, 0),AMotionEvent_getY(event, 0));
+			if(count==1) self->input->_fireTouchMoveEvent(tmp,tmp);			
+			for(int i = 1;i < count ; i++){ 
+					self->input->_fireTouchMoveEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                              AMotionEvent_getY(event, i)),tmp);
+					tmp=Dojo::Vector(AMotionEvent_getX(event,1),AMotionEvent_getY(event,1));
+			}
 
 		} else if (flags == AMOTION_EVENT_ACTION_CANCEL) {                                         //????? DOJO event??
 			//save_fingers_input(input,event, IF_CANCEL);
@@ -108,7 +113,7 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		if(cmd==APP_CMD_LOST_FOCUS){
 		    // When our app loses focus, we stop monitoring the accelerometer.
 		    // This is to avoid consuming battery while not being used.
-		    if (self != NULL && accelerometerSensor != NULL) {
+		    if (self != NULL && self->accelerometerSensor != NULL) {
 		        ASensorEventQueue_disableSensor(self->sensorEventQueue,self->accelerometerSensor);
 		    }
 		}
@@ -180,10 +185,10 @@ void AndroidPlatform::initialise(Game *g)
     this->app=GetAndroidApp();
     //accelerometer
     this->sensorManager = ASensorManager_getInstance();
-    this->accelerometerSensor = ASensorManager_getDefaultSensor(input_android->sensorManager,ASENSOR_TYPE_ACCELEROMETER);
+    this->accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
     //dojo object
     render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
-    input  = new TouchSource();
+    input  = new InputSystem();
     sound  = new SoundManager();
     //start the game
     game->begin();
@@ -240,7 +245,7 @@ void AndroidPlatform::step( float dt )
 void AndroidPlatform::UpdateEvent(){
 	if(sensorEventQueue==0){
 		sensorEventQueue =ASensorManager_createEventQueue(sensorManager,
-								  GET_LOOPER,
+								  app->looper,
 								  LOOPER_ID_USER,
 								  NULL, NULL);
 		 ASensorEventQueue_enableSensor(sensorEventQueue,accelerometerSensor);
@@ -253,12 +258,12 @@ void AndroidPlatform::UpdateEvent(){
 	int ident,events;
 	struct android_poll_source* source;
 	while ((ident = ALooper_pollAll(0, NULL, &events,(void**)&source)) >= 0){
-		if (source != NULL) source->process(GET_STATE, source);
+		if (source != NULL) source->process(app, source);
 		//GET SENSOR
                 if (ident == LOOPER_ID_USER) {
                     if (accelerometerSensor != NULL) {
                         ASensorEvent event;
-                        while (ASensorEventQueue_getEvents(input_android->sensorEventQueue, &event, 1) > 0) {
+                        while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0) {
 			   input->_fireAccelerationEvent(Dojo::Vector(event.acceleration.x,
 								      event.acceleration.y,
 								      event.acceleration.z),0);

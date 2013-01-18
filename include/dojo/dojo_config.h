@@ -28,7 +28,7 @@
 	#endif
 
 //are we on GNU/Linux?
-#elif defined( __linux )
+#elif defined( __linux ) && !defined( __ANDROID__ )
 	#define PLATFORM_LINUX
 
 #elif defined( __ANDROID__ )

@@ -1,8 +1,14 @@
 #include "stdafx.h"
 
+#include "dojo_common_header.h"
 #include "DebugUtils.h"
 
 using namespace Dojo;
+
+#ifdef PLATFORM_ANDROID
+//stream string buffer
+std::stringstream  debug_stream_android;
+#endif
 
 //the default assert fail implementation
 void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file )
@@ -18,6 +24,11 @@ void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, 
 	DebugBreak();
 #elif defined( PLATFORM_LINUX )
 	raise( SIGTRAP );
+#elif defined( PLATFORM_ANDROID )
+	//https://groups.google.com/forum/#!msg/android-ndk/jZG9avVjDBY/22WaArngxqYJ
+	//__asm__ ("bkpt 0");	
+	//TODO implement something
+	raise( SIGTRAP ); 
 #else
 	#error unsupported platform
 #endif
