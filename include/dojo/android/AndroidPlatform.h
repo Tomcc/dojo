@@ -94,6 +94,8 @@ namespace Dojo
 		ASensorManager* sensorManager;
 		const ASensor* accelerometerSensor;
 		ASensorEventQueue* sensorEventQueue;
+		//android accelerometer
+		void UpdateEvent();
 		
 		//openGL EGL
 		int running;

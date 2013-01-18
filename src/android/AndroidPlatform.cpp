@@ -26,8 +26,37 @@ extern "C" int ANDROID_VALID_DEVICE;
 extern  "C" struct android_app* GetAndroidApp();
 //EVENT APP
 extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* event) {
-                //get platform
-		AndroidPlatform* self = (AndroidPlatform*)app->userData;
+		//get platform
+		AndroidPlatform* self = app->userData ? (AndroidPlatform*)app->userData : NULL;
+
+		unsigned int flags = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+		if (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_POINTER_DOWN) { //down
+
+			int count = AMotionEvent_getPointerCount(event);
+			for(int i = 0;i < count ; i++) 
+					input->_fireTouchBeginEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                         AMotionEvent_getY(event, i)));
+
+		} else if (flags == AMOTION_EVENT_ACTION_UP || flags == AMOTION_EVENT_ACTION_POINTER_UP) { //up
+
+			int count = AMotionEvent_getPointerCount(event);
+			for(int i = 0;i < count ; i++) 
+					input->_fireTouchEndEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                       AMotionEvent_getY(event, i)));
+
+		} else if (flags == AMOTION_EVENT_ACTION_MOVE) {                                           //move
+
+			int count = AMotionEvent_getPointerCount(event);
+			for(int i = 0;i < count ; i++) 
+					input->_fireTouchMoveEvent(Dojo::Vector(AMotionEvent_getX(event, i),
+							                        AMotionEvent_getY(event, i)));
+
+		} else if (flags == AMOTION_EVENT_ACTION_CANCEL) {                                         //????? DOJO event??
+			//save_fingers_input(input,event, IF_CANCEL);
+		} else {
+			return 0;
+		}
+
 		return 0;
 	}
 extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
@@ -46,7 +75,7 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		else
 		if(cmd==APP_CMD_RESUME){
 			//is RESUME
-			self->isInPause=false;
+			if(self) self->isInPause=false;
 		}
 		else
 		if( cmd==APP_CMD_TERM_WINDOW ){
@@ -67,6 +96,21 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 				self->isInPause=true;
 			}
 			//waiting
+		}else
+		if (cmd==APP_CMD_GAINED_FOCUS){
+		    // When our app gains focus, we start monitoring the accelerometer.
+		   if (self != NULL && self->accelerometerSensor != NULL) {
+		        ASensorEventQueue_enableSensor(self->sensorEventQueue,self->accelerometerSensor);
+		        // We'd like to get 60 events per second (in us).
+		        ASensorEventQueue_setEventRate(self->sensorEventQueue,self->accelerometerSensor,(1000L/60)*1000);
+		    }
+		}
+		if(cmd==APP_CMD_LOST_FOCUS){
+		    // When our app loses focus, we stop monitoring the accelerometer.
+		    // This is to avoid consuming battery while not being used.
+		    if (self != NULL && accelerometerSensor != NULL) {
+		        ASensorEventQueue_disableSensor(self->sensorEventQueue,self->accelerometerSensor);
+		    }
 		}
 	}
 
@@ -134,10 +178,13 @@ void AndroidPlatform::initialise(Game *g)
     DEBUG_ASSERT( GetAndroidApp() );
     GetAndroidApp()->userData=(void*)this;
     this->app=GetAndroidApp();
+    //accelerometer
+    this->sensorManager = ASensorManager_getInstance();
+    this->accelerometerSensor = ASensorManager_getDefaultSensor(input_android->sensorManager,ASENSOR_TYPE_ACCELEROMETER);
     //dojo object
     render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
-    //sound  = new SoundManager();
-    //input  = new TouchSource();
+    input  = new TouchSource();
+    sound  = new SoundManager();
     //start the game
     game->begin();
 }   
@@ -181,12 +228,49 @@ void AndroidPlatform::present()
 void AndroidPlatform::step( float dt )
 {
 	DEBUG_ASSERT( running );
+	//update accelerometer	
+	UpdateEvent();
+	//update game
 	game->loop( dt );
 	render->render();	
 	//sound->update( dt );
 
 }
 
+void AndroidPlatform::UpdateEvent(){
+	if(sensorEventQueue==0){
+		sensorEventQueue =ASensorManager_createEventQueue(sensorManager,
+								  GET_LOOPER,
+								  LOOPER_ID_USER,
+								  NULL, NULL);
+		 ASensorEventQueue_enableSensor(sensorEventQueue,accelerometerSensor);
+		// We'd like to get 60 events per second (in us).
+		ASensorEventQueue_setEventRate(sensorEventQueue,
+		                               accelerometerSensor,
+		                               (1000L/60)*1000);
+	}
+
+	int ident,events;
+	struct android_poll_source* source;
+	while ((ident = ALooper_pollAll(0, NULL, &events,(void**)&source)) >= 0){
+		if (source != NULL) source->process(GET_STATE, source);
+		//GET SENSOR
+                if (ident == LOOPER_ID_USER) {
+                    if (accelerometerSensor != NULL) {
+                        ASensorEvent event;
+                        while (ASensorEventQueue_getEvents(input_android->sensorEventQueue, &event, 1) > 0) {
+			   input->_fireAccelerationEvent(Dojo::Vector(event.acceleration.x,
+								      event.acceleration.y,
+								      event.acceleration.z),0);
+                        }
+                    }
+                }
+		if (app->destroyRequested != 0) {
+			return;
+		}
+	}
+
+}
 
 void AndroidPlatform::loop( float frameTime )
 {
