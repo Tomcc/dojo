@@ -180,7 +180,6 @@ namespace Dojo
 			*this += '.';
 
 			int n;
-			unichar c;
 			for( int i = 0; i < digits && f != 0; ++i )
 			{
 				//append the remainder
