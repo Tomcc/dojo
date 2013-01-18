@@ -36,23 +36,26 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop( float frameTime );
 
+		/*
 		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path);
 		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out);
 		virtual uint loadFileContent( char*& bufptr, const std::string& path);
-        virtual uint loadAudioFileContent(ALuint& i, const std::string& name);
+        	virtual uint loadAudioFileContent(ALuint& i, const std::string& name);
 		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height);
-		
-		virtual void load(  Table* dest );
-		virtual void save(  Table* table );
+		*/
+		//TODO
+		virtual void load(  Table* dest ){}
+		virtual void save(  Table* table ){}
 
-		virtual void openWebPage( const std::string& site );
+		virtual void openWebPage( const std::string& site ){}
 		
-		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
+		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height ){}
 		
-		virtual String getAppDataPath();
-		virtual String getRootPath();
+		virtual String getAppDataPath(){}
+		virtual String getRootPath(){}
 		
-		virtual void openWebPage( const String& site );
+		virtual void openWebPage( const String& site ){}
+		
 		
 
 	protected:

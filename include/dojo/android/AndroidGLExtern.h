@@ -5,7 +5,7 @@
 	#include <GLES/gl.h>
 	#include <GLES/glext.h>
 	#include <GLES2/gl2.h>
-    #include <GLES2/gl2ext.h>
+        #include <GLES2/gl2ext.h>
 	
 	
 	#define glGenRenderbuffers			glGenRenderbuffersOES
@@ -19,11 +19,15 @@
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
 	#define glBlendEquation             glBlendEquationOES
 	
-    #define glBindVertexArray           glBindVertexArrayOES
-    #define glGenVertexArrays           glGenVertexArraysOES
-    #define glDeleteVertexArrays        glDeleteVertexArraysOES
+    	#define glBindVertexArray           glBindVertexArrayOESEXT
+    	#define glGenVertexArrays           glGenVertexArraysOESEXT
+    	#define glDeleteVertexArrays        glDeleteVertexArraysOESEXT
+
 	//#define GL_FUNC_ADD GL_FUNC_ADD_OES
-	
+        extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOESEXT;
+        extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOESEXT;
+        extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOESEXT;
+
 	extern void ExternInitOpenGL();
 	
 #endif
