@@ -4,7 +4,6 @@
 
 #include "Render.h"
 #include "Platform.h"
-#include "Model.h"
 #include "Game.h"
 #include "AnimatedQuad.h"
 #include "Sprite.h"
@@ -40,7 +39,7 @@ zFar( 1000 )
 	targetSize.y = (float)Platform::getSingleton()->getWindowHeight();
 	
 	//create the fader object			
-	fadeObject = new Model( level, Vector::ZERO, "texturedQuad", String::EMPTY );
+	fadeObject = new Renderable( level, Vector::ZERO, "texturedQuad" );
 	fadeObject->color = Color( 0, 0, 0, 0 );
 	
 	fadeObject->scale.x = size.x;

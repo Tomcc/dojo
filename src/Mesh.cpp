@@ -37,7 +37,7 @@ inline void checkGLError()
 	DEBUG_ASSERT_MSG( g == GL_NO_ERROR, ( "OpenGL encountered an error: " + err ).ASCII().c_str() );
 }
 
-#ifndef _FINAL
+#ifndef _DEBUG
 	#define CHECK_GL_ERROR	checkGLError()
 #else
 	#define CHECK_GL_ERROR

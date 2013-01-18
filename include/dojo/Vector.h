@@ -18,7 +18,7 @@ namespace Dojo
 	typedef glm::mat4x4 Matrix;
 	typedef glm::quat Quaternion;
 	
-	///attempt to some backwards compatibility and general interface decency for Vector
+	///a wrapper to glm::tvec3, providing the most common Vector algebra needs
 	class Vector : public glm::vec3
 	{
 	public:
@@ -33,11 +33,13 @@ namespace Dojo
 		static const Vector ONE;
 		static const Vector MAX, MIN;
 		
+		///xyz are set to the same value, or 0
 		Vector( float f = 0 ) : glm::vec3(f)
 		{
 			
 		}
 				
+		///2D constructor - xy are initialized and z is set to 0
 		Vector( float X, float Y ) : glm::vec3( X, Y, 0 )
 		{
 			
@@ -57,15 +59,6 @@ namespace Dojo
 		{
 
 		}
-
-		/*inline const Vector& operator = ( const Vector& v )
-		{
-			x = v.x;
-			y = v.y;
-			z = v.z;
-			
-			return *this;
-		}*/
 				
 		inline const Vector& operator += ( const Vector& v )
 		{
@@ -95,11 +88,6 @@ namespace Dojo
 			return Vector( x * s, y * s, z * s );
 		}
 
-		/*inline Vector operator / ( float s ) const 
-		{
-			return Vector( x/s, y/s, z/s );
-		}*/
-
 		inline float operator * ( const Vector& v ) const 
 		{
 			return glm::dot( (const glm::vec3&)(*this), (const glm::vec3&)v );
@@ -110,53 +98,24 @@ namespace Dojo
 			return glm::cross( *this, v );
 		}
 
-		inline const float length()
+		///returns the length of this Vector
+		inline const float length() const
 		{
 			return sqrtf( x*x + y*y + z*z );
 		}
 		
-		inline const float normalize()
-		{
-			float l = (float)length();
-			float s = 1.f / l;
-			x *= s;
-			y *= s;
-			z *= s;
-
-			return l;
-		}	
-		
+		///returns a normalized copy of this Vector
 		inline Vector normalized() const
 		{
-			Vector v = *this;
-			v.normalize();
-			
-			return v;
+			float l = length();
+			return Vector( x/l, y/l, z/l );
 		}
-		
+
+		///linearly interpolates the two vectors
 		inline Vector lerp( float s, const Dojo::Vector& v )
 		{			
 			float invs = 1.f - s;			
 			return Vector( x*s + invs*v.x, y*s + invs*v.y, z*s + invs*v.z);
-		}
-
-		/*inline const Vector& reflect( const Dojo::Vector& normal )
-		{
-			float dot = 2.f * ( *this * normal );
-			x -= dot * normal.x;
-			y -= dot * normal.y;
-			z -= dot * normal.z;
-
-			return *this;
-		}*/
-
-		inline const Vector& scale( const Vector& scale )
-		{
-			x *= scale.x;
-			y *= scale.y;
-			z *= scale.z;
-
-			return *this;
 		}
 		
 		///returns a vector with abs componenents
@@ -177,11 +136,13 @@ namespace Dojo
 			return Vector( x/v.x, y/v.y, z/v.z );
 		}
 
+		///returns the distance from this to v
 		inline float distance( const Vector& v ) const 
 		{
 			return sqrt( distanceSquared(v) );
 		}
-		
+
+		///returns the squared (and faster to compute) distance from this to v
 		inline float distanceSquared( const Vector& v ) const
 		{
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);

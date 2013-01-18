@@ -15,12 +15,19 @@ namespace Dojo
 	class Email;
 	class ApplicationListener;
 	
+	///Platform is the base of the engine; it runs the main loop, creates the windows and updates the Game
+	/** the Platform is the first object to be initialized in a Dojo game, using the static method Platform::create() */
 	class Platform
 	{
 	public:
 
-		static Platform* createNativePlatform( const Table& config = Table::EMPTY_TABLE );
+		///creates the Platform
+		/**
+		\param config pass a non-empty Table to override the loading from the Platform User Configuration table, found in APPDATA/GAME_NAME/config.ds
+		*/
+		static Platform* create( const Table& config = Table::EMPTY_TABLE );
 
+		///shuts down the platform and the game
 		static void shutdownPlatform();
 
 		inline static  Platform* getSingleton()
@@ -28,58 +35,60 @@ namespace Dojo
 			DEBUG_ASSERT( singleton );
 
 			return singleton;
-		}
-	
-		Platform( const Table& configTable ) :
-		config( configTable ),
-		running( false ),
-		game( NULL ),
-		sound( NULL ),
-		render( NULL ),
-		input( NULL ),
-		realFrameTime( 0 ),
-		mFullscreen( 0 ),
-		mFrameSteppingEnabled( false )
-		{
-
-		}		
+		}	
 		
 		virtual ~Platform()
 		{
 			
 		}
 		
-		inline void setGame( Game* g )
-		{
-			DEBUG_ASSERT( g );
-			game = g;
-		}		
-		
 		inline Game* getGame()
 		{
 			return game;
 		}
 
+		///returns the SoundManager instance
 		inline SoundManager* getSoundManager()	{	return sound;	}
+		///returns the Render instance
 		inline Render* getRender()				{	return render;	}
+		///returns the InputSystem instance
 		inline InputSystem* getInput()			{	return input;	}
+		///returns the FontSystem instance
 		inline FontSystem* getFontSystem()		{	return fonts;	}
+
+		///returns "real frame time" or the time actually consumed by game computations in the last frame
+		/**
+		useful to evaluate performance when FPS are locked by the fixed run loop.
+		*/
 		inline double getRealFrameTime()		{	return realFrameTime;	}
+
+		///gets the ISO locale code, es: en, it, de, se, fr
 		inline const String& getLocale()		{	return locale;	}
 		
+		///gets the physical screen width
 		inline int getScreenWidth()             {   return screenWidth;     }
-		inline int getScreenHeight()            {   return screenHeight;    }
+		///gets the physical screen height
+		inline int getScreenHeight()			{   return screenHeight;    }
+
+		///gets the physical screen orientation
 		inline int getScreenOrientation()       {   return screenOrientation;   }
 
+		///gets the window width
 		inline int getWindowWidth()             {   return windowWidth;     }
+		///gets the window height
 		inline int getWindowHeight()            {   return windowHeight;    }
 		
 		bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
+
+		///tells if it is running fullscreen
 		bool isFullscreen()		{	return mFullscreen; }
 		
 		inline bool isRunning()					{	return running; }
 		
-		virtual void initialise()=0;
+		///initializes the platform and calls Game::onBegin()
+		virtual void initialise( Game* game )=0;
+
+		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown()=0;
 		
 		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
@@ -96,7 +105,7 @@ namespace Dojo
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
-		inline void addFocusListener( ApplicationListener* f )
+		inline void addApplicationListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f );
 			DEBUG_ASSERT( !focusListeners.exists( f ) );
@@ -104,13 +113,14 @@ namespace Dojo
 			focusListeners.add( f );
 		}
 
-		inline void removeFocusListener( ApplicationListener* f )
+		inline void removeApplicationListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f  );
 
 			focusListeners.remove( f );
 		}
 
+		///returns true if the device is able to manage non-power-of-2 textures
 		virtual bool isNPOTEnabled()=0;
 		
 		///returns TRUE if the screen is physically "small", not dependent on resolution
@@ -122,25 +132,41 @@ namespace Dojo
 			return false;
 		}
 		
+		///returns the application data path for this game
 		virtual String getAppDataPath()=0;
+		///returns the root path for this game (eg. workind directory)
 		virtual String getRootPath()=0;
 		
+		///returns the user configuration table
 		const Table& getUserConfiguration()
 		{
 			return config;
 		}
 
+		///loads the whole file allocating a new buffer
 		uint loadFileContent( char*& bufptr, const String& path );
 				
-		void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );		
+		///discovers all the files with an extension in a folder
+		/**\param type type extension, es "png"
+		\param path path where to look for, non recursive
+		\param out vector where the results are appended*/
+		void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
+
+		///loads the table found at absPath into dest
+		/**if absPath is empty, the table file is loaded from $(Appdata)/$(GameName)/$(TableName).ds */
 		void load( Table* dest, const String& absPath = String::EMPTY );
+		
+		///saves the table found at absPath into dest
+		/**if absPath is empty, the table file is saved to $(Appdata)/$(GameName)/$(TableName).ds */
 		void save( Table* table, const String& absPath = String::EMPTY );
 		
+		///returns true if an application is blocking the system output for this app, eg. a call or the mp3 player on iOS
 		virtual bool isSystemSoundInUse()
 		{
 			return false;
 		}
 
+		///opens a web page in the default browser
 		virtual void openWebPage( const String& site )=0;
 		
 		///send an email object
@@ -157,6 +183,21 @@ namespace Dojo
 		void _fireTermination();
 
 	protected:
+
+		///protected singleton constructor
+		Platform( const Table& configTable ) :
+			config( configTable ),
+			running( false ),
+			game( NULL ),
+			sound( NULL ),
+			render( NULL ),
+			input( NULL ),
+			realFrameTime( 0 ),
+			mFullscreen( 0 ),
+			mFrameSteppingEnabled( false )
+		{
+
+		}	
 
 		static Platform* singleton;
 		

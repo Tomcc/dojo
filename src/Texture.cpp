@@ -297,6 +297,8 @@ bool Texture::onLoad()
 		return loadFromFile( filePath );
 	else if( parentAtlas )
 		return _setupAtlas();
+	else
+		return false;
 }
 
 void Texture::onUnload( bool soft )

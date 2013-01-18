@@ -7,10 +7,12 @@
 
 namespace Dojo
 {
+	///StringReader wraps a Dojo::String to help parsing
 	class StringReader
 	{
 	public:
 
+		///UTF-32 constructor
 		StringReader( const String& string ) :
 		wcharStr( &string ),
 		utf8Str( NULL ),
@@ -20,6 +22,7 @@ namespace Dojo
 
 		}
 
+		///UTF-8 constructor
 		StringReader( const std::string& string ) :
 		utf8Str( &string ),
 		wcharStr( NULL ),
@@ -196,7 +199,7 @@ namespace Dojo
 			return sign * res;
 		}
 
-
+		///reads n raw bytes from the file
 		inline void readBytes( void* dest, int sizeBytes )
 		{
 			DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );

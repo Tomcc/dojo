@@ -27,7 +27,7 @@ namespace Dojo
 		Win32Platform( const Table& config );
 		virtual ~Win32Platform();
 
-		virtual void initialise();
+		virtual void initialise( Game* g );
 		virtual void shutdown();
 
 		void prepareThreadContext();

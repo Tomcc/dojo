@@ -12,6 +12,17 @@
 
 namespace Dojo
 {
+	///Table is the internal representation of the Dojo Script data definition format
+	/** 
+	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, String, Color, Raw Data and Table itself.
+	
+	set( key, value ) sets a value to the given key;
+	get*( key, defaultValue ) gets the value of the given key, or returns defaultValue if the key was not found 
+	
+	Table does support numeric indexing via "auto values", or values which are not bound to a (explicit) name.
+	auto values can be queried using
+	get*( index, defaultValue )
+	*/
 	class Table : public Resource
 	{
 	public:
@@ -113,8 +124,10 @@ namespace Dojo
 			return '_' + String(i);
 		}
 
+		///loads the file at path into dest
 		static void loadFromFile( Table* dest, const String& path );
 		
+		///Creates a new table optionally named tablename
 		Table( const String& tablename = String::EMPTY ) :
 		Resource(),
 		name( tablename ),
@@ -137,7 +150,7 @@ namespace Dojo
 				map[ itr->first ] = itr->second->clone();
 		}
 
-		//resource constructor
+		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
 		Table( ResourceGroup* creator, const String& path ) :
 		Resource( creator, path ),
 		name( Utils::getFileName( path ) ),
@@ -163,6 +176,7 @@ namespace Dojo
 			}
 		}
 		
+		///sets the Table name
 		inline void setName( const String& newName )
 		{
 			DEBUG_ASSERT( newName.size() > 0 );
@@ -235,6 +249,9 @@ namespace Dojo
 			set( value.getName(), FT_TABLE, value );
 		}		
 		
+		///creates a new nested table named key
+		/** 
+		nested Tables always have name == key */
 		inline Table* createTable( const String& key = String::EMPTY )
 		{	
 			String name;
@@ -249,6 +266,7 @@ namespace Dojo
 			return getTable( name ); //TODO don't do another search
 		}
 		
+		///empties the map and deletes every value
 		void clear()
 		{					
 			unnamedMembers = 0;
@@ -260,6 +278,12 @@ namespace Dojo
 			map.clear();
 		}		
 		
+		///Inherits all the member in table t
+		/** 
+		After the call, this Table contains a copy of all the field defined in t but not here. 
+		Nested Tables are an exception as if they're defined in both, the local nested table will
+		recursively inherit the other nested table.
+		*/
 		void inherit( Table* t )
 		{
 			DEBUG_ASSERT( t );
@@ -284,6 +308,7 @@ namespace Dojo
 			}
 		}
 
+		///total number of entries
 		inline int size()
 		{
 			return (int)map.size();
@@ -294,6 +319,7 @@ namespace Dojo
 			return name;
 		}
 
+		///returns the total number of unnamed members
 		inline int getAutoMembers() const
 		{
 			return unnamedMembers;
@@ -309,6 +335,7 @@ namespace Dojo
 			return name.size() > 0;
 		}
 
+		///returns true if this Table contains key
 		inline bool exists( const String& key ) const
 		{
 			DEBUG_ASSERT( key.size() );
@@ -316,6 +343,7 @@ namespace Dojo
 			return map.find( key ) != map.end();
 		}
 
+		///returns true if this Table contains key and the value is of type t
 		inline bool existsAs( const String& key, FieldType t ) const
 		{
 			EntryMap::const_iterator itr = map.find( key );
@@ -328,6 +356,7 @@ namespace Dojo
 			return false;
 		}
 		
+		///generic get
 		inline Entry* get( const String& key ) const
 		{ 
 			return map.find( key )->second;

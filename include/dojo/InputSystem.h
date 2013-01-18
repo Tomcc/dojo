@@ -21,7 +21,14 @@ namespace Dojo
 	class Renderable;
 	class InputDevice;
 	
-	///keycodes, thanks to OIS Library
+	///InputSystem manages the input at the lower level in Dojo
+	/**
+	Listening to the InputSystem allows to be updated about 
+	-Touches on the touch screen, 
+	-Accelerations on the gyroscope, 
+	-mouse position and clicks
+	-InputDevice connection and disconnection
+	*/
 	class InputSystem : public ApplicationListener
 	{
 	public:
@@ -93,18 +100,28 @@ namespace Dojo
 			
 		}
 
+		///registers a new device to this InputSystem
+		/** 
+		and sends an event about its connection to the listeners */
 		inline void addDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( !mDeviceList.exists( device ) );
 
 			mDeviceList.add( device );
+
+			_fireDeviceConnected( device );
 		}
 
+		///unregisters a new device to this InputSystem
+		/** 
+		and sends an event about its disconnection to the listeners */
 		inline void removeDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( mDeviceList.exists( device ) );
 
-			mDeviceList.remove( device );
+			_fireDeviceDisconnected( device );
+
+			mDeviceList.remove( device );			
 		}
 		
 		inline void addListener( Listener* l )
@@ -129,30 +146,27 @@ namespace Dojo
 			}
 		}
 		
+		///enables or disables the whole input
 		inline void setEnabled( bool e )
 		{
 			enabled = e;
 		}
 		
+		///returns a list of the touches that existed in the last frame (that either began, or were kept still)
 		inline const TouchList& getTouchList()
 		{
 			return mTouchList;
 		}
 
+		///returns a list of the already connected devices
 		inline const DeviceList& getDeviceList() const
 		{
 			return mDeviceList;
 		}
 
-		virtual void onApplicationFocusLost()
-		{
-			//flush buffered state
-			//TODO
-		}
-
 		virtual void onApplicationFocusGained()
 		{
-			//fill in buffered state
+			//buffered states such as key presses etc could have changed while the app was out of focus!
 			//TODO
 		}
 
@@ -165,9 +179,6 @@ namespace Dojo
 		
 		void _fireShakeEvent();		
 		void _fireAccelerationEvent( const Dojo::Vector& accel, float roll );
-
-		void _fireDeviceConnected( Dojo::InputDevice* j );
-		void _removeDevice( Dojo::InputDevice* j );
 
 	protected:
 		
@@ -226,6 +237,9 @@ namespace Dojo
 			
 			return t;
 		}
+
+		void _fireDeviceConnected( Dojo::InputDevice* j );
+		void _fireDeviceDisconnected( Dojo::InputDevice* j );
 
 	};
 }

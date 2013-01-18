@@ -18,13 +18,21 @@
 
 namespace Dojo
 {	
+	///A Sprite is a wrapper around AnimatedQuad providing management for multiple registered Animations
 	class Sprite : public AnimatedQuad
 	{	
 		
 	public:
 				
 		typedef Array<Animation*> AnimationList;
-														
+								
+		///Creates a new Sprite in a GameState, at position Pos, with the given default Animation (which must exist!)
+		/**
+			\param level the level it will be created in
+			\param pos its position
+			\param defaultAnimName the name of animation 0
+			\param timePerFrame the frame time of the animation
+			\param pixelPerfect if pixelPerfect, an objects' scale is bound to the pixel size of the current frame and to the pixel size of the current Viewport. A pixelPerfect object can still be scaled using pixelScale.*/
 		Sprite( GameState* level, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = -1, bool pixelPerfect = true );
 				
 		virtual ~Sprite()
@@ -32,7 +40,7 @@ namespace Dojo
 			for( int i = 0; i < animations.size(); ++i )
 				SAFE_DELETE( animations.at(i) );
 						
-			//frames have to be relased manually from the group!
+			//frames have to be released manually from the group!
 		}		
 
 		virtual void reset()
@@ -67,6 +75,7 @@ namespace Dojo
 			return animations.size()-1;
 		}
 		
+		///registers an animation using the FrameSet named base
 		int registerAnimation( const String& base, float timePerFrame = -1 );
 				
 		///sets the animation at the given index

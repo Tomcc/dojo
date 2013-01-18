@@ -20,12 +20,15 @@ namespace Dojo
 	class Mesh;
 	class FrameSet;
 	
+	///A Texture is the image container in Dojo; all the images to be displayed need to be loaded in GPU memory using one
 	class Texture : public Resource
 	{
 	public:
 		 
+		///Create a empty new texture
 		Texture( ResourceGroup* creator = NULL );
 
+		///Create a empty new texture that will be loaded from path
 		Texture( ResourceGroup* creator, const String& path );
 		
 		virtual ~Texture();
@@ -37,6 +40,8 @@ namespace Dojo
 		bool loadFromFile( const String& path );
 				
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
+		/** 
+		a texture of this kind is loaded via an .atlasinfo and doesn't use VRAM in itself */
 		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
 
 		///loads the texture with the given parameters
@@ -54,11 +59,11 @@ namespace Dojo
 
 		void enableMipmaps();
 		
-		///warning - this does not free the allocated memory!
 		void disableMipmaps();
 
+		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void enableTiling();
-
+		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void disableTiling();
 				
 		inline uint getWidth()					{	return width;		}
@@ -73,12 +78,16 @@ namespace Dojo
 			return internalHeight;
 		}
 		
+		///Returns a parent atlas Texture if this texture is a "fake" tile atlas
 		inline Texture* getParentAtlas()		{	return parentAtlas;	}
+
+		///returns the FrameSet that will load and delete this Texture
 		inline FrameSet* getOwnerFrameSet()		{	return ownerFrameSet;}
 		
+		///returns the size this texture would have on-screen if drawn in a pixel-perfect way
 		inline const Vector& getScreenSize()	{	return screenSize;	}
 		
-		///obtain the optimal billboard to use this texture as a sprite!
+		///obtain the optimal billboard to use this texture as a sprite, when the device does not support Power of 2 Textures
 		inline Mesh* getOptimalBillboard()
 		{
 			if( !OBB )
@@ -88,6 +97,8 @@ namespace Dojo
 		}
 		
 		inline bool isNonPowerOfTwo()			{	return npot;		}
+
+		///true if it belongs to an atlas
 		inline bool isAtlasTile()				{	return parentAtlas != NULL;	}
 		
 		inline void _notifyScreenSize( const Vector& ss )

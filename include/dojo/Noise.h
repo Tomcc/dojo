@@ -16,10 +16,14 @@
 
 namespace Dojo 
 {
+	///Noise is a Perlin Noise utility implementation
 	class Noise
 	{
 	public:
 		
+		///Creates a Noise object drawing numbers from the given Random generator
+		/** 
+		this allows to use the same random to obtain the same Perlin distribution */
 		Noise( Random& rand )
 		{
 			for( int i = 0; i < 256; ++i )
@@ -39,7 +43,7 @@ namespace Dojo
 				p[256+i] = p[i];
 		}
 			
-		
+		///returns the Perlin noise at point x,y,z
 		float perlinNoise(float x, float y, float z) 
 		{
 			int X = (int)floor(x) & 255,                  // FIND UNIT CUBE THAT
@@ -65,21 +69,30 @@ namespace Dojo
 								  grad(p[BB+1], x-1.0f, y-1.0f, z-1.0f ))));
 		}   
 		
+		///returns the Perlin noise at position x,y,z with an octave given by "scale"
+		/** 
+		a bigger scale will generate bigger Perlin features */
 		float noise( float x, float y, float z, float scale ) 
 		{
 			return 0.5f * scale * perlinNoise( x/scale, y/scale, z/scale );
 		}
 		
+		///returns the Perlin noise at position x,y with an octave given by "scale"
+		/** 
+		a bigger scale will generate bigger Perlin features;
+		z is used to return different "planes" at different scales, generating completely different 2D slices at each scale.*/
 		float noise( float x, float y, float scale ) 
 		{
 			return noise( x, y, scale, scale );
 		}
 		
+		///returns the Perlin noise at x,y,z, scaled down to 0..1 range
 		float filternoise( float x, float y, float z, float scale ) 
 		{
 			return 0.5f * ( 1.0f + perlinNoise( x/scale, y/scale, z/scale ) );
 		}
-		
+
+		///returns the Perlin noise at x,y, scaled down to 0..1 range
 		float filternoise( float x, float y, float scale ) 
 		{
 			return filternoise( x, y, scale, scale );

@@ -18,7 +18,7 @@ namespace Dojo {
 		class SoundListener;
 		class SoundSource;
 
-		///Classe che gestisce il sistema Audio di Dojo.
+		///Dojo's audio system, based on OpenAL
 		class SoundManager 
 		{
 		public:
@@ -26,7 +26,6 @@ namespace Dojo {
 
 			static const float m;
 
-			///metodo statico per convertire la classe vector in vettore C-style.
 			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
 			{
 				DEBUG_ASSERT( ALpos );
@@ -37,6 +36,7 @@ namespace Dojo {
 			}
 
 			SoundManager();
+
 			~SoundManager();
 			
 			///clear() destroys the sound pool - use wisely!
@@ -54,9 +54,10 @@ namespace Dojo {
 				fadeState = FS_NONE;
 			}
 
-			///restituisce una fonte sonora con il suono dato
+			///Returns a sound source ready to play a new sound
 			SoundSource* getSoundSource( SoundSet* set, int i = -1 );
 
+			///Returns a sound source ready to play a new sound, with the position already set
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
 			{
 				DEBUG_ASSERT( set );
@@ -67,6 +68,7 @@ namespace Dojo {
 				return s;
 			}
 
+			///Plays the given set without spatial positioning
 			inline SoundSource* playSound( SoundSet* set )
 			{
 				DEBUG_ASSERT( set );
@@ -76,6 +78,7 @@ namespace Dojo {
 				return s;
 			}
 
+			///Plays the given set at pos
 			inline SoundSource* playSound( const Vector& pos, SoundSet* set )
 			{
 				DEBUG_ASSERT( set );
@@ -85,7 +88,10 @@ namespace Dojo {
 				return s;
 			}
 						
-			///setta la musica facendo un fade lineare in fadeTime rispetto alla track precedente
+			///Starts a new sound using it as background music
+			/**
+			\param trackFadeTime the duration of the intro fade-in
+			*/
 			void playMusic( SoundSet* music, float trackFadeTime = 0 );
 			
 			inline void pauseMusic()
@@ -97,7 +103,7 @@ namespace Dojo {
 			
 			void resumeMusic();
 
-			///interrompe la traccia corrente con un certo fade
+			///stops the music, with an optional fade-out
 			inline void stopMusic( float stopFadeTime = 0 )
 			{
 				if( musicTrack && !isMusicFading() )
@@ -132,7 +138,7 @@ namespace Dojo {
 				return musicTrack;
 			}
 			
-			///metodo utile per mettere in pausa tutte le sources attive
+			///pauses all the active SoundSources (excluding the background music!)
 			void pauseAll()
 			{
 				for( SoundSource* s : busySoundPool )
@@ -141,7 +147,7 @@ namespace Dojo {
 						s->pause();
 				}
 			}
-			
+			///resumes all the active SoundSources (excluding the background music!)
 			void resumeAll()
 			{
 				for( SoundSource* s : busySoundPool )
@@ -151,7 +157,7 @@ namespace Dojo {
 				}
 			}
 			
-			///sopts all playing sounds
+			///stops all the active SoundSources (excluding the background music!)
 			void stopAll()
 			{
 				for( SoundSource* s : busySoundPool )
@@ -161,18 +167,19 @@ namespace Dojo {
 				}
 			}
 			
-			//c'e' gia' un fade in corso?
+			///true if the music is fading
 			inline bool isMusicFading()		{	return fadeState != FS_NONE;	}
             ///is the music already playing?
             inline bool isMusicPlaying()    {   return musicTrack != NULL;      }
 			
+			///sets the openAL Listener's position
 			inline void setListenerPosition( const Vector& pos )
 			{				
 				vectorToALfloat(pos , listenerPos );
 				
 				alListenerfv(AL_POSITION, listenerPos);
 			}
-			
+			///sets the openAL Listener's orientation
 			inline void setListenerOrientation( const Vector& forward, const Vector& up )
 			{				
 				orientation[0] = forward.x;
@@ -185,7 +192,6 @@ namespace Dojo {
 				alListenerfv(AL_ORIENTATION, orientation);
 			}
 
-			///ereditato da Manager
 			void update( float dt );
 
 		protected:

@@ -76,7 +76,8 @@ namespace Dojo
 		
 #ifdef GAME_CENTER_ENABLED
 		///IOS SPECIFIC - checks game center availability and logins into it.
-		/** Returns true if no error occurred */
+		/** 
+		Returns true if no error occurred */
 		void loginToGameCenter( GameCenterListener* listener );
 		
 		void postScore( unsigned int score, const Dojo::String& leaderboard, GameCenterListener* listener );

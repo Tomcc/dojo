@@ -60,7 +60,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		return 0;
 
     case WM_MOUSEWHEEL: //mouse wheel moved
-		app->mouseWheelMoved( (int)((float)HIWORD(wparam)) / (float)WHEEL_DELTA );
+		app->mouseWheelMoved( (int)( (float)HIWORD(wparam) / (float)WHEEL_DELTA ) );
         return 0;
 
     case WM_LBUTTONDOWN:  //left down
@@ -95,8 +95,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 
 		switch( wparam )
 		{
-#ifdef _DEBUG  //close with ESC automagically
 		case VK_ESCAPE:
+#ifdef _DEBUG  //close with ESC automagically
 			PostQuitMessage( 0 );
 			break;
 #endif
@@ -372,8 +372,9 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	save( &config );
 }
 
-void Win32Platform::initialise()
+void Win32Platform::initialise( Game* g )
 {
+	game = g;
 	DEBUG_ASSERT( game );
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
@@ -626,7 +627,7 @@ void Win32Platform::keyPressed( int kc )
 
 	Dojo::KeyCode key = mKeyMap[ kc ];
 
-#ifndef _FINAL
+#ifndef _DEBUG
 	if( key == KC_DIVIDE )	
 		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
 	else if( mFrameSteppingEnabled )

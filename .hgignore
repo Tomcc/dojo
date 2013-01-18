@@ -1,0 +1,11 @@
+syntax: glob
+src/Render.cpp~
+src/Platform.cpp~
+src/android/AndroidGLExtern.cpp~
+Android/jni/Android.mk~
+src/android/Android_main.c~
+src/android/AndroidPlatform.cpp~
+include/dojo/android/AndroidPlatform.h~
+include/dojo/android/AndroidGLExtern.h~
+Android/jni/dojo/Android.mk~
+Android/jni/Application.mk~

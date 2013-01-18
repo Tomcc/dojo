@@ -26,16 +26,7 @@ namespace Dojo
 
 		Vector uvOffset;
 				
-		Renderable( GameState* level, const Vector& pos ) :
-		Object( level, pos, Vector::ONE ),
-		visible( true ),
-		layer(0),
-		renderingOrder(0),
-		currentFadeTime(0),
-		mCulled( false )
-		{
-			reset();
-		}
+		Renderable( GameState* level, const Vector& pos, const String& meshName = String::EMPTY );
 		
 		virtual ~Renderable();
 		

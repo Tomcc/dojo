@@ -15,6 +15,7 @@
 
 namespace Dojo
 {	
+	///A geometric Plane implementation
 	class Plane
 	{
 	public:
@@ -22,31 +23,35 @@ namespace Dojo
 		Vector n;
 		float d;
 		
+		///Empty (invalid) plane constructor
 		Plane() :
 		d( 0 )
 		{
 			
 		}
 		
-		Plane(  const Vector& normal, float distance )
+		///Creates a plane with the given normal and distance
+		Plane( const Vector& normal, float distance )
 		{
 			setup( normal, distance );	
 		}
 		
+		///Creates a plane with the given normal and distance
 		inline void setup( const Vector& normal, float distance )
 		{
 			n = normal;
 			d = distance;
 		}
 		
+		///Creates a plane centered in C and passing from points A and B
 		inline void setup( const Vector& center, const Vector& A, const Vector& B )
 		{
-			n = (A-center) ^ (B-center);
-			n.normalize();
+			n = ((A-center) ^ (B-center)).normalized();
 			
 			d = -( center * n);
 		}
 		
+		///returns the distance of the plane from center
 		inline float distance( const Vector& center )
 		{
 			return center.distanceFromPlane( n, d );

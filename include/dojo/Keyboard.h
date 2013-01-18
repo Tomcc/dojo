@@ -7,6 +7,8 @@
 
 namespace Dojo
 {
+	///A keyboard represents a single key mapping abstracted on the keyboard
+	/**\remark multiple Keyboards can exist at the same time, allowing for same-keyboard multiplayer*/
 	class Keyboard : public InputDevice
 	{
 	public:

@@ -26,9 +26,7 @@
 
 namespace Dojo
 {
-	// Not thread safe (unless auto-initialization is avoided and each thread has
-	// its own Random object)
-	
+	///A Random implementation using Mersenne Twister	
 	class Random {
 		// Data
 	public:
@@ -44,12 +42,18 @@ namespace Dojo
 		uint32 *pNext;     // next value to get from state
 		int left;          // number of values left before reload needed
 
-		// Methods
 	public:
-		Random( const uint32 oneSeed );  // initialize with a simple uint32
-		Random( uint32 *const bigSeed, uint32 const seedLength = N );  // or array
-		Random();  // auto-initialize with /dev/urandom or time() and clock()
-		Random( const Random& o );  // copy
+
+		///class Dojo::Random initialized with time()
+		Random();  
+
+		///Creates a new Random generator using a seed
+		Random( const uint32 oneSeed );
+
+		///Creates a new Random generator using a big seed in an array
+		Random( uint32 *const bigSeed, uint32 const seedLength = N ); 
+
+		Random( const Random& o );
 
 		// Do NOT use for CRYPTOGRAPHY without securely hashing several returned
 		// values together, otherwise the generator state can be learned after

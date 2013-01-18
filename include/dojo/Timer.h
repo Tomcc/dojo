@@ -5,9 +5,15 @@
 
 namespace Dojo
 {
+	///A Timer is an utility class to work with real (system) time
 	class Timer 
 	{
 	public:
+
+		///returns the current system high-precision time
+		static double currentTime();
+
+		///Creates a new (optionally looping) Timer, using current time
 		Timer( double period = 0 )
 		{
 			//start from now
@@ -16,6 +22,7 @@ namespace Dojo
 			setLoop(period);
 		}
 
+		///resets the Timer to the current time
 		inline void reset()
 		{
 			eventTime = currentTime();
@@ -25,19 +32,14 @@ namespace Dojo
 		{
 			eventTime = -1;
 		}
-		
-		double currentTime();
 
+		///sets the timer as looping - to be used with loopElapsed()
 		inline void setLoop( double period )
 		{
 			mPeriod = (period > 0) ? period : 0;
 		}
 
-		inline void setLoopFPS( double FPS )
-		{
-			mPeriod = (FPS > 0) ? 1.f/FPS : 0;
-		}
-
+		///removes the loop
 		inline void disableLoop()
 		{
 			mPeriod = 0;

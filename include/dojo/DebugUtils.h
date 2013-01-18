@@ -1,34 +1,16 @@
 #ifndef DebugUtils_h__
 #define DebugUtils_h__
 
-#ifndef _FINAL //release versions DO have enabled asserts!
-	
-	
+#ifndef _DEBUG
+
 	#define DEBUG_ASSERT_MSG( T, MSG ) {if( !(T) ) { Dojo::gp_assert_handler( MSG, #T, __LINE__, __FILE__ ); }}
 	#define DEBUG_ASSERT( T ) DEBUG_ASSERT_MSG( T, "No description" )
 
 	#define DEBUG_TODO DEBUG_ASSERT_MSG( false, "METHOD NOT IMPLEMENTED" )
 	#define DEBUG_FAIL DEBUG_ASSERT_MSG( false, "This should never happen and is likely due to a bug" )
-	
-	#if defined( PLATFORM_ANDROID )	
-	
-		#include <android/log.h>
-		#define LOG_TAG "DOJO"
-		//buffer output
-		extern std::stringstream  debug_stream_android;		
-		//
-		#define __std_andr_cout debug_stream_android.str(std::string()); debug_stream_android
-		#define __std_andr_flush __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, "%s", debug_stream_android.str().c_str() );
-		#define DEBUG_OUT( T ) __std_andr_cout<< T << ' '; __std_andr_flush
-		#define DEBUG_MESSAGE( T ) __std_andr_cout << T << '\n'; __std_andr_flush
-		
-		#else
-		
-		#define DEBUG_OUT( T ) std::cout << T << ' '
-		#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
+	#define DEBUG_OUT( T ) std::cout << T << ' '
+	#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
 
-	#endif
-	
 #else
 
 	#define DEBUG_ASSERT_MSG( T, MSG )

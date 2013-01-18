@@ -9,9 +9,9 @@ namespace Dojo
 {
 	class SoundManager;
 
-	///Classe che gestisce la memoria caricata da un wav.
+	///Internal class to contain a SoundBuffer loaded from file, or from memory
 	/**
-	Non dovrebbe essere utilizzato all'esterno di SoundManager.
+	Sounds are referenced using SoundSets, which contain one or more SoundBuffers, just like FrameSets and Textures.
 	*/
 	class SoundBuffer : public Resource
 	{

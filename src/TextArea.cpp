@@ -10,12 +10,10 @@ using namespace Dojo;
 TextArea::TextArea( GameState* l, 
 		 const String& fontSetName, 
 		 const Vector& pos, 
-		 uint chars, 
 		 bool center,
 		 const Vector& bounds) :
 Renderable( l, pos ),
 fontName( fontSetName ),
-maxChars( chars ),
 interline( 0.2f ),
 maxLineLenght( 0xfffffff ),
 centered( center ),
@@ -38,14 +36,14 @@ visibleCharsNumber( 0xfffffff )
 	mesh = _createMesh();
 	freeLayers.add( this ); //add itself to the free layers
 
-	characters = (Font::Character**)malloc( sizeof( void* ) * maxChars );
-
 	//init
 	clearText();
 }
 
 TextArea::~TextArea()
 {			
+	clearText();
+
 	if( mesh )
 	{
 		if( mesh->isLoaded() )
@@ -54,16 +52,14 @@ TextArea::~TextArea()
 	}
 
 	_destroyLayers();
-
-	free( characters );
 }
 
 void TextArea::clearText()
 {						
-	currentCharIdx = 0;
-
-	//reset characters
-	memset( characters, 0, maxChars * sizeof( void* ) );
+	//delete characters
+	for( auto c : characters )
+		delete c;
+	characters.clear();
 
 	content.clear();
 
@@ -92,16 +88,17 @@ void TextArea::addText( const String& text )
 	unichar c;
 
 	//parse and setup characters
-	for( int i = 0; i < (int)text.size() && currentCharIdx < maxChars; ++i, ++currentCharIdx )
+	for( int i = 0; i < (int)text.size(); ++i )
 	{
 		c = text[i];
 
-		currentChar = characters[currentCharIdx] = font->getCharacter( c );
+		currentChar = font->getCharacter( c );
+		characters.add( currentChar );
 
 		currentLineLength += currentChar->pixelWidth;
 
 		if( c == ' ' || c == '\t' )
-			lastSpace = currentCharIdx;
+			lastSpace = characters.size()-1;
 
 		else if( c == '\n' )
 		{
@@ -123,11 +120,9 @@ void TextArea::addText( const String& text )
 
 void TextArea::addText( uint n, char paddingChar, uint digits )
 {
-	String number( n );
+	//TODO String already does this! remove
 
-	//if not specified, budget is max char number
-	if( digits == 0 )
-		digits = maxChars - currentCharIdx;
+	String number( n );
 
 	//stay in the digit budget?
 	if( paddingChar != 0 )
@@ -163,7 +158,7 @@ Renderable* TextArea::_enableLayer( Texture* tex )
 	r->setActive( true );
 	r->setTexture( tex );
 	
-	r->getMesh()->begin( currentCharIdx * 2 );
+	r->getMesh()->begin( getLenght() * 2 );
 	
 	busyLayers.add( r );
 	
@@ -220,7 +215,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 		return true;
 
 	//no characters to show
-	if( !visibleCharsNumber || !currentCharIdx )
+	if( !visibleCharsNumber || getLenght() == 0 )
 		return false;
 
 	//get screen size
@@ -240,7 +235,7 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	_hideLayers();
 
 	//either reach the last valid character or the last existing character
-	for( int i = 0; i < visibleCharsNumber && i < currentCharIdx; ++i )
+	for( int i = 0; i < visibleCharsNumber && i < characters.size(); ++i )
 	{
 		rep = characters[i];
 

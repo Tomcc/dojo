@@ -14,6 +14,7 @@
 
 namespace Dojo
 {
+	///StateInterface is the State and State machine class
 	class StateInterface
 	{
 	public:

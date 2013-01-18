@@ -26,7 +26,7 @@ mMaxFrameLength( maximumdt )
 
 	Math::seedRandom();
 	
-	Platform::getSingleton()->addFocusListener( this ); //always listen to the app
+	Platform::getSingleton()->addApplicationListener( this ); //always listen to the app
 }
 	
 Game::~Game()

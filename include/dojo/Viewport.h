@@ -23,9 +23,15 @@ namespace Dojo
 	class Render;
 	class GameState;
 	class AnimatedQuad;
-	class Model;
+	class Renderable;
 	class Texture;
 		
+	///A Viewport is a View in a Dojo GameState, working both in 2D and 3D
+	/**
+	when rendering a 2D layer, the Viewport uses an orthogonal transform and manages
+	the pixel-perfect rendering with its targetSize property;
+	when rendering a 3D layer, it culls the scene and renders the perspective using its Frustum
+	*/
 	class Viewport : public Object
 	{
 	public:
@@ -53,13 +59,19 @@ namespace Dojo
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
 
+		///set the pixel size of the "virtual rendering area"
+		/**
+		all the rendering is then scaled to have the virtual rendering area fit inside the real rendering area.
+		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
+		*/
 		inline void setTargetSize( const Vector& size )		{ targetSize = size; }
 
+		///enables or disables 3D culling of hidden objects
 		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 		
 		inline const Color& getClearColor()				{	return clearColor;	}
 		inline AnimatedQuad* getBackgroundSprite()		{	return background;	}
-		inline Model* getFader()						{	return fadeObject;	}
+		inline Renderable* getFader()					{	return fadeObject;	}
 		inline float getVFOV()							{	return VFOV;		}
 		inline float getZFar()							{	return zFar;		}
 		inline float getZNear()							{	return zNear;		}
@@ -67,6 +79,7 @@ namespace Dojo
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 		inline const Vector& getTargetSize()			{   return targetSize;  }
 
+		///returns the on-screen position of the given world-space vector
 		Vector getScreenPosition( const Vector& pos );
 		
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
@@ -97,11 +110,13 @@ namespace Dojo
 			return Math::AABBsCollide( r->getWorldMax(), r->getWorldMin(), getWorldMax(), getWorldMin() );
 		}
 		
+		///returns the world position of the given screenPoint
 		inline Vector makeWorldCoordinates( const Vector& screenPoint )
 		{
 			return makeWorldCoordinates( (int)screenPoint.x, (int)screenPoint.y );
 		}
-		
+
+		///returns the world position of the given screenPoint
 		inline Vector makeWorldCoordinates( int x, int y )
 		{
 			return Vector(
@@ -109,12 +124,14 @@ namespace Dojo
 						  getWorldMax().y - ((float)y / targetSize.y) * size.y );
 		}
 			
+		///converts the w and h pixel sizes in a screen space size
 		inline void makeScreenSize( Vector& dest, int w, int h )
 		{	
 			dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
 			dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
 		}
-				
+		
+		///converts the texture pixel sizes in a screen space size
 		void makeScreenSize( Vector& dest, Texture* tex );
 		
 		inline float getPixelSide()
@@ -140,7 +157,7 @@ namespace Dojo
 		bool cullingEnabled;	
 		
 		AnimatedQuad* background;
-		Model* fadeObject;
+		Renderable* fadeObject;
 				
 		Color clearColor;
         
