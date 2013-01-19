@@ -313,8 +313,11 @@ void Render::renderElement( Renderable* s )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
-
+#if !defined( PLATFORM_ANDROID ) 
 	glBindVertexArray( 0 );
+#else
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+#endif
 }
 
 void Render::endFrame()

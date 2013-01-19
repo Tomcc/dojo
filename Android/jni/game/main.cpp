@@ -29,6 +29,13 @@ protected:
 
 	    addChild( camera ); //add the camera to the scene
 	    setViewport( camera ); //tell Dojo we will render from this camera
+	    
+	    addPrefabMeshes();
+            loadResources();
+
+	    Renderable * r = new Renderable( this, Vector::ZERO, "texturedQuad" );
+	    addChild( r, LL_ACTORS );
+	
 	} 
 
 	virtual void onEnd()

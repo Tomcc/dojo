@@ -136,7 +136,9 @@ Platform(table){
 
 void AndroidPlatform::ResetDisplay(){
  //initialize OpenGL ES and EGL
-/*
+
+
+#ifdef DEF_SET_OPENGL_ES2
     const EGLint attribs[] = {
     //      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
             EGL_RENDERABLE_TYPE,
@@ -148,7 +150,7 @@ void AndroidPlatform::ResetDisplay(){
             EGL_DEPTH_SIZE, 16,
             EGL_NONE
     };      
-*/
+#else
     const EGLint attribs[] = {
             EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
             EGL_BLUE_SIZE, 8,
@@ -156,6 +158,7 @@ void AndroidPlatform::ResetDisplay(){
             EGL_RED_SIZE, 8,
             EGL_NONE
     }; 
+#endif
     //SET ANDROID WINDOW
     EGLint _w, _h, dummy, format;
     EGLint numConfigs;
@@ -178,8 +181,13 @@ void AndroidPlatform::ResetDisplay(){
     DEBUG_MESSAGE("create a surface, and openGL context");
     surface = eglCreateWindowSurface(display, config,app->window, NULL);
     DEBUG_ASSERT( surface );
-    const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 1,  EGL_NONE}; //openGL ES 2.0 //2, EGL_NONE
+#ifdef SET_OPENGL_ES2
+    const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 2,  EGL_NONE}; //openGL ES 2.0 //2, EGL_NONE
     context = eglCreateContext(display, config, NULL, attrib_list);
+#else
+    const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 1,  EGL_NONE}; //openGL ES 1.0 //1, EGL_NONE
+    context = eglCreateContext(display, config, NULL, attrib_list);
+#endif
     DEBUG_ASSERT( context );
     //set corrunt openGL context
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
@@ -189,8 +197,9 @@ void AndroidPlatform::ResetDisplay(){
     //get WIDTH,HEIGHT
     eglQuerySurface(display, surface, EGL_WIDTH, &width);
     eglQuerySurface(display, surface, EGL_HEIGHT, &height);
-    DEBUG_MESSAGE("screen : width"<<width<<" height:"<<height);
-    //init opengl VBA calls
+    DEBUG_MESSAGE("screen : width:"<<width<<" height:"<<height);
+    //init opengl VBA calls	
+    DEBUG_MESSAGE("!!init opengl VBA calls!");
     ExternInitOpenGL();
     //is not in pause
     isInPause=false;

@@ -1,11 +1,14 @@
 #ifndef ANDROIDGLEXTERN_H
 #define ANDROIDGLEXTERN_H
 
+	#ifndef GL_GLEXT_PROTOTYPES
+	#define GL_GLEXT_PROTOTYPES 1
+	#endif
 	#include <EGL/egl.h>
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
 	#include <GLES2/gl2.h>
         #include <GLES2/gl2ext.h>
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
 	
 	
 	#define glGenRenderbuffers			glGenRenderbuffersOES
@@ -19,6 +22,7 @@
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
 	#define glBlendEquation             glBlendEquationOES
 	
+	//#define glClearDepth                glClearDepthf
     	#define glBindVertexArray           glBindVertexArrayOESEXT
     	#define glGenVertexArrays           glGenVertexArraysOESEXT
     	#define glDeleteVertexArrays        glDeleteVertexArraysOESEXT

@@ -142,13 +142,15 @@ bool Mesh::end()
 		return false;
 
 	//create the VAO
+	#if !defined( PLATFORM_ANDROID ) 
 	if( vertexArrayDesc )
 		glDeleteVertexArrays( 1, &vertexArrayDesc );
 
 	glGenVertexArrays( 1, &vertexArrayDesc );
 	glBindVertexArray( vertexArrayDesc );
-
+	
 	CHECK_GL_ERROR;
+	#endif
 
 	//create the VBO
 	if( !vertexHandle )
@@ -207,8 +209,10 @@ bool Mesh::end()
 
 	CHECK_GL_ERROR;
 
+	#if !defined( PLATFORM_ANDROID ) 
 	glBindVertexArray( 0 );
-	
+	#endif
+
 	if( mDestroyBuffersOnEnd ) //won't be updated ever again
 		_destroyBuffers();
 	
@@ -238,10 +242,15 @@ bool Mesh::end()
 
 void Mesh::bind()
 {		
+
+	#if !defined( PLATFORM_ANDROID ) 
 	DEBUG_ASSERT( vertexHandle );
 	DEBUG_ASSERT( vertexArrayDesc );
-
 	glBindVertexArray( vertexArrayDesc );
+	#else
+	DEBUG_ASSERT( vertexHandle );
+	glBindBuffer(GL_ARRAY_BUFFER,vertexHandle);
+	#endif
 
 	DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
 }
