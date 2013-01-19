@@ -48,6 +48,9 @@ Platform* Platform::create( const Table & config )
 #elif defined( PLATFORM_LINUX )
     singleton = new LinuxPlatform( config );
     
+#elif defined( PLATFORM_ANDROID )
+    singleton = new AndroidPlatform( config );
+    
 #endif
 	return singleton;
 }

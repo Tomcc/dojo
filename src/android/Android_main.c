@@ -5,9 +5,9 @@
 #include <android_native_app_glue.h>
 
 /* android debug */
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "TH2D ENGINE OUTPUT", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "TH2D ENGINE OUTPUT", __VA_ARGS__))
-#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "TH2D ENGINE OUTPUT", __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "DOJO", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "DOJO", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "DOJO", __VA_ARGS__))
 
 #ifndef FALSE
 #define FALSE 0
@@ -48,7 +48,9 @@ void android_main(struct android_app* state) {
     state->onAppCmd = android_handle_cmd;
     state->onInputEvent = android_handle_input;
     ANDROID_VALID_DEVICE=FALSE;
-    
+    //save app
+    app_state=state;
+    //
     int ident;
     int events;
     struct android_poll_source* source;
@@ -60,6 +62,8 @@ void android_main(struct android_app* state) {
 	}
 	usleep( 16 );
     }
+
+    LOGE("!main!");
     ////////////////////////////
     //GET APK (ZIP FILE)
     ANativeActivity* activity = state->activity;

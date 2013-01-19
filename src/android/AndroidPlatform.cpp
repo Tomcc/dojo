@@ -13,9 +13,9 @@
 #include "AndroidGLExtern.h"
 
 /* android debug */
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "TH2D ENGINE OUTPUT", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "TH2D ENGINE OUTPUT", __VA_ARGS__))
-#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "TH2D ENGINE OUTPUT", __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "DOJO", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "DOJO", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "DOJO", __VA_ARGS__))
 
 using namespace Dojo;
 
@@ -28,6 +28,7 @@ extern  "C" struct android_app* GetAndroidApp();
 extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* event) {
 		//get platform
 		AndroidPlatform* self = app->userData ? (AndroidPlatform*)app->userData : NULL;
+		DEBUG_MESSAGE("android_handle_input");
 
 		unsigned int flags = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
 		if (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_POINTER_DOWN) { //down
@@ -67,9 +68,10 @@ extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* e
 extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		//get platform
 		AndroidPlatform* self = app->userData ? (AndroidPlatform*)app->userData : NULL;
-
+        	
 		if( cmd==APP_CMD_INIT_WINDOW ){
 			ANDROID_VALID_DEVICE=1; //enable Window_Flip() (and FOR INPUT)
+        		DEBUG_MESSAGE("APP_INIT_WINDOW");
 			if(self){
 				//Reinizialize display
 				self->ResetDisplay();
@@ -79,11 +81,13 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		}
 		else
 		if(cmd==APP_CMD_RESUME){
+        		DEBUG_MESSAGE("APP_CMD_RESUME");
 			//is RESUME
 			if(self) self->isInPause=false;
 		}
 		else
 		if( cmd==APP_CMD_TERM_WINDOW ){
+        		DEBUG_MESSAGE("APP_CMD_TERM_WINDOW");
 			ANDROID_VALID_DEVICE=0; //disable Window_Flip() (and FOR INPUT)
 			//delete
 			if(self){
@@ -95,6 +99,7 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		}
 		else
 		if(cmd==APP_CMD_PAUSE  && ANDROID_VALID_DEVICE ){
+        		DEBUG_MESSAGE("APP_CMD_PAUSE");
 			ANDROID_VALID_DEVICE=0; //disable Window_Flip() (and FOR INPUT)
 			if(self){				
 				//is IN PAUSE
@@ -123,18 +128,22 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 /* DOJO */
 AndroidPlatform::AndroidPlatform(const Table& table) :
 Platform(table){
-
+	app=NULL;
+	sensorManager=NULL;
+	accelerometerSensor=NULL;
+	sensorEventQueue=NULL;
 }
 
 void AndroidPlatform::ResetDisplay(){
  //initialize OpenGL ES and EGL
     const EGLint attribs[] = {
     //      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, //openGL ES 2.0
+            EGL_RENDERABLE_TYPE, 
+            EGL_OPENGL_ES2_BIT, //openGL ES 2.0
             EGL_BLUE_SIZE, 8,
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
-//	    EGL_ALPHA_SIZE, 0,
+	    EGL_ALPHA_SIZE, 8,
             EGL_DEPTH_SIZE, 16,
             EGL_NONE
     };    
@@ -145,16 +154,26 @@ void AndroidPlatform::ResetDisplay(){
     EGLSurface surface;
     EGLContext context;
     //get display
+    DEBUG_MESSAGE("get display");
     EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    DEBUG_ASSERT( display );
     eglInitialize(display, 0, 0);
     //set openGL configuration
+    DEBUG_MESSAGE("set openGL configuration:eglChooseConfig");
     eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+    DEBUG_MESSAGE("set openGL configuration:eglGetConfigAttrib");
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+    DEBUG_MESSAGE("set openGL ANativeWindow_setBuffersGeometry");
+//ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_FULLSCREEN, 0);<--usare questo todo
+//AWINDOW_FLAG_SCALED
     ANativeWindow_setBuffersGeometry(app->window, 0, 0, format);
     //create a surface, and openGL context	
+    DEBUG_MESSAGE("create a surface, and openGL context");
     surface = eglCreateWindowSurface(display, config,app->window, NULL);
+    DEBUG_ASSERT( surface );
     const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE}; //openGL ES 2.0
     context = eglCreateContext(display, config, NULL, attrib_list);
+    DEBUG_ASSERT( context );
     //set corrunt openGL context
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
         LOGE("error eglMakeCurrent");
@@ -163,6 +182,7 @@ void AndroidPlatform::ResetDisplay(){
     //get WIDTH,HEIGHT
     eglQuerySurface(display, surface, EGL_WIDTH, &width);
     eglQuerySurface(display, surface, EGL_HEIGHT, &height);
+    DEBUG_MESSAGE("screen : width"<<width<<" height:"<<height);
     //init opengl VBA calls
     ExternInitOpenGL();
     //is not in pause
@@ -171,28 +191,36 @@ void AndroidPlatform::ResetDisplay(){
 }
 void AndroidPlatform::initialise(Game *g)
 {
+    DEBUG_MESSAGE("AndroidPlatform::initialise()");
     //set game
     game=g;
     DEBUG_ASSERT( game );
-    //Set Display	
-    ResetDisplay();
     //init app
     DEBUG_ASSERT( GetAndroidApp() );
     GetAndroidApp()->userData=(void*)this;
     this->app=GetAndroidApp();
+    //Set Display	
+    ResetDisplay();
     //accelerometer
     this->sensorManager = ASensorManager_getInstance();
+    DEBUG_ASSERT( sensorManager );
+
     this->accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
+    DEBUG_ASSERT( accelerometerSensor );
+
     //dojo object
     render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
     input  = new InputSystem();
     sound  = new SoundManager();
+    //enable loop
+    running=true;
     //start the game
     game->begin();
 }   
 
 void AndroidPlatform::shutdown()
 {
+        DEBUG_MESSAGE("AndroidPlatform::shutdown()");
 	// and a cheesy fade exit
 	if (display != EGL_NO_DISPLAY) {
 		eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -204,16 +232,18 @@ void AndroidPlatform::shutdown()
 		}
 		eglTerminate(display);
 	}
- 	running = 0;
     	display = EGL_NO_DISPLAY;
     	context = EGL_NO_CONTEXT;
     	surface = EGL_NO_SURFACE;
+	//enable loop, and disable draw (pause)
+	running=false;
+	isInPause=true;
 }       
 
 void AndroidPlatform::acquireContext()
 {
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        LOGE("error eglMakeCurrent");
+        DEBUG_MESSAGE("AndroidPlatform::acquireContext() error eglMakeCurrent");
         return;
     }
 }
@@ -240,13 +270,24 @@ void AndroidPlatform::step( float dt )
 }
 
 void AndroidPlatform::UpdateEvent(){
-	if(sensorEventQueue==0){
+
+
+	if(sensorEventQueue==NULL){
+
+ 		DEBUG_MESSAGE("UpdateEvent::init createEventQueue");
+
 		sensorEventQueue =ASensorManager_createEventQueue(sensorManager,
 								  app->looper,
 								  LOOPER_ID_USER,
 								  NULL, NULL);
+
+ 		DEBUG_MESSAGE("UpdateEvent::init enableSensor");
+
 		 ASensorEventQueue_enableSensor(sensorEventQueue,accelerometerSensor);
 		// We'd like to get 60 events per second (in us).
+
+ 		DEBUG_MESSAGE("UpdateEvent::init setEventRate");
+
 		ASensorEventQueue_setEventRate(sensorEventQueue,
 		                               accelerometerSensor,
 		                               (1000L/60)*1000);
@@ -254,6 +295,7 @@ void AndroidPlatform::UpdateEvent(){
 
 	int ident,events;
 	struct android_poll_source* source;
+
 	while ((ident = ALooper_pollAll(0, NULL, &events,(void**)&source)) >= 0){
 		if (source != NULL) source->process(app, source);
 		//GET SENSOR
@@ -278,10 +320,12 @@ void AndroidPlatform::loop( float frameTime )
 {
 	frameTimer.reset();
 	float dt;
+
+    	DEBUG_MESSAGE("start Platform::loop()");
+
 	while( running )
 	{
 		dt = frameTimer.getElapsedTime();
-
 		if( dt > frameTime )
 		{
 			frameTimer.reset();

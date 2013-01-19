@@ -1,6 +1,7 @@
 #ifndef DebugUtils_h__
 #define DebugUtils_h__
 
+
 #ifndef _DEBUG
 
 	#define DEBUG_ASSERT_MSG( T, MSG ) {if( !(T) ) { Dojo::gp_assert_handler( MSG, #T, __LINE__, __FILE__ ); }}
@@ -8,9 +9,10 @@
 
 	#define DEBUG_TODO DEBUG_ASSERT_MSG( false, "METHOD NOT IMPLEMENTED" )
 	#define DEBUG_FAIL DEBUG_ASSERT_MSG( false, "This should never happen and is likely due to a bug" )
-
-	#if defined( PLATFORM_ANDROID )	
-	
+	//fix...
+	#if defined( __ANDROID__ )	
+		#include <sstream>
+		#include <string>
 		#include <android/log.h>
 		#define LOG_TAG "DOJO"
 		//buffer output
