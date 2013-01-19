@@ -27,15 +27,15 @@
 	
 	#endif
 
-//are we on GNU/Linux?
-#elif defined( __linux ) && !defined( __ANDROID__ )
-	#define PLATFORM_LINUX
-
 #elif defined( __ANDROID__ )
 	#define PLATFORM_ANDROID
-	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
-#else 
-	#error "Platform unrecognized"
+
+#elif defined( __linux )
+	#define PLATFORM_LINUX
+
+#else
+	#error "Unsupported Platform"
+
 #endif
 
 
@@ -78,11 +78,15 @@
 #endif
 
 //general configurations
-#if defined( PLATFORM_IOS ) || defined( PLATFORM_ANDROID )
+#ifdef PLATFORM_IOS
 	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
 #else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
 	#define DOJO_WIREFRAME_AVAILABLE
+#endif
+
+#ifdef PLATFORM_ANDROID
+	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
 #endif
 
 //do not use the differential state commit //HACK

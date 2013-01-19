@@ -75,6 +75,7 @@
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
     <ClInclude Include="include\dojo\win32\XInputJoystick.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />

@@ -149,8 +149,8 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 		Poco::Zip::ZipArchive zip( file );
 
 		//create a new file mapping
-		auto result = mZipFileMaps.emplace( zipPath, ZipFoldersMap() );
-		ZipFoldersMap& map = result.first->second;
+		mZipFileMaps[ zipPath ] = ZipFoldersMap();
+		ZipFoldersMap& map = mZipFileMaps.find( zipPath )->second;
 
 		auto itr = zip.fileInfoBegin();
 		auto end = zip.fileInfoEnd();
