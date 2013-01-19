@@ -43,11 +43,12 @@ namespace Dojo
 		virtual void present();
 
 		virtual void step( float dt );
-		virtual void loop( float frameTime );
+		virtual void loop();
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
 		
 		virtual String getAppDataPath();
+		virtual String getResourcesPath();
 		virtual String getRootPath();
 		
 		virtual void openWebPage( const String& site );
