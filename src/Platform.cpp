@@ -97,7 +97,7 @@ Poco::Zip::ZipArchive Platform::_openInnerMostZip( const String& path, String& z
 
 	zipPath = path.substr( 0, idx-1 );
 
-	reminder = (idx < path.size()) ? path.substr( idx ) : String::EMPTY;
+	if(idx < path.size()) reminder = path.substr( idx ); else reminder = String::EMPTY;
 	std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
 
 	Poco::Zip::ZipArchive arch( file );
