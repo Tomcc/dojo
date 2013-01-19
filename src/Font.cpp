@@ -245,9 +245,8 @@ bool Font::Page::onLoad()
 
 Font::Font( ResourceGroup* creator, const String& path ) :
 Resource( creator, path )
-{			
-	//miss all the pages
-	memset( pages, 0, sizeof( void* ) * FONT_MAX_PAGES );
+{
+
 }
 
 Font::~Font()
@@ -284,10 +283,10 @@ bool Font::onLoad()
 	DEBUG_ASSERT( !isLoaded() );
 
 	//load existing pages that were trimmed during a previous unload
-	for( int i = 0; i < FONT_MAX_PAGES; ++i )
+	for( Page* p : pages )
 	{
-		if( pages[i] && !pages[i]->isLoaded() )
-			pages[i]->onLoad();
+		if( p && !p->isLoaded() )
+			p->onLoad();
 	}
 
 	return loaded = true;
@@ -295,10 +294,10 @@ bool Font::onLoad()
 
 void Font::onUnload( bool soft )
 {
-	for( uint i = 0; i < FONT_MAX_PAGES; ++i )
+	for( Page* p : pages )
 	{
-		if( pages[i] && pages[i]->isLoaded() )
-			pages[i]->onUnload( soft );
+		if( p && p->isLoaded() )
+			p->onUnload( soft );
 	}
 
 	loaded = false;
