@@ -35,6 +35,8 @@ protected:
 
 	    Renderable * r = new Renderable( this, Vector::ZERO, "texturedQuad" );
 	    addChild( r, LL_ACTORS );
+	    r->setRotation( Vector(0,0,20) );
+	    r->scale=Vector(5,8);
 	
 	} 
 
