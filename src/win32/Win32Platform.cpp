@@ -448,10 +448,11 @@ void Win32Platform::prepareThreadContext()
 
 void Win32Platform::shutdown()
 {
-	//destroy game
-	game->end();
-
-	delete game;
+	if( game )
+	{
+		game->end();
+		delete game;
+	}
 
 	//destroy managers
 	delete render;
@@ -529,9 +530,11 @@ void Win32Platform::step( float dt )
 	render->render();
 }
 
-void Win32Platform::loop( float frameTime )
+void Win32Platform::loop()
 {
-	frameInterval = frameTime;
+	DEBUG_ASSERT( game );
+
+	frameInterval = game->getNativeFrameLength();
 
 	frameTimer.reset();
 
@@ -741,6 +744,11 @@ String Win32Platform::getAppDataPath()
 String Win32Platform::getRootPath()
 {
 	return String( Poco::Path::current() );
+}
+
+String Win32Platform::getResourcesPath()
+{
+	return getRootPath(); //on windows, it is the same
 }
 
 void Win32Platform::openWebPage( const String& site )

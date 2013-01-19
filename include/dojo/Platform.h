@@ -101,7 +101,17 @@ namespace Dojo
 		virtual void present()=0;
 
 		virtual void step( float dt )=0;
-		virtual void loop( float frameTime )=0;
+		virtual void loop()=0;
+
+		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
+		void run( Game* game )
+		{
+			initialise( game );
+
+			loop( );
+
+			Platform::shutdownPlatform();
+		}
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
@@ -134,8 +144,10 @@ namespace Dojo
 		
 		///returns the application data path for this game
 		virtual String getAppDataPath()=0;
-		///returns the root path for this game (eg. workind directory)
+		///returns the root path for this game (eg. working directory)
 		virtual String getRootPath()=0;
+		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
+		virtual String getResourcesPath	()=0;
 		
 		///returns the user configuration table
 		const Table& getUserConfiguration()

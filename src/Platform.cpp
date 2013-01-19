@@ -57,8 +57,6 @@ Platform* Platform::create( const Table & config )
 
 void Platform::shutdownPlatform()
 {
-	DEBUG_ASSERT( singleton );
-
 	singleton->shutdown();
 
 	SAFE_DELETE( singleton );
