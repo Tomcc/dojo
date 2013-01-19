@@ -15,6 +15,7 @@ DOJO_PATH_INCLUDE_DOJO := ../../../include/dojo
 DOJO_PATH_ANDROID_INCLUDE_DOJO := ../../../include/dojo/android
 DOJO_PATH_CPP := ../../../src
 DOJO_PATH_ANDROID_CPP := ../../../src/android
+DOJO_GAME_PATH_ANDROID := ../game
 
 #libs
 LOCAL_LDLIBS:=  $(DIP_LIB_PATH)/libopenal.a\
@@ -37,15 +38,24 @@ LOCAL_C_INCLUDES+=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH)\
 DOJO_CPP:=$(wildcard $(LOCAL_PATH)/$(DOJO_PATH_CPP)/*.cpp)
 DOJO_CPP+=$(wildcard $(LOCAL_PATH)/$(DOJO_PATH_ANDROID_CPP)/*.cpp)
 DOJO_C:=$(wildcard $(LOCAL_PATH)/$(DOJO_PATH_ANDROID_CPP)/*.c)
+#c/cpp game files
+DOJO_GAME_CPP:=$(wildcard $(LOCAL_PATH)/$(DOJO_GAME_PATH_ANDROID)/*.cpp)
+DOJO_GAME_C:=$(wildcard $(LOCAL_PATH)/$(DOJO_GAME_PATH_ANDROID)/*.c)
+
 #h files
 DOJO_H:=$(wildcard $(LOCAL_PATH)/$(DOJO_PATH_INCLUDE_DOJO)/*.h)
 DOJO_H+=$(wildcard $(LOCAL_PATH)/$(DOJO_PATH_ANDROID_INCLUDE_DOJO)/*.h)
+#h game files
+DOJO_GAME_H:=$(wildcard $(LOCAL_PATH)/$(DOJO_GAME_PATH_ANDROID)/*.h)
 
 
 #add cpp file
 LOCAL_SRC_FILES:=$(DOJO_CPP:$(LOCAL_PATH)/%=%)
 LOCAL_SRC_FILES+=$(DOJO_C:$(LOCAL_PATH)/%=%)
 LOCAL_SRC_FILES+=$(DOJO_H:$(LOCAL_PATH)/%=%)
+LOCAL_SRC_FILES+=$(DOJO_GAME_CPP:$(LOCAL_PATH)/%=%)
+LOCAL_SRC_FILES+=$(DOJO_GAME_C:$(LOCAL_PATH)/%=%)
+LOCAL_SRC_FILES+=$(DOJO_GAME_H:$(LOCAL_PATH)/%=%)
 				
 #openGL extra propriety
 LOCAL_CFLAGS += -D__STDC_LIMIT_MACROS -DGL_GLEXT_PROTOTYPES -DCP_USE_DOUBLES=0

@@ -119,9 +119,6 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 		}
 	}
 
-extern "C" int main(int argc, char *argv[]){
-	return 0;
-}
 
 /* DOJO */
 AndroidPlatform::AndroidPlatform(const Table& table) :
