@@ -136,26 +136,33 @@ Platform(table){
 
 void AndroidPlatform::ResetDisplay(){
  //initialize OpenGL ES and EGL
+/*
     const EGLint attribs[] = {
     //      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_RENDERABLE_TYPE, 
-            EGL_OPENGL_ES2_BIT, //openGL ES 2.0
+            EGL_RENDERABLE_TYPE,
+            EGL_OPENGL_ES2_BIT, //openGL ES 2.0 
             EGL_BLUE_SIZE, 8,
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
 	    EGL_ALPHA_SIZE, 8,
             EGL_DEPTH_SIZE, 16,
             EGL_NONE
-    };    
+    };      
+*/
+    const EGLint attribs[] = {
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_BLUE_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_RED_SIZE, 8,
+            EGL_NONE
+    }; 
     //SET ANDROID WINDOW
     EGLint _w, _h, dummy, format;
     EGLint numConfigs;
     EGLConfig config;
-    EGLSurface surface;
-    EGLContext context;
     //get display
     DEBUG_MESSAGE("get display");
-    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     DEBUG_ASSERT( display );
     eglInitialize(display, 0, 0);
     //set openGL configuration
@@ -171,7 +178,7 @@ void AndroidPlatform::ResetDisplay(){
     DEBUG_MESSAGE("create a surface, and openGL context");
     surface = eglCreateWindowSurface(display, config,app->window, NULL);
     DEBUG_ASSERT( surface );
-    const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE}; //openGL ES 2.0
+    const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 1,  EGL_NONE}; //openGL ES 2.0 //2, EGL_NONE
     context = eglCreateContext(display, config, NULL, attrib_list);
     DEBUG_ASSERT( context );
     //set corrunt openGL context
@@ -243,7 +250,10 @@ void AndroidPlatform::shutdown()
 void AndroidPlatform::acquireContext()
 {
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        DEBUG_MESSAGE("AndroidPlatform::acquireContext() error eglMakeCurrent");
+        DEBUG_MESSAGE("AndroidPlatform::acquireContext() error eglMakeCurrent:");
+        DEBUG_MESSAGE("AndroidPlatform::display"<<display);
+        DEBUG_MESSAGE("AndroidPlatform::surface"<<surface);
+        DEBUG_MESSAGE("AndroidPlatform::context"<<context);
         return;
     }
 }
@@ -251,7 +261,8 @@ void AndroidPlatform::acquireContext()
 void AndroidPlatform::present()
 {
    // No display or in pause....
-   if ( display == EGL_NO_DISPLAY || !isInPause ){
+   if ( display == EGL_NO_DISPLAY || isInPause ){
+        	DEBUG_MESSAGE("no AndroidPlatform::present()");
 		return;
    } 
    eglSwapBuffers( display, surface);
@@ -316,8 +327,11 @@ void AndroidPlatform::UpdateEvent(){
 
 }
 
-void AndroidPlatform::loop( float frameTime )
+void AndroidPlatform::loop()
 {
+	DEBUG_ASSERT( game );
+	float frameInterval = game->getNativeFrameLength();
+
 	frameTimer.reset();
 	float dt;
 
@@ -326,7 +340,7 @@ void AndroidPlatform::loop( float frameTime )
 	while( running )
 	{
 		dt = frameTimer.getElapsedTime();
-		if( dt > frameTime )
+		if( dt > frameInterval )
 		{
 			frameTimer.reset();
 			if(!isInPause) step( dt );

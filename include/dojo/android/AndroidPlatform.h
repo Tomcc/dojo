@@ -40,7 +40,7 @@ namespace Dojo
 		virtual void present();
 
 		virtual void step( float dt );
-		virtual void loop( float frameTime );
+		virtual void loop();
 
 		/*
                 //TODO
@@ -78,6 +78,7 @@ namespace Dojo
 		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height ){}
 		
 		virtual String getAppDataPath(){ return String(""); }
+		virtual String getResourcesPath(){ return String(""); }
 		virtual String getRootPath(){ return String(""); }
 		
 		virtual void openWebPage( const String& site ){}

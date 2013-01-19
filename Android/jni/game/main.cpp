@@ -77,13 +77,7 @@ extern "C" int main( int argc, char** argv )
 
     	DEBUG_MESSAGE("new MyGame()");
 
-	platform->initialise( new MyGame() );
-
-    	DEBUG_MESSAGE("Platform::run()");
-
-	platform->loop(1.0f/60.0f);
-
-	Platform::shutdownPlatform();
+	platform->run( new MyGame() );
 
 	return 0;
 }
