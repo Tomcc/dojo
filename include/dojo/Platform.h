@@ -234,6 +234,13 @@ namespace Dojo
 		Dojo::Array< ApplicationListener* > focusListeners;
 
 		String _getTablePath( Table* dest, const String& absPath );
+
+		///for each component in the path, check if a directory.zip file exists
+		String _replaceFoldersWithExistingZips( const String& absPath );
+
+		Poco::Zip::ZipArchive _openInnerMostZip( const String& path, String& zipPath, String& reminder );
+
+		bool _pathContainsZip( const String & path );
 	};
 }
 

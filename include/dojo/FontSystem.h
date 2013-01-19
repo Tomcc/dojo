@@ -4,6 +4,7 @@
 #include "dojo_common_header.h"
 
 #include "Utils.h"
+#include "Platform.h"
 
 namespace Dojo
 {
@@ -58,13 +59,17 @@ namespace Dojo
 
 		FT_Face _createFaceForFile( const String& fileName )
 		{
-			//create new face
+			char* buf;
+			FT_Long size = Platform::getSingleton()->loadFileContent( buf, fileName );
+
+			//create new face from memory - loading from memory is needed for zip loading
 			FT_Face face;
-			int err = FT_New_Face( freeType, fileName.ASCII().c_str(), 0, &face );
+			int err = FT_New_Memory_Face( freeType, (FT_Byte*)buf, size, 0, &face );
 			faceMap[ fileName ] = face;
 
 			DEBUG_ASSERT( err == 0 );
 
+			free( buf );
 			return face;
 		}
 

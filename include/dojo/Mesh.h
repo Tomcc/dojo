@@ -476,6 +476,9 @@ namespace Dojo
 		}
 
 		void _prepareVertex( float x, float y, float z );
+
+		///binds the attribute arrays and the Buffer Objects required to render the mesh
+		void _bindAttribArrays();
 	};
 }
 

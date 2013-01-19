@@ -665,18 +665,25 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 
 	std::string ansipath = path.ASCII();
 
-	//check the file signature and deduce its format
-	fif = FreeImage_GetFileType(ansipath.c_str(), 0);
-	//if still unknown, try to guess the file format from the file extension
-	if(fif == FIF_UNKNOWN)
-		fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
+	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
+	fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
 		return 0;
 
 	//check that the plugin has reading capabilities and load the file
-	if(FreeImage_FIFSupportsReading(fif))
-		dib = FreeImage_Load(fif, ansipath.c_str());
+	if( !FreeImage_FIFSupportsReading(fif))
+		return 0;
+
+	char* buf;
+	int fileSize = loadFileContent( buf, path );
+
+	// attach the binary data to a memory stream
+	FIMEMORY *hmem = FreeImage_OpenMemory( (BYTE*)buf, fileSize );
+
+	// load an image from the memory stream
+	dib = FreeImage_LoadFromMemory(fif, hmem, 0);
+
 	//if the image failed to load, return failure
 	if(!dib)
 		return 0;
@@ -717,7 +724,10 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 		}
 	}
 	
+	//free resources
 	FreeImage_Unload( dib );
+	FreeImage_CloseMemory(hmem);
+	free( buf );
 
 	static const GLenum formatsForSize[] = { GL_NONE, GL_UNSIGNED_BYTE, GL_RG, GL_RGB, GL_RGBA };
 	return formatsForSize[ pixelSize ];
@@ -743,7 +753,9 @@ String Win32Platform::getAppDataPath()
 
 String Win32Platform::getRootPath()
 {
-	return String( Poco::Path::current() );
+	String path( Poco::Path::current() );
+	Utils::makeCanonicalPath( path );
+	return path;
 }
 
 String Win32Platform::getResourcesPath()

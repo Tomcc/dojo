@@ -33,7 +33,7 @@
 
 #elif defined( __ANDROID__ )
 	#define PLATFORM_ANDROID
-	
+	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
 #else 
 	#error "Platform unrecognized"
 #endif
