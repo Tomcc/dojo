@@ -17,10 +17,10 @@ Viewport::Viewport(
 		 const Color& clear, 
 		 float _VFOV, 
 		 float _zNear,
-		 float _zFar,
-		 int fadeObjectLayer ) :
+		 float _zFar ) :
 Object( level, pos, size ),
 cullingEnabled( true ),
+fadeObject( NULL ),
 background( NULL ),
 clearColor( clear ),
 frustumCullingEnabled( false ),
@@ -38,20 +38,25 @@ zFar( 1000 )
 	targetSize.x = (float)Platform::getSingleton()->getWindowWidth();
 	targetSize.y = (float)Platform::getSingleton()->getWindowHeight();
 	
-	//create the fader object			
-	fadeObject = new Renderable( level, Vector::ZERO, "texturedQuad" );
-	fadeObject->color = Color( 0, 0, 0, 0 );
-	
-	fadeObject->scale.x = size.x;
-	fadeObject->scale.y = size.y;
-	
-	fadeObject->setVisible( false );
-	
-	addChild( fadeObject, fadeObjectLayer );
-	
 	if( _VFOV > 0 )
 		enableFrustum( _VFOV, _zNear, _zFar );
 }	
+
+void Viewport::addFader( int layer )
+{
+	DEBUG_ASSERT( !fadeObject );
+
+	//create the fader object			
+	fadeObject = new Renderable( getGameState(), Vector::ZERO, "texturedQuad" );
+	fadeObject->color = Color( 0, 0, 0, 0 );
+
+	fadeObject->scale.x = size.x;
+	fadeObject->scale.y = size.y;
+
+	fadeObject->setVisible( false );
+
+	addChild( fadeObject, layer );
+}
 
 void Viewport::setBackgroundSprite( const String& name, float frameTime )
 {			

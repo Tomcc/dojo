@@ -43,8 +43,7 @@ namespace Dojo
 			const Color& clear, 
 			float _VFOV = 0, 
 			float _zNear = 0,
-			float _zFar = 100,
-			int fadeObjectLayer = 8 );
+			float _zFar = 100 );
 		
 		virtual ~Viewport()
 		{
@@ -54,6 +53,9 @@ namespace Dojo
 
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum( float VFOV, float zNear, float zFar );
+
+		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
+		void addFader( int layer );
 		
 		void setBackgroundSprite( const String& name, float frameTime = 0 );
 				
