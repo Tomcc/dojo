@@ -22,14 +22,13 @@ LOCAL_LDLIBS:=  $(DIP_LIB_PATH)/libopenal.a\
 		$(DIP_LIB_PATH)/libzzip.a\
                 $(DIP_LIB_PATH)/libvorbis.a\
                 $(DIP_LIB_PATH)/libfreetype2.a\
+                $(DIP_LIB_PATH)/libFreeImage.a\
                 $(DIP_LIB_PATH)/libPocoFoundation.a\
 		-L$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi/ \
                 -llog -lz -landroid -lGLESv1_CM -lGLESv2 -landroid -lEGL  -s\
 	        -lgnustl_static -lsupc++ 
 #-lGLESv2
 #-lGLESv1_CM
-			   
-LOCAL_STATIC_LIBRARIES := android_native_app_glue
 
 #include
 LOCAL_C_INCLUDES+=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH)\
@@ -59,8 +58,5 @@ LOCAL_CFLAGS += -D__STDC_LIMIT_MACROS -DDEF_SET_OPENGL_ES2 -DGL_GLEXT_PROTOTYPES
 LOCAL_CPPFLAGS   += -std=gnu++11 -frtti -fexceptions
 
 include $(BUILD_STATIC_LIBRARY)
-
-#Build native glue static library as well.
-$(call import-module,android/native_app_glue)
 
 

@@ -20,9 +20,11 @@
 int ANDROID_VALID_DEVICE;
 //app android
 struct android_app* app_state=NULL;
-//APK UNZIP
-extern void _apk_Open(const char*);
-extern void _apk_Close();
+//APK
+const char* path_apk=NULL;
+extern const char* GetAndroidApk(){
+	return path_apk;
+}
 //OPENAL CALL
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved);
 //EVENT APP
@@ -33,11 +35,14 @@ extern struct android_app* GetAndroidApp(){
 	return app_state;
 }
 
+
 /*********************************
 Android MAIN
 **********************************/
-void android_main(struct android_app* state) {
+extern void android_main(struct android_app* state) {
     
+    //hack
+    if(state==NULL) return;
     /////////////////////////////////
     // Make sure glue isn't stripped.
     app_dummy();
@@ -62,8 +67,6 @@ void android_main(struct android_app* state) {
 	}
 	usleep( 16 );
     }
-
-    LOGE("!main!");
     ////////////////////////////
     //GET APK (ZIP FILE)
     ANativeActivity* activity = state->activity;
@@ -72,22 +75,16 @@ void android_main(struct android_app* state) {
     jclass clazz = (*env)->GetObjectClass(env, activity->clazz);
     jmethodID methodID = (*env)->GetMethodID(env, clazz, "getPackageCodePath", "()Ljava/lang/String;");
     jobject result = (*env)->CallObjectMethod(env, activity->clazz, methodID);
-    const char* str;
     jboolean isCopy;
-    str = (*env)->GetStringUTFChars(env, (jstring)result, &isCopy);
+    path_apk= (const char*) (*env)->GetStringUTFChars(env, (jstring)result, &isCopy);
+    ////////////////////////////
     ////////////////////////////
     //INIT openAL/backend
     JNI_OnLoad(activity->vm,0);
     ////////////////////////
-    //OPEN ZIP (APK ASSETs)
-    _apk_Open(str);
-    //
     char *argv[2];
     argv[0] = strdup("Dojo");
     argv[1] = NULL;
     int out=main(1, argv);
-    //CLOSE ZIP (APK ASSETs)
-    _apk_Close();
-    //
 }
 

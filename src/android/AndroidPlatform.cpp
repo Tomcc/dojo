@@ -24,6 +24,7 @@ using namespace Dojo;
 extern "C" int ANDROID_VALID_DEVICE;
 //get app
 extern  "C" struct android_app* GetAndroidApp();
+extern  "C" const char* GetAndroidApk();
 //EVENT APP
 extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* event) {
 		//get platform
@@ -128,10 +129,16 @@ extern "C" void android_handle_cmd(struct android_app* app, int32_t cmd) {
 /* DOJO */
 AndroidPlatform::AndroidPlatform(const Table& table) :
 Platform(table){
-	app=NULL;
-	sensorManager=NULL;
-	accelerometerSensor=NULL;
-	sensorEventQueue=NULL;
+    app=NULL;
+    sensorManager=NULL;
+    accelerometerSensor=NULL;
+    sensorEventQueue=NULL;    
+
+    addZipFormat( ".apk" );
+    this->apkdir=String(GetAndroidApk());
+    Utils::makeCanonicalPath(this->apkdir);
+    DEBUG_MESSAGE("getPackageCodePath:");
+
 }
 
 void AndroidPlatform::ResetDisplay(){
@@ -234,6 +241,20 @@ void AndroidPlatform::initialise(Game *g)
     game->begin();
 }   
 
+String AndroidPlatform::getAppDataPath(){ 
+	return this->apkdir+"/assets";
+ }
+String AndroidPlatform::getResourcesPath(){ 
+ 	std::string tmp=(this->apkdir+String("/assets")).ASCII();
+	DEBUG_MESSAGE("AndroidPlatform::getResourcesPath:"<<tmp);
+	return this->apkdir+String("/assets");
+ }
+String AndroidPlatform::getRootPath(){ 
+ 	std::string tmp=this->apkdir.ASCII();
+	DEBUG_MESSAGE("AndroidPlatform::getRootPath:"<<tmp);
+	return this->apkdir; 
+}
+
 void AndroidPlatform::shutdown()
 {
         DEBUG_MESSAGE("AndroidPlatform::shutdown()");
@@ -265,6 +286,89 @@ void AndroidPlatform::acquireContext()
         DEBUG_MESSAGE("AndroidPlatform::context"<<context);
         return;
     }
+}
+
+GLenum AndroidPlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
+{
+	void* data;
+
+        DEBUG_MESSAGE("loadImageFile::path:"<<path.ASCII());
+
+	//image format
+	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+	//pointer to the image, once loaded
+	FIBITMAP *dib = NULL;
+
+	std::string ansipath = path.ASCII();
+
+	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
+	fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
+	//if still unkown, return failure
+	if(fif == FIF_UNKNOWN)
+		return 0;
+
+	//check that the plugin has reading capabilities and load the file
+	if( !FreeImage_FIFSupportsReading(fif))
+		return 0;
+
+	char* buf;
+	int fileSize = loadFileContent( buf, path );
+
+	// attach the binary data to a memory stream
+	FIMEMORY *hmem = FreeImage_OpenMemory( (BYTE*)buf, fileSize );
+
+	// load an image from the memory stream
+	dib = FreeImage_LoadFromMemory(fif, hmem, 0);
+
+	//if the image failed to load, return failure
+	if(!dib)
+		return 0;
+
+	//retrieve the image data
+	data = (void*)FreeImage_GetBits(dib);
+	//get the image width and height, and size per pixel
+	width = FreeImage_GetWidth(dib);
+	height = FreeImage_GetHeight(dib);
+	
+	pixelSize = FreeImage_GetBPP(dib)/8;
+	
+	int size = width*height*pixelSize;
+	bufptr = malloc( size );
+	
+	//swap R and B and invert image while copying
+	byte* in, *out;
+	for( int i = 0, ii = height-1; i < height ; ++i, --ii )
+	{
+		for( int j = 0; j < width; ++j )
+		{
+			out = (byte*)bufptr + (j + i*width)*pixelSize;
+			in = (byte*)data + (j + ii*width)*pixelSize;
+
+			if( pixelSize >= 4 )
+				out[3] = in[3];
+			
+			if( pixelSize >= 3 )
+			{
+				out[2] = in[0];
+				out[1] = in[1];
+				out[0] = in[2];
+			}
+			else
+			{
+				out[0] = in[0];
+			}
+		}
+	}
+	
+	//free resources
+	FreeImage_Unload( dib );
+	FreeImage_CloseMemory(hmem);
+	free( buf );
+
+        DEBUG_MESSAGE("loadImageFile::size:"<<width<<"x"<<height);
+
+	static const GLenum formatsForSize[] = { GL_NONE, GL_UNSIGNED_BYTE, 0, GL_RGB, GL_RGBA };
+	return formatsForSize[ pixelSize ];
 }
 
 void AndroidPlatform::present()
