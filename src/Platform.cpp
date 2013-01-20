@@ -56,9 +56,30 @@ void Platform::shutdownPlatform()
 	SAFE_DELETE( singleton );
 }
 
-bool Platform::_pathContainsZip( const String& path )
+Platform::Platform( const Table& configTable ) :
+	config( configTable ),
+	running( false ),
+	game( NULL ),
+	sound( NULL ),
+	render( NULL ),
+	input( NULL ),
+	realFrameTime( 0 ),
+	mFullscreen( 0 ),
+	mFrameSteppingEnabled( false )
 {
-	return path.find( String(".zip") ) != String::npos;
+	addZipFormat( ".zip" );
+	addZipFormat( ".dpk" );
+}	
+
+int Platform::_findZipExtension( const String & path )
+{
+	for( const String& ext : mZipExtensions )
+	{
+		int idx = path.find( ext );
+		if( idx != String::npos )
+			return idx + ext.size();
+	}
+	return String::npos;
 }
 
 String Platform::_replaceFoldersWithExistingZips( const String& absPath )
@@ -73,14 +94,25 @@ String Platform::_replaceFoldersWithExistingZips( const String& absPath )
 		next = absPath.find_first_of( '/', prev+1 );
 
 		String currentFolder = absPath.substr( prev, next-prev );
-		String partialFolder = res + currentFolder + ".zip";
 
-		//check if partialFolder exists as a zip file
-		Poco::File zipFile( partialFolder.ASCII() );
+		//for each possibile zip extension, search a zip named like that
+		bool found = false;
+		for( const String& ext : mZipExtensions )
+		{
+			String partialFolder = res + currentFolder + ext;
 
-		if( zipFile.exists() && zipFile.isFile() )
-			res = partialFolder;
-		else
+			//check if partialFolder exists as a zip file
+			Poco::File zipFile( partialFolder.ASCII() );
+
+			if( zipFile.exists() && zipFile.isFile() )
+			{
+				res = partialFolder;
+				found = true;
+				break;
+			}
+		}
+		
+		if( !found) 
 			res += currentFolder;
 
 		prev = next;
@@ -92,13 +124,15 @@ String Platform::_replaceFoldersWithExistingZips( const String& absPath )
 
 const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, String& zipPath, String& remainder )
 {
-
 	//find the innermost zip 
-	int idx = path.find( String(".zip") ) + 5;
+	int idx = _findZipExtension( path );
 
-	zipPath = path.substr( 0, idx-1 );
+	zipPath = path.substr( 0, idx );
 
-	remainder = (idx < path.size()) ? path.substr( idx ) : String::EMPTY;
+	if( idx < path.size() )
+		remainder = path.substr( idx+1 );
+	else 
+		remainder = String::EMPTY;
 
 	DEBUG_ASSERT_MSG( remainder.find( String(".zip") ) == String::npos, "Error: nested zips are not supported!" );
 
@@ -141,7 +175,8 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
 	String absPath = _replaceFoldersWithExistingZips( cleanAbsPath );
 
-	if( _pathContainsZip( absPath ) ) //there's at least one zip in the path
+	int idx = _findZipExtension( absPath );
+	if( idx != String::npos ) //there's at least one zip in the path
 	{
 		//now, get the file/folder mapping in memory for the zip
 		//it is cached because parsing the header from disk each time is TOO SLOW
@@ -191,7 +226,8 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 	using namespace std;
 	
 	int size = 0;
-	if( !_pathContainsZip( path ) )
+	int internalZipPathIdx = _findZipExtension( path );
+	if( internalZipPathIdx == String::npos )
 	{
 		fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate | ios_base::binary );
 
@@ -209,11 +245,9 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 	}
 	else //open a file from a zip
 	{
-		int idx = path.find( String(".zip") );
+		String zipPath = path.substr( 0, internalZipPathIdx );
+		String zipInternalPath = path.substr( internalZipPathIdx+1 );
 
-		String zipPath = path.substr( 0, idx + 4 );
-
-		String zipInternalPath = path.substr( idx+5 );
 		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
 
 		Poco::Zip::ZipArchive arch( file );

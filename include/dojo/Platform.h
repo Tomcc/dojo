@@ -47,6 +47,13 @@ namespace Dojo
 			return game;
 		}
 
+		///add a format that will be recognized as a zip package by the file loader
+		inline void addZipFormat( const String& ext )
+		{
+			DEBUG_ASSERT( ext.size() );
+			mZipExtensions.push_back( ext );
+		}
+
 		///returns the SoundManager instance
 		inline SoundManager* getSoundManager()	{	return sound;	}
 		///returns the Render instance
@@ -196,6 +203,7 @@ namespace Dojo
 
 	protected:
 
+		typedef std::vector< String > ZipExtensionList;
 		typedef std::vector< String > PathList;
 		typedef std::unordered_map< String, PathList > ZipFoldersMap;
 		typedef std::unordered_map< String, ZipFoldersMap > ZipFileMapping;
@@ -224,6 +232,7 @@ namespace Dojo
 
 		///this "caches" the zip headers for faster access - each zip that has been opened has its paths cached here!
 		ZipFileMapping mZipFileMaps;
+		ZipExtensionList mZipExtensions;
 
 		String _getTablePath( Table* dest, const String& absPath );
 
@@ -232,22 +241,10 @@ namespace Dojo
 
 		const ZipFoldersMap& _getZipFileMap( const String& path, String& zipPath, String& reminder );
 
-		bool _pathContainsZip( const String & path );
+		int _findZipExtension( const String & path );
 
 		///protected singleton constructor
-		Platform( const Table& configTable ) :
-			config( configTable ),
-			running( false ),
-			game( NULL ),
-			sound( NULL ),
-			render( NULL ),
-			input( NULL ),
-			realFrameTime( 0 ),
-			mFullscreen( 0 ),
-			mFrameSteppingEnabled( false )
-		{
-
-		}	
+		Platform( const Table& configTable );
 	};
 }
 
