@@ -55,10 +55,7 @@ TextArea::~TextArea()
 }
 
 void TextArea::clearText()
-{						
-	//delete characters
-	for( auto c : characters )
-		delete c;
+{
 	characters.clear();
 
 	content.clear();

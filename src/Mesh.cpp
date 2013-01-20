@@ -134,43 +134,9 @@ void Mesh::vertex( float x, float y, float z )
 	ptr[2] = z;
 }
 
-bool Mesh::end()
-{			
-	DEBUG_ASSERT( isEditing() );
-	
-	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
-		return false;
-
-	//create the VAO
-	if( vertexArrayDesc )
-		glDeleteVertexArrays( 1, &vertexArrayDesc );
-
-	glGenVertexArrays( 1, &vertexArrayDesc );
-	glBindVertexArray( vertexArrayDesc );
-
-	CHECK_GL_ERROR;
-
-	//create the VBO
-	if( !vertexHandle )
-		glGenBuffers(1, &vertexHandle );
-
-	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
-	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
-	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
-
-	CHECK_GL_ERROR;
-
-	//create the IBO
-	if( isIndexed() ) //we support unindexed meshes
-	{				
-		if( !indexHandle )
-			glGenBuffers(1, &indexHandle );
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexByteSize * indexCount, indices, usage);
-
-		CHECK_GL_ERROR;						
-	}
+void Mesh::_bindAttribArrays()
+{
+	glBindBuffer( GL_ARRAY_BUFFER, vertexHandle );
 
 	//construct attributes
 	for( int i = 0; i < _VF_COUNT; ++i )
@@ -203,11 +169,58 @@ bool Mesh::end()
 
 			CHECK_GL_ERROR;
 		}
+		else if( state != GL_VERTEX_ARRAY ) //do not disable the position
+			glDisableClientState( state );
 	}
+
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0 ); //only bind the index buffer if existing (duh)
+
+	CHECK_GL_ERROR;
+}
+
+bool Mesh::end()
+{			
+	DEBUG_ASSERT( isEditing() );
+	
+	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
+		return false;
+
+	//create the VBO
+	if( !vertexHandle )
+		glGenBuffers(1, &vertexHandle );
+
+	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
 
 	CHECK_GL_ERROR;
 
+	//create the IBO
+	if( isIndexed() ) //we support unindexed meshes
+	{				
+		if( !indexHandle )
+			glGenBuffers(1, &indexHandle );
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexByteSize * indexCount, indices, usage);
+
+		CHECK_GL_ERROR;						
+	}
+
+#ifndef DOJO_DISABLE_VAOS //if we're using VAOs
+	//create the VAO
+	if( vertexArrayDesc )
+		glDeleteVertexArrays( 1, &vertexArrayDesc );
+
+	glGenVertexArrays( 1, &vertexArrayDesc );
+	glBindVertexArray( vertexArrayDesc );
+
+	CHECK_GL_ERROR;
+
+	_bindAttribArrays();
+
 	glBindVertexArray( 0 );
+#endif
 	
 	if( mDestroyBuffersOnEnd ) //won't be updated ever again
 		_destroyBuffers();
@@ -239,11 +252,16 @@ bool Mesh::end()
 void Mesh::bind()
 {		
 	DEBUG_ASSERT( vertexHandle );
+
+#ifndef DOJO_DISABLE_VAOS
 	DEBUG_ASSERT( vertexArrayDesc );
-
 	glBindVertexArray( vertexArrayDesc );
+#else
 
-	DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
+	_bindAttribArrays(); //bind attribs each frame! (costly)
+#endif
+
+	CHECK_GL_ERROR;
 }
 
 const uint Mesh::VERTEX_FIELD_SIZES[] = { 
