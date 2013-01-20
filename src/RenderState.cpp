@@ -36,7 +36,7 @@ void RenderState::applyState()
 		else
 		{
 			//override the previous bound texture with nothing
-			glBindTexture( GL_TEXTURE_2D, NULL );
+			glBindTexture( GL_TEXTURE_2D, 0 );
 			glDisable( GL_TEXTURE_2D );
 			
 			glMatrixMode( GL_TEXTURE );

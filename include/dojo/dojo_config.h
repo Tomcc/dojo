@@ -33,9 +33,6 @@
 
 #elif defined( ANDROID )
 	#define PLATFORM_ANDROID
-
-	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
-
 #else 
 	#error "Platform unrecognized"
 #endif
@@ -85,6 +82,10 @@
 #else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
 	#define DOJO_WIREFRAME_AVAILABLE
+#endif
+
+#ifdef PLATFORM_ANDROID
+	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
 #endif
 
 //do not use the differential state commit //HACK
