@@ -209,10 +209,9 @@ bool Mesh::end()
 
 #ifndef DOJO_DISABLE_VAOS //if we're using VAOs
 	//create the VAO
-	if( vertexArrayDesc )
-		glDeleteVertexArrays( 1, &vertexArrayDesc );
+	if( !vertexArrayDesc )
+		glGenVertexArrays( 1, &vertexArrayDesc );
 
-	glGenVertexArrays( 1, &vertexArrayDesc );
 	glBindVertexArray( vertexArrayDesc );
 
 	CHECK_GL_ERROR;

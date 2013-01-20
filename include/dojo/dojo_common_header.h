@@ -31,6 +31,7 @@
 
 #include <Poco/Path.h>
 #include <Poco/Timer.h>
+#include <Poco/Zip/ZipArchive.h>
 
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>

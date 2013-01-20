@@ -11,32 +11,19 @@ void Table::loadFromFile( Table* dest, const String& path )
 {
 	DEBUG_ASSERT( path.size() );
 
-	FILE* file = fopen( path.ASCII().c_str(), "rb" );
-
-	if( !file )
-	{
-		DEBUG_MESSAGE( "WARNING: Cannot load table " << path.ASCII() );
-		return;
-	}
-
-	fseek( file, 0, SEEK_END);
-	uint size = ftell (file);
-
-	fseek( file, 0, SEEK_SET );
-
-	std::string buf; //this is a classic UTF8 string
-	buf.resize( size );
-
-	size_t read = fread( (void*)buf.data(), sizeof( char ), size, file );
-
-	DEBUG_ASSERT( read == size );
-
-	fclose( file );
+	char* bufchar;
+	Platform::getSingleton()->loadFileContent( bufchar, path );
+	
+	//TODO refactor to use directly the buffer, this is HEAVY!
+	std::string buf( bufchar );
+	free( bufchar );
 
 	dest->setName( Utils::getFileName( path ) );
 
 	StringReader reader( buf );
 	dest->deserialize( reader );
+
+
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );

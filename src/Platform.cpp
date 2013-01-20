@@ -25,6 +25,7 @@
 
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Exception.h>
+#include <Poco/Zip/ZipStream.h>
 
 using namespace Dojo;
 
@@ -55,51 +56,155 @@ void Platform::shutdownPlatform()
 	SAFE_DELETE( singleton );
 }
 
+bool Platform::_pathContainsZip( const String& path )
+{
+	return path.find( String(".zip") ) != String::npos;
+}
+
+String Platform::_replaceFoldersWithExistingZips( const String& absPath )
+{
+	//find the root (on windows it is not the first character)
+	int next, prev = absPath.find_first_of( '/' );
+
+	String res = absPath.substr( 0, prev );
+
+	do
+	{
+		next = absPath.find_first_of( '/', prev+1 );
+
+		String currentFolder = absPath.substr( prev, next-prev );
+		String partialFolder = res + currentFolder + ".zip";
+
+		//check if partialFolder exists as a zip file
+		Poco::File zipFile( partialFolder.ASCII() );
+
+		if( zipFile.exists() && zipFile.isFile() )
+			res = partialFolder;
+		else
+			res += currentFolder;
+
+		prev = next;
+
+	} while( next != String::npos);
+	
+	return res;
+}
+
+Poco::Zip::ZipArchive Platform::_openInnerMostZip( const String& path, String& zipPath, String& reminder )
+{
+	//find the innermost zip 
+	int idx = path.find( String(".zip") ) + 5;
+
+	zipPath = path.substr( 0, idx-1 );
+
+	reminder = (idx < path.size()) ? path.substr( idx ) : String::EMPTY;
+	std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
+
+	Poco::Zip::ZipArchive arch( file );
+
+	return arch;
+
+	//TODO open zips inside zips
+}
+
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
 {
-	try
-	{				
-		Poco::DirectoryIterator itr( (getRootPath() + "/" + wpath).ASCII() );
-		Poco::DirectoryIterator end;
-		
-		String extension = type;
-		
-		while( itr != end )
-		{			
-			String path = itr->path();
-			
-			if( Utils::getFileExtension( path ) == extension )
-			{
-				Utils::makeCanonicalPath( path );
-				
-				out.push_back( path );
-			}
-			++itr;
+	String cleanAbsPath = getResourcesPath() + "/" + wpath;
+
+	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
+	String absPath = _replaceFoldersWithExistingZips( cleanAbsPath );
+
+	if( _pathContainsZip( absPath ) ) //there's at least one zip in the path
+	{
+		//now, find the innermost zip, that is, the deepest zip which contains this path
+		String zipInternalPath, zipPath;
+		Poco::Zip::ZipArchive zip = _openInnerMostZip( absPath, zipPath, zipInternalPath );
+
+		auto itr = zip.fileInfoBegin();
+		auto end = zip.fileInfoEnd();
+		for( ; itr != end; ++itr )
+		{
+			//now, check if the folder is "in" the required internal folder, zipInternalPath
+			String filePath( itr->second.getFileName() );
+			String fileDir = Utils::getDirectory( filePath );
+
+			if( fileDir == zipInternalPath && type == Utils::getFileExtension( filePath ) ) //if path and extension match
+				out.push_back( zipPath + "/" + itr->second.getFileName() );
 		}
 	}
-	catch ( ... )
+	else
 	{
-		
-	}	
+		try
+		{				
+			Poco::DirectoryIterator itr( absPath.ASCII() );
+			Poco::DirectoryIterator end;
+
+			String extension = type;
+
+			while( itr != end )
+			{			
+				String path = itr->path();
+
+				if( Utils::getFileExtension( path ) == extension )
+				{
+					Utils::makeCanonicalPath( path );
+
+					out.push_back( path );
+				}
+				++itr;
+			}
+		}
+		catch ( ... )	{}	
+	}
 }
 
 uint Platform::loadFileContent( char*& bufptr, const String& path )
 {	
 	using namespace std;
 	
-	fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate | ios_base::binary );
-	
-	if( !file.is_open() )
-		return 0;
-	
-	int size = (int)file.tellg();
-	file.seekg(0);
-	
-	bufptr = (char*)malloc( size );
-	
-	file.read( bufptr, size );
-	
-	file.close();
+	int size = 0;
+	if( !_pathContainsZip( path ) )
+	{
+		fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate | ios_base::binary );
+
+		if( !file.is_open() )
+			return 0;
+
+		size = (int)file.tellg();
+		file.seekg(0);
+
+		bufptr = (char*)malloc( size );
+
+		file.read( bufptr, size );
+
+		file.close();
+	}
+	else //open a file from a zip
+	{
+		int idx = path.find( String(".zip") );
+
+		String zipPath = path.substr( 0, idx + 4 );
+
+		String zipInternalPath = path.substr( idx+5 );
+		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
+
+		Poco::Zip::ZipArchive arch( file );
+
+		auto elem = arch.findHeader( zipInternalPath.UTF8() );
+
+		if( elem == arch.headerEnd() )
+			return 0;
+
+		Poco::Zip::ZipInputStream zipin (file, elem->second);
+
+		size = elem->second.getUncompressedSize()+1;
+		bufptr = (char*)malloc( size );
+
+		zipin.read( bufptr, size );
+
+		//add terminator
+		bufptr[ size-1 ] = 0;
+	}
 	
 	return size;
 }
