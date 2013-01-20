@@ -55,7 +55,7 @@ currentFadeTime(0)
 	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN ); //ensure at least MIN sources have been built
 
 	//dummy source to manage source shortage
-	fakeSource = new SoundSource( this, NULL );
+	fakeSource = new SoundSource( this, 0 );
 
 	setListenerPosition( Vector::ZERO );
 	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
