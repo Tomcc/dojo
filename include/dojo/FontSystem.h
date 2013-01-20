@@ -13,6 +13,7 @@ namespace Dojo
 	public:
 
 		typedef std::unordered_map< String, FT_Face > FaceMap;
+		typedef std::unordered_map< String, void* > FaceMemoryMap;
 
 		FontSystem()
 		{
@@ -24,6 +25,9 @@ namespace Dojo
 
 		virtual ~FontSystem()
 		{
+			for( auto e : memoryMap )
+				free( e.second );
+
 			FT_Done_FreeType( freeType );
 		}
 
@@ -54,6 +58,7 @@ namespace Dojo
 	protected:
 
 		FaceMap faceMap;
+		FaceMemoryMap memoryMap;
 
 		FT_Library freeType;
 
@@ -61,15 +66,15 @@ namespace Dojo
 		{
 			char* buf;
 			FT_Long size = Platform::getSingleton()->loadFileContent( buf, fileName );
-
+			
 			//create new face from memory - loading from memory is needed for zip loading
 			FT_Face face;
 			int err = FT_New_Memory_Face( freeType, (FT_Byte*)buf, size, 0, &face );
 			faceMap[ fileName ] = face;
+			memoryMap[ fileName ] = buf; //keep the memory
 
 			DEBUG_ASSERT( err == 0 );
 
-			free( buf );
 			return face;
 		}
 

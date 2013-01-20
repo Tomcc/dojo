@@ -161,10 +161,14 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( index < FONT_MAX_PAGES );
 
-			Page* res = pages[ index ];
+			Page* res = index < pages.size() ? pages[ index ] : NULL;
 
 			if( !res )
 			{
+				//make room in the vector
+				while( index >= pages.size() )
+					pages.add( NULL );
+
 				pages[ index ] = res = new Page( this, index );
 				res->onLoad();
 			}
@@ -239,7 +243,7 @@ namespace Dojo
 		///this has to be called each time that we need to use the face
 		void _prepareFace();
 		
-		Page* pages[ FONT_MAX_PAGES ]; 
+		Array< Page* > pages;
 		
 		static void _blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
 		static void _blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
