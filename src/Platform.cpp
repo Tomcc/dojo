@@ -90,21 +90,48 @@ String Platform::_replaceFoldersWithExistingZips( const String& absPath )
 	return res;
 }
 
-Poco::Zip::ZipArchive Platform::_openInnerMostZip( const String& path, String& zipPath, String& reminder )
+const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, String& zipPath, String& remainder )
 {
+
 	//find the innermost zip 
 	int idx = path.find( String(".zip") ) + 5;
 
 	zipPath = path.substr( 0, idx-1 );
 
-	reminder = (idx < path.size()) ? path.substr( idx ) : String::EMPTY;
-	std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
+	remainder = (idx < path.size()) ? path.substr( idx ) : String::EMPTY;
 
-	Poco::Zip::ZipArchive arch( file );
+	DEBUG_ASSERT_MSG( remainder.find( String(".zip") ) == String::npos, "Error: nested zips are not supported!" );
 
-	return arch;
+	//has this zip been already loaded?
+	ZipFileMapping::const_iterator elem = mZipFileMaps.find( zipPath );
 
-	//TODO open zips inside zips
+	if( elem != mZipFileMaps.end() )
+		return elem->second;
+	else
+	{
+		//actually open the file
+		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
+
+		Poco::Zip::ZipArchive zip( file );
+
+		//create a new file mapping
+		auto result = mZipFileMaps.emplace( zipPath, ZipFoldersMap() );
+		ZipFoldersMap& map = result.first->second;
+
+		auto itr = zip.fileInfoBegin();
+		auto end = zip.fileInfoEnd();
+		for( ; itr != end; ++itr )
+		{
+			if( itr->second.isFile() )
+			{
+				String filePath( itr->second.getFileName() );
+
+				map[ Utils::getDirectory( filePath ) ].push_back( filePath );
+			}
+		}
+
+		return map;
+	}
 }
 
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
@@ -116,21 +143,22 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 
 	if( _pathContainsZip( absPath ) ) //there's at least one zip in the path
 	{
-		//now, find the innermost zip, that is, the deepest zip which contains this path
+		//now, get the file/folder mapping in memory for the zip
+		//it is cached because parsing the header from disk each time is TOO SLOW
 		String zipInternalPath, zipPath;
-		Poco::Zip::ZipArchive zip = _openInnerMostZip( absPath, zipPath, zipInternalPath );
+		const ZipFoldersMap& map = _getZipFileMap( absPath, zipPath, zipInternalPath );
 
-		auto itr = zip.fileInfoBegin();
-		auto end = zip.fileInfoEnd();
-		for( ; itr != end; ++itr )
+		//do we have a folder named "zipInternalPath"?
+		auto folderItr = map.find( zipInternalPath );
+		if( folderItr != map.end() )
 		{
-			//now, check if the folder is "in" the required internal folder, zipInternalPath
-			String filePath( itr->second.getFileName() );
-			String fileDir = Utils::getDirectory( filePath );
-
-			if( fileDir == zipInternalPath && type == Utils::getFileExtension( filePath ) ) //if path and extension match
-				out.push_back( zipPath + "/" + itr->second.getFileName() );
-		}
+			//add all the files with the needed extension
+			for( String filePath : folderItr->second )
+			{
+				if( Utils::getFileExtension( filePath ) == type )
+					out.push_back( zipPath + "/" + filePath );
+			}
+		}		
 	}
 	else
 	{

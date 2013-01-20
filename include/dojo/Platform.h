@@ -196,20 +196,9 @@ namespace Dojo
 
 	protected:
 
-		///protected singleton constructor
-		Platform( const Table& configTable ) :
-			config( configTable ),
-			running( false ),
-			game( NULL ),
-			sound( NULL ),
-			render( NULL ),
-			input( NULL ),
-			realFrameTime( 0 ),
-			mFullscreen( 0 ),
-			mFrameSteppingEnabled( false )
-		{
-
-		}	
+		typedef std::vector< String > PathList;
+		typedef std::unordered_map< String, PathList > ZipFoldersMap;
+		typedef std::unordered_map< String, ZipFoldersMap > ZipFileMapping;
 
 		static Platform* singleton;
 		
@@ -233,14 +222,32 @@ namespace Dojo
 
 		Dojo::Array< ApplicationListener* > focusListeners;
 
+		///this "caches" the zip headers for faster access - each zip that has been opened has its paths cached here!
+		ZipFileMapping mZipFileMaps;
+
 		String _getTablePath( Table* dest, const String& absPath );
 
 		///for each component in the path, check if a directory.zip file exists
 		String _replaceFoldersWithExistingZips( const String& absPath );
 
-		Poco::Zip::ZipArchive _openInnerMostZip( const String& path, String& zipPath, String& reminder );
+		const ZipFoldersMap& _getZipFileMap( const String& path, String& zipPath, String& reminder );
 
 		bool _pathContainsZip( const String & path );
+
+		///protected singleton constructor
+		Platform( const Table& configTable ) :
+			config( configTable ),
+			running( false ),
+			game( NULL ),
+			sound( NULL ),
+			render( NULL ),
+			input( NULL ),
+			realFrameTime( 0 ),
+			mFullscreen( 0 ),
+			mFrameSteppingEnabled( false )
+		{
+
+		}	
 	};
 }
 
