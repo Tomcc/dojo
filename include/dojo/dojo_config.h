@@ -27,14 +27,15 @@
 	
 	#endif
 
-//are we on GNU/Linux?
+#elif defined( __ANDROID__ )
+	#define PLATFORM_ANDROID
+
 #elif defined( __linux )
 	#define PLATFORM_LINUX
 
-#elif defined( ANDROID )
-	#define PLATFORM_ANDROID
-#else 
-	#error "Platform unrecognized"
+#else
+	#error "Unsupported Platform"
+
 #endif
 
 
