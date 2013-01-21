@@ -16,11 +16,12 @@
 #include <GLES2/gl2ext.h>
 #include <android/sensor.h>
 #include <android/log.h>
-#include <android_native_app_glue.h>
+#include <android/native_activity.h>
 #include <android_native_app_glue.h>
 #include "Timer.h"
 
 extern "C" {
+	void android_main(struct android_app* state);
 	int32_t android_handle_input(struct android_app* app, AInputEvent* event);
 	void android_handle_cmd(struct android_app* app, int32_t cmd);
 }
@@ -42,15 +43,6 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop();
 
-		/*
-                //TODO
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path);
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out);
-		virtual uint loadFileContent( char*& bufptr, const std::string& path);
-        	virtual uint loadAudioFileContent(ALuint& i, const std::string& name);
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height);
-		*/
-		
 		virtual void setFullscreen( bool fullscreen )
 		{
 			//android can only fullscreen 
@@ -59,30 +51,27 @@ namespace Dojo
 
 		virtual bool isNPOTEnabled()
 		{
-			return false; //it always is on windows
+			DEBUG_MESSAGE("AndroidPlatform::isNPOTEnabled");
+			return true; 
 		}
                 ///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
                 virtual void prepareThreadContext(){
 			//???
 		}
+		
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
+		virtual String getAppDataPath();
+		virtual String getResourcesPath();
+		virtual String getRootPath();
+		
 		//TODO
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize ){
-			return 0;
-		}
-
-		virtual void load(  Table* dest ){}
-		virtual void save(  Table* table ){}
 
 		virtual void openWebPage( const std::string& site ){}
 		
 		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height ){}
 		
-		virtual String getAppDataPath(){ return String(""); }
-		virtual String getResourcesPath(){ return String(""); }
-		virtual String getRootPath(){ return String(""); }
-		
+
 		virtual void openWebPage( const String& site ){}
-		
 		
 
 	protected:
@@ -90,6 +79,7 @@ namespace Dojo
 		void ResetDisplay();
 		int32_t width, height;	
 		Timer frameTimer;
+		String apkdir;
 		
 		//android	
 		//app manager
