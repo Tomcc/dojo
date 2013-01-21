@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := game
 LOCAL_ARM_MODE := arm
 
-DOJO_PATH := ../../dojo2android
+DOJO_PATH := ../../..
 
 ############################################################################
 ############################################################################
@@ -19,9 +19,9 @@ DIP_INCLUDE_PATH_DOJ := $(DOJO_PATH)/include/dojo/
 DIP_INCLUDE_PATH := $(DOJO_PATH)/include
 DIP_LIB_PATH := $(DOJO_PATH)/dependencies-android/lib
 #libs
-LOCAL_LDLIBS:=  $(DIP_LIB_PATH)/libdojo-android.a\
-		$(DIP_LIB_PATH)/libopenal.a\
-		$(DIP_LIB_PATH)/libzzip.a\
+LOCAL_LDLIBS:=  $(DOJO_PATH)/Android/obj/local/armeabi/libdojo-android.a\
+				$(DIP_LIB_PATH)/libopenal.a\
+				$(DIP_LIB_PATH)/libzzip.a\
                 $(DIP_LIB_PATH)/libvorbis.a\
                 $(DIP_LIB_PATH)/libfreetype2.a\
                 $(DIP_LIB_PATH)/libFreeImage.a\
@@ -46,13 +46,14 @@ LOCAL_CPPFLAGS   += -std=gnu++11 -frtti -fexceptions
 
 #GAME MAKE
 #c/cpp files
-GAME_PATH_ANDROID := game
-GAME_PATH_ANDROID_INCLUDE := game
+GAME_PATH_ANDROID := $(LOCAL_PATH)
+GAME_PATH_ANDROID_INCLUDE := $(LOCAL_PATH)
+
 #c/cpp game files
-GAME_CPP:=$(wildcard $(LOCAL_PATH)/$(GAME_PATH_ANDROID)/*.cpp)
-GAME_C:=$(wildcard $(LOCAL_PATH)/$(GAME_PATH_ANDROID)/*.c)
+GAME_CPP:=$(wildcard $(GAME_PATH_ANDROID)/*.cpp)
+GAME_C:=$(wildcard $(GAME_PATH_ANDROID)/*.c)
 #h files
-GAME_H+=$(wildcard $(LOCAL_PATH)/$(GAME_PATH_ANDROID_INCLUDE)/*.h)
+GAME_H+=$(wildcard $(GAME_PATH_ANDROID_INCLUDE)/*.h)
 
 #add cpp file
 LOCAL_SRC_FILES+=$(GAME_CPP:$(LOCAL_PATH)/%=%)

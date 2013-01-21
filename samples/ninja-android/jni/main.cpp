@@ -1,6 +1,6 @@
 #include <dojo.h>
 
-#include <MyGame.h>
+#include "MyGame.h"
 
 #include "android_native_app_glue.h"
 
