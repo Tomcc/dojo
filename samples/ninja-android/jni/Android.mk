@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := game
 LOCAL_ARM_MODE := arm
 
-DOJO_PATH := ../../..
+DOJO_PATH := $(LOCAL_PATH)/../../..
 
 ############################################################################
 ############################################################################
@@ -30,10 +30,10 @@ LOCAL_LDLIBS:=  $(DOJO_PATH)/Android/obj/local/armeabi/libdojo-android.a\
                 -llog -lz -landroid -lGLESv1_CM -lGLESv2 -landroid -lEGL  -s\
 	        -lgnustl_static -lsupc++
    
-LOCAL_C_INCLUDES:=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH)
-LOCAL_C_INCLUDES+=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH_DOJ)
-LOCAL_C_INCLUDES+=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH_AND)
-LOCAL_C_INCLUDES+=$(LOCAL_PATH)/$(DIP_INCLUDE_PATH_DIP)
+LOCAL_C_INCLUDES:=$(DIP_INCLUDE_PATH)
+LOCAL_C_INCLUDES+=$(DIP_INCLUDE_PATH_DOJ)
+LOCAL_C_INCLUDES+=$(DIP_INCLUDE_PATH_AND)
+LOCAL_C_INCLUDES+=$(DIP_INCLUDE_PATH_DIP)
 
 #openGL extra propriety
 LOCAL_CFLAGS += -D__STDC_LIMIT_MACROS -DDEF_SET_OPENGL_ES2 -DGL_GLEXT_PROTOTYPES -DCP_USE_DOUBLES=0
