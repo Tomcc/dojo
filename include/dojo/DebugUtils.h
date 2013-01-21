@@ -1,5 +1,5 @@
 #ifndef DebugUtils_h__
-#define DebugUtils_h__
+#define DebugUtils_h__ 
 
 #ifdef WIN32 //HACK
 

@@ -2,6 +2,8 @@
 
 #include "DebugUtils.h"
 
+#include "dojo_common_header.h"
+
 using namespace Dojo;
 
 //the default assert fail implementation

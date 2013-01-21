@@ -2,12 +2,12 @@
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
-#ifdef _MSC_VER //if using VC++
+#if defined(_MSC_VER) || defined( __linux ) //if using VC++ or gcc
 
 #ifndef dojo_stdafx_h__
 #define dojo_stdafx_h__
 
-#include "dojo_common_header.h"
+#include   "dojo_common_header.h"
 
 #endif
 
