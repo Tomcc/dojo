@@ -18,6 +18,9 @@
 #elif defined( PLATFORM_LINUX )
     #include "linux/LinuxPlatform.h"
 
+#elif defined( PLATFORM_ANDROID )
+    #include "android/AndroidPlatform.h"
+
 #endif
 
 #include "StringReader.h"
@@ -45,6 +48,10 @@ Platform* Platform::create( const Table & config )
 #elif defined( PLATFORM_LINUX )
     singleton = new LinuxPlatform( config );
     
+#elif defined( PLATFORM_ANDROID )
+    android_main(NULL); //HACK
+    singleton = new AndroidPlatform( config );
+	
 #endif
 	return singleton;
 }
