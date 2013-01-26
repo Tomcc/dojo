@@ -21,7 +21,7 @@ LOCAL_LDLIBS:=  $(DIP_LIB_PATH)/libopenal.a\
 		$(DIP_LIB_PATH)/libzzip.a\
                 $(DIP_LIB_PATH)/libvorbis.a\
                 $(DIP_LIB_PATH)/libfreetype2.a\
-                $(DIP_LIB_PATH)/libFreeImage.a\
+                $(DIP_LIB_PATH)/libzzip.a\
                 $(DIP_LIB_PATH)/libPocoFoundation.a\
 		-L$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi/ \
                 -llog -lz -landroid -lGLESv1_CM -lGLESv2 -landroid -lEGL  -s\

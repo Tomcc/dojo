@@ -30,7 +30,7 @@
 
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Exception.h>
-#include <Poco/Zip/ZipStream.h>
+//#include <Poco/Zip/ZipStream.h> not work in android, change in zzip
 
 using namespace Dojo;
 
