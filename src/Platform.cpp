@@ -249,6 +249,7 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
 		//OPEN ZIP
 		ZipArchive zip;
+		zip.open(zipPath.UTF8());
 		//OPEN FILE IN ZIP
 		auto pfile=zip.openFile(  zipInternalPath.UTF8(),"rb");
 		//READ FILE
