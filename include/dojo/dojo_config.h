@@ -78,11 +78,11 @@
 #endif
 
 //general configurations
-#ifdef PLATFORM_IOS
-	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS devices
+#if defined( PLATFORM_IOS ) || defined( PLATFORM_ANDROID )
+	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS/Android devices
 #else
 	//#define DOJO_GAMMA_CORRECTION_ENABLED
-	#define DOJO_WIREFRAME_AVAILABLE
+	#define DOJO_WIREFRAME_AVAILABLE //WIREFRAME not avaiable on iOS/Android devices
 #endif
 
 #ifdef PLATFORM_ANDROID

@@ -1,7 +1,9 @@
 #include "stdafx.h"
 
 #include "Platform.h"
-
+//private:
+#include "ZipArchive.h"
+//
 #include "Utils.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
@@ -150,25 +152,16 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 		return elem->second;
 	else
 	{
-		//actually open the file
-		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
-
-		Poco::Zip::ZipArchive zip( file );
-
-		//create a new file mapping
 		mZipFileMaps[ zipPath ] = ZipFoldersMap();
 		ZipFoldersMap& map = mZipFileMaps.find( zipPath )->second;
 
-		auto itr = zip.fileInfoBegin();
-		auto end = zip.fileInfoEnd();
-		for( ; itr != end; ++itr )
-		{
-			if( itr->second.isFile() )
-			{
-				String filePath( itr->second.getFileName() );
+		ZipArchive zip( zipPath.UTF8() );
+		std::vector<std::string> zip_files;
+		zip.getListAllFiles(".",zip_files);
 
-				map[ Utils::getDirectory( filePath ) ].push_back( filePath );
-			}
+		for(std::string& itr : zip_files){
+			String filePath( itr );
+			map[ Utils::getDirectory( filePath ) ].push_back( filePath );
 		}
 
 		return map;
@@ -254,25 +247,18 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 	{
 		String zipPath = path.substr( 0, internalZipPathIdx );
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
-
-		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
-
-		Poco::Zip::ZipArchive arch( file );
-
-		auto elem = arch.findHeader( zipInternalPath.UTF8() );
-
-		if( elem == arch.headerEnd() )
-			return 0;
-
-		Poco::Zip::ZipInputStream zipin (file, elem->second);
-
-		size = elem->second.getUncompressedSize()+1;
-		bufptr = (char*)malloc( size );
-
-		zipin.read( bufptr, size );
-
-		//add terminator
-		bufptr[ size-1 ] = 0;
+		//OPEN ZIP
+		ZipArchive zip;
+		//OPEN FILE IN ZIP
+		auto pfile=zip.openFile(  zipInternalPath.UTF8(),"rb");
+		//READ FILE
+		size = pfile->size();
+		bufptr = (char*)malloc( size+1 );
+		pfile->read(bufptr,size,1);
+		//CLOSE FILE
+		delete pfile;
+		//ADD terminator
+		bufptr[ size ] = 0;
 	}
 	
 	return size;

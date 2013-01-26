@@ -31,7 +31,7 @@
 
 #include <Poco/Path.h>
 #include <Poco/Timer.h>
-#include <Poco/Zip/ZipArchive.h>
+//#include <Poco/Zip/ZipArchive.h> not work in android, change in zzip
 
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
@@ -95,7 +95,6 @@
 	#include <android/log.h>
 	#include <android/native_activity.h>
 	#include <android_native_app_glue.h>
-	#include <FreeImage.h>
 	
 #else
 	#error "No Platform defined!"
