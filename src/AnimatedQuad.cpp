@@ -19,6 +19,7 @@ animationSpeedMultiplier( 1 ),
 pixelPerfect( pp )
 {
 	cullMode = CM_DISABLED;
+	inheritScale = false;
 	
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );

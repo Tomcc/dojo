@@ -38,7 +38,8 @@ namespace Dojo {
 		
 		typedef Dojo::Array< Object* > ChildList;
 		
-		bool dispose;
+		bool dispose,
+			inheritScale;
 		
 		Vector position, speed, scale;
 		

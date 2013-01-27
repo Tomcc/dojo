@@ -58,6 +58,12 @@ namespace Dojo
 				else
 					totalTime = 1;
 			}
+
+			inline void _unset()
+			{
+				mElapsedLoops = 0;
+				animationTime = 0;
+			}
 			
 			///gets the currently bound texture
 			inline Texture* getCurrentFrame()

@@ -86,6 +86,9 @@ namespace Dojo
 			DEBUG_ASSERT( mAnimationIdx >= 0 );
 			DEBUG_ASSERT( animations.size() > mAnimationIdx );
 			
+			if( animation )
+				animation->_unset();
+
 			animation = animations.at( mAnimationIdx );
 			
 			_setTexture( animation->getCurrentFrame() );

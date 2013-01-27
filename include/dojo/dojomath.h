@@ -107,6 +107,17 @@ namespace Dojo
 			return (i >> n) & 0x1;
 		}
 		
+		///sets the nth bit of the mask i
+		static inline int setBit( int i, byte n, bool state )
+		{
+			DEBUG_ASSERT( n < 32 );
+
+			if( state )
+				return i | ( 0x1 << n );
+			else
+				return i & ~(0x1 << n);
+		}
+
 		///clamps in [0..1[
 		static inline float saturate( float n )
 		{

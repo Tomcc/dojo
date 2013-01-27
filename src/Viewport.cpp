@@ -47,8 +47,8 @@ void Viewport::addFader( int layer )
 	DEBUG_ASSERT( !fadeObject );
 
 	//create the fader object			
-	fadeObject = new Renderable( getGameState(), Vector::ZERO, "texturedQuad" );
-	fadeObject->color = Color( 0, 0, 0, 0 );
+	fadeObject = new Renderable( getGameState(), Vector( 0,0, -1), "texturedQuad" );
+	fadeObject->color = Color::NIL;
 
 	fadeObject->scale.x = size.x;
 	fadeObject->scale.y = size.y;
