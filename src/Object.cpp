@@ -19,7 +19,8 @@ scale( 1,1,1 ),
 childs( NULL ),
 parent( NULL ),
 dispose( false ),
-mNeedsAABB( true )
+mNeedsAABB( true ),
+inheritScale( true )
 {
 	DEBUG_ASSERT( parentLevel );
 	
@@ -81,6 +82,8 @@ void Object::destroyChild( int i )
 {
 	DEBUG_ASSERT( hasChilds() );
 	DEBUG_ASSERT( childs->size() > i );
+
+	childs->at(i)->onDestruction();
 	
 	Object* child = childs->at( i );
 	
@@ -118,11 +121,14 @@ void Object::destroyAllChilds()
 {
 	if( childs )
 	{	
-		for( int i = 0; i < childs->size(); ++i )
+		for( auto child : *childs )
 		{
+			child->onDestruction();
+			_unregisterChild( child );
+
 			//_unregisterChild( childs->at(i) );
-			DEBUG_ASSERT( childs->at(i) );
-			SAFE_DELETE( childs->at(i) );
+			DEBUG_ASSERT( child );
+			SAFE_DELETE( child );
 		}
 		
 		SAFE_DELETE( childs );
@@ -152,12 +158,21 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 void Object::updateWorldTransform()
 {	
 	//compute local matrix from position and orientation
-	mWorldTransform = parent ? parent->getWorldTransform() : Matrix( 1 );
+	if( !parent )
+		mWorldTransform = Matrix(1);
+	else if( inheritScale )
+		mWorldTransform = parent->getWorldTransform();
+	else //build a wt without scale
+	{
+		mWorldTransform = Matrix(1);
+		mWorldTransform = glm::translate( mWorldTransform, parent->position );
+		mWorldTransform *= mat4_cast( parent->rotation );
+	}
 	
 	mWorldTransform = glm::translate( mWorldTransform, position );
 	mWorldTransform *= mat4_cast( rotation );
 	mWorldTransform = glm::scale( mWorldTransform, scale );
-	
+
 	//update AABB if needed
 	if( mNeedsAABB )
 		_updateWorldAABB( -halfSize, halfSize );    

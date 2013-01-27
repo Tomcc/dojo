@@ -12,8 +12,11 @@ void Table::loadFromFile( Table* dest, const String& path )
 	DEBUG_ASSERT( path.size() );
 
 	char* bufchar;
-	Platform::getSingleton()->loadFileContent( bufchar, path );
+	int read = Platform::getSingleton()->loadFileContent( bufchar, path );
 	
+	if( read == 0 )
+		return;
+
 	//TODO refactor to use directly the buffer, this is HEAVY!
 	std::string buf( bufchar );
 	free( bufchar );

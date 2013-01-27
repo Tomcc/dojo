@@ -59,10 +59,10 @@ namespace Dojo
 					_notifyButtonState( (KeyCode)(kc + b), Math::getBit( buttonMask, b ) );
 
 				_notifyAxis( AI_LX, (float)state.Gamepad.sThumbLX * (1.0f / (float)0x7fff));
-				_notifyAxis( AI_LY, (float)state.Gamepad.sThumbLY * (-1.0f / (float)0x7fff));
+				_notifyAxis( AI_LY, (float)state.Gamepad.sThumbLY * (1.0f / (float)0x7fff));
 
 				_notifyAxis( AI_RX, (float)state.Gamepad.sThumbRX * (1.0f / (float)0x7fff));
-				_notifyAxis( AI_RY, (float)state.Gamepad.sThumbRY * (-1.0f / (float)0x7fff));
+				_notifyAxis( AI_RY, (float)state.Gamepad.sThumbRY * (1.0f / (float)0x7fff));
 
 				_notifyAxis( AI_SLIDER1, (float)state.Gamepad.bLeftTrigger * (1.0f / (float)255));
 

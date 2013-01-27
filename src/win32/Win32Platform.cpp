@@ -630,7 +630,7 @@ void Win32Platform::keyPressed( int kc )
 
 	Dojo::KeyCode key = mKeyMap[ kc ];
 
-#ifndef _DEBUG
+#ifdef _DEBUG
 	if( key == KC_DIVIDE )	
 		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
 	else if( mFrameSteppingEnabled )

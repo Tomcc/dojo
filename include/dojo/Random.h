@@ -221,9 +221,6 @@ namespace Dojo
 	inline Random::Random( uint32 *const bigSeed, const uint32 seedLength )
 	{ seed(bigSeed,seedLength); }
 
-	inline Random::Random()
-	{ seed(); }
-
 	inline Random::Random( const Random& o )
 	{
 		register const uint32 *t = o.state;

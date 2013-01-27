@@ -61,7 +61,8 @@ namespace Dojo
 		InputDevice( Type type, int ID, int buttonNumber, int axisNumber ) :
 		mID( ID ),
 		mButtonNumber( buttonNumber ),
-		mAxisNumber( axisNumber )
+		mAxisNumber( axisNumber ),
+		mType( type )
 		{
 			for( int i = 0; i < mAxisNumber; ++i )
 			{
@@ -70,7 +71,7 @@ namespace Dojo
 			}
 		}
 
-		///returns if the given key is pressed
+		///returns if the given action is pressed
 		virtual bool isKeyDown( KeyCode key )
 		{
 			KeyPressedMap::iterator elem = mButton.find( key );

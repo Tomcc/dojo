@@ -123,7 +123,10 @@ namespace Dojo
 		
 		virtual ~Mesh()
 		{
-
+		#ifndef DOJO_DISABLE_VAOS
+			if( vertexArrayDesc )
+				glDeleteVertexArrays( 1, &vertexArrayDesc );
+		#endif
 		}
 
 		///sets the dimension of a single index in this mesh
