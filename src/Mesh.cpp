@@ -16,33 +16,6 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV,
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
-
-inline void checkGLError()
-{
-	String err;
-	GLenum g = glGetError();
-
-	switch(g)
-	{
-	case GL_NO_ERROR:
-		return;
-	case GL_INVALID_ENUM:           err = "GL_INVALID_ENUM";        break;
-	case GL_INVALID_VALUE:          err = "GL_INVALID_VALUE";       break;
-	case GL_INVALID_OPERATION:		err = "GL_INVALID_OPERATION";   break;
-	case GL_STACK_OVERFLOW:         err = "GL_STACK_OVERFLOW";      break;
-	case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
-	case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
-	};
-
-	DEBUG_ASSERT_MSG( g == GL_NO_ERROR, ( "OpenGL encountered an error: " + err ).ASCII().c_str() );
-}
-
-#ifndef _DEBUG
-	#define CHECK_GL_ERROR	checkGLError()
-#else
-	#define CHECK_GL_ERROR
-#endif
-
 ///Tells the buffer to allocate at least "vertices" vertices
 void Mesh::setVertexCap( uint count )
 {

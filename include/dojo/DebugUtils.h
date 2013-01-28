@@ -29,7 +29,11 @@
 		#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
 
 	#endif
-
+	
+	#define ___DEFINETOSTRING(X) #X
+	#define ___LINETOSTRING ___DEFINETOSTRING(__LINE__)
+	#define CHECK_GL_ERROR	Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(__FILE__,___LINETOSTRING)
+	
 #else
 
 	#define DEBUG_ASSERT_MSG( T, MSG )
@@ -38,7 +42,8 @@
 	#define DEBUG_FAIL
 	#define DEBUG_OUT( T )
 	#define DEBUG_MESSAGE( T )
-
+	#define CHECK_GL_ERROR
+	
 #endif
 
 //a delete to ensure the deleted object was valid
@@ -58,7 +63,9 @@ namespace Dojo
 
 	///the default assertion handler
 	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file );
-
+	
+	///the default openGL assertion handler
+	void DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* line_source);
 }
 
 #endif // DebugUtils_h__
