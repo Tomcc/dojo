@@ -330,6 +330,7 @@ void Texture::_buildOptimalBillboard()
 		OBB = new Mesh();
 	
 		//build or rebuild the OBB
+		OBB->setTriangleMode( Mesh::TM_STRIP );
 		OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
 		OBB->setVertexFieldEnabled( Mesh::VF_UV );
 	}
