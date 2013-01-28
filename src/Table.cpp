@@ -18,15 +18,13 @@ void Table::loadFromFile( Table* dest, const String& path )
 		return;
 
 	//TODO refactor to use directly the buffer, this is HEAVY!
-	std::string buf( bufchar );
+	std::string buf( bufchar, read );
 	free( bufchar );
 
 	dest->setName( Utils::getFileName( path ) );
 
 	StringReader reader( buf );
 	dest->deserialize( reader );
-
-
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
@@ -270,7 +268,7 @@ void Table::deserialize( StringReader& buf )
 		case PT_STRING:
 
 			str.clear();
-			while( true )
+			while( !buf.eof() )
 			{
 				c = buf.get();
 				if( c == '"' )	break;

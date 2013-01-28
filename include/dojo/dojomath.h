@@ -108,14 +108,14 @@ namespace Dojo
 		}
 		
 		///sets the nth bit of the mask i
-		static inline int setBit( int i, byte n, bool state )
+		static int setBit( int i, int n, bool state )
 		{
 			DEBUG_ASSERT( n < 32 );
-
+			
 			if( state )
 				return i | ( 0x1 << n );
 			else
-				return i & ~(0x1 << n);
+				return i & (~( 0x1 << n ));
 		}
 
 		///clamps in [0..1[
