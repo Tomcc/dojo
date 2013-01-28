@@ -9,11 +9,7 @@
 #ifdef PLATFORM_ANDROID
 
 #include <string>
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include "AndroidGLExtern.h"
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android/native_activity.h>

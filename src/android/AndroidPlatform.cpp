@@ -155,7 +155,7 @@ void AndroidPlatform::ResetDisplay(){
             EGL_BLUE_SIZE, 8,
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
-	    EGL_ALPHA_SIZE, 8,
+			EGL_ALPHA_SIZE, 8,
             EGL_DEPTH_SIZE, 16,
             EGL_NONE
     };      
@@ -190,7 +190,7 @@ void AndroidPlatform::ResetDisplay(){
     DEBUG_MESSAGE("create a surface, and openGL context");
     surface = eglCreateWindowSurface(display, config,app->window, NULL);
     DEBUG_ASSERT( surface );
-#ifdef SET_OPENGL_ES2
+#ifdef DEF_SET_OPENGL_ES2
     const EGLint attrib_list [] = {EGL_CONTEXT_CLIENT_VERSION, 2,  EGL_NONE}; //openGL ES 2.0 //2, EGL_NONE
     context = eglCreateContext(display, config, NULL, attrib_list);
 #else
