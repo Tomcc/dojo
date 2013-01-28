@@ -23,11 +23,14 @@
 	#define glBindFramebuffer			    glBindFramebufferOES
 	#define glGetRenderbufferParameteriv	glGetRenderbufferParameterivOES
 	#define glCheckFramebufferStatus	    glCheckFramebufferStatusOES
-	#define glBlendEquation                 glBlendEquationOES
 	
 	#ifndef DEF_SET_OPENGL_ES2
 	#define GL_FUNC_ADD GL_FUNC_ADD_OES
 	#define GL_NONE GL_NONE_OES
+	//glBlendEquation is unimplemented
+	#define glBlendEquation(x) 
+	#else
+	#define glBlendEquation                 glBlendEquationOES	
 	#endif
 	
 	//#define glClearDepth                glClearDepthf
