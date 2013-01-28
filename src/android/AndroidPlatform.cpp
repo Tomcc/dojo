@@ -231,8 +231,8 @@ void AndroidPlatform::initialise(Game *g)
     DEBUG_ASSERT( sensorManager );
 
     this->accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
-    DEBUG_ASSERT( accelerometerSensor );
-
+    if(this->accelerometerSensor==NULL){  DEBUG_MESSAGE("Accelerometer feature not supported on this device."); }
+	
     //dojo object
     render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
     input  = new InputSystem();
@@ -336,6 +336,7 @@ void AndroidPlatform::step( float dt )
 
 void AndroidPlatform::UpdateEvent(){
 
+if(accelerometerSensor!=NULL){
 
 	if(sensorEventQueue==NULL){
 
@@ -378,7 +379,8 @@ void AndroidPlatform::UpdateEvent(){
 			return;
 		}
 	}
-
+	
+}
 }
 
 void AndroidPlatform::loop()
