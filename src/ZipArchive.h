@@ -1,6 +1,7 @@
 #ifndef ZIPARCHIVE_H
 #define ZIPARCHIVE_H
 
+#include "dojostring.h"
 #include <string>
 #include <vector>
 #include <zzip/zzip.h>
@@ -45,26 +46,26 @@ namespace Dojo{
 	public:
 	
                 ZipArchive();
-                ZipArchive(const std::string& path);
+                ZipArchive(const String& path);
                 ~ZipArchive();
                 //open zip file
-                bool open(const std::string& path);
+                bool open(const String& path);
                 //close zip file
                 void close();
                 //open file
-                ZipFile* openFile(const std::string& path,const std::string& mode);
+                ZipFile* openFile(const String& path,const String& mode);
                 //paths and files in zip
-                void getList(std::string path,std::vector<std::string>& out);
-                void getListFiles(std::string path,std::vector<std::string>& out);
-                void getListSubDirectories(std::string path,std::vector<std::string>& out);
+                void getList(String path,std::vector<String>& out);
+                void getListFiles(String path,std::vector<String>& out);
+                void getListSubDirectories(String path,std::vector<String>& out);
 
-                void getListAll(std::string path,std::vector<std::string>& out);
-                void getListAllFiles(std::string path,std::vector<std::string>& out);
-                void getListAllSubDirectories(std::string path,std::vector<std::string>& out);
+                void getListAll(String path,std::vector<String>& out);
+                void getListAllFiles(String path,std::vector<String>& out);
+                void getListAllSubDirectories(String path,std::vector<String>& out);
 
 	private:
 
-                void madeValidPath(std::string& path);
+                void madeValidPath(String& path);
                 ZZIP_DIR* zip_file;
 
 	};

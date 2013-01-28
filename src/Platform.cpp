@@ -155,14 +155,13 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 		mZipFileMaps[ zipPath ] = ZipFoldersMap();
 		ZipFoldersMap& map = mZipFileMaps.find( zipPath )->second;
 
-		ZipArchive zip( zipPath.UTF8() );
-		std::vector<std::string> zip_files;
+		ZipArchive zip( zipPath );
+		std::vector<String> zip_files;
 		zip.getListAllFiles(".",zip_files);
 
-		for(std::string& itr : zip_files){
-			String filePath( itr );
-			map[ Utils::getDirectory( filePath ) ].push_back( filePath );
-		}
+		for(int i=0;i<zip_files.size();++i)
+			map[ Utils::getDirectory( zip_files[i] ) ].push_back( zip_files[i] );
+		
 
 		return map;
 	}
@@ -249,9 +248,9 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
 		//OPEN ZIP
 		ZipArchive zip;
-		zip.open(zipPath.UTF8());
+		zip.open(zipPath);
 		//OPEN FILE IN ZIP
-		auto pfile=zip.openFile(  zipInternalPath.UTF8(),"rb");
+		auto pfile=zip.openFile(  zipInternalPath,"rb");
 		//READ FILE
 		size = pfile->size();
 		bufptr = (char*)malloc( size+1 );
