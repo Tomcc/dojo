@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ZipArchive.h"
 extern "C"{
 	#include <zzip/write.h>
