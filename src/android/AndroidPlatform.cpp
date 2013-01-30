@@ -207,6 +207,11 @@ void AndroidPlatform::ResetDisplay(){
     eglQuerySurface(display, surface, EGL_WIDTH, &width);
     eglQuerySurface(display, surface, EGL_HEIGHT, &height);
     DEBUG_MESSAGE("screen : width:"<<width<<" height:"<<height);
+	//return size screen	
+	screenWidth =width;
+	screenHeight =height;	
+	windowWidth = screenWidth;
+	windowHeight = screenHeight;
     //init opengl VBA calls	
     DEBUG_MESSAGE("!!init opengl VBA calls!");
     ExternInitOpenGL();
