@@ -388,17 +388,21 @@ void Win32Platform::initialise( Game* g )
 	if( config.isEmpty() )
 		Table::loadFromFile( &config, getAppDataPath() + "/" + game->getName() + "/config.ds" );
 
-	Vector windowSize = config.getVector("windowSize", Vector( (float)screenWidth, (float)screenHeight ) );
+	float w = Math::min( screenWidth, game->getNativeWidth() );
+	float h = Math::min( screenHeight, game->getNativeHeight() );
+
+	Vector windowSize = config.getVector("windowSize", Vector( w, h ) );
 	windowWidth = (int)windowSize.x;
 	windowHeight = (int)windowSize.y;
 
-	mFullscreen = config.getBool( "fullscreen" );
+	//a window can be fullscreen only if the windowSize equals the screenSize, and if it wants to
+	mFullscreen = windowWidth == screenWidth && windowHeight == screenHeight && config.getBool( "fullscreen" );
 
 	//just use the game's preferred settings
 	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )
 		return;
 
-	setVSync( !config.getBool( "disable_vsync" ) );		
+	setVSync( config.getBool( "disable_vsync" ) ? 0 : 1 );		
 	
 	render = new Render( width, height, DO_LANDSCAPE_LEFT );
 

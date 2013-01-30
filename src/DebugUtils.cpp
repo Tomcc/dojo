@@ -3,6 +3,8 @@
 #include "dojo_common_header.h"
 #include "DebugUtils.h"
 
+#include "dojo_common_header.h"
+
 using namespace Dojo;
 
 #ifdef PLATFORM_ANDROID

@@ -72,11 +72,14 @@ namespace Dojo
 		{
 			typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
 			PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
-
+			
 			char *extensions = (char*)glGetString( GL_EXTENSIONS );
 
 			if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+			{
+				DEBUG_MESSAGE( "Warning: \"WGL_EXT_swap_control\" extension not supported on your computer, disabling vsync" );
 				return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
+			}
 			else
 			{
 				wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );

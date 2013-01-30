@@ -19,14 +19,21 @@ mNativeFrameLength( nativedt ),
 mMaxFrameLength( maximumdt )
 {	
 	DEBUG_ASSERT( name.size() );
-	DEBUG_ASSERT( w > 0 );
-	DEBUG_ASSERT( h > 0 );
+	DEBUG_ASSERT( w >= 0 );
+	DEBUG_ASSERT( h >= 0 );
 	DEBUG_ASSERT( mNativeFrameLength > 0 );
 	DEBUG_ASSERT( mMaxFrameLength >= mNativeFrameLength );
 
+	Platform* p = Platform::getSingleton();
+
+	if( w == 0 )
+		nativeWidth = p->getScreenWidth();
+	if( h == 0 )
+		nativeHeight = p->getScreenHeight();
+
 	Math::seedRandom();
 	
-	Platform::getSingleton()->addApplicationListener( this ); //always listen to the app
+	p->addApplicationListener( this ); //always listen to the app
 }
 	
 Game::~Game()

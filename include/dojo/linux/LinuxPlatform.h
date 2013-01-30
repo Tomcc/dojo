@@ -2,12 +2,6 @@
 
 #ifdef PLATFORM_LINUX
 
-#include <OIS/OIS.h>
-
-#include <X11/Xlib.h>
-#include <GL/glx.h>
-#include <GL/glu.h>
-
 #include "Platform.h"
 #include "Vector.h"
 
@@ -15,80 +9,46 @@
 
 namespace Dojo
 {
-	class LinuxPlatform : public Platform, public OIS::MouseListener, public OIS::KeyListener
+	class LinuxPlatform : public Platform
 	{
 	public:
 
-		LinuxPlatform(const Table& table);
+		LinuxPlatform( const Table& config );
+		
+		///initializes the platform and calls Game::onBegin()
+		virtual void initialise( Game* game );
 
-		virtual void initialise();
+		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown();
+		
+		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
+		virtual void prepareThreadContext();
+
+		///switches the game to windowed, if supported
+		virtual void setFullscreen( bool enabled );
 
 		virtual void acquireContext();
 		virtual void present();
 
 		virtual void step( float dt );
-		virtual void loop( float frameTime );
+		virtual void loop();
 
-		virtual std::string getCompleteFilePath( const std::string& name, const std::string& type, const std::string& path);
-		virtual void getFilePathsForType( const std::string& type, const std::string& path, std::vector<std::string>& out);
-		virtual uint loadFileContent( char*& bufptr, const std::string& path);
-        virtual uint loadAudioFileContent(ALuint& i, const std::string& name);
-		virtual void loadPNGContent( void*& bufptr, const std::string& path, uint& width, uint& height);
-		
-		virtual void load(  Table* dest );
-		virtual void save( Table* table );
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize );
 
-		virtual void openWebPage( const std::string& site );
+		///returns true if the device is able to manage non-power-of-2 textures
+		virtual bool isNPOTEnabled();
 
-		virtual bool mouseMoved( const OIS::MouseEvent& arg );
-		virtual bool mousePressed( const OIS::MouseEvent& arg, OIS::MouseButtonID id );
-		virtual bool mouseReleased(	const OIS::MouseEvent& arg, OIS::MouseButtonID id );
-
-		virtual bool keyPressed(const OIS::KeyEvent &arg);
-		virtual bool keyReleased(const OIS::KeyEvent &arg);
-		
-		virtual void prepareThreadContext();
-		
-		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height );
-		
+		///returns the application data path for this game (eg. to save user files)
 		virtual String getAppDataPath();
+		///returns the read-only root path for this game (eg. working directory)
 		virtual String getRootPath();
+		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
+		virtual String getResourcesPath	();
 		
+		///opens a web page in the default browser
 		virtual void openWebPage( const String& site );
 		
-
 	protected:
-
-		Display                 *dpy;
-		Window                  root;
-		static const GLint      att[];
-		XVisualInfo             *vi;
-		Colormap                cmap;
-		XSetWindowAttributes    swa;
-		Window                  win;
-		GLXContext              glc;
-		XWindowAttributes       gwa;
-		XEvent                  xev;
-
-		int width, height;
-
-		Timer frameTimer;
-
-		OIS::InputManager* inputManager;
-		OIS::Mouse* mouse;
-		OIS::Keyboard* keys;
-
-		Vector cursorPos;
-
-		bool dragging;
-
-		bool _hasExtension( const std::string& type, const std::string& nameOrPath );
-		std::string _toNormalPath( const std::string& path );
-
-		std::string _getUserDirectory();
-
-		bool _initialiseWindow( const std::string& caption, uint w, uint h );
 
 	private:
 	};

@@ -108,14 +108,14 @@ namespace Dojo
 		}
 		
 		///sets the nth bit of the mask i
-		static inline int setBit( int i, byte n, bool state )
+		static int setBit( int i, int n, bool state )
 		{
 			DEBUG_ASSERT( n < 32 );
-
+			
 			if( state )
 				return i | ( 0x1 << n );
 			else
-				return i & ~(0x1 << n);
+				return i & (~( 0x1 << n ));
 		}
 
 		///clamps in [0..1[
@@ -154,7 +154,7 @@ namespace Dojo
 		
 		static inline bool AABBContains( const Vector& max, const Vector& min, const Vector& point )
 		{
-			DEBUG_TODO;
+			return max.x >= point.x && max.y >= point.y && max.z >= point.z && min.x <= point.x && min.y <= point.y && min.z <= point.z;
 		}
 		
 		static inline bool AABBContainsAABB( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
