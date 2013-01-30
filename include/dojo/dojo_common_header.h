@@ -79,6 +79,9 @@
 	#include <GL/glext.h>
 	#include <GL/gl.h>
 
+	#include <signal.h>
+	#include <stdint.h>
+
 #elif defined( PLATFORM_IOS )
 	#include <OpenGLES/ES1/gl.h>
 	#include <OpenGLES/ES1/glext.h>

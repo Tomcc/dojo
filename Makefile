@@ -1,13 +1,34 @@
-OBJECTS := src/AnimatedQuad.o src/Color.o src/Font.o src/FrameSet.o src/Game.o src/GameState.o src/Math.o src/Mesh.o src/Object.o src/ParticlePool.o src/Platform.o src/Renderable.o src/Render.o src/RenderState.o src/ResourceGroup.o src/SoundBuffer.o src/SoundManager.o src/SoundSource.o src/Sprite.o src/Table.o src/Texture.o src/TouchSource.o src/Vector.o src/Viewport.o Linux/LinuxPlatform.o
-CFLAGS  := -I . -I Linux -I include/dojo -D LINUX -I /usr/include -I /usr/include/freetype2
 
-dojo: $(OBJECTS)
-	ld -o src/$@ $^
+SOURCES := $(wildcard src/*.cpp) $(wildcard src/linux/*.cpp)
+OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES) )
+HEADERS := $(wildcard include/*.h) $(wildcard include/dojo/*.h) $(wildcard include/dojo/linux/*.h)
+
+PROJDIR := $(CURDIR)
+
+CFLAGS := -Winvalid-pch -I $(PROJDIR) -I $(PROJDIR)/include/dojo/ -I $(PROJDIR)/include/dojo/linux -I /usr/include/freetype2 -std=c++11 -D__STDC_LIMIT_MACROS
+
+all: dojo
+
+lib:
+	@mkdir lib
+
+stdafx.h.gch: stdafx.h $(HEADERS)
+	g++ $(CFLAGS) -c stdafx.h -o $@
+
+dojo: CFLAGS += -O3
+dojo: lib stdafx.h.gch $(OBJECTS)
+	ar rcs lib/lib$@.a $(OBJECTS)
+
+dojo_d: CFLAGS += -g -D_DEBUG
+dojo_d: lib stdafx.h.gch $(OBJECTS)
+	ar rcs lib/lib$@.a $(OBJECTS)
+debug: dojo_d
 
 %.o: %.cpp
-	g++ -c $(CFLAGS) -o $@ $^
+	g++ $(CFLAGS) -c -o $@ $^
 
-.PHONY: clean
+.PHONY: clean debug pre
 
 clean:
 	rm -rf src/*.o dojo
+	rm -rf stdafx.h.gch
