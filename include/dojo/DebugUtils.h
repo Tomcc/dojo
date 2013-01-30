@@ -1,7 +1,7 @@
 #ifndef DebugUtils_h__
 #define DebugUtils_h__
 
-#ifdef WIN32 //HACK
+#ifdef _DEBUG
 
 	#define DEBUG_ASSERT_MSG( T, MSG ) {if( !(T) ) { Dojo::gp_assert_handler( MSG, #T, __LINE__, __FILE__ ); }}
 	#define DEBUG_ASSERT( T ) DEBUG_ASSERT_MSG( T, "No description" )

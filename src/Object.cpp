@@ -170,8 +170,8 @@ void Object::updateWorldTransform()
 	}
 	
 	mWorldTransform = glm::translate( mWorldTransform, position );
-	mWorldTransform *= mat4_cast( rotation );
 	mWorldTransform = glm::scale( mWorldTransform, scale );
+	mWorldTransform *= mat4_cast( rotation );
 
 	//update AABB if needed
 	if( mNeedsAABB )

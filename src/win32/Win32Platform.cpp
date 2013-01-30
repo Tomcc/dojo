@@ -398,7 +398,7 @@ void Win32Platform::initialise( Game* g )
 	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )
 		return;
 
-	setVSync( !config.getBool( "disable_vsync" ) );		
+	setVSync( config.getBool( "disable_vsync" ) ? 0 : 1 );		
 	
 	render = new Render( width, height, DO_LANDSCAPE_LEFT );
 

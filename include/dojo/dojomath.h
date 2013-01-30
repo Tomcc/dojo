@@ -154,7 +154,7 @@ namespace Dojo
 		
 		static inline bool AABBContains( const Vector& max, const Vector& min, const Vector& point )
 		{
-			DEBUG_TODO;
+			return max.x >= point.x && max.y >= point.y && max.z >= point.z && min.x <= point.x && min.y <= point.y && min.z <= point.z;
 		}
 		
 		static inline bool AABBContainsAABB( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
