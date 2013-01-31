@@ -27,10 +27,9 @@ GameState::~GameState()
 }
 
 void GameState::clear()
-{	
-	//unregister objects
+{		
 	destroyAllChilds();
-		
+
 	//flush resources
 	unloadResources( false );
 }

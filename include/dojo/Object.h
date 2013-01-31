@@ -45,11 +45,8 @@ namespace Dojo {
 		
 		///Creates a new Object in the given GameState at the given position, with bbSize size
 		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  );
-		
-		virtual ~Object()
-		{
-			destroyAllChilds();
-		}
+
+		virtual ~Object();
 		
 		virtual void reset()
 		{

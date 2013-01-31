@@ -27,6 +27,11 @@ inheritScale( true )
 	setSize( bbSize );
 }
 
+Object::~Object()
+{
+	destroyAllChilds();
+}
+
 void Object::addChild( Object* o )
 {    
 	DEBUG_ASSERT( o );
@@ -65,6 +70,10 @@ void Object::removeChild( int i )
 	_unregisterChild( child );
 	
 	childs->remove( i );
+
+	//if that was the last child, remove the list itself
+	if( childs->size() == 0 )
+		SAFE_DELETE( childs );
 }
 
 void Object::removeChild( Object* o )
@@ -83,9 +92,9 @@ void Object::destroyChild( int i )
 	DEBUG_ASSERT( hasChilds() );
 	DEBUG_ASSERT( childs->size() > i );
 
-	childs->at(i)->onDestruction();
-	
 	Object* child = childs->at( i );
+
+	child->onDestruction();
 	
 	removeChild( i );
 	
@@ -108,7 +117,7 @@ void Object::collectChilds()
 {
 	if( childs )
 	{
-		for( int i = 0; i < childs->size(); ++i )
+		for( int i = 0; childs && i < childs->size(); ++i )
 		{
 			if( childs->at( i )->dispose )
 				destroyChild( i-- );
@@ -119,20 +128,12 @@ void Object::collectChilds()
 
 void Object::destroyAllChilds()
 {
+	//just set all to dispose and then collect them
 	if( childs )
-	{	
 		for( auto child : *childs )
-		{
-			child->onDestruction();
-			_unregisterChild( child );
+			child->dispose = true;
 
-			//_unregisterChild( childs->at(i) );
-			DEBUG_ASSERT( child );
-			SAFE_DELETE( child );
-		}
-		
-		SAFE_DELETE( childs );
-	}
+	collectChilds();
 }
 
 void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
