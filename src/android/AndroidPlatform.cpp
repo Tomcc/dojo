@@ -254,7 +254,7 @@ void AndroidPlatform::initialise(Game *g)
 }   
 
 String AndroidPlatform::getAppDataPath(){ 
-	return this->apkdir+"/assets";
+	return GetAndroidApp()->activity->internalDataPath;
  }
 String AndroidPlatform::getResourcesPath(){ 
  	std::string tmp=(this->apkdir+String("/assets")).ASCII();
