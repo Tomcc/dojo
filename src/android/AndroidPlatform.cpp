@@ -13,6 +13,9 @@
 #include "AndroidGLExtern.h"
 #define LODEPNG_COMPILE_DECODER
 #include "lodepng.h"
+#include "FontSystem.h"
+#include "SoundManager.h"
+#include "InputSystem.h"
 
 /* android debug */
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "DOJO", __VA_ARGS__))
@@ -239,9 +242,11 @@ void AndroidPlatform::initialise(Game *g)
     if(this->accelerometerSensor==NULL){  DEBUG_MESSAGE("Accelerometer feature not supported on this device."); }
 	
     //dojo object
-    render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );
-    input  = new InputSystem();
-    sound  = new SoundManager();
+
+    this->Platform::render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );	
+	this->Platform::input = new InputSystem();
+	this->Platform::fonts = new FontSystem();
+    this->Platform::sound  = new SoundManager();
     //enable loop
     running=true;
     //start the game
