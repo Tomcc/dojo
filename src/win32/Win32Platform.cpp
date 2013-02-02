@@ -380,13 +380,13 @@ void Win32Platform::initialise( Game* g )
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
 	//create user dir if not existing
-	String userDir = getAppDataPath() + '/' + game->getName();
+	String userDir = getAppDataPath();
 
 	CreateDirectoryW( userDir.c_str(), NULL );
 
 	//load settings
 	if( config.isEmpty() )
-		Table::loadFromFile( &config, getAppDataPath() + "/" + game->getName() + "/config.ds" );
+		Table::loadFromFile( &config, userDir + "/config.ds" );
 
 	float w = Math::min( screenWidth, game->getNativeWidth() );
 	float h = Math::min( screenHeight, game->getNativeHeight() );
@@ -739,6 +739,8 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 
 String Win32Platform::getAppDataPath()
 {
+	DEBUG_ASSERT( game );
+
 	TCHAR szPath[MAX_PATH];
 
 	SHGetFolderPathW(
@@ -752,7 +754,7 @@ String Win32Platform::getAppDataPath()
 
 	Utils::makeCanonicalPath( dir );
 
-	return dir; 
+	return dir + '/' + game->getName(); 
 }
 
 String Win32Platform::getRootPath()

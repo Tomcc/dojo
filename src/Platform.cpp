@@ -278,7 +278,7 @@ String Platform::_getTablePath( Table* dest, const String& absPath )
 		DEBUG_ASSERT( dest->hasName() );
 		
 		//look for this file inside the prefs
-		return getAppDataPath() + '/' + game->getName() + '/' + dest->getName() + ".ds";
+		return getAppDataPath() + '/' + dest->getName() + ".ds";
 	}
 	else
 		return absPath;
