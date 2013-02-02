@@ -39,11 +39,11 @@ namespace Dojo
 		virtual bool isNPOTEnabled();
 
 		///returns the application data path for this game (eg. to save user files)
-		virtual String getAppDataPath();
+		virtual const String& getAppDataPath();
 		///returns the read-only root path for this game (eg. working directory)
-		virtual String getRootPath();
+		virtual const String& getRootPath();
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
-		virtual String getResourcesPath	();
+		virtual const String& getResourcesPath	();
 		
 		///opens a web page in the default browser
 		virtual void openWebPage( const String& site );
