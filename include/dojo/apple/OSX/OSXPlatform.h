@@ -36,17 +36,30 @@ namespace Dojo
 		
 		virtual ~OSXPlatform();
         
-        virtual void initialise();
+        virtual void initialise( Game* g );
+		virtual void loop();
 		virtual void shutdown();
         
 		virtual void prepareThreadContext();
 		virtual void acquireContext();
 		virtual void present();
         
-		virtual void loop( float frameTime );
+        virtual void setFullscreen( bool f );        
 		
-		virtual const String& getRootPath();
-		virtual const String& getAppDataPath();
+		virtual const String& getRootPath()
+        {
+            return mRootPath;
+        }
+        
+		virtual const String& getAppDataPath()
+        {
+            return mAppDataPath;
+        }
+        
+        virtual const String& getResourcesPath()
+        {
+            return mResourcesPath;
+        }
 
 		virtual void openWebPage( const String& site );
 		
@@ -56,6 +69,8 @@ namespace Dojo
 		}
 	
 	protected:
+        
+        String mRootPath, mResourcesPath, mAppDataPath;
                 
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
         CustomOpenGLView* view;
