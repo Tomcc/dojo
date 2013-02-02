@@ -248,17 +248,28 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
 		//OPEN ZIP
 		ZipArchive zip;
-		zip.open(zipPath);
-		//OPEN FILE IN ZIP
-		auto pfile=zip.openFile(  zipInternalPath,"rb");
-		//READ FILE
-		size = pfile->size();
-		bufptr = (char*)malloc( size+1 );
-		pfile->read(bufptr,size,1);
-		//CLOSE FILE
-		delete pfile;
-		//ADD terminator
-		bufptr[ size ] = 0;
+		if(zip.open(zipPath)){
+			//OPEN FILE IN ZIP
+			auto pfile=zip.openFile(  zipInternalPath,"rb");
+			if(pfile!=NULL){
+				//READ FILE
+				size = pfile->size();
+				bufptr = (char*)malloc( size+1 );
+				pfile->read(bufptr,size,1);
+				//CLOSE FILE
+				delete pfile;
+				//ADD terminator
+				bufptr[ size ] = 0;
+			}
+			else{
+				DEBUG_MESSAGE("can't read:"<<path.ASCII())
+				return 0;
+			}
+		}
+		else{
+			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII())
+			return 0;
+		}
 	}
 	
 	return size;
@@ -300,12 +311,14 @@ void Platform::save( Table* src, const String& absPath )
 	src->serialize( buf );
 	
 	String path = _getTablePath(src, absPath);
-	FILE* f = fopen( path.ASCII().c_str(), "w" );
+
+	DEBUG_MESSAGE( path.ASCII() );
+	FILE* f = fopen( path.ASCII().c_str(), "w+" );
 	
-	if( !f )
+	if( f==NULL )
 	{
 		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
-		DEBUG_MESSAGE( path.c_str() );
+		DEBUG_MESSAGE( path.ASCII() );
 	}
 	DEBUG_ASSERT( f );
 	

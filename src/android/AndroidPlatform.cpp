@@ -1,6 +1,9 @@
 #include "android/AndroidPlatform.h"
 
 #include <jni.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android/native_activity.h>
@@ -11,11 +14,15 @@
 #include "Utils.h"
 #include "Table.h"
 #include "AndroidGLExtern.h"
-#define LODEPNG_COMPILE_DECODER
-#include "lodepng.h"
 #include "FontSystem.h"
 #include "SoundManager.h"
 #include "InputSystem.h"
+
+#define LODEPNG_COMPILE_DECODER
+#include "lodepng.h"
+#include <setjmp.h>
+#include <jpeg/jpeglib.h>
+#include <jpeg/jerror.h>
 
 /* android debug */
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "DOJO", __VA_ARGS__))
@@ -242,16 +249,52 @@ void AndroidPlatform::initialise(Game *g)
     if(this->accelerometerSensor==NULL){  DEBUG_MESSAGE("Accelerometer feature not supported on this device."); }
 	
     //dojo object
-
     this->Platform::render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );	
 	this->Platform::input = new InputSystem();
 	this->Platform::fonts = new FontSystem();
     this->Platform::sound  = new SoundManager();
-    //enable loop
+	//dojo make internal storage:
+	std::string filesPath(GetAndroidApp()->activity->internalDataPath);
+	/* get exist path "files/" */
+	{
+		struct stat sb;
+		int32_t res = stat(filesPath.c_str(), &sb);
+		if (0 == res && sb.st_mode & S_IFDIR)
+		{
+			DEBUG_MESSAGE("'files/' dir already in app's internal data storage.");
+		}
+		else if (ENOENT == errno)
+		{
+			res = mkdir(filesPath.c_str(), 0770);
+			if(res!=0){ DEBUG_MESSAGE("files/ No permission read and write in internal storage"); }
+			else { DEBUG_MESSAGE("mkdir(files/) done"); }
+		}
+	}
+	//enable loop
     running=true;
     //start the game
     game->begin();
 }   
+
+/*
+ I can't make a dir in internal storage, but is an INTERNAL storage 
+ $(Appdata)/$(GameName)/....
+ to
+ $(root)/$(app storage)/files/.....
+*/
+String AndroidPlatform::_getTablePath( Table* dest, const String& absPath ){
+	
+	if( absPath.size() == 0 )
+	{
+		DEBUG_ASSERT( dest->hasName() );		
+		//look for this file inside the prefs
+		return getAppDataPath() +'/'+ dest->getName() + ".ds";
+	}
+	else
+		return absPath;
+
+}
+		
 
 String AndroidPlatform::getAppDataPath(){ 
 	return GetAndroidApp()->activity->internalDataPath;
@@ -300,23 +343,68 @@ void AndroidPlatform::acquireContext()
     }
 }
 
+
+
 GLenum AndroidPlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
 	//TODO : JPGE & TGA
 	char* buf;
 	unsigned char* localbufptr;
 	int fileSize = loadFileContent( buf, path );
-	//LOAD PNG
-	LodePNGState state;
-	lodepng_state_init(&state);
-	lodepng_decode(&localbufptr,(unsigned int*)&(width),(unsigned int*)&(height),&state,(unsigned const char*)buf,fileSize);
-	//SAVE DATA
-	pixelSize=lodepng_get_channels(&state.info_png.color);
-	bufptr=localbufptr;
-	//FREE
-	lodepng_state_cleanup(&state);
-	free( buf );   //free PNG uncompressed
-	//
+	const Dojo::String& expath=Dojo::Utils::getFileExtension( path ) ;
+
+	if(expath == Dojo::String("png")){
+		//LOAD PNG
+		LodePNGState state;
+		lodepng_state_init(&state);
+		lodepng_decode(&localbufptr,(unsigned int*)&(width),(unsigned int*)&(height),&state,(unsigned const char*)buf,fileSize);
+		//SAVE DATA
+		pixelSize=lodepng_get_channels(&state.info_png.color);
+		bufptr=localbufptr;
+		//FREE
+		lodepng_state_cleanup(&state);
+		free( buf );   //free PNG uncompressed
+		//
+	}
+	else if(expath == Dojo::String("jpg")){
+
+        struct jpeg_decompress_struct dinfo;  
+		struct jpeg_error_mgr jerr;
+
+		dinfo.err = jpeg_std_error(&jerr);		
+		 /* Now we can initialize the JPEG decompression object. */
+        jpeg_create_decompress(&dinfo);		
+		/* Step 2: specify data source (eg, a file) */
+		jpeg_mem_src(&dinfo, (unsigned char*)buf, fileSize);		
+		/* Step 3: read file parameters with jpeg_read_header() */
+		jpeg_read_header(&dinfo, TRUE);    
+		/* Step 5: Start decompressor */
+		jpeg_start_decompress(&dinfo);
+		//alloc image
+		width=dinfo.output_width;
+		height=dinfo.output_height;
+		pixelSize=(int)dinfo.output_components;
+		bufptr=(void*)malloc(width*height*pixelSize);
+		//calc rowsize	
+		int row_stride =width*pixelSize;
+		void *outbuffer=bufptr;
+	    //step 6, read the image line by line
+		while (dinfo.output_scanline < dinfo.output_height) {
+			//IT ALWAYS crash ON THIS JPEG_READ_SCANLINES FUNCTION CALL BELOW
+			(void) jpeg_read_scanlines(&dinfo, (JSAMPARRAY)(&outbuffer), 1);
+			outbuffer +=row_stride;
+		}
+        /* Step 7: Finish decompression */
+		(void) jpeg_finish_decompress(&dinfo);
+		/* Step 8: Release JPEG decompression object */
+		/* This is an important step since it will release a good deal of memory. */
+		jpeg_destroy_decompress(&dinfo);
+		//free JPG uncompressed
+		free( buf );   
+	}
+	else{
+		return 0;
+	}
 	static const GLenum formatsForSize[] = { GL_NONE, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA };
 	//return
 	return formatsForSize[ pixelSize ];

@@ -58,15 +58,18 @@ namespace Dojo
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
 		virtual String getAppDataPath();
 		virtual String getResourcesPath();
-		virtual String getRootPath();
+		virtual String getRootPath();		
+		/*
+		   I can't make a dir in internal storage, but is an INTERNAL storage 
+		   $(Appdata)/$(GameName)/....
+		   to
+		   $(root)/$(app storage)/files/.....
+		*/
+		virtual String _getTablePath( Table* dest, const String& absPath );
 		
 		//TODO
 
-		virtual void openWebPage( const std::string& site ){}
-		
-		virtual void loadPNGContent( void*& bufptr, const String& path, int& width, int& height ){}
-		
-
+		virtual void openWebPage( const std::string& site ){}	
 		virtual void openWebPage( const String& site ){}
 		
 

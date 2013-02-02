@@ -234,7 +234,7 @@ namespace Dojo
 		ZipFileMapping mZipFileMaps;
 		ZipExtensionList mZipExtensions;
 
-		String _getTablePath( Table* dest, const String& absPath );
+		virtual String _getTablePath( Table* dest, const String& absPath );
 
 		///for each component in the path, check if a directory.zip file exists
 		String _replaceFoldersWithExistingZips( const String& absPath );
