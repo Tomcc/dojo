@@ -47,9 +47,9 @@ namespace Dojo
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
 		
-		virtual String getAppDataPath();
-		virtual String getResourcesPath();
-		virtual String getRootPath();
+		virtual const String& getAppDataPath();
+		virtual const String& getResourcesPath();
+		virtual const String& getRootPath();
 		
 		virtual void openWebPage( const String& site );
 
@@ -135,6 +135,8 @@ namespace Dojo
 		XInputJoystick* mXInputJoystick[ 4 ];
 
 		Timer mStepTimer;
+
+		String mAppDataPath, mRootPath;
 
 		void _initKeyMap();
 

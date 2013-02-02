@@ -377,16 +377,29 @@ void Win32Platform::initialise( Game* g )
 	game = g;
 	DEBUG_ASSERT( game );
 
+	//init appdata folder
+	TCHAR szPath[MAX_PATH];
+
+	SHGetFolderPathW(
+		hwnd, 
+		CSIDL_APPDATA|CSIDL_FLAG_CREATE, 
+		NULL, 
+		0, 
+		szPath);
+
+	mAppDataPath = String(szPath) + '/' + game->getName();
+	Utils::makeCanonicalPath( mAppDataPath );
+
+	mRootPath = Poco::Path::current();
+	Utils::makeCanonicalPath( mRootPath );
+
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
-	//create user dir if not existing
-	String userDir = getAppDataPath();
-
-	CreateDirectoryW( userDir.c_str(), NULL );
+	CreateDirectoryW( getAppDataPath().c_str(), NULL );
 
 	//load settings
 	if( config.isEmpty() )
-		Table::loadFromFile( &config, userDir + "/config.ds" );
+		Table::loadFromFile( &config, getAppDataPath() + "/config.ds" );
 
 	float w = Math::min( screenWidth, game->getNativeWidth() );
 	float h = Math::min( screenHeight, game->getNativeHeight() );
@@ -737,34 +750,18 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	return formatsForSize[ pixelSize ];
 }
 
-String Win32Platform::getAppDataPath()
+const String& Win32Platform::getAppDataPath()
 {
-	DEBUG_ASSERT( game );
-
-	TCHAR szPath[MAX_PATH];
-
-	SHGetFolderPathW(
-		hwnd, 
-		CSIDL_APPDATA|CSIDL_FLAG_CREATE, 
-		NULL, 
-		0, 
-		szPath);
-
-	String dir( szPath );
-
-	Utils::makeCanonicalPath( dir );
-
-	return dir + '/' + game->getName(); 
+	DEBUG_ASSERT( mAppDataPath.size() );
+	return mAppDataPath;
 }
 
-String Win32Platform::getRootPath()
+const String& Win32Platform::getRootPath()
 {
-	String path( Poco::Path::current() );
-	Utils::makeCanonicalPath( path );
-	return path;
+	return mRootPath;
 }
 
-String Win32Platform::getResourcesPath()
+const String& Win32Platform::getResourcesPath()
 {
 	return getRootPath(); //on windows, it is the same
 }

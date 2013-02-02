@@ -62,8 +62,8 @@ namespace Dojo
 				
 		virtual bool isSystemSoundInUse();
 		
-		virtual String getRootPath();
-		virtual String getAppDataPath();
+		virtual const String& getRootPath();
+		virtual const String& getAppDataPath();
 				
 		virtual void openWebPage( const String& site );
 		
