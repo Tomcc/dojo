@@ -253,6 +253,7 @@ void AndroidPlatform::initialise(Game *g)
 	this->Platform::input = new InputSystem();
 	this->Platform::fonts = new FontSystem();
     this->Platform::sound  = new SoundManager();
+	this->Platform::input->addDevice(&androidKeyboard);
 	//dojo make internal storage:
 	std::string filesPath(GetAndroidApp()->activity->internalDataPath);
 	/* get exist path "files/" */
@@ -304,12 +305,17 @@ void AndroidPlatform::shutdown()
 		}
 		eglTerminate(display);
 	}
-    	display = EGL_NO_DISPLAY;
-    	context = EGL_NO_CONTEXT;
-    	surface = EGL_NO_SURFACE;
+    display = EGL_NO_DISPLAY;
+    context = EGL_NO_CONTEXT;
+    surface = EGL_NO_SURFACE;
 	//enable loop, and disable draw (pause)
 	running=false;
 	isInPause=true;
+	//destroy managers
+	delete this->Platform::render; this->Platform::render=NULL;
+	delete this->Platform::sound; this->Platform::sound=NULL;
+	delete this->Platform::input; this->Platform::input=NULL;
+	delete this->Platform::fonts; this->Platform::fonts=NULL;
 }       
 
 void AndroidPlatform::acquireContext()
@@ -408,7 +414,7 @@ void AndroidPlatform::step( float dt )
 	//update game
 	game->loop( dt );
 	render->render();	
-	//sound->update( dt );
+	sound->update( dt );
 
 }
 

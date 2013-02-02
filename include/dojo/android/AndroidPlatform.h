@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include "InputSystem.h"
 #include "SoundManager.h"
+#include "Keyboard.h"
 #include "Vector.h"
 
 #ifdef PLATFORM_ANDROID
@@ -74,7 +75,8 @@ namespace Dojo
 		String apkdir;
 		String apkdirResources;
 		String dirAppData;
-		
+		//Keyboard
+		Keyboard androidKeyboard;		
 		//android	
 		//app manager
 		struct android_app* app;
