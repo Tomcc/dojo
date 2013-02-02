@@ -14,6 +14,12 @@ enabled(enable)
 	Platform::getSingleton()->addApplicationListener( this );
 }
 
+void InputSystem::poll(float dt)
+{
+    for( auto device : mDeviceList )
+        device->poll( dt );
+};
+
 void InputSystem::_fireTouchBeginEvent( const Vector& point )
 {
     if( enabled )

@@ -54,7 +54,9 @@ void ApplePlatform::step( float dt )
 	Timer frameTimer;
 	
 	//clamp to max dt to avoid crazy behaviour
-	dt = Math::min( dt, game->getMaximumFrameLength() );		
+	dt = Math::min( dt, game->getMaximumFrameLength() );
+	
+    input->poll( dt );
 	
     game->loop(dt);
     

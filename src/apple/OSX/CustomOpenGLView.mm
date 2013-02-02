@@ -13,6 +13,8 @@
 #include "Platform.h"
 #include "Vector.h"
 #include "Game.h"
+#include "Keyboard.h"
+
 
 using namespace Dojo;
 
@@ -25,6 +27,8 @@ using namespace Dojo;
 		
 	platform = targetPlatform;
 	input = platform->getInput();
+    keyboard = new Keyboard();
+    input->addDevice( keyboard );
 		
 	time = CFAbsoluteTimeGetCurrent();
 	
@@ -164,6 +168,9 @@ using namespace Dojo;
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    input->removeDevice( keyboard );
+    delete keyboard;
+    
 	//shutdown the app and let the Platform continue
 	[[NSApplication sharedApplication] stop:self];
 }
@@ -252,19 +259,18 @@ using namespace Dojo;
 - (void)keyDown:(NSEvent *)theEvent
 {	
 	uint kc = [theEvent keyCode];
-	if( !repetition[kc] ) {
-        DEBUG_TODO; //do wrap a Keyboard object here
-        //		input->_fireKeyPressedEvent( [[theEvent characters] characterAtIndex:0], keymap[kc] );
-		
+	if( !repetition[kc] )
+    {
+        keyboard->_notifyButtonState( keymap[kc], true );
+        
 		repetition[kc] = true;
 	}		
 }
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-    DEBUG_TODO; //do wrap a Keyboard object here
-//	input->_fireKeyReleasedEvent( [[theEvent characters] characterAtIndex:0], keymap[[theEvent keyCode] ] );
-	
+	keyboard->_notifyButtonState( keymap[[theEvent keyCode]], false );
+    
 	repetition[[theEvent keyCode]] = false;
 }
 

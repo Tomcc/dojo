@@ -122,9 +122,9 @@ void OSXPlatform::initialise( Game* g )
     //create soundmanager
     sound = new SoundManager();
 	
-    //create input
+    //create input and the keyboard system object
     input = new InputSystem();
-	
+    
 	//fonts
 	fonts = new FontSystem();
 	

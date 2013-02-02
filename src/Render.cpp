@@ -181,8 +181,8 @@ void Render::removeRenderable( Renderable* s )
 {	
 	if( hasLayer( s->getLayer() ) )
 	{
-		s->_notifyRenderInfo( NULL, 0, 0 );
 		getLayer( s->getLayer() )->remove( s );
+		s->_notifyRenderInfo( NULL, 0, 0 );
 	}
 
 	if( s == currentRenderState )
