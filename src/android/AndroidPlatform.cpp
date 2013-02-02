@@ -270,44 +270,24 @@ void AndroidPlatform::initialise(Game *g)
 			else { DEBUG_MESSAGE("mkdir(files/) done"); }
 		}
 	}
+	//set paths
+	this->apkdirResources=this->apkdir+String("/assets");
+	this->dirAppData=GetAndroidApp()->activity->internalDataPath;
 	//enable loop
     running=true;
     //start the game
     game->begin();
 }   
-
-/*
- I can't make a dir in internal storage, but is an INTERNAL storage 
- $(Appdata)/$(GameName)/....
- to
- $(root)/$(app storage)/files/.....
-*/
-String AndroidPlatform::_getTablePath( Table* dest, const String& absPath ){
 	
-	if( absPath.size() == 0 )
-	{
-		DEBUG_ASSERT( dest->hasName() );		
-		//look for this file inside the prefs
-		return getAppDataPath() +'/'+ dest->getName() + ".ds";
-	}
-	else
-		return absPath;
 
-}
-		
-
-String AndroidPlatform::getAppDataPath(){ 
-	return GetAndroidApp()->activity->internalDataPath;
+const String& AndroidPlatform::getAppDataPath(){ 
+	return dirAppData;
  }
-String AndroidPlatform::getResourcesPath(){ 
- 	std::string tmp=(this->apkdir+String("/assets")).ASCII();
-	DEBUG_MESSAGE("AndroidPlatform::getResourcesPath:"<<tmp);
-	return this->apkdir+String("/assets");
+const String& AndroidPlatform::getResourcesPath(){ 
+	return apkdirResources;
  }
-String AndroidPlatform::getRootPath(){ 
- 	std::string tmp=this->apkdir.ASCII();
-	DEBUG_MESSAGE("AndroidPlatform::getRootPath:"<<tmp);
-	return this->apkdir; 
+const String& AndroidPlatform::getRootPath(){ 
+	return apkdir; 
 }
 
 void AndroidPlatform::shutdown()

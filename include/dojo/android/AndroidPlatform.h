@@ -48,7 +48,7 @@ namespace Dojo
 		virtual bool isNPOTEnabled()
 		{
 			DEBUG_MESSAGE("AndroidPlatform::isNPOTEnabled");
-			return true; 
+			return false; 
 		}
                 ///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
                 virtual void prepareThreadContext(){
@@ -56,20 +56,13 @@ namespace Dojo
 		}
 		
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
-		virtual String getAppDataPath();
-		virtual String getResourcesPath();
-		virtual String getRootPath();		
-		/*
-		   I can't make a dir in internal storage, but is an INTERNAL storage 
-		   $(Appdata)/$(GameName)/....
-		   to
-		   $(root)/$(app storage)/files/.....
-		*/
-		virtual String _getTablePath( Table* dest, const String& absPath );
+		virtual const String& getAppDataPath();
+		virtual const String& getResourcesPath();
+		virtual const String& getRootPath();		
+		
+		
 		
 		//TODO
-
-		virtual void openWebPage( const std::string& site ){}	
 		virtual void openWebPage( const String& site ){}
 		
 
@@ -79,6 +72,8 @@ namespace Dojo
 		int32_t width, height;	
 		Timer frameTimer;
 		String apkdir;
+		String apkdirResources;
+		String dirAppData;
 		
 		//android	
 		//app manager
