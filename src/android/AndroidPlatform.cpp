@@ -238,22 +238,22 @@ void AndroidPlatform::initialise(Game *g)
     //init app
     DEBUG_ASSERT( GetAndroidApp() );
     GetAndroidApp()->userData=(void*)this;
-    this->app=GetAndroidApp();
+    app=GetAndroidApp();
     //Set Display	
     ResetDisplay();
     //accelerometer
-    this->sensorManager = ASensorManager_getInstance();
+    sensorManager = ASensorManager_getInstance();
     DEBUG_ASSERT( sensorManager );
 
-    this->accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
-    if(this->accelerometerSensor==NULL){  DEBUG_MESSAGE("Accelerometer feature not supported on this device."); }
+    accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
+    if(accelerometerSensor==NULL){  DEBUG_MESSAGE("Accelerometer feature not supported on this device."); }
 	
     //dojo object
-    this->Platform::render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );	
-	this->Platform::input = new InputSystem();
-	this->Platform::fonts = new FontSystem();
-    this->Platform::sound  = new SoundManager();
-	this->Platform::input->addDevice(&androidKeyboard);
+    render = new Render( ((int)width), ((int)height), DO_LANDSCAPE_LEFT );	
+	input = new InputSystem();
+	fonts = new FontSystem();
+    sound  = new SoundManager();
+	input->addDevice(&androidKeyboard);
 	//dojo make internal storage:
 	std::string filesPath(GetAndroidApp()->activity->internalDataPath);
 	/* get exist path "files/" */
@@ -272,8 +272,8 @@ void AndroidPlatform::initialise(Game *g)
 		}
 	}
 	//set paths
-	this->apkdirResources=this->apkdir+String("/assets");
-	this->dirAppData=GetAndroidApp()->activity->internalDataPath;
+	apkdirResources=apkdir+String("/assets");
+	dirAppData=GetAndroidApp()->activity->internalDataPath;
 	//enable loop
     running=true;
     //start the game
@@ -312,10 +312,10 @@ void AndroidPlatform::shutdown()
 	running=false;
 	isInPause=true;
 	//destroy managers
-	delete this->Platform::render; this->Platform::render=NULL;
-	delete this->Platform::sound; this->Platform::sound=NULL;
-	delete this->Platform::input; this->Platform::input=NULL;
-	delete this->Platform::fonts; this->Platform::fonts=NULL;
+	delete render; render=NULL;
+	delete sound; sound=NULL;
+	delete input; input=NULL;
+	delete fonts; fonts=NULL;
 }       
 
 void AndroidPlatform::acquireContext()
