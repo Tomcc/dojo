@@ -511,11 +511,12 @@ void Win32Platform::_pollDevices( float dt )
 {
 	input->poll( dt );
 
-	for( auto j : mXInputJoystick ) //poll disconnected pads
+	for( auto j : mXInputJoystick ) //poll disconnected pads for connection
 	{
-		DEBUG_TODO;
+		if( !j->isConnected() )
+			j->poll( dt );
 	}
-	
+
 	//TODO DInput joysticks
 }
 
