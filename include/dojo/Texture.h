@@ -68,7 +68,12 @@ namespace Dojo
 				
 		inline uint getWidth()					{	return width;		}
 		inline uint getHeight()					{	return height;		}
-		
+
+		///returns the texture size in the UV space of the parent atlas/padded image
+		inline const Vector& getUVSize()		{	return UVSize;		}
+		///returns the texture offset in the UV space of the parent atlas/padded image
+		inline const Vector& getUVOffset()		{	return UVOffset;	}
+
 		inline uint getInternalWidth()
 		{
 			return internalWidth;
@@ -119,8 +124,7 @@ namespace Dojo
 				
 		bool npot, mMipmapsEnabled;
 		int width, height, internalWidth, internalHeight;
-		float xRatio, yRatio;
-		float xOffset, yOffset;
+		Vector UVSize, UVOffset;
 		
 		Texture* parentAtlas;
 		FrameSet* ownerFrameSet;
