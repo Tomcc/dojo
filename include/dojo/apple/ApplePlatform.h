@@ -33,11 +33,10 @@ namespace Dojo
         ApplePlatform( const Table& config );
 		
 		virtual ~ApplePlatform();
-		
-		virtual void initialise()=0;        
+		   
 		virtual void step( float dt );
-						
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height );
+        
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize );
         		        
     protected:
         

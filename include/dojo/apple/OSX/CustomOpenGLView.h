@@ -26,6 +26,7 @@ namespace Dojo
 	CFAbsoluteTime time;
     
 	Dojo::InputSystem* input;
+    Dojo::InputDevice* keyboard;
 	
 	Dojo::KeyCode keymap[0x80];
 	bool repetition[0x80];

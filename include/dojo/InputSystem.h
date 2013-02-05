@@ -145,7 +145,10 @@ namespace Dojo
 				l->_notifySource(NULL);
 			}
 		}
-		
+        
+        ///polls all the registered devices
+        void poll( float dt );
+        
 		///enables or disables the whole input
 		inline void setEnabled( bool e )
 		{

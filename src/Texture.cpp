@@ -14,10 +14,6 @@ Resource( creator ),
 	height(0),
 	internalWidth(0),
 	internalHeight(0),
-	xRatio(0),
-	yRatio(0),
-	xOffset(0),
-	yOffset(0),
 	glhandle( 0 ),
 	npot( false ),
 	parentAtlas( NULL ),
@@ -34,10 +30,6 @@ width(0),
 height(0),
 internalWidth(0),
 internalHeight(0),
-xRatio(0),
-yRatio(0),
-xOffset(0),
-yOffset(0),
 glhandle( 0 ),
 npot( false ),
 parentAtlas( NULL ),
@@ -166,15 +158,14 @@ bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLen
 		imageData = paddedData;
 	}
 												
-	xRatio = (float)width/(float)internalWidth;
-	yRatio = (float)height/(float)internalHeight;	
+	UVSize.x = (float)width/(float)internalWidth;
+	UVSize.y = (float)height/(float)internalHeight;	
 	npot = ( Math::nextPowerOfTwo( width ) != width || Math::nextPowerOfTwo( height ) != height );
 	
 	size = internalWidth * internalHeight * destPixelSize;
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 	
-	//HACK
 	glTexImage2D(
 		GL_TEXTURE_2D, 
 		0, 
@@ -258,12 +249,12 @@ bool Texture::_setupAtlas()
 	glhandle = parentAtlas->glhandle;
 
 	//find uv coordinates
-	xOffset = (float)mAtlasOriginX/(float)internalWidth;
-	yOffset = (float)mAtlasOriginY/(float)internalHeight;
+	UVOffset.x = (float)mAtlasOriginX/(float)internalWidth;
+	UVOffset.y = (float)mAtlasOriginY/(float)internalHeight;
 
 	//find uv size
-	xRatio = (float)width/(float)internalWidth;
-	yRatio = (float)height/(float)internalHeight;
+	UVSize.x = (float)width/(float)internalWidth;
+	UVSize.y = (float)height/(float)internalHeight;
 
 	return (loaded = true);
 }
@@ -308,7 +299,7 @@ void Texture::onUnload( bool soft )
 	if( !soft || isReloadable() )
 	{
 		if( OBB )
-			OBB->onUnload(); //always destroy the OBB
+			SAFE_DELETE( OBB );
 
 		if( !parentAtlas ) //don't unload parent texture!
 		{
@@ -338,20 +329,20 @@ void Texture::_buildOptimalBillboard()
 	OBB->begin( 4 );
 	
 	OBB->vertex( -0.5, -0.5 );		
-	OBB->uv( xOffset, 
-			 yOffset + yRatio );
+	OBB->uv( UVOffset.x, 
+			 UVOffset.y + UVSize.y );
 	
 	OBB->vertex( 0.5, -0.5 );		
-	OBB->uv( xOffset + xRatio, 
-			 yOffset + yRatio );
+	OBB->uv( UVOffset.x + UVSize.x, 
+			 UVOffset.y + UVSize.y );
 	
 	OBB->vertex( -0.5, 0.5 );		
-	OBB->uv( xOffset, 
-			 yOffset );
+	OBB->uv( UVOffset.x, 
+			 UVOffset.y );
 	
 	OBB->vertex( 0.5, 0.5 );
-	OBB->uv( xOffset + xRatio, 
-			 yOffset );
+	OBB->uv( UVOffset.x + UVSize.x, 
+			 UVOffset.y );
 	
 	OBB->end();			
 }

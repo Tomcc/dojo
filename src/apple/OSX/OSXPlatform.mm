@@ -33,25 +33,53 @@ ApplePlatform( config )
 }
 
 
-void OSXPlatform::initialise() 
-{	
+void OSXPlatform::initialise( Game* g )
+{
+    game = g;
 	DEBUG_ASSERT( game );
 	
 	[NSApplication sharedApplication];
 	
     pool = [[NSAutoreleasePool alloc] init];
 	
+    //store relevant paths
+    mRootPath = [[NSBundle mainBundle] bundlePath];
+    mResourcesPath = [[NSBundle mainBundle] resourcePath];
+    
+    NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	mAppDataPath = [nspaths objectAtIndex:0];
+    mAppDataPath += "/" + game->getName();
+    
 	_createApplicationDirectory();
-		
-	//show menu bar
-	/*NSMenu* menu = [[NSMenu alloc] initWithTitle: Utils::toNSString( game->getName() ) ];
-	 [[NSApplication sharedApplication] setMenu:menu];*/
-	
+    
+    //override the config or load it from file
+    if( config.size() == 0 )
+        load( &config, getAppDataPath() + "/config.ds" );
+    
+    //override window size
+    if( config.exists( "windowSize" ) )
+    {
+        Vector dim = config.getVector( "windowSize" );
+        windowWidth = dim.x;
+        windowHeight = dim.y;
+    }
+    else //use the defaults
+    {
+        windowWidth = game->getNativeWidth();
+        windowHeight = game->getNativeHeight();
+    }
+    
+    //auto-choose dimensions?
+    if( windowWidth == 0 )  windowWidth = screenWidth;
+    if( windowHeight == 0 ) windowHeight = screenHeight;
+    
+    //TODO read fullscreen
+    
     NSRect frame;
     frame.origin.x = 10;
     frame.origin.y = 768;
-    frame.size.width = game->getNativeWidth();
-    frame.size.height = game->getNativeHeight();
+    frame.size.width = windowWidth;
+    frame.size.height = windowHeight;
 	
     NSOpenGLPixelFormatAttribute attributes [] = {
         NSOpenGLPFAWindow,
@@ -60,7 +88,7 @@ void OSXPlatform::initialise()
 		
 		//msaa
 		NSOpenGLPFASampleBuffers, 1,
-		NSOpenGLPFASamples, config.getInt( "MSAA" ),
+		NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)config.getInt( "MSAA" ),
 		NSOpenGLPFANoRecovery,
 		
         (NSOpenGLPixelFormatAttribute)nil
@@ -94,9 +122,9 @@ void OSXPlatform::initialise()
     //create soundmanager
     sound = new SoundManager();
 	
-    //create input
+    //create input and the keyboard system object
     input = new InputSystem();
-	
+    
 	//fonts
 	fonts = new FontSystem();
 	
@@ -141,10 +169,10 @@ void OSXPlatform::present()
     [[view openGLContext] flushBuffer];
 }
 
-void OSXPlatform::loop( float frameTime )
+void OSXPlatform::loop()
 {		
 	// start animation timer
-	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( frameTime ) 
+	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( game->getNativeFrameLength() )
 								target:view 
 								selector:@selector(stepCallback:) 
 								userInfo:nil 
@@ -163,17 +191,9 @@ void OSXPlatform::loop( float frameTime )
 	[[NSApplication sharedApplication] run];
 }
 
-String OSXPlatform::getRootPath()
+void OSXPlatform::setFullscreen(bool f)
 {
-	return String( [[NSBundle mainBundle] resourcePath] );
-}
-
-String OSXPlatform::getAppDataPath()
-{
-	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-	NSString* nspath = [nspaths objectAtIndex:0];
-	
-	return String( nspath );
+    DEBUG_TODO;
 }
 
 void OSXPlatform::openWebPage( const String& site )

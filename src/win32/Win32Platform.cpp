@@ -509,10 +509,13 @@ void Win32Platform::_invoke( Poco::Timer& timer )
 
 void Win32Platform::_pollDevices( float dt )
 {
-	mKeyboard.poll( dt );
+	input->poll( dt );
 
-	for( auto j : mXInputJoystick )
-		j->poll( dt );
+	for( auto j : mXInputJoystick ) //poll disconnected pads for connection
+	{
+		if( !j->isConnected() )
+			j->poll( dt );
+	}
 
 	//TODO DInput joysticks
 }

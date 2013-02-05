@@ -54,7 +54,9 @@ void ApplePlatform::step( float dt )
 	Timer frameTimer;
 	
 	//clamp to max dt to avoid crazy behaviour
-	dt = Math::min( dt, game->getMaximumFrameLength() );		
+	dt = Math::min( dt, game->getMaximumFrameLength() );
+	
+    input->poll( dt );
 	
     game->loop(dt);
     
@@ -64,7 +66,7 @@ void ApplePlatform::step( float dt )
 	realFrameTime = frameTimer.getElapsedTime();
 }
 
-GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height )
+GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
     width = height = 0;
     
@@ -88,7 +90,7 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
         DEBUG_TODO;
     }
     
-    int pixelSize = (int)CGImageGetBitsPerPixel( CGImage ) / 8;
+    pixelSize = (int)CGImageGetBitsPerPixel( CGImage ) / 8;
     bool alphaChannel = pixelSize == 4;
     
 	width = (int)CGImageGetWidth(CGImage);
@@ -117,15 +119,13 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
 }
 
 void ApplePlatform::_createApplicationDirectory()
-{	
-	String dirname = getAppDataPath() + "/" + game->getName();
-			
+{			
 	//check if the directory exists, if not existing create it!
 	NSFileManager *fileManager= [NSFileManager defaultManager]; 
-	if(![ fileManager fileExistsAtPath:dirname.toNSString() ])
+	if(![ fileManager fileExistsAtPath:getAppDataPath().toNSString() ])
 	{
 		bool success = [fileManager 
-						createDirectoryAtPath:dirname.toNSString()
+						createDirectoryAtPath:getAppDataPath().toNSString()
 						withIntermediateDirectories:YES 
 						attributes:nil 
 						error:NULL];
