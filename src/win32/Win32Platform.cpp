@@ -180,6 +180,11 @@ mFramesToAdvance( 0 )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
 	*/
+	LCID lcid;
+	String bstrRetBuf;
+
+	//TODO detect locale
+	locale = "it";
 
 	//if no config is supplied, try to load it from an user file
 

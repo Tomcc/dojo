@@ -66,6 +66,9 @@ namespace Dojo
 		*/
 		void setLocale( const Dojo::String& locID, const Dojo::String& fallbackLocaleID )
 		{
+			DEBUG_ASSERT( locID.size() );
+			DEBUG_ASSERT( fallbackLocaleID.size() );
+
 			locale = locID;
 			fallbackLocale = fallbackLocaleID;
 		}
@@ -275,17 +278,7 @@ namespace Dojo
 		///adds a localization folder located in baseFolder, choosing it using the current locale
 		/** 
 		for example, "base/en" if en; "base/it" if it, etc */
-		void addLocalizedFolder( const String& basefolder, int version = 0 )
-		{
-			String lid = basefolder;
-				
-			if( lid[ lid.size() - 1 ] != '/' )
-				lid += '/';
-			
-			lid += locale;
-			
-			addFolderSimple( lid );
-		}
+		void addLocalizedFolder( const String& basefolder, int version = 0 );
 
 		///adds all the resources and the localized resources in a folder
 		void addFolder( const String& folder, int version = 0 )
@@ -294,7 +287,7 @@ namespace Dojo
 			
 			//localized loading
 			if( isLocalizationRequired() )		
-				addFolderSimple( folder, version );
+				addLocalizedFolder( folder, version );
 		}
 		
 		///asserts that this group will not load more resources in the future, useful for task-based loading
