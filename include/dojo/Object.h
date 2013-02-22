@@ -116,7 +116,7 @@ namespace Dojo {
 		{
 			DEBUG_TODO;            
 
-			return worldPos;
+			return Vector::ZERO;
 		}
 		
 		///returns a local direction in world space
@@ -126,6 +126,13 @@ namespace Dojo {
 			dir = getWorldTransform() * dir;
 			
 			return Vector( dir.x, dir.y, dir.z );
+		}
+
+		inline Vector getLocalDirection( const Vector& worldDir )
+		{
+			DEBUG_TODO;
+
+			return Vector::ZERO;
 		}
 		
 		inline const Quaternion getRotation()

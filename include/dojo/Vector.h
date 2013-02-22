@@ -15,6 +15,8 @@ using namespace std;
 
 namespace Dojo	
 {
+	class Plane;
+
 	typedef glm::mat4x4 Matrix;
 	typedef glm::quat Quaternion;
 	
@@ -147,12 +149,6 @@ namespace Dojo
 		{
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
 		}
-		
-		///returns the distance of this vector from the given plane
-		inline float distanceFromPlane( const Vector& normal, float d ) const 
-		{
-			return (*this) * normal + d;
-		}
 
 		inline bool isNear( const Vector& v, float threshold = 0.1 )
 		{
@@ -183,9 +179,28 @@ namespace Dojo
 			return (((size_t)x) * 73856093) ^ (((size_t)y) * 19349663) ^ (((size_t)z) * 83492791);
 		}
 
+		///reflect this vector on the plane with the given normal
+		inline Vector reflect( const Vector& normal ) const
+		{
+			return 2.f * normal * ( normal * *this ) - *this;
+		}
+
+		///refracts this vector on the plane with the given normal, where eta is the refraction indices ratio
+		inline Vector refract( const Vector& n, float eta ) const
+		{
+			const Vector& i = -*this;
+
+			float N_dot_I = n*i;
+			float k = 1.f - eta * eta * (1.f - N_dot_I * N_dot_I);
+			if (k < 0.f)
+				return 0;
+			else
+				return eta * i - (eta * N_dot_I + sqrtf(k)) * n;
+		}
+
 	protected:
 	};
-}	
+}
 
 namespace std
 	{

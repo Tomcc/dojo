@@ -19,6 +19,8 @@ timeElapsed(0),
 camera(NULL)
 {
 	mNeedsAABB = true;
+
+	gameState = this; //useful to pass a GameState around as an Object
 }
 
 GameState::~GameState()

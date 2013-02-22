@@ -7,17 +7,49 @@
 
 namespace Dojo
 {
-		template <typename T>
+	template <typename T>
 	class Array 
 	{
 	public:
 
+		typedef Array< T > ArrayImpl;
+
+		class iterator;
+
+		///A range is the natural iterable view of an Array, to use in foreachs
+		class Range
+		{
+		public:
+
+			///creates a new range over base starting at start and ending at end (not included), or the natural end
+			Range( const ArrayImpl& base, int start, int end = -1 ) :
+			mStart( start ),
+			mEnd( end ),
+			mBase( base )
+			{
+				if( mEnd < 0 )
+					mEnd = mBase.size();
+
+				DEBUG_ASSERT( mStart >= 0 );
+				DEBUG_ASSERT( mEnd >= 0 );
+				DEBUG_ASSERT( mStart <= mEnd );
+			}
+			
+			iterator begin() const;
+
+			///returns a C++11-foreach-compliant vector past the back element
+			iterator end() const;
+
+			const ArrayImpl& mBase;
+			int mStart, mEnd;
+		};
+
 		class iterator
 		{
 		public:
-			iterator( const Array<T>& a, int initialPos ) :
-			base( a ),
-			pos( initialPos )
+			iterator( Range a ) :
+			pos( a.mStart ),
+			range( a )
 			{
 
 			}
@@ -31,13 +63,13 @@ namespace Dojo
 
 			const T& operator* () const
 			{
-				return base[ pos ];
+				return range.mBase[ pos ];
 			}
 
 			const iterator& operator++ ()
 			{
 				//don't allow to increase after the end
-				DEBUG_ASSERT( pos < base.size() );
+				DEBUG_ASSERT( pos < range.mBase.size() );
 
 				++pos;
 				// although not strictly necessary for a range-based for loop
@@ -48,8 +80,9 @@ namespace Dojo
 
 		private:
 			int pos;
-			const Array<T>& base;
+			Range range;
 		};
+
 		
 		///Constructor
 		/**
@@ -298,15 +331,21 @@ namespace Dojo
 		FV_INLINE int getPageSize()	const {	return pageSize;	}
 		
 		///returns a C++11-foreach-compliant vector to the front element
-		FV_INLINE iterator begin()
+		FV_INLINE iterator begin() const
 		{
-			return iterator( *this, 0 );
+			return iterator( Range( *this, 0 ) );
 		}
 
 		///returns a C++11-foreach-compliant vector past the back element
-		FV_INLINE iterator end()
+		FV_INLINE iterator end() const
 		{
-			return iterator( *this, size() );
+			return iterator( Range( *this, size() ) );
+		}
+
+		///returns an iterable range starting at start and ending at end (not included) or the natural end
+		FV_INLINE Range range( int start, int end = -1 ) const
+		{
+			return Range( *this, start, end );
 		}
 		
 		FV_INLINE T* _getArrayPointer()	const {	return vectorArray;	}
@@ -329,6 +368,18 @@ namespace Dojo
 		}
 		
 	};
+
+	template <typename T>
+	typename Array<T>::iterator Array<T>::Range::begin() const
+	{
+		return iterator( *this );
+	}
+
+	template <typename T>
+	typename Array<T>::iterator Array<T>::Range::end() const
+	{
+		return iterator( Range( mBase, mEnd ) );
+	}
 }
 
 #endif

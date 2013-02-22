@@ -55,15 +55,18 @@ void AnimatedQuad::immediateAnimation( const String& name, float timePerFrame )
 }
 
 void AnimatedQuad::onAction( float dt )
-{
-	Renderable::onAction( dt );
-		
+{		
     advanceAnim(dt);
 
 	_updateScreenSize();
 
 	if( pixelPerfect )
+	{
 		scale = screenSize;
+		scale.z = 1; //be sure to keep scale = 1 or the transform will be denormalized (no inverse!)
+	}
+
+	Renderable::onAction( dt );
 }
 
 bool AnimatedQuad::prepare( const Vector& viewportPixelRatio )

@@ -15,6 +15,7 @@
 #include "Color.h"
 #include "Vector.h"
 #include "Array.h"
+#include "dojomath.h"
 
 namespace Dojo
 {
@@ -37,39 +38,41 @@ namespace Dojo
 			rotation( 0 ),
 			offset( 0,0 ),
 			texture( NULL ),
-			requiresTransform( false )
+			optTransform( NULL )
 			{
 
 			}
 
+			~TextureUnit()
+			{
+				if( optTransform )
+					SAFE_DELETE( optTransform );
+			}
+
 			void applyTransform()
 			{
-				DEBUG_ASSERT( requiresTransform );
+				DEBUG_ASSERT( optTransform );
 
 				glMatrixMode( GL_TEXTURE );
-				glLoadIdentity();
-
-				glScalef( scale.x, scale.y, 1 );
-				glRotatef( rotation, 0, 0, 1.f );
-				glTranslatef( offset.x, offset.y, 0 );
+				glLoadMatrixf( glm::value_ptr( *optTransform ) );
 			}
 
 			inline void setOffset( const Vector& v )
 			{
 				offset = v;
-				requiresTransform = true;
+				_updateTransform();
 			}
 
 			inline void setScale( const Vector& v )
 			{
 				scale = v;
-				requiresTransform = true;
+				_updateTransform();
 			}
 
 			inline void setRotation( const float r )
 			{
 				rotation = r;
-				requiresTransform = true;
+				_updateTransform();
 			}
 
 			inline const Vector& getOffset()
@@ -89,7 +92,7 @@ namespace Dojo
 
 			inline bool isTransformRequired()
 			{
-				return requiresTransform;
+				return optTransform != nullptr;
 			}
 
 		protected:
@@ -97,7 +100,18 @@ namespace Dojo
 			Vector offset, scale;
 			float rotation;
 
-			bool requiresTransform;
+			Matrix* optTransform;
+
+			void _updateTransform()
+			{
+				if( !optTransform )
+					optTransform = new Matrix;
+
+				//build the transform
+				*optTransform = glm::scale( Matrix(1), scale );
+				*optTransform = glm::translate( *optTransform, offset );
+				*optTransform = glm::rotate( *optTransform, Math::toEuler(rotation), Vector::UNIT_Z );
+			}
 
 		};
 

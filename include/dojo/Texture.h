@@ -33,6 +33,9 @@ namespace Dojo
 		
 		virtual ~Texture();
 
+		///loads an empty texture with the given properties
+		bool loadEmpty( int width, int height, GLenum destFormat );
+
 		///loads the texture from a memory area with RGBA8 format
 		bool loadFromMemory( byte* buf, int width, int height, GLenum sourceFormat, GLenum destFormat  );
 
@@ -124,6 +127,7 @@ namespace Dojo
 				
 		bool npot, mMipmapsEnabled;
 		int width, height, internalWidth, internalHeight;
+		GLenum internalFormat;
 		Vector UVSize, UVOffset;
 		
 		Texture* parentAtlas;

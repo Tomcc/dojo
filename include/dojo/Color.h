@@ -121,6 +121,13 @@ namespace Dojo
 			g *= s;
 			b *= s;
 		}
+
+		inline void operator += ( const Color& c )
+		{
+			r += c.r;
+			g += c.g;
+			b += c.b;
+		}
 						
 	protected:
 	};
