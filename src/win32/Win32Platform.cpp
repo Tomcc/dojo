@@ -180,6 +180,11 @@ mFramesToAdvance( 0 )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
 	*/
+	LCID lcid;
+	String bstrRetBuf;
+
+	//TODO detect locale
+	locale = "it";
 
 	//if no config is supplied, try to load it from an user file
 
@@ -676,8 +681,6 @@ void Win32Platform::keyReleased( int kc )
 
 GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
-	void* data;
-
 	//image format
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	//pointer to the image, once loaded
@@ -709,37 +712,41 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 		return 0;
 
 	//retrieve the image data
-	data = (void*)FreeImage_GetBits(dib);
+	void* data = (void*)FreeImage_GetBits(dib);
+
 	//get the image width and height, and size per pixel
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
+	int pitch = FreeImage_GetPitch( dib );
 	
 	pixelSize = FreeImage_GetBPP(dib)/8;
 	
 	int size = width*height*pixelSize;
 	bufptr = malloc( size );
 	
-	//swap R and B and invert image while copying
-	byte* in, *out;
-	for( int i = 0, ii = height-1; i < height ; ++i, --ii )
 	{
-		for( int j = 0; j < width; ++j )
+		byte* in, *out;
+		for( int ii, i = 0; i < height; ++i )
 		{
-			out = (byte*)bufptr + (j + i*width)*pixelSize;
-			in = (byte*)data + (j + ii*width)*pixelSize;
+			ii = height - i -1;
+			for( int j = 0; j < width; ++j )
+			{
+				out = (byte*)bufptr + (j + i*width)*pixelSize;
+				in = (byte*)data + j * pixelSize + ii * pitch;
 
-			if( pixelSize >= 4 )
-				out[3] = in[3];
-			
-			if( pixelSize >= 3 )
-			{
-				out[2] = in[0];
-				out[1] = in[1];
-				out[0] = in[2];
-			}
-			else
-			{
-				out[0] = in[0];
+				if( pixelSize >= 4 )
+					out[3] = in[3];
+
+				if( pixelSize >= 3 )
+				{
+					out[2] = in[0];
+					out[1] = in[1];
+					out[0] = in[2];
+				}
+				else
+				{
+					out[0] = in[0];
+				}
 			}
 		}
 	}
@@ -747,7 +754,6 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	//free resources
 	FreeImage_Unload( dib );
 	FreeImage_CloseMemory(hmem);
-	free( buf );
 
 	static const GLenum formatsForSize[] = { GL_NONE, GL_UNSIGNED_BYTE, GL_RG, GL_RGB, GL_RGBA };
 	return formatsForSize[ pixelSize ];

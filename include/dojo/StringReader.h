@@ -16,8 +16,7 @@ namespace Dojo
 		StringReader( const String& string ) :
 		wcharStr( &string ),
 		utf8Str( NULL ),
-		idx( 0 ),
-		mEOF( false )
+		idx( 0 )
 		{
 
 		}
@@ -26,32 +25,28 @@ namespace Dojo
 		StringReader( const std::string& string ) :
 		utf8Str( &string ),
 		wcharStr( NULL ),
-		idx( 0 ),
-		mEOF( false )
+		idx( 0 )
 		{
 
-		}
-
-		inline bool eof()
-		{
-			return mEOF;
 		}
 		
+		///returns a new unicode character or 0 if the stream ended
 		inline unichar get()
 		{
-            DEBUG_ASSERT( !eof() );
             DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );
 
-			if( wcharStr )
+			//HACK this doesn't care about utf8 multichars!
+			if( (wcharStr && idx >= wcharStr->size()) || (utf8Str && idx >= utf8Str->size()) )
 			{
-				mEOF = idx + 1 >= wcharStr->size();
+				++idx;
+				return 0;
+			}
+			else if( wcharStr )
+			{
 				return (*wcharStr)[ idx++ ];
 			}
 			else
 			{
-				//make a wchar using an UTF8 sequence
-				//HACK this doesn't care about UTF8
-				mEOF = idx + 1 >= utf8Str->size();
 				return (unichar)(*utf8Str)[ idx++ ];
 			}
 		}
@@ -67,6 +62,27 @@ namespace Dojo
 		{
 			return c >= '0' && c <= '9';
 		}
+
+		inline static bool isLowerCaseLetter( unichar c )
+		{
+			return c >= 'a' && c <= 'z';
+		}
+		
+		inline static bool isUpperCaseLetter( unichar c )
+		{
+			return c >= 'A' && c <= 'Z';
+		}
+
+		inline static bool isLetter( unichar c )
+		{
+			return isLowerCaseLetter(c) || isUpperCaseLetter( c );
+		}
+
+		///returns if the given char is ok for a name, 0-9A-Za-z
+		inline static bool isNameCharacter( unichar c )
+		{
+			return isNumber( c ) || isLetter( c );
+		}
         
         inline static bool isHex( unichar c )
         {
@@ -80,7 +96,7 @@ namespace Dojo
 
 		inline void skipWhiteSpace()
 		{
-			while( !eof() && isWhiteSpace( get() ) );
+			while( isWhiteSpace( get() ) );
 
 			back(); //put back first non whitespace char
 		}
@@ -97,6 +113,11 @@ namespace Dojo
                 return 0;
             }
         }
+
+		inline int getCurrentIndex()
+		{
+			return idx;
+		}
         
         ///reads a formatted hex
         unsigned int readHex()
@@ -131,7 +152,7 @@ namespace Dojo
 			float sign = 1;
 			float count = 0;
 			float res = 0;
-			while( state != PS_END && !eof() )
+			while( state != PS_END )
 			{
 				c = get();
 
@@ -161,7 +182,7 @@ namespace Dojo
 						res *= 10;
 						res += c - '0';
 					}
-					else if( isWhiteSpace( c ) && count > 0 )
+					else if( count > 0 )
 					{
 						back();
 						state = PS_END;

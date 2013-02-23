@@ -57,7 +57,8 @@ namespace Dojo
 		{
 			TM_STRIP,
 			TM_LIST,
-			TM_LINE_STRIP
+			TM_LINE_STRIP,
+			TM_LINE_LIST
 		};
 		
 		///Creates a new empty Mesh

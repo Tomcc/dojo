@@ -5,8 +5,6 @@
 
 using namespace Dojo;
 
-#define EOF_CHAR 0
-
 void Table::loadFromFile( Table* dest, const String& path )
 {
 	DEBUG_ASSERT( path.size() );
@@ -169,17 +167,14 @@ void Table::deserialize( StringReader& buf )
 
 	//feed one char at a time and do things
 	unichar c = 1, c2;
-	while( (!buf.eof() || c != EOF_CHAR ) && state != PS_END && state != PS_ERROR )
+	while( state != PS_END && state != PS_ERROR )
 	{
-		if( buf.eof() && c != EOF_CHAR )
-			c = EOF_CHAR; //do check EOF_CHAR conditions
-		else
-			c = buf.get();
+		c = buf.get();
 		
 		switch( state )
 		{
 		case PS_TABLE: //wait for either a name, or an anon value	
-				 if( c == '}' )				state = PS_END;
+				 if( c == '}' || c == 0 )				state = PS_END;
 			else if( isNameStarter( c ) )	state = PS_NAME;
 			
 
@@ -234,8 +229,7 @@ void Table::deserialize( StringReader& buf )
 		case PT_NUMBER:
 			  
 			//check if next char is x, that is, really we have an hex color!
-			if( !buf.eof() )    c2 = buf.get();
-			else                c2 = 0;
+			c2 = buf.get();
 				
 			if( c == '0' && c2 == 'x' )
 			{
@@ -252,7 +246,7 @@ void Table::deserialize( StringReader& buf )
 			else if( c == '-' && c2 == '-' ) //or, well, a comment! (LIKE A HACK)
 			{
 				//just skip until newline
-				while( buf.get() != '\n' && !buf.eof() );
+				do { c = buf.get(); } while( c != 0 && c != '\n' );
 			}
 			else
 			{
@@ -268,7 +262,7 @@ void Table::deserialize( StringReader& buf )
 		case PT_STRING:
 
 			str.clear();
-			while( !buf.eof() )
+			while( 1 )
 			{
 				c = buf.get();
 				if( c == '"' )	break;

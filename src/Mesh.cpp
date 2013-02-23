@@ -154,6 +154,8 @@ void Mesh::_bindAttribArrays()
 bool Mesh::end()
 {			
 	DEBUG_ASSERT( isEditing() );
+
+	editing = false;
 	
 	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
 		return false;
@@ -200,7 +202,6 @@ bool Mesh::end()
 	loaded = glGetError() == GL_NO_ERROR;
 	
 	currentVertex = NULL;
-	editing = false;
 
 	//guess triangle count
 	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();

@@ -88,8 +88,6 @@ namespace Dojo
 		inline void setState( StateInterface* child )
 		{
 			DEBUG_ASSERT( mCanSetNextState );
-
-
 			DEBUG_ASSERT( !hasNextState() );
 			
 			nextStatePtr = child;

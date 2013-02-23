@@ -308,6 +308,7 @@ void Render::renderElement( Renderable* s )
 		case Mesh::TM_LIST:         mode = GL_TRIANGLES;        break;
 		case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
 		case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
+		case Mesh::TM_LINE_LIST:	mode = GL_LINES;			break;
 	}
 
 	if( !m->isIndexed() )

@@ -19,7 +19,8 @@ Resource( creator ),
 	parentAtlas( NULL ),
 	OBB( NULL ),
 	ownerFrameSet( NULL ),
-	mMipmapsEnabled( true )
+	mMipmapsEnabled( true ),
+	internalFormat( GL_NONE )
 {			
 
 }
@@ -35,7 +36,8 @@ npot( false ),
 parentAtlas( NULL ),
 OBB( NULL ),
 ownerFrameSet( NULL ),
-mMipmapsEnabled( true )
+mMipmapsEnabled( true ),
+internalFormat( GL_NONE )
 {			
 
 }
@@ -116,76 +118,77 @@ void Texture::disableMipmaps()
 	}
 }
 
-bool Texture::loadFromMemory( Dojo::byte* imageData, int width, int height, GLenum sourceFormat, GLenum destFormat )
+bool Texture::loadEmpty( int width, int height, GLenum destFormat )
 {
-	int err;
-	
-	DEBUG_ASSERT( imageData );
 	DEBUG_ASSERT( width > 0 );
 	DEBUG_ASSERT( height > 0 ); 
 
 	bind(0);
-	
-	byte* paddedData = NULL;
-	
+
 	//Assume formats are either GL_RGB or GL_RGBA
-	int sourcePixelSize = (sourceFormat == GL_RGBA) ? 4 : 3;
 	int destPixelSize = (destFormat == GL_RGBA) ? 4 : 3;
 
 	int POTwidth = Math::nextPowerOfTwo( width );
 	int POTheight = Math::nextPowerOfTwo( height );
 
+	npot = width != POTwidth && height != POTheight;
+
+	int destWidth, destHeight;
+
 	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
-	if( (width == POTwidth && height == POTheight ) || Platform::getSingleton()->isNPOTEnabled() )
+	if( !npot || Platform::getSingleton()->isNPOTEnabled() )
 	{
-		internalWidth = width;
-		internalHeight = height;
+		destWidth = width;
+		destHeight = height;
 	}
 	else
 	{
-		internalWidth = POTwidth;
-		internalHeight = POTheight;
-		
-		//need to pad imageData to a POT buffer
-		paddedData = (byte*)malloc( internalWidth * internalHeight * sourcePixelSize );
-		
-		memset( paddedData, 0, internalWidth * internalHeight * sourcePixelSize );
-		for( int i = 0; i < height; ++i )
-			memcpy( paddedData + i*internalWidth*sourcePixelSize, 
-					imageData + i*width*sourcePixelSize, 
-					width*sourcePixelSize );
-		
-		imageData = paddedData;
+		destWidth = POTwidth;
+		destHeight = POTheight;
 	}
-												
+
+	//check if the texture has to be recreated (changed dimensions)
+	if( destWidth != internalWidth || destHeight != internalHeight || internalFormat != destFormat )
+	{
+		internalWidth = destWidth;
+		internalHeight = destHeight;
+		internalFormat = destFormat;
+		size = internalWidth * internalHeight * destPixelSize;
+
+		//create an empty GPU mem space
+		glTexImage2D(
+			GL_TEXTURE_2D, 
+			0, 
+			internalFormat,
+			internalWidth, 
+			internalHeight,
+			0, 
+			internalFormat, //it's not like we're loading anything anyway
+			GL_UNSIGNED_BYTE, 
+			NULL );
+	}
+
 	UVSize.x = (float)width/(float)internalWidth;
-	UVSize.y = (float)height/(float)internalHeight;	
-	npot = ( Math::nextPowerOfTwo( width ) != width || Math::nextPowerOfTwo( height ) != height );
-	
-	size = internalWidth * internalHeight * destPixelSize;
+	UVSize.y = (float)height/(float)internalHeight;
+
+	loaded = (glGetError() == GL_NO_ERROR);
+	DEBUG_ASSERT( loaded );
+	return loaded;
+}
+
+bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sourceFormat, GLenum destFormat )
+{
+	DEBUG_ASSERT( imageData );
+
+	loadEmpty( width, height, destFormat );
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
-	
-	glTexImage2D(
-		GL_TEXTURE_2D, 
-		0, 
-		destFormat,
-		internalWidth, 
-		internalHeight, 
-		0, 
-		sourceFormat,
-		GL_UNSIGNED_BYTE, 
-		imageData);
 
-	err = glGetError();
-	loaded = (err == GL_NO_ERROR);
+	//paste the actual data inside the image, works with NPOT devices too
+	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
 
-	DEBUG_ASSERT( loaded );
-	
-	//aaand now, kill the temp padding buffer
-	if( paddedData )
-		free( paddedData );
-	
+	loaded = (glGetError() == GL_NO_ERROR);
+	DEBUG_ASSERT( loaded );	
 	return loaded;
 }
 
@@ -299,7 +302,10 @@ void Texture::onUnload( bool soft )
 	if( !soft || isReloadable() )
 	{
 		if( OBB )
+		{
+			OBB->onUnload();
 			SAFE_DELETE( OBB );
+		}
 
 		if( !parentAtlas ) //don't unload parent texture!
 		{

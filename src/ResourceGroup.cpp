@@ -11,6 +11,8 @@
 #include "SoundSet.h"
 #include "SoundBuffer.h"
 
+#include <Poco/File.h>
+
 using namespace Dojo;
 
 ResourceGroup::ResourceGroup() :
@@ -34,6 +36,24 @@ ResourceGroup::~ResourceGroup()
 	SAFE_DELETE( empty );
 	
 	unloadResources( false );
+}
+
+void ResourceGroup::addLocalizedFolder( const String& basefolder, int version )
+{
+	String lid = basefolder;
+
+	if( lid[ lid.size() - 1 ] != '/' )
+		lid += '/';
+
+	String localeDirPath = lid + locale;
+
+	//check if the folder exists or fallback to the default one
+	Poco::File localeDir( localeDirPath.UTF8() );
+	
+	if( localeDir.exists() )
+		addFolderSimple( localeDirPath, version );
+	else
+		addFolderSimple( lid + fallbackLocale, version );
 }
 
 void ResourceGroup::addTable( Table* t )

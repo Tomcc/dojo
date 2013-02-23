@@ -184,9 +184,32 @@ namespace Dojo
 			name = newName;
 		}
 
+		///returns the table which contains the given "dot formatted" key
+		/** it returns "this" for a normal non-hierarchical key
+		returns "A" for a key such as "A.key"
+		returns "B" for a key such as "A.B.key" */
+		Table* getParentTable( const String& key, String& realKey ) const
+		{
+			int dotIdx = 0;
+			for(; dotIdx< key.size() && key[dotIdx] != '.'; ++dotIdx ); 
+
+			if( dotIdx == key.size() )
+			{
+				realKey = key;
+				return (Table*)this;
+			}
+
+			String partialKey = key.substr( dotIdx+1 );
+			Table* child = getTable( key.substr( 0, dotIdx ) );
+
+			DEBUG_ASSERT( child->size() );
+
+			return child->getParentTable( partialKey, realKey );
+		}
+
 		template< class T >
-		inline void set( const String& key, FieldType type, const T& value )
-		{			
+		inline void setImpl( const String& key, FieldType type, const T& value )
+		{
 			//generate name
 			if( key.size() == 0 )
 				map[ _getAutoName() ] = new TypedEntry< T >( type, value );
@@ -197,6 +220,17 @@ namespace Dojo
 
 				map[ key ] = new TypedEntry< T >( type, value );
 			}
+		}
+
+		template< class T >
+		inline void set( const String& key, FieldType type, const T& value )
+		{			
+			String actualKey;
+			Table* t = getParentTable( key, actualKey );
+			DEBUG_ASSERT( t ); //cannot add a key to a non-existing table
+
+			//actually set the key on the right table
+			t->setImpl( actualKey, type, value );
 		}
 		
 		inline void set( const String& key, float value )
@@ -358,14 +392,22 @@ namespace Dojo
 		
 		///generic get
 		inline Entry* get( const String& key ) const
-		{ 
-			return map.find( key )->second;
+		{
+			String actualKey;
+			const Table* container = getParentTable( key, actualKey );
+			
+			if( !container )
+				return NULL;
+
+			auto elem = container->map.find( actualKey );
+			return elem != container->map.end() ? elem->second : NULL;
 		}
 		
 		inline float getNumber( const String& key, float defaultValue = 0 ) const
 		{			
-			if( existsAs( key, FT_NUMBER ) )
-				return *( (float*)get(key)->getValue() );
+			Entry* e = get( key );
+			if( e && e->type == FT_NUMBER )
+				return *( (float*)e->getValue() );
 			else
 				return defaultValue;
 		}
@@ -377,48 +419,54 @@ namespace Dojo
 		
 		inline bool getBool( const String& key, bool defaultValue = false ) const
 		{
-			if( existsAs( key, FT_NUMBER ) )
-				return (*( (float*)get(key)->getValue() )) > 0;
+			Entry* e = get( key );
+			if( e && e->type == FT_NUMBER )
+				return (*( (float*)e->getValue() )) > 0;
 			else
 				return defaultValue;
 		}
 		
 		inline const String& getString( const String& key, const String& defaultValue = String::EMPTY ) const
 		{
-			if( existsAs(key, FT_STRING ) )
-				return *( (String*)get(key)->getValue() );
+			Entry* e = get( key );
+			if( e && e->type == FT_STRING )
+				return *( (String*)e->getValue() );
 			else
 				return defaultValue;
 		}
 		
 		inline const Dojo::Vector& getVector( const String& key, const Dojo::Vector& defaultValue = Vector::ZERO ) const
 		{
-			if( existsAs( key, FT_VECTOR ) ) 
-				return *( (Vector*)get(key)->getValue() );
+			Entry* e = get( key );
+			if( e && e->type == FT_VECTOR )
+				return *( (Vector*)e->getValue() );
 			else
 				return defaultValue;
 		}
 		
 		inline const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& defaultValue = Color::BLACK ) const
 		{
-			if( existsAs( key, FT_VECTOR ) )
-				return Color( *( (Vector*)get(key)->getValue() ), alpha );
+			Entry* e = get( key );
+			if( e && e->type == FT_VECTOR )
+				return Color( *( (Vector*)e->getValue() ), alpha );
 			else
 				return defaultValue;
 		}
 		
 		inline Table* getTable( const String& key ) const
 		{			
-			if( existsAs(key, FT_TABLE ) )
-				return (Table*)get(key)->getValue();
+			Entry* e = get( key );
+			if( e && e->type == FT_TABLE )
+				return (Table*)e->getValue();
 			else
 				return &EMPTY_TABLE;
 		}
 		
 		inline const Data& getData( const String& key ) const
 		{
-			if( existsAs( key, FT_DATA ) )
-				return *( (Data*)get(key)->getValue() );
+			Entry* e = get( key );
+			if( e && e->type == FT_DATA )
+				return *( (Data*)e->getValue() );
 			else
 				return EMPTY_DATA;
 		}	

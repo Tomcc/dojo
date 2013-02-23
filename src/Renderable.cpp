@@ -9,6 +9,19 @@
 
 using namespace Dojo;
 
+Renderable::Renderable( GameState* level, const Vector& pos, Mesh* m ) :
+	Object( level, pos, Vector::ONE ),
+	visible( true ),
+	layer(0),
+	renderingOrder(0),
+	currentFadeTime(0),
+	mCulled( false )
+{
+	reset();
+
+	mesh = m;
+}
+
 Renderable::Renderable( GameState* level, const Vector& pos, const String& meshName ) :
 	Object( level, pos, Vector::ONE ),
 	visible( true ),

@@ -36,6 +36,9 @@ visibleCharsNumber( 0xfffffff )
 	mesh = _createMesh();
 	freeLayers.add( this ); //add itself to the free layers
 
+	//not visible until prepared!
+	scale = 0;
+
 	//init
 	clearText();
 }

@@ -245,8 +245,8 @@ namespace Dojo
 		
 		Array< Page* > pages;
 		
-		static void _blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
-		static void _blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
+		static void _blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
+		static void _blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
 
 	};
 }

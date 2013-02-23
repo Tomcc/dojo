@@ -9,7 +9,7 @@
 
 using namespace Dojo;
 
-void Font::_blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
+void Font::_blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 {
 	DEBUG_ASSERT( dest );
 	DEBUG_ASSERT( bitmap );
@@ -31,7 +31,7 @@ void Font::_blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint dest
 	}
 	else
 	{
-		Dojo::byte b;
+		byte b;
 		for( int i = 0; i < bitmap->rows; ++i )
 		{
 			rowy = ( i + y ) * destside;
@@ -49,13 +49,13 @@ void Font::_blit( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint dest
 	}
 }
 
-void Font::_blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
+void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
 {
 	DEBUG_ASSERT( dest );
 	DEBUG_ASSERT( bitmap );
 
 	uint rowy;
-	Dojo::byte* ptr;
+	byte* ptr;
 
 	for( int i = 0; i < bitmap->rows; ++i )
 	{
@@ -69,10 +69,10 @@ void Font::_blitborder( Dojo::byte* dest, FT_Bitmap* bitmap, uint x, uint y, uin
 			a /= 255.f;
 			float inva = 1.f - a;
 
-			ptr[0] = (Dojo::byte)(ptr[0] * inva + a * col.r * 255.f);
-			ptr[1] = (Dojo::byte)(ptr[1] * inva + a * col.g * 255.f);
-			ptr[2] = (Dojo::byte)(ptr[2] * inva + a * col.b * 255.f);
-			ptr[3] = (Dojo::byte)(ptr[3] * inva + a * a * 255.f);  //the font is really the alpha
+			ptr[0] = (byte)(ptr[0] * inva + a * col.r * 255.f);
+			ptr[1] = (byte)(ptr[1] * inva + a * col.g * 255.f);
+			ptr[2] = (byte)(ptr[2] * inva + a * col.b * 255.f);
+			ptr[3] = (byte)(ptr[3] * inva + a * a * 255.f);  //the font is really the alpha
 		}
 	}
 }

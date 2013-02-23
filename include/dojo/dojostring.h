@@ -14,7 +14,10 @@ namespace Dojo
 #ifndef PLATFORM_LINUX
 	typedef unsigned int uint;
 #endif
+	
+#ifndef PLATFORM_WIN32
 	typedef unsigned char byte;
+#endif
     
     //define the right unichar
 #ifndef __APPLE__

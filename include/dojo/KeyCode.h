@@ -176,6 +176,8 @@ namespace Dojo
 		KC_MOUSE_LEFT  = 0x102,
 		KC_MOUSE_RIGHT = 0x103,
 		KC_MOUSE_MIDDLE = 0x104,
+
+		KC_KEY_COUNT
 	};
 }
 
