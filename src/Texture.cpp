@@ -304,7 +304,6 @@ void Texture::onUnload( bool soft )
 		if( OBB )
 		{
 			OBB->onUnload();
-			SAFE_DELETE( OBB );
 		}
 
 		if( !parentAtlas ) //don't unload parent texture!

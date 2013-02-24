@@ -83,21 +83,15 @@ namespace Dojo
 
 			virtual void onUnload( bool soft = false )
 			{
-				//TODO make texts soft-unloadable
 				//a font page can always unload
-				if( !soft )
-				{
-					texture->onUnload(); //force unload
+				texture->onUnload(); //force unload
 
-					loaded = false;
-				}
+				loaded = false;
 			}
 
 			virtual bool isReloadable()
 			{
-				//HACK //TODO make font pages reloadable
-				//return true; //always reloadable
-				return false;
+				return true;
 			}
 
 			inline Texture* getTexture() 
@@ -132,6 +126,8 @@ namespace Dojo
 				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
 			}
 		};
+
+		typedef std::unordered_map< uint, Page* > PageMap;
 		
 		///A Font represents a single .font file, and is bound to a .ttf TrueType font definition
 		/**
@@ -161,19 +157,16 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( index < FONT_MAX_PAGES );
 
-			Page* res = index < pages.size() ? pages[ index ] : NULL;
+			PageMap::iterator itr = pages.find( index );
 
-			if( !res )
+			if( itr == pages.end() )
 			{
-				//make room in the vector
-				while( index >= pages.size() )
-					pages.add( NULL );
-
-				pages[ index ] = res = new Page( this, index );
-				res->onLoad();
+				Page* p = new Page( this, index );
+				pages[ index ] = p;
+				p->onLoad();
+				return p;
 			}
-
-			return res;
+			else return itr->second;
 		}
 
 		///returns (and lazy-loads) the Page containing this Unicode character
@@ -243,7 +236,7 @@ namespace Dojo
 		///this has to be called each time that we need to use the face
 		void _prepareFace();
 		
-		Array< Page* > pages;
+		PageMap pages;
 		
 		static void _blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
 		static void _blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );

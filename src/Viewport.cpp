@@ -124,17 +124,20 @@ void Viewport::_updateFrustum()
 
 void Viewport::_updateTransforms()
 {
-    //compute view, that is the inverse of our world matrix    
-    mViewTransform = Matrix(1);
-    
-    Vector worldPos = getWorldPosition();
+    //compute view, that is the inverse of our world matrix        
+    /*Vector worldPos = getWorldPosition();
     
     glm::vec3 t( -worldPos.x, -worldPos.y, -worldPos.z );
-    
-    mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
-    mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );
-    mViewTransform = glm::translate( mViewTransform, t );
-    
+
+	mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );
+	mViewTransform = glm::translate( mViewTransform, t );
+	mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );*/
+
+	//TODO use something faster than glm::inverse, starting from the components
+	mViewTransform = glm::inverse( mWorldTransform );
+
+	//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
+	
     //compute ortho projection
     mOrthoTransform = glm::ortho(-getHalfSize().x, 
                               getHalfSize().x,
