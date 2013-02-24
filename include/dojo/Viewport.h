@@ -17,6 +17,7 @@
 #include "Vector.h"
 #include "Color.h"
 #include "Renderable.h"
+#include "Platform.h"
 
 namespace Dojo 
 {	
@@ -122,8 +123,8 @@ namespace Dojo
 		inline Vector makeWorldCoordinates( int x, int y )
 		{
 			return Vector(
-						  getWorldMin().x + ((float)x / targetSize.x) * size.x,
-						  getWorldMax().y - ((float)y / targetSize.y) * size.y );
+						  getWorldMin().x + ((float)x / Platform::getSingleton()->getWindowWidth()) * size.x,
+						  getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y );
 		}
 			
 		///converts the w and h pixel sizes in a screen space size

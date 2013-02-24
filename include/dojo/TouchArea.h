@@ -65,6 +65,12 @@ namespace Dojo
         {
             ++mTouches;
         }
+
+		///tells if this area currently contains at least one touch
+		bool isPressed()
+		{
+			return mPressed;
+		}
                 
         inline void _fireOnTouchUsingCurrentTouches()
         {

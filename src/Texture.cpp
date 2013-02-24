@@ -56,7 +56,7 @@ void Texture::bind( uint index )
 	if( !glhandle )
 	{
 		glGenTextures( 1, &glhandle );
-		glGetError();
+		DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
 		DEBUG_ASSERT( glhandle );
 	}
 
@@ -311,7 +311,9 @@ void Texture::onUnload( bool soft )
 		{
 			DEBUG_ASSERT( glhandle );
 			glDeleteTextures(1, &glhandle );
-		
+
+			internalWidth = internalHeight = 0;
+			internalFormat = GL_NONE;
 			glhandle = 0;
 		}
 
