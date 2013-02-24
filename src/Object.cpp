@@ -169,7 +169,7 @@ void Object::updateWorldTransform()
 		mWorldTransform = glm::translate( mWorldTransform, parent->position );
 		mWorldTransform *= mat4_cast( parent->rotation );
 	}
-	
+
 	mWorldTransform = glm::translate( mWorldTransform, position );
 	mWorldTransform = glm::scale( mWorldTransform, scale );
 	mWorldTransform *= mat4_cast( rotation );

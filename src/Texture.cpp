@@ -122,6 +122,7 @@ bool Texture::loadEmpty( int width, int height, GLenum destFormat )
 {
 	DEBUG_ASSERT( width > 0 );
 	DEBUG_ASSERT( height > 0 ); 
+	DEBUG_ASSERT( destFormat > 0 );
 
 	bind(0);
 

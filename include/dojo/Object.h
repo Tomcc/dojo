@@ -74,12 +74,19 @@ namespace Dojo {
 			setSize( Vector( x,y) );
 		}
 		
-		
+		///set the orientation quaternion for this object
 		inline void setRotation( const Quaternion& quat )
 		{
 			rotation = quat;
 		}
+
+		///rotates the object starting from the current orientation around the given axis
+		inline void rotate( float r, const Vector& axis = Vector::UNIT_Z )
+		{
+			rotation = glm::rotate( rotation, r, axis );
+		}
 		
+		///sets the full orientation using a vector made of euler angles around x,y,z
 		inline void setRotation( const Vector& eulerAngles )
 		{
 			setRotation( Quaternion( eulerAngles ) );
