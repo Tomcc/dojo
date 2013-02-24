@@ -58,23 +58,22 @@ namespace Dojo {
 		
 		//forces an update of the world transform
 		void updateWorldTransform();
-		
+
+		///sets a AABB size
+		inline void setSize( const Vector& bbSize )
+		{
+			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0 );
+
+			size = bbSize;
+			halfSize = size * 0.5f;
+
+		}
 		///sets a 2D AABB size
 		inline void setSize( float x, float y )
 		{						
-			DEBUG_ASSERT( x >= 0 && y >= 0 );
-						
-			size.x = x;
-			size.y = y;
-			halfSize.x = size.x * 0.5f;
-			halfSize.y = size.y * 0.5f;
+			setSize( Vector( x,y) );
 		}
 		
-		///sets a 2D AABB size
-		inline void setSize( const Vector& bbSize )
-		{
-			setSize( bbSize.x, bbSize.y );
-		}
 		
 		inline void setRotation( const Quaternion& quat )
 		{
@@ -209,12 +208,13 @@ namespace Dojo {
 		{
 			DEBUG_ASSERT( mNeedsAABB );
 			
-			///HACK only works in 2D!
 			return 
-			p.x < worldUpperBound.x && 
-			p.x > worldLowerBound.x && 
-			p.y < worldUpperBound.y && 
-			p.y > worldLowerBound.y;
+			p.x <= worldUpperBound.x && 
+			p.x >= worldLowerBound.x && 
+			p.y <= worldUpperBound.y && 
+			p.y >= worldLowerBound.y &&
+			p.z <= worldUpperBound.z && 
+			p.z >= worldLowerBound.z;
 		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )

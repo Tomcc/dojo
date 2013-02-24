@@ -52,12 +52,9 @@ void GameState::touchAreaAtPoint( const Vector& point )
 	Dojo::Array< TouchArea* > layer;
 	int topMostLayer = INT32_MIN;
 	
-	for( int i = 0; i < mTouchAreas.size(); ++i )
-	{
-		TouchArea* t = mTouchAreas[i];
-		
-		bool c = t->contains( pointer );
-		if( t->isActive() && t->getLayer() >= topMostLayer && c )
+	for( auto t : mTouchAreas )
+	{		
+		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains( pointer ) )
 		{
 			//new highest layer - discard lowest layers found
 			if( t->getLayer() > topMostLayer )
