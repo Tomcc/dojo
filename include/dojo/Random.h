@@ -214,6 +214,11 @@ namespace Dojo
 		state[0] = 0x80000000UL;  // MSB is 1, assuring non-zero initial array
 		reload();
 	}
+
+	inline Random::Random()
+	{
+		seed( time( NULL ) );
+	}
 	
 	inline Random::Random( const uint32 oneSeed )
 	{ seed(oneSeed); }

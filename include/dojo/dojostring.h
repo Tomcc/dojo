@@ -159,6 +159,12 @@ namespace Dojo
 		{
 			uint div = 1000000000;
 			unichar c;
+
+			if( i < 0 )
+			{
+				*this += '-';
+				i = -i;
+			}
 			
 			for( ; div > 0; i %= div, div /= 10 )
 			{

@@ -212,7 +212,7 @@ namespace Dojo
 		{
 			//generate name
 			if( key.size() == 0 )
-				map[ _getAutoName() ] = new TypedEntry< T >( type, value );
+				map[ autoname() ] = new TypedEntry< T >( type, value );
 			else
 			{
 				if( exists( key ) )
@@ -291,7 +291,7 @@ namespace Dojo
 			String name;
 			
 			if( key.size() == 0 )
-				name = _getAutoName();
+				name = autoname();
 			else
 				name = key;
 							
@@ -517,6 +517,12 @@ namespace Dojo
 		{
 			return getData( autoMemberName( idx ) );
 		}	
+
+		///returns a new unique anoymous id for a new "array member"
+		inline String autoname()
+		{
+			return '_' + String( unnamedMembers++ );
+		}
 		
 		inline const EntryMap::const_iterator begin() const
 		{
@@ -573,11 +579,6 @@ namespace Dojo
 		EntryMap map;
 
 		uint unnamedMembers;
-
-		inline String _getAutoName()
-		{
-			return '_' + String( unnamedMembers++ );
-		}
 	};
 }
 

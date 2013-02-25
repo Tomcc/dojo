@@ -142,6 +142,7 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	worldUpperBound = Vector::MIN;
 	worldLowerBound = Vector::MAX;
 	
+
 	Vector vertex;    
 	
 	for( int i = 0; i < 8; ++i )
@@ -176,7 +177,7 @@ void Object::updateWorldTransform()
 
 	//update AABB if needed
 	if( mNeedsAABB )
-		_updateWorldAABB( -halfSize, halfSize );    
+		_updateWorldAABB( -halfSize, halfSize );
 }
 
 void Object::updateChilds( float dt )
