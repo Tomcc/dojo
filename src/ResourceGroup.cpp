@@ -294,7 +294,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->begin( 24 );
 	
-	cube->vertex( l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 0,0,1 );	cube->uv(1,1);
 	cube->vertex( l, -l, l );	cube->normal( 0,0,1 );  cube->uv(0,1);
 	cube->vertex( -l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,0);
 	cube->vertex( -l, -l, l );	cube->normal( 0,0,1 );	cube->uv(0,0);
@@ -308,7 +308,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->quad(4,5,6,7);
 	
-	cube->vertex( l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 1,0, 0 );	cube->uv(1,1);
 	cube->vertex( l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
 	cube->vertex( l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
 	cube->vertex( l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
@@ -322,7 +322,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->quad(12,13,14,15);
 	
-	cube->vertex( l, l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 0,1,0 );	cube->uv(1,1);
 	cube->vertex( -l, l, l );	cube->normal( 0,1,0 );  cube->uv(0,1);
 	cube->vertex( l, l, -l );	cube->normal( 0,1,0 );	cube->uv(1,0);
 	cube->vertex( -l, l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);

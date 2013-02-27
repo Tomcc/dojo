@@ -58,6 +58,9 @@ namespace Dojo
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
 		void addFader( int layer );
 		
+		///orients the camera to look at a given 3D point
+		void lookAt( const Vector& worldPos );
+
 		void setBackgroundSprite( const String& name, float frameTime = 0 );
 				
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}	

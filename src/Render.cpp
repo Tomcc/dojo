@@ -362,7 +362,7 @@ void Render::renderLayer( Layer* list )
 		}
 	}
 	else
-	{		
+	{
 		for( int i = 0; i < lights.size(); ++i )
 			glDisable( GL_LIGHT0 + i );
 	}

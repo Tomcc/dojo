@@ -58,6 +58,11 @@ void Viewport::addFader( int layer )
 	addChild( fadeObject, layer );
 }
 
+void Viewport::lookAt(  const Vector& worldPos )
+{
+	setRotation( glm::quat_cast( glm::lookAt( getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y ) ) ); //HACK why negative does work? Up is +Y
+}
+
 void Viewport::setBackgroundSprite( const String& name, float frameTime )
 {			
 	DEBUG_ASSERT( name.size() );
@@ -94,32 +99,32 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 	frustumCullingEnabled = true;
 
 	//compute local frustum vertices
-	//order is - top left, bottom left, bottom right, top right
-	farPlaneSide.z = zFar;
+	//order is - top left, bottom left, bottom right, top right, z is negative because OpenGL is right-handed
+	farPlaneSide.z = -zFar;
 	farPlaneSide.y = zFar * tan( Math::toRadian( VFOV*0.5f ) );
 	farPlaneSide.x = ((float)targetSize.x/(float)targetSize.y) * farPlaneSide.y;
 
 	localFrustumVertices[0] = Vector( farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
-	localFrustumVertices[1] = Vector( farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
+	localFrustumVertices[1] = Vector( -farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
 	localFrustumVertices[2] = Vector( -farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
-	localFrustumVertices[3] = Vector( -farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
+	localFrustumVertices[3] = Vector( farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
 }
 
 void Viewport::_updateFrustum()
 {
-	worldFrustumVertices[0] = getWorldPosition( localFrustumVertices[0] );
-	worldFrustumVertices[1] = getWorldPosition( localFrustumVertices[1] );
-	worldFrustumVertices[2] = getWorldPosition( localFrustumVertices[2] );
-	worldFrustumVertices[3] = getWorldPosition( localFrustumVertices[3] );
+	for( int i = 0; i < 4; ++i )
+		worldFrustumVertices[i] = getWorldPosition( localFrustumVertices[i] );
     
     Vector worldPosition = getWorldPosition();
 
-	worldFrustumPlanes[0].setup( worldFrustumVertices[1], worldFrustumVertices[0], worldPosition );
-	worldFrustumPlanes[1].setup( worldFrustumVertices[2], worldFrustumVertices[1], worldPosition );
-	worldFrustumPlanes[2].setup( worldFrustumVertices[3], worldFrustumVertices[2], worldPosition );
-	worldFrustumPlanes[3].setup( worldFrustumVertices[0], worldFrustumVertices[3], worldPosition ); 
+	for( int i = 0; i < 4; ++i )
+	{
+		int i2 = (i+1)%4;
+
+		worldFrustumPlanes[i].setup( worldPosition, worldFrustumVertices[i2], worldFrustumVertices[i] );
+	}
 	//far plane
-	worldFrustumPlanes[0].setup( worldFrustumVertices[1], worldFrustumVertices[2], worldFrustumVertices[0] );
+	worldFrustumPlanes[4].setup( worldFrustumVertices[2], worldFrustumVertices[1], worldFrustumVertices[0] );
 }
 
 void Viewport::_updateTransforms()
@@ -129,11 +134,11 @@ void Viewport::_updateTransforms()
     
     glm::vec3 t( -worldPos.x, -worldPos.y, -worldPos.z );
 
-	mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );
-	mViewTransform = glm::translate( mViewTransform, t );
-	mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );*/
+	mViewTransform = glm::translate( Matrix(1), t );
+	mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
+	mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );*/
 
-	//TODO use something faster than glm::inverse, starting from the components
+	//TODO use something faster than glm::inverse
 	mViewTransform = glm::inverse( mWorldTransform );
 
 	//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
@@ -146,7 +151,7 @@ void Viewport::_updateTransforms()
                                  zNear,
                                  zFar ) * mViewTransform;
        
-    //compute frustum projection - HACK could be faster reusing mViewTransform?    
+    //compute frustum projection
     mFrustumTransform = glm::perspective( 
                                          VFOV, targetSize.x / targetSize.y, 
                                          zNear, 
@@ -156,14 +161,18 @@ void Viewport::_updateTransforms()
 bool Viewport::isContainedInFrustum( Renderable* r )
 {
 	DEBUG_ASSERT( r );
-    
-	//for each plane, check where the AABB is placed
-	for( uint i = 0; i < 5; ++i )
-	{
-		Vector bounds = r->getWorldMax() - r->getWorldMin();
 
-		if( worldFrustumPlanes[i].getSide( r->getWorldPosition(), bounds ) == -1 )
+	Vector halfSize = (r->getWorldMax() - r->getWorldMin()) * 0.5f;
+	Vector worldPos = r->getWorldPosition();
+
+	//for each plane, check where the AABB is placed
+	for( uint i = 0; i < 4; ++i )
+	{
+		if( worldFrustumPlanes[i].getSide( worldPos, halfSize ) < 0 )
+		{
+			//DEBUG_MESSAGE( "CULED!!!!    " << i );
 			return false;
+		}
 	}
 
 	return true;

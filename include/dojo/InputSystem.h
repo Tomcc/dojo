@@ -70,9 +70,9 @@ namespace Dojo
 			
 			inline InputSystem* getSource()	{	return source;	}
 			
-			virtual void onTouchBegan( const Touch& touch ) {}
-			virtual void onTouchMove( const Touch& touch )  {}
-			virtual void onTouchEnd( const Touch& touch )   {}
+			virtual void onTouchBegan( const InputSystem::Touch& touch ) {}
+			virtual void onTouchMove( const InputSystem::Touch& touch )  {}
+			virtual void onTouchEnd( const InputSystem::Touch& touch )   {}
 			
 			virtual void onMouseMove( const Dojo::Vector& curPos, const Dojo::Vector& oldPos )	{}
 			virtual void onScrollWheel( float scroll )	{}

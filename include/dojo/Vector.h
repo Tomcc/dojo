@@ -155,18 +155,10 @@ namespace Dojo
 			return distanceSquared( v ) < threshold*threshold;
 		}
 
+		///returns the dot product with this vector with only positive components
 		inline float absDot( const Vector& v ) const 
 		{
-			float a = x * v.x;
-			a = (a < 0) ? -a : a;
-
-			float b = y * v.y;
-			b = (b < 0) ? -b : b;
-
-			float c = z * v.z;
-			c = (c < 0) ? -c : c;
-
-			return a + b + c;
+			return abs( x * v.x ) + abs( y * v.y ) + abs( z * v.z );
 		}
 		
 		inline String toString() const

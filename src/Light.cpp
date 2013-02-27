@@ -96,11 +96,12 @@ void Light::bind( uint i, const Matrix& viewProj )
 			glLightfv( light, GL_POSITION, fv );*/
 		}
 		else
-		{            
-            Matrix m = viewProj * getWorldTransform();			
-            glm::vec4 v = m * glm::vec4(0,0,0,1);
+		{
+			glMatrixMode( GL_MODELVIEW );
+			glLoadIdentity();
                        
-			glLightfv( light, GL_POSITION, glm::value_ptr( v ) );
+			glm::vec4 p( position.x, position.y, position.z, 1 );
+			glLightfv( light, GL_POSITION, glm::value_ptr( p ) );
 			
 			glLightf( light, GL_LINEAR_ATTENUATION, attenuation );
 			
