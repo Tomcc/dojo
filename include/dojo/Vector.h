@@ -114,26 +114,26 @@ namespace Dojo
 		}
 
 		///linearly interpolates the two vectors
-		inline Vector lerp( float s, const Dojo::Vector& v )
+		inline Vector lerp( float s, const Dojo::Vector& v ) const
 		{			
 			float invs = 1.f - s;			
 			return Vector( x*s + invs*v.x, y*s + invs*v.y, z*s + invs*v.z);
 		}
 		
 		///returns a vector with abs componenents
-		inline Vector absComponents()
+		inline Vector absComponents() const
 		{
 			return Vector( abs(x), abs(y), abs(z) );
 		}
 		
 		///multiplies component by component
-		inline Vector mulComponents( const Vector& v )
+		inline Vector mulComponents( const Vector& v ) const
 		{
 			return Vector( x*v.x, y*v.y, z*v.z );
 		}
 
 		///divides component by component
-		inline Vector divideComponents( const Vector& v )
+		inline Vector divideComponents( const Vector& v ) const
 		{
 			return Vector( x/v.x, y/v.y, z/v.z );
 		}

@@ -220,7 +220,7 @@ namespace Dojo {
 		LightList lights;
 		Color defaultAmbient;
 		
-		Matrix mCurrentViewProj, mRenderRotation;
+		Matrix mCurrentView, mRenderRotation;
 	};		
 }
 

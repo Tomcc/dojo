@@ -17,6 +17,16 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
 
+const uint Mesh::VERTEX_FIELD_SIZES[] = { 
+	2 * sizeof( GLfloat ), //position 2D
+	3 * sizeof( GLfloat ),  //position 3D
+	4 * sizeof( GLubyte ),  //color
+	3 * sizeof( GLfloat ),  //normal
+	2 * sizeof( GLfloat ),  //uv0
+	2 * sizeof( GLfloat )
+};
+
+
 inline void checkGLError()
 {
 	String err;
@@ -60,8 +70,7 @@ void Mesh::setVertexCap( uint count )
 		_buildFieldOffsets();	//build the offsets for each field	
 	}			
 	else
-	{	
-		//TODO MAKE THIS ACTUALLY WORK
+	{
 		vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
 	}
 }	
@@ -159,7 +168,6 @@ void Mesh::_bindAttribArrays()
 			case VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset );	break;
 			case VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset ); break;
 			case VF_NORMAL:				glNormalPointer( GL_FLOAT, vertexSize, fieldOffset );	break;
-				//TODO switch to BGRA to reduce bandwidth use
 			case VF_COLOR:				glColorPointer( 4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset );	break;
 
 			case VF_UV:	
@@ -179,9 +187,7 @@ void Mesh::_bindAttribArrays()
 }
 
 bool Mesh::end()
-{			
-	DEBUG_ASSERT( isEditing() );
-
+{
 	editing = false;
 	
 	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
@@ -263,21 +269,6 @@ void Mesh::bind()
 
 	CHECK_GL_ERROR;
 }
-
-const uint Mesh::VERTEX_FIELD_SIZES[] = { 
-	2 * sizeof( GLfloat ),
-	3 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),  //uv0
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	4 * sizeof( GLubyte ),
-	3 * sizeof( GLfloat )
-};
 
 bool Mesh::onLoad()
 {

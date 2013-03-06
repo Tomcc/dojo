@@ -43,8 +43,6 @@ backLayer( NULL )
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_CULL_FACE );
-	
-	glEnable( GL_LIGHTING );
 
 	glCullFace( GL_BACK );
 	
@@ -54,17 +52,12 @@ backLayer( NULL )
 	glEnable( GL_BLEND );	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	
-	//HACK
-	//glEnable( GL_COLOR_MATERIAL );
+	glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
-	//glColorMaterial( GL_FRONT, GL_DIFFUSE );
-#endif
-	
-	float white[] = {1,1,1,1};
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );
-	
+	glColorMaterial( GL_FRONT, GL_DIFFUSE );
+#endif	
 	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	glEnable( GL_FRAMEBUFFER_SRGB );
@@ -288,15 +281,15 @@ void Render::renderElement( Renderable* s )
 	
 	//clone the view matrix on the top of the stack		
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
+	glLoadMatrixf( glm::value_ptr( mCurrentView * s->getWorldTransform() ) );
 		
 	//HACK
 #ifndef PLATFORM_IOS
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
 #endif
-	glEnable( GL_COLOR_MATERIAL );
-	
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );
+	
+	glEnable( GL_COLOR_MATERIAL );
 
 	s->commitChanges( currentRenderState );
 
@@ -341,7 +334,11 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-	mCurrentViewProj =  mRenderRotation * (list->projectionOff ? viewport->getViewProjOrtho() : viewport->getViewProjFrustum());
+	mCurrentView =  mRenderRotation * viewport->getViewTransform();
+
+	const Matrix& proj = list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform();
+	glMatrixMode( GL_PROJECTION );
+	glLoadMatrixf( glm::value_ptr( proj ) );
 	
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )
@@ -351,11 +348,12 @@ void Render::renderLayer( Layer* list )
 	
 	if( list->lightingOn )
 	{		
+		glEnable( GL_LIGHTING );
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
 		int i = 0;
 		for( ; i < lights.size(); ++i )
 		{
-			lights[i]->bind( i, mCurrentViewProj );
+			lights[i]->bind( i, mCurrentView );
 			
 			if( !lights[i]->hasAmbient() )
 				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );
@@ -363,6 +361,8 @@ void Render::renderLayer( Layer* list )
 	}
 	else
 	{
+		glDisable( GL_LIGHTING );
+
 		for( int i = 0; i < lights.size(); ++i )
 			glDisable( GL_LIGHT0 + i );
 	}

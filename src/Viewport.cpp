@@ -143,19 +143,20 @@ void Viewport::_updateTransforms()
 
 	//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
 	
+	//TODO only compute projections if the params change
     //compute ortho projection
     mOrthoTransform = glm::ortho(-getHalfSize().x, 
                               getHalfSize().x,
                               -getHalfSize().y,
                               getHalfSize().y,
                                  zNear,
-                                 zFar ) * mViewTransform;
+                                 zFar );
        
     //compute frustum projection
     mFrustumTransform = glm::perspective( 
                                          VFOV, targetSize.x / targetSize.y, 
                                          zNear, 
-                                         zFar ) * mViewTransform;
+                                         zFar );
 }
 
 bool Viewport::isContainedInFrustum( Renderable* r )

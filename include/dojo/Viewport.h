@@ -84,6 +84,7 @@ namespace Dojo
 		inline const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 		inline const Vector& getTargetSize()			{   return targetSize;  }
+		inline const Matrix& getViewTransform()			{	return mViewTransform;	}
 
 		///returns the on-screen position of the given world-space vector
 		Vector getScreenPosition( const Vector& pos );
@@ -91,11 +92,11 @@ namespace Dojo
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
 		Vector getRayDirection( const Vector& screenSpacePos );
         
-        inline const Matrix& getViewProjOrtho()
+        inline const Matrix& getOrthoProjectionTransform()
         {
             return mOrthoTransform;
         }
-        inline const Matrix& getViewProjFrustum()
+        inline const Matrix& getPerspectiveProjectionTransform()
         {
             return mFrustumTransform;
         }

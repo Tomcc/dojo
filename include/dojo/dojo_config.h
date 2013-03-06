@@ -97,6 +97,8 @@
 
 #define DOJO_MAX_TEXTURE_UNITS 2
 
+//#define DOJO_DISABLE_VAOS
+
 //common enums
 namespace Dojo
 {

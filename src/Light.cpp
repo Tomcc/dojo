@@ -10,7 +10,8 @@ Light::Light( GameState* s,
 	  const Color& specular, 
 	  const Color& ambient ) :
 Object( s, pos, Vector::ZERO ),
-type( LT_NONE )
+type( LT_NONE ),
+specularExponent(128)
 {
 	setColors( diffuse, specular, ambient );
 }
@@ -61,7 +62,7 @@ inline void toFV( float* fv, const Vector& v, float w )
 	fv[3] = w;
 }
 
-void Light::bind( uint i, const Matrix& viewProj )
+void Light::bind( uint i, const Matrix& view )
 {
 	GLenum light = GL_LIGHT0 + i;
 	
@@ -89,16 +90,13 @@ void Light::bind( uint i, const Matrix& viewProj )
 		if( type == LT_DIRECTIONAL )
 		{
             DEBUG_TODO;
-            /*
-			Vector worldDirection = getWorldDirection();			
-			toFV( fv, worldDirection, 1 );
-			
-			glLightfv( light, GL_POSITION, fv );*/
 		}
 		else
 		{
+			Matrix world = glm::translate( Matrix(1.f), position );
+
 			glMatrixMode( GL_MODELVIEW );
-			glLoadIdentity();
+			glLoadMatrixf( glm::value_ptr( view * world ) );
                        
 			glm::vec4 p( position.x, position.y, position.z, 1 );
 			glLightfv( light, GL_POSITION, glm::value_ptr( p ) );
@@ -108,15 +106,7 @@ void Light::bind( uint i, const Matrix& viewProj )
 			if( type == LT_SPOT )
 			{
                 DEBUG_TODO;
-                /*
-				glLightf( light, GL_SPOT_CUTOFF, spotFOV );
-				glLightf( light, GL_SPOT_EXPONENT, spotExponent );
-								
-				Vector worldDirection = getWorldDirection();			
-				toFV( fv, worldDirection, 1 );
-				
-				glLightfv( light, GL_SPOT_DIRECTION, fv );*/
 			}
-		}		
+		}
 	}	
 }
