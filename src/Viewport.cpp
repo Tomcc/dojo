@@ -139,6 +139,8 @@ void Viewport::_updateTransforms()
 	mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
 	mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );*/
 
+	updateWorldTransform();
+
 	//TODO use something faster than glm::inverse
 	mViewTransform = glm::inverse( mWorldTransform );
 
@@ -162,6 +164,9 @@ void Viewport::_updateTransforms()
 
 bool Viewport::isContainedInFrustum( Renderable* r )
 {
+	//HACK
+	return true;
+
 	DEBUG_ASSERT( r );
 
 	Vector halfSize = (r->getWorldMax() - r->getWorldMin()) * 0.5f;

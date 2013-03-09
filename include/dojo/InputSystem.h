@@ -81,8 +81,8 @@ namespace Dojo
 			
 			virtual void onAcceleration( const Dojo::Vector& accel, float roll )	{}
 
-			virtual void onDeviceConnected( Dojo::InputDevice* j ) {};
-			virtual void onDeviceDisconnected( Dojo::InputDevice* j ) {};
+			virtual void onDeviceConnected( Dojo::InputDevice* j ) {}
+			virtual void onDeviceDisconnected( Dojo::InputDevice* j ) {}
 
 			inline void _notifySource( InputSystem* src )	{	source = src;	}
 			
