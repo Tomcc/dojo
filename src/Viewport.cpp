@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "AnimatedQuad.h"
 #include "Sprite.h"
+#include "GameState.h"
 
 using namespace Dojo;
 

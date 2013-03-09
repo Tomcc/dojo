@@ -185,6 +185,12 @@ namespace Dojo
 		
 		inline void appendFloat( float f, byte digits = 4 )
 		{
+			if( f < 0 )
+			{
+				*this += '-';
+				f = abs(f);
+			}
+
 			appendInt((int)f);
 
 			f -= floor( f );

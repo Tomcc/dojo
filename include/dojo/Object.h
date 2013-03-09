@@ -43,8 +43,11 @@ namespace Dojo {
 		
 		Vector position, speed, scale;
 		
-		///Creates a new Object in the given GameState at the given position, with bbSize size
-		Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  );
+		///Creates a new Object as a child of the given object at the given relative position, with bbSize size
+		/**
+		\remark the object still has to be attached!
+		*/
+		Object( Object* parent, const Vector& pos, const Vector& bbSize  );
 
 		virtual ~Object();
 		
@@ -120,9 +123,11 @@ namespace Dojo {
 		///returns the position in local coordinates of the given world position
 		inline Vector getLocalPosition( const Vector& worldPos )
 		{
-			DEBUG_TODO;            
+			Matrix inv = glm::inverse( getWorldTransform() ); //TODO make faster for gods' sake
+			glm::vec4 p( worldPos.x, worldPos.y, worldPos.z, 1 );
+			p = inv * p;
 
-			return Vector::ZERO;
+			return Vector( p.x, p.y, p.z );
 		}
 		
 		///returns a local direction in world space
@@ -248,8 +253,6 @@ namespace Dojo {
 
 		void _notifyParent( Object* p )
 		{
-			DEBUG_ASSERT( p != parent );
-
 			parent = p;
 		}
 				

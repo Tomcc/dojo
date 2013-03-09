@@ -26,9 +26,9 @@ namespace Dojo
 
 		Vector uvOffset;
 
-		Renderable( GameState* level, const Vector& pos, Mesh* m = nullptr );
+		Renderable( Object* parent, const Vector& pos, Mesh* m = nullptr );
 				
-		Renderable( GameState* level, const Vector& pos, const String& meshName );
+		Renderable( Object* parent, const Vector& pos, const String& meshName );
 
 		
 		virtual ~Renderable();

@@ -348,6 +348,23 @@ Mesh* TextArea::_createMesh()
 	return mesh;
 }
 
+Renderable* TextArea::_createLayer( Texture* t )
+{
+	DEBUG_ASSERT( t );
+
+	Renderable* r = new Renderable( gameState, Vector::ZERO );
+	r->scale = scale;
+	r->setMesh( _createMesh() );
+	r->setTexture( t );
+	r->setVisible( false );
+	r->setActive( false );
+
+	addChild( r, getLayer() );
+	freeLayers.add( r );
+
+	return r;
+}
+
 void TextArea::onAction(float dt)
 {
 	bool previousAABBSetting = mNeedsAABB;
@@ -358,4 +375,3 @@ void TextArea::onAction(float dt)
 	if( (mNeedsAABB = previousAABBSetting) )
 		_updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
 }
-

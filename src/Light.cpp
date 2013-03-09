@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Light.h"
+#include "GameState.h"
 
 using namespace Dojo;
 
@@ -36,9 +37,7 @@ void Light::initDirectional( const Vector& dir )
 {
 	type = LT_DIRECTIONAL;
 	
-	//set the direction
-    DEBUG_TODO;
-	//angle = dir.angleFromDirection();
+	position = dir;
 }
 
 ///setups this light to be a spotlight
@@ -86,21 +85,17 @@ void Light::bind( uint i, const Matrix& view )
 		
 		if( hasAmbient() )
 			glLightfv( light, GL_AMBIENT, (float*) &ambient );
-		
-		if( type == LT_DIRECTIONAL )
-		{
-            DEBUG_TODO;
-		}
-		else
-		{
-			Matrix world = glm::translate( Matrix(1.f), position );
 
-			glMatrixMode( GL_MODELVIEW );
-			glLoadMatrixf( glm::value_ptr( view * world ) );
-                       
-			glm::vec4 p( position.x, position.y, position.z, 1 );
-			glLightfv( light, GL_POSITION, glm::value_ptr( p ) );
-			
+		Matrix world = glm::translate( Matrix(1.f), position );
+
+		glMatrixMode( GL_MODELVIEW );
+		glLoadMatrixf( glm::value_ptr( view * world ) );
+
+		glm::vec4 p( position.x, position.y, position.z, (type == LT_POINT) ? 1.f : 0.f );
+		glLightfv( light, GL_POSITION, glm::value_ptr( p ) );
+
+		if( type == LT_POINT ) //attenuation only affects POINT and SPOT lights
+		{
 			glLightf( light, GL_LINEAR_ATTENUATION, attenuation );
 			
 			if( type == LT_SPOT )

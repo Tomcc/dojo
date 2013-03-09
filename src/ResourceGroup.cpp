@@ -241,7 +241,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	m->begin(4);	
 	
-	m->vertex( -0.5, -0.5 );		
+	m->vertex( -0.5, -0.5 );	
 	m->uv( 0,1 );
 	
 	m->vertex( 0.5, -0.5 );		
@@ -360,7 +360,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_1" );
+	addMesh( cube, "prefabSkybox-Z" );
 	
 	cube = new Mesh( this );
 	
@@ -380,7 +380,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_2" );
+	addMesh( cube, "prefabSkybox+X" );
 	
 	cube = new Mesh( this );
 	
@@ -400,7 +400,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_3" );
+	addMesh( cube, "prefabSkybox+Z" );
 	
 	cube = new Mesh( this );
 	
@@ -420,7 +420,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_4" );
+	addMesh( cube, "prefabSkybox-X" );
 	
 	cube = new Mesh( this );
 	
@@ -440,7 +440,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_5" );
+	addMesh( cube, "prefabSkybox+Y" );
 	
 	cube = new Mesh( this );
 	
@@ -461,7 +461,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->end();
 	
-	addMesh( cube, "prefabSkybox_6");
+	addMesh( cube, "prefabSkybox-Y");
 	
 	
 	//add cube for wireframe use

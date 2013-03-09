@@ -18,7 +18,7 @@
 namespace Dojo 
 {	
 	class GameState;
-	
+
 	///TextArea is a Renderable used to display Unicode text
 	class TextArea : public Renderable 
 	{
@@ -148,22 +148,7 @@ namespace Dojo
 		Mesh* _createMesh();
 
 		///create a Layer that uses the given Page
-		inline Renderable* _createLayer( Texture* t )
-		{
-			DEBUG_ASSERT( t );
-
-			Renderable* r = new Renderable( gameState, Vector::ZERO );
-			r->scale = scale;
-			r->setMesh( _createMesh() );
-			r->setTexture( t );
-			r->setVisible( false );
-			r->setActive( false );
-
-			addChild( r, getLayer() );
-			freeLayers.add( r );
-
-			return r;
-		}
+		Renderable* _createLayer( Texture* t );
 
 		///get a layer for this page
 		Renderable* _enableLayer( Texture* tex );

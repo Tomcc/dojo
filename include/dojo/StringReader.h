@@ -194,19 +194,16 @@ namespace Dojo
 				}
 				else if( state == PS_MANTISSA )
 				{
-					if( isWhiteSpace(c) )
-					{
-						back();
-						state = PS_END;
-					}
-
-					else if( isNumber(c) )
+					if( isNumber(c) )
 					{
 						res += (float)(c-'0') / count;
 						count *= 10.f;
 					}
-					else 
-						state = PS_ERROR;
+					else //the number ended
+					{
+						back();
+						state = PS_END;
+					}
 				}
 				else if( state == PS_ERROR )
 				{		
