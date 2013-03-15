@@ -64,11 +64,19 @@ namespace Dojo
 		/// integer in [0,2^32-1]
 		uint32 randInt();                     
 		/// integer in [0,n] for n < 2^32
-		uint32 randInt( const uint32 n );     
+		uint32 randInt( const uint32 n );    
+
 		/// real number in [0,1]
 		double rand();                        
 		/// real number in [0,n]
 		double rand( const double n );    
+
+		///real number in [min, max]
+		double rand( double min, double max )
+		{
+			return min + rand( max - min );
+		}
+
 		/// real number in [0,1)
 		double randExc();   
 		/// real number in [0,n)

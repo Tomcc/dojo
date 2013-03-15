@@ -115,7 +115,6 @@ public class Mesh {
 	
 	public void parse( BufferedReader in ) throws IOException {
 		
-		
 		while( in.ready() ) {
 			StringTokenizer tk = new StringTokenizer( in.readLine() );
 			
@@ -185,22 +184,24 @@ public class Mesh {
 		where the fields are
 		enum VertexField
 		{
-			VF_POSITION2D = 0,
-			VF_POSITION3D = 1,
-			VF_UV = 2,
-			VF_UV_1 = 3,
-			VF_UV_2 = 4,
-			VF_UV_3 = 5,
-			VF_UV_4 = 6,
-			VF_UV_5 = 7,
-			VF_UV_6 = 8,
-			VF_UV_7 = 9,
-			VF_COLOR = 10,
-			VF_NORMAL = 11
+			VF_POSITION2D,
+			VF_POSITION3D,
+			VF_COLOR,
+			VF_NORMAL,
+			VF_UV,
+			VF_UV_1,
 		};*/
 		
-		//either 8 bit or 16 bit indices
-		int indexBytes = (getIndexCount()) < 0xff ? 1 : 2; 
+		//write down index size
+		int indexBytes;
+		
+		if( getIndexCount() > 0xffff )
+			indexBytes = 4;
+		else if( getIndexCount() > 0xff )
+			indexBytes = 2;
+		else
+			indexBytes = 1;
+ 
 		out.write( indexBytes );
 		
 		//always triangle list
@@ -210,19 +211,11 @@ public class Mesh {
 		out.write(0);  //2D
 		out.write(1);  //3D
 		
-		out.write(1); //UVS
-		out.write(0);
-		out.write(0);
-		out.write(0);
-		out.write(0);
-		out.write(0);
-		out.write(0);
-		out.write(0);
-		
-		out.write(0); //color
-		
-		out.write(1); //normal
-		
+		out.write(0); //COLOR
+		out.write(1); //NORMAL
+		out.write(1); //UV0
+		out.write(0); //UV1
+
 		//max
 		out.writeFloat( max.x );
 		out.writeFloat( max.y );
@@ -268,6 +261,13 @@ public class Mesh {
 				out.writeShort( (short)f.i1 );
 				out.writeShort( (short)f.i2 );
 				out.writeShort( (short)f.i3 );
+			}
+		}
+		else if( indexBytes == 4 ) {
+			for( Face f : face ) {
+				out.writeInt( (int)f.i1 );
+				out.writeInt( (int)f.i2 );
+				out.writeInt( (int)f.i3 );
 			}
 		}
 	}

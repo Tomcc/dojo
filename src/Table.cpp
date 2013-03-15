@@ -236,8 +236,6 @@ void Table::deserialize( StringReader& buf )
 				buf.back();
 				buf.back();
 				
-				DEBUG_MESSAGE( curName.ASCII() );
-				
 				//create a color using the hex
 				col.set( buf.readHex() );
 				
