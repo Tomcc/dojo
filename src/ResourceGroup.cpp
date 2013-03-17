@@ -377,7 +377,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox+X" );
+	addMesh( cube, "prefabSkybox-X" );
 	
 	cube = new Mesh( this );
 	
@@ -417,7 +417,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox-X" );
+	addMesh( cube, "prefabSkybox+X" );
 	
 	cube = new Mesh( this );
 	
