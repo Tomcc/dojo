@@ -240,12 +240,12 @@ public class Mesh {
 			out.writeFloat( v.p.y );
 			out.writeFloat( v.p.z );
 			
-			out.writeFloat( v.uv.u );
-			out.writeFloat( v.uv.v );
-			
 			out.writeFloat( v.n.x );
 			out.writeFloat( v.n.y );
 			out.writeFloat( v.n.z );
+
+			out.writeFloat( v.uv.u );
+			out.writeFloat( v.uv.v );
 		}
 		
 		//write down index data

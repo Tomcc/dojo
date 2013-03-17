@@ -176,14 +176,11 @@ void ResourceGroup::addFonts( const String& subdirectory, int version )
 void ResourceGroup::addMeshes( const String& subdirectory )
 {
 	std::vector<String> paths;
-	String name;
+	String name; 
 	
-	//look for different binary files on different platforms
-	String format = Math::isLittleEndian() ? "lem" : "bem"; 
+	Platform::getSingleton()->getFilePathsForType( "mesh", subdirectory, paths );
 	
-	Platform::getSingleton()->getFilePathsForType( format, subdirectory, paths );
-	
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] );
 		

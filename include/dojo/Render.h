@@ -160,6 +160,8 @@ namespace Dojo {
 		inline uint getLastFrameVertexCount()		{	return frameVertexCount;	}
 		inline uint getLastFrameTriCount()			{	return frameTriCount;		}
 		inline uint getLastFrameBatchCount()		{	return frameBatchCount;		}
+
+		const Color& getDefaultAmbient()			{	return defaultAmbient;		}
 		
 		inline bool isValid()						{	return valid;		}
 						

@@ -48,16 +48,9 @@ public class Main {
 			System.out.print( "Parsed " + m.getVertexCount() + " vertices and " + m.getIndexCount() + " indices... ");
 			System.out.println( t + " ms" );
 		
-			System.out.print( "writing big-endian mesh " + filename + ".bem... \t" );
 			t = System.currentTimeMillis();
 			
-			m.write( filename + ".bem", ByteOrder.BIG_ENDIAN );
-			
-			System.out.println( (System.currentTimeMillis()-t) + " ms" );			
-			System.out.print( "writing little-endian mesh " + filename + ".lem... \t" );
-			t = System.currentTimeMillis();
-			
-			m.write( filename + ".lem", ByteOrder.LITTLE_ENDIAN );
+			m.write( filename + ".mesh", ByteOrder.LITTLE_ENDIAN );
 			
 			System.out.println( (System.currentTimeMillis()-t) + " ms" );
 			

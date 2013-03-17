@@ -2,6 +2,8 @@
 
 #include "Light.h"
 #include "GameState.h"
+#include "Platform.h"
+#include "Render.h"
 
 using namespace Dojo;
 
@@ -12,7 +14,7 @@ Light::Light( GameState* s,
 	  const Color& ambient ) :
 Object( s, pos, Vector::ZERO ),
 type( LT_NONE ),
-specularExponent(128)
+specularExponent(10)
 {
 	setColors( diffuse, specular, ambient );
 }
@@ -74,17 +76,17 @@ void Light::bind( uint i, const Matrix& view )
 		//setup all the lighting parameters
 		glEnable( light );
 		
+		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::getSingleton()->getRender()->getDefaultAmbient();
+
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );
 		glLightfv( light, GL_SPECULAR, (float*) &specular );
+		glLightfv( light, GL_AMBIENT, ambientp );
 		
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, (float*)&ambient );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, ambientp );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)&diffuse );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, (float*)&specular );
 		
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, specularExponent );
-		
-		if( hasAmbient() )
-			glLightfv( light, GL_AMBIENT, (float*) &ambient );
 
 		Matrix world = glm::translate( Matrix(1.f), position );
 

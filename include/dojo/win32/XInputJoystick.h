@@ -18,7 +18,7 @@ namespace Dojo
 	public:
 
 		XInputJoystick( int n ) : 
-		InputDevice( DT_XBOX_JOYSTICK, n, 16, 8 ),
+		InputDevice( "XInput Joystick", n, 16, 8 ),
 		mConnectionCheckTimer( 0 ),
 		mConnected( false )
 		{

@@ -24,6 +24,8 @@
 
 #include "dojo_common_header.h"
 
+#include "Timer.h"
+
 namespace Dojo
 {
 	///A Random implementation using Mersenne Twister	
@@ -225,7 +227,9 @@ namespace Dojo
 
 	inline Random::Random()
 	{
-		seed( time( NULL ) );
+		//use an high-precision timer to grab microseconds
+		Timer t;
+		seed( (uint32)(t.currentTime() * 1000000) );
 	}
 	
 	inline Random::Random( const uint32 oneSeed )

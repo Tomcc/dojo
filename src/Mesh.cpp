@@ -257,17 +257,15 @@ bool Mesh::end()
 
 void Mesh::bind()
 {		
-	DEBUG_ASSERT( vertexHandle );
-
 #ifndef DOJO_DISABLE_VAOS
+
 	DEBUG_ASSERT( vertexArrayDesc );
 	glBindVertexArray( vertexArrayDesc );
 #else
-
 	_bindAttribArrays(); //bind attribs each frame! (costly)
 #endif
 
-	CHECK_GL_ERROR;
+	CHECK_GL_ERROR; 
 }
 
 bool Mesh::onLoad()
@@ -299,15 +297,13 @@ bool Mesh::onLoad()
 	}
 	
 	//max and min
-	memcpy( &max, ptr, sizeof( Vector ) );
+	Vector loadedMax;
+	memcpy( &loadedMax, ptr, sizeof( Vector ) );
 	ptr += sizeof( Vector );
 	
-	memcpy( &min, ptr, sizeof( Vector ) );
+	Vector loadedMin;
+	memcpy( &loadedMin, ptr, sizeof( Vector ) );
 	ptr += sizeof( Vector );
-		
-	//center and dimensions
-	center = (max+min)*0.5f;
-	dimensions = (max-min);
 	
 	//vertex count
 	uint vc = *((int*)ptr);
@@ -334,6 +330,9 @@ bool Mesh::onLoad()
 		indexCount = ic;
 	}
 	
+	max = loadedMax;
+	min = loadedMin;
+
 	//push over to GPU
 	return end();
 }

@@ -32,7 +32,7 @@ namespace Dojo
 
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
 		Keyboard() :
-		InputDevice( DT_KEYBOARD, 0, KC_JOYPAD_1, 3 )
+		InputDevice( "keyboard", 0, KC_JOYPAD_1, 3 )
 		{
 
 		}
