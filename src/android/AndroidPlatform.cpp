@@ -150,6 +150,8 @@ Platform(table){
     this->apkdir=String(GetAndroidApk());
     Utils::makeCanonicalPath(this->apkdir);
     DEBUG_MESSAGE("getPackageCodePath:");
+	//TO DO: set languages....
+	locale="en";
 
 }
 
@@ -398,6 +400,7 @@ GLenum AndroidPlatform::loadImageFile( void*& bufptr, const String& path, int& w
 
 void AndroidPlatform::present()
 {
+   realFrameTime = (float)mStepTimer.getElapsedTime(); 
    // No display or in pause....
    if ( display == EGL_NO_DISPLAY || isInPause ){
         	DEBUG_MESSAGE("no AndroidPlatform::present()");

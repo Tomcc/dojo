@@ -71,7 +71,6 @@ namespace Dojo
 		
 		void ResetDisplay();
 		int32_t width, height;	
-		Timer frameTimer;
 		String apkdir;
 		String apkdirResources;
 		String dirAppData;
@@ -85,7 +84,9 @@ namespace Dojo
 		ASensorEventQueue* sensorEventQueue;
 		//android accelerometer
 		void UpdateEvent();
-		
+		//timers		
+		Timer mStepTimer;
+		Timer frameTimer;
 		//openGL EGL
 		int running;
 		int isInPause;

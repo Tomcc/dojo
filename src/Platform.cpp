@@ -1,7 +1,9 @@
 #include "stdafx.h"
 
 #include "Platform.h"
-
+//private:
+#include "ZipArchive.h"
+//
 #include "Utils.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
@@ -18,6 +20,9 @@
 #elif defined( PLATFORM_LINUX )
     #include "linux/LinuxPlatform.h"
 
+#elif defined( PLATFORM_ANDROID )
+    #include "android/AndroidPlatform.h"
+
 #endif
 
 #include "StringReader.h"
@@ -25,7 +30,7 @@
 
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Exception.h>
-#include <Poco/Zip/ZipStream.h>
+//#include <Poco/Zip/ZipStream.h> not work in android, change in zzip
 
 using namespace Dojo;
 
@@ -45,6 +50,10 @@ Platform* Platform::create( const Table & config )
 #elif defined( PLATFORM_LINUX )
     singleton = new LinuxPlatform( config );
     
+#elif defined( PLATFORM_ANDROID )
+    android_main(NULL); //HACK
+    singleton = new AndroidPlatform( config );
+	
 #endif
 	return singleton;
 }
@@ -65,8 +74,7 @@ Platform::Platform( const Table& configTable ) :
 	input( NULL ),
 	realFrameTime( 0 ),
 	mFullscreen( 0 ),
-	mFrameSteppingEnabled( false ),
-    screenOrientation( DO_LANDSCAPE_RIGHT )
+	mFrameSteppingEnabled( false )
 {
 	addZipFormat( ".zip" );
 	addZipFormat( ".dpk" );
@@ -144,26 +152,16 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 		return elem->second;
 	else
 	{
-		//actually open the file
-		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
-
-		Poco::Zip::ZipArchive zip( file );
-
-		//create a new file mapping
 		mZipFileMaps[ zipPath ] = ZipFoldersMap();
 		ZipFoldersMap& map = mZipFileMaps.find( zipPath )->second;
 
-		auto itr = zip.fileInfoBegin();
-		auto end = zip.fileInfoEnd();
-		for( ; itr != end; ++itr )
-		{
-			if( itr->second.isFile() )
-			{
-				String filePath( itr->second.getFileName() );
+		ZipArchive zip( zipPath );
+		std::vector<String> zip_files;
+		zip.getListAllFiles(".",zip_files);
 
-				map[ Utils::getDirectory( filePath ) ].push_back( filePath );
-			}
-		}
+		for(int i=0;i<zip_files.size();++i)
+			map[ Utils::getDirectory( zip_files[i] ) ].push_back( zip_files[i] );
+		
 
 		return map;
 	}
@@ -248,25 +246,30 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 	{
 		String zipPath = path.substr( 0, internalZipPathIdx );
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
-
-		std::ifstream file( zipPath.UTF8(), std::ios_base::in | std::ios_base::binary );
-
-		Poco::Zip::ZipArchive arch( file );
-
-		auto elem = arch.findHeader( zipInternalPath.UTF8() );
-
-		if( elem == arch.headerEnd() )
+		//OPEN ZIP
+		ZipArchive zip;
+		if(zip.open(zipPath)){
+			//OPEN FILE IN ZIP
+			auto pfile=zip.openFile(  zipInternalPath,"rb");
+			if(pfile!=NULL){
+				//READ FILE
+				size = pfile->size();
+				bufptr = (char*)malloc( size+1 );
+				pfile->read(bufptr,size,1);
+				//CLOSE FILE
+				delete pfile;
+				//ADD terminator
+				bufptr[ size ] = 0;
+			}
+			else{
+				DEBUG_MESSAGE("can't read:"<<path.ASCII())
+				return 0;
+			}
+		}
+		else{
+			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII())
 			return 0;
-
-		Poco::Zip::ZipInputStream zipin (file, elem->second);
-
-		size = elem->second.getUncompressedSize()+1;
-		bufptr = (char*)malloc( size );
-
-		zipin.read( bufptr, size );
-
-		//add terminator
-		bufptr[ size-1 ] = 0;
+		}
 	}
 	
 	return size;
@@ -308,12 +311,14 @@ void Platform::save( Table* src, const String& absPath )
 	src->serialize( buf );
 	
 	String path = _getTablePath(src, absPath);
-	FILE* f = fopen( path.ASCII().c_str(), "w" );
+
+	DEBUG_MESSAGE( path.ASCII() );
+	FILE* f = fopen( path.ASCII().c_str(), "w+" );
 	
-	if( !f )
+	if( f==NULL )
 	{
 		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
-		DEBUG_MESSAGE( path.c_str() );
+		DEBUG_MESSAGE( path.ASCII() );
 	}
 	DEBUG_ASSERT( f );
 	
