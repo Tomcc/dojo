@@ -50,7 +50,7 @@ using namespace Dojo;
 }
 
 - (void) layoutSubviews
-{		
+{
 	//set the scale factor to 2 to support retina display, if available
 	
 	bool hasRetina = ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] && [[UIScreen mainScreen] scale] == 2);
@@ -60,7 +60,7 @@ using namespace Dojo;
 	
 	if( !renderImpl )
 	{
-		platform->initialise();
+		platform->_initialiseImpl( self );
 	
 		renderImpl = platform->getRender();
 		touchSource = platform->getInput();	
@@ -93,8 +93,6 @@ using namespace Dojo;
 			
 	//get C++ system
 	platform = (IOSPlatform*)Platform::getSingleton();
-	
-	platform->_notifyNativeApp( self );
 }
 
 - (void) startAnimation

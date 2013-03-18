@@ -156,7 +156,7 @@ namespace Dojo
 		///returns the read-only root path for this game (eg. working directory)
 		virtual const String& getRootPath()=0;
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
-		virtual const String& getResourcesPath	()=0;
+		virtual const String& getResourcesPath()=0;
 		
 		///returns the user configuration table
 		const Table& getUserConfiguration()

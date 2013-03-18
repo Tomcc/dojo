@@ -50,19 +50,26 @@ namespace Dojo
 		
 		virtual ~IOSPlatform();
 				
-		virtual void initialise();
+		virtual void initialise( Game* game );
+		virtual void loop();
 		virtual void shutdown();
 		
 		virtual void prepareThreadContext();
 		
 		virtual void acquireContext();
 		virtual void present();
-
-		virtual void loop( float frameTime );
+        
+        ///sets the app fullscreen or windowed, has no effect on iOS
+        virtual void setFullscreen( bool )
+        {
+            DEBUG_ASSERT_MSG( false, "Error: iOS apps can only run fullscreen" );
+        }
 				
+        ///iOS specific - tells if the system sound is currently hold by another application
 		virtual bool isSystemSoundInUse();
 		
 		virtual const String& getRootPath();
+        virtual const String& getResourcesPath();
 		virtual const String& getAppDataPath();
 				
 		virtual void openWebPage( const String& site );
@@ -110,12 +117,7 @@ namespace Dojo
 		*/
 		 
 #ifdef __OBJC__
-		void _notifyNativeApp( Application* application )
-		{
-			DEBUG_ASSERT( application );
-			
-			app = application;
-		}
+		void _initialiseImpl( Application* application );
 		
 		inline Application* getNativeApplication()
 		{			
@@ -124,6 +126,9 @@ namespace Dojo
 #endif
 		
 	protected:
+        
+        String mRootPath, mResourcesPath, mAppDataPath;
+        
 		/*
 		typedef std::map< void*, Email::Listener* > SenderEmailListenerMap;
 		SenderEmailListenerMap senderEmailListenerMap;

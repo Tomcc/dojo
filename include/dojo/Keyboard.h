@@ -13,22 +13,8 @@ namespace Dojo
 	{
 	public:
 
-		struct FakeAxis
-		{
-			Axis axis;
-
-			KeyCode min, max;
-
-			FakeAxis( Axis toEmulate, KeyCode minKey, KeyCode maxKey ) :
-			axis( toEmulate ),
-			min( minKey ),
-			max( maxKey )
-			{
-
-			}
-		};
-
-		typedef std::vector< FakeAxis > FakeAxes;
+        typedef std::pair< KeyCode, KeyCode > KeyPair;
+		typedef std::unordered_map< int, KeyPair > FakeAxes;
 
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
 		Keyboard() :
@@ -37,9 +23,9 @@ namespace Dojo
 
 		}
 
-		void addFakeAxis( const FakeAxis& a )
+		void addFakeAxis( Axis axis, KeyCode min, KeyCode max )
 		{
-			mFakeAxes.push_back( a );
+            mFakeAxes[ axis ] = KeyPair( min, max );
 		}
 
 		virtual void poll( float dt )
@@ -47,10 +33,10 @@ namespace Dojo
 			for( auto& fakeAxis : mFakeAxes )
 			{
 				float l = 0;
-				l += isKeyDown( fakeAxis.max ) ? 1.f : 0.f;
-				l -= isKeyDown( fakeAxis.min ) ? 1.f : 0.f;
+				l += isKeyDown( fakeAxis.second.second ) ? 1.f : 0.f;
+				l -= isKeyDown( fakeAxis.second.first ) ? 1.f : 0.f;
 
-				_notifyAxis( fakeAxis.axis, l );
+				_notifyAxis( (Axis)fakeAxis.first, l );
 			}
 		}
 
