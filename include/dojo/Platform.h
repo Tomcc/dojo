@@ -80,7 +80,7 @@ namespace Dojo
 		inline int getScreenHeight()			{   return screenHeight;    }
 
 		///gets the physical screen orientation
-		inline int getScreenOrientation()       {   return screenOrientation;   }
+		inline Orientation getScreenOrientation()       {   return screenOrientation;   }
 
 		///gets the window width
 		inline int getWindowWidth()             {   return windowWidth;     }

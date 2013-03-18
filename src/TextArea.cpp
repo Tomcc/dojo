@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "GameState.h"
 #include "Mesh.h"
+#include "Viewport.h"
 
 using namespace Dojo;
 
@@ -208,20 +209,24 @@ void TextArea::_destroyLayer( Renderable* r )
 }
 
 
-bool TextArea::prepare( const Vector& viewportPixelRatio )
+void TextArea::_prepare()
 {
 	//not changed
 	if( !changed )
-		return true;
+		return;
 
 	//no characters to show
 	if( !visibleCharsNumber || getLenght() == 0 )
-		return false;
+		return;
+    
+    //setup the aspect ratio
+    gameState->getViewport()->makeScreenSize( screenSize, font->getFontWidth(), font->getFontHeight() );
+    
+    pixelScale.z = 1;
+    screenSize = screenSize.mulComponents( pixelScale );
+    scale = screenSize;
 
-	//get screen size
-	screenSize.x = scale.x = font->getFontWidth() * viewportPixelRatio.x * pixelScale.x;
-	screenSize.y = scale.y = font->getFontHeight() * viewportPixelRatio.y * pixelScale.y;
-
+    //render the font
 	Font::Character* rep, *lastRep = NULL;
 	Vector newSize(0,0);
 	bool doKerning = font->isKerningEnabled();
@@ -321,8 +326,6 @@ bool TextArea::prepare( const Vector& viewportPixelRatio )
 	setSize( mLayersUpperBound - mLayersLowerBound );
    
 	changed = false;
-
-	return true;
 }
 
 void TextArea::_centerLastLine( uint startingAt, float size )
@@ -369,6 +372,8 @@ void TextArea::onAction(float dt)
 {
 	bool previousAABBSetting = mNeedsAABB;
 	mNeedsAABB = false; //do not trigger the update
+    
+    _prepare();
 	
 	Renderable::onAction(dt);
 	

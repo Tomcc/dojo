@@ -69,13 +69,6 @@ void AnimatedQuad::onAction( float dt )
 	Renderable::onAction( dt );
 }
 
-bool AnimatedQuad::prepare( const Vector& viewportPixelRatio )
-{
-	//TODO remove as it's useless?
-
-	return true;
-}
-
 void AnimatedQuad::_updateScreenSize()
 {
 	if( pixelPerfect )

@@ -99,7 +99,7 @@ void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 	for( Listener* l : listeners )
 		l->onDeviceConnected( j );
 
-	DEBUG_MESSAGE( "Connected a joystick!" );
+	DEBUG_MESSAGE( "Connected a " << j->getType().ASCII().c_str() << "!" );
 }
 
 void InputSystem::_fireDeviceDisconnected( Dojo::InputDevice* j )

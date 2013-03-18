@@ -78,8 +78,6 @@ backLayer( NULL )
 
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
-	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
-	
 	setDefaultAmbient( Color::BLACK );
 }
 
@@ -199,7 +197,9 @@ void Render::setInterfaceOrientation( Orientation o )
 	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
-	
+	    
+	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
+    
 	//swap height and width values used in-game if the render has been rotated
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -210,7 +210,7 @@ void Render::setInterfaceOrientation( Orientation o )
 	{
 		viewportWidth = height;
 		viewportHeight = width;
-	}
+	}    
 	
 	//compute matrix
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
@@ -235,21 +235,9 @@ void Render::startFrame()
 				 viewport->getClearColor().a );
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-				
-	if( renderRotation == 0 || renderRotation == 180 )
-	{
-		viewportPixelRatio.x = viewport->getSize().x / viewport->getTargetSize().x;
-		viewportPixelRatio.y = viewport->getSize().y / viewport->getTargetSize().y;
-	}
-	else 
-	{
-		//swap
-		viewportPixelRatio.x = viewport->getSize().y / viewport->getTargetSize().x;
-		viewportPixelRatio.y = viewport->getSize().x / viewport->getTargetSize().y;
-	}
-
-	viewportPixelRatio *= nativeToScreenRatio;
-	
+    
+	mCurrentView = viewport->getViewTransform();
+    
 	frameStarted = true;
 	
 	//draw the backdrop
@@ -266,10 +254,6 @@ void Render::renderElement( Renderable* s )
 {
 	DEBUG_ASSERT( frameStarted );
 	DEBUG_ASSERT( viewport );
-
-	//if prepare fails, the object can't be rendered
-	if( !s->prepare( viewportPixelRatio ) )
-		return;
 
 	frameVertexCount += s->getMesh()->getVertexCount();
 	frameTriCount += s->getMesh()->getTriangleCount();
@@ -309,7 +293,9 @@ void Render::renderElement( Renderable* s )
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
 
+#ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
+#endif
 }
 
 void Render::endFrame()
@@ -334,11 +320,9 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-	mCurrentView =  mRenderRotation * viewport->getViewTransform();
-
 	const Matrix& proj = list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform();
 	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( glm::value_ptr( proj ) );
+	glLoadMatrixf( glm::value_ptr( mRenderRotation * proj ) );
 	
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )

@@ -85,11 +85,6 @@ namespace Dojo
 		{
 			return !mCulled;
 		}
-
-		virtual bool prepare( const Vector& viewportPixelSize )
-		{
-			return true;
-		}
 			
 		inline void advanceFade( float dt )		
 		{			

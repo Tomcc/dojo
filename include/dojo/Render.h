@@ -141,19 +141,6 @@ namespace Dojo {
 			return positiveLayers.size();
 		}
 		
-		inline int getScreenWidth()						{	return width;		}
-		inline int getScreenHeight()					{	return height;		}
-		
-		inline int getWidth()
-		{
-			return viewportWidth;
-		}
-		
-		inline int getHeight()
-		{
-			return viewportHeight;
-		}
-		
 		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
 		inline Viewport* getViewport()				{	return viewport;	}
 
@@ -206,8 +193,7 @@ namespace Dojo {
 		
 		float nativeToScreenRatio;
 						
-		Viewport* viewport;	
-		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
+		Viewport* viewport;
 		
 		RenderState* currentRenderState, *firstRenderState;
 		Layer* currentLayer;

@@ -58,7 +58,12 @@ void IOSPlatform::initialise( Game* newGame )
     //store the game object
     game = newGame;
     
-    //actually do nothing like a boss
+    //swap reported screen and window dimensions if the game requires a different ratio
+    if( game->getNativeOrientation() == DO_LANDSCAPE_LEFT || game->getNativeOrientation() == DO_LANDSCAPE_RIGHT )
+    {
+        std::swap( screenWidth, screenHeight );
+        std::swap( windowWidth, windowHeight );
+    }
 }
 
 void IOSPlatform::_initialiseImpl(Application *application)
@@ -66,6 +71,7 @@ void IOSPlatform::_initialiseImpl(Application *application)
     app = application;
 
     DEBUG_ASSERT( app );
+    
     
     uint width, height;
 		
