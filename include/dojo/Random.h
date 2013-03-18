@@ -24,6 +24,8 @@
 
 #include "dojo_common_header.h"
 
+#include "Timer.h"
+
 namespace Dojo
 {
 	///A Random implementation using Mersenne Twister	
@@ -64,11 +66,19 @@ namespace Dojo
 		/// integer in [0,2^32-1]
 		uint32 randInt();                     
 		/// integer in [0,n] for n < 2^32
-		uint32 randInt( const uint32 n );     
+		uint32 randInt( const uint32 n );    
+
 		/// real number in [0,1]
 		double rand();                        
 		/// real number in [0,n]
 		double rand( const double n );    
+
+		///real number in [min, max]
+		double rand( double min, double max )
+		{
+			return min + rand( max - min );
+		}
+
 		/// real number in [0,1)
 		double randExc();   
 		/// real number in [0,n)
@@ -213,6 +223,13 @@ namespace Dojo
 		}
 		state[0] = 0x80000000UL;  // MSB is 1, assuring non-zero initial array
 		reload();
+	}
+
+	inline Random::Random()
+	{
+		//use an high-precision timer to grab microseconds
+		Timer t;
+		seed( (uint32)(t.currentTime() * 1000000) );
 	}
 	
 	inline Random::Random( const uint32 oneSeed )

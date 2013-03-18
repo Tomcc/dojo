@@ -43,8 +43,6 @@ backLayer( NULL )
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
 	glEnable( GL_CULL_FACE );
-	
-	glEnable( GL_LIGHTING );
 
 	glCullFace( GL_BACK );
 	
@@ -54,17 +52,12 @@ backLayer( NULL )
 	glEnable( GL_BLEND );	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	
-	//HACK
-	//glEnable( GL_COLOR_MATERIAL );
+	glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
 #ifndef PLATFORM_IOS
-	//glColorMaterial( GL_FRONT, GL_DIFFUSE );
-#endif
-	
-	float white[] = {1,1,1,1};
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, white );
-	
+	glColorMaterial( GL_FRONT, GL_DIFFUSE );
+#endif	
 	
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	glEnable( GL_FRAMEBUFFER_SRGB );
@@ -85,8 +78,6 @@ backLayer( NULL )
 
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
-	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
-	
 	setDefaultAmbient( Color::BLACK );
 }
 
@@ -100,7 +91,7 @@ Render::~Render()
 
 void Render::setWireframe( bool wireframe )
 {
-#if !defined( PLATFORM_IOS ) && !defined( PLATFORM_ANDROID ) 
+#ifndef PLATFORM_IOS
 	glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
 #else
 	DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );
@@ -206,7 +197,9 @@ void Render::setInterfaceOrientation( Orientation o )
 	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
-	
+	    
+	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
+    
 	//swap height and width values used in-game if the render has been rotated
 	if( renderRotation == 0 || renderRotation == 180 )
 	{
@@ -217,7 +210,7 @@ void Render::setInterfaceOrientation( Orientation o )
 	{
 		viewportWidth = height;
 		viewportHeight = width;
-	}
+	}    
 	
 	//compute matrix
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
@@ -242,21 +235,9 @@ void Render::startFrame()
 				 viewport->getClearColor().a );
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-				
-	if( renderRotation == 0 || renderRotation == 180 )
-	{
-		viewportPixelRatio.x = viewport->getSize().x / viewport->getTargetSize().x;
-		viewportPixelRatio.y = viewport->getSize().y / viewport->getTargetSize().y;
-	}
-	else 
-	{
-		//swap
-		viewportPixelRatio.x = viewport->getSize().y / viewport->getTargetSize().x;
-		viewportPixelRatio.y = viewport->getSize().x / viewport->getTargetSize().y;
-	}
-
-	viewportPixelRatio *= nativeToScreenRatio;
-	
+    
+	mCurrentView = viewport->getViewTransform();
+    
 	frameStarted = true;
 	
 	//draw the backdrop
@@ -274,10 +255,6 @@ void Render::renderElement( Renderable* s )
 	DEBUG_ASSERT( frameStarted );
 	DEBUG_ASSERT( viewport );
 
-	//if prepare fails, the object can't be rendered
-	if( !s->prepare( viewportPixelRatio ) )
-		return;
-
 	frameVertexCount += s->getMesh()->getVertexCount();
 	frameTriCount += s->getMesh()->getTriangleCount();
 	//each renderable is a single batch
@@ -288,15 +265,15 @@ void Render::renderElement( Renderable* s )
 	
 	//clone the view matrix on the top of the stack		
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf( glm::value_ptr( mCurrentViewProj * s->getWorldTransform() ) );
+	glLoadMatrixf( glm::value_ptr( mCurrentView * s->getWorldTransform() ) );
 		
 	//HACK
-#if !defined( PLATFORM_IOS ) && !defined( PLATFORM_ANDROID ) 
+#ifndef PLATFORM_IOS
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
 #endif
-	glEnable( GL_COLOR_MATERIAL );
-	
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );
+	
+	glEnable( GL_COLOR_MATERIAL );
 
 	s->commitChanges( currentRenderState );
 
@@ -315,10 +292,9 @@ void Render::renderElement( Renderable* s )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else
 		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
-#if !defined( PLATFORM_ANDROID ) 
+
+#ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
-#else
-	glBindBuffer(GL_ARRAY_BUFFER,0);
 #endif
 }
 
@@ -344,7 +320,9 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-	mCurrentViewProj =  mRenderRotation * (list->projectionOff ? viewport->getViewProjOrtho() : viewport->getViewProjFrustum());
+	const Matrix& proj = list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform();
+	glMatrixMode( GL_PROJECTION );
+	glLoadMatrixf( glm::value_ptr( mRenderRotation * proj ) );
 	
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )
@@ -354,18 +332,21 @@ void Render::renderLayer( Layer* list )
 	
 	if( list->lightingOn )
 	{		
+		glEnable( GL_LIGHTING );
 		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
 		int i = 0;
 		for( ; i < lights.size(); ++i )
 		{
-			lights[i]->bind( i, mCurrentViewProj );
+			lights[i]->bind( i, mCurrentView );
 			
 			if( !lights[i]->hasAmbient() )
 				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );
 		}
 	}
 	else
-	{		
+	{
+		glDisable( GL_LIGHTING );
+
 		for( int i = 0; i < lights.size(); ++i )
 			glDisable( GL_LIGHT0 + i );
 	}

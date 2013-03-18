@@ -13,28 +13,36 @@ namespace Dojo
 	{
 	public:
 
+        typedef std::pair< KeyCode, KeyCode > KeyPair;
+		typedef std::unordered_map< int, KeyPair > FakeAxes;
+
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
 		Keyboard() :
-		InputDevice( DT_KEYBOARD, 0, KC_JOYPAD_1, 2 )
+		InputDevice( "keyboard", 0, KC_JOYPAD_1, 3 )
 		{
 
+		}
+
+		void addFakeAxis( Axis axis, KeyCode min, KeyCode max )
+		{
+            mFakeAxes[ axis ] = KeyPair( min, max );
 		}
 
 		virtual void poll( float dt )
 		{
-			float lx = 0;
-			lx += isKeyDown( KC_RIGHT ) ? 1.f : 0.f;
-			lx -= isKeyDown( KC_LEFT ) ? 1.f : 0.f;
+			for( auto& fakeAxis : mFakeAxes )
+			{
+				float l = 0;
+				l += isKeyDown( fakeAxis.second.second ) ? 1.f : 0.f;
+				l -= isKeyDown( fakeAxis.second.first ) ? 1.f : 0.f;
 
-			float ly = 0;
-			ly += isKeyDown( KC_UP ) ? 1.f : 0.f;
-			ly -= isKeyDown( KC_DOWN ) ? 1.f : 0.f;
-
-			_notifyAxis( AI_LX, lx );
-			_notifyAxis( AI_LY, ly );
+				_notifyAxis( (Axis)fakeAxis.first, l );
+			}
 		}
 
 	protected:
+
+		FakeAxes mFakeAxes;
 	private:
 	};
 }

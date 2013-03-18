@@ -9,8 +9,8 @@
 
 using namespace Dojo;
 
-Renderable::Renderable( GameState* level, const Vector& pos, Mesh* m ) :
-	Object( level, pos, Vector::ONE ),
+Renderable::Renderable( Object* parent, const Vector& pos, Mesh* m ) :
+	Object( parent, pos, Vector::ONE ),
 	visible( true ),
 	layer(0),
 	renderingOrder(0),
@@ -22,8 +22,8 @@ Renderable::Renderable( GameState* level, const Vector& pos, Mesh* m ) :
 	mesh = m;
 }
 
-Renderable::Renderable( GameState* level, const Vector& pos, const String& meshName ) :
-	Object( level, pos, Vector::ONE ),
+Renderable::Renderable( Object* parent, const Vector& pos, const String& meshName ) :
+	Object( parent, pos, Vector::ONE ),
 	visible( true ),
 	layer(0),
 	renderingOrder(0),
@@ -33,7 +33,7 @@ Renderable::Renderable( GameState* level, const Vector& pos, const String& meshN
 	reset();
 
 	if( meshName.size() )
-		setMesh( level->getMesh( meshName ) );
+		setMesh( getGameState()->getMesh( meshName ) );
 }
 
 Renderable::~Renderable()

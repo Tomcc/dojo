@@ -176,14 +176,11 @@ void ResourceGroup::addFonts( const String& subdirectory, int version )
 void ResourceGroup::addMeshes( const String& subdirectory )
 {
 	std::vector<String> paths;
-	String name;
+	String name; 
 	
-	//look for different binary files on different platforms
-	String format = Math::isLittleEndian() ? "lem" : "bem"; 
+	Platform::getSingleton()->getFilePathsForType( "mesh", subdirectory, paths );
 	
-	Platform::getSingleton()->getFilePathsForType( format, subdirectory, paths );
-	
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] );
 		
@@ -241,7 +238,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	m->begin(4);	
 	
-	m->vertex( -0.5, -0.5 );		
+	m->vertex( -0.5, -0.5 );	
 	m->uv( 0,1 );
 	
 	m->vertex( 0.5, -0.5 );		
@@ -294,7 +291,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->begin( 24 );
 	
-	cube->vertex( l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 0,0,1 );	cube->uv(1,1);
 	cube->vertex( l, -l, l );	cube->normal( 0,0,1 );  cube->uv(0,1);
 	cube->vertex( -l, l, l );	cube->normal( 0,0,1 );	cube->uv(1,0);
 	cube->vertex( -l, -l, l );	cube->normal( 0,0,1 );	cube->uv(0,0);
@@ -308,7 +305,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->quad(4,5,6,7);
 	
-	cube->vertex( l, l, l );	cube->normal( 1,0, 0 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 1,0, 0 );	cube->uv(1,1);
 	cube->vertex( l, l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,1);
 	cube->vertex( l, -l, l );	cube->normal( 1,0, 0 );	cube->uv(1,0);
 	cube->vertex( l, -l, -l );	cube->normal( 1,0, 0 );	cube->uv(0,0);
@@ -322,7 +319,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->quad(12,13,14,15);
 	
-	cube->vertex( l, l, l );	cube->normal( 0,1,0 );	cube->uv(1,1);
+	cube->vertex( l, l, l );		cube->normal( 0,1,0 );	cube->uv(1,1);
 	cube->vertex( -l, l, l );	cube->normal( 0,1,0 );  cube->uv(0,1);
 	cube->vertex( l, l, -l );	cube->normal( 0,1,0 );	cube->uv(1,0);
 	cube->vertex( -l, l, -l );	cube->normal( 0,1,0 );	cube->uv(0,0);
@@ -360,7 +357,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_1" );
+	addMesh( cube, "prefabSkybox-Z" );
 	
 	cube = new Mesh( this );
 	
@@ -380,7 +377,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_2" );
+	addMesh( cube, "prefabSkybox-X" );
 	
 	cube = new Mesh( this );
 	
@@ -400,7 +397,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_3" );
+	addMesh( cube, "prefabSkybox+Z" );
 	
 	cube = new Mesh( this );
 	
@@ -420,7 +417,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_4" );
+	addMesh( cube, "prefabSkybox+X" );
 	
 	cube = new Mesh( this );
 	
@@ -440,7 +437,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->quad(0,1,2,3);
 	
 	cube->end();
-	addMesh( cube, "prefabSkybox_5" );
+	addMesh( cube, "prefabSkybox+Y" );
 	
 	cube = new Mesh( this );
 	
@@ -461,7 +458,7 @@ void ResourceGroup::addPrefabMeshes()
 	
 	cube->end();
 	
-	addMesh( cube, "prefabSkybox_6");
+	addMesh( cube, "prefabSkybox-Y");
 	
 	
 	//add cube for wireframe use

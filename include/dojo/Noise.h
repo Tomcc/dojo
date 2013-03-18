@@ -26,6 +26,25 @@ namespace Dojo
 		this allows to use the same random to obtain the same Perlin distribution */
 		Noise( Random& rand )
 		{
+			seed( rand );
+		}
+
+		///Creates a Noise object drawing numbers from a new random number generator
+		Noise( unsigned int seedInt )
+		{
+			Random r( seedInt );
+			seed( r );
+		}
+
+		///creates a new noise object initialized with the default seeding method
+		Noise()
+		{
+			Random gen;
+			seed( gen );
+		}
+
+		void seed( Random& rand )
+		{
 			for( int i = 0; i < 256; ++i )
 				p[i] = i;
 
@@ -38,7 +57,7 @@ namespace Dojo
 				p[i] = p[d];
 				p[d] = t;
 			}
-			
+
 			for (int i = 0; i < 256 ; i++) 
 				p[256+i] = p[i];
 		}
@@ -96,6 +115,12 @@ namespace Dojo
 		float filternoise( float x, float y, float scale ) 
 		{
 			return filternoise( x, y, scale, scale );
+		}
+
+		///returns the Perlin noise at x, scaled down to 0..1 range
+		float filternoise( float x, float scale ) 
+		{
+			return filternoise( x, x, x, scale );
 		}
 				
 	protected:

@@ -18,7 +18,7 @@
 namespace Dojo 
 {	
 	class GameState;
-	
+
 	///TextArea is a Renderable used to display Unicode text
 	class TextArea : public Renderable 
 	{
@@ -103,9 +103,7 @@ namespace Dojo
 		inline const String& getContent()		{	return content;			}
 				
 		///returns the size in screen coordinates for UI
-		inline const Vector& getScreenSize()	{	return screenSize;		}	
-		
-		bool prepare( const Vector& viewportPixelRatio );
+		inline const Vector& getScreenSize()	{	return screenSize;		}
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{
@@ -141,6 +139,8 @@ namespace Dojo
 		Vector mLayersLowerBound, mLayersUpperBound;
 
 		LayerList busyLayers, freeLayers;
+        
+		void _prepare();
 
 		void _centerLastLine( uint startingAt, float size );
 
@@ -148,22 +148,7 @@ namespace Dojo
 		Mesh* _createMesh();
 
 		///create a Layer that uses the given Page
-		inline Renderable* _createLayer( Texture* t )
-		{
-			DEBUG_ASSERT( t );
-
-			Renderable* r = new Renderable( gameState, Vector::ZERO );
-			r->scale = scale;
-			r->setMesh( _createMesh() );
-			r->setTexture( t );
-			r->setVisible( false );
-			r->setActive( false );
-
-			addChild( r, getLayer() );
-			freeLayers.add( r );
-
-			return r;
-		}
+		Renderable* _createLayer( Texture* t );
 
 		///get a layer for this page
 		Renderable* _enableLayer( Texture* tex );

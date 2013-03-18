@@ -7,6 +7,8 @@
 
 namespace Dojo 
 {
+	typedef Poco::ScopedLock< Poco::Mutex > ScopedLock;
+
 	class SoundManager;
 	class Render;
 	class InputSystem;
@@ -78,7 +80,7 @@ namespace Dojo
 		inline int getScreenHeight()			{   return screenHeight;    }
 
 		///gets the physical screen orientation
-		inline int getScreenOrientation()       {   return screenOrientation;   }
+		inline Orientation getScreenOrientation()       {   return screenOrientation;   }
 
 		///gets the window width
 		inline int getWindowWidth()             {   return windowWidth;     }
@@ -154,7 +156,7 @@ namespace Dojo
 		///returns the read-only root path for this game (eg. working directory)
 		virtual const String& getRootPath()=0;
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
-		virtual const String& getResourcesPath	()=0;
+		virtual const String& getResourcesPath()=0;
 		
 		///returns the user configuration table
 		const Table& getUserConfiguration()

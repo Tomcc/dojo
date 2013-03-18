@@ -141,25 +141,14 @@ namespace Dojo {
 			return positiveLayers.size();
 		}
 		
-		inline int getScreenWidth()						{	return width;		}
-		inline int getScreenHeight()					{	return height;		}
-		
-		inline int getWidth()
-		{
-			return viewportWidth;
-		}
-		
-		inline int getHeight()
-		{
-			return viewportHeight;
-		}
-		
 		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
 		inline Viewport* getViewport()				{	return viewport;	}
 
 		inline uint getLastFrameVertexCount()		{	return frameVertexCount;	}
 		inline uint getLastFrameTriCount()			{	return frameTriCount;		}
 		inline uint getLastFrameBatchCount()		{	return frameBatchCount;		}
+
+		const Color& getDefaultAmbient()			{	return defaultAmbient;		}
 		
 		inline bool isValid()						{	return valid;		}
 						
@@ -204,8 +193,7 @@ namespace Dojo {
 		
 		float nativeToScreenRatio;
 						
-		Viewport* viewport;	
-		Vector viewportPixelRatio, textureScreenPixelRatio, spriteScreenPixelSize;
+		Viewport* viewport;
 		
 		RenderState* currentRenderState, *firstRenderState;
 		Layer* currentLayer;
@@ -220,7 +208,7 @@ namespace Dojo {
 		LightList lights;
 		Color defaultAmbient;
 		
-		Matrix mCurrentViewProj, mRenderRotation;
+		Matrix mCurrentView, mRenderRotation;
 	};		
 }
 

@@ -15,6 +15,7 @@
 #include <dojo/GameState.h>
 #include <dojo/InputSystem.h>
 #include <dojo/InputDevice.h>
+#include <dojo/Keyboard.h>
 #include <dojo/Light.h>
 #include <dojo/Mesh.h>
 #include <dojo/Noise.h>

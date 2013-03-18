@@ -119,9 +119,6 @@ texture( NULL )
 	DEBUG_ASSERT( font );
 
 	texture = new Texture();
-	texture->disableBilinearFiltering();
-	texture->disableMipmaps();
-	texture->disableTiling();
 }
 
 bool Font::Page::onLoad()
@@ -232,6 +229,9 @@ bool Font::Page::onLoad()
 	}
 
 	//drop the buffer in the texture
+	texture->disableBilinearFiltering();
+	texture->disableMipmaps();
+	texture->disableTiling();
 	loaded = texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
 
 	free( buf );
@@ -283,10 +283,10 @@ bool Font::onLoad()
 	DEBUG_ASSERT( !isLoaded() );
 
 	//load existing pages that were trimmed during a previous unload
-	for( Page* p : pages )
+	for( auto& pair : pages )
 	{
-		if( p && !p->isLoaded() )
-			p->onLoad();
+		if( !pair.second->isLoaded() )
+			pair.second->onLoad();
 	}
 
 	return loaded = true;
@@ -294,11 +294,17 @@ bool Font::onLoad()
 
 void Font::onUnload( bool soft )
 {
-	for( Page* p : pages )
+	for( auto& pair : pages )
 	{
-		if( p && p->isLoaded() )
-			p->onUnload( soft );
+		if( pair.second->isLoaded() )
+			pair.second->onUnload();
+
+		if( !soft )
+			delete pair.second;
 	}
+
+	if( !soft )
+		pages.clear();
 
 	loaded = false;
 }

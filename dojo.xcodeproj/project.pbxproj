@@ -15,12 +15,6 @@
 		431CF7D1147D52050031CB4E /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CC147D52050031CB4E /* libPocoFoundation.a */; };
 		431CF7D2147D52050031CB4E /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CD147D52050031CB4E /* libvorbis.a */; };
 		431CF7D3147D52050031CB4E /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CE147D52050031CB4E /* libvorbisfile.a */; };
-		431CF7D9147D52300031CB4E /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D4147D52300031CB4E /* libfreetype.a */; };
-		431CF7DA147D52300031CB4E /* libogg_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D5147D52300031CB4E /* libogg_iphone.a */; };
-		431CF7DB147D52300031CB4E /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D6147D52300031CB4E /* libPocoFoundation.a */; };
-		431CF7DC147D52300031CB4E /* libvorbis_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D7147D52300031CB4E /* libvorbis_iphone.a */; };
-		431CF7DD147D52300031CB4E /* libvorbisfile_iphone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */; };
-		431CF7EE147D748E0031CB4E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7ED147D748E0031CB4E /* CoreGraphics.framework */; };
 		4395BCD216BD545C00309AE2 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */; };
 		4395BCD316BD545C00309AE2 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */; };
 		4395BCD416BD545C00309AE2 /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAF16BD545B00309AE2 /* ApplePlatform.h */; };
@@ -449,18 +443,12 @@
 		431CF768147D4E680031CB4E /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
 		431CF769147D4E680031CB4E /* dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "dojo-Prefix.pch"; sourceTree = "<group>"; };
 		431CF76A147D4E680031CB4E /* create_dojo_h.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = create_dojo_h.sh; sourceTree = "<group>"; };
-		431CF795147D4FCE0031CB4E /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libdojo-ios.a"; path = "libdojod-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		431CF795147D4FCE0031CB4E /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		431CF7CA147D52050031CB4E /* libFreeType.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFreeType.a; path = "dependencies-OSX/lib/libFreeType.a"; sourceTree = "<group>"; };
 		431CF7CB147D52050031CB4E /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "dependencies-OSX/lib/libogg.a"; sourceTree = "<group>"; };
 		431CF7CC147D52050031CB4E /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = "dependencies-OSX/lib/libPocoFoundation.a"; sourceTree = "<group>"; };
 		431CF7CD147D52050031CB4E /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "dependencies-OSX/lib/libvorbis.a"; sourceTree = "<group>"; };
 		431CF7CE147D52050031CB4E /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "dependencies-OSX/lib/libvorbisfile.a"; sourceTree = "<group>"; };
-		431CF7D4147D52300031CB4E /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = dependencies/lib/libfreetype.a; sourceTree = "<group>"; };
-		431CF7D5147D52300031CB4E /* libogg_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg_iphone.a; path = dependencies/lib/libogg_iphone.a; sourceTree = "<group>"; };
-		431CF7D6147D52300031CB4E /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = dependencies/lib/libPocoFoundation.a; sourceTree = "<group>"; };
-		431CF7D7147D52300031CB4E /* libvorbis_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis_iphone.a; path = dependencies/lib/libvorbis_iphone.a; sourceTree = "<group>"; };
-		431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile_iphone.a; path = dependencies/lib/libvorbisfile_iphone.a; sourceTree = "<group>"; };
-		431CF7ED147D748E0031CB4E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedQuad.h; sourceTree = "<group>"; };
 		4395BBAF16BD545B00309AE2 /* ApplePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlatform.h; sourceTree = "<group>"; };
 		4395BBB816BD545B00309AE2 /* ApplicationListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationListener.h; sourceTree = "<group>"; };
@@ -801,12 +789,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				431CF7EE147D748E0031CB4E /* CoreGraphics.framework in Frameworks */,
-				431CF7D9147D52300031CB4E /* libfreetype.a in Frameworks */,
-				431CF7DA147D52300031CB4E /* libogg_iphone.a in Frameworks */,
-				431CF7DB147D52300031CB4E /* libPocoFoundation.a in Frameworks */,
-				431CF7DC147D52300031CB4E /* libvorbis_iphone.a in Frameworks */,
-				431CF7DD147D52300031CB4E /* libvorbisfile_iphone.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,7 +804,6 @@
 				431CF69A147D4E5B0031CB4E /* include */,
 				4395BEA616BD549A00309AE2 /* src */,
 				431CF7C9147D51E50031CB4E /* Frameworks-OSX */,
-				431CF685147D4E0A0031CB4E /* Frameworks-iOS */,
 				431CF684147D4E0A0031CB4E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -834,19 +815,6 @@
 				431CF795147D4FCE0031CB4E /* libdojo-ios.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		431CF685147D4E0A0031CB4E /* Frameworks-iOS */ = {
-			isa = PBXGroup;
-			children = (
-				431CF7ED147D748E0031CB4E /* CoreGraphics.framework */,
-				431CF7D4147D52300031CB4E /* libfreetype.a */,
-				431CF7D5147D52300031CB4E /* libogg_iphone.a */,
-				431CF7D6147D52300031CB4E /* libPocoFoundation.a */,
-				431CF7D7147D52300031CB4E /* libvorbis_iphone.a */,
-				431CF7D8147D52300031CB4E /* libvorbisfile_iphone.a */,
-			);
-			name = "Frameworks-iOS";
 			sourceTree = "<group>";
 		};
 		431CF69A147D4E5B0031CB4E /* include */ = {
@@ -1904,13 +1872,13 @@
 					"$(inherited)",
 					DOJO_IOS,
 				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/dependencies-iOS/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dependencies/lib\"",
+					"\"$(SRCROOT)/dependencies-iOS/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1930,12 +1898,12 @@
 					"$(inherited)",
 					DOJO_IOS,
 				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/dependencies-iOS/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dependencies/lib\"",
+					"\"$(SRCROOT)/dependencies-iOS/lib\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

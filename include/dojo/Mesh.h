@@ -277,7 +277,7 @@ namespace Dojo
 		///sets the color of the current vertex		
 		inline void color( float r, float g, float b, float a  )
 		{		
-			DEBUG_ASSERT( isEditing() );	
+			DEBUG_ASSERT( isEditing() );
 			
 			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
 			ptr[0] = (GLubyte)(r*255);

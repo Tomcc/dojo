@@ -14,16 +14,6 @@ namespace Dojo
 
 		const static int BUTTON_MAX = 16;
 
-		enum Type
-		{
-			DT_KEYBOARD,
-			DT_XBOX_JOYSTICK,
-			DT_DINPUT_JOYSTICK,
-			DT_MAC_JOYSTICK,
-			DT_LINUX_JOYSTICK,
-			DT_OUYA_JOYSTICK
-		};
-
 		//! each pad has a number of analog inputs; each one is a float
 		enum Axis
 		{
@@ -46,23 +36,23 @@ namespace Dojo
 		{
 		public:
 			///ButtonPressed events are sent when the button bound to "action" is pressed on the device j
-			virtual void onButtonPressed( Dojo::InputDevice* j, int action )	{};
+			virtual void onButtonPressed( Dojo::InputDevice* j, int action )	{}
 			///ButtonReleased events are sent when the button bound to "action" is released on the device j
-			virtual void onButtonReleased( Dojo::InputDevice* j, int action )	{};
+			virtual void onButtonReleased( Dojo::InputDevice* j, int action )	{}
 
 			///AxisMoved events are sent when the axis a is changed on the device j, with a current state of "state" and with the reported relative speed
-			virtual void onAxisMoved( Dojo::InputDevice* j, Dojo::InputDevice::Axis a, float state, float speed )	{};
+			virtual void onAxisMoved( Dojo::InputDevice* j, Dojo::InputDevice::Axis a, float state, float speed )	{}
 
 			///this event is fired just before the device is disconnected and the InputDevice object deleted
-			virtual void onDisconnected( Dojo::InputDevice* j ) {};
+			virtual void onDisconnected( Dojo::InputDevice* j ) {}
 		};
 
 		///Creates a new InputDevice of the given type, bound to the ID slot, supporting "buttonNumber" buttons and "axisNumber" axes
-		InputDevice( Type type, int ID, int buttonNumber, int axisNumber ) :
+		InputDevice( String name, int ID, int buttonNumber, int axisNumber ) :
 		mID( ID ),
 		mButtonNumber( buttonNumber ),
 		mAxisNumber( axisNumber ),
-		mType( type )
+		mType( name )
 		{
 			for( int i = 0; i < mAxisNumber; ++i )
 			{
@@ -129,7 +119,7 @@ namespace Dojo
 			return elem != mBindings.end() ? elem->second : key;
 		}
 
-		inline Type getType()
+		inline const String& getType()
 		{
 			return mType;
 		}
@@ -184,11 +174,11 @@ namespace Dojo
 	protected:
 
 		typedef Dojo::Array< Listener* > ListenerList;
-		typedef unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
-		typedef unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
+		typedef std::unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
+		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
 		typedef Dojo::Array< float > FloatList;
 
-		Type mType;
+		String mType;
 		int mAxisNumber, mButtonNumber;
 
 		ListenerList pListeners;

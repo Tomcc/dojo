@@ -16,6 +16,43 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV,
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
+
+const uint Mesh::VERTEX_FIELD_SIZES[] = { 
+	2 * sizeof( GLfloat ), //position 2D
+	3 * sizeof( GLfloat ),  //position 3D
+	4 * sizeof( GLubyte ),  //color
+	3 * sizeof( GLfloat ),  //normal
+	2 * sizeof( GLfloat ),  //uv0
+	2 * sizeof( GLfloat )
+};
+
+
+inline void checkGLError()
+{
+	String err;
+	GLenum g = glGetError();
+
+	switch(g)
+	{
+	case GL_NO_ERROR:
+		return;
+	case GL_INVALID_ENUM:           err = "GL_INVALID_ENUM";        break;
+	case GL_INVALID_VALUE:          err = "GL_INVALID_VALUE";       break;
+	case GL_INVALID_OPERATION:		err = "GL_INVALID_OPERATION";   break;
+	case GL_STACK_OVERFLOW:         err = "GL_STACK_OVERFLOW";      break;
+	case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
+	case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
+	};
+
+	DEBUG_ASSERT_MSG( g == GL_NO_ERROR, ( "OpenGL encountered an error: " + err ).ASCII().c_str() );
+}
+
+#ifndef _DEBUG
+	#define CHECK_GL_ERROR	checkGLError()
+#else
+	#define CHECK_GL_ERROR
+#endif
+
 ///Tells the buffer to allocate at least "vertices" vertices
 void Mesh::setVertexCap( uint count )
 {
@@ -33,8 +70,7 @@ void Mesh::setVertexCap( uint count )
 		_buildFieldOffsets();	//build the offsets for each field	
 	}			
 	else
-	{	
-		//TODO MAKE THIS ACTUALLY WORK
+	{
 		vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
 	}
 }	
@@ -132,7 +168,6 @@ void Mesh::_bindAttribArrays()
 			case VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset );	break;
 			case VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset ); break;
 			case VF_NORMAL:				glNormalPointer( GL_FLOAT, vertexSize, fieldOffset );	break;
-				//TODO switch to BGRA to reduce bandwidth use
 			case VF_COLOR:				glColorPointer( 4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset );	break;
 
 			case VF_UV:	
@@ -152,9 +187,7 @@ void Mesh::_bindAttribArrays()
 }
 
 bool Mesh::end()
-{			
-	DEBUG_ASSERT( isEditing() );
-
+{
 	editing = false;
 	
 	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
@@ -224,33 +257,16 @@ bool Mesh::end()
 
 void Mesh::bind()
 {		
-	DEBUG_ASSERT( vertexHandle );
-
 #ifndef DOJO_DISABLE_VAOS
+
 	DEBUG_ASSERT( vertexArrayDesc );
 	glBindVertexArray( vertexArrayDesc );
 #else
-
 	_bindAttribArrays(); //bind attribs each frame! (costly)
 #endif
 
-	CHECK_GL_ERROR;
+	CHECK_GL_ERROR; 
 }
-
-const uint Mesh::VERTEX_FIELD_SIZES[] = { 
-	2 * sizeof( GLfloat ),
-	3 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),  //uv0
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	2 * sizeof( GLfloat ),
-	4 * sizeof( GLubyte ),
-	3 * sizeof( GLfloat )
-};
 
 bool Mesh::onLoad()
 {
@@ -281,15 +297,13 @@ bool Mesh::onLoad()
 	}
 	
 	//max and min
-	memcpy( &max, ptr, sizeof( Vector ) );
+	Vector loadedMax;
+	memcpy( &loadedMax, ptr, sizeof( Vector ) );
 	ptr += sizeof( Vector );
 	
-	memcpy( &min, ptr, sizeof( Vector ) );
+	Vector loadedMin;
+	memcpy( &loadedMin, ptr, sizeof( Vector ) );
 	ptr += sizeof( Vector );
-		
-	//center and dimensions
-	center = (max+min)*0.5f;
-	dimensions = (max-min);
 	
 	//vertex count
 	uint vc = *((int*)ptr);
@@ -316,6 +330,9 @@ bool Mesh::onLoad()
 		indexCount = ic;
 	}
 	
+	max = loadedMax;
+	min = loadedMin;
+
 	//push over to GPU
 	return end();
 }

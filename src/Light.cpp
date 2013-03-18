@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "Light.h"
+#include "GameState.h"
+#include "Platform.h"
+#include "Render.h"
 
 using namespace Dojo;
 
@@ -10,7 +13,8 @@ Light::Light( GameState* s,
 	  const Color& specular, 
 	  const Color& ambient ) :
 Object( s, pos, Vector::ZERO ),
-type( LT_NONE )
+type( LT_NONE ),
+specularExponent(10)
 {
 	setColors( diffuse, specular, ambient );
 }
@@ -35,9 +39,7 @@ void Light::initDirectional( const Vector& dir )
 {
 	type = LT_DIRECTIONAL;
 	
-	//set the direction
-    DEBUG_TODO;
-	//angle = dir.angleFromDirection();
+	position = dir;
 }
 
 ///setups this light to be a spotlight
@@ -61,7 +63,7 @@ inline void toFV( float* fv, const Vector& v, float w )
 	fv[3] = w;
 }
 
-void Light::bind( uint i, const Matrix& viewProj )
+void Light::bind( uint i, const Matrix& view )
 {
 	GLenum light = GL_LIGHT0 + i;
 	
@@ -74,48 +76,34 @@ void Light::bind( uint i, const Matrix& viewProj )
 		//setup all the lighting parameters
 		glEnable( light );
 		
+		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::getSingleton()->getRender()->getDefaultAmbient();
+
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );
 		glLightfv( light, GL_SPECULAR, (float*) &specular );
+		glLightfv( light, GL_AMBIENT, ambientp );
 		
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, (float*)&ambient );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, ambientp );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)&diffuse );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, (float*)&specular );
 		
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, specularExponent );
-		
-		if( hasAmbient() )
-			glLightfv( light, GL_AMBIENT, (float*) &ambient );
-		
-		if( type == LT_DIRECTIONAL )
+
+		Matrix world = glm::translate( Matrix(1.f), position );
+
+		glMatrixMode( GL_MODELVIEW );
+		glLoadMatrixf( glm::value_ptr( view * world ) );
+
+		glm::vec4 p( position.x, position.y, position.z, (type == LT_POINT) ? 1.f : 0.f );
+		glLightfv( light, GL_POSITION, glm::value_ptr( p ) );
+
+		if( type == LT_POINT ) //attenuation only affects POINT and SPOT lights
 		{
-            DEBUG_TODO;
-            /*
-			Vector worldDirection = getWorldDirection();			
-			toFV( fv, worldDirection, 1 );
-			
-			glLightfv( light, GL_POSITION, fv );*/
-		}
-		else
-		{            
-            Matrix m = viewProj * getWorldTransform();			
-            glm::vec4 v = m * glm::vec4(0,0,0,1);
-                       
-			glLightfv( light, GL_POSITION, glm::value_ptr( v ) );
-			
 			glLightf( light, GL_LINEAR_ATTENUATION, attenuation );
 			
 			if( type == LT_SPOT )
 			{
                 DEBUG_TODO;
-                /*
-				glLightf( light, GL_SPOT_CUTOFF, spotFOV );
-				glLightf( light, GL_SPOT_EXPONENT, spotExponent );
-								
-				Vector worldDirection = getWorldDirection();			
-				toFV( fv, worldDirection, 1 );
-				
-				glLightfv( light, GL_SPOT_DIRECTION, fv );*/
 			}
-		}		
+		}
 	}	
 }

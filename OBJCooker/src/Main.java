@@ -1,7 +1,15 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.ByteOrder;
+
+import javax.swing.JFileChooser;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 
 public class Main {
@@ -13,14 +21,13 @@ public class Main {
 		
 		String infile = "";
 		if( args.length < 1 )	{
-			System.out.print( "Input file name: ");
-			BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+			JFileChooser chooser = new JFileChooser(".");
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		
+			if( chooser.showOpenDialog( null ) != JFileChooser.APPROVE_OPTION )
+				return;
 			
-			try {
-				infile = in.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			infile = chooser.getSelectedFile().getAbsolutePath();
 		}
 		else
 			infile = args[0];
@@ -41,16 +48,9 @@ public class Main {
 			System.out.print( "Parsed " + m.getVertexCount() + " vertices and " + m.getIndexCount() + " indices... ");
 			System.out.println( t + " ms" );
 		
-			System.out.print( "writing big-endian mesh " + filename + ".bem... \t" );
 			t = System.currentTimeMillis();
 			
-			m.write( filename + ".bem", ByteOrder.BIG_ENDIAN );
-			
-			System.out.println( (System.currentTimeMillis()-t) + " ms" );			
-			System.out.print( "writing little-endian mesh " + filename + ".lem... \t" );
-			t = System.currentTimeMillis();
-			
-			m.write( filename + ".lem", ByteOrder.LITTLE_ENDIAN );
+			m.write( filename + ".mesh", ByteOrder.LITTLE_ENDIAN );
 			
 			System.out.println( (System.currentTimeMillis()-t) + " ms" );
 			

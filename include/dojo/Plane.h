@@ -42,7 +42,7 @@ namespace Dojo
 			setup( center, A, B );
 		}
 		
-		///Creates a plane with the given normal and distance
+		///Creates a plane with the given normal and distance from the origin
 		inline void setup( const Vector& normal, float distance )
 		{
 			n = normal;
@@ -54,7 +54,7 @@ namespace Dojo
 		{
 			n = ((A-center) ^ (B-center)).normalized();
 			
-			d = -( center * n);
+			d = -(center * n);
 		}
 
 		///Returns the distance of a point from the given plane

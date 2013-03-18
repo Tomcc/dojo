@@ -10,19 +10,19 @@
 using namespace Dojo;
 using namespace glm;
 
-Object::Object( GameState* parentLevel, const Vector& pos, const Vector& bbSize  ): 
+Object::Object( Object* parentObject, const Vector& pos, const Vector& bbSize  ): 
 position( pos ),
-gameState( parentLevel ),
+gameState( parentObject->getGameState() ),
 speed(0,0,0),
 active( true ),
 scale( 1,1,1 ),
 childs( NULL ),
-parent( NULL ),
+parent( parentObject ),
 dispose( false ),
 mNeedsAABB( true ),
 inheritScale( true )
 {
-	DEBUG_ASSERT( parentLevel );
+	DEBUG_ASSERT( parent );
 	
 	setSize( bbSize );
 }
@@ -142,6 +142,7 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	worldUpperBound = Vector::MIN;
 	worldLowerBound = Vector::MAX;
 	
+
 	Vector vertex;    
 	
 	for( int i = 0; i < 8; ++i )
@@ -169,14 +170,14 @@ void Object::updateWorldTransform()
 		mWorldTransform = glm::translate( mWorldTransform, parent->position );
 		mWorldTransform *= mat4_cast( parent->rotation );
 	}
-	
+
 	mWorldTransform = glm::translate( mWorldTransform, position );
-	mWorldTransform = glm::scale( mWorldTransform, scale );
 	mWorldTransform *= mat4_cast( rotation );
+	mWorldTransform = glm::scale( mWorldTransform, scale );
 
 	//update AABB if needed
 	if( mNeedsAABB )
-		_updateWorldAABB( -halfSize, halfSize );    
+		_updateWorldAABB( -halfSize, halfSize );
 }
 
 void Object::updateChilds( float dt )

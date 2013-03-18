@@ -76,6 +76,16 @@ namespace Dojo
 		{
 			return (a > b) ? a : b;
 		}
+
+		static inline int min( int a, int b )
+		{
+			return (a < b) ? a : b;
+		}
+
+		static inline int max( int a, int b )
+		{
+			return (a > b) ? a : b;
+		}
 		
 		///returns a vector which components are the component-wise max of a and b
 		static inline Vector max( const Vector& a, const Vector& b ) 

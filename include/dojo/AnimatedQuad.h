@@ -284,8 +284,6 @@ namespace Dojo
 		
 		virtual void onAction( float dt );
 		
-		virtual bool prepare( const Vector& viewportPixelRatio );
-		
 		void _updateScreenSize();
 		
 	protected:

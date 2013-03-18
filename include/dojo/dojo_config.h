@@ -76,8 +76,14 @@
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
 	#define glBlendEquation             glBlendEquationOES
 
+    #define glGenVertexArrays   glGenVertexArraysOES
+    #define glBindVertexArray   glBindVertexArrayOES
+    #define glDeleteVertexArrays     glDeleteVertexArraysOES
+
 	#define GL_FUNC_ADD GL_FUNC_ADD_OES
-	
+
+    #define GL_NONE 0
+
 #endif
 
 //general configurations
@@ -96,6 +102,8 @@
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
 #define DOJO_MAX_TEXTURE_UNITS 2
+
+#define DOJO_DISABLE_VAOS
 
 //common enums
 namespace Dojo

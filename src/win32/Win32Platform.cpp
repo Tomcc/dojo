@@ -180,8 +180,6 @@ mFramesToAdvance( 0 )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
 	*/
-	LCID lcid;
-	String bstrRetBuf;
 
 	//TODO detect locale
 	locale = "it";
@@ -406,10 +404,10 @@ void Win32Platform::initialise( Game* g )
 	if( config.isEmpty() )
 		Table::loadFromFile( &config, getAppDataPath() + "/config.ds" );
 
-	float w = Math::min( screenWidth, game->getNativeWidth() );
-	float h = Math::min( screenHeight, game->getNativeHeight() );
+	int w = Math::min( screenWidth, game->getNativeWidth() );
+	int h = Math::min( screenHeight, game->getNativeHeight() );
 
-	Vector windowSize = config.getVector("windowSize", Vector( w, h ) );
+	Vector windowSize = config.getVector("windowSize", Vector( (float)w, (float)h ) );
 	windowWidth = (int)windowSize.x;
 	windowHeight = (int)windowSize.y;
 

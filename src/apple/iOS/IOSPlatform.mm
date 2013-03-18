@@ -27,9 +27,18 @@ IOSPlatform::IOSPlatform( const Table& config ) :
 ApplePlatform( config ),
 app( NULL ),
 player( NULL )
-{
-	screenWidth = [[UIScreen mainScreen] bounds].size.width * [[UIScreen mainScreen] scale];
-    screenHeight = [[UIScreen mainScreen] bounds].size.height * [[UIScreen mainScreen] scale];
+{    
+    //store the system directories
+    mRootPath = [[NSBundle mainBundle] executablePath];
+    
+    NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	mAppDataPath = [nspaths objectAtIndex:0];
+    
+    mResourcesPath = [[NSBundle mainBundle] resourcePath ];
+    
+    //screen and window size are the same, we don't support running in subviews (todo?)
+	windowWidth = screenWidth = [[UIScreen mainScreen] bounds].size.width * [[UIScreen mainScreen] scale];
+    windowHeight = screenHeight = [[UIScreen mainScreen] bounds].size.height * [[UIScreen mainScreen] scale];
     
     screenOrientation = DO_PORTRAIT; //screen is in portrait mode by default
 }
@@ -40,10 +49,30 @@ IOSPlatform::~IOSPlatform()
 		[player release];
 }
 
-void IOSPlatform::initialise()
+void IOSPlatform::initialise( Game* newGame )
 {
-	DEBUG_ASSERT( app );
+    //do not initialize twice
+    DEBUG_ASSERT( game == nullptr );
+    DEBUG_ASSERT( newGame );
 			
+    //store the game object
+    game = newGame;
+    
+    //swap reported screen and window dimensions if the game requires a different ratio
+    if( game->getNativeOrientation() == DO_LANDSCAPE_LEFT || game->getNativeOrientation() == DO_LANDSCAPE_RIGHT )
+    {
+        std::swap( screenWidth, screenHeight );
+        std::swap( windowWidth, windowHeight );
+    }
+}
+
+void IOSPlatform::_initialiseImpl(Application *application)
+{
+    app = application;
+
+    DEBUG_ASSERT( app );
+    
+    
     uint width, height;
 		
 //RENDER
@@ -182,9 +211,14 @@ void IOSPlatform::present()
 	[context presentRenderbuffer:GL_RENDERBUFFER_OES];
 }
 
-void IOSPlatform::loop( float minstep )
+void IOSPlatform::loop()
 {
-	DEBUG_TODO;
+    //launch the iphone app
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    //TODO figure out how to bring argc and argv here
+    UIApplicationMain( 0, nullptr, nil, nil);
+    [pool release];
 }
 
 bool IOSPlatform::isSystemSoundInUse()
@@ -196,17 +230,20 @@ bool IOSPlatform::isSystemSoundInUse()
 	return otherAudioIsPlaying;
 }
 
-String IOSPlatform::getRootPath()
+const String& IOSPlatform::getRootPath()
 {
-	return String( [[NSBundle mainBundle] bundlePath] );
+    return mRootPath;
+	
 }
 
-String IOSPlatform::getAppDataPath()
+const String& IOSPlatform::getResourcesPath()
 {
-	NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString* nspath = [nspaths objectAtIndex:0];
-	
-	return String( nspath );
+    return mResourcesPath;
+}
+
+const String& IOSPlatform::getAppDataPath()
+{
+    return mAppDataPath;    
 }
 
 void IOSPlatform::openWebPage( const String& site )

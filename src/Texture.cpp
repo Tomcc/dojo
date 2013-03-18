@@ -122,6 +122,7 @@ bool Texture::loadEmpty( int width, int height, GLenum destFormat )
 {
 	DEBUG_ASSERT( width > 0 );
 	DEBUG_ASSERT( height > 0 ); 
+	DEBUG_ASSERT( destFormat > 0 );
 
 	bind(0);
 
@@ -304,7 +305,6 @@ void Texture::onUnload( bool soft )
 		if( OBB )
 		{
 			OBB->onUnload();
-			SAFE_DELETE( OBB );
 		}
 
 		if( !parentAtlas ) //don't unload parent texture!
@@ -329,7 +329,6 @@ void Texture::_buildOptimalBillboard()
 		OBB = new Mesh();
 	
 		//build or rebuild the OBB
-		OBB->setTriangleMode( Mesh::TM_STRIP );
 		OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
 		OBB->setVertexFieldEnabled( Mesh::VF_UV );
 	}

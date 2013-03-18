@@ -51,12 +51,12 @@ namespace Dojo
 			return name;	
 		}
 		
-		inline uint getNativeWidth()
+		inline int getNativeWidth()
 		{
 			return nativeWidth;
 		}
 		
-		inline uint getNativeHeight()
+		inline int getNativeHeight()
 		{
 			return nativeHeight;
 		}
@@ -78,7 +78,7 @@ namespace Dojo
 		
 	protected:
 		
-		uint nativeWidth, nativeHeight;
+		int nativeWidth, nativeHeight;
 		float mNativeFrameLength, mMaxFrameLength;
 		
 		Orientation nativeOrientation;
