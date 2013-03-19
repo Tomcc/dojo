@@ -64,6 +64,7 @@
 	#endif
 #else
 	//iOS platform - OpenglES
+	#define USING_OPENGLES
 
 	#define glGenRenderbuffers			glGenRenderbuffersOES
 	#define glGenFramebuffers			glGenFramebuffersOES
@@ -96,6 +97,7 @@
 
 #ifdef PLATFORM_ANDROID
 	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
+    #define USING_OPENGLES
 #endif
 
 //do not use the differential state commit //HACK

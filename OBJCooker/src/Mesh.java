@@ -29,9 +29,23 @@ public class Mesh {
 		public float u,v;
 	}
 	
+	class Color
+	{
+		public float r,g,b,a;
+		
+		public Color( int r, int g, int b, int a ) {
+			this.r = r / 255.f;
+			this.g = g / 255.f;
+			this.b = b / 255.f;
+			this.a = a / 255.f;
+		}
+	}
+	
 	class Vertex {
 		public Vector p, n;
 		public UV uv;
+		
+		public Color color;
 		
 		public int index;
 		
@@ -58,6 +72,7 @@ public class Mesh {
 	List< Vector > pos = new ArrayList< Vector >();
 	List< UV> uv = new ArrayList< UV >();
 	List< Vector > normal = new ArrayList< Vector >();
+	List< Color > color = new ArrayList< Color >();
 	
 	List< Vertex > vertices = new ArrayList< Vertex >();
 	
@@ -148,6 +163,14 @@ public class Mesh {
 					
 					normal.add( v );
 				}
+				else if( s.equals( "vc" ) ) { //non-standard color format #1: vc r g b a
+					int r = Integer.parseInt( tk.nextToken() );
+					int g = Integer.parseInt( tk.nextToken() );
+					int b = Integer.parseInt( tk.nextToken() );
+					int a = Integer.parseInt( tk.nextToken() );
+					
+					color.add( new Color( r,g,b,a) );
+				}
 				else if( s.equals( "f" ) ) {
 					
 					int idx[] = new int[4];
@@ -233,20 +256,8 @@ public class Mesh {
 		out.writeInt( getIndexCount() );
 				
 		//write down interleaved vertex data
-		for( int i = 0; i < vertices.size(); ++i ) {
-			Vertex v = vertices.get(i);
-			
-			out.writeFloat( v.p.x );
-			out.writeFloat( v.p.y );
-			out.writeFloat( v.p.z );
-			
-			out.writeFloat( v.n.x );
-			out.writeFloat( v.n.y );
-			out.writeFloat( v.n.z );
-
-			out.writeFloat( v.uv.u );
-			out.writeFloat( v.uv.v );
-		}
+		for( Vertex v : vertices )
+			v.writeTo( out );
 		
 		//write down index data
 		if( indexBytes == 1 ) {

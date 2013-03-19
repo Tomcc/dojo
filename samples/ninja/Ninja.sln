@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ninja", "Ninja.vcxproj", "{135FAC69-447C-42C4-AF05-F8E2D575114E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8} = {DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dojo", "..\..\Dojo.vcxproj", "{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugOptimized|Win32 = DebugOptimized|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.Debug|Win32.Build.0 = Debug|Win32
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.DebugOptimized|Win32.ActiveCfg = Debug|Win32
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.DebugOptimized|Win32.Build.0 = Debug|Win32
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.Release|Win32.ActiveCfg = Release|Win32
+		{135FAC69-447C-42C4-AF05-F8E2D575114E}.Release|Win32.Build.0 = Release|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.Debug|Win32.Build.0 = Debug|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.DebugOptimized|Win32.ActiveCfg = DebugOptimized|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.DebugOptimized|Win32.Build.0 = DebugOptimized|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.Release|Win32.ActiveCfg = Release|Win32
+		{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

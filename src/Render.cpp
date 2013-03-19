@@ -55,7 +55,7 @@ backLayer( NULL )
 	glEnable( GL_COLOR_MATERIAL );
 	
 	//on IOS this is default and the command is not supported
-#ifndef PLATFORM_IOS
+#ifndef USING_OPENGLES
 	glColorMaterial( GL_FRONT, GL_DIFFUSE );
 #endif	
 	
@@ -91,7 +91,7 @@ Render::~Render()
 
 void Render::setWireframe( bool wireframe )
 {
-#ifndef PLATFORM_IOS
+#ifndef USING_OPENGLES
 	glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
 #else
 	DEBUG_ASSERT( !"WIREFRAME IS NOT SUPPORTED ON OPENGLES AND IS A DEBUG ONLY FEATURE" );
@@ -267,8 +267,8 @@ void Render::renderElement( Renderable* s )
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf( glm::value_ptr( mCurrentView * s->getWorldTransform() ) );
 		
-	//HACK
-#ifndef PLATFORM_IOS
+	//I'm not sure this actually makes sense
+#ifndef USING_OPENGLES
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
 #endif
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );

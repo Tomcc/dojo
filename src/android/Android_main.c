@@ -59,7 +59,7 @@ extern void android_main(struct android_app* state) {
     int ident;
     int events;
     struct android_poll_source* source;
-    //waiting get window
+    //waiting to get window
     while (!ANDROID_VALID_DEVICE){
 	while ((ident = ALooper_pollAll(0, NULL, &events,(void**)&source)) >= 0){
 		if (source != NULL) source->process(state, source);
@@ -67,24 +67,35 @@ extern void android_main(struct android_app* state) {
 	}
 	usleep( 16 );
     }
+
+    LOGE("!sono passato lol1!");
     ////////////////////////////
     //GET APK (ZIP FILE)
     ANativeActivity* activity = state->activity;
     JNIEnv* env;
     (*(activity->vm))->AttachCurrentThread(activity->vm, &env, NULL);
+    LOGE("!sono passato lol1!");
     jclass clazz = (*env)->GetObjectClass(env, activity->clazz);
+    LOGE("!sono passato lol2!");
     jmethodID methodID = (*env)->GetMethodID(env, clazz, "getPackageCodePath", "()Ljava/lang/String;");
+    LOGE("!sono passato lol3!");
     jobject result = (*env)->CallObjectMethod(env, activity->clazz, methodID);
+    LOGE("!sono passato lol4!");
     jboolean isCopy;
+    LOGE("!sono passato lol5!");
     path_apk= (const char*) (*env)->GetStringUTFChars(env, (jstring)result, &isCopy);
+    LOGE("!sono passato lol6!");
     ////////////////////////////
     ////////////////////////////
     //INIT openAL/backend
+    LOGE("!sono passato lol7!");
     JNI_OnLoad(activity->vm,0);
     ////////////////////////
+    LOGE("!sono passato lol8!");
     char *argv[2];
     argv[0] = strdup("Dojo");
     argv[1] = NULL;
+    LOGE("!sono passato lol9!");
     int out=main(1, argv);
 }
 

@@ -262,12 +262,12 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 				bufptr[ size ] = 0;
 			}
 			else{
-				DEBUG_MESSAGE("can't read:"<<path.ASCII())
+				DEBUG_MESSAGE("can't read:"<<path.ASCII());
 				return 0;
 			}
 		}
 		else{
-			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII())
+			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII());
 			return 0;
 		}
 	}
