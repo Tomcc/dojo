@@ -4,9 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
-
 
 public class Mesh {
 	
@@ -31,23 +31,62 @@ public class Mesh {
 	
 	class Color
 	{
-		public float r,g,b,a;
+		public int r,g,b,a;
 		
 		public Color( int r, int g, int b, int a ) {
-			this.r = r / 255.f;
-			this.g = g / 255.f;
-			this.b = b / 255.f;
-			this.a = a / 255.f;
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
 		}
 	}
 	
 	class Vertex {
-		public Vector p, n;
-		public UV uv;
-		
+		//the order in the bytestream must be:
+		public Vector p;
 		public Color color;
+		public Vector n;
+		public UV uv;	
 		
-		public int index;
+		public int index = -1;
+		
+		public Vertex() {
+			p = null;
+			color = null;
+			n = null;
+			uv = null;
+		}
+		
+		public boolean hasColor()	{	return color != null;	}
+		public boolean hasNormal()	{	return n != null;	}
+		public boolean hasUV()		{	return uv != null;	}
+		
+		public void writeTo( EndiannessFilterStream out ) throws IOException {
+			
+			//write out the existing attributes
+			assert( p != null );
+			out.writeFloat( p.x );
+			out.writeFloat( p.y );
+			out.writeFloat( p.z );
+			
+			if( color != null ) {
+				out.write( color.r );
+				out.write( color.g );
+				out.write( color.b );
+				out.write( color.a );
+			}
+			
+			if( n != null ) {
+				out.writeFloat( n.x );
+				out.writeFloat( n.y );
+				out.writeFloat( n.z );
+			}
+			
+			if( uv != null ) {
+				out.writeFloat( uv.u );
+				out.writeFloat( uv.v );
+			}
+		}		
 		
 		public boolean equals( Object o ) {
 			if( o.getClass() != this.getClass() )
@@ -55,7 +94,12 @@ public class Mesh {
 			
 			Vertex v = (Vertex)o;
 			
-			return v.p == p && v.uv == uv && v.n == n;
+			//shallow comparisons are ok because attributes are unique
+			return v.p == p && v.uv == uv && v.n == n && v.color == color;
+		}
+		
+		public int hashCode() {
+			return p.hashCode() + (uv != null ? uv.hashCode() : 0 ) + (color != null ? color.hashCode() : 0 ) + (n != null ? n.hashCode() : 0 );
 		}
 	}
 	
@@ -75,11 +119,18 @@ public class Mesh {
 	List< Color > color = new ArrayList< Color >();
 	
 	List< Vertex > vertices = new ArrayList< Vertex >();
+	HashSet< Vertex > verticesSet = new HashSet< Vertex >();
 	
 	List< Face > face = new ArrayList< Face >();
 	
 	Vector max = new Vector( -Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE );
 	Vector min = new Vector( Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE );
+	
+	int positionIdx = -1;
+	int colorIdx = -1;
+	int normalIdx = -1;
+	int uvIdx = -1;
+	int assignedFieldIdx = 0;
 	
 	public Mesh( String infile ) throws IOException {
 		parse( infile );
@@ -95,25 +146,52 @@ public class Mesh {
 	
 	public int addOrRetrieveIndex( Vertex v ) {
 		
-		int idx = vertices.indexOf( v );
-		
-		if( idx == -1 ) { //new, add to the list
-			idx = vertices.size();
-			
-			vertices.add( v );
-			v.index = idx;
-		}
-		
-		return idx;
+		 int idx = vertices.indexOf( v );
+         
+         if( idx == -1 ) { //new, add to the list
+                 idx = vertices.size();
+                 
+                 vertices.add( v );
+                 v.index = idx;
+         }
+         
+         return idx;
 	}
 	
 	public int parseVertex( StringTokenizer tk ) {
 		Vertex v = new Vertex();
-		
-		//retrieve values
-		v.p = pos.get( Integer.parseInt( tk.nextToken("/ ") )-1 );
-		v.uv = uv.get( Integer.parseInt( tk.nextToken("/ ") )-1 );
-		v.n = normal.get( Integer.parseInt( tk.nextToken("/ ") )-1 );
+	
+		String listString = tk.nextToken(" ") + "/"; //adds / to end the last index without special cases
+		StringBuffer curIdx = new StringBuffer();
+		int currentField = 0;
+		for( int i = 0; i < listString.length(); ++i ) {
+			
+			char c = listString.charAt(i);
+			//grab the current idx
+			if( c == '/' )
+			{
+				if( curIdx.length() > 0 ) { //if it has no lenght, skip this field
+				
+					int idx = Integer.parseInt( curIdx.toString() )-1;
+					
+					if( currentField == positionIdx )
+						v.p = pos.get( idx );
+					else if( currentField == colorIdx )
+						v.color = color.get( idx );
+					else if( currentField == normalIdx )
+						v.n = normal.get( idx );
+					else if( currentField == uvIdx )
+						v.uv = uv.get( idx );
+					else
+						assert( false ); //error!
+				}
+				
+				curIdx = new StringBuffer();
+				++currentField;
+			}
+			else
+				curIdx.append( c );
+		}
 		
 		//max and min
 		max.x = Math.max( v.p.x, max.x );
@@ -123,6 +201,10 @@ public class Mesh {
 		min.x = Math.min( v.p.x, min.x );
 		min.y = Math.min( v.p.y, min.y );
 		min.z = Math.min( v.p.z, min.z );
+		
+		//print some status
+		if( vertices.size() % 100 == 0 )
+			System.out.println( vertices.size() );
 								
 		//find its index
 		return addOrRetrieveIndex( v );
@@ -145,14 +227,20 @@ public class Mesh {
 					v.z = Float.parseFloat( tk.nextToken() );
 					
 					pos.add( v );
-				}
-				else if( s.equals( "vt" ) ) {
-					UV v = new UV();
 					
-					v.u = Float.parseFloat( tk.nextToken() );
-					v.v = 1.f - Float.parseFloat( tk.nextToken() );
-										
-					uv.add( v );					
+					if( positionIdx < 0 )
+						positionIdx = assignedFieldIdx++;  ///assign the order of this field
+				}
+				else if( s.equals( "vc" ) ) { //non-standard color format #1: vc r g b a
+					int r = Integer.parseInt( tk.nextToken() );
+					int g = Integer.parseInt( tk.nextToken() );
+					int b = Integer.parseInt( tk.nextToken() );
+					int a = Integer.parseInt( tk.nextToken() );
+					
+					color.add( new Color( r,g,b,a) );
+					
+					if( colorIdx < 0 )
+						colorIdx = assignedFieldIdx++;
 				}
 				else if( s.equals( "vn" ) ) {
 					Vector v = new Vector();
@@ -162,14 +250,20 @@ public class Mesh {
 					v.z = Float.parseFloat( tk.nextToken() );
 					
 					normal.add( v );
-				}
-				else if( s.equals( "vc" ) ) { //non-standard color format #1: vc r g b a
-					int r = Integer.parseInt( tk.nextToken() );
-					int g = Integer.parseInt( tk.nextToken() );
-					int b = Integer.parseInt( tk.nextToken() );
-					int a = Integer.parseInt( tk.nextToken() );
 					
-					color.add( new Color( r,g,b,a) );
+					if( normalIdx < 0 )
+						normalIdx = assignedFieldIdx++;
+				}
+				else if( s.equals( "vt" ) ) {
+					UV v = new UV();
+					
+					v.u = Float.parseFloat( tk.nextToken() );
+					v.v = 1.f - Float.parseFloat( tk.nextToken() );
+										
+					uv.add( v );
+					
+					if( uvIdx < 0 )
+						uvIdx = assignedFieldIdx++;
 				}
 				else if( s.equals( "f" ) ) {
 					
@@ -234,9 +328,11 @@ public class Mesh {
 		out.write(0);  //2D
 		out.write(1);  //3D
 		
-		out.write(0); //COLOR
-		out.write(1); //NORMAL
-		out.write(1); //UV0
+		//all the vertices MUST be the same, so the first vertex is ok to get the fields
+		Vertex firstvertex = vertices.get(0);
+		out.write( firstvertex.hasColor() ? 1 : 0 ); //COLOR
+		out.write( firstvertex.hasNormal() ? 1 : 0 ); //NORMAL
+		out.write( firstvertex.hasUV() ? 1 : 0 ); //UV0
 		out.write(0); //UV1
 
 		//max
