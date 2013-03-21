@@ -18,11 +18,11 @@ nativeOrientation( r ),
 mNativeFrameLength( nativedt ),
 mMaxFrameLength( maximumdt )
 {	
-	DEBUG_ASSERT( name.size() );
-	DEBUG_ASSERT( w >= 0 );
-	DEBUG_ASSERT( h >= 0 );
-	DEBUG_ASSERT( mNativeFrameLength > 0 );
-	DEBUG_ASSERT( mMaxFrameLength >= mNativeFrameLength );
+	DEBUG_ASSERT( name.size(), "A Game must have a non-empty name" );
+	DEBUG_ASSERT( w >= 0, "negative width" );
+	DEBUG_ASSERT( h >= 0, "negative height"  );
+	DEBUG_ASSERT( mNativeFrameLength > 0, "the Native Frame Lenght must be greater than 0 seconds" );
+	DEBUG_ASSERT( mMaxFrameLength >= mNativeFrameLength, "the native frame lenght must be less or equal than the max frame length" );
 
 	Platform* p = Platform::getSingleton();
 

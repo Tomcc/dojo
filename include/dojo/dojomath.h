@@ -102,7 +102,7 @@ namespace Dojo
 		///clamps n between max and min
 		static inline float clamp( float n, float max, float min )
 		{
-			DEBUG_ASSERT( max >= min );
+			DEBUG_ASSERT( max >= min, "clamp: max must be >= than min" );
 			
 			if( n > max )	return max;
 			if( n < min )	return min;
@@ -112,7 +112,7 @@ namespace Dojo
 		///gets the nth bit in the mask i
 		static inline bool getBit( int i, byte n )
 		{
-			DEBUG_ASSERT( n < 32 );
+			DEBUG_ASSERT( n < 32, "getBit: byte number was more than 32" );
 			
 			return (i >> n) & 0x1;
 		}
@@ -120,7 +120,7 @@ namespace Dojo
 		///sets the nth bit of the mask i
 		static int setBit( int i, int n, bool state )
 		{
-			DEBUG_ASSERT( n < 32 );
+			DEBUG_ASSERT( n < 32, "setBit: byte number was more than 32" );
 			
 			if( state )
 				return i | ( 0x1 << n );

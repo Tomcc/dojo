@@ -30,9 +30,9 @@ namespace Dojo
 				if( mEnd < 0 )
 					mEnd = mBase.size();
 
-				DEBUG_ASSERT( mStart >= 0 );
-				DEBUG_ASSERT( mEnd >= 0 );
-				DEBUG_ASSERT( mStart <= mEnd );
+				DEBUG_ASSERT( mStart >= 0, "Range start was negative" );
+				DEBUG_ASSERT( mEnd >= 0, "Range end was negative" );
+				DEBUG_ASSERT( mStart <= mEnd, "Flipped range start and end (end < start)" );
 			}
 			
 			iterator begin() const;
@@ -69,7 +69,7 @@ namespace Dojo
 			const iterator& operator++ ()
 			{
 				//don't allow to increase after the end
-				DEBUG_ASSERT( pos < range.mBase.size() );
+				DEBUG_ASSERT( pos < range.mBase.size(), "Iterator was increased past the end of the range" );
 
 				++pos;
 				// although not strictly necessary for a range-based for loop
@@ -91,7 +91,7 @@ namespace Dojo
 		 */
 		Array(int firstPageSize = 64, int newPageSize = 64, int validElements = 0)
 		{
-			DEBUG_ASSERT( validElements*sizeof(T) <= (size_t)firstPageSize );
+			DEBUG_ASSERT( validElements <= (size_t)firstPageSize, "The first page must contain at least 'validElements' elements" );
 			
 			pageSize = newPageSize;			
 			elements = validElements;
@@ -109,8 +109,7 @@ namespace Dojo
 		vectorArray( buffer ),
 		arraySize( size )
 		{
-			DEBUG_ASSERT( elements );
-			DEBUG_ASSERT( size );
+			DEBUG_ASSERT( size <= 0, "Array constructor: size is negative" );
 			
 			elements = arraySize / sizeof( T );
 			
@@ -195,8 +194,8 @@ namespace Dojo
 		 */
 		FV_INLINE void remove(int index)
 		{
-			DEBUG_ASSERT( size() > index );
-			DEBUG_ASSERT( index >= 0 );
+			DEBUG_ASSERT( size() > index, "index is past the end of the Array" );
+			DEBUG_ASSERT( index >= 0, "index is negative" );
 			
 			--elements;
 			
@@ -222,8 +221,8 @@ namespace Dojo
 		///removes an element at index shifting each other subsequent element by 1
 		FV_INLINE void removeOrdered( int index )
 		{
-			DEBUG_ASSERT( size() > index );
-			DEBUG_ASSERT( index >= 0 );
+			DEBUG_ASSERT( size() > index, "removeOrdered: OOB index" );
+			DEBUG_ASSERT( index >= 0, "removeOrdered: index is negative" );
 			
 			if(index < size()-1)
 			{
@@ -249,7 +248,7 @@ namespace Dojo
 		///removes the back (top if used like a stack) element of the vector
 		FV_INLINE void pop()
 		{
-			DEBUG_ASSERT( size() );
+			DEBUG_ASSERT( size(), "pop: Vector is empty" );
 			
 			elements--;
 		}
@@ -257,7 +256,7 @@ namespace Dojo
 		///returns the top/back element of the vector
 		FV_INLINE T& top()
 		{
-			DEBUG_ASSERT( size() );
+			DEBUG_ASSERT( size(), "top: Vector is empty" );
 			
 			return vectorArray[ elements-1 ];
 		}
@@ -295,8 +294,8 @@ namespace Dojo
 		
 		FV_INLINE T& operator[] (int index) const
 		{
-			DEBUG_ASSERT( index < size() );
-			DEBUG_ASSERT( index >= 0 );
+			DEBUG_ASSERT( size() > index, "operator[]: OOB index" );
+			DEBUG_ASSERT( index >= 0, "operator[]: index is negative" );
 			
 			return vectorArray[ index ];
 		}
@@ -364,7 +363,7 @@ namespace Dojo
 			//reallocate the memory
 			vectorArray = (T*)realloc( vectorArray, sizeof(T) * arraySize );
 
-			DEBUG_ASSERT( vectorArray );
+			DEBUG_ASSERT( vectorArray, "Array could not be extended" );
 		}
 		
 	};

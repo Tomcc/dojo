@@ -26,37 +26,10 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat )
 };
 
-
-inline void checkGLError()
-{
-	String err;
-	GLenum g = glGetError();
-
-	switch(g)
-	{
-	case GL_NO_ERROR:
-		return;
-	case GL_INVALID_ENUM:           err = "GL_INVALID_ENUM";        break;
-	case GL_INVALID_VALUE:          err = "GL_INVALID_VALUE";       break;
-	case GL_INVALID_OPERATION:		err = "GL_INVALID_OPERATION";   break;
-	case GL_STACK_OVERFLOW:         err = "GL_STACK_OVERFLOW";      break;
-	case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
-	case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
-	};
-
-	DEBUG_ASSERT_MSG( g == GL_NO_ERROR, ( "OpenGL encountered an error: " + err ).ASCII().c_str() );
-}
-
-#ifndef _DEBUG
-	#define CHECK_GL_ERROR	checkGLError()
-#else
-	#define CHECK_GL_ERROR
-#endif
-
 ///Tells the buffer to allocate at least "vertices" vertices
 void Mesh::setVertexCap( uint count )
 {
-	DEBUG_ASSERT( vertexCount <= indexMaxValue ); //check indexability
+	DEBUG_ASSERT( count <= indexMaxValue, "setVertexCap: the requested cap is too high and can't be indexed with the current indices size" );
 
 	if( count < vertexMaxCount ) //no need to grow the buffer
 		return;
@@ -102,7 +75,7 @@ void Mesh::setIndexCap( uint count )
 
 void Mesh::_prepareVertex( float x, float y, float z )
 {
-	DEBUG_ASSERT( isEditing() );
+	DEBUG_ASSERT( isEditing(), "_prepareVertex: this Mesh is not in Edit mode" );
 
 	//grow the buffer to the needed size			
 	if( vertexCount >= vertexMaxCount )
@@ -270,7 +243,7 @@ void Mesh::bind()
 
 bool Mesh::onLoad()
 {
-	DEBUG_ASSERT( !isLoaded() );
+	DEBUG_ASSERT( !isLoaded(), "onLoad: Mesh is already loaded" );
 
 	if( !isReloadable() )
 		return false;
@@ -279,7 +252,7 @@ bool Mesh::onLoad()
 	char* data;
 	Platform::getSingleton()->loadFileContent( data, filePath );
 		
-	DEBUG_ASSERT( data );
+	DEBUG_ASSERT_INFO( data, "onLoad: cannot find or read file", "path = " + filePath );
 	
 	char* ptr = data;
 	

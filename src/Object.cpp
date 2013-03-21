@@ -22,7 +22,7 @@ dispose( false ),
 mNeedsAABB( true ),
 inheritScale( true )
 {
-	DEBUG_ASSERT( parent );
+	DEBUG_ASSERT( parent, "Null parent provided: any Object needs to have a non-null parent, except GameState" );
 	
 	setSize( bbSize );
 }
@@ -34,7 +34,7 @@ Object::~Object()
 
 void Object::addChild( Object* o )
 {    
-	DEBUG_ASSERT( o );
+	DEBUG_ASSERT( o, "Child to add is null" );
 	
 	if( !childs )
 		childs = new ChildList(10,10);
@@ -53,7 +53,7 @@ void Object::addChild( Renderable* o, int layer )
 
 void Object::_unregisterChild( Object* child )
 {
-	DEBUG_ASSERT( child );
+	DEBUG_ASSERT( child, "Child to remove is null" );
 	
 	child->_notifyParent( NULL );
 	
@@ -62,8 +62,8 @@ void Object::_unregisterChild( Object* child )
 
 void Object::removeChild( int i )
 {	
-	DEBUG_ASSERT( hasChilds() );
-	DEBUG_ASSERT( childs->size() > i );
+	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
+	DEBUG_ASSERT( childs->size() > i && i >= 0, "Child index is OOB" );
 	
 	Object* child = childs->at( i );
 	
@@ -78,8 +78,8 @@ void Object::removeChild( int i )
 
 void Object::removeChild( Object* o )
 {
-	DEBUG_ASSERT( o );
-	DEBUG_ASSERT( hasChilds() );
+	DEBUG_ASSERT( o, "Child to remove is null" );
+	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
 	
 	int i = childs->getElementIndex( o );
 	
@@ -89,8 +89,8 @@ void Object::removeChild( Object* o )
 
 void Object::destroyChild( int i )
 {
-	DEBUG_ASSERT( hasChilds() );
-	DEBUG_ASSERT( childs->size() > i );
+	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
+	DEBUG_ASSERT( childs->size() > i && i >= 0, "Child index is OOB" );
 
 	Object* child = childs->at( i );
 
@@ -103,8 +103,8 @@ void Object::destroyChild( int i )
 
 void Object::destroyChild( Object* o )
 {
-	DEBUG_ASSERT( o );
-	DEBUG_ASSERT( hasChilds() );
+	DEBUG_ASSERT( o, "Child to destroy is null" );
+	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
 	
 	int i = childs->getElementIndex( o );
 	

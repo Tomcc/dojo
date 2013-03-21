@@ -35,7 +35,6 @@
     <ClInclude Include="include\dojo\dojomath.h" />
     <ClInclude Include="include\dojo\dojo_common_header.h" />
     <ClInclude Include="include\dojo\dojo_config.h" />
-    <ClInclude Include="include\dojo\Email.h" />
     <ClInclude Include="include\dojo\ApplicationListener.h" />
     <ClInclude Include="include\dojo\Font.h" />
     <ClInclude Include="include\dojo\FontSystem.h" />
@@ -86,7 +85,6 @@
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
-    <ClCompile Include="src\Email.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />
     <ClCompile Include="src\Game.cpp" />

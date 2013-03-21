@@ -48,7 +48,7 @@ namespace Dojo
 		
 		inline void startFade( const Color& start, const Color& end, float duration )
 		{			
-			DEBUG_ASSERT( duration > 0 );
+			DEBUG_ASSERT( duration > 0, "The duration of a fade must be greater than 0" );
 			
 			fadeStartColor = start;
 			fadeEndColor = end;			

@@ -45,7 +45,7 @@ zFar( 1000 )
 
 void Viewport::addFader( int layer )
 {
-	DEBUG_ASSERT( !fadeObject );
+	DEBUG_ASSERT( !fadeObject, "A fade overlay object already exists" );
 
 	//create the fader object			
 	fadeObject = new Renderable( getGameState(), Vector( 0,0, -1), "texturedQuad" );
@@ -65,9 +65,7 @@ void Viewport::lookAt(  const Vector& worldPos )
 }
 
 void Viewport::setBackgroundSprite( const String& name, float frameTime )
-{			
-	DEBUG_ASSERT( name.size() );
-	
+{
 	if( background )
 		destroyChild( background );
 	
@@ -89,9 +87,9 @@ void Viewport::setBackgroundSprite( const String& name, float frameTime )
 void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 {
 	//assert some reasonable values
-	DEBUG_ASSERT( _zNear > 0 );
-	DEBUG_ASSERT( _zNear < _zFar );
-	DEBUG_ASSERT( _VFOV > 0 && _VFOV < 180 );
+	DEBUG_ASSERT( _zNear > 0, "Z near value cannot be negative or 0" );
+	DEBUG_ASSERT( _zNear < _zFar, "Z far cannot be less than Z near" );
+	DEBUG_ASSERT( _VFOV > 0 && _VFOV < 180, "Vertical FOV has to be in the range ]0..180[" );
 
 	VFOV = _VFOV;
 	zNear = _zNear;
@@ -167,7 +165,7 @@ bool Viewport::isContainedInFrustum( Renderable* r )
 	//HACK
 	return true;
 
-	DEBUG_ASSERT( r );
+	DEBUG_ASSERT( r, "The passed renderable was null" );
 
 	Vector halfSize = (r->getWorldMax() - r->getWorldMin()) * 0.5f;
 	Vector worldPos = r->getWorldPosition();

@@ -34,7 +34,7 @@ namespace Dojo
 
 		inline static  Platform* getSingleton()
 		{
-			DEBUG_ASSERT( singleton );
+			DEBUG_ASSERT( singleton, "The Platform singleton was not created, use Platform::create() to create it" );
 
 			return singleton;
 		}	
@@ -52,7 +52,7 @@ namespace Dojo
 		///add a format that will be recognized as a zip package by the file loader
 		inline void addZipFormat( const String& ext )
 		{
-			DEBUG_ASSERT( ext.size() );
+			DEBUG_ASSERT( ext.size(), "addZipFormat: empty format string" );
 			mZipExtensions.push_back( ext );
 		}
 
@@ -126,15 +126,15 @@ namespace Dojo
 		
 		inline void addApplicationListener( ApplicationListener* f )
 		{
-			DEBUG_ASSERT( f );
-			DEBUG_ASSERT( !focusListeners.exists( f ) );
+			DEBUG_ASSERT( f, "addApplicationListener: null listener passed" );
+			DEBUG_ASSERT( !focusListeners.exists( f ), "addApplicationListener: this listener is already registered" );
 
 			focusListeners.add( f );
 		}
 
 		inline void removeApplicationListener( ApplicationListener* f )
 		{
-			DEBUG_ASSERT( f  );
+			DEBUG_ASSERT( f, "removeApplicationListener: null listener passed" );
 
 			focusListeners.remove( f );
 		}

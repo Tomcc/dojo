@@ -13,11 +13,15 @@ std::stringstream  debug_stream_android;
 #endif
 
 //the default assert fail implementation
-void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file )
+void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char* info, int line, const char* file, const char* function )
 {
 	DEBUG_MESSAGE( "Assertion failed: " << desc );
 	DEBUG_MESSAGE( "Condition is false: " << arg );
-	DEBUG_MESSAGE( "Line: " << file << " @ " << line );
+	
+	if( info )
+		DEBUG_MESSAGE( "with " << info );
+
+	DEBUG_MESSAGE( "Function: " << function << " in " << file << " @ " << line );
 
 	//either catch this as a breakpoint in the debugger or abort (if not debugged)
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_OSX )
@@ -28,8 +32,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, 
 	raise( SIGTRAP );
 #elif defined( PLATFORM_ANDROID )
 	//https://groups.google.com/forum/#!msg/android-ndk/jZG9avVjDBY/22WaArngxqYJ
-	//__asm__ ("bkpt 0");	
-	//TODO implement something
+	//__asm__ ("bkpt 0");
 	raise( SIGTRAP ); 
 #else
 	#error unsupported platform
@@ -52,10 +55,8 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* li
 			case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
 			case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
 		};
-		DEBUG_MESSAGE( ( "OpenGL encountered an error: " + err+" line:"+line_source+" file:"+file_source ).ASCII().c_str() );
-	}
-	if(glerror){ 
-		DEBUG_ASSERT_MSG(0,"OpenGL encountered");
+
+		DEBUG_FAIL( ("OpenGL encountered an error: " + err+" line:"+line_source+" file:"+file_source ).ASCII().c_str() );
 	}
 }
 

@@ -18,7 +18,7 @@ size(0),
 buffer( AL_NONE ),
 mDuration( 0 )
 {
-	DEBUG_ASSERT( creator );
+	DEBUG_ASSERT( creator, "SoundBuffer needs a creator object" );
 }
 
 SoundBuffer::~SoundBuffer()
@@ -28,17 +28,17 @@ SoundBuffer::~SoundBuffer()
 
 bool SoundBuffer::onLoad()
 {
-	DEBUG_ASSERT( isLoaded() == false );
+	DEBUG_ASSERT( isLoaded() == false, "The SoundBuffer is already loaded" );
 
 	alGenBuffers(1,&buffer);
 	
-	DEBUG_ASSERT( buffer );
+	DEBUG_ASSERT( buffer, "OpenAL error, cannot gen a new buffer" );
 
 	ALenum error = alGetError();
 	
 	String ext = Utils::getFileExtension( filePath );
 	
-	DEBUG_ASSERT( ext == String( "ogg" ) );
+	DEBUG_ASSERT( ext == String( "ogg" ), "Sound file extension is not ogg" );
 	
 	size = _loadOggFromFile();
 			
@@ -58,7 +58,7 @@ bool SoundBuffer::onLoad()
 
 void SoundBuffer::onUnload(bool soft)
 {
-	DEBUG_ASSERT( isLoaded() );
+	DEBUG_ASSERT( isLoaded(), "SoundBuffer is not loaded" );
 
 	if( !soft || isReloadable() )
 	{
@@ -133,7 +133,7 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 	
 	int error = ov_open_callbacks( &src, &file, NULL, 0, callbacks );
 	
-	DEBUG_ASSERT( error == 0 );
+	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
 	
 	info = ov_info( &file, -1 );
 	
@@ -166,15 +166,15 @@ int SoundBuffer::_loadOggFromMemory( void * buf, int sz )
 		else
 			totalRead += read;
 
-		DEBUG_ASSERT( totalRead <= uncompressedSize ); //this should always be true
+		DEBUG_ASSERT( totalRead <= uncompressedSize, "Total read bytes overflow the extimated buffer" ); //this should always be true
 
 	} while( !corrupt );
 	
-	DEBUG_ASSERT( totalRead > 0 );
+	DEBUG_ASSERT( totalRead > 0, "No audio bytes were read from the stream" );
 	
 	alBufferData( buffer, format, uncompressedData, totalRead, bitrate );
 	
-	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
+	DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "alBufferData error, cannot load a SoundBuffer" );
 	
 	free( uncompressedData );
 	
@@ -186,7 +186,7 @@ int SoundBuffer::_loadOggFromFile()
 	char* buf;
 	int sz = Platform::getSingleton()->loadFileContent( buf, filePath );
 	
-	DEBUG_ASSERT( sz );
+	DEBUG_ASSERT( sz, "Cannot load an ogg from file", "path = " + filePath );
 	
 	_loadOggFromMemory( buf, sz );
 	

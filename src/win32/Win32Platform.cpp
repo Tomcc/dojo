@@ -352,7 +352,7 @@ void Win32Platform::_setFullscreen( bool fullscreen )
 
 		LONG ret = ChangeDisplaySettings( &dm, CDS_FULLSCREEN );
 
-		DEBUG_ASSERT( ret == DISP_CHANGE_SUCCESSFUL );
+		DEBUG_ASSERT( ret == DISP_CHANGE_SUCCESSFUL, "Win32 error: cannot start fullscreen mode" );
 
 		//WARNING MoveWindow can change backbuffer size
 		MoveWindow(hwnd, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
@@ -378,7 +378,7 @@ void Win32Platform::setFullscreen( bool fullscreen )
 void Win32Platform::initialise( Game* g )
 {
 	game = g;
-	DEBUG_ASSERT( game );
+	DEBUG_ASSERT( game, "The Game implementation passed to initialise() can't be null" );
 
 	//init appdata folder
 	TCHAR szPath[MAX_PATH];
@@ -535,7 +535,7 @@ void Win32Platform::step( float dt )
 		
 		bool success = wglShareLists(hglrc, c) != 0;
 
-		DEBUG_ASSERT( success );
+		DEBUG_ASSERT( success, "WGL Error: cannot share the OpenGL Context with the helper thread" );
 
 		*(mContextRequestsQueue.front()) = c; //assing back to the caller thread
 
@@ -555,7 +555,7 @@ void Win32Platform::step( float dt )
 
 void Win32Platform::loop()
 {
-	DEBUG_ASSERT( game );
+	DEBUG_ASSERT( game, "A game must be specified when starting the main loop" );
 
 	frameInterval = game->getNativeFrameLength();
 
@@ -759,7 +759,6 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 
 const String& Win32Platform::getAppDataPath()
 {
-	DEBUG_ASSERT( mAppDataPath.size() );
 	return mAppDataPath;
 }
 

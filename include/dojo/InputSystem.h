@@ -105,7 +105,7 @@ namespace Dojo
 		and sends an event about its connection to the listeners */
 		inline void addDevice( InputDevice* device )
 		{
-			DEBUG_ASSERT( !mDeviceList.exists( device ) );
+			DEBUG_ASSERT( !mDeviceList.exists( device ), "addDevice: this device was already registered" );
 
 			mDeviceList.add( device );
 
@@ -117,7 +117,7 @@ namespace Dojo
 		and sends an event about its disconnection to the listeners */
 		inline void removeDevice( InputDevice* device )
 		{
-			DEBUG_ASSERT( mDeviceList.exists( device ) );
+			DEBUG_ASSERT( mDeviceList.exists( device ), "removeDevice: this device was not registered" );
 
 			_fireDeviceDisconnected( device );
 
@@ -126,7 +126,7 @@ namespace Dojo
 		
 		inline void addListener( Listener* l )
 		{
-			DEBUG_ASSERT( l );
+			DEBUG_ASSERT( l != nullptr, "addListener: null listener passed " );
 			
 			if( l->getSource() == NULL )
 			{
@@ -137,7 +137,7 @@ namespace Dojo
 		
 		inline void removeListener( Listener* l )
 		{
-			DEBUG_ASSERT( l );
+			DEBUG_ASSERT( l != nullptr, "removeListener: null listener passed " );
 			
 			if( l->getSource() == this )
 			{
@@ -232,7 +232,7 @@ namespace Dojo
 		{
 			int idx = _getExistingTouchID( point );
 
-			DEBUG_ASSERT( idx >= 0 );
+			DEBUG_ASSERT( idx >= 0, "Needed to remove an existing touch but it was not found" );
 
 			Touch* t = mTouchList[idx];
 			

@@ -11,8 +11,8 @@ using namespace Dojo;
 
 void Font::_blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 {
-	DEBUG_ASSERT( dest );
-	DEBUG_ASSERT( bitmap );
+	DEBUG_ASSERT( dest, "null destination buffer" );
+	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
 	uint rowy, idx;
 	if( bitmap->pixel_mode != FT_PIXEL_MODE_MONO )
@@ -51,8 +51,8 @@ void Font::_blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 
 void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
 {
-	DEBUG_ASSERT( dest );
-	DEBUG_ASSERT( bitmap );
+	DEBUG_ASSERT( dest, "null destination buffer" );
+	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
 	uint rowy;
 	byte* ptr;
@@ -79,8 +79,8 @@ void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint dest
 
 void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics )
 {
-	DEBUG_ASSERT( p );
-	DEBUG_ASSERT( metrics );
+	DEBUG_ASSERT( p, "Character needs a non-null parent Page" );
+	DEBUG_ASSERT( metrics, "null FreeType font metrics" );
 
 	float fsx = (float)sx;
 	float fsy = (float)sy;
@@ -116,7 +116,7 @@ firstCharIdx( index * FONT_CHARS_PER_PAGE ),
 font( f ),
 texture( NULL )
 {
-	DEBUG_ASSERT( font );
+	DEBUG_ASSERT( font, "Page needs a non-null parent font" );
 
 	texture = new Texture();
 }
@@ -256,6 +256,8 @@ Font::~Font()
 
 bool Font::onLoad()
 {
+	DEBUG_ASSERT( !isLoaded(), "onLoad: this font is already loaded" );
+
 	Table t;
 	Platform::getSingleton()->load( &t, filePath );
 
@@ -279,8 +281,6 @@ bool Font::onLoad()
 	Table* preload = t.getTable( "preloadedPages" );
 	for( int i = 0; i < preload->getAutoMembers(); ++i )
 		getPage( preload->getInt( i ) );
-
-	DEBUG_ASSERT( !isLoaded() );
 
 	//load existing pages that were trimmed during a previous unload
 	for( auto& pair : pages )
@@ -311,9 +311,9 @@ void Font::onUnload( bool soft )
 
 float Font::getKerning( Character* next, Character* prev )
 {
-	DEBUG_ASSERT( kerning );
-	DEBUG_ASSERT( next );
-	DEBUG_ASSERT( prev );
+	DEBUG_ASSERT( kerning, "getKerning: kerning is not enabled on this font" );
+	DEBUG_ASSERT( next, "getKerning: next was null" );
+	DEBUG_ASSERT( prev, "getKerning: prev was null" );
 
 	FT_Vector vec;
 

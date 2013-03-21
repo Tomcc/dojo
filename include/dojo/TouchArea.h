@@ -51,7 +51,7 @@ namespace Dojo
                 
         inline void setListener( Listener* l )
         {
-            DEBUG_ASSERT( l );
+            DEBUG_ASSERT( l, "cannot set a null listener" );
     
             listener = l;
         }

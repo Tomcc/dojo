@@ -57,12 +57,12 @@ namespace Dojo
 		*/
 		inline int registerAnimation( FrameSet* set, float timePerFrame = -1 )
 		{
-			DEBUG_ASSERT( set );
+			DEBUG_ASSERT( set != nullptr, "registering a null frameset" );
 
 			if( timePerFrame < 0 )
 				timePerFrame = set->getPreferredAnimationTime();
 
-			DEBUG_ASSERT( timePerFrame >= 0 );
+			DEBUG_ASSERT( timePerFrame >= 0, "the time per frame of an animation can't be negative" );
 						
 			Animation* a = new Animation( set, timePerFrame );
 		
@@ -83,8 +83,8 @@ namespace Dojo
 		{
 			mAnimationIdx = i;
 
-			DEBUG_ASSERT( mAnimationIdx >= 0 );
-			DEBUG_ASSERT( animations.size() > mAnimationIdx );
+			DEBUG_ASSERT( mAnimationIdx >= 0, "negative animation index" );
+			DEBUG_ASSERT( animations.size() > mAnimationIdx, "OOB animation index" );
 			
 			if( animation )
 				animation->_unset();

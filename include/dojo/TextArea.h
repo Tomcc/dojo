@@ -156,7 +156,7 @@ namespace Dojo
 		///get the layer assigned to this texture
 		inline Renderable* _getLayer( Texture* tex )
 		{
-			DEBUG_ASSERT( tex );
+			DEBUG_ASSERT( tex, "Cannot get a layer for a null texture" );
 
 			//find this layer in the already assigned, or get new
 			for( int i = 0; i < busyLayers.size(); ++i )

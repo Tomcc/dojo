@@ -42,7 +42,7 @@ namespace Dojo
 			///Sets up an existing animation with frames from FrameSet, advancing frame each timePerFrame seconds
 			inline void setup( FrameSet* set, float tpf )
 			{
-				DEBUG_ASSERT( tpf >= 0 );
+				DEBUG_ASSERT( tpf >= 0, "Cannot set a negative time per frame" );
 				
 				animationTime = 0;
 				timePerFrame = tpf;			
@@ -104,10 +104,12 @@ namespace Dojo
 			}
 			
 			///forces the animation to display a frame
-			inline void setFrame( uint i )
+			/**
+			if i is out of bounds, it will be wrapped on the existing frames.
+			*/
+			inline void setFrame( int i )
 			{
-				DEBUG_ASSERT( frames );
-				DEBUG_ASSERT( frames->getFrameNumber() > i );
+				DEBUG_ASSERT( frames, "Animation has no frames" );
 				
 				currentFrame = frames->getFrame( i );
 				
@@ -117,7 +119,7 @@ namespace Dojo
 			///forces the animation to a given time
 			inline void setAnimationTime( float t )
 			{				
-				DEBUG_ASSERT( frames );
+				DEBUG_ASSERT( frames, "Animation has no frames" );
 				
 				if( timePerFrame == 0 )
 					return;
@@ -177,7 +179,7 @@ namespace Dojo
 		///forces an animation with the given frameSet
 		inline void immediateAnimation( FrameSet* s, float timePerFrame )
 		{
-			DEBUG_ASSERT( s );
+			DEBUG_ASSERT( s, "immediateAnimation: setting a NULL animation" );
 			
 			animation->setup( s, timePerFrame );
 			
@@ -197,7 +199,7 @@ namespace Dojo
 		
 		inline FrameSet* getFrameSet()
 		{
-			DEBUG_ASSERT( animation );
+			DEBUG_ASSERT( animation != nullptr, "getFrameSet: no animation set" );
 			
 			return animation->frames;
 		}
@@ -227,8 +229,7 @@ namespace Dojo
 		///forces the animation to a given time
 		inline void setAnimationTime( float t )
 		{
-			DEBUG_ASSERT( t >= 0 );
-			DEBUG_ASSERT( animation );
+			DEBUG_ASSERT( animation != nullptr, "setAnimationTime: no animation set" );
 			
 			animation->setAnimationTime( t );
 			
@@ -240,7 +241,7 @@ namespace Dojo
 		\param t a ratio value where 0 is animation start and 1 is animation end; a value outside [0..1] will make the animation loop. */
 		inline void setAnimationPercent( float t )
 		{
-			DEBUG_ASSERT( animation );
+			DEBUG_ASSERT( animation != nullptr, "setAnimationPercent: no animation set" );
 			
 			setAnimationTime( t * animation->getTotalTime() );
 		}
@@ -248,13 +249,12 @@ namespace Dojo
 		///advances the current animation and changes the current texture if the frame was changed
 		inline void advanceAnim( float dt )		
 		{				
-			DEBUG_ASSERT( animation );
+			DEBUG_ASSERT( animation != nullptr, "advanceAnim: no animation set" );
 					
 			//active animation?
 			if( animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0 )		
 			{
-				DEBUG_ASSERT( animation->frames ); 
-				DEBUG_ASSERT( animation->frames->getFrameNumber() );
+				DEBUG_ASSERT( animation->frames->getFrameNumber() > 0, "advanceAnim: the current Animation has no frames" );
 				
 				//update the renderState using the animation
 				animation->advance( dt * animationSpeedMultiplier );	
@@ -264,10 +264,9 @@ namespace Dojo
 		}
 		
 		///forces a to display the FrameSet frame i of the current Animation
-		inline void setFrame( uint i )
+		inline void setFrame( int i )
 		{
-			DEBUG_ASSERT( animation );
-			DEBUG_ASSERT( animation->frames );
+			DEBUG_ASSERT( animation != nullptr, "setFrame: no animation set" );
 			
 			animation->setFrame( i );
 			
@@ -277,7 +276,7 @@ namespace Dojo
 		///sets the speed multiplier that is used by advanceFrame. m = 1 means normal speed, m = 2 double speed, ...
 		inline void setAnimationSpeedMultiplier( float m )
 		{
-			DEBUG_ASSERT( m >= 0 );
+			DEBUG_ASSERT( m >= 0, "setAnimationSpeedMultiplier: multiplier must be >= 0" );
 			
 			animationSpeedMultiplier = m;
 		}

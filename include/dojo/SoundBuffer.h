@@ -30,8 +30,8 @@ namespace Dojo
 			size( sz ),
 			pointer( 0 )
 			{
-				DEBUG_ASSERT( data );
-				DEBUG_ASSERT( size );
+				DEBUG_ASSERT( data, "null data passed" );
+				DEBUG_ASSERT( size >= 0, "Invalid <= 0 size" );
 			}
 			
 			static size_t read( void* out, size_t size, size_t count, void* source );

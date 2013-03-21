@@ -16,8 +16,6 @@
 #include "Vector.h"
 #include "Color.h"
 
-#define MESH_MAX_TEXTURES 8
-
 namespace Dojo 
 {
 	///A Mesh is the only primitive Dojo can render.
@@ -136,11 +134,11 @@ namespace Dojo
 		*/
 		inline void setIndexByteSize( byte bytenumber )
 		{
-			DEBUG_ASSERT( !indices );
+			DEBUG_ASSERT( !indices, "setIndexByteSize must be called BEFORE begin!" );
 			DEBUG_ASSERT( 
 				bytenumber == 1 || 
 				bytenumber == 2 || 
-				bytenumber == 4 );
+				bytenumber == 4, "setIndexByteSize: byteNumber must be either 1,2 or 4" );
 
 			indexByteSize = bytenumber;
 
@@ -156,11 +154,11 @@ namespace Dojo
 			}
 			else if( indexByteSize == 4 )
 			{
-#ifndef PLATFORM_IOS
+#ifdef DOJO_32BIT_INDICES_AVAILABLE
 				indexGLType = GL_UNSIGNED_INT;
 				indexMaxValue = 0xffffffff;
 #else
-				DEBUG_ASSERT( !"32 BIT INDICES NOT SUPPORTED ON OES" );
+				DEBUG_FAIL( "32 BIT INDICES NOT SUPPORTED" );
 #endif
 			}
 		}		
@@ -168,7 +166,7 @@ namespace Dojo
 		///enables a new VertexField
 		void setVertexFieldEnabled( VertexField f )
 		{
-			DEBUG_ASSERT( !vertices );
+			DEBUG_ASSERT( !vertices, "setVertexFieldEnabled must be called BEFORE begin!" );
 
 			vertexFields[f] = true;
 			vertexSize += VERTEX_FIELD_SIZES[ f ];
@@ -227,8 +225,8 @@ namespace Dojo
 		inline void begin( uint extimatedVerts = 1 )
 		{			
 			//be sure that we aren't already building
-			DEBUG_ASSERT( extimatedVerts > 0 );
-			DEBUG_ASSERT( !isEditing() );
+			DEBUG_ASSERT( extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0" );
+			DEBUG_ASSERT( !isEditing(), "begin: this Mesh is already in Edit mode" );
 
 			//the buffer is too small for extimated vertex count?
 			setVertexCap( extimatedVerts );
@@ -246,7 +244,7 @@ namespace Dojo
 		///starts the update after the last added vertex - useful for sequential updates
 		inline void append()
 		{
-			DEBUG_ASSERT( !isEditing() );
+			DEBUG_ASSERT( !isEditing(), "append: this Mesh is already in Edit mode" );
 
 			currentVertex = vertices + vertexSize * (vertexCount-1);
 
@@ -267,7 +265,7 @@ namespace Dojo
 		///sets the uv of the given UV set				
 		inline void uv( float u, float v, byte set = 0 )
 		{			
-			DEBUG_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing(), "uv: this Mesh is not in Edit mode" );
 			
 			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV + set ] );
 			ptr[0] = u;
@@ -277,7 +275,7 @@ namespace Dojo
 		///sets the color of the current vertex		
 		inline void color( float r, float g, float b, float a  )
 		{		
-			DEBUG_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing(), "color: this Mesh is not in Edit mode" );
 			
 			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
 			ptr[0] = (GLubyte)(r*255);
@@ -294,7 +292,7 @@ namespace Dojo
 		///adds a vertex at the given position
 		inline void normal( float x, float y, float z )
 		{		
-			DEBUG_ASSERT( isEditing() );
+			DEBUG_ASSERT( isEditing(), "normal: this Mesh is not in Edit mode" );
 			
 			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_NORMAL ] );
 			
@@ -311,8 +309,8 @@ namespace Dojo
 		///adds one index
 		inline void index( uint idx )
 		{		
-			DEBUG_ASSERT( isEditing() );
-			DEBUG_ASSERT( idx <= indexMaxValue );
+			DEBUG_ASSERT( isEditing(), "index: this Mesh is not in Edit mode" );
+			DEBUG_ASSERT( idx <= indexMaxValue, "index: the index passed is too big to be contained in this mesh's index format, see setIndexByteSize" );
 			
 			if( indexCount >= indexMaxCount )
 				setIndexCap( indexCount + 1 );
@@ -360,7 +358,7 @@ namespace Dojo
 		
 		virtual void onUnload( bool soft = false )
 		{
-			DEBUG_ASSERT( isLoaded() );
+			DEBUG_ASSERT( isLoaded(), "onUnload: Mesh is not loaded" );
 
 			//when soft unloading, only unload file-based meshes
 			if( !soft || isReloadable() )
@@ -413,9 +411,10 @@ namespace Dojo
 		}
 				
 		///returns a pointer to the memory of the vertex with index i
-		inline float* _getVertex( uint i )
+		inline float* _getVertex( int i )
 		{			
-			DEBUG_ASSERT( i < vertexCount );
+			DEBUG_ASSERT( i >= 0, "i is negative" );
+			DEBUG_ASSERT( i < vertexCount, "i is OOB" );
 			
 			return (float*)(vertices + vertexSize * i);
 		}

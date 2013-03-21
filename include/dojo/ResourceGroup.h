@@ -66,8 +66,8 @@ namespace Dojo
 		*/
 		void setLocale( const Dojo::String& locID, const Dojo::String& fallbackLocaleID )
 		{
-			DEBUG_ASSERT( locID.size() );
-			DEBUG_ASSERT( fallbackLocaleID.size() );
+			DEBUG_ASSERT( locID.size(), "setLocale: the locale was an empty string" );
+			DEBUG_ASSERT( fallbackLocaleID.size(), "setLocale: the fallback locale was an empty string" );
 
 			locale = locID;
 			fallbackLocale = fallbackLocaleID;
@@ -108,8 +108,8 @@ namespace Dojo
 		
 		inline void addFrameSet( FrameSet* set, const String& name )
 		{
-			DEBUG_ASSERT( !getFrameSet( name ) );
-			DEBUG_ASSERT( !finalized );
+			DEBUG_ASSERT_INFO( !getFrameSet( name ), "A FrameSet with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 			
 			frameSets[name] = set;
 			
@@ -118,8 +118,8 @@ namespace Dojo
 		
 		inline void addFont( Font* f, const String& name )
 		{
-			DEBUG_ASSERT( !getFont( name ) );
-			DEBUG_ASSERT( !finalized );
+			DEBUG_ASSERT_INFO( !getFont( name ), "A Sound with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 			
 			fonts[name] = f;
 			
@@ -128,8 +128,8 @@ namespace Dojo
 		
 		inline void addMesh( Mesh* m, const String& name )
 		{
-			DEBUG_ASSERT( !getMesh( name ) );
-			DEBUG_ASSERT( !finalized );
+			DEBUG_ASSERT_INFO( !getMesh( name ), "A Mesh with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 			
 			meshes[ name ] = m;
 			
@@ -138,8 +138,8 @@ namespace Dojo
 		
 		inline void addSound( SoundSet* sb, const String& name )
 		{
-			DEBUG_ASSERT( !getSound( name ) );
-			DEBUG_ASSERT( !finalized );
+			DEBUG_ASSERT_INFO( !getSound( name ), "A Sound with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 			
 			sounds[ name ] = sb;
 			
@@ -151,7 +151,7 @@ namespace Dojo
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		inline void addSubgroup( ResourceGroup* g )
 		{
-			DEBUG_ASSERT( g );
+			DEBUG_ASSERT( g != nullptr, "Adding a null subgroup" );
 			
 			subs.add( g );
 		}
@@ -159,7 +159,7 @@ namespace Dojo
 		///removes a subgroup
 		inline void removeSubgroup( ResourceGroup* g )
 		{
-			DEBUG_ASSERT( g );
+			DEBUG_ASSERT( g != nullptr, "Removing a null subgroup" );
 			
 			subs.remove( g );
 		}
@@ -194,6 +194,8 @@ namespace Dojo
 
 		inline FrameSet* getFrameSet( const String& name )
 		{
+			DEBUG_ASSERT( name.size(), "getFrameSet: empty name provided" );
+
 			return find< FrameSet >( name, RT_FRAMESET );
 		}
 		
@@ -206,21 +208,25 @@ namespace Dojo
 		
 		inline Font* getFont( const String& name )
 		{
+			DEBUG_ASSERT( name.size(), "getFont: empty name provided" );
 			return find< Font >( name, RT_FONT );
 		}
 		
 		inline Mesh* getMesh( const String& name )
 		{
+			DEBUG_ASSERT( name.size(), "getMesh: empty name provided" );
 			return find< Mesh >( name, RT_MESH );
 		}
 
 		inline SoundSet* getSound( const String& name )
 		{
+			DEBUG_ASSERT( name.size(), "getSound: empty name provided" );
 			return find< SoundSet >( name, RT_SOUND );
 		}
 		
 		inline Table* getTable( const String& name )
 		{
+			DEBUG_ASSERT( name.size(), "getTable: empty name provided" );
 			return find< Table >( name, RT_TABLE );
 		}
 		

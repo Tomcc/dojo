@@ -71,7 +71,7 @@ namespace Dojo
 			Entry( FieldType fieldType ) :
 			type( fieldType )
 			{
-				DEBUG_ASSERT( type <= FT_TABLE );
+
 			}
 					
 			virtual ~Entry()
@@ -179,7 +179,7 @@ namespace Dojo
 		///sets the Table name
 		inline void setName( const String& newName )
 		{
-			DEBUG_ASSERT( newName.size() > 0 );
+			DEBUG_ASSERT( newName.size() > 0, "Setting an empty Table name" );
 
 			name = newName;
 		}
@@ -200,9 +200,10 @@ namespace Dojo
 			}
 
 			String partialKey = key.substr( dotIdx+1 );
-			Table* child = getTable( key.substr( 0, dotIdx ) );
+			String childName = key.substr( 0, dotIdx );
+			Table* child = getTable( childName );
 
-			DEBUG_ASSERT( child->size() );
+			DEBUG_ASSERT_INFO( child->size() > 0, "A part of a dot-formatted key referred to a non-existing table", "childName = " + childName );
 
 			return child->getParentTable( partialKey, realKey );
 		}
@@ -227,7 +228,7 @@ namespace Dojo
 		{			
 			String actualKey;
 			Table* t = getParentTable( key, actualKey );
-			DEBUG_ASSERT( t ); //cannot add a key to a non-existing table
+			DEBUG_ASSERT( t != nullptr, "Cannot add a key to a non-existing table" );
 
 			//actually set the key on the right table
 			t->setImpl( actualKey, type, value );
@@ -270,10 +271,10 @@ namespace Dojo
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		inline void set( const String& key, void* value, uint size, bool managed = false )
+		inline void set( const String& key, void* value, int size, bool managed = false )
 		{
-			DEBUG_ASSERT( value );
-			DEBUG_ASSERT( size );
+			DEBUG_ASSERT( value, "Setting a NULL Data value" );
+			DEBUG_ASSERT( size >= 0, "Setting a Data value size <= 0" );
 
 			set(key, FT_DATA, Data( value, size ) );
 		}
@@ -320,7 +321,7 @@ namespace Dojo
 		*/
 		void inherit( Table* t )
 		{
-			DEBUG_ASSERT( t );
+			DEBUG_ASSERT( t != nullptr, "Cannot inherit a null Table" );
 
 			//for each map member of the other map
 			EntryMap::iterator itr = t->map.begin(),
@@ -372,7 +373,7 @@ namespace Dojo
 		///returns true if this Table contains key
 		inline bool exists( const String& key ) const
 		{
-			DEBUG_ASSERT( key.size() );
+			DEBUG_ASSERT( key.size(), "exists: key is empty" );
 
 			return map.find( key ) != map.end();
 		}
@@ -473,7 +474,8 @@ namespace Dojo
 		
 		inline String autoMemberName( int idx ) const 
 		{
-			DEBUG_ASSERT( idx < getAutoMembers() );
+			DEBUG_ASSERT( idx >= 0, "autoMemberName: idx is negative" );
+			DEBUG_ASSERT_INFO( idx < getAutoMembers(), "autoMemberName: idx is OOB", String("idx = ") + idx );
 			
 			return '_' + String( idx );
 		}

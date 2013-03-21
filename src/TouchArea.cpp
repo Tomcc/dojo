@@ -13,7 +13,7 @@ mPressed( false ),
 mTouches( 0 ),
 mLayer( layer )
 {
-    DEBUG_ASSERT( listener );
+    DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
     
     mNeedsAABB = true;
     state->addTouchArea( this );
@@ -26,7 +26,7 @@ mPressed( false ),
 mTouches( 0 ),
 mLayer( r->getLayer() )
 {
-    DEBUG_ASSERT( listener );
+    DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
     
     mNeedsAABB = true;
     getGameState()->addTouchArea( this );

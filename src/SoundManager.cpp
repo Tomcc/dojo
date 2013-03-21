@@ -27,18 +27,18 @@ currentFadeTime(0)
 	// Initialization
 	device = alcOpenDevice(NULL); // select the "preferred device"
 	
-	DEBUG_ASSERT( device );
+	DEBUG_ASSERT( device, "Cannot open an OpenAL device" );
 
 	context = alcCreateContext(device,NULL);
 		
-	DEBUG_ASSERT( context );
+	DEBUG_ASSERT( context, "Cannot create an OpenAL context" );
 		
 	alcMakeContextCurrent(context);
 
 	alGetError();
 
 	//preload sounds
-	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN );
+	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN, "Min source number cannot be > Max source number" );
 
 	//create at least MIN sources, the rest will be lazy-loaded
 	for( int i = 0; i < NUM_SOURCES_MIN; ++i )
@@ -52,7 +52,7 @@ currentFadeTime(0)
 			break;
 	}
 
-	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN ); //ensure at least MIN sources have been built
+	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN, "OpenAL could not preload at least NUM_SOURCES_MIN sources" ); //ensure at least MIN sources have been built
 
 	//dummy source to manage source shortage
 	fakeSource = new SoundSource( this, 0 );
@@ -60,7 +60,7 @@ currentFadeTime(0)
 	setListenerPosition( Vector::ZERO );
 	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
 
-	DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
+	DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "OpenAL error, unable to setup OpenAL" );
 }
 
 SoundManager::~SoundManager()
@@ -77,7 +77,7 @@ SoundManager::~SoundManager()
 
 SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
 {
-	DEBUG_ASSERT( set );
+	DEBUG_ASSERT( set, "Cannot get a source for a null SoundSet" );
 
 	//try to lazy-create a new source, if allowed
 	if( idleSoundPool.isEmpty() && busySoundPool.size() < NUM_SOURCES_MAX )
@@ -105,7 +105,7 @@ SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
 
 void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 {
-	DEBUG_ASSERT( next );
+	DEBUG_ASSERT( next, "null music source passed" );
 
 	//override music activation if the system sound is in use
 	if( isMusicFading() || Platform::getSingleton()->isSystemSoundInUse() )
@@ -121,7 +121,7 @@ void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 
 void SoundManager::setMasterVolume( float volume )
 {	
-	DEBUG_ASSERT( volume >= 0 );
+	DEBUG_ASSERT( volume >= 0, "Volumes cannot be negative" );
 
 	masterVolume = volume;
 

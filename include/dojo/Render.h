@@ -75,15 +75,15 @@ namespace Dojo {
 		
 		inline void addLight( Light* l )
 		{
-			DEBUG_ASSERT( l );
-			DEBUG_ASSERT( lights.size() < RENDER_MAX_LIGHTS );
+			DEBUG_ASSERT( l, "addLight: null light passed" );
+			DEBUG_ASSERT( lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)" );
 			
 			lights.add( l );
 		}
 		
 		inline void removeLight( Light* l )
 		{
-			DEBUG_ASSERT( l );
+			DEBUG_ASSERT( l, "removeLight: null light passed" );
 			
 			lights.remove( l );	
 			

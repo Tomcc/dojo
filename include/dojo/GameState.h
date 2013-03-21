@@ -43,7 +43,7 @@ namespace Dojo
 		///Registers an existing TouchArea in this GameState
         inline void addTouchArea( TouchArea* t )
         {
-            DEBUG_ASSERT( t );
+            DEBUG_ASSERT( t != nullptr, "addTouchArea: area passed was null" );
             
             mTouchAreas.add( t );
         }
@@ -51,7 +51,7 @@ namespace Dojo
         ///Unregisters an existing TouchArea in this GameState
         inline void removeTouchArea( TouchArea* t )
         {
-            DEBUG_ASSERT( t );
+            DEBUG_ASSERT( t != nullptr, "removeTouchArea: area passed was null" );
             
             mTouchAreas.remove( t );
         }

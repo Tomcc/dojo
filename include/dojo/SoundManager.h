@@ -28,11 +28,11 @@ namespace Dojo {
 
 			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
 			{
-				DEBUG_ASSERT( ALpos );
+				DEBUG_ASSERT( ALpos, "null AL position vector" );
 				
-				*ALpos++ = vector.x/m;
-				*ALpos++ = vector.y/m;
-				*ALpos = 0;
+				ALpos[0] = vector.x/m;
+				ALpos[1] = vector.y/m;
+				ALpos[2] = 0;
 			}
 
 			SoundManager();
@@ -60,7 +60,7 @@ namespace Dojo {
 			///Returns a sound source ready to play a new sound, with the position already set
 			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
 			{
-				DEBUG_ASSERT( set );
+				DEBUG_ASSERT( set, "Getting a Source for a NULL sound" );
 				
 				SoundSource* s = getSoundSource( set );
 				s->setPosition( pos );
@@ -71,7 +71,7 @@ namespace Dojo {
 			///Plays the given set without spatial positioning
 			inline SoundSource* playSound( SoundSet* set )
 			{
-				DEBUG_ASSERT( set );
+				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				 
 				SoundSource* s = getSoundSource( set );
 				s->play();
@@ -81,7 +81,7 @@ namespace Dojo {
 			///Plays the given set at pos
 			inline SoundSource* playSound( const Vector& pos, SoundSet* set )
 			{
-				DEBUG_ASSERT( set );
+				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				
 				SoundSource* s = getSoundSource( pos, set );
 				s->play();
@@ -96,7 +96,7 @@ namespace Dojo {
 			
 			inline void pauseMusic()
 			{
-                DEBUG_ASSERT( isMusicPlaying() );
+                DEBUG_ASSERT( isMusicPlaying(), "pauseMusic: music is not playing" );
                 
 				musicTrack->pause();
 			}
@@ -120,7 +120,7 @@ namespace Dojo {
 
 			inline void setMusicVolume( float volume )			
 			{	
-				DEBUG_ASSERT( volume >= 0 );
+				DEBUG_ASSERT( volume >= 0, "setMusicVolume: volume is negative" );
 				
 				musicVolume = volume;	
 

@@ -1,14 +1,15 @@
 #ifndef DebugUtils_h__
 #define DebugUtils_h__ 
 
-
 #ifdef _DEBUG
+	
+	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
+	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).ASCII().c_str() )
+	#define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, NULL )
+	#define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
-	#define DEBUG_ASSERT_MSG( T, MSG ) {if( !(T) ) { Dojo::gp_assert_handler( MSG, #T, __LINE__, __FILE__ ); }}
-	#define DEBUG_ASSERT( T ) DEBUG_ASSERT_MSG( T, "No description" )
-
-	#define DEBUG_TODO DEBUG_ASSERT_MSG( false, "METHOD NOT IMPLEMENTED" )
-	#define DEBUG_FAIL DEBUG_ASSERT_MSG( false, "This should never happen and is likely due to a bug" )
+	#define DEBUG_TODO DEBUG_ASSERT( false, "METHOD NOT IMPLEMENTED" )
+	#define DEBUG_FAIL( MSG ) DEBUG_ASSERT( false, MSG )
 	//fix...
 	#if defined( __ANDROID__ )	
 		#include <sstream>
@@ -47,7 +48,7 @@
 #endif
 
 //a delete to ensure the deleted object was valid
-#define SAFE_DELETE( T ) { DEBUG_ASSERT( T ); delete T; T = NULL; }
+#define SAFE_DELETE( T ) { DEBUG_ASSERT( T, "Deleting a NULL pointer" ); delete T; T = NULL; }
 
 //synonyms
 #define DEBUG_DEPRECATED DEBUG_TODO
@@ -56,13 +57,13 @@
 namespace Dojo
 {
 	///the assertion handler type
-	typedef void (*AssertHandlerPtr)(const char*, const char*, int, const char*);
+	typedef void (*AssertHandlerPtr)(const char*, const char*, const char*, int, const char*, const char* );
 
 	///the globally define assertion handler pointer
 	extern AssertHandlerPtr gp_assert_handler;
 
 	///the default assertion handler
-	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, int line, const char* file );
+	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char*, int line, const char* file, const char* function );
 	
 	///the default openGL assertion handler
 	void DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* line_source);

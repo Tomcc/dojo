@@ -72,8 +72,8 @@ void RenderState::applyState()
 
 void RenderState::commitChanges( RenderState* pastState )
 {
-	DEBUG_ASSERT( pastState );
-	DEBUG_ASSERT( mesh );
+	DEBUG_ASSERT( pastState, "the past RenderState is null" );
+	DEBUG_ASSERT( mesh, "A mesh is required to setup a new renderstate" );
 
 	//always bind color as it is just not expensive
 	glColor4f( color.r, color.g, color.b, color.a );

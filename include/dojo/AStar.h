@@ -37,7 +37,7 @@ namespace Dojo
 
 			void addEdge( Node* b )
 			{
-				DEBUG_ASSERT( b );
+				DEBUG_ASSERT( b, "addEdge: Node must not be NULL" );
 				edges.add( b );
 			}
 
@@ -188,15 +188,15 @@ namespace Dojo
 
 		inline float _distance( Node* A, Node* B )
 		{
-			DEBUG_ASSERT( A );
-			DEBUG_ASSERT( B );
+			DEBUG_ASSERT( A, "A Node is NULL" );
+			DEBUG_ASSERT( B, "B Node is NULL" );
 
 			return A->position.distance( B->position );
 		}
 
 		inline Node* _nearest( const Graph& set, const Vector& pos )
 		{
-			DEBUG_ASSERT( set.size() ); //at least one node is needed
+			DEBUG_ASSERT( set.size(), "Can't find a nearest Node on an empty set" );
 
 			float minDistance = FLT_MAX;
 			Node* nearest = nullptr;

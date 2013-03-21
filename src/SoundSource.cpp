@@ -40,7 +40,7 @@ SoundSource::~SoundSource()
 
 void SoundSource::setVolume( float v )
 {	
-	DEBUG_ASSERT( v >= 0 );
+	DEBUG_ASSERT( v >= 0, "Sound volumes cannot be negative" );
 	
 	volume = v * mgr->getMasterVolume();
 	

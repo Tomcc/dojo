@@ -85,16 +85,16 @@ namespace Dojo
 
 		inline void addListener( Listener* l )
 		{
-			DEBUG_ASSERT( l );
-			DEBUG_ASSERT( !pListeners.exists( l ) );
+			DEBUG_ASSERT( l, "Adding a null listener" );
+			DEBUG_ASSERT( !pListeners.exists( l ), "The listener is already registered" );
 
 			pListeners.add( l );
 		}
 
 		inline void removeListener( Listener* l )
 		{
-			DEBUG_ASSERT( l );
-			DEBUG_ASSERT( pListeners.exists( l ) );
+			DEBUG_ASSERT( l, "The passed listener is NULL");
+			DEBUG_ASSERT( pListeners.exists( l ), "The listened to be removed is not registered" );
 
 			pListeners.remove( l );
 		}

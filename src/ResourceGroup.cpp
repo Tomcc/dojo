@@ -58,9 +58,9 @@ void ResourceGroup::addLocalizedFolder( const String& basefolder, int version )
 
 void ResourceGroup::addTable( Table* t )
 {
-	DEBUG_ASSERT( t );
-	DEBUG_ASSERT( !getTable( t->getName() ) );
-	DEBUG_ASSERT( !finalized );
+	DEBUG_ASSERT( t != nullptr, "addTable: Table is null" );
+	DEBUG_ASSERT( !getTable( t->getName() ), "addTable: a table with this name was already added" );
+	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 	
 	tables[ t->getName() ] = t;
 	
@@ -69,10 +69,8 @@ void ResourceGroup::addTable( Table* t )
 
 void ResourceGroup::addSets( const String& subdirectory, int version )
 {
-	//add all the sets in the given folder
-	
-	DEBUG_ASSERT( subdirectory.size() );
-	DEBUG_ASSERT( version >= 0 );
+	DEBUG_ASSERT( subdirectory.size(), "addSets: folder path is empty" );
+	DEBUG_ASSERT( version >= 0, "addSets: negative versions are invalid" );
 	
 	std::vector< String > paths;
 	String name, lastName;
@@ -150,8 +148,8 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 void ResourceGroup::addFonts( const String& subdirectory, int version )
 {
 	//add all the sets in the given folder
-	DEBUG_ASSERT( subdirectory.size() );
-	DEBUG_ASSERT( version >= 0 );
+	DEBUG_ASSERT( subdirectory.size(), "addFonts: folder path is empty" );
+	DEBUG_ASSERT( version >= 0, "addFonts: negative versions are invalid" );
 	
 	String name;
 	std::vector<String> paths;

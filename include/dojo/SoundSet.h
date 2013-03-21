@@ -37,8 +37,8 @@ namespace Dojo
 		///returns a random buffer (-1) or the one at index i
 		inline SoundBuffer* getBuffer( int i = -1 )
 		{
-			DEBUG_ASSERT( buffers.size() );
-			DEBUG_ASSERT( (int)buffers.size() > i );
+			DEBUG_ASSERT( buffers.size(), "This SoundSet is empty" );
+			DEBUG_ASSERT_INFO( (int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + String( i ) );
 
 			if( i < 0 )
 			{
@@ -57,7 +57,7 @@ namespace Dojo
 
 		inline void addBuffer( SoundBuffer* b )
 		{
-			DEBUG_ASSERT( b );
+			DEBUG_ASSERT( b, "Adding a NULL SoundBuffer" );
 			
 			buffers.add( b );
 		}

@@ -48,7 +48,7 @@ namespace Dojo
 		filePath( path ),
 		pDataProvider( NULL )
 		{
-			DEBUG_ASSERT( path.size() );
+			DEBUG_ASSERT( path.size(), "The file path is empty" );
 		}
 
 		Resource( ResourceGroup* group, DataProvider* source ) :
@@ -57,13 +57,13 @@ namespace Dojo
 		size( 0 ),
 		pDataProvider( source )
 		{
-			DEBUG_ASSERT( source );
+			DEBUG_ASSERT( source, "The DataProvider is NULL" );
 		}
 		
 		virtual ~Resource()
 		{
 			//must be unloaded at this point
-			DEBUG_ASSERT( loaded == false );
+			DEBUG_ASSERT( loaded == false, "A Resource was destroyed without being unloaded before (resource leak!)" );
 		}
 		
 		virtual bool onLoad()=0;

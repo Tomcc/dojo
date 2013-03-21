@@ -117,8 +117,8 @@ namespace Dojo
 		
 		inline void _notifyOwnerFrameSet( FrameSet* s )
 		{
-			DEBUG_ASSERT( ownerFrameSet == NULL );
-			DEBUG_ASSERT( s );
+			DEBUG_ASSERT( ownerFrameSet == NULL, "Tried to set an owner on an already owned Texture" );
+			DEBUG_ASSERT( s, "Tried to set a NULL owner on a Texture");
 			
 			ownerFrameSet = s;
 		}

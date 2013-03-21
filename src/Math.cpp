@@ -24,15 +24,13 @@ float Math::random()
 
 float Math::rangeRandom( float min, float max )
 {
+	DEBUG_ASSERT( min <= max, "The min end of a random range must be less or equal than the max end" );
+
 	return ((float)rand()/(float)RAND_MAX)*(max-min) + min;
 }
 
 Vector Math::randomVector( const Vector& min, const Vector& max )
 {
-	DEBUG_ASSERT( min.x < max.x );
-	DEBUG_ASSERT( min.y < max.y );
-	DEBUG_ASSERT( min.z < max.z );
-
 	return Vector(
 		rangeRandom( min.x,max.x ), 
 		rangeRandom( min.y,max.y ), 
@@ -41,9 +39,6 @@ Vector Math::randomVector( const Vector& min, const Vector& max )
 
 Vector Math::randomVector2D( const Vector& min, const Vector& max, float z )
 {
-	DEBUG_ASSERT( min.x < max.x );
-	DEBUG_ASSERT( min.y < max.y );
-
 	return Vector(
 		rangeRandom( min.x,max.x ), 
 		rangeRandom( min.y,max.y ), 

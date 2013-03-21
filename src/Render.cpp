@@ -36,9 +36,9 @@ backLayer( NULL )
 	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
 	DEBUG_MESSAGE ("version: OpenGL " << glGetString (GL_VERSION));
 	
-	//clean errors
-	DEBUG_ASSERT( glGetError() == 0 );
-	glGetError();
+	//clean errors (some drivers leave errors on the stack)
+	CHECK_GL_ERROR;
+	CHECK_GL_ERROR;
 	
 	glEnable( GL_RESCALE_NORMAL );
 	glEnable( GL_NORMALIZE );
@@ -79,6 +79,8 @@ backLayer( NULL )
 	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
 	
 	setDefaultAmbient( Color::BLACK );
+
+	CHECK_GL_ERROR;
 }
 
 Render::~Render()
@@ -185,7 +187,7 @@ void Render::removeRenderable( Renderable* s )
 
 void Render::setViewport( Viewport* v )		
 {	
-	DEBUG_ASSERT( v );
+	DEBUG_ASSERT( v, "Cannot set a null Viewport" );
 	
 	viewport = v;
 }	
@@ -218,8 +220,8 @@ void Render::setInterfaceOrientation( Orientation o )
 
 void Render::startFrame()
 {	
-	DEBUG_ASSERT( !frameStarted );
-	DEBUG_ASSERT( viewport );
+	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
+	DEBUG_ASSERT( viewport, "Rendering requires a Viewport to be set" );
 
 	platform->acquireContext();
 	
@@ -252,8 +254,8 @@ void Render::startFrame()
 
 void Render::renderElement( Renderable* s )
 {
-	DEBUG_ASSERT( frameStarted );
-	DEBUG_ASSERT( viewport );
+	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
+	DEBUG_ASSERT( viewport, "Rendering requires a Viewport to be set" );
 
 	frameVertexCount += s->getMesh()->getVertexCount();
 	frameTriCount += s->getMesh()->getTriangleCount();
@@ -300,7 +302,7 @@ void Render::renderElement( Renderable* s )
 
 void Render::endFrame()
 {			
-	DEBUG_ASSERT( frameStarted );
+	DEBUG_ASSERT( frameStarted, "Tried to end rendering but the frame was not started" );
 	
 	platform->present();
 	

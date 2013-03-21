@@ -143,7 +143,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 	else 
 		remainder = String::EMPTY;
 
-	DEBUG_ASSERT_MSG( remainder.find( String(".zip") ) == String::npos, "Error: nested zips are not supported!" );
+	DEBUG_ASSERT( remainder.find( String(".zip") ) == String::npos, "Error: nested zips are not supported!" );
 
 	//has this zip been already loaded?
 	ZipFileMapping::const_iterator elem = mZipFileMaps.find( zipPath );
@@ -279,7 +279,7 @@ String Platform::_getTablePath( Table* dest, const String& absPath )
 {
 	if( absPath.size() == 0 )
 	{
-		DEBUG_ASSERT( dest->hasName() );
+		DEBUG_ASSERT( dest->hasName(), "Cannot get a path for an unnamed table" );
 		
 		//look for this file inside the prefs
 		return getAppDataPath() + '/' + dest->getName() + ".ds";
@@ -290,7 +290,7 @@ String Platform::_getTablePath( Table* dest, const String& absPath )
 
 void Platform::load( Table* dest, const String& absPath )
 {
-	DEBUG_ASSERT( dest );
+	DEBUG_ASSERT( dest, "Destination table is null" );
 	
 	using namespace std;
 	
@@ -302,7 +302,7 @@ void Platform::load( Table* dest, const String& absPath )
 
 void Platform::save( Table* src, const String& absPath )
 {
-	DEBUG_ASSERT( src );
+	DEBUG_ASSERT( src, "The table to be saved is null" );
 	
 	using namespace std;
 	
@@ -320,7 +320,7 @@ void Platform::save( Table* src, const String& absPath )
 		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
 		DEBUG_MESSAGE( path.ASCII() );
 	}
-	DEBUG_ASSERT( f );
+	DEBUG_ASSERT( f, "Cannot open a file for saving" );
 	
 	std::string utf8; //TODO a real UTF8 conversion
 

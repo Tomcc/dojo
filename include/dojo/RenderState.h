@@ -51,7 +51,7 @@ namespace Dojo
 
 			void applyTransform()
 			{
-				DEBUG_ASSERT( optTransform );
+				DEBUG_ASSERT( optTransform, "Tried to apply a non-existing texture transform" );
 
 				glMatrixMode( GL_TEXTURE );
 				glLoadMatrixf( glm::value_ptr( *optTransform ) );
@@ -148,7 +148,7 @@ namespace Dojo
 		
 		inline void setMesh( Mesh* m )
 		{			
-			DEBUG_ASSERT( m );
+			DEBUG_ASSERT( m, "setMesh requires a non-null mesh" );
 
 			mesh = m;
 		}
@@ -159,8 +159,8 @@ namespace Dojo
 		*/
 		inline void setTexture( Texture* tex, int ID = 0 )
 		{
-			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
+			DEBUG_ASSERT( ID >= 0, "Passed a negative texture ID to setTexture()" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 
 			if( textures[ID] == NULL ) //adding a new one
 			{                
@@ -177,8 +177,8 @@ namespace Dojo
 				
 		inline Texture* getTexture( int ID = 0 )
 		{
-			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
+			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative texture ID" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 	
 			if( textures[ID] )
 				return textures[ID]->texture;
@@ -188,8 +188,8 @@ namespace Dojo
 
 		inline TextureUnit* getTextureUnit( int ID )
 		{
-			DEBUG_ASSERT( ID >= 0 );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS );
+			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative textureUnit" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 
 			return textures[ID];
 		}
@@ -206,7 +206,7 @@ namespace Dojo
 		///returns the "weight" of the changes needed to pass from "this" to "s"
 		inline uint getDistance( RenderState* s )
 		{
-			DEBUG_ASSERT( s );
+			DEBUG_ASSERT( s, "getDistance: The input RenderState is null" );
 			
 			uint dist = 0;
 			

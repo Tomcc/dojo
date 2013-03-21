@@ -7,7 +7,8 @@ using namespace Dojo;
 
 void Table::loadFromFile( Table* dest, const String& path )
 {
-	DEBUG_ASSERT( path.size() );
+	DEBUG_ASSERT( dest != nullptr, "The destination table is null" );
+	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
 	char* bufchar;
 	int read = Platform::getSingleton()->loadFileContent( bufchar, path );
@@ -33,7 +34,7 @@ const Table::Data Table::EMPTY_DATA = Data(0,0);
 bool Table::onLoad()
 {
 	//loads itself from file
-	DEBUG_ASSERT( !loaded );
+	DEBUG_ASSERT( !isLoaded(), "The Table is already loaded" );
 
 	if( !isReloadable() )
 		return false;

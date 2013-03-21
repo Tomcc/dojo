@@ -39,7 +39,7 @@ namespace Dojo
 		
 		inline void release( Particle* p )
 		{
-			DEBUG_ASSERT( p );
+			DEBUG_ASSERT( p, "particle is null" );
 			
 			if( firstIdleIdx == 0 || p->isActive() == false )
 				return;

@@ -104,7 +104,7 @@ void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 
 void InputSystem::_fireDeviceDisconnected( Dojo::InputDevice* j )
 {
-	DEBUG_ASSERT( mDeviceList.exists(j) );
+	DEBUG_ASSERT( mDeviceList.exists(j), "Tried to disconnect a non existing device" );
 
 	//first notify this to all the listeners
 	for( Listener* l : listeners )

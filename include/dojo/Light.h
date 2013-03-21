@@ -36,7 +36,7 @@ namespace Dojo
 		
 		void setSpecularExponent( float exponent )
 		{
-			DEBUG_ASSERT( exponent >= 0 );
+			DEBUG_ASSERT( exponent >= 0 && exponent <= 128, "The specular exponent must be between 0 and 128" );
 			
 			specularExponent = exponent;
 		}

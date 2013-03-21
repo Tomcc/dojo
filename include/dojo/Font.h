@@ -102,7 +102,7 @@ namespace Dojo
 			///get the char in this page
 			inline Character* getChar( unichar c )
 			{
-				DEBUG_ASSERT( _charInPage(c) );
+				DEBUG_ASSERT( _charInPage(c), "getChar: the requested char doesn't belong to this page" );
 
 				return &( chars[ c - firstCharIdx ] );
 			}
@@ -155,7 +155,7 @@ namespace Dojo
 		///returns (and lazy-loads) the character Page with the given index
 		inline Page* getPage( uint index )
 		{
-			DEBUG_ASSERT( index < FONT_MAX_PAGES );
+			DEBUG_ASSERT( index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index" );
 
 			PageMap::iterator itr = pages.find( index );
 

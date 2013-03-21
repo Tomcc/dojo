@@ -28,7 +28,7 @@ visibleCharsNumber( 0xfffffff )
 
 	font = gameState->getFont( fontName );
 
-	DEBUG_ASSERT( font );
+	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
 
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
@@ -194,7 +194,7 @@ void TextArea::_hideLayers()
 
 void TextArea::_destroyLayer( Renderable* r )
 {
-	DEBUG_ASSERT( r );
+	DEBUG_ASSERT( r, "null layer" );
 	
 	if( r == this )  //do not delete the TA itself, even if it is a layer
 		return;
@@ -353,7 +353,7 @@ Mesh* TextArea::_createMesh()
 
 Renderable* TextArea::_createLayer( Texture* t )
 {
-	DEBUG_ASSERT( t );
+	DEBUG_ASSERT( t, "null texture" );
 
 	Renderable* r = new Renderable( gameState, Vector::ZERO );
 	r->scale = scale;

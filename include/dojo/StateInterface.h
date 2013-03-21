@@ -48,7 +48,7 @@ namespace Dojo
 		*/
 		inline void setState( int newState )		
 		{			
-			DEBUG_ASSERT( mCanSetNextState );
+			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
 			
 			nextState = newState;
 			
@@ -68,7 +68,7 @@ namespace Dojo
 		 */
 		inline void setStateImmediate( int newState )		
 		{			
-			DEBUG_ASSERT( mCanSetNextState );
+			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
 			
 			nextState = newState;
 			
@@ -87,8 +87,8 @@ namespace Dojo
 		 */
 		inline void setState( StateInterface* child )
 		{
-			DEBUG_ASSERT( mCanSetNextState );
-			DEBUG_ASSERT( !hasNextState() );
+			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
+			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
 			
 			nextStatePtr = child;
 						
@@ -238,7 +238,7 @@ namespace Dojo
 		
 		inline void _nextState( StateInterface* child )
 		{
-			DEBUG_ASSERT( child );
+			DEBUG_ASSERT( child != nullptr, "null substate passed" );
 			
 			//first try, call substate end
 			if( mTransitionCompleted )
@@ -263,7 +263,7 @@ namespace Dojo
 		
 		inline void _applyNextState()
 		{
-			DEBUG_ASSERT( hasNextState() );
+			DEBUG_ASSERT( hasNextState(), "_applyNextState was called but not next state was defined" );
 						
 			//they have to be cancelled before, because the state that is beginning
 			//could need to set them again

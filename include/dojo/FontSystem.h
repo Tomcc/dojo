@@ -20,7 +20,7 @@ namespace Dojo
 			//launch FreeType
 			int err = FT_Init_FreeType( &freeType );
 
-			DEBUG_ASSERT( err == 0 );
+			DEBUG_ASSERT( err == 0, "FreeType failed to initialize" );
 		}
 
 		virtual ~FontSystem()
@@ -73,7 +73,7 @@ namespace Dojo
 			faceMap[ fileName ] = face;
 			memoryMap[ fileName ] = buf; //keep the memory
 
-			DEBUG_ASSERT( err == 0 );
+			DEBUG_ASSERT_INFO( err == 0, "FreeType could not load a Font file", "path = " + fileName );
 
 			return face;
 		}

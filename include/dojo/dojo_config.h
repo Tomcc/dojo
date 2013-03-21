@@ -87,18 +87,19 @@
 
 #endif
 
-//general configurations
-#if defined( PLATFORM_IOS ) || defined( PLATFORM_ANDROID )
-	#define MESH_32BIT_INDICES 0  //32 bit indices not avaiable on older iOS/Android devices
-#else
-	//#define DOJO_GAMMA_CORRECTION_ENABLED
+#ifdef PLATFORM_ANDROID
+	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
+	#define USING_OPENGLES
+#endif
+
+//general configuration
+
+#ifndef USING_OPENGLES
+	#define DOJO_32BIT_INDICES_AVAILABLE
 	#define DOJO_WIREFRAME_AVAILABLE //WIREFRAME not avaiable on iOS/Android devices
 #endif
 
-#ifdef PLATFORM_ANDROID
-	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
-    #define USING_OPENGLES
-#endif
+//#define DOJO_GAMMA_CORRECTION_ENABLED
 
 //do not use the differential state commit //HACK
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT

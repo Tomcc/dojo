@@ -92,7 +92,7 @@ namespace Dojo
 				float elapsed = 0;
 				alGetSourcef( source, AL_SEC_OFFSET, &elapsed );
 				
-				DEBUG_ASSERT( alGetError() == AL_NO_ERROR );
+				DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "OpenAL error, cannot set source play offset" );
 
 				return elapsed;
 			}
@@ -117,7 +117,7 @@ namespace Dojo
 
 			void _setup( SoundBuffer* b )
 			{
-				DEBUG_ASSERT( b );
+				DEBUG_ASSERT( b, "null SoundBuffer" );
 				
 				buffer = b;
 			}

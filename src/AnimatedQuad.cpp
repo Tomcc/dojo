@@ -24,7 +24,7 @@ pixelPerfect( pp )
 	//use the default quad
 	mesh = level->getMesh( "texturedQuad" );
 	
-	DEBUG_ASSERT( mesh );
+	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 	
 	animation = new Animation( NULL, 0 );
 	
@@ -45,13 +45,17 @@ void AnimatedQuad::reset()
 	
 	setTexture( NULL );
 	mesh = gameState->getMesh( "texturedQuad" );
+
+	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 }
 
 void AnimatedQuad::immediateAnimation( const String& name, float timePerFrame )
 {
-	DEBUG_ASSERT( name.size() );
+	FrameSet* set = gameState->getFrameSet( name );
 	
-	immediateAnimation( gameState->getFrameSet( name ), timePerFrame );
+	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );
+	
+	immediateAnimation( set, timePerFrame );
 }
 
 void AnimatedQuad::onAction( float dt )
@@ -73,7 +77,7 @@ void AnimatedQuad::_updateScreenSize()
 {
 	if( pixelPerfect )
 	{
-		DEBUG_ASSERT( getTexture() );
+		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
 		gameState->getViewport()->makeScreenSize( screenSize, getTexture() );
 		screenSize.x *= pixelScale.x;

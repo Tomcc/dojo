@@ -105,14 +105,14 @@ namespace Dojo
 
 		inline bool isSeeing( Renderable* s )
 		{
-			DEBUG_ASSERT( s );
+			DEBUG_ASSERT( s, "isSeeing: null renderable passed" );
 
 			return cullingEnabled && s->isVisible() && touches( s );
 		}
 
 		inline bool touches( Renderable* r )
 		{
-			DEBUG_ASSERT( r );
+			DEBUG_ASSERT( r != nullptr, "touches: null renderable passed" );
 
 			return Math::AABBsCollide( r->getWorldMax(), r->getWorldMin(), getWorldMax(), getWorldMin() );
 		}

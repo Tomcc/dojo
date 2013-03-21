@@ -50,14 +50,16 @@ Texture::~Texture()
 
 void Texture::bind( uint index )
 {
-	DEBUG_ASSERT( index < DOJO_MAX_TEXTURE_UNITS );
+	DEBUG_ASSERT( index < DOJO_MAX_TEXTURE_UNITS, "The texture index is greater than DOJO_MAX_TEXTURE_UNITS" );
 	
 	//create the gl texture if still not created!
 	if( !glhandle )
 	{
 		glGenTextures( 1, &glhandle );
-		DEBUG_ASSERT( glGetError() == GL_NO_ERROR );
-		DEBUG_ASSERT( glhandle );
+
+		CHECK_GL_ERROR;
+
+		DEBUG_ASSERT( glhandle, "OpenGL Error, no texture handle was generated" );
 	}
 
 	glActiveTexture( GL_TEXTURE0 + index );
@@ -120,9 +122,9 @@ void Texture::disableMipmaps()
 
 bool Texture::loadEmpty( int width, int height, GLenum destFormat )
 {
-	DEBUG_ASSERT( width > 0 );
-	DEBUG_ASSERT( height > 0 ); 
-	DEBUG_ASSERT( destFormat > 0 );
+	DEBUG_ASSERT( width > 0, "Width must be more than 0" );
+	DEBUG_ASSERT( height > 0, "Height must be more than 0" ); 
+	DEBUG_ASSERT( destFormat > 0, "the desired internal image format is undefined" );
 
 	bind(0);
 
@@ -173,13 +175,13 @@ bool Texture::loadEmpty( int width, int height, GLenum destFormat )
 	UVSize.y = (float)height/(float)internalHeight;
 
 	loaded = (glGetError() == GL_NO_ERROR);
-	DEBUG_ASSERT( loaded );
+	DEBUG_ASSERT( loaded, "Cannot load an empty texture" );
 	return loaded;
 }
 
 bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sourceFormat, GLenum destFormat )
 {
-	DEBUG_ASSERT( imageData );
+	DEBUG_ASSERT( imageData, "null image data" );
 
 	loadEmpty( width, height, destFormat );
 	
@@ -189,13 +191,13 @@ bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sou
 	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
 
 	loaded = (glGetError() == GL_NO_ERROR);
-	DEBUG_ASSERT( loaded );	
+	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );	
 	return loaded;
 }
 
 bool Texture::loadFromFile( const String& path )
 {
-	DEBUG_ASSERT( !loaded );
+	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 	
 	void* imageData = NULL;
 
@@ -203,7 +205,7 @@ bool Texture::loadFromFile( const String& path )
 	int pixelSize;
 	sourceFormat = Platform::getSingleton()->loadImageFile( imageData, path, width, height, pixelSize );
 	
-	DEBUG_ASSERT( sourceFormat );
+	DEBUG_ASSERT_INFO( sourceFormat, "Cannot load an image file", "path = " + path );
 	
 	if( creator && creator->disableBilinear )	
 		disableBilinearFiltering();
@@ -239,7 +241,7 @@ bool Texture::loadFromFile( const String& path )
 
 bool Texture::_setupAtlas()
 {
-	DEBUG_ASSERT( parentAtlas );
+	DEBUG_ASSERT( parentAtlas, "Tried to load a Texture as an atlas tile but the parent atlas is null" );
 
 	if( !parentAtlas->isLoaded() )
 		return (loaded = false);
@@ -247,7 +249,7 @@ bool Texture::_setupAtlas()
 	internalWidth = parentAtlas->getInternalWidth();
 	internalHeight = parentAtlas->getInternalHeight();
 
-	DEBUG_ASSERT( width && height && internalWidth && internalHeight );
+	DEBUG_ASSERT( width > 0 && height > 0 && internalWidth > 0 && internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)" );
 
 	//copy bind handle
 	glhandle = parentAtlas->glhandle;
@@ -265,8 +267,8 @@ bool Texture::_setupAtlas()
 
 bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 {
-	DEBUG_ASSERT( tex );
-	DEBUG_ASSERT( !isLoaded() );	
+	DEBUG_ASSERT( tex, "null atlas texture" );
+	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );	
 
 	parentAtlas = tex;
 
@@ -283,7 +285,7 @@ bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
 
 bool Texture::onLoad()
 {	
-	DEBUG_ASSERT( !loaded );
+	DEBUG_ASSERT( !isLoaded(), "The texture is already loaded" );
 
 	if( OBB )  //rebuild and reload the OBB if it was purged
 		_buildOptimalBillboard();
@@ -298,7 +300,7 @@ bool Texture::onLoad()
 
 void Texture::onUnload( bool soft )
 {		
-	DEBUG_ASSERT( loaded );
+	DEBUG_ASSERT( isLoaded(), "The Texture is not loaded" );
 	
 	if( !soft || isReloadable() )
 	{
@@ -309,7 +311,7 @@ void Texture::onUnload( bool soft )
 
 		if( !parentAtlas ) //don't unload parent texture!
 		{
-			DEBUG_ASSERT( glhandle );
+			DEBUG_ASSERT( glhandle, "Tried to unload a texture but the texture handle was invalid" );
 			glDeleteTextures(1, &glhandle );
 
 			internalWidth = internalHeight = 0;

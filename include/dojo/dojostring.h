@@ -101,7 +101,7 @@ namespace Dojo
 		///if found, replace the given substr with the given replacement - they can be of different lengths.
 		inline void replaceToken( const String& substring, const String& replacement )
 		{
-			DEBUG_ASSERT( substring.size() );
+			DEBUG_ASSERT( substring.size(), "The substring to replace is empty" );
 			
 			size_t start = find( substring );
 			
@@ -143,7 +143,7 @@ namespace Dojo
 		
 		inline void appendASCII( const char* s )
 		{
-			DEBUG_ASSERT( s );
+			DEBUG_ASSERT( s, "Tried to append a NULL ASCII string" );
 
 			for( int i = 0; s[i] != 0; ++i )
 				append( 1, (unichar)s[i] );
@@ -215,7 +215,7 @@ namespace Dojo
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
 		inline void appendRaw( void* data, uint sz )
 		{
-			DEBUG_ASSERT_MSG( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
+			DEBUG_ASSERT( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
 			
 			append( (unichar*)data, sz / sizeof( unichar ) );
 		}

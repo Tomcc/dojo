@@ -33,7 +33,7 @@ namespace Dojo
 		///returns a new unicode character or 0 if the stream ended
 		inline unichar get()
 		{
-            DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );
+            DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str), "StringReader is uninitialized" );
 
 			//HACK this doesn't care about utf8 multichars!
 			if( (wcharStr && idx >= wcharStr->size()) || (utf8Str && idx >= utf8Str->size()) )
@@ -53,7 +53,7 @@ namespace Dojo
 		
 		inline void back()
 		{
-            DEBUG_ASSERT( idx > 0 );
+            DEBUG_ASSERT( idx > 0, "back: The StringReader is already at the start of the stream" );
             
 			--idx;
 		}
@@ -109,7 +109,7 @@ namespace Dojo
                 return 10 + c - 'a';
             else
             {
-                DEBUG_ASSERT( "WRONG HEX VALUE" );
+                DEBUG_FAIL( "WRONG HEX VALUE" );
                 return 0;
             }
         }
@@ -220,7 +220,7 @@ namespace Dojo
 		///reads n raw bytes from the file
 		inline void readBytes( void* dest, int sizeBytes )
 		{
-			DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str) );
+			DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str), "Reading bytes from an uninitialized StringReader" );
 
 			//load format data
 			int elemSize = wcharStr ? sizeof( unichar ) : 1;

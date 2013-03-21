@@ -28,7 +28,9 @@ mAnimationIdx( -1 )
 
 int Sprite::registerAnimation( const String& base, float timePerFrame )
 {
-	return registerAnimation( 
-		gameState->getFrameSet( base ), 
-		timePerFrame );	
+	FrameSet* set = gameState->getFrameSet( base );
+
+	DEBUG_ASSERT_INFO( set != nullptr, "The FrameSet to be registered could not be found", "name = " + base );
+
+	return registerAnimation( set, timePerFrame );	
 }

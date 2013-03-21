@@ -68,7 +68,7 @@ namespace Dojo
 		*/
 		inline void setPreferredAnimationTime( float t )
 		{
-			DEBUG_ASSERT( t > 0 );
+			DEBUG_ASSERT( t > 0, "setPreferredAnimationTime: t must be more than 0" );
 
 			mPreferredAnimationTime = t;
 		}
@@ -83,7 +83,7 @@ namespace Dojo
 		
 		virtual void onUnload( bool soft ) //unload all of the content
 		{
-			DEBUG_ASSERT( loaded );
+			DEBUG_ASSERT( loaded, "onUnload: this FrameSet is not loaded" );
 			
 			for( int i = 0; i < frames.size(); ++i )
 				frames.at(i)->onUnload( soft );
@@ -98,9 +98,8 @@ namespace Dojo
 		*/
 		inline void addTexture( Texture* t, bool owner = false )
 		{
-			DEBUG_ASSERT( t );
-			DEBUG_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL) );
-			DEBUG_ASSERT( !isLoaded() || (t->isLoaded() && isLoaded()) );
+			DEBUG_ASSERT( t != nullptr, "Adding a NULL texture" );
+			DEBUG_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL), "This Texture already has an owner FrameSet" );
 			
 			if( owner )
 				t->_notifyOwnerFrameSet( this );

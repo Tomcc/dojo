@@ -38,7 +38,7 @@ void GameState::clear()
 
 void GameState::setViewport( Viewport* v )
 {
-	DEBUG_ASSERT( v );
+	DEBUG_ASSERT( v, "can't set a null viewport" );
 	
 	camera = v;
 	

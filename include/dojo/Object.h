@@ -65,7 +65,7 @@ namespace Dojo {
 		///sets a AABB size
 		inline void setSize( const Vector& bbSize )
 		{
-			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0 );
+			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0, "Malformed size (one component was less or equal to 0)" );
 
 			size = bbSize;
 			halfSize = size * 0.5f;
@@ -165,22 +165,22 @@ namespace Dojo {
 
 		inline Object* getChild( int i )				
 		{
-			DEBUG_ASSERT( hasChilds() );
-			DEBUG_ASSERT( childs->size() > i );
+			DEBUG_ASSERT( hasChilds(), "Tried to retrieve a child from an object with no childs" );
+			DEBUG_ASSERT( childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child" );
 			
 			return childs->at( i );
 		}
 		
 		inline Vector& getWorldMax()
 		{
-			DEBUG_ASSERT( mNeedsAABB );
+			DEBUG_ASSERT( mNeedsAABB, "getWorldMax: this Object has no AABB" );
 			
 			return worldUpperBound;
 		}
 		
 		inline Vector& getWorldMin()
 		{
-			DEBUG_ASSERT( mNeedsAABB );
+			DEBUG_ASSERT( mNeedsAABB, "getWorldMin: this Object has no AABB" );
 			
 			return worldLowerBound;
 		}
@@ -218,7 +218,7 @@ namespace Dojo {
 		
 		inline bool contains( const Vector& p )
 		{
-			DEBUG_ASSERT( mNeedsAABB );
+			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
 			
 			return 
 			p.x <= worldUpperBound.x && 
@@ -231,15 +231,15 @@ namespace Dojo {
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{		
-			DEBUG_ASSERT( mNeedsAABB );
+			DEBUG_ASSERT( mNeedsAABB, "collides: this Object has no AABB" );
 			
 			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
 		}
 		
 		inline bool collidesWith( Object * t )
 		{			
-			DEBUG_ASSERT( t );
-			DEBUG_ASSERT( mNeedsAABB );            
+			DEBUG_ASSERT( t, "collidesWith: colliding Object is NULL" );
+			DEBUG_ASSERT( mNeedsAABB, "collidesWith: this Object has no AABB" );            
 
 			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}
