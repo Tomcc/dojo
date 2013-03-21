@@ -65,3 +65,8 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 	
 	return p;			
 }
+
+Particle* ParticlePool::_getParticleImpl()
+{
+	return new Particle( this, gameState, pool.size() );
+}

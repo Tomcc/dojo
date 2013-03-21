@@ -29,13 +29,13 @@ namespace Dojo
 		Vector pixelScale;
 		
 		///Creates a new TextArea
-		/**\param l the parent level
+		/**\param l the parent object
 		\param fontSetName the name of the .font definition file
 		\param pos bottom right corner position (unless centered)
 		\param center the position is at the center of the string
 		\param bounds TextArea's AABB
 		*/
-		TextArea( GameState* l, 
+		TextArea( Object* l, 
 				 const String& fontSetName, 
 				 const Vector& pos, 
 				 bool center = false,

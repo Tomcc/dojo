@@ -123,10 +123,7 @@ namespace Dojo
 			return NULL;
 		}
 
-		virtual Particle* _getParticleImpl()
-		{
-			return new Particle( this, gameState, pool.size() );
-		}
+		virtual Particle* _getParticleImpl();
 	};
 }
 

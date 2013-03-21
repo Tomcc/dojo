@@ -10,28 +10,29 @@
 
 using namespace Dojo;
 
-AnimatedQuad::AnimatedQuad( GameState* level, const Vector& pos, bool pp ) :
-Renderable( level, pos ),
+AnimatedQuad::AnimatedQuad( Object* parent, const Vector& pos, const String& immediateAnim, float tpf ) :
+Renderable( parent, pos ),
 animation( NULL ),
 animationTime( 0 ),
 pixelScale( 1,1 ),
 animationSpeedMultiplier( 1 ),
-pixelPerfect( pp )
+pixelPerfect( true )
 {
 	cullMode = CM_DISABLED;
 	inheritScale = false;
 	
 	//use the default quad
-	mesh = level->getMesh( "texturedQuad" );
+	mesh = getGameState()->getMesh( "texturedQuad" );
 	
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
-	
+
 	animation = new Animation( NULL, 0 );
-	
+
 	reset();
+
+	if( immediateAnim.size() )
+		immediateAnimation( immediateAnim, tpf );
 }
-
-
 
 void AnimatedQuad::reset()
 {

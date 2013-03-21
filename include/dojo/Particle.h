@@ -39,7 +39,7 @@ namespace Dojo
 
 		Vector acceleration;
 		
-		Particle( ParticlePool* p, GameState* level, uint i ) :
+		Particle( ParticlePool* p, Object* level, uint i ) :
 		AnimatedQuad( level, Vector::ZERO ),
 		pool( p ),
 		index( i ),

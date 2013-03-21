@@ -161,10 +161,11 @@ namespace Dojo
 		
 		///creates a new AnimatedQuad
 		/**
-			\param level the level it will be created in
+			\param level the parent it will be created for
 			\param pos its position
-			\param pixelPerfect if pixelPerfect, an objects' scale is bound to the pixel size of the current frame and to the pixel size of the current Viewport. A pixelPerfect object can still be scaled using pixelScale.*/
-		AnimatedQuad( GameState* level, const Vector& pos, bool pixelPerfect = true );
+			\param immediateAnim the name of the animation it will be set to
+			\param timePerFrame immediate animation's time per frame */
+		AnimatedQuad( Object* parent, const Vector& pos, const String& immediateAnim = String::EMPTY, float timePerFrame = 0.0f );
 		
 		virtual ~AnimatedQuad()
 		{
@@ -298,6 +299,8 @@ namespace Dojo
 				
 		inline void _setTexture( Texture* t )
 		{			
+			DEBUG_ASSERT( t, "texture is null" );
+
 			setTexture( t, 0 );
 
 			mesh = t->getOptimalBillboard();

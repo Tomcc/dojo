@@ -37,13 +37,17 @@
 	
 #else
 
-	#define DEBUG_ASSERT_MSG( T, MSG )
-	#define DEBUG_ASSERT( T )
-	#define DEBUG_TODO
-	#define DEBUG_FAIL
-	#define DEBUG_OUT( T )
-	#define DEBUG_MESSAGE( T )
-	#define CHECK_GL_ERROR
+//TODO turn these into warnings?
+
+	#define DEBUG_ASSERT_IMPL( T, MSG, INFO ) {}
+	#define DEBUG_ASSERT_INFO( T, MSG, INFO ) {}
+	#define DEBUG_ASSERT( T, MSG ) {}
+	#define DEBUG_ASSERT_N( T ) {}
+	#define DEBUG_TODO {}
+	#define DEBUG_FAIL {}
+	#define DEBUG_OUT( T ) {}
+	#define DEBUG_MESSAGE( T ) {}
+	#define CHECK_GL_ERROR {}
 	
 #endif
 

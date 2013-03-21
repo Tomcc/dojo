@@ -8,7 +8,7 @@
 
 using namespace Dojo;
 
-TextArea::TextArea( GameState* l, 
+TextArea::TextArea( Object* l, 
 		 const String& fontSetName, 
 		 const Vector& pos, 
 		 bool center,

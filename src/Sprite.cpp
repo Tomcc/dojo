@@ -8,10 +8,12 @@
 
 using namespace Dojo;
 
-Sprite::Sprite( GameState* level, const Vector& pos, const String& defaultAnimName, float tpf, bool pp ) :
-AnimatedQuad( level, pos, pp ),
+Sprite::Sprite( Object* parent, const Vector& pos, const String& defaultAnimName, float tpf, bool pp ) :
+AnimatedQuad( parent, pos ),
 mAnimationIdx( -1 )
 {	
+	pixelPerfect = pp;
+
 	//get rid of default animation
 	SAFE_DELETE( animation );
 	

@@ -186,7 +186,7 @@ int SoundBuffer::_loadOggFromFile()
 	char* buf;
 	int sz = Platform::getSingleton()->loadFileContent( buf, filePath );
 	
-	DEBUG_ASSERT( sz, "Cannot load an ogg from file", "path = " + filePath );
+	DEBUG_ASSERT_INFO( sz, "Cannot load an ogg from file", "path = " + filePath );
 	
 	_loadOggFromMemory( buf, sz );
 	

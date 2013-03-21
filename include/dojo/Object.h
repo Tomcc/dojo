@@ -47,7 +47,7 @@ namespace Dojo {
 		/**
 		\remark the object still has to be attached!
 		*/
-		Object( Object* parent, const Vector& pos, const Vector& bbSize  );
+		Object( Object* parent, const Vector& pos, const Vector& bbSize = Vector::ONE );
 
 		virtual ~Object();
 		
