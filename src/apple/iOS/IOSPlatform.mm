@@ -11,7 +11,6 @@
 
 #include "Utils.h"
 #include "dojomath.h"
-#include "Email.h"
 
 #include "Render.h"
 #include "SoundManager.h"
@@ -21,13 +20,20 @@
 #include "Table.h"
 #include "Texture.h"
 
+#include "AppDelegate.h"
+#include "Application.h"
+
 using namespace Dojo;
 
 IOSPlatform::IOSPlatform( const Table& config ) :
 ApplePlatform( config ),
 app( NULL ),
 player( NULL )
-{    
+{
+    //call the cocoa wrapper classes to keep them in the library
+    [AppDelegate _keepMeInLibraryFile];
+    [Application _keepMeInLibraryFile];
+    
     //store the system directories
     mRootPath = [[NSBundle mainBundle] executablePath];
     
@@ -52,12 +58,9 @@ IOSPlatform::~IOSPlatform()
 void IOSPlatform::initialise( Game* newGame )
 {
     //do not initialize twice
-    DEBUG_ASSERT( game == nullptr );
-    DEBUG_ASSERT( newGame );
-			
-    //store the game object
     game = newGame;
-    
+	DEBUG_ASSERT( game != nullptr, "A non-null Game implementation must be provided to initialise()" );
+        
     //swap reported screen and window dimensions if the game requires a different ratio
     if( game->getNativeOrientation() == DO_LANDSCAPE_LEFT || game->getNativeOrientation() == DO_LANDSCAPE_RIGHT )
     {
@@ -70,8 +73,7 @@ void IOSPlatform::_initialiseImpl(Application *application)
 {
     app = application;
 
-    DEBUG_ASSERT( app );
-    
+    DEBUG_ASSERT( app, "null Application" );
     
     uint width, height;
 		
@@ -192,12 +194,12 @@ void IOSPlatform::acquireContext()
 
 void IOSPlatform::prepareThreadContext()
 {	
-	DEBUG_ASSERT( context );
+	DEBUG_ASSERT( context, "There is no context defined" );
 		
 	EAGLContext* clone = [[EAGLContext alloc] initWithAPI:[context API] sharegroup:[context sharegroup]];
 		
 	bool err = [EAGLContext setCurrentContext:clone];
-	DEBUG_ASSERT( err );
+	DEBUG_ASSERT( err, "Error: cannot share the OpenGL Context" );
 	
 	[[NSAutoreleasePool alloc] init];
 }
@@ -209,6 +211,13 @@ void IOSPlatform::present()
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
 	
 	[context presentRenderbuffer:GL_RENDERBUFFER_OES];
+}
+
+void IOSPlatform::step( float dt )
+{
+    //do nothing if the app isn't still initialized
+    if( running )
+       ApplePlatform::step( dt );
 }
 
 void IOSPlatform::loop()
@@ -254,65 +263,14 @@ void IOSPlatform::openWebPage( const String& site )
 }
 
 
-/*
-void IOSPlatform::sendEmail( const Email& e )
-{	
-	//check if this device can send emails
-	if( ![MFMailComposeViewController canSendMail ] )
-	{
-		e.listener->onEmailFailed();
-		return;
-	}
-	
-	MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
-	controller.mailComposeDelegate = app;
-	
-	NSArray* recipients = [NSArray arrayWithObject:e.dest.toNSString() ];
-	
-	[controller setToRecipients: recipients ];
-	[controller setSubject: e.subject.toNSString() ];
-	[controller setMessageBody: e.message.toNSString()  isHTML:NO];
-	
-	if( e.attachmentData )
-	{		
-		NSData* attachmentData = [NSData dataWithBytes:e.attachmentData length:e.attachmentSize ];
-		
-		[controller addAttachmentData: attachmentData 
-					mimeType: e.attachmentMimeType.toNSString() 
-					fileName:e.attachmentName.toNSString() ];
-	}
-	
-	senderEmailListenerMap[ controller ] = e.listener;
-	
-	[app addSubview: [controller view] ];
-	[[controller view] becomeFirstResponder];
-	
-	//[controller release];
-}
-
-void IOSPlatform::onEmailSent( void* senderController, bool success )
-{
-	SenderEmailListenerMap::iterator pos = senderEmailListenerMap.find( senderController );
-	
-	if( pos != senderEmailListenerMap.end() )
-	{
-		if( success )
-			pos->second->onEmailSent();
-		else
-			pos->second->onEmailFailed();
-		
-		senderEmailListenerMap.erase( pos );
-	}
-}
-*/
-void IOSPlatform::enableScreenSaver( bool s )
+       void IOSPlatform::enableScreenSaver( bool s )
 {
 	[[UIApplication sharedApplication] setIdleTimerDisabled: !s ];
 }
 
 void IOSPlatform::copyImageIntoCameraRoll( const Dojo::String& path )
 {
-	DEBUG_ASSERT( path.size() );
+	DEBUG_ASSERT( path.size(), "The camera roll image path cannot be empty" );
 	
 	//create an UIImage
 	UIImage* img = [UIImage imageWithContentsOfFile: path.toNSString() ];
@@ -342,21 +300,21 @@ void IOSPlatform::playMp3File( const Dojo::String& relPath, bool loop )
 
 void IOSPlatform::stopMp3File()
 {
-	DEBUG_ASSERT( player );
-	DEBUG_ASSERT( player.playing );
+	DEBUG_ASSERT( player, "No iOS hardware player created" );
+	DEBUG_ASSERT( player.playing, "The iOS hardware player is already in use" );
 	
 	[player stop];
 }
 
-void IOSPlatform::setMp3FileVolume( float gain )
+void IOSPlatform::setMp3FileVolume( float volume )
 {
-	DEBUG_ASSERT( gain >= 0.0 );
-	DEBUG_ASSERT( gain <= 1.0 );
+	DEBUG_ASSERT( volume >= 0.0, "The iOS HW mp3 volume cannot be negative" );
+	DEBUG_ASSERT( volume <= 1.0, "The iOS HW mp3 volume cannot be " );
 	
 	if( !player )
 		player = [AVAudioPlayer alloc];
 	
-	player.volume = gain;
+	player.volume = volume;
 }
 
 //------------------------------------------------------------------------------------
@@ -386,7 +344,7 @@ bool IOSPlatform::_checkGameCenterAvailability()
 
 void IOSPlatform::loginToGameCenter( GameCenterListener* listener )
 {
-	DEBUG_ASSERT( listener );
+	DEBUG_ASSERT( listener, "The game center listener must not be null" );
 	
 	if( !_checkGameCenterAvailability() )
 	{
@@ -412,7 +370,7 @@ void IOSPlatform::loginToGameCenter( GameCenterListener* listener )
 
 void IOSPlatform::postScore( unsigned int score, const Dojo::String& leaderboard, GameCenterListener* listener )
 {
-	DEBUG_ASSERT( listener );
+	DEBUG_ASSERT( listener, "The Game Center Listener must not be null" );
 	
 	GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:leaderboard.toNSString()] autorelease];
     scoreReporter.value = score;
@@ -426,7 +384,7 @@ void IOSPlatform::postScore( unsigned int score, const Dojo::String& leaderboard
 
 void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListener* listener )
 {
-	DEBUG_ASSERT( listener );
+	DEBUG_ASSERT( listener, "The Game Center Listener must not be null" );
 	
 	NSArray* players = [NSArray arrayWithObject: [[GKLocalPlayer localPlayer] playerID] ];
 	
@@ -459,7 +417,7 @@ void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListe
 
 void IOSPlatform::postAchievement( const Dojo::String& code, GameCenterListener* listener )
 {
-	DEBUG_ASSERT( listener );
+	DEBUG_ASSERT( listener, "The Game Center Listener must not be null" );
 	
 	GKAchievement *achievement = [[[GKAchievement alloc] initWithIdentifier: code.toNSString() ] autorelease];
     if (achievement)
@@ -475,7 +433,7 @@ void IOSPlatform::postAchievement( const Dojo::String& code, GameCenterListener*
 
 void IOSPlatform::requestAchievements( GameCenterListener* listener)
 {
-	DEBUG_ASSERT( listener );
+	DEBUG_ASSERT( listener, "The Game Center Listener must not be null" );
 	
 	[GKAchievement loadAchievementsWithCompletionHandler:^(NSArray *achievements, NSError *error) 
 	{

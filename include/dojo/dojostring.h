@@ -234,7 +234,7 @@ namespace Dojo
 		
 		inline String& appendNSString( NSString* nss )
 		{
-			DEBUG_ASSERT( nss );
+			DEBUG_ASSERT( nss, "NSString was null" );
 			
 			uint sz = size();
 			resize( sz + [nss length] );

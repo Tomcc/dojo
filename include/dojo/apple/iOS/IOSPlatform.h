@@ -52,6 +52,7 @@ namespace Dojo
 				
 		virtual void initialise( Game* game );
 		virtual void loop();
+        virtual void step( float dt );
 		virtual void shutdown();
 		
 		virtual void prepareThreadContext();
@@ -62,7 +63,7 @@ namespace Dojo
         ///sets the app fullscreen or windowed, has no effect on iOS
         virtual void setFullscreen( bool )
         {
-            DEBUG_ASSERT_MSG( false, "Error: iOS apps can only run fullscreen" );
+        	DEBUG_FAIL( "iOS apps can only run in fullscreen" );
         }
 				
         ///iOS specific - tells if the system sound is currently hold by another application

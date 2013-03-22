@@ -96,6 +96,12 @@ namespace Dojo {
 		}
 				
 		inline void setActive( bool a )		{	active = a;	}
+        
+        ///tells if this object is a renderable
+        virtual bool isRenderable()
+        {
+            return false;
+        }
 				
 		inline const Vector& getSize()		{	return size;	}			
 		inline const Vector& getHalfSize()	{	return halfSize;}	

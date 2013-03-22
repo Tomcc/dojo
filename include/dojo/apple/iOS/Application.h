@@ -68,7 +68,6 @@ namespace Dojo
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event;
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
-/*
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error;
-*/
+
++ (void)_keepMeInLibraryFile;
 @end

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		430328F816FCA46B00242A3F /* IOSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 430328F716FCA46B00242A3F /* IOSPlatform.h */; };
+		430A122C16FA2060000591D8 /* libzzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 430A122B16FA2060000591D8 /* libzzip.a */; };
 		431CF687147D4E0B0031CB4E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF686147D4E0A0031CB4E /* Cocoa.framework */; };
 		431CF76B147D4E680031CB4E /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 431CF768147D4E680031CB4E /* stdafx.h */; };
 		431CF76C147D4E680031CB4E /* dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 431CF769147D4E680031CB4E /* dojo-Prefix.pch */; };
@@ -15,6 +17,9 @@
 		431CF7D1147D52050031CB4E /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CC147D52050031CB4E /* libPocoFoundation.a */; };
 		431CF7D2147D52050031CB4E /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CD147D52050031CB4E /* libvorbis.a */; };
 		431CF7D3147D52050031CB4E /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CE147D52050031CB4E /* libvorbisfile.a */; };
+		4386F3ED16F8EBEF000853F6 /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */; };
+		4386F3EE16F8EBEF000853F6 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 4386F3EC16F8EBEF000853F6 /* ZipArchive.h */; };
+		4386F3EF16F8EC3A000853F6 /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */; };
 		4395BCD216BD545C00309AE2 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */; };
 		4395BCD316BD545C00309AE2 /* AnimatedQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */; };
 		4395BCD416BD545C00309AE2 /* ApplePlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBAF16BD545B00309AE2 /* ApplePlatform.h */; };
@@ -37,8 +42,6 @@
 		4395BCF116BD545C00309AE2 /* dojomath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBBF16BD545B00309AE2 /* dojomath.h */; };
 		4395BCF216BD545C00309AE2 /* dojostring.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC016BD545B00309AE2 /* dojostring.h */; };
 		4395BCF316BD545C00309AE2 /* dojostring.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC016BD545B00309AE2 /* dojostring.h */; };
-		4395BCF416BD545C00309AE2 /* Email.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC116BD545B00309AE2 /* Email.h */; };
-		4395BCF516BD545C00309AE2 /* Email.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC116BD545B00309AE2 /* Email.h */; };
 		4395BCF616BD545C00309AE2 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC216BD545B00309AE2 /* Font.h */; };
 		4395BCF716BD545C00309AE2 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC216BD545B00309AE2 /* Font.h */; };
 		4395BCF816BD545C00309AE2 /* FontSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BBC316BD545B00309AE2 /* FontSystem.h */; };
@@ -355,7 +358,6 @@
 		4395BE3116BD545C00309AE2 /* Viewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BCCC16BD545C00309AE2 /* Viewport.h */; };
 		4395BE3E16BD547B00309AE2 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE3B16BD547B00309AE2 /* AppDelegate.h */; };
 		4395BE3F16BD547B00309AE2 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE3C16BD547B00309AE2 /* Application.h */; };
-		4395BE4016BD547B00309AE2 /* IOSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE3D16BD547B00309AE2 /* IOSPlatform.h */; };
 		4395BE4516BD548200309AE2 /* CustomOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE4216BD548200309AE2 /* CustomOpenGLView.h */; };
 		4395BE4616BD548200309AE2 /* Dojo-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE4316BD548200309AE2 /* Dojo-Prefix.pch */; };
 		4395BE4716BD548200309AE2 /* OSXPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4395BE4416BD548200309AE2 /* OSXPlatform.h */; };
@@ -369,8 +371,6 @@
 		4395BEE916BD549A00309AE2 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB216BD549A00309AE2 /* Color.cpp */; };
 		4395BEEA16BD549A00309AE2 /* DebugUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB316BD549A00309AE2 /* DebugUtils.cpp */; };
 		4395BEEB16BD549A00309AE2 /* DebugUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB316BD549A00309AE2 /* DebugUtils.cpp */; };
-		4395BEEC16BD549A00309AE2 /* Email.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB416BD549A00309AE2 /* Email.cpp */; };
-		4395BEED16BD549A00309AE2 /* Email.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB416BD549A00309AE2 /* Email.cpp */; };
 		4395BEEE16BD549A00309AE2 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB516BD549A00309AE2 /* Font.cpp */; };
 		4395BEEF16BD549A00309AE2 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB516BD549A00309AE2 /* Font.cpp */; };
 		4395BEF016BD549A00309AE2 /* FrameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4395BEB616BD549A00309AE2 /* FrameSet.cpp */; };
@@ -434,10 +434,11 @@
 		4395BF3616BD54B200309AE2 /* IOSPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3316BD54B200309AE2 /* IOSPlatform.mm */; };
 		4395BF3A16BD54B900309AE2 /* CustomOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3816BD54B900309AE2 /* CustomOpenGLView.mm */; };
 		4395BF3B16BD54B900309AE2 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3916BD54B900309AE2 /* OSXPlatform.mm */; };
-		4395BF4016BD5D0700309AE2 /* libPocoZip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4395BF3F16BD5D0700309AE2 /* libPocoZip.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		430328F716FCA46B00242A3F /* IOSPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSPlatform.h; sourceTree = "<group>"; };
+		430A122B16FA2060000591D8 /* libzzip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzzip.a; path = "dependencies-OSX/lib/libzzip.a"; sourceTree = "<group>"; };
 		431CF683147D4E0A0031CB4E /* libdojo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		431CF686147D4E0A0031CB4E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		431CF768147D4E680031CB4E /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
@@ -449,6 +450,8 @@
 		431CF7CC147D52050031CB4E /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = "dependencies-OSX/lib/libPocoFoundation.a"; sourceTree = "<group>"; };
 		431CF7CD147D52050031CB4E /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "dependencies-OSX/lib/libvorbis.a"; sourceTree = "<group>"; };
 		431CF7CE147D52050031CB4E /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "dependencies-OSX/lib/libvorbisfile.a"; sourceTree = "<group>"; };
+		4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZipArchive.cpp; sourceTree = "<group>"; };
+		4386F3EC16F8EBEF000853F6 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
 		4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedQuad.h; sourceTree = "<group>"; };
 		4395BBAF16BD545B00309AE2 /* ApplePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlatform.h; sourceTree = "<group>"; };
 		4395BBB816BD545B00309AE2 /* ApplicationListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationListener.h; sourceTree = "<group>"; };
@@ -460,7 +463,6 @@
 		4395BBBE16BD545B00309AE2 /* dojo_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojo_config.h; sourceTree = "<group>"; };
 		4395BBBF16BD545B00309AE2 /* dojomath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojomath.h; sourceTree = "<group>"; };
 		4395BBC016BD545B00309AE2 /* dojostring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dojostring.h; sourceTree = "<group>"; };
-		4395BBC116BD545B00309AE2 /* Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Email.h; sourceTree = "<group>"; };
 		4395BBC216BD545B00309AE2 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
 		4395BBC316BD545B00309AE2 /* FontSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSystem.h; sourceTree = "<group>"; };
 		4395BBC416BD545B00309AE2 /* FrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSet.h; sourceTree = "<group>"; };
@@ -723,7 +725,6 @@
 		4395BCCC16BD545C00309AE2 /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Viewport.h; sourceTree = "<group>"; };
 		4395BE3B16BD547B00309AE2 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4395BE3C16BD547B00309AE2 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
-		4395BE3D16BD547B00309AE2 /* IOSPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSPlatform.h; sourceTree = "<group>"; };
 		4395BE4216BD548200309AE2 /* CustomOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomOpenGLView.h; sourceTree = "<group>"; };
 		4395BE4316BD548200309AE2 /* Dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Dojo-Prefix.pch"; sourceTree = "<group>"; };
 		4395BE4416BD548200309AE2 /* OSXPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSXPlatform.h; sourceTree = "<group>"; };
@@ -732,7 +733,6 @@
 		4395BEB116BD549A00309AE2 /* AStar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AStar.cpp; sourceTree = "<group>"; };
 		4395BEB216BD549A00309AE2 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		4395BEB316BD549A00309AE2 /* DebugUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugUtils.cpp; sourceTree = "<group>"; };
-		4395BEB416BD549A00309AE2 /* Email.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Email.cpp; sourceTree = "<group>"; };
 		4395BEB516BD549A00309AE2 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
 		4395BEB616BD549A00309AE2 /* FrameSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameSet.cpp; sourceTree = "<group>"; };
 		4395BEB716BD549A00309AE2 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
@@ -767,7 +767,6 @@
 		4395BF3316BD54B200309AE2 /* IOSPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSPlatform.mm; sourceTree = "<group>"; };
 		4395BF3816BD54B900309AE2 /* CustomOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomOpenGLView.mm; sourceTree = "<group>"; };
 		4395BF3916BD54B900309AE2 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
-		4395BF3F16BD5D0700309AE2 /* libPocoZip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoZip.a; path = "dependencies-OSX/lib/libPocoZip.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -775,13 +774,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				430A122C16FA2060000591D8 /* libzzip.a in Frameworks */,
 				431CF687147D4E0B0031CB4E /* Cocoa.framework in Frameworks */,
 				431CF7CF147D52050031CB4E /* libFreeType.a in Frameworks */,
 				431CF7D0147D52050031CB4E /* libogg.a in Frameworks */,
 				431CF7D1147D52050031CB4E /* libPocoFoundation.a in Frameworks */,
 				431CF7D2147D52050031CB4E /* libvorbis.a in Frameworks */,
 				431CF7D3147D52050031CB4E /* libvorbisfile.a in Frameworks */,
-				4395BF4016BD5D0700309AE2 /* libPocoZip.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -828,7 +827,7 @@
 		431CF7C9147D51E50031CB4E /* Frameworks-OSX */ = {
 			isa = PBXGroup;
 			children = (
-				4395BF3F16BD5D0700309AE2 /* libPocoZip.a */,
+				430A122B16FA2060000591D8 /* libzzip.a */,
 				431CF686147D4E0A0031CB4E /* Cocoa.framework */,
 				431CF7CA147D52050031CB4E /* libFreeType.a */,
 				431CF7CB147D52050031CB4E /* libogg.a */,
@@ -853,7 +852,6 @@
 				4395BBBE16BD545B00309AE2 /* dojo_config.h */,
 				4395BBBF16BD545B00309AE2 /* dojomath.h */,
 				4395BBC016BD545B00309AE2 /* dojostring.h */,
-				4395BBC116BD545B00309AE2 /* Email.h */,
 				4395BBC216BD545B00309AE2 /* Font.h */,
 				4395BBC316BD545B00309AE2 /* FontSystem.h */,
 				4395BBC416BD545B00309AE2 /* FrameSet.h */,
@@ -1171,9 +1169,9 @@
 		4395BE3A16BD547B00309AE2 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				430328F716FCA46B00242A3F /* IOSPlatform.h */,
 				4395BE3B16BD547B00309AE2 /* AppDelegate.h */,
 				4395BE3C16BD547B00309AE2 /* Application.h */,
-				4395BE3D16BD547B00309AE2 /* IOSPlatform.h */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -1191,12 +1189,13 @@
 		4395BEA616BD549A00309AE2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */,
+				4386F3EC16F8EBEF000853F6 /* ZipArchive.h */,
 				4395BEA716BD549A00309AE2 /* AnimatedQuad.cpp */,
 				4395BEA816BD549A00309AE2 /* apple */,
 				4395BEB116BD549A00309AE2 /* AStar.cpp */,
 				4395BEB216BD549A00309AE2 /* Color.cpp */,
 				4395BEB316BD549A00309AE2 /* DebugUtils.cpp */,
-				4395BEB416BD549A00309AE2 /* Email.cpp */,
 				4395BEB516BD549A00309AE2 /* Font.cpp */,
 				4395BEB616BD549A00309AE2 /* FrameSet.cpp */,
 				4395BEB716BD549A00309AE2 /* Game.cpp */,
@@ -1279,7 +1278,6 @@
 				4395BCEE16BD545C00309AE2 /* dojo_config.h in Headers */,
 				4395BCF016BD545C00309AE2 /* dojomath.h in Headers */,
 				4395BCF216BD545C00309AE2 /* dojostring.h in Headers */,
-				4395BCF416BD545C00309AE2 /* Email.h in Headers */,
 				4395BCF616BD545C00309AE2 /* Font.h in Headers */,
 				4395BCF816BD545C00309AE2 /* FontSystem.h in Headers */,
 				4395BCFA16BD545C00309AE2 /* FrameSet.h in Headers */,
@@ -1439,6 +1437,8 @@
 				4395BE4516BD548200309AE2 /* CustomOpenGLView.h in Headers */,
 				4395BE4616BD548200309AE2 /* Dojo-Prefix.pch in Headers */,
 				4395BE4716BD548200309AE2 /* OSXPlatform.h in Headers */,
+				4386F3EE16F8EBEF000853F6 /* ZipArchive.h in Headers */,
+				430328F816FCA46B00242A3F /* IOSPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1457,7 +1457,6 @@
 				4395BCEF16BD545C00309AE2 /* dojo_config.h in Headers */,
 				4395BCF116BD545C00309AE2 /* dojomath.h in Headers */,
 				4395BCF316BD545C00309AE2 /* dojostring.h in Headers */,
-				4395BCF516BD545C00309AE2 /* Email.h in Headers */,
 				4395BCF716BD545C00309AE2 /* Font.h in Headers */,
 				4395BCF916BD545C00309AE2 /* FontSystem.h in Headers */,
 				4395BCFB16BD545C00309AE2 /* FrameSet.h in Headers */,
@@ -1616,7 +1615,6 @@
 				4395BE3116BD545C00309AE2 /* Viewport.h in Headers */,
 				4395BE3E16BD547B00309AE2 /* AppDelegate.h in Headers */,
 				4395BE3F16BD547B00309AE2 /* Application.h in Headers */,
-				4395BE4016BD547B00309AE2 /* IOSPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1694,8 +1692,8 @@
 				4395BEDA16BD549A00309AE2 /* ApplePlatform.mm in Sources */,
 				4395BEE616BD549A00309AE2 /* AStar.cpp in Sources */,
 				4395BEE816BD549A00309AE2 /* Color.cpp in Sources */,
+				4386F3ED16F8EBEF000853F6 /* ZipArchive.cpp in Sources */,
 				4395BEEA16BD549A00309AE2 /* DebugUtils.cpp in Sources */,
-				4395BEEC16BD549A00309AE2 /* Email.cpp in Sources */,
 				4395BEEE16BD549A00309AE2 /* Font.cpp in Sources */,
 				4395BEF016BD549A00309AE2 /* FrameSet.cpp in Sources */,
 				4395BEF216BD549A00309AE2 /* Game.cpp in Sources */,
@@ -1737,10 +1735,10 @@
 				4395BD0B16BD545C00309AE2 /* dummy.cpp in Sources */,
 				4395BED916BD549A00309AE2 /* AnimatedQuad.cpp in Sources */,
 				4395BEDB16BD549A00309AE2 /* ApplePlatform.mm in Sources */,
+				4386F3EF16F8EC3A000853F6 /* ZipArchive.cpp in Sources */,
 				4395BEE716BD549A00309AE2 /* AStar.cpp in Sources */,
 				4395BEE916BD549A00309AE2 /* Color.cpp in Sources */,
 				4395BEEB16BD549A00309AE2 /* DebugUtils.cpp in Sources */,
-				4395BEED16BD549A00309AE2 /* Email.cpp in Sources */,
 				4395BEEF16BD549A00309AE2 /* Font.cpp in Sources */,
 				4395BEF116BD549A00309AE2 /* FrameSet.cpp in Sources */,
 				4395BEF316BD549A00309AE2 /* Game.cpp in Sources */,
@@ -1863,8 +1861,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
-					armv6,
 					armv7,
+					i386,
+					armv7s,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
@@ -1882,6 +1881,7 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "armv7 i386 armv7s";
 			};
 			name = Debug;
 		};
@@ -1889,8 +1889,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
-					armv6,
 					armv7,
+					i386,
+					armv7s,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
@@ -1904,10 +1905,12 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dependencies-iOS/lib\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 i386 armv7s";
 			};
 			name = Release;
 		};

@@ -36,7 +36,7 @@ ApplePlatform( config )
 void OSXPlatform::initialise( Game* g )
 {
     game = g;
-	DEBUG_ASSERT( game );
+	DEBUG_ASSERT( game, "A non-null Game implementation must be provided to initialise" );
 	
 	[NSApplication sharedApplication];
 	

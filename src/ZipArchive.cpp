@@ -84,7 +84,7 @@ ZipFile* ZipArchive::openFile(const Dojo::String& path,const Dojo::String& mode)
 		int mode_flags=ZZIP_CASELESS;
 		//fake fopen MODE like C
 		if(mode.size()){	
-			#ifdef __ANDROID__
+			#ifndef WIN32	
 			#define  O_BINARY 0x0000
 			#endif 
 			mode_flags |= mode[0]=='b' ? O_BINARY : 0;

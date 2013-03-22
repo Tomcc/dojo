@@ -57,7 +57,8 @@ void Object::_unregisterChild( Object* child )
 	
 	child->_notifyParent( NULL );
 	
-	Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
+    if( child->isRenderable() )
+        Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
 }
 
 void Object::removeChild( int i )

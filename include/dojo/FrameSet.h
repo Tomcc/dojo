@@ -110,7 +110,7 @@ namespace Dojo
 		///returns the (looped!) frame at index i
 		/** 
 		if i > number of frames, i is looped over n as in i % size() */
-		inline Texture* getFrame( uint i )			
+		inline Texture* getFrame( int i )			
 		{	
 			return frames.at( i%frames.size() );	
 		}

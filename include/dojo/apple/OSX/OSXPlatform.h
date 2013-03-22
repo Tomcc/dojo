@@ -11,7 +11,7 @@
 
 #include "ApplePlatform.h"
 
-#include "Keyboard.h"ø
+#include "Keyboard.h"
 
 #ifdef __OBJC__
     #import <AppKit/NSOpenGLView.h>

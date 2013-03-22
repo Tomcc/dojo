@@ -49,6 +49,32 @@ using namespace Dojo;
 	platform->step( frameTimer.deltaTime() ); //one step
 }
 
+- (void) initialise
+{
+    // Get the layer
+    CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
+    
+    eaglLayer.opaque = TRUE;
+    eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+    
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    
+    displayVisible = TRUE;
+    
+    animating = FALSE;
+    displayLink = nil;
+    renderImpl = NULL;
+    
+    //initialise accelerometer
+    UIAccelerometer* accelerometer = [UIAccelerometer sharedAccelerometer];
+    accelerometer.delegate = self;
+    lastAccelerationX = lastAccelerationY = lastRoll = 0;
+    
+    //get C++ system
+    platform = (IOSPlatform*)Platform::getSingleton();    
+}
+
 - (void) layoutSubviews
 {
 	//set the scale factor to 2 to support retina display, if available
@@ -59,40 +85,14 @@ using namespace Dojo;
 		[self setContentScaleFactor:2];
 	
 	if( !renderImpl )
-	{
+	{        
 		platform->_initialiseImpl( self );
 	
 		renderImpl = platform->getRender();
-		touchSource = platform->getInput();	
+		touchSource = platform->getInput();
 		
 		frameTimer.reset();
 	}
-}
-
-- (void) initialise
-{
-	// Get the layer
-	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
-	
-	eaglLayer.opaque = TRUE;
-	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-									[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
-	
-	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-	
-	displayVisible = TRUE;
-	
-	animating = FALSE;
-	displayLink = nil;
-	renderImpl = NULL;
-
-	//initialise accelerometer
-	UIAccelerometer* accelerometer = [UIAccelerometer sharedAccelerometer];
-	accelerometer.delegate = self;
-	lastAccelerationX = lastAccelerationY = lastRoll = 0;
-			
-	//get C++ system
-	platform = (IOSPlatform*)Platform::getSingleton();
 }
 
 - (void) startAnimation
@@ -187,8 +187,8 @@ Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );
         Vector prevPos = getInterfaceOrientatedPoint( prevLoc, renderImpl, self );
 		
-		touchSource->_fireTouchMoveEvent( pos, prevPos );	
-	}	
+		touchSource->_fireTouchMoveEvent( pos, prevPos );
+	}
 }	
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -228,13 +228,11 @@ Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 										(float)acceleration.z ),
 										relativeRoll);
 }
-/*
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
+
++ (void) _keepMeInLibraryFile
 {
-	platform->onEmailSent( controller, result != MFMailComposeResultFailed );
-		
-	[[controller view] resignFirstResponder];
+    //this method is required as without an un-optimizable method LLVM will remove this class as it is not called from any cpp file
+    sleep(0);
 }
-*/
 
 @end

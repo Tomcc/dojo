@@ -109,7 +109,7 @@ namespace Dojo
                 return 10 + c - 'a';
             else
             {
-                DEBUG_FAIL( "WRONG HEX VALUE" );
+                DEBUG_FAIL( "The value is not an hex number" );
                 return 0;
             }
         }

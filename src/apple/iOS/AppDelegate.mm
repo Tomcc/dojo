@@ -93,4 +93,10 @@ using namespace Dojo;
 
 #endif
 
++ (void) _keepMeInLibraryFile
+{
+    //this method is required as without an un-optimizable method LLVM will remove this class as it is not called from any cpp file
+    sleep(0);
+}
+
 @end

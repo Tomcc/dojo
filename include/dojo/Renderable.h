@@ -80,12 +80,14 @@ namespace Dojo
 		///tells if the object is either visible or has a mesh
 		inline bool isVisible()				{	return visible && mesh;	}
 		inline bool isFading()				{	return fading;			}
+        
+        virtual bool isRenderable()         {   return true;            }
 					
 		inline bool isInView()
 		{
 			return !mCulled;
 		}
-			
+
 		inline void advanceFade( float dt )		
 		{			
 			if( fading ) //fade is scheduled

@@ -114,7 +114,21 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
     
 	CGDataProviderRelease( prov );
 	CGImageRelease( CGImage );
-	
+    
+#ifdef PLATFORM_IOS
+    if( alphaChannel ) //depremultiply the alpha dammit
+    {
+        byte* ptr = (byte*)bufptr;
+        byte* end = ptr + width * height * 4;
+        for( ; ptr < end; ptr += 4 )
+        {
+            float invAlpha = 1.f / (((float)ptr[3]) / 255.f);
+            ptr[0] = (byte)(((float)ptr[0]) * invAlpha);
+            ptr[1] = (byte)(((float)ptr[1]) * invAlpha);
+            ptr[2] = (byte)(((float)ptr[2]) * invAlpha);
+        }
+    }
+#endif
 	return alphaChannel ? GL_RGBA : GL_RGB;
 }
 
@@ -130,6 +144,6 @@ void ApplePlatform::_createApplicationDirectory()
 						attributes:nil 
 						error:NULL];
 		
-		DEBUG_ASSERT( success );
+		DEBUG_ASSERT( success, "Cannot create the user data directory" );
 	}	
 }

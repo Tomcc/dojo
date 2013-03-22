@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application;
+#import "Application.h"
 
 #ifdef GAME_CENTER_ENABLED
 	#import <GameKit/GKLeaderboardViewController.h>
@@ -28,6 +28,8 @@
 
 - (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController;
 #endif
+
++ (void) _keepMeInLibraryFile;
 		
 @end
 

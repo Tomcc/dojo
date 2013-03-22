@@ -158,7 +158,7 @@ namespace Dojo
 				indexGLType = GL_UNSIGNED_INT;
 				indexMaxValue = 0xffffffff;
 #else
-				DEBUG_FAIL( "32 BIT INDICES NOT SUPPORTED" );
+				DEBUG_FAIL( "32 bit indices are disabled (force enabled with DOJO_32BIT_INDICES_AVAILABLE)" );
 #endif
 			}
 		}		

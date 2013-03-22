@@ -22,8 +22,8 @@ using namespace Dojo;
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform
 {    
-	DEBUG_ASSERT(targetPlatform);
-	DEBUG_ASSERT(targetPlatform->getInput() );		
+	DEBUG_ASSERT(targetPlatform, "The platform can't be null" );
+	DEBUG_ASSERT(targetPlatform->getInput(), "The input system can't be null" );
 		
 	platform = targetPlatform;
 	input = platform->getInput();
