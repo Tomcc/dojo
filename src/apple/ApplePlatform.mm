@@ -51,7 +51,7 @@ ApplePlatform::~ApplePlatform()
 
 void ApplePlatform::step( float dt )
 {
-	Timer frameTimer;
+    frameTimer.reset();
 	
 	//clamp to max dt to avoid crazy behaviour
 	dt = Math::min( dt, game->getMaximumFrameLength() );
@@ -60,10 +60,9 @@ void ApplePlatform::step( float dt )
 	
     game->loop(dt);
     
-    render->render();
     sound->update(dt);
-	
-	realFrameTime = frameTimer.getElapsedTime();
+    
+    render->render();
 }
 
 GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
@@ -81,7 +80,8 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
     
     String ext = Utils::getFileExtension( path );
     
-    if( ext == String( "png" ) )
+    ///"img" format is a rename of png, to avoid mangling by xcode!
+    if( ext == String( "png" ) || ext == String( "img" ) )
         CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
     else if( ext == String( "jpg" ) )
         CGImage = CGImageCreateWithJPEGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
@@ -116,7 +116,7 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
 	CGImageRelease( CGImage );
     
 #ifdef PLATFORM_IOS
-    if( alphaChannel ) //depremultiply the alpha dammit
+    if( alphaChannel && ext == String( "png" ) ) //depremultiply the alpha dammit
     {
         byte* ptr = (byte*)bufptr;
         byte* end = ptr + width * height * 4;

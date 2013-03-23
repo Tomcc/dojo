@@ -205,11 +205,13 @@ void IOSPlatform::prepareThreadContext()
 }
 
 void IOSPlatform::present()
-{	
+{
+	realFrameTime = frameTimer.getElapsedTime();
+    
 	[EAGLContext setCurrentContext:context];
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-	
+    
 	[context presentRenderbuffer:GL_RENDERBUFFER_OES];
 }
 

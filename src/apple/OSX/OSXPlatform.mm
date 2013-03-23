@@ -165,7 +165,9 @@ void OSXPlatform::acquireContext()
     [[view openGLContext] makeCurrentContext];
 }
 void OSXPlatform::present()
-{    
+{
+	realFrameTime = frameTimer.getElapsedTime();
+    
     [[view openGLContext] flushBuffer];
 }
 

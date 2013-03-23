@@ -80,6 +80,7 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 	//find pngs and jpgs
 	Platform::getSingleton()->getFilePathsForType( "png", subdirectory, paths );
 	Platform::getSingleton()->getFilePathsForType( "jpg", subdirectory, paths );
+	Platform::getSingleton()->getFilePathsForType( "img", subdirectory, paths );
 		
 	for( int i = 0; i < paths.size(); ++i )
 	{

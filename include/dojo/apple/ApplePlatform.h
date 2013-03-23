@@ -18,6 +18,8 @@
 	#import <Foundation/NSAutoreleasePool.h>
 #endif
 
+#include "Timer.h"
+
 namespace Dojo
 {
 	
@@ -40,6 +42,8 @@ namespace Dojo
         		        
     protected:
         
+        Timer frameTimer;
+        
         enum CGImageType
         {
             CGIT_PNG,
@@ -47,7 +51,7 @@ namespace Dojo
         };
 		
 		void _createApplicationDirectory();
-		
+    
 		//these always exists because .cpp and .mm compiling this header could get different sizes for the class!!!
        	NSAutoreleasePool* pool;
         
