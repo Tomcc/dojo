@@ -80,8 +80,7 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
     
     String ext = Utils::getFileExtension( path );
     
-    ///"img" format is a rename of png, to avoid mangling by xcode!
-    if( ext == String( "png" ) || ext == String( "img" ) )
+    if( ext == String( "png" ) )
         CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
     else if( ext == String( "jpg" ) )
         CGImage = CGImageCreateWithJPEGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
@@ -116,7 +115,7 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
 	CGImageRelease( CGImage );
     
 #ifdef PLATFORM_IOS
-    if( alphaChannel && ext == String( "png" ) ) //depremultiply the alpha dammit
+    if( alphaChannel ) //depremultiply the alpha dammit
     {
         byte* ptr = (byte*)bufptr;
         byte* end = ptr + width * height * 4;
