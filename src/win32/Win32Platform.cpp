@@ -690,7 +690,12 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
-		return 0;
+	{
+		if( Utils::getFileExtension( ansipath ) == String( "img" ) )
+			fif = FIF_PNG;
+		else
+			return 0;
+	}
 
 	//check that the plugin has reading capabilities and load the file
 	if( !FreeImage_FIFSupportsReading(fif))
