@@ -6,8 +6,8 @@
 
 using namespace Dojo;
 
-TouchArea::TouchArea(  Listener* l, Dojo::GameState* state, const Vector& pos, const Vector& size, int layer ) :
-Object( state, pos, size ),
+TouchArea::TouchArea(  Listener* l, Dojo::Object* parent, const Vector& pos, const Vector& size, int layer ) :
+Object( parent, pos, size ),
 listener( l ),
 mPressed( false ),
 mTouches( 0 ),
@@ -16,7 +16,7 @@ mLayer( layer )
     DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
     
     mNeedsAABB = true;
-    state->addTouchArea( this );
+    getGameState()->addTouchArea( this );
 }
 
 TouchArea::TouchArea( Renderable* r, Listener* l ) :
