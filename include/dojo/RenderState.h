@@ -229,6 +229,22 @@ namespace Dojo
 		void applyState();
 		
 		void commitChanges( RenderState* nextState );
+
+		///sets up destBlend and srcBlend to use normal alpha blending
+		void useAlphaBlend()
+		{
+			srcBlend = GL_SRC_ALPHA;
+			destBlend = GL_ONE_MINUS_SRC_ALPHA;
+			blendEquation = GL_FUNC_ADD;
+		}
+
+		///sets up destBlend and srcBlend to use alpha+additive blending
+		void useAdditiveBlend()
+		{
+			destBlend = GL_ONE;
+			srcBlend = GL_SRC_ALPHA;
+			blendEquation = GL_FUNC_ADD;
+		}
 				
 	protected:
 			

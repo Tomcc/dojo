@@ -46,6 +46,7 @@ namespace Dojo
 				
 		inline void setVisible( bool v )				{	visible = v;		}
 		
+		///starts a linear fade on the color of this Renderable, from start to end and "duration" seconds long
 		inline void startFade( const Color& start, const Color& end, float duration )
 		{			
 			DEBUG_ASSERT( duration > 0, "The duration of a fade must be greater than 0" );
@@ -64,6 +65,7 @@ namespace Dojo
 			setVisible( true );
 		}
 		
+		///starts a linear fade on the alpha of this Renderable, from start to end and "duration" seconds long
 		inline void startFade( float startAlpha, float endAlpha, float duration )
 		{			
 			color.a = startAlpha;
@@ -72,6 +74,12 @@ namespace Dojo
 			end.a = endAlpha;
 			
 			startFade(color, end, duration);
+		}
+
+		///stops a current fade leaving the Renderable in the current state
+		void stopFade()
+		{
+			fading = false;
 		}
 		
 		inline int getLayer()				{	return layer;			}
