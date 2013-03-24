@@ -163,6 +163,12 @@ namespace Dojo
 			
 			subs.remove( g );
 		}
+
+		///removes all of the registered subgrops from this ResourceGroup
+		void removeAllSubgroups()
+		{
+			subs.clear();
+		}
 		
 		inline void removeFrameSet( const String& name )
 		{

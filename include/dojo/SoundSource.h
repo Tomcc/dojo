@@ -86,6 +86,12 @@ namespace Dojo
 
 			float getVolume();	
 
+			///returns the SoundBuffer that is currently being played
+			SoundBuffer* getSoundBuffer()
+			{
+				return buffer;
+			}
+
 			///returns the elapsed time since source play 
 			inline float getElapsedTime()
 			{
