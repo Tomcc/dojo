@@ -194,6 +194,9 @@ namespace Dojo
 			return spacing;
 		}
 
+		///returns the length in pixel for the given string
+		int getPixelLength( const String& s );
+
 		inline uint getCharIndex( Character* c )
 		{
 			return FT_Get_Char_Index( face, c->character );

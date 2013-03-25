@@ -12,6 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Object.h"
+#include "Touch.h"
 
 namespace Dojo
 {
@@ -28,15 +29,24 @@ namespace Dojo
     class TouchArea : public Object
     {
     public:
+
+		typedef Array< Touch > TouchList;
         
         class Listener
         {
         public:
             
+			///Tapped is sent when the TA was previously "free", and then a touch starts inside the area
+			/**
+			differs with Pressed as it won't be sent, for example, when the user drags a finger inside the area
+			*/
+			virtual void onTouchAreaTapped( Dojo::TouchArea* area ) {}
+
 			///Pressed is sent when a previously untouched area is tapped
-            virtual void onTouchAreaPressed( Dojo::TouchArea* )     {}	
+            virtual void onTouchAreaPressed( Dojo::TouchArea* area )     {}	
+
 			///Released is sent when a previously touched (one or more touches) is released
-            virtual void onTouchAreaReleased( Dojo::TouchArea* )	{}
+            virtual void onTouchAreaReleased( Dojo::TouchArea* area )	{}
             
         protected:            
         };
@@ -60,11 +70,12 @@ namespace Dojo
         {
             return mLayer;
         }
-        
-        inline void _incrementTouches()
-        {
-            ++mTouches;
-        }
+
+		///returns a list of the touches that entered this toucharea in the last frame
+		inline const TouchList& getTouchList()
+		{
+			return mTouches;
+		}
 
 		///tells if this area currently contains at least one touch
 		bool isPressed()
@@ -75,29 +86,56 @@ namespace Dojo
         inline void _fireOnTouchUsingCurrentTouches()
         {
             //set the state to clicked if there's at least one touch
-            bool active = mTouches > 0;
+            bool active = mTouches.size() > 0;
             
             if( mPressed != active ) ///fire the event on state change
             {                
                 mPressed = active;
+
+				//if all the touches just began in this area, the user tapped
+				if( mPressed )
+				{
+					bool tapped = true;
+					for( auto& t : mTouches )
+					{
+						if( !t.firstFrame )
+						{
+							tapped = false;
+							break;
+						}
+					}
+					if( tapped )		listener->onTouchAreaTapped( this );
+				}
                 
                 if( mPressed )      listener->onTouchAreaPressed( this );
                 else                listener->onTouchAreaReleased( this );
             }
-            
-            mTouches = 0;
         }
         
         inline void _notifyLayer( int l )
         {
             mLayer = l;
-        }
+		}
+
+		void _clearTouches()
+		{
+			mTouches.clear();
+		}
+
+		void _incrementTouches( const Touch& touch )
+		{
+			mTouches.add( touch );
+		}
         
     protected:        
         bool mPressed;
-        int mTouches, mLayer;
+        int mLayer;
+
+		TouchList mTouches;
         
         Listener* listener;
+
+		
     };
 }
 

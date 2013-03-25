@@ -16,6 +16,10 @@ enabled(enable)
 
 void InputSystem::poll(float dt)
 {
+	//update all the touches
+	for( auto touch : mTouchList )
+		touch->_update();
+
     for( auto device : mDeviceList )
         device->poll( dt );
 };

@@ -245,7 +245,7 @@ namespace Dojo {
 		inline bool collidesWith( Object * t )
 		{			
 			DEBUG_ASSERT( t, "collidesWith: colliding Object is NULL" );
-			DEBUG_ASSERT( mNeedsAABB, "collidesWith: this Object has no AABB" );            
+			DEBUG_ASSERT( mNeedsAABB, "collidesWith: this Object has no AABB" );
 
 			return collidesWith( t->getWorldMax(), t->getWorldMin() );
 		}

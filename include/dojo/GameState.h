@@ -14,9 +14,9 @@
 
 #include "Object.h"
 #include "ResourceGroup.h"
-#include "InputSystem.h"
 #include "Renderable.h"
 #include "StateInterface.h"
+#include "Touch.h"
 
 namespace Dojo 
 {	
@@ -31,7 +31,10 @@ namespace Dojo
 	it is also a ResourceGroup, meaning that a GameState can be associated easily with the Resources it loads;
 	and it is implements StateInterface, so that it can easily become a substate of Game, and manage its own (often complex) internal states.
 	*/
-	class GameState : public Object, public ResourceGroup, public StateInterface
+	class GameState : 
+		public Object, 
+		public ResourceGroup, 
+		public StateInterface
 	{
 	public:
 		
@@ -68,9 +71,9 @@ namespace Dojo
 		///sets the active Viewport (ie. camera) on this GameState
 		void setViewport( Viewport* v );
 		
-		///"touches" all the touchAreas at the given point in the level
+		///"touches" all the touchAreas with the given touch
 		/**touched TouchAreas will fire onTouchAreaPressed() on their listeners as soon as updateClickableState() is called*/
-		void touchAreaAtPoint( const Vector& point );        
+		void touchAreaAtPoint( Touch* touch );        
 
 		///triggers all the TouchAreas to send their events if they were touched before the last updateClickableState call
         void updateClickableState();

@@ -15,6 +15,7 @@
 #include "Array.h"
 #include "Vector.h"
 #include "ApplicationListener.h"
+#include "Touch.h"
 
 namespace Dojo 
 {
@@ -32,22 +33,6 @@ namespace Dojo
 	class InputSystem : public ApplicationListener
 	{
 	public:
-		
-		class Touch
-		{
-		public:
-			
-			int ID;
-			Vector point, speed;
-			
-			Touch( int _ID, const Vector& _point ) :
-			ID( _ID ),
-			point( _point ),
-			speed( Vector::ZERO )
-			{
-				
-			}
-		};
 		
 		typedef Array< Touch* > TouchList;
 		typedef Array< InputDevice* > DeviceList;
@@ -70,9 +55,9 @@ namespace Dojo
 			
 			inline InputSystem* getSource()	{	return source;	}
 			
-			virtual void onTouchBegan( const InputSystem::Touch& touch ) {}
-			virtual void onTouchMove( const InputSystem::Touch& touch )  {}
-			virtual void onTouchEnd( const InputSystem::Touch& touch )   {}
+			virtual void onTouchBegan( const Touch& touch ) {}
+			virtual void onTouchMove( const Touch& touch )  {}
+			virtual void onTouchEnd( const Touch& touch )   {}
 			
 			virtual void onMouseMove( const Dojo::Vector& curPos, const Dojo::Vector& oldPos )	{}
 			virtual void onScrollWheel( float scroll )	{}

@@ -8,6 +8,7 @@
 #include "Viewport.h"
 #include "Platform.h"
 #include "TouchArea.h"
+#include "InputSystem.h"
 
 using namespace Dojo;
 
@@ -45,9 +46,9 @@ void GameState::setViewport( Viewport* v )
 	Platform::getSingleton()->getRender()->setViewport( v );
 }
 
-void GameState::touchAreaAtPoint( const Vector& point )
+void GameState::touchAreaAtPoint( Touch* touch )
 {
-	Vector pointer = getViewport()->makeWorldCoordinates( point );
+	Vector pointer = getViewport()->makeWorldCoordinates( touch->point );
 
 	Dojo::Array< TouchArea* > layer;
 	int topMostLayer = INT32_MIN;
@@ -68,21 +69,25 @@ void GameState::touchAreaAtPoint( const Vector& point )
 
 	//trigger all the areas overlapping in the topmost layer 
 	for( int i = 0; i < layer.size(); ++i )
-		layer[i]->_incrementTouches();	
+		layer[i]->_incrementTouches( *touch );	
 }
 
 void GameState::updateClickableState()
 {
 	if( !childs )
 		return;
+
+	//clear all the touchareas
+	for( auto ta : mTouchAreas )
+		ta->_clearTouches();
 	
-	const InputSystem::TouchList& touches = Platform::getSingleton()->getInput()->getTouchList();
+	const InputSystem::TouchList& touchList = Platform::getSingleton()->getInput()->getTouchList();
 		
 	//"touch" all the touchareas active in this frame
-	for( int i = 0; i < touches.size(); ++i )
-		touchAreaAtPoint( touches[i]->point );
+	for( auto touch : touchList )
+		touchAreaAtPoint( touch );
 	
 	///launch events
-	for( int i = 0; i < mTouchAreas.size(); ++i )
-		mTouchAreas[i]->_fireOnTouchUsingCurrentTouches();
+	for( auto ta : mTouchAreas )
+		ta->_fireOnTouchUsingCurrentTouches();
 }
