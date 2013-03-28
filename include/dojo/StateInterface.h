@@ -122,11 +122,11 @@ namespace Dojo
 		{			
 			if( mTransitionCompleted )  //do not call a loop if the current state is not "active" (ie-transition in progress)
 				_subStateLoop( dt );
-		
-			onLoop( dt );
-			
+
 			if( hasNextState() )
 				_applyNextState();
+
+			onLoop( dt );
 		}
 		
 		///end the execution of this state (and its childs)

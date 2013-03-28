@@ -658,15 +658,18 @@ void Win32Platform::keyPressed( int kc )
 		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
 	else if( mFrameSteppingEnabled )
 	{
-		if( key == KC_NUMPAD0 )		mFramesToAdvance = 1;
-		else if( key == KC_NUMPAD1 )	mFramesToAdvance = 5;
-		else if( key == KC_NUMPAD2 )	mFramesToAdvance = 10;
-		else if( key == KC_NUMPAD3 )	mFramesToAdvance = 20;
-		else if( key == KC_NUMPAD4 )	mFramesToAdvance = 50;
-		else if( key == KC_NUMPAD5 )	mFramesToAdvance = 100;
-		else if( key == KC_NUMPAD6 )	mFramesToAdvance = 200;
-		else if( key == KC_NUMPAD7 )	mFramesToAdvance = 500;
+		if( key == KC_0 )		mFramesToAdvance = 1;
+		else if( key == KC_1 )	mFramesToAdvance = 5;
+		else if( key == KC_2 )	mFramesToAdvance = 10;
+		else if( key == KC_3 )	mFramesToAdvance = 20;
+		else if( key == KC_4 )	mFramesToAdvance = 50;
+		else if( key == KC_5 )	mFramesToAdvance = 100;
+		else if( key == KC_6 )	mFramesToAdvance = 200;
+		else if( key == KC_7 )	mFramesToAdvance = 500;
 	}
+
+	if( mFramesToAdvance ) //capture the input
+		return;
 #endif
 	
 	mKeyboard._notifyButtonState( key, true );
