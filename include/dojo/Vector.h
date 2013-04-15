@@ -150,9 +150,16 @@ namespace Dojo
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
 		}
 
+		///returns true if this vector is near to v within the given threshold
 		inline bool isNear( const Vector& v, float threshold = 0.1 )
 		{
 			return distanceSquared( v ) < threshold*threshold;
+		}
+
+		///returns true when all the components of the vector are 0
+		inline bool isZero() const
+		{
+			return x == 0.f && y == 0.f && z == 0.f;
 		}
 
 		///returns the dot product with this vector with only positive components

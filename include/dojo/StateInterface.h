@@ -88,7 +88,7 @@ namespace Dojo
 		inline void setState( StateInterface* child )
 		{
 			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
-			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
+ 			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
 			
 			nextStatePtr = child;
 						

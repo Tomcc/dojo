@@ -2,7 +2,6 @@
 #define Platform_h__
 
 #include "dojo_common_header.h"
-
 #include "Table.h"
 
 namespace Dojo 
@@ -16,6 +15,7 @@ namespace Dojo
 	class Game;
 	class Email;
 	class ApplicationListener;
+	class FileStream;
 	
 	///Platform is the base of the engine; it runs the main loop, creates the windows and updates the Game
 	/** the Platform is the first object to be initialized in a Dojo game, using the static method Platform::create() */
@@ -164,8 +164,11 @@ namespace Dojo
 			return config;
 		}
 
+		///creates a new FileStream object for the given path, but does not open it
+		FileStream* getFile( const String& path );
+
 		///loads the whole file allocating a new buffer
-		uint loadFileContent( char*& bufptr, const String& path );
+		int loadFileContent( char*& bufptr, const String& path );
 				
 		///discovers all the files with an extension in a folder
 		/**\param type type extension, es "png"

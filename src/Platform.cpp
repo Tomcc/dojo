@@ -5,6 +5,7 @@
 #include "ZipArchive.h"
 //
 #include "Utils.h"
+#include "File.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
 
@@ -219,30 +220,23 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 	}
 }
 
-uint Platform::loadFileContent( char*& bufptr, const String& path )
-{	
+FileStream* Platform::getFile( const String& path )
+{
 	using namespace std;
-	
+
 	int size = 0;
 	int internalZipPathIdx = _findZipExtension( path );
-	if( internalZipPathIdx == String::npos )
-	{
-		fstream file( path.ASCII().c_str(), ios_base::in | ios_base::ate | ios_base::binary );
+	
+	if( internalZipPathIdx == String::npos ) //normal file
+		return new File( path );
 
-		if( !file.is_open() )
-			return 0;
-
-		size = (int)file.tellg();
-		file.seekg(0);
-
-		bufptr = (char*)malloc( size );
-
-		file.read( bufptr, size );
-
-		file.close();
-	}
 	else //open a file from a zip
 	{
+		DEBUG_TODO;
+		//TODO use a ZipStream
+		return nullptr;
+
+		/*
 		String zipPath = path.substr( 0, internalZipPathIdx );
 		String zipInternalPath = path.substr( internalZipPathIdx+1 );
 		//OPEN ZIP
@@ -268,9 +262,26 @@ uint Platform::loadFileContent( char*& bufptr, const String& path )
 		else{
 			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII());
 			return 0;
-		}
+		}*/
 	}
-	
+}
+
+int Platform::loadFileContent( char*& bufptr, const String& path )
+{
+	FileStream* file = getFile( path );
+	int size = 0;
+	if( file->open() )
+	{
+		size = file->getSize();
+		bufptr = (char*)malloc( size );
+
+		file->read( (byte*)bufptr, size );
+
+		file->close();
+	}
+
+	SAFE_DELETE( file );
+
 	return size;
 }
 

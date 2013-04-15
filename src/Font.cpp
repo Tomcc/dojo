@@ -345,10 +345,10 @@ int Font::getPixelLength( const String& str )
 	for( int i = 0; i < str.size(); ++i )
 	{
 		Character* chr = getCharacter( str[i] );
-		l += chr->advance * chr->pixelWidth;
+		l += (int)(chr->advance * chr->pixelWidth);
 		
 		if( lastChar && isKerningEnabled() )
-			l += getKerning( chr, lastChar ) * fontWidth;
+			l += (int)(getKerning( chr, lastChar ) * fontWidth);
 
 		lastChar = chr;
 	}

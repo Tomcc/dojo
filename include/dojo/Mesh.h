@@ -394,7 +394,7 @@ namespace Dojo
 			return vertexFields[f];
 		}
 		
-		inline uint getVertexCount()
+		inline int getVertexCount()
 		{
 			return vertexCount;
 		}
