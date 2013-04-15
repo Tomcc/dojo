@@ -108,7 +108,7 @@ void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
 	DEBUG_ASSERT( next, "null music source passed" );
 
 	//override music activation if the system sound is in use
-	if( isMusicFading() || Platform::getSingleton()->isSystemSoundInUse() )
+	if( Platform::getSingleton()->isSystemSoundInUse() )
 		return;
 
 	nextMusicTrack = getSoundSource( next );

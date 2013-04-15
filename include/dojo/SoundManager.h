@@ -106,16 +106,13 @@ namespace Dojo {
 			///stops the music, with an optional fade-out
 			inline void stopMusic( float stopFadeTime = 0 )
 			{
-				if( musicTrack && !isMusicFading() )
-				{
-					DEBUG_MESSAGE( "Music fading out in " << stopFadeTime << " s" );
+                DEBUG_MESSAGE( "Music fading out in " << stopFadeTime << " s" );
 					
-					fadeState = FS_FADE_OUT;
-					nextMusicTrack = NULL;
+                fadeState = FS_FADE_OUT;
+                nextMusicTrack = NULL;
 
-					halfFadeTime = stopFadeTime;
-					currentFadeTime = 0;
-				}
+                halfFadeTime = stopFadeTime;
+                currentFadeTime = 0;
 			}
 
 			inline void setMusicVolume( float volume )			
