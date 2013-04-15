@@ -188,8 +188,6 @@ int SoundBuffer::_loadOggFromFile()
 	
 	DEBUG_ASSERT_INFO( sz, "Cannot load an ogg from file", "path = " + filePath );
     
-    DEBUG_MESSAGE( filePath.ASCII().c_str() );
-	
 	_loadOggFromMemory( buf, sz );
 	
 	free( buf );
