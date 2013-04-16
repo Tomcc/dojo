@@ -2,6 +2,7 @@
 
 #include "Table.h"
 #include "Platform.h"
+#include "FileStream.h"
 
 using namespace Dojo;
 
@@ -10,20 +11,23 @@ void Table::loadFromFile( Table* dest, const String& path )
 	DEBUG_ASSERT( dest != nullptr, "The destination table is null" );
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
-	char* bufchar;
-	int read = Platform::getSingleton()->loadFileContent( bufchar, path );
+	FileStream* file = Platform::getSingleton()->getFile( path );
 	
-	if( read == 0 )
-		return;
+	if( file->open() )
+	{
+		//read the contents directly in a string
+		std::string buf;
+		buf.resize( file->getSize() );
 
-	//TODO refactor to use directly the buffer, this is HEAVY!
-	std::string buf( bufchar, read );
-	free( bufchar );
+		file->read( (byte*)buf.c_str(), buf.size() );
 
-	dest->setName( Utils::getFileName( path ) );
+		dest->setName( Utils::getFileName( path ) );
 
-	StringReader reader( buf );
-	dest->deserialize( reader );
+		StringReader reader( buf );
+		dest->deserialize( reader );
+	}
+
+	SAFE_DELETE( file );
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );

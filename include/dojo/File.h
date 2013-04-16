@@ -53,6 +53,22 @@ namespace Dojo
 			return mAccess;
 		}
 
+		virtual long getCurrentPosition()
+		{
+			DEBUG_ASSERT( isOpen(), "The file must be open" );
+			DEBUG_ASSERT( mFile, "The C file is invalid" );
+
+			return ftell( mFile );
+		}
+
+		virtual int seek( long offset, int fromWhere = SEEK_SET )
+		{
+			DEBUG_ASSERT( isOpen(), "The file must be open" );
+			DEBUG_ASSERT( mFile, "The C file is invalid" );
+
+			return fseek( mFile, offset, fromWhere );
+		}
+
 		virtual int read(  byte* buf, int number )
 		{
 			DEBUG_ASSERT( isReadable(), "The file must be open and readable" );

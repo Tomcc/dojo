@@ -106,6 +106,9 @@
 
 #define DOJO_MAX_TEXTURE_UNITS 2
 
+//There is VAO experimental support but Valve states that VAOs are slower on all platforms
+//source: https://developer.nvidia.com/sites/default/files/akamai/gamedev/docs/Porting%20Source%20to%20Linux.pdf
+//needs testing, comment to enable
 #define DOJO_DISABLE_VAOS
 
 //common enums

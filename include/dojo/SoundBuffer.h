@@ -4,6 +4,8 @@
 #include "dojo_common_header.h"
 
 #include "Resource.h"
+#include "Stream.h"
+#include "Array.h"
 
 namespace Dojo 
 {
@@ -16,64 +18,148 @@ namespace Dojo
 	class SoundBuffer : public Resource
 	{
 	public:
-		
-		class VorbisSource
+
+		///A Chunk represents an actual OpenAL buffer. Chunks are used to preallocate streaming resources
+		class Chunk : public Resource
 		{
 		public:
-			void* data;
-			long size;
+
+			///the max size in PCM of a chunk
+			static const int MAX_SIZE = 48000 * 3;
 			
-			long pointer;
-			
-			VorbisSource( void* d, size_t sz ) :
-			data( d ),
-			size( sz ),
-			pointer( 0 )
+			///Creates a new chunk that will use the given source span to load
+			Chunk( SoundBuffer* parent, int start, int end ) :
+				size( 0 ),
+				alBuffer( 0 ),
+				references( 0 ),
+				pParent( parent ),
+				mStartPosition( start ),
+				mEndPosition( end )
 			{
-				DEBUG_ASSERT( data, "null data passed" );
-				DEBUG_ASSERT( size >= 0, "Invalid <= 0 size" );
+				DEBUG_ASSERT( parent, "invalid parent" );
+				DEBUG_ASSERT( start >= 0, "invalid starting position" );
+				DEBUG_ASSERT( end > start, "invalid ending position" );
+
+				//allocate the buffer
+				alGenBuffers( 1, &alBuffer );
 			}
-			
-			static size_t read( void* out, size_t size, size_t count, void* source );
-			static int seek( void *source, ogg_int64_t offset, int whence );			
-			static int close( void *source );			
-			static long tell( void *source );
+
+			~Chunk()
+			{
+				alDeleteBuffers( 1, &alBuffer );
+			}
+
+			///acquires one reference to this Chunk, and loads it if needed
+			void get()
+			{
+				if( references == 0 && !isLoaded() ) //load it when referenced the first time
+					onLoad();
+
+				++references;
+			}
+
+			///releases one reference to this Chunk, and unloads it if needed
+			void release()
+			{
+				--references;
+
+				DEBUG_ASSERT( references >= 0, "References should never be less than 0" );
+
+				if( references == 0 ) //unload it when dereferenced last time
+					onUnload();
+			}
+
+			///returns the underlying OpenAL buffer
+			ALuint getOpenALBuffer()
+			{
+				return alBuffer;
+			}
+
+			///returns the size of this chunk
+			int getSize()
+			{
+				return size;
+			}
+
+			virtual bool onLoad();
+
+			virtual void onUnload( bool soft = false );
+
+		protected:
+
+			SoundBuffer* pParent;
+			int mStartPosition;
+			int mEndPosition;
+
+			ALuint size;
+			ALuint alBuffer;
+			int references;
 		};
 
-		///Costruttore
+		typedef Array< Chunk* > ChunkList;
+		
+		///Creates a new file-loaded SoundBuffer in the given resourcegroup, for the given file path
 		SoundBuffer( ResourceGroup* creator, const String& path );
-		///Distruttore
+		
 		~SoundBuffer();
 
 		virtual bool onLoad();
 		virtual void onUnload( bool soft = false );
 
-		///Ottieni la dimensione in memoria di questo buffer.
+		///tells the memory size of this SoundBuffer
 		inline int getSize()					{	return size;	}
+
+		///returns the number of chunks that compose this sound
+		inline int getChunkNumber()
+		{
+			return mChunks.size();
+		}
+
+		///tells the duration in seconds of this SoundBuffer
 		inline float getDuration()				{	return mDuration;}
 
-		inline bool isLoaded()					{	return buffer != AL_NONE;	}
-
-		///-uso interno-
-		inline ALuint _getOpenALBuffer()	
+		inline bool isLoaded()					
 		{
-			return buffer;
+			return !mChunks.isEmpty();
+		}
+
+		///tells if this buffer has been loaded as a streaming (multi-part, lazy-loaded) buffer.
+		bool isStreaming()
+		{
+			return mChunks.size() > 1;
+		}
+
+		///get the nth part of this SoundBuffer. only streaming buffers have more than one part.
+		/**
+		if n is greater than the number of chunks, it will loop, just like animation frames
+		*/
+		Chunk* getChunk( int n )
+		{
+			DEBUG_ASSERT( n >= 0 && n < mChunks.size(), "The requested chunk is out of bounds" );
+
+			mChunks[ n ]->get();
+			return mChunks[ n ];
 		}
 
 	protected:
-			
+
+		static ov_callbacks VORBIS_CALLBACKS;
+
+		static size_t _vorbisRead( void* out, size_t size, size_t count, void* source );
+		static int _vorbisSeek( void *source, ogg_int64_t offset, int whence );			
+		static int _vorbisClose( void *source );			
+		static long _vorbisTell( void *source );
+
 		SoundManager* mgr;
-		
-		ALsizei	size;
 
-		ALuint buffer;
-
+		ALuint size;
 		float mDuration;
-		
-		int _loadOggFromMemory( void* buf, int sz );
-		int _loadOggFromFile();
-						
-		
+
+		ChunkList mChunks;
+		Stream* mSource;
+
+		bool _loadOgg( Stream* source );
+		bool _loadOggFromFile();
 	};
 }
 

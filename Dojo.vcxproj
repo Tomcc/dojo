@@ -28,6 +28,7 @@
     <ClInclude Include="include\dojo\InputDevice.h" />
     <ClInclude Include="include\dojo\Keyboard.h" />
     <ClInclude Include="include\dojo\KeyCode.h" />
+    <ClInclude Include="include\dojo\MemoryInputStream.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />

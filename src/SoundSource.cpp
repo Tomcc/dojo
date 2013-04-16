@@ -22,6 +22,7 @@ void SoundSource::_reset()
 	pos = Vector::ZERO;
 	positionChanged = true;
 	buffer = NULL;
+	mCurrentChunk = 0;
 
 	//set default parameters
 	volume = 1.0f;
@@ -29,7 +30,6 @@ void SoundSource::_reset()
 	looping = false;
 
 	setAutoRemove(true);
-	setFlushMemoryWhenRemoved(false);
 }
 
 SoundSource::~SoundSource()
@@ -57,7 +57,7 @@ float SoundSource::getVolume()
 
 void SoundSource::play( float volume )
 {
-	//il suono e' abilitato a suonare?
+	//can the sound play?
 	if( !isValid() && buffer && buffer->isLoaded() && mgr->getMasterVolume() > 0 )
 		return;
 
@@ -66,10 +66,32 @@ void SoundSource::play( float volume )
 		if(source && buffer )
 		{
 			//set global parameters
-			alSourcef (source, AL_REFERENCE_DISTANCE,    1.0f );
+			alSourcef (source, AL_REFERENCE_DISTANCE, 1.0f );
 
-            //TODO - request 3 chunks to the buffer
-			alSourcei (source, AL_BUFFER,   buffer->_getOpenALBuffer()  );
+			int chunkNumber = buffer->getChunkNumber();
+			if( chunkNumber == 1 ) //immediate sound
+			{
+				mCurrentChunk = buffer->getChunk( 0 );
+
+				alSourcei (source, AL_BUFFER, buffer->getChunk( 0 )->getOpenALBuffer() );
+			}
+			else
+			{				
+				DEBUG_ASSERT( mChunkQueue.empty(), "The queue should have been emptied before reusing the queue" );
+
+				//try to load at least BUFFER_QUEUE sounds
+				for( mCurrentChunkID = 0; mCurrentChunkID < chunkNumber && mCurrentChunkID < QUEUE_SIZE; ++mCurrentChunkID )
+				{
+					//add to the queue
+					auto chunk = buffer->getChunk( mCurrentChunkID );
+					chunk->get();
+					ALuint buf = chunk->getOpenALBuffer();
+					alSourceQueueBuffers( source, 1, &buf );
+
+					mChunkQueue.push( chunk );
+				}
+				--mCurrentChunkID;
+			}
 		}
 		else
 			state = SS_FINISHED;
@@ -133,17 +155,48 @@ void SoundSource::_update()
 		positionChanged = false;
 	}
 	
-    //TODO - stop if the buffer tells there will be no more chunks
-    //pause if there are no more chunks but the buffer is still "open" 
+    //if streaming, check if buffers have been used and replenish the queue
+	if( isStreaming() )
+	{
+		ALint processed;
+		alGetSourcei( source, AL_BUFFERS_PROCESSED, &processed );
+
+		if( processed )
+		{
+			//pop the old buffer
+			ALuint b;
+			alSourceUnqueueBuffers( source, 1, &b );
+
+			auto chunk = mChunkQueue.front();
+			mChunkQueue.pop();
+			chunk->release();
+
+			//add a new buffer
+			++mCurrentChunkID;
+			if( looping && mCurrentChunkID >= buffer->getChunkNumber() )
+				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
+			
+			if( mCurrentChunkID < buffer->getChunkNumber() ) //exhausted?
+			{
+				chunk = buffer->getChunk( mCurrentChunkID );
+				chunk->get();
+				mChunkQueue.push( chunk );
+			}
+		}
+	}
     
 	alGetSourcei(source, AL_SOURCE_STATE, &playState);
 
 	if( autoRemove && !looping && state == SS_PLAYING && playState == AL_STOPPED )
 	{
-		state = SS_FINISHED;
+		//take care of the chunks
+		if( mCurrentChunk ) //nonstreaming
+			mCurrentChunk->release();
+		else
+		{
+			DEBUG_TODO; //release the exhausted buffers in the queue
+		}
 
-		//unload the used buffer!
-		if(flush)
-			buffer->onUnload();
+		state = SS_FINISHED;
 	}
 }

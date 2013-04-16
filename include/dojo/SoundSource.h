@@ -4,12 +4,14 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
+#include "SoundBuffer.h"
+
+#include <queue>
 
 namespace Dojo
 {
 		class SoundManager;
-		class SoundBuffer;
-
+		
 		///SoundSource is an actual sound being played
 		/**
 		SoundSources are created (actually, they are drawn from a pool) using SoundManager::play(), and automatically
@@ -18,6 +20,8 @@ namespace Dojo
 		class SoundSource 
 		{				
 		public:
+
+			static const int QUEUE_SIZE = 3;
 
 			enum SoundState 			
 			{
@@ -49,7 +53,8 @@ namespace Dojo
 			inline void setLooping(bool l)
 			{
 				looping = l;
-				if( source ) alSourcei (source, AL_LOOPING, looping);
+				if( source ) //do not use this looping flag on streaming sounds, we handle it in the update 
+					alSourcei (source, AL_LOOPING, isStreaming() ? false : looping );
 			}
 
 			inline void setPitch( float p)			
@@ -57,10 +62,6 @@ namespace Dojo
 				pitch = p;
 				if( source ) alSourcef (source, AL_PITCH,  pitch);			
 			}
-			///if true, the buffer attached to this source will be destroyed when the playback ends!
-			/** 
-			useful for big one-shot sounds such as dialogue */
-			inline void setFlushMemoryWhenRemoved(bool f)	{		flush = f;		}
 			
 			///if autoremove is disabled, SoundManager won't garbage collect this Source
 			inline void setAutoRemove(bool a)				{	autoRemove = a;		}	
@@ -81,6 +82,12 @@ namespace Dojo
 			///returns the Source's playing state
 			inline SoundState getState()		{	return state;	}
 			inline bool isPlaying()				{	return state == SS_PLAYING;	}
+
+			///tells if this source is bound to a streaming SoundBuffer
+			bool isStreaming()
+			{
+				return buffer && buffer->isStreaming();
+			}
 
 			inline ALuint getSource()			{	return source;	}
 
@@ -133,7 +140,9 @@ namespace Dojo
 			void _loadResources();
 
 		protected:
-			
+
+			typedef std::queue< SoundBuffer::Chunk* > ChunkQueue;
+
 			SoundManager* mgr;
 			
 			Vector pos;
@@ -144,11 +153,15 @@ namespace Dojo
 			ALuint source;
 			ALfloat position[3];
 			ALint playState;
-			
+
+			int mCurrentChunkID;
+			SoundBuffer::Chunk* mCurrentChunk;
+			ChunkQueue mChunkQueue;
+
 			SoundState state;
 
 			//params
-			bool flush, looping, autoRemove;	
+			bool looping, autoRemove;	
 			float volume, pitch;
 		};
 }

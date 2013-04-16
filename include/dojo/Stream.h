@@ -45,6 +45,12 @@ namespace Dojo
 		///returns the kind of access this stream provides, ie. read-only
 		virtual Access getAccess()=0;
 
+		///returns the current reading/writing position
+		virtual long getCurrentPosition()=0;
+
+		///goes to the given position
+		virtual int seek( long offset, int fromWhere = SEEK_SET )=0;
+
 		///utility method that tells if the stream is open
 		bool isOpen()
 		{
@@ -66,7 +72,19 @@ namespace Dojo
 		///ensures that the stream is in sync with the underlying data, ie. buffered data will be written to file
 		virtual void flush()
 		{
-			DEBUG_FAIL( "This stream is not write-enabled" );
+
+		}
+
+		///tells the Stream to prepare to be read from
+		virtual Access open()
+		{
+			return getAccess();
+		}
+
+		///closes the Stream and releases its resources
+		virtual void close()
+		{
+			flush();
 		}
 	};
 }
