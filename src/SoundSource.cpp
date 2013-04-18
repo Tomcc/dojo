@@ -75,7 +75,7 @@ void SoundSource::play( float volume )
 				alSourcei (source, AL_BUFFER, buffer->getChunk( 0 )->getOpenALBuffer() );
 			}
 			else
-			{				
+			{
 				DEBUG_ASSERT( mChunkQueue.empty(), "The queue should have been emptied before reusing the queue" );
 
 				//try to load at least BUFFER_QUEUE sounds
@@ -86,10 +86,14 @@ void SoundSource::play( float volume )
 					ALuint buf = chunk->getOpenALBuffer();
 					alSourceQueueBuffers( source, 1, &buf );
 
+					CHECK_AL_ERROR;
+
 					mChunkQueue.push( chunk );
 				}
 				--mCurrentChunkID;
 			}
+
+			CHECK_AL_ERROR;
 		}
 		else
 			state = SS_FINISHED;
@@ -117,6 +121,8 @@ void SoundSource::play( float volume )
 		alGetSourcefv(source, AL_POSITION, position);
 			
 		state = SS_PLAYING;	
+
+		CHECK_AL_ERROR;
 	}
 }
 
@@ -183,6 +189,8 @@ void SoundSource::_update()
 
 				alSourceQueueBuffers( source, 1, &b );
 			}
+			
+			CHECK_AL_ERROR;
 		}
 	}
     
@@ -192,7 +200,9 @@ void SoundSource::_update()
 	{
 		//release all the used chunks
 		if( !isStreaming() ) //nonstreaming
+		{
 			mCurrentChunk->release();
+		}
 		else
 		{
 			while( !mChunkQueue.empty() )
@@ -201,6 +211,8 @@ void SoundSource::_update()
 				mChunkQueue.pop();
 			}
 		}
+
+		alSourcei( source, AL_BUFFER, AL_NONE ); //clear the buffer for source reusing (this ALSO clears the buffer queue!)
 
 		state = SS_FINISHED;
 	}

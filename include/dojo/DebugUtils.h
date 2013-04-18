@@ -31,9 +31,8 @@
 
 	#endif
 	
-	#define ___DEFINETOSTRING(X) #X
-	#define ___LINETOSTRING ___DEFINETOSTRING(__LINE__)
-	#define CHECK_GL_ERROR	Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(__FILE__,___LINETOSTRING)
+	#define CHECK_GL_ERROR	Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(__FILE__,__LINE__ )
+	#define CHECK_AL_ERROR	Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(__FILE__,__LINE__ )
 	
 #else
 
@@ -48,6 +47,7 @@
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}
 	#define CHECK_GL_ERROR {}
+	#define CHECK_AL_ERROR	true
 	
 #endif
 
@@ -70,7 +70,10 @@ namespace Dojo
 	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char*, int line, const char* file, const char* function );
 	
 	///the default openGL assertion handler
-	void DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* line_source);
+	void DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source, int line );
+
+	///the default openAL assertion handler
+	bool DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line );
 }
 
 #endif // DebugUtils_h__

@@ -35,7 +35,7 @@ currentFadeTime(0)
 		
 	alcMakeContextCurrent(context);
 
-	alGetError();
+	CHECK_AL_ERROR;
 
 	//preload sounds
 	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN, "Min source number cannot be > Max source number" );
@@ -60,7 +60,7 @@ currentFadeTime(0)
 	setListenerPosition( Vector::ZERO );
 	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
 
-	DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "OpenAL error, unable to setup OpenAL" );
+	CHECK_AL_ERROR;
 }
 
 SoundManager::~SoundManager()

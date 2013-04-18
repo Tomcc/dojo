@@ -46,7 +46,7 @@ bool SoundBuffer::onLoad()
 	
 	_loadOggFromFile();
 			
-	return alGetError() != AL_NO_ERROR;
+	return CHECK_AL_ERROR;
 }
 
 
@@ -73,7 +73,7 @@ int SoundBuffer::_vorbisSeek( void *userdata, ogg_int64_t offset, int whence )
 {
 	Stream* source = (Stream*)userdata;
 
-	return source->seek( offset, whence );
+	return source->seek( (long)offset, whence );
 }
 
 int SoundBuffer::_vorbisClose( void *userdata )
@@ -100,8 +100,12 @@ bool SoundBuffer::Chunk::onLoad()
 
 	DEBUG_ASSERT( source->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
+	CHECK_AL_ERROR;
+
 	//create the openAL buffer
 	alGenBuffers( 1, &alBuffer );
+
+	CHECK_AL_ERROR;
 	
 	char* uncompressedData = (char*)malloc( mUncompressedSize );
 
@@ -154,11 +158,11 @@ bool SoundBuffer::Chunk::onLoad()
 	
 	alBufferData( alBuffer, format, uncompressedData, totalRead, bitrate );
 	
-	DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "alBufferData error, cannot load a SoundBuffer" );
+	loaded = CHECK_AL_ERROR;
 	
 	free( uncompressedData );
 	
-	return loaded = alGetError() == AL_NO_ERROR;
+	return loaded;
 }
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
@@ -185,7 +189,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	OggVorbis_File file;
 	vorbis_info* info;
 	ALenum format;
-	int uncompressedSize, totalRead = 0;
+	ogg_int64_t uncompressedSize;
 	
 	int error = ov_open_callbacks( source, &file, NULL, 0, VORBIS_CALLBACKS );
 	
@@ -197,49 +201,42 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
 	int bitrate = info->rate;// * info->channels;
-	int totalPCM = (int)ov_pcm_total( &file, -1 );
+	ogg_int64_t totalPCM = ov_pcm_total( &file, -1 );
 	int section = -1;
 
 	uncompressedSize = totalPCM * wordSize * info->channels;
 
+	//find the number of chunks that we want
 	int chunkN = 1;
 	for( ; uncompressedSize / chunkN > Chunk::MAX_SIZE; chunkN++ );
-
-	int chunkByteSize = uncompressedSize / chunkN;
+	ogg_int64_t chunkPCM = totalPCM / chunkN;
 
 	mDuration = (float)totalPCM / (float)info->rate;
 
-	char BUF[ 2048 ];
+	int streamPosition = 0;
+	ogg_int64_t fileStart = 0, fileEnd = -1;
+	ogg_int64_t pcmStart = 0, pcmEnd = -1;
 
-	bool eof = false;
-	for( int i = 0; !eof; ++i )
+	//load all the needed chunks
+	while(1)
 	{
-		int totalRead = 0;
-		int fileStart = i > 0 ? ov_raw_tell( &file ) : 0;
+		pcmEnd = min( totalPCM, pcmStart + chunkPCM );
+		ov_pcm_seek_page( &file, pcmEnd );
 
-		while(1)
-		{
-			int section = -1;
-			int read = ov_read( &file, BUF, sizeof( BUF ), 0, wordSize, 1, &section );
+		pcmEnd = ov_pcm_tell( &file );
+		fileEnd = ov_raw_tell( &file );
 
-			DEBUG_ASSERT( read != OV_ENOSEEK, "cannot seek" );
-			DEBUG_ASSERT( read != OV_EINVAL, "invalid value" );
-			DEBUG_ASSERT( read != OV_EREAD, "cannot read" );
-			DEBUG_ASSERT( read != OV_EFAULT, "internal fault" );
-			DEBUG_ASSERT( read != OV_EBADLINK, "?" );
+		if( fileStart == fileEnd ) //check if EOF
+			break;
 
-			if( read == 0 )
-			{
-				eof = true;
-				break;
-			}
+		if( pcmEnd == pcmStart ) //buffer is too small, let's assume that there is just one page
+			pcmEnd = totalPCM; 
 
-			totalRead += read;
-		}
+		ogg_int64_t byteSize = (pcmEnd-pcmStart) * wordSize * info->channels;
+		mChunks.add( new Chunk( this, (long)fileStart, (long)byteSize ) );
 
-		//create it
-		if( totalRead )
-			mChunks.add( new Chunk( this, fileStart, totalRead ) );
+		pcmStart = pcmEnd;
+		fileStart = fileEnd;
 	}
 
 	ov_clear( &file );

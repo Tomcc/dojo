@@ -45,7 +45,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char
 #endif
 }
 
-void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* line_source)
+void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source, int line )
 {
 	String err;
 	bool glerror=false;
@@ -63,8 +63,27 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source,const char* li
 			case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
 		};
 
-		DEBUG_FAIL( ("OpenGL encountered an error: " + err+" line:"+line_source+" file:"+file_source ).ASCII().c_str() );
+		DEBUG_FAIL( ("OpenGL encountered an error: " + err + " line:" + String(line) + " file:" + file_source ).ASCII().c_str() );
 	}
+}
+
+bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line )
+{
+	int error = alGetError();
+
+	char* err = "";
+	switch ( error )
+	{
+	case AL_INVALID_OPERATION:		err = "AL_INVALID_OPERATION";		break;
+	case AL_INVALID_NAME:			err = "AL_INVALID_NAME";			break;
+	case AL_INVALID_ENUM:			err = "AL_INVALID_ENUM";			break;
+	case AL_INVALID_VALUE:			err = "AL_INVALID_VALUE";			break;
+	case AL_OUT_OF_MEMORY:			err = "AL_OUT_OF_MEMORY";			break;
+	default:						err = "Unknown error";				break;
+	}
+
+	DEBUG_ASSERT( error == AL_NO_ERROR, ("OpenAL encountered an error: " + String(err) + " line:" + String(line) + " file:" + file_source ).ASCII().c_str() );
+	return error == AL_NO_ERROR;
 }
 
 Dojo::AssertHandlerPtr Dojo::gp_assert_handler = Dojo::DEFAULT_ASSERT_HANDLER;

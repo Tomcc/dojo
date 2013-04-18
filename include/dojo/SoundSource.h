@@ -60,7 +60,8 @@ namespace Dojo
 			inline void setPitch( float p)			
 			{		
 				pitch = p;
-				if( source ) alSourcef (source, AL_PITCH,  pitch);			
+				if( source ) 
+					alSourcef (source, AL_PITCH,  pitch);			
 			}
 			
 			///if autoremove is disabled, SoundManager won't garbage collect this Source
@@ -105,7 +106,7 @@ namespace Dojo
 				float elapsed = 0;
 				alGetSourcef( source, AL_SEC_OFFSET, &elapsed );
 				
-				DEBUG_ASSERT( alGetError() == AL_NO_ERROR, "OpenAL error, cannot set source play offset" );
+				CHECK_AL_ERROR;
 
 				return elapsed;
 			}
