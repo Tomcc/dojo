@@ -2,13 +2,13 @@
 
 #include "SoundSource.h"
 #include "SoundManager.h"
+#include "Platform.h"
 
 using namespace Dojo;
 
-SoundSource::SoundSource( SoundManager* manager, ALuint src ) :
+SoundSource::SoundSource( ALuint src ) :
 buffer( NULL ),
 source( src ),
-mgr( manager ),
 pos(0,0),
 positionChanged( true )
 {
@@ -42,7 +42,7 @@ void SoundSource::setVolume( float v )
 {	
 	DEBUG_ASSERT( v >= 0, "Sound volumes cannot be negative" );
 	
-	volume = v * mgr->getMasterVolume();
+	volume = v * Platform::getSingleton()->getSoundManager()->getMasterVolume();
 	
 	if( source ) alSourcef (source, AL_GAIN, volume );		
 }
@@ -58,7 +58,7 @@ float SoundSource::getVolume()
 void SoundSource::play( float volume )
 {
 	//can the sound play?
-	if( !isValid() && buffer && buffer->isLoaded() && mgr->getMasterVolume() > 0 )
+	if( !isValid() && buffer && buffer->isLoaded() && Platform::getSingleton()->getSoundManager()->getMasterVolume() > 0 )
 		return;
 
 	if(state == SS_INITIALISING)
@@ -72,7 +72,6 @@ void SoundSource::play( float volume )
 			if( chunkNumber == 1 ) //immediate sound
 			{
 				mCurrentChunk = buffer->getChunk( 0 );
-
 				alSourcei (source, AL_BUFFER, buffer->getChunk( 0 )->getOpenALBuffer() );
 			}
 			else
@@ -84,7 +83,6 @@ void SoundSource::play( float volume )
 				{
 					//add to the queue
 					auto chunk = buffer->getChunk( mCurrentChunkID );
-					chunk->get();
 					ALuint buf = chunk->getOpenALBuffer();
 					alSourceQueueBuffers( source, 1, &buf );
 
@@ -171,16 +169,19 @@ void SoundSource::_update()
 			mChunkQueue.pop();
 			chunk->release();
 
-			//add a new buffer
+			//find the new buffer ID, loop if the source is looping, else go OOB
 			++mCurrentChunkID;
 			if( looping && mCurrentChunkID >= buffer->getChunkNumber() )
 				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
 			
 			if( mCurrentChunkID < buffer->getChunkNumber() ) //exhausted?
 			{
+				//queue the new buffer
 				chunk = buffer->getChunk( mCurrentChunkID );
-				chunk->get();
 				mChunkQueue.push( chunk );
+				b = chunk->getOpenALBuffer();
+
+				alSourceQueueBuffers( source, 1, &b );
 			}
 		}
 	}
@@ -189,12 +190,16 @@ void SoundSource::_update()
 
 	if( autoRemove && !looping && state == SS_PLAYING && playState == AL_STOPPED )
 	{
-		//take care of the chunks
-		if( mCurrentChunk ) //nonstreaming
+		//release all the used chunks
+		if( !isStreaming() ) //nonstreaming
 			mCurrentChunk->release();
 		else
 		{
-			DEBUG_TODO; //release the exhausted buffers in the queue
+			while( !mChunkQueue.empty() )
+			{
+				mChunkQueue.front()->release();
+				mChunkQueue.pop();
+			}
 		}
 
 		state = SS_FINISHED;

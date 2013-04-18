@@ -32,7 +32,7 @@ namespace Dojo
 			};
 		
 			///Internal constructor
-			SoundSource( SoundManager* manager, ALuint source );
+			SoundSource( ALuint source );
 
 			virtual ~SoundSource();
 
@@ -70,11 +70,11 @@ namespace Dojo
 			void play( float volume = 1.0f );
 			
 			void pause();
+
 			///Stops the sound; it will be garbage collected from now on
 			inline void stop()
 			{
-				state = SS_FINISHED;
-				alSourceStop(source);
+ 				alSourceStop(source);
 			}
 			///Sets the playback to the beginning of the sound, and pauses it
 			void rewind();
@@ -142,8 +142,6 @@ namespace Dojo
 		protected:
 
 			typedef std::queue< SoundBuffer::Chunk* > ChunkQueue;
-
-			SoundManager* mgr;
 			
 			Vector pos;
 			bool positionChanged;

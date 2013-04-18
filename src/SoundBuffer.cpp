@@ -54,13 +54,9 @@ void SoundBuffer::onUnload(bool soft)
 {
 	DEBUG_ASSERT( isLoaded(), "SoundBuffer is not loaded" );
 
-	/*if( !soft || isReloadable() )
-	{
-		alDeleteBuffers(1, &buffer);
-		buffer = AL_NONE;
-	}*/
-
-	DEBUG_TODO;
+	//just push the event to all its chunks
+	for( auto chunk : mChunks )
+		chunk->onUnload( soft );
 }
 
 ////-------------------------------------////-------------------------------------////------------------------------------
@@ -104,8 +100,10 @@ bool SoundBuffer::Chunk::onLoad()
 
 	DEBUG_ASSERT( source->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
-	int compressedSize = mEndPosition - mStartPosition;
-	char* uncompressedData = (char*)malloc( MAX_SIZE );
+	//create the openAL buffer
+	alGenBuffers( 1, &alBuffer );
+	
+	char* uncompressedData = (char*)malloc( mUncompressedSize );
 
 	OggVorbis_File file;
 	vorbis_info* info;
@@ -122,7 +120,6 @@ bool SoundBuffer::Chunk::onLoad()
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
 	int bitrate = info->rate;// * info->channels;
-	int section = -1;
 
 	//read all vorbis packets in the same buffer
 	long read = 0;
@@ -134,7 +131,8 @@ bool SoundBuffer::Chunk::onLoad()
 	bool corrupt = false;
 	do
 	{
-		read = ov_read( &file, uncompressedData + totalRead, MAX_SIZE - totalRead, 0, wordSize, 1, &section );
+		int section = -1;
+		read = ov_read( &file, uncompressedData + totalRead, mUncompressedSize - totalRead, 0, wordSize, 1, &section );
 
 		if( read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL )
 			corrupt = true;
@@ -145,14 +143,14 @@ bool SoundBuffer::Chunk::onLoad()
 		else
 			totalRead += read;
 
-		DEBUG_ASSERT( totalRead <= MAX_SIZE, "Total read bytes overflow the buffer" ); //this should always be true
+		DEBUG_ASSERT( totalRead <= mUncompressedSize, "Total read bytes overflow the buffer" ); //this should always be true
 
-	} while( !corrupt );
+	} while( !corrupt && totalRead < mUncompressedSize );
 
 	ov_clear( &file );
 	
-	if( totalRead == 0 ) //no bytes were read!
-		return false;
+	DEBUG_ASSERT( !corrupt, "an ogg vorbis stream was corrupt and could not be read" );
+	DEBUG_ASSERT( totalRead > 0, "no data was read from the stream" );
 	
 	alBufferData( alBuffer, format, uncompressedData, totalRead, bitrate );
 	
@@ -165,7 +163,12 @@ bool SoundBuffer::Chunk::onLoad()
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 {
-
+	//either unload if forced, or if the parent is reloadable (loaded from file or persistent source)
+	if( !soft || pParent->isReloadable() )
+	{
+		alDeleteBuffers( 1, &alBuffer );
+		alBuffer = 0;
+	}
 }
 
 bool SoundBuffer::_loadOgg( Stream* source )
@@ -194,42 +197,56 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
 	int bitrate = info->rate;// * info->channels;
-	int pcm = (int)ov_pcm_total( &file, -1 );
+	int totalPCM = (int)ov_pcm_total( &file, -1 );
 	int section = -1;
 
-	uncompressedSize = pcm * wordSize * info->channels;
+	uncompressedSize = totalPCM * wordSize * info->channels;
 
-	mDuration = (float)pcm / (float)info->rate;
+	int chunkN = 1;
+	for( ; uncompressedSize / chunkN > Chunk::MAX_SIZE; chunkN++ );
 
-	int fileStart = 0;
-	int fileEnd = -1;
-	for( int i = 1; 1; ++i )
+	int chunkByteSize = uncompressedSize / chunkN;
+
+	mDuration = (float)totalPCM / (float)info->rate;
+
+	char BUF[ 2048 ];
+
+	bool eof = false;
+	for( int i = 0; !eof; ++i )
 	{
-		//find where in the file is the next chunk
-		int pcmidx = min( pcm, i* Chunk::MAX_SIZE );
-		error = ov_pcm_seek( &file, pcmidx );
-		
-		DEBUG_ASSERT( error != OV_ENOSEEK, "cannot seek" );
-		DEBUG_ASSERT( error != OV_EINVAL, "invalid value" );
-		DEBUG_ASSERT( error != OV_EREAD, "cannot read" );
-		DEBUG_ASSERT( error != OV_EFAULT, "internal fault" );
-		DEBUG_ASSERT( error != OV_EBADLINK, "?" );
+		int totalRead = 0;
+		int fileStart = i > 0 ? ov_raw_tell( &file ) : 0;
 
-		fileEnd = ov_raw_tell( &file );
+		while(1)
+		{
+			int section = -1;
+			int read = ov_read( &file, BUF, sizeof( BUF ), 0, wordSize, 1, &section );
 
-		if( fileStart == fileEnd )
-			break;
+			DEBUG_ASSERT( read != OV_ENOSEEK, "cannot seek" );
+			DEBUG_ASSERT( read != OV_EINVAL, "invalid value" );
+			DEBUG_ASSERT( read != OV_EREAD, "cannot read" );
+			DEBUG_ASSERT( read != OV_EFAULT, "internal fault" );
+			DEBUG_ASSERT( read != OV_EBADLINK, "?" );
+
+			if( read == 0 )
+			{
+				eof = true;
+				break;
+			}
+
+			totalRead += read;
+		}
 
 		//create it
-		mChunks.add( new Chunk( this, fileStart, fileEnd ) );
-		fileStart = fileEnd;
+		if( totalRead )
+			mChunks.add( new Chunk( this, fileStart, totalRead ) );
 	}
 
 	ov_clear( &file );
 
 	//preload the first chunks
-	for( int i = 0; i < SoundSource::QUEUE_SIZE && i < mChunks.size(); ++i )
-		mChunks[i]->onLoad();
+	/*for( int i = 0; i < SoundSource::QUEUE_SIZE && i < mChunks.size(); ++i )
+		mChunks[i]->onLoad();*/
 
 	if( !isStreaming() )
 		mChunks[0]->get(); //get() it to avoid that it is unloaded by the sources

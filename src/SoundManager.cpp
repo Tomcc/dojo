@@ -47,7 +47,7 @@ currentFadeTime(0)
 		alGenSources(1, &src );
 
 		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.add( new SoundSource( this, src ) );
+			idleSoundPool.add( new SoundSource( src ) );
 		else
 			break;
 	}
@@ -55,7 +55,7 @@ currentFadeTime(0)
 	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN, "OpenAL could not preload at least NUM_SOURCES_MIN sources" ); //ensure at least MIN sources have been built
 
 	//dummy source to manage source shortage
-	fakeSource = new SoundSource( this, 0 );
+	fakeSource = new SoundSource( 0 );
 
 	setListenerPosition( Vector::ZERO );
 	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
@@ -85,7 +85,7 @@ SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
 		ALuint src;
 		alGenSources( 1, & src );
 		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.add( new SoundSource( this, src ) );
+			idleSoundPool.add( new SoundSource( src ) );
 	}
 
 	//is there a source now?

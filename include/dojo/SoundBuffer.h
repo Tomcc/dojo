@@ -28,20 +28,17 @@ namespace Dojo
 			static const int MAX_SIZE = 48000 * 3;
 			
 			///Creates a new chunk that will use the given source span to load
-			Chunk( SoundBuffer* parent, int start, int end ) :
+			Chunk( SoundBuffer* parent, long streamStartPosition, long uncompressedSize ) :
 				size( 0 ),
-				alBuffer( 0 ),
+				alBuffer( AL_NONE ),
 				references( 0 ),
 				pParent( parent ),
-				mStartPosition( start ),
-				mEndPosition( end )
+				mStartPosition( streamStartPosition ),
+				mUncompressedSize( uncompressedSize )
 			{
 				DEBUG_ASSERT( parent, "invalid parent" );
-				DEBUG_ASSERT( start >= 0, "invalid starting position" );
-				DEBUG_ASSERT( end > start, "invalid ending position" );
-
-				//allocate the buffer
-				alGenBuffers( 1, &alBuffer );
+				DEBUG_ASSERT( streamStartPosition >= 0, "invalid starting position" );
+				DEBUG_ASSERT( uncompressedSize > 0, "invalid PCM span size" );
 			}
 
 			~Chunk()
@@ -88,8 +85,8 @@ namespace Dojo
 		protected:
 
 			SoundBuffer* pParent;
-			int mStartPosition;
-			int mEndPosition;
+			long mStartPosition;
+			long mUncompressedSize;
 
 			ALuint size;
 			ALuint alBuffer;
@@ -121,6 +118,11 @@ namespace Dojo
 		inline bool isLoaded()					
 		{
 			return !mChunks.isEmpty();
+		}
+
+		virtual bool isReloadable()
+		{
+			return mSource != nullptr;
 		}
 
 		///tells if this buffer has been loaded as a streaming (multi-part, lazy-loaded) buffer.
