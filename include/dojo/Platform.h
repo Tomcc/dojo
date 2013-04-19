@@ -3,6 +3,7 @@
 
 #include "dojo_common_header.h"
 #include "Table.h"
+#include "BackgroundQueue.h"
 
 namespace Dojo 
 {
@@ -64,6 +65,9 @@ namespace Dojo
 		inline InputSystem* getInput()			{	return input;	}
 		///returns the FontSystem instance
 		inline FontSystem* getFontSystem()		{	return fonts;	}
+
+		///returns the default BackgroundQueue
+		BackgroundQueue& getBackgroundQueue()	{	return mBackgroundQueue;	}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
 		/**
@@ -232,6 +236,8 @@ namespace Dojo
 		FontSystem* fonts;
 		
 		float realFrameTime;
+
+		BackgroundQueue mBackgroundQueue;
 
 		Dojo::Array< ApplicationListener* > focusListeners;
 

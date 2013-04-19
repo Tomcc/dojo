@@ -153,9 +153,8 @@ namespace Dojo
 			ALfloat position[3];
 			ALint playState;
 
-			int mCurrentChunkID;
-			SoundBuffer::Chunk* mCurrentChunk;
-			ChunkQueue mChunkQueue;
+			int mCurrentChunkID, mQueuedChunks;
+			SoundBuffer::Chunk* mFrontChunk, *mBackChunk;
 
 			SoundState state;
 

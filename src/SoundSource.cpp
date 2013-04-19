@@ -22,7 +22,8 @@ void SoundSource::_reset()
 	pos = Vector::ZERO;
 	positionChanged = true;
 	buffer = NULL;
-	mCurrentChunk = 0;
+	mFrontChunk = mBackChunk = nullptr;
+	mCurrentChunkID = 0;
 
 	//set default parameters
 	volume = 1.0f;
@@ -71,36 +72,24 @@ void SoundSource::play( float volume )
 			alSourcef (source, AL_REFERENCE_DISTANCE, 1.0f );
 
 			int chunkNumber = buffer->getChunkNumber();
-			if( chunkNumber == 1 ) //immediate sound
+
+			mFrontChunk = buffer->getChunk( 0 );
+			ALuint alBuffer = mFrontChunk->getOpenALBuffer();
+
+			if( chunkNumber == 1 )  //non-streaming
 			{
-				CHECK_AL_ERROR;
-
-				mCurrentChunk = buffer->getChunk( 0 );
-				ALuint buf = buffer->getChunk( 0 )->getOpenALBuffer();
-				alSourcei (source, AL_BUFFER, buf );
-
+				alSourcei (source, AL_BUFFER, alBuffer );
 				CHECK_AL_ERROR;	
 			}
-			else
-			{
-				DEBUG_ASSERT( mChunkQueue.empty(), "The queue should have been emptied before reusing the queue" );
-
-				//try to load at least BUFFER_QUEUE sounds
-				for( mCurrentChunkID = 0; mCurrentChunkID < chunkNumber && mCurrentChunkID < QUEUE_SIZE; ++mCurrentChunkID )
-				{
-					//add to the queue
-					auto chunk = buffer->getChunk( mCurrentChunkID );
-					ALuint buf = chunk->getOpenALBuffer();
-					alSourceQueueBuffers( source, 1, &buf );
-					mChunkQueue.push( chunk );
-
-					CHECK_AL_ERROR;
-				}
-				--mCurrentChunkID;
-
+			else //use a queue
+			{				
+				alSourceQueueBuffers( source, 1, &alBuffer );
+				mQueuedChunks = 1;
 				CHECK_AL_ERROR;
-			}
 
+				//start loading in the back buffer
+				mBackChunk = buffer->getChunk( ++mCurrentChunkID, true );
+			}
 		}
 		else
 			state = SS_FINISHED;
@@ -167,8 +156,18 @@ void SoundSource::_update()
 	}
 	
     //if streaming, check if buffers have been used and replenish the queue
-	if( isStreaming() )
+	if( isStreaming() && mBackChunk )
 	{
+		//check if the backbuffer has finished loading and add it to the queue
+		if( mQueuedChunks == 1 && mBackChunk->isLoaded()  )
+		{
+			ALuint b = mBackChunk->getOpenALBuffer();
+			alSourceQueueBuffers( source, 1, &b );
+			++mQueuedChunks;
+			CHECK_AL_ERROR;
+		}
+
+		//check if the front buffer stopped streaming, move and pull a new backbuffer
 		ALint processed;
 		alGetSourcei( source, AL_BUFFERS_PROCESSED, &processed );
 
@@ -177,27 +176,22 @@ void SoundSource::_update()
 			//pop the old buffer
 			ALuint b;
 			alSourceUnqueueBuffers( source, 1, &b );
+			--mQueuedChunks;
+			CHECK_AL_ERROR;
+			
+			mFrontChunk->release();
+			mFrontChunk = mBackChunk;
 
-			auto chunk = mChunkQueue.front();
-			mChunkQueue.pop();
-			chunk->release();
-
-			//find the new buffer ID, loop if the source is looping, else go OOB
+			//find the new buffer ID, loop if the source is looping, else go OOB and stop
 			++mCurrentChunkID;
 			if( looping && mCurrentChunkID >= buffer->getChunkNumber() )
 				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
 			
-			if( mCurrentChunkID < buffer->getChunkNumber() ) //exhausted?
-			{
-				//queue the new buffer
-				chunk = buffer->getChunk( mCurrentChunkID );
-				mChunkQueue.push( chunk );
-				b = chunk->getOpenALBuffer();
+			if( mCurrentChunkID < buffer->getChunkNumber() ) //not exhausted? start loading a new backbuffer
+				mBackChunk = buffer->getChunk( mCurrentChunkID, true );
 
-				alSourceQueueBuffers( source, 1, &b );
-			}
-			
-			CHECK_AL_ERROR;
+			else
+				mBackChunk = nullptr;			
 		}
 	}
     
@@ -206,25 +200,13 @@ void SoundSource::_update()
 	if( autoRemove && state == SS_PLAYING && playState == AL_STOPPED )
 	{
 		alSourcei( source, AL_BUFFER, AL_NONE ); //clear the buffer for source reusing - this ALSO works for queued buffers 
-
-		ALint n;
-		alGetSourcei( source, AL_BUFFERS_PROCESSED, &n );
-		DEBUG_ASSERT( n == 0, "This OpenAL implementation fails in cleaning the sources with AL_NONE" );
-
-		CHECK_AL_ERROR;
-
+		
 		//release all the used chunks
-		if( !isStreaming() ) //nonstreaming
-			mCurrentChunk->release();
-	
-		else
-		{
-			while( !mChunkQueue.empty() )
-			{
-				mChunkQueue.front()->release();
-				mChunkQueue.pop();
-			}
-		}
+		if( mFrontChunk )
+			mFrontChunk->release();
+
+		if( mBackChunk )
+			mBackChunk->release();
 
 		state = SS_FINISHED;
 	}

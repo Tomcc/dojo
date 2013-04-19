@@ -21,6 +21,7 @@
     <ClInclude Include="include\dojo\apple\OSX\OSXPlatform.h" />
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
+    <ClInclude Include="include\dojo\BackgroundQueue.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\File.h" />

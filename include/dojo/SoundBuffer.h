@@ -46,7 +46,16 @@ namespace Dojo
 				alDeleteBuffers( 1, &alBuffer );
 			}
 
-			///acquires one reference to this Chunk, and loads it if needed
+			///acquires one reference to this Chunk, and loads in a background thread
+			void getAsync()
+			{
+				if( references == 0 && !isLoaded() ) //load it when referenced the first time
+					loadAsync();
+
+				++references;
+			}
+
+			///acquires one reference to this Chunk, and loads it
 			void get()
 			{
 				if( references == 0 && !isLoaded() ) //load it when referenced the first time
@@ -80,6 +89,10 @@ namespace Dojo
 				return size;
 			}
 
+			///loads in the default background queue
+			void loadAsync();
+
+			///loads the chunk asynchronously
 			virtual bool onLoad();
 
 			virtual void onUnload( bool soft = false );
@@ -137,11 +150,15 @@ namespace Dojo
 		/**
 		if n is greater than the number of chunks, it will loop, just like animation frames
 		*/
-		Chunk* getChunk( int n )
+		Chunk* getChunk( int n, bool loadAsync = false )
 		{
 			DEBUG_ASSERT( n >= 0 && n < mChunks.size(), "The requested chunk is out of bounds" );
 
-			mChunks[ n ]->get();
+			if( loadAsync )
+				mChunks[n]->getAsync();
+			else
+				mChunks[ n ]->get();
+
 			return mChunks[ n ];
 		}
 

@@ -91,7 +91,11 @@ long SoundBuffer::_vorbisTell( void *userdata )
 
 bool SoundBuffer::Chunk::onLoad()
 {
-	loaded = false;
+	DEBUG_ASSERT( !isLoaded(), "The Chunk is already loaded" );
+
+	alGenBuffers( 1, &alBuffer ); //gen the buffer if it didn't exist
+
+	CHECK_AL_ERROR;
 
 	//reopen the source
 	Stream* source = pParent->mSource;
@@ -102,27 +106,22 @@ bool SoundBuffer::Chunk::onLoad()
 
 	CHECK_AL_ERROR;
 
-	//create the openAL buffer
-	alGenBuffers( 1, &alBuffer );
-
-	CHECK_AL_ERROR;
-	
 	char* uncompressedData = (char*)malloc( mUncompressedSize );
 
 	OggVorbis_File file;
 	vorbis_info* info;
 	ALenum format;
 	int totalRead = 0;
-	
+
 	int error = ov_open_callbacks( source, &file, NULL, 0, VORBIS_CALLBACKS );
-	
+
 	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
-	
+
 	info = ov_info( &file, -1 );
-	
+
 	int wordSize = 2;
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-	
+
 	int bitrate = info->rate;// * info->channels;
 
 	//read all vorbis packets in the same buffer
@@ -152,17 +151,28 @@ bool SoundBuffer::Chunk::onLoad()
 	} while( !corrupt && totalRead < mUncompressedSize );
 
 	ov_clear( &file );
-	
+
 	DEBUG_ASSERT( !corrupt, "an ogg vorbis stream was corrupt and could not be read" );
 	DEBUG_ASSERT( totalRead > 0, "no data was read from the stream" );
-	
+
 	alBufferData( alBuffer, format, uncompressedData, totalRead, bitrate );
-	
+
 	loaded = CHECK_AL_ERROR;
-	
+
 	free( uncompressedData );
-	
+
 	return loaded;
+}
+
+void SoundBuffer::Chunk::loadAsync()
+{
+	DEBUG_ASSERT( !isLoaded(), "The Chunk is already loaded" );
+
+	//async load
+	Platform::getSingleton()->getBackgroundQueue().queueTask( [ & ]()
+	{
+		onLoad();
+	} );
 }
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
@@ -247,12 +257,8 @@ bool SoundBuffer::_loadOgg( Stream* source )
 
 	ov_clear( &file );
 
-	//preload the first chunks
-	/*for( int i = 0; i < mChunks.size(); ++i )
-		mChunks[i]->get();*/
-
 	if( !isStreaming() )
-		mChunks[0]->get(); //get() it to avoid that it is unloaded by the sources
+		mChunks[0]->get(); //get() it to avoid that it is unloaded by the sources, and load synchronously
 
 	return true;
 }
