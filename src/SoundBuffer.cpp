@@ -167,11 +167,17 @@ bool SoundBuffer::Chunk::onLoad()
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 {
+	DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
+
 	//either unload if forced, or if the parent is reloadable (loaded from file or persistent source)
 	if( !soft || pParent->isReloadable() )
 	{
 		alDeleteBuffers( 1, &alBuffer );
 		alBuffer = 0;
+
+		loaded = false;
+
+		CHECK_AL_ERROR;
 	}
 }
 
@@ -242,8 +248,8 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	ov_clear( &file );
 
 	//preload the first chunks
-	/*for( int i = 0; i < SoundSource::QUEUE_SIZE && i < mChunks.size(); ++i )
-		mChunks[i]->onLoad();*/
+	/*for( int i = 0; i < mChunks.size(); ++i )
+		mChunks[i]->get();*/
 
 	if( !isStreaming() )
 		mChunks[0]->get(); //get() it to avoid that it is unloaded by the sources

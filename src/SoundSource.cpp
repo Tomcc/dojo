@@ -65,14 +65,21 @@ void SoundSource::play( float volume )
 	{
 		if(source && buffer )
 		{
+			CHECK_AL_ERROR;
+
 			//set global parameters
 			alSourcef (source, AL_REFERENCE_DISTANCE, 1.0f );
 
 			int chunkNumber = buffer->getChunkNumber();
 			if( chunkNumber == 1 ) //immediate sound
 			{
+				CHECK_AL_ERROR;
+
 				mCurrentChunk = buffer->getChunk( 0 );
-				alSourcei (source, AL_BUFFER, buffer->getChunk( 0 )->getOpenALBuffer() );
+				ALuint buf = buffer->getChunk( 0 )->getOpenALBuffer();
+				alSourcei (source, AL_BUFFER, buf );
+
+				CHECK_AL_ERROR;	
 			}
 			else
 			{
@@ -85,15 +92,15 @@ void SoundSource::play( float volume )
 					auto chunk = buffer->getChunk( mCurrentChunkID );
 					ALuint buf = chunk->getOpenALBuffer();
 					alSourceQueueBuffers( source, 1, &buf );
+					mChunkQueue.push( chunk );
 
 					CHECK_AL_ERROR;
-
-					mChunkQueue.push( chunk );
 				}
 				--mCurrentChunkID;
+
+				CHECK_AL_ERROR;
 			}
 
-			CHECK_AL_ERROR;
 		}
 		else
 			state = SS_FINISHED;
@@ -196,13 +203,20 @@ void SoundSource::_update()
     
 	alGetSourcei(source, AL_SOURCE_STATE, &playState);
 
-	if( autoRemove && !looping && state == SS_PLAYING && playState == AL_STOPPED )
+	if( autoRemove && state == SS_PLAYING && playState == AL_STOPPED )
 	{
+		alSourcei( source, AL_BUFFER, AL_NONE ); //clear the buffer for source reusing - this ALSO works for queued buffers 
+
+		ALint n;
+		alGetSourcei( source, AL_BUFFERS_PROCESSED, &n );
+		DEBUG_ASSERT( n == 0, "This OpenAL implementation fails in cleaning the sources with AL_NONE" );
+
+		CHECK_AL_ERROR;
+
 		//release all the used chunks
 		if( !isStreaming() ) //nonstreaming
-		{
 			mCurrentChunk->release();
-		}
+	
 		else
 		{
 			while( !mChunkQueue.empty() )
@@ -211,8 +225,6 @@ void SoundSource::_update()
 				mChunkQueue.pop();
 			}
 		}
-
-		alSourcei( source, AL_BUFFER, AL_NONE ); //clear the buffer for source reusing (this ALSO clears the buffer queue!)
 
 		state = SS_FINISHED;
 	}

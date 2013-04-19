@@ -69,6 +69,8 @@ namespace Dojo
 			///returns the underlying OpenAL buffer
 			ALuint getOpenALBuffer()
 			{
+				DEBUG_ASSERT( isLoaded(), "This buffer is not loaded and has no AL buffer" );
+
 				return alBuffer;
 			}
 
@@ -151,8 +153,6 @@ namespace Dojo
 		static int _vorbisSeek( void *source, ogg_int64_t offset, int whence );			
 		static int _vorbisClose( void *source );			
 		static long _vorbisTell( void *source );
-
-		SoundManager* mgr;
 
 		ALuint size;
 		float mDuration;
