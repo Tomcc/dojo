@@ -51,15 +51,11 @@ namespace Dojo
 		void stop()
 		{
 			running = false;
+			mQueueSemaphore.set(); //wake up so that it can be closed
 			Poco::Thread::join();
 		}
 
-		virtual void run()
-		{
-			while( running )
-				_processQueue();
-		}
-
+		virtual void run();
 
 	protected:
 
@@ -71,18 +67,6 @@ namespace Dojo
 		Poco::Semaphore mQueueSemaphore;
 		Poco::Mutex mQueueMutex;
 
-		void _processQueue()
-		{
-			mQueueSemaphore.wait(); //wait for a new task to arrive
-
-			//pop it from the queue
-			mQueueMutex.lock();
-			Task t = mQueue.front();
-			mQueue.pop();
-			mQueueMutex.unlock();
-
-			t(); //execute
-		}
 	private:
 	};
 }

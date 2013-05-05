@@ -437,6 +437,8 @@ void Win32Platform::initialise( Game* g )
 
 	fonts = new FontSystem();
 
+	mBackgroundQueue = new BackgroundQueue();
+
 	DEBUG_MESSAGE( "---- Game Launched!");
 
 	//start the game
@@ -445,23 +447,19 @@ void Win32Platform::initialise( Game* g )
 
 void Win32Platform::prepareThreadContext()
 {
-	HGLRC context = 0;
+	ContextShareRequest req;
 
 	mCRQMutex.lock();
 
-	mContextRequestsQueue.push( &context );
+	mContextRequestsQueue.push( &req );
 			
 	mCRQMutex.unlock();
 
-	//now busy-wait
-#ifdef _DEBUG
-	while( context == 0 );
-#else
-	//HACK
-	Poco::Thread::sleep( 1000 );
-#endif
+	req.wait();
 
-	bool error = wglMakeCurrent( hdc, context )>0;
+	bool success = wglMakeCurrent( hdc, req.contextHandle )>0;
+
+	DEBUG_ASSERT( success, "Unable to share the context" );
 
 	glewInit();
 }
@@ -473,6 +471,9 @@ void Win32Platform::shutdown()
 		game->end();
 		delete game;
 	}
+
+	//stop the background queue
+	mBackgroundQueue->stop();
 
 	//destroy managers
 	delete render;
@@ -531,15 +532,17 @@ void Win32Platform::step( float dt )
 	mCRQMutex.lock();
 	while( mContextRequestsQueue.size() )
 	{
-		HGLRC c = wglCreateContext(hdc); 
+		ContextShareRequest* req = mContextRequestsQueue.front();
+		mContextRequestsQueue.pop();
+
+		req->contextHandle = wglCreateContext(hdc); 
 		
-		bool success = wglShareLists(hglrc, c) != 0;
+		bool success = wglShareLists(hglrc, req->contextHandle) != 0;
 
 		DEBUG_ASSERT( success, "WGL Error: cannot share the OpenGL Context with the helper thread" );
 
-		*(mContextRequestsQueue.front()) = c; //assing back to the caller thread
-
-		mContextRequestsQueue.pop();
+		//signal the caller
+		req->set();
 	}
 	mCRQMutex.unlock();
 

@@ -67,7 +67,7 @@ namespace Dojo
 		inline FontSystem* getFontSystem()		{	return fonts;	}
 
 		///returns the default BackgroundQueue
-		BackgroundQueue& getBackgroundQueue()	{	return mBackgroundQueue;	}
+		BackgroundQueue& getBackgroundQueue()	{	return *mBackgroundQueue;	}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
 		/**
@@ -237,7 +237,7 @@ namespace Dojo
 		
 		float realFrameTime;
 
-		BackgroundQueue mBackgroundQueue;
+		BackgroundQueue* mBackgroundQueue;
 
 		Dojo::Array< ApplicationListener* > focusListeners;
 

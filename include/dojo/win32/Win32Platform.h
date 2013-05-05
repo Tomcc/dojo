@@ -113,13 +113,25 @@ namespace Dojo
 		bool mMousePressed;
 
 		//context sharing stuff needed for multithread creation
-		typedef std::queue< HGLRC* > ContextRequestsQueue;
+		struct ContextShareRequest : public Poco::Semaphore
+		{
+			ContextShareRequest() :
+				Poco::Semaphore(1)
+			{
+				wait();
+			}
+
+			HGLRC contextHandle;
+		};
+
+		typedef std::queue< ContextShareRequest* > ContextRequestsQueue;
 		ContextRequestsQueue mContextRequestsQueue;
 		Poco::Mutex mCRQMutex;
 
 		bool _initialiseWindow( const String& caption, uint w, uint h );
 		
 	private:
+
 
 		uint lastPressedText;
 

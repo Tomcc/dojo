@@ -120,8 +120,11 @@ void Texture::disableMipmaps()
 	}
 }
 
-bool Texture::loadEmpty( int width, int height, GLenum destFormat )
+bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 {
+	width = w;
+	height = h;
+
 	DEBUG_ASSERT( width > 0, "Width must be more than 0" );
 	DEBUG_ASSERT( height > 0, "Height must be more than 0" ); 
 	DEBUG_ASSERT( destFormat > 0, "the desired internal image format is undefined" );
