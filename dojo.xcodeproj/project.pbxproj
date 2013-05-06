@@ -434,6 +434,20 @@
 		4395BF3616BD54B200309AE2 /* IOSPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3316BD54B200309AE2 /* IOSPlatform.mm */; };
 		4395BF3A16BD54B900309AE2 /* CustomOpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3816BD54B900309AE2 /* CustomOpenGLView.mm */; };
 		4395BF3B16BD54B900309AE2 /* OSXPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4395BF3916BD54B900309AE2 /* OSXPlatform.mm */; };
+		43E248F817380A3C00A99984 /* BackgroundQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F217380A3C00A99984 /* BackgroundQueue.h */; };
+		43E248F917380A3C00A99984 /* BackgroundQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F217380A3C00A99984 /* BackgroundQueue.h */; };
+		43E248FA17380A3C00A99984 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F317380A3C00A99984 /* File.h */; };
+		43E248FB17380A3C00A99984 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F317380A3C00A99984 /* File.h */; };
+		43E248FC17380A3C00A99984 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F417380A3C00A99984 /* FileStream.h */; };
+		43E248FD17380A3C00A99984 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F417380A3C00A99984 /* FileStream.h */; };
+		43E248FE17380A3C00A99984 /* MemoryInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F517380A3C00A99984 /* MemoryInputStream.h */; };
+		43E248FF17380A3C00A99984 /* MemoryInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F517380A3C00A99984 /* MemoryInputStream.h */; };
+		43E2490017380A3C00A99984 /* Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F617380A3C00A99984 /* Stream.h */; };
+		43E2490117380A3C00A99984 /* Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F617380A3C00A99984 /* Stream.h */; };
+		43E2490217380A3C00A99984 /* Touch.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F717380A3C00A99984 /* Touch.h */; };
+		43E2490317380A3C00A99984 /* Touch.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E248F717380A3C00A99984 /* Touch.h */; };
+		43E2490517380C2500A99984 /* BackgroundQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43E2490417380C2400A99984 /* BackgroundQueue.cpp */; };
+		43E2490617380C2500A99984 /* BackgroundQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43E2490417380C2400A99984 /* BackgroundQueue.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -767,6 +781,13 @@
 		4395BF3316BD54B200309AE2 /* IOSPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSPlatform.mm; sourceTree = "<group>"; };
 		4395BF3816BD54B900309AE2 /* CustomOpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomOpenGLView.mm; sourceTree = "<group>"; };
 		4395BF3916BD54B900309AE2 /* OSXPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSXPlatform.mm; sourceTree = "<group>"; };
+		43E248F217380A3C00A99984 /* BackgroundQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundQueue.h; sourceTree = "<group>"; };
+		43E248F317380A3C00A99984 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
+		43E248F417380A3C00A99984 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
+		43E248F517380A3C00A99984 /* MemoryInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInputStream.h; sourceTree = "<group>"; };
+		43E248F617380A3C00A99984 /* Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stream.h; sourceTree = "<group>"; };
+		43E248F717380A3C00A99984 /* Touch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Touch.h; sourceTree = "<group>"; };
+		43E2490417380C2400A99984 /* BackgroundQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundQueue.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -841,6 +862,12 @@
 		4395BBAC16BD545B00309AE2 /* dojo */ = {
 			isa = PBXGroup;
 			children = (
+				43E248F217380A3C00A99984 /* BackgroundQueue.h */,
+				43E248F317380A3C00A99984 /* File.h */,
+				43E248F417380A3C00A99984 /* FileStream.h */,
+				43E248F517380A3C00A99984 /* MemoryInputStream.h */,
+				43E248F617380A3C00A99984 /* Stream.h */,
+				43E248F717380A3C00A99984 /* Touch.h */,
 				4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */,
 				4395BBAE16BD545B00309AE2 /* apple */,
 				4395BBB816BD545B00309AE2 /* ApplicationListener.h */,
@@ -1189,6 +1216,7 @@
 		4395BEA616BD549A00309AE2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				43E2490417380C2400A99984 /* BackgroundQueue.cpp */,
 				4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */,
 				4386F3EC16F8EBEF000853F6 /* ZipArchive.h */,
 				4395BEA716BD549A00309AE2 /* AnimatedQuad.cpp */,
@@ -1439,6 +1467,12 @@
 				4395BE4716BD548200309AE2 /* OSXPlatform.h in Headers */,
 				4386F3EE16F8EBEF000853F6 /* ZipArchive.h in Headers */,
 				430328F816FCA46B00242A3F /* IOSPlatform.h in Headers */,
+				43E248F817380A3C00A99984 /* BackgroundQueue.h in Headers */,
+				43E248FA17380A3C00A99984 /* File.h in Headers */,
+				43E248FC17380A3C00A99984 /* FileStream.h in Headers */,
+				43E248FE17380A3C00A99984 /* MemoryInputStream.h in Headers */,
+				43E2490017380A3C00A99984 /* Stream.h in Headers */,
+				43E2490217380A3C00A99984 /* Touch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1615,6 +1649,12 @@
 				4395BE3116BD545C00309AE2 /* Viewport.h in Headers */,
 				4395BE3E16BD547B00309AE2 /* AppDelegate.h in Headers */,
 				4395BE3F16BD547B00309AE2 /* Application.h in Headers */,
+				43E248F917380A3C00A99984 /* BackgroundQueue.h in Headers */,
+				43E248FB17380A3C00A99984 /* File.h in Headers */,
+				43E248FD17380A3C00A99984 /* FileStream.h in Headers */,
+				43E248FF17380A3C00A99984 /* MemoryInputStream.h in Headers */,
+				43E2490117380A3C00A99984 /* Stream.h in Headers */,
+				43E2490317380A3C00A99984 /* Touch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1725,6 +1765,7 @@
 				4395BF2816BD549A00309AE2 /* Viewport.cpp in Sources */,
 				4395BF3A16BD54B900309AE2 /* CustomOpenGLView.mm in Sources */,
 				4395BF3B16BD54B900309AE2 /* OSXPlatform.mm in Sources */,
+				43E2490517380C2500A99984 /* BackgroundQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1771,6 +1812,7 @@
 				4395BF3416BD54B200309AE2 /* AppDelegate.mm in Sources */,
 				4395BF3516BD54B200309AE2 /* Application.mm in Sources */,
 				4395BF3616BD54B200309AE2 /* IOSPlatform.mm in Sources */,
+				43E2490617380C2500A99984 /* BackgroundQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

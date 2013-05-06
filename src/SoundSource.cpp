@@ -79,10 +79,10 @@ void SoundSource::play( float volume )
 			if( chunkNumber == 1 )  //non-streaming
 			{
 				alSourcei (source, AL_BUFFER, alBuffer );
-				CHECK_AL_ERROR;	
+				CHECK_AL_ERROR;
 			}
 			else //use a queue
-			{				
+			{
 				alSourceQueueBuffers( source, 1, &alBuffer );
 				mQueuedChunks = 1;
 				CHECK_AL_ERROR;

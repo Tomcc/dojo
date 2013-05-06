@@ -22,7 +22,8 @@ namespace Dojo
 
 		///Creates a new empty BackgroundQueue and starts its thread pool
 		BackgroundQueue() :
-		mQueueSemaphore( 1, 0xffff )
+		mQueueSemaphore( 1, 0xffff ),
+        running( false )
 		{
 			mQueueSemaphore.wait(); //POCO doesn't allow for empty queues for some reason
 

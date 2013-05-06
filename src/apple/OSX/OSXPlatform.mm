@@ -119,6 +119,9 @@ void OSXPlatform::initialise( Game* g )
 	if( config.getInt( "MSAA" ) )
 		glEnable(GL_MULTISAMPLE);
     
+    //create the background task queue
+    mBackgroundQueue = new BackgroundQueue();
+    
     //create soundmanager
     sound = new SoundManager();
 	
