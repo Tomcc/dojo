@@ -27,8 +27,6 @@ namespace Dojo
 		{
 		public:
 
-			Poco::Mutex mMutex;
-
 			///the max size in PCM of a chunk
 			static const int MAX_DURATION = 3;
 			static const int MAX_SIZE = 41000 * sizeof( short ) * MAX_DURATION;
@@ -105,7 +103,7 @@ namespace Dojo
 
 			ALuint size;
 			ALuint alBuffer;
-			std::atomic<int> references;
+			int references;
 		};
 
 		typedef Array< Chunk* > ChunkList;

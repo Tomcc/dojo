@@ -19,6 +19,9 @@ namespace Dojo
 	public:
 
 		typedef std::function< void() > Task;
+		typedef std::function< void() > Callback;
+
+		static const Callback NOP_CALLBACK;
 
 		///Creates a new empty BackgroundQueue and starts its thread pool
 		BackgroundQueue() :
@@ -36,11 +39,11 @@ namespace Dojo
 		Tasks are void to void lambdas, ie []() { printf( "Hello World\n" ); }
 		Task execution parameters can be captured with the closure operator.
 		*/
-		void queueTask( const Task& task )
+		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK )
 		{
-			Poco::ScopedLock< Poco::Mutex > lock( mQueueMutex );
+			ScopedLock lock( mQueueMutex );
 
-			mQueue.push( task );
+			mQueue.push( TaskCallbackPair( task, callback ) );
 
 			mQueueSemaphore.set();
 		}
@@ -58,15 +61,23 @@ namespace Dojo
 
 		virtual void run();
 
+		///-internal- causes the queue to fire the completion listeners on the main thread
+		void _fireCompletedCallbacks();
+
 	protected:
 
-		typedef std::queue< Task > TaskQueue;
+		typedef std::pair< Task, Callback > TaskCallbackPair;
+		typedef std::queue< TaskCallbackPair > TaskQueue;
+		typedef std::queue< Task > CompletedTaskQueue;
 
 		bool running;
 
 		TaskQueue mQueue;
 		Poco::Semaphore mQueueSemaphore;
 		Poco::Mutex mQueueMutex;
+
+		CompletedTaskQueue mCompletedQueue;
+		Poco::Mutex mCompletedQueueMutex;
 
 	private:
 	};

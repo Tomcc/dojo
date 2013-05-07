@@ -7,8 +7,6 @@
 
 namespace Dojo 
 {
-	typedef Poco::ScopedLock< Poco::Mutex > ScopedLock;
-
 	class SoundManager;
 	class Render;
 	class InputSystem;

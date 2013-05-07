@@ -116,5 +116,10 @@
 //keycode.h is a plain enum
 #include "KeyCode.h"
 
+//typedefs
+namespace Dojo
+{
+	typedef Poco::ScopedLock< Poco::Mutex > ScopedLock;
+}
 
 #endif // dojo_common_headers_h__

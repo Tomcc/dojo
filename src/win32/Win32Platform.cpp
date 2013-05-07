@@ -549,6 +549,9 @@ void Win32Platform::step( float dt )
 	//update input
 	_pollDevices( dt );
 
+	//update completed tasks
+	mBackgroundQueue->_fireCompletedCallbacks();
+
 	game->loop( dt);
 
 	sound->update( dt );

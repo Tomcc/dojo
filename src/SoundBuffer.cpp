@@ -174,9 +174,11 @@ void SoundBuffer::Chunk::loadAsync()
 	Platform::getSingleton()->getBackgroundQueue().queueTask( [ & ]()
 	{
 		onLoad();
-
+	},
+	[&]() //then,
+	{
 		release();
-	} );
+	});
 }
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
