@@ -168,20 +168,24 @@ void SoundBuffer::Chunk::loadAsync()
 {
 	DEBUG_ASSERT( !isLoaded(), "The Chunk is already loaded" );
 
+	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
+
 	//async load
 	Platform::getSingleton()->getBackgroundQueue().queueTask( [ & ]()
 	{
 		onLoad();
+
+		release();
 	} );
 }
 
 void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 {
-	DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
-
 	//either unload if forced, or if the parent is reloadable (loaded from file or persistent source)
 	if( !soft || pParent->isReloadable() )
 	{
+		DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
+
 		alDeleteBuffers( 1, &alBuffer );
 		alBuffer = 0;
 

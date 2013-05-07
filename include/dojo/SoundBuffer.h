@@ -6,6 +6,9 @@
 #include "Resource.h"
 #include "Stream.h"
 #include "Array.h"
+#include "Platform.h"
+
+#include <atomic>
 
 namespace Dojo 
 {
@@ -24,8 +27,11 @@ namespace Dojo
 		{
 		public:
 
+			Poco::Mutex mMutex;
+
 			///the max size in PCM of a chunk
-			static const int MAX_SIZE = 48000 * 3;
+			static const int MAX_DURATION = 3;
+			static const int MAX_SIZE = 41000 * sizeof( short ) * MAX_DURATION;
 			
 			///Creates a new chunk that will use the given source span to load
 			Chunk( SoundBuffer* parent, long streamStartPosition, long uncompressedSize ) :
@@ -49,29 +55,23 @@ namespace Dojo
 			///acquires one reference to this Chunk, and loads in a background thread
 			void getAsync()
 			{
-				if( references == 0 && !isLoaded() ) //load it when referenced the first time
+				if( references++ == 0 && !isLoaded() ) //load it when referenced the first time
 					loadAsync();
-
-				++references;
 			}
 
 			///acquires one reference to this Chunk, and loads it
 			void get()
 			{
-				if( references == 0 && !isLoaded() ) //load it when referenced the first time
+				if( references++ == 0 && !isLoaded() ) //load it when referenced the first time
 					onLoad();
-
-				++references;
 			}
 
 			///releases one reference to this Chunk, and unloads it if needed
 			void release()
 			{
-				--references;
-
 				DEBUG_ASSERT( references >= 0, "References should never be less than 0" );
 
-				if( references == 0 ) //unload it when dereferenced last time
+				if( --references == 0 ) //unload it when dereferenced last time
 					onUnload();
 			}
 
@@ -105,7 +105,7 @@ namespace Dojo
 
 			ALuint size;
 			ALuint alBuffer;
-			int references;
+			std::atomic<int> references;
 		};
 
 		typedef Array< Chunk* > ChunkList;
