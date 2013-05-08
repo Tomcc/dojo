@@ -50,8 +50,6 @@ void BackgroundQueue::Worker::run()
 		if( !pParent->_waitForTaskOrClose( pair ) ) //wait for a new task or close
 			break;
 
-		DEBUG_MESSAGE( Poco::Thread::getName() );
-
 		pair.first(); //execute the task
 
 		//push the callback on the completed queue
