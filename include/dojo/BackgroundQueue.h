@@ -6,13 +6,14 @@
 #include <functional>
 #include <queue>
 #include <Poco/Semaphore.h>
-#include <Poco//Mutex.h>
+#include <Poco/Mutex.h>
 
 namespace Dojo
 {
-	///A BackgroundQueue spawn its own thread to run, the tasks that are assigned to it over the available thread pool //TODO the thread pool is just 1 thread!
+	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool //TODO the thread pool is just 1 thread!
 	/**
-	Dojo always spawns a default BackgroundQueue that can be retrieved with Platform::getBackgroundQueue(), but more can be created if needed
+	Dojo always spawns a default BackgroundQueue that can be retrieved with Platform::getBackgroundQueue(), but more can be created if needed.
+	The BackgroundQueue also fires the "then" callbacks for the tasks that have finished on the main thread.
 	*/
 	class BackgroundQueue : public Poco::Runnable, public Poco::Thread
 	{
@@ -24,13 +25,16 @@ namespace Dojo
 		static const Callback NOP_CALLBACK;
 
 		///Creates a new empty BackgroundQueue and starts its thread pool
-		BackgroundQueue() :
+		/**
+		\param poolSize the number of threads in the pool size. If -1 is passed, the default size is the available cores number x 2.
+		*/
+		BackgroundQueue( int poolSize = -1 ) :
 		mQueueSemaphore( 1, 0xffff ),
         running( false )
 		{
-			mQueueSemaphore.wait(); //POCO doesn't allow for empty queues for some reason
+			mQueueSemaphore.wait(); //POCO doesn't allow for semaphores to be created empty for some reason
 
-			//TODO start more than one thread?
+			//TODO use a threadpool
 			start( *this );
 		}
 
@@ -62,7 +66,7 @@ namespace Dojo
 		virtual void run();
 
 		///-internal- causes the queue to fire the completion listeners on the main thread
-		void _fireCompletedCallbacks();
+		void fireCompletedCallbacks();
 
 	protected:
 

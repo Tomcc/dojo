@@ -34,7 +34,7 @@ void BackgroundQueue::run()
 	}
 }
 
-void BackgroundQueue::_fireCompletedCallbacks()
+void BackgroundQueue::fireCompletedCallbacks()
 {
 	mCompletedQueueMutex.lock();
 

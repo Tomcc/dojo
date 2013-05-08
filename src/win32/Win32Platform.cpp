@@ -550,7 +550,7 @@ void Win32Platform::step( float dt )
 	_pollDevices( dt );
 
 	//update completed tasks
-	mBackgroundQueue->_fireCompletedCallbacks();
+	mBackgroundQueue->fireCompletedCallbacks();
 
 	game->loop( dt);
 
