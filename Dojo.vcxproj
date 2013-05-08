@@ -83,9 +83,9 @@
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\dojo\BackgroundQueue.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
+    <ClCompile Include="src\BackgroundQueue.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />
