@@ -3,19 +3,14 @@
 
 #include "dojo_common_header.h"
 
-#include <functional>
-#include <queue>
-#include <Poco/Semaphore.h>
-#include <Poco/Mutex.h>
-
 namespace Dojo
 {
-	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool //TODO the thread pool is just 1 thread!
+	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool
 	/**
 	Dojo always spawns a default BackgroundQueue that can be retrieved with Platform::getBackgroundQueue(), but more can be created if needed.
 	The BackgroundQueue also fires the "then" callbacks for the tasks that have finished on the main thread.
 	*/
-	class BackgroundQueue : public Poco::Runnable, public Poco::Thread
+	class BackgroundQueue
 	{
 	public:
 
@@ -28,14 +23,12 @@ namespace Dojo
 		/**
 		\param poolSize the number of threads in the pool size. If -1 is passed, the default size is the available cores number x 2.
 		*/
-		BackgroundQueue( int poolSize = -1 ) :
-		mQueueSemaphore( 1, 0xffff ),
-        running( false )
-		{
-			mQueueSemaphore.wait(); //POCO doesn't allow for semaphores to be created empty for some reason
+		BackgroundQueue( int poolSize = -1 );
 
-			//TODO use a threadpool
-			start( *this );
+		virtual ~BackgroundQueue()
+		{
+			if( mRunning )
+				stop();
 		}
 
 		///queues this task for execution in the current thread pool
@@ -45,7 +38,7 @@ namespace Dojo
 		*/
 		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK )
 		{
-			ScopedLock lock( mQueueMutex );
+			Lock lock( mQueueMutex );
 
 			mQueue.push( TaskCallbackPair( task, callback ) );
 
@@ -58,30 +51,80 @@ namespace Dojo
 		*/
 		void stop()
 		{
-			running = false;
-			mQueueSemaphore.set(); //wake up so that it can be closed
-			Poco::Thread::join();
+			mRunning = false;
+
+			//signal each for each thread in the pool so that they can be closed
+			for( auto& w : mWorkers )
+				mQueueSemaphore.set();
+
+			for( auto& w : mWorkers )
+				w->join();
 		}
 
-		virtual void run();
-
-		///-internal- causes the queue to fire the completion listeners on the main thread
+		///causes the queue to fire the completion listeners on the main thread.
+		/**
+		\remark remember to call this on any custom BackgroundQueue!
+		*/
 		void fireCompletedCallbacks();
 
 	protected:
 
+		class Worker : public Poco::Thread, public Poco::Runnable
+		{
+		public:
+
+			Worker( BackgroundQueue* parent ) :
+			pParent( parent )
+			{
+				DEBUG_ASSERT( pParent, "the parent can't be null" );
+
+				start( *this );
+			}
+
+			virtual void run();
+
+		protected:
+			BackgroundQueue* pParent;
+		};
+
 		typedef std::pair< Task, Callback > TaskCallbackPair;
 		typedef std::queue< TaskCallbackPair > TaskQueue;
 		typedef std::queue< Task > CompletedTaskQueue;
+		typedef std::vector< std::unique_ptr< Worker > > WorkerList;
 
-		bool running;
+		bool mRunning;
 
 		TaskQueue mQueue;
+		Mutex mQueueMutex;
 		Poco::Semaphore mQueueSemaphore;
-		Poco::Mutex mQueueMutex;
 
+		Mutex mCompletedQueueMutex;
 		CompletedTaskQueue mCompletedQueue;
-		Poco::Mutex mCompletedQueueMutex;
+
+		WorkerList mWorkers;
+
+		///waits for a task, returns false if the thread has to close
+		bool _waitForTaskOrClose( TaskCallbackPair& out )
+		{
+			mQueueSemaphore.wait();
+
+			if( mRunning ) //fetch a new task from the queue
+			{
+				Lock l( mQueueMutex );
+				out = mQueue.front();
+				mQueue.pop();
+				return true;
+			}
+			else return false;
+		}
+
+		///adds a completion callback to the queue
+		void _queueCompletionCallback( const Callback& c )
+		{
+			Lock l( mCompletedQueueMutex );
+
+			mCompletedQueue.push( c );
+		}
 
 	private:
 	};

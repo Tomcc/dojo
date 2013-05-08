@@ -22,6 +22,25 @@ using namespace Dojo;
 
 #define WINDOWMODE_PROPERTIES (WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)
 
+void _debugWin32Error( const char* msg, const char *file_source, int line, const char* function )
+{
+	DWORD error = GetLastError();
+
+	Dojo::gp_assert_handler( 
+		("Win32 encountered an error: " + String( (unsigned int)error ) + " (" + msg + ")" ).ASCII().c_str(),
+		"error != GL_NO_ERROR",
+		NULL, 
+		line, 
+		file_source, 
+		function );
+}
+
+#ifdef _DEBUG
+	#define CHECK_WIN32_ERROR(T, MSG ) { if( !(T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
+#else
+	#define CHECK_WIN32_ERROR(T, MSG ) {}
+#endif
+
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
 	Win32Platform* app = (Win32Platform*)Platform::getSingleton();
@@ -171,7 +190,7 @@ Platform( configTable ),
 dragging( false ),
 mMousePressed( false ),
 cursorPos( Vector::ZERO ),
-frameStart( 1 ),
+frameStart( 0, 1 ),
 frameInterval(0),
 mFramesToAdvance( 0 )
 {
@@ -189,7 +208,10 @@ mFramesToAdvance( 0 )
 	screenWidth = GetSystemMetrics( SM_CXSCREEN );
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
 
-	frameStart.wait();
+	//detect CPU cores
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo( &sysinfo );
+	mCPUCores = sysinfo.dwNumberOfProcessors;
 
 	_initKeyMap();
 }
@@ -352,7 +374,7 @@ void Win32Platform::_setFullscreen( bool fullscreen )
 
 		LONG ret = ChangeDisplaySettings( &dm, CDS_FULLSCREEN );
 
-		DEBUG_ASSERT( ret == DISP_CHANGE_SUCCESSFUL, "Win32 error: cannot start fullscreen mode" );
+		CHECK_WIN32_ERROR( ret == DISP_CHANGE_SUCCESSFUL, "while setting fullscreen mode" );
 
 		//WARNING MoveWindow can change backbuffer size
 		MoveWindow(hwnd, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
@@ -459,7 +481,7 @@ void Win32Platform::prepareThreadContext()
 
 	bool success = wglMakeCurrent( hdc, req.contextHandle )>0;
 
-	DEBUG_ASSERT( success, "Unable to share the context" );
+	CHECK_WIN32_ERROR( success, "while sharing context" );
 
 	glewInit();
 }
@@ -473,7 +495,7 @@ void Win32Platform::shutdown()
 	}
 
 	//stop the background queue
-	mBackgroundQueue->stop();
+	delete mBackgroundQueue;
 
 	//destroy managers
 	delete render;
@@ -539,7 +561,7 @@ void Win32Platform::step( float dt )
 		
 		bool success = wglShareLists(hglrc, req->contextHandle) != 0;
 
-		DEBUG_ASSERT( success, "WGL Error: cannot share the OpenGL Context with the helper thread" );
+		CHECK_WIN32_ERROR( success, "while creating and sharing a new context" );
 
 		//signal the caller
 		req->set();

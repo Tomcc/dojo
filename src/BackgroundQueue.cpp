@@ -8,31 +8,18 @@ using namespace Dojo;
 
 const BackgroundQueue::Callback BackgroundQueue::NOP_CALLBACK = [](){};
 
-void BackgroundQueue::run()
+BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
+	mQueueSemaphore( 0, 0xffff ),
+	mRunning( true )
 {
-	Platform::getSingleton()->prepareThreadContext();
+	if( poolSize < 0 )
+		poolSize = Platform::getSingleton()->getCPUCoreCount();
 
-	running = true;
-	while( 1 )
-	{
-		mQueueSemaphore.wait(); //wait for a new task to arrive
-
-		if( !running ) //it's been awakened for closing?
-			break;
-
-		//pop it from the queue
-		mQueueMutex.lock();
-		auto taskCallbackPair = mQueue.front();
-		mQueue.pop();
-		mQueueMutex.unlock();
-
-		taskCallbackPair.first(); //execute the task
-
-		//push the callback on the completed queue
-		ScopedLock l1( mCompletedQueueMutex );
-		mCompletedQueue.push( taskCallbackPair.second );
-	}
+	//create the thread pool
+	for( int i = 0; i < poolSize; ++i )
+		mWorkers.push_back( std::unique_ptr<Worker>(new Worker(this)) );
 }
+
 
 void BackgroundQueue::fireCompletedCallbacks()
 {
@@ -49,5 +36,25 @@ void BackgroundQueue::fireCompletedCallbacks()
 	{
 		localQueue.front()();
 		localQueue.pop();
+	}
+}
+
+void BackgroundQueue::Worker::run()
+{
+	Platform::getSingleton()->prepareThreadContext();
+
+	while( 1 )
+	{
+		TaskCallbackPair pair;
+
+		if( !pParent->_waitForTaskOrClose( pair ) ) //wait for a new task or close
+			break;
+
+		DEBUG_MESSAGE( Poco::Thread::getName() );
+
+		pair.first(); //execute the task
+
+		//push the callback on the completed queue
+		pParent->_queueCompletionCallback( pair.second );
 	}
 }

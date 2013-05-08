@@ -88,6 +88,15 @@ namespace Dojo
 		inline int getWindowWidth()             {   return windowWidth;     }
 		///gets the window height
 		inline int getWindowHeight()            {   return windowHeight;    }
+
+		///returns the number of "real" cores supported by the hardware
+		/**
+		\remark logical cores exposed by HyperThreading will count as normal cores
+		*/
+		int getCPUCoreCount()
+		{
+			return mCPUCores;
+		}
 		
 		bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
 
@@ -219,6 +228,7 @@ namespace Dojo
 		
 		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
+		int mCPUCores;
 		
 		String locale;
 

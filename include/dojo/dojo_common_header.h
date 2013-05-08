@@ -19,6 +19,9 @@
 #include <fstream>
 #include <unordered_map>
 #include <bitset>
+#include <memory>
+#include <functional>
+#include <queue>
 
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
@@ -31,7 +34,8 @@
 
 #include <Poco/Path.h>
 #include <Poco/Timer.h>
-//#include <Poco/Zip/ZipArchive.h> not work in android, change in zzip
+#include <Poco/Semaphore.h>
+#include <Poco/Mutex.h>
 
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
@@ -119,7 +123,10 @@
 //typedefs
 namespace Dojo
 {
-	typedef Poco::ScopedLock< Poco::Mutex > ScopedLock;
+	typedef Poco::FastMutex Mutex;
+	typedef Poco::Mutex RecursiveMutex;
+	typedef Poco::ScopedLock< Mutex > Lock;
+	typedef Poco::ScopedLock< RecursiveMutex > RecursiveLock;
 }
 
 #endif // dojo_common_headers_h__
