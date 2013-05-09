@@ -13,7 +13,7 @@ BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
 	mRunning( true )
 {
 	if( poolSize < 0 )
-		poolSize = 1; //HACKPlatform::getSingleton()->getCPUCoreCount();
+		poolSize = Platform::getSingleton()->getCPUCoreCount();
 
 	//create the thread pool
 	for( int i = 0; i < poolSize; ++i )

@@ -29,7 +29,6 @@ namespace Dojo
     Dojo::InputDevice* keyboard;
 	
 	Dojo::KeyCode keymap[0x80];
-	bool repetition[0x80];
     
     NSPoint lastMousePos;
 }
@@ -66,6 +65,6 @@ namespace Dojo
 
 - (void)keyUp:(NSEvent *)theEvent;
 
-
+- (void)flagsChanged:(NSEvent *)theEvent;
 
 @end

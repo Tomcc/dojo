@@ -32,9 +32,6 @@ using namespace Dojo;
 		
 	time = CFAbsoluteTimeGetCurrent();
 	
-	//set every repetition to 0
-	memset( repetition, 0, sizeof( bool ) );
-	
 	//init keys
 	// Virtual Key Map to KeyCode
 	keymap[0x12] = KC_1;
@@ -259,19 +256,25 @@ using namespace Dojo;
 - (void)keyDown:(NSEvent *)theEvent
 {	
 	uint kc = [theEvent keyCode];
-	if( !repetition[kc] )
-    {
-        keyboard->_notifyButtonState( keymap[kc], true );
-        
-		repetition[kc] = true;
-	}		
+    keyboard->_notifyButtonState( keymap[kc], true );
 }
 
 - (void)keyUp:(NSEvent *)theEvent
 {
 	keyboard->_notifyButtonState( keymap[[theEvent keyCode]], false );
-    
-	repetition[[theEvent keyCode]] = false;
+}
+
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+#define LEFT_MODIFIER (1<<8) //this was found disassembling modifier flags and is apparently true
+
+    unsigned int mask = [theEvent modifierFlags];
+    keyboard->_notifyButtonState( KC_LSHIFT, mask & NSShiftKeyMask && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RSHIFT, mask & NSShiftKeyMask && (mask & LEFT_MODIFIER) == 0 );
+    keyboard->_notifyButtonState( KC_LEFT_ALT, mask & NSAlternateKeyMask && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RIGHT_ALT, mask & NSAlternateKeyMask && (mask & LEFT_MODIFIER) == 0 );
+    keyboard->_notifyButtonState( KC_LCONTROL, mask & NSControlKeyMask && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RCONTROL, mask & NSControlKeyMask && (mask & LEFT_MODIFIER) == 0 );
 }
 
 - (void)dealloc
