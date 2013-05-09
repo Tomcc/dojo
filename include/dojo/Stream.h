@@ -25,6 +25,11 @@ namespace Dojo
 			///this Stream can be used both write and to read
 			SA_READWRITE
 		};
+        
+        virtual ~Stream()
+        {
+            
+        }
 
 		///reads up to "number" bytes from the stream into buf, returns the number of bytes read
 		virtual int read( byte* buf, int number )
@@ -47,6 +52,13 @@ namespace Dojo
 
 		///returns the current reading/writing position
 		virtual long getCurrentPosition()=0;
+        
+        ///creates a new unopened Stream that points to the same underlying data, useful for concurrent reads in multithreading.
+        virtual Stream* copy()
+        {
+            DEBUG_FAIL( "This Stream type does not implement copy" );
+            return nullptr;
+        }
 
 		///goes to the given position
 		virtual int seek( long offset, int fromWhere = SEEK_SET )=0;

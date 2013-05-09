@@ -103,7 +103,7 @@ namespace Dojo
 
 			ALuint size;
 			ALuint alBuffer;
-			int references;
+            std::atomic_int references;
 		};
 
 		typedef Array< Chunk* > ChunkList;

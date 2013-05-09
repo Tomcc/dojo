@@ -21,6 +21,12 @@ namespace Dojo
 
 		}
 
+        virtual ~File()
+        {
+            if( isOpen() )
+                close();
+        }
+        
 		virtual Access open()
 		{
 			DEBUG_ASSERT( !isOpen(), "The file was already open" );
@@ -94,6 +100,12 @@ namespace Dojo
 			mFile = nullptr;
 			mAccess = SA_BAD_FILE;
 		}
+        
+        ///creates a new File* to read the underlying file. Does not copy reading status
+        virtual Stream* copy()
+        {
+            return new File( mPath, mWrite );
+        }
 
 	protected:
 

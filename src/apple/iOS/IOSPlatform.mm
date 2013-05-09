@@ -115,14 +115,17 @@ void IOSPlatform::_initialiseImpl(Application *application)
 	
 	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER, depthRenderbuffer );
-	
-	render = new Render( width, height, screenOrientation );
-	
+    
+    
 	//some local configs
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     
-    const char* extensions = (char*) glGetString(GL_EXTENSIONS); 
+    const char* extensions = (char*) glGetString(GL_EXTENSIONS);
     mNPOTEnabled = strstr(extensions, "GL_APPLE_texture_2D_limited_npot") != 0;
+    
+    mBackgroundQueue = new BackgroundQueue();
+	
+	render = new Render( width, height, screenOrientation );
 	
 //SOUND MANAGER
 
@@ -137,7 +140,7 @@ void IOSPlatform::_initialiseImpl(Application *application)
 	uint sessionCategory = kAudioSessionCategory_AmbientSound;
 #endif
 	AudioSessionSetProperty (kAudioSessionProperty_AudioCategory, sizeof (sessionCategory), &sessionCategory);
-	AudioSessionSetActive (true);	
+	AudioSessionSetActive (true);
 	
 	sound = new SoundManager();
 	input = new InputSystem();

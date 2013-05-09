@@ -27,6 +27,11 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( path.size() > 0, "File path cannot be empty" );
 		}
+        
+        virtual ~FileStream()
+        {
+            
+        }
 
 		///opens the file
 		/**

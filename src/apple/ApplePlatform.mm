@@ -37,6 +37,9 @@ ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
     pool = [[NSAutoreleasePool alloc] init];
+    
+    //find cpu cores
+    mCPUCores = sysconf( _SC_NPROCESSORS_ONLN );
 
 	if( [[NSLocale preferredLanguages] count ] )
 		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
@@ -55,6 +58,8 @@ void ApplePlatform::step( float dt )
 	
 	//clamp to max dt to avoid crazy behaviour
 	dt = Math::min( dt, game->getMaximumFrameLength() );
+    
+    mBackgroundQueue->fireCompletedCallbacks();
 	
     input->poll( dt );
 	

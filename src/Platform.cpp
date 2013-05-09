@@ -270,7 +270,7 @@ FileStream* Platform::getFile( const String& path )
 
 int Platform::loadFileContent( char*& bufptr, const String& path )
 {
-	FileStream* file = getFile( path );
+	auto file = std::unique_ptr<FileStream>( getFile( path ) );
 	int size = 0;
 	if( file->open() )
 	{
@@ -278,11 +278,7 @@ int Platform::loadFileContent( char*& bufptr, const String& path )
 		bufptr = (char*)malloc( size );
 
 		file->read( (byte*)bufptr, size );
-
-		file->close();
 	}
-
-	SAFE_DELETE( file );
 
 	return size;
 }

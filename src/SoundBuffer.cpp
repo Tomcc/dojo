@@ -96,15 +96,13 @@ bool SoundBuffer::Chunk::onLoad()
 	alGenBuffers( 1, &alBuffer ); //gen the buffer if it didn't exist
 
 	CHECK_AL_ERROR;
-
-	//reopen the source
-	Stream* source = pParent->mSource;
-	if( !source->isOpen() )
-		source->open();
+    
+    //copy the source to avoid side-effects
+    std::unique_ptr< Stream > source( pParent->mSource->copy() );
+    
+    source->open();
 
 	DEBUG_ASSERT( source->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
-
-	CHECK_AL_ERROR;
 
 	char* uncompressedData = (char*)malloc( mUncompressedSize );
 
@@ -113,7 +111,7 @@ bool SoundBuffer::Chunk::onLoad()
 	ALenum format;
 	int totalRead = 0;
 
-	int error = ov_open_callbacks( source, &file, NULL, 0, VORBIS_CALLBACKS );
+	int error = ov_open_callbacks( source.get(), &file, NULL, 0, VORBIS_CALLBACKS );
 
 	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
 
@@ -222,9 +220,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	int wordSize = 2;
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 	
-	int bitrate = info->rate;// * info->channels;
 	ogg_int64_t totalPCM = ov_pcm_total( &file, -1 );
-	int section = -1;
 
 	uncompressedSize = totalPCM * wordSize * info->channels;
 
@@ -235,7 +231,6 @@ bool SoundBuffer::_loadOgg( Stream* source )
 
 	mDuration = (float)totalPCM / (float)info->rate;
 
-	int streamPosition = 0;
 	ogg_int64_t fileStart = 0, fileEnd = -1;
 	ogg_int64_t pcmStart = 0, pcmEnd = -1;
 
