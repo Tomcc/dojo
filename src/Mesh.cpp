@@ -146,6 +146,7 @@ void Mesh::_bindAttribArrays()
 			case VF_UV:	
 			case VF_UV_1:	
 				glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset );	break;
+            default: ;
 			};
 
 			CHECK_GL_ERROR;
@@ -215,7 +216,10 @@ bool Mesh::end()
 	switch ( triangleMode ) {
 		case TM_LIST:       triangleCount = elemCount / 3;  break;
 		case TM_STRIP:      triangleCount = elemCount-2;    break;
-		case TM_LINE_STRIP: triangleCount = 0;
+		case TM_LINE_STRIP:
+        case TM_LINE_LIST:
+            triangleCount = 0;
+            break;
 	}
 	
 	//geometric hints

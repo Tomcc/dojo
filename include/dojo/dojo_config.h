@@ -43,13 +43,6 @@
 #define NDEBUG  //to be sure!
 #endif
 
-#ifdef PLATFORM_IOS
-	#define BIG_ENDIAN 1
-#else
-	#define BIG_ENDIAN 0
-#endif
-
-
 //opengl rebindings!
 #ifndef PLATFORM_IOS
 

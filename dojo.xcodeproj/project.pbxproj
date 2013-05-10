@@ -1701,7 +1701,7 @@
 		431CF67A147D4E0A0031CB4E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = none;
 			};
 			buildConfigurationList = 431CF67D147D4E0A0031CB4E /* Build configuration list for PBXProject "dojo" */;
@@ -1874,6 +1874,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = "dependencies-OSX/include";
@@ -1889,6 +1890,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = "dependencies-OSX/include";

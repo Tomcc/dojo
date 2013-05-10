@@ -409,7 +409,7 @@ void IOSPlatform::requestScore( const Dojo::String& leaderboard, GameCenterListe
 				if( scores == nil )
 					value = 0;
 				
-				listener->onHighScoreGet( query.category, value, false );
+				listener->onHighScoreGet( query.category, (int)value, false );
 			}
 			else
 			{
@@ -434,7 +434,6 @@ void IOSPlatform::postAchievement( const Dojo::String& code, GameCenterListener*
 		 }];
     }
 }
-
 
 void IOSPlatform::requestAchievements( GameCenterListener* listener)
 {

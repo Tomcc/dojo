@@ -100,6 +100,7 @@ void Table::serialize( String& buf, String indent ) const
 			buf += indent + '}';
 
 			break;
+            default: break;
 		}
 
 		buf += '\n';
@@ -220,6 +221,7 @@ void Table::deserialize( StringReader& buf )
 			else if( isNumber( c ) )target = PT_NUMBER;
 
 			break;
+        default: ;
 		}
 
 		switch( target )
@@ -299,6 +301,7 @@ void Table::deserialize( StringReader& buf )
 			table->deserialize( buf );
 
 			break;
+        default: ;
 		}
 
 		if( target ) //read something

@@ -226,7 +226,6 @@ FileStream* Platform::getFile( const String& path )
 {
 	using namespace std;
 
-	int size = 0;
 	int internalZipPathIdx = _findZipExtension( path );
 	
 	if( internalZipPathIdx == String::npos ) //normal file

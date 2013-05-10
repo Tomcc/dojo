@@ -79,7 +79,7 @@ bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line, con
 {
 	int error = alGetError();
 
-	char* err = "";
+	const char* err = "";
 	switch ( error )
 	{
 	case AL_INVALID_OPERATION:		err = "AL_INVALID_OPERATION";		break;

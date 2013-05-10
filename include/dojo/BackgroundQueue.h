@@ -54,7 +54,7 @@ namespace Dojo
 			mRunning = false;
 
 			//signal each for each thread in the pool so that they can be closed
-			for( auto& w : mWorkers )
+			for( int i = 0; i < mWorkers.size(); ++i )
 				mQueueSemaphore.set();
 
 			for( auto& w : mWorkers )

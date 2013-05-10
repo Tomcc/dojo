@@ -185,6 +185,7 @@ void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 	if( !soft || pParent->isReloadable() )
 	{
 		DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
+        DEBUG_ASSERT( alBuffer != AL_NONE, "tried to delete an invalid alBuffer" );
 
 		alDeleteBuffers( 1, &alBuffer );
 		alBuffer = 0;
