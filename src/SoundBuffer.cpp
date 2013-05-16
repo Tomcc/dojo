@@ -267,7 +267,8 @@ bool SoundBuffer::_loadOgg( Stream* source )
 
 bool SoundBuffer::_loadOggFromFile()
 {
-	mSource = Platform::getSingleton()->getFile( filePath );
+	mFile = Platform::getSingleton()->getFile( filePath );
+	mSource = mFile.get();
 	
 	_loadOgg( mSource );
 

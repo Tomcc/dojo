@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header.h" />
     <ClInclude Include="include\dojo.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\apple\ApplePlatform.h" />
@@ -56,6 +57,8 @@
     <ClInclude Include="include\dojo\Renderable.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
     <ClInclude Include="include\dojo\ResourceGroup.h" />
+    <ClInclude Include="include\dojo\Shader.h" />
+    <ClInclude Include="include\dojo\ShaderProgram.h" />
     <ClInclude Include="include\dojo\SoundBuffer.h" />
     <ClInclude Include="include\dojo\SoundManager.h" />
     <ClInclude Include="include\dojo\SoundSet.h" />
@@ -104,6 +107,8 @@
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
     <ClCompile Include="src\ResourceGroup.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\SoundBuffer.cpp" />
     <ClCompile Include="src\SoundManager.cpp" />
     <ClCompile Include="src\SoundSet.cpp" />

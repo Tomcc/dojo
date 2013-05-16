@@ -18,7 +18,6 @@
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
-#include <bitset>
 #include <memory>
 #include <functional>
 #include <queue>

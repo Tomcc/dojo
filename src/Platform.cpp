@@ -222,14 +222,14 @@ void Platform::getFilePathsForType( const String& type, const String& wpath, std
 	}
 }
 
-FileStream* Platform::getFile( const String& path )
+Platform::FilePtr Platform::getFile( const String& path )
 {
 	using namespace std;
 
 	int internalZipPathIdx = _findZipExtension( path );
 	
 	if( internalZipPathIdx == String::npos ) //normal file
-		return new File( path );
+		return FilePtr( new File( path ) );
 
 	else //open a file from a zip
 	{

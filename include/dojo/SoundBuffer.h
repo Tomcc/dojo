@@ -174,6 +174,7 @@ namespace Dojo
 
 		ChunkList mChunks;
 		Stream* mSource;
+		Platform::FilePtr mFile; //this unique ptr keeps ownership of the file accessor when the src is a file
 
 		bool _loadOgg( Stream* source );
 		bool _loadOggFromFile();

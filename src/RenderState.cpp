@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "FrameSet.h"
 #include "Timer.h"
+#include "Shader.h"
 
 using namespace Dojo;
 
@@ -16,6 +17,8 @@ bool RenderState::isAlphaRequired()
 
 void RenderState::applyState()
 {
+	glUseProgram( pShader ? pShader->getGLProgram() : 0 );
+
 	for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 	{
 		//select current slot

@@ -27,6 +27,8 @@ disableTiling( false )
 	mapArray[ RT_MESH ] = &meshes;
 	mapArray[ RT_SOUND ] = &sounds;
 	mapArray[ RT_TABLE ] = &tables;
+	mapArray[ RT_SHADER ] = &shaders;
+	mapArray[ RT_PROGRAM ] = &programs;
 	
 	empty = new FrameSet( this, "empty" );
 }
@@ -223,6 +225,33 @@ void ResourceGroup::addTables( const String& folder )
 	
 	for( uint i = 0; i < paths.size(); ++i )
 		addTable( new Table( this, paths[i] ) );
+}
+
+void ResourceGroup::addPrograms( const String& folder )
+{
+	std::vector< String > paths;
+
+	Platform::getSingleton()->getFilePathsForType("vs", folder, paths );
+	Platform::getSingleton()->getFilePathsForType("ps", folder, paths );
+
+	for( auto& path : paths )
+	{
+		String name = Utils::getFileName( path );
+		addProgram( new ShaderProgram( this, path ), name );
+	}
+}
+
+void ResourceGroup::addShaders( const String& folder )
+{
+	std::vector< String > paths;
+
+	Platform::getSingleton()->getFilePathsForType("shader", folder, paths );
+
+	for( auto& path : paths )
+	{
+		String name = Utils::getFileName( path );
+		addShader( new Shader( this, path ), name );
+	}
 }
 
 void ResourceGroup::addPrefabMeshes()

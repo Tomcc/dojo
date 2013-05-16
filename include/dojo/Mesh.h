@@ -376,7 +376,7 @@ namespace Dojo
 			}
 		}
 				
-		///binds the mesh VAO
+		///binds the mesh buffers
 		virtual void bind();
 				
 		inline bool isIndexed()

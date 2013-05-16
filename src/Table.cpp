@@ -11,7 +11,7 @@ void Table::loadFromFile( Table* dest, const String& path )
 	DEBUG_ASSERT( dest != nullptr, "The destination table is null" );
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
-    auto file = std::unique_ptr< FileStream >( Platform::getSingleton()->getFile( path ) );
+    auto file = Platform::getSingleton()->getFile( path );
 	
 	if( file->open() )
 	{

@@ -21,6 +21,7 @@ namespace Dojo
 {
 	class Texture;
 	class Mesh;
+	class Shader;
 	
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
 	class RenderState 
@@ -37,8 +38,8 @@ namespace Dojo
 			scale( 1,1 ),
 			rotation( 0 ),
 			offset( 0,0 ),
-			texture( NULL ),
-			optTransform( NULL )
+			texture( nullptr ),
+			optTransform( nullptr )
 			{
 
 			}
@@ -132,10 +133,11 @@ namespace Dojo
 		mTextureNumber( 0 ),
 		cullMode( CM_BACK ),
 		blendingEnabled( true ),
-		mesh( NULL ),
 		srcBlend( GL_SRC_ALPHA ),
 		destBlend( GL_ONE_MINUS_SRC_ALPHA ),
-		blendEquation( GL_FUNC_ADD )
+		blendEquation( GL_FUNC_ADD ),
+		mesh( nullptr ),
+		pShader( nullptr )
 		{
 			memset( textures, 0, sizeof( textures ) ); //zero all the textures
 		}
@@ -173,7 +175,17 @@ namespace Dojo
 			textures[ID]->texture = tex;
 		}
 
+		///enables or disables blending of this RS
 		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
+
+		///sets the Shader material to be used for this RenderState
+		/**
+		\remark the shader may be null to remove shader use
+		*/
+		void setShader( Shader* shader )
+		{
+			pShader = shader;
+		}
 				
 		inline Texture* getTexture( int ID = 0 )
 		{
@@ -254,6 +266,8 @@ namespace Dojo
 		int mTextureNumber;
 
 		Mesh* mesh;
+
+		Shader* pShader;
 
 		void _bindTextureSlot( int i );
 	};

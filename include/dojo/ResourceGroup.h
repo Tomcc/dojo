@@ -17,6 +17,8 @@
 #include "SoundSet.h"
 #include "Mesh.h"
 #include "Table.h"
+#include "Shader.h"
+#include "ShaderProgram.h"
 
 #undef RT_FONT
 
@@ -42,7 +44,11 @@ namespace Dojo
 			RT_FONT,
 			RT_MESH,
 			RT_SOUND,
-			RT_TABLE
+			RT_TABLE,
+			RT_SHADER,
+			RT_PROGRAM,
+
+			_RT_COUNT
 		};
 				
 		//various resource properties TODO: refactor
@@ -53,6 +59,8 @@ namespace Dojo
 		typedef std::unordered_map<String, Mesh*> MeshMap;
 		typedef std::unordered_map<String, SoundSet*> SoundMap;
 		typedef std::unordered_map<String, Table*> TableMap;
+		typedef std::unordered_map<String, Shader* > ShaderMap;
+		typedef std::unordered_map<String, ShaderProgram* > ProgramMap;
 		typedef Array< ResourceGroup* > SubgroupList;
 		
 		///Create a new empty ResourceGroup
@@ -147,6 +155,28 @@ namespace Dojo
 		}
 		
 		void addTable( Table* t );
+
+		///adds an existing Shader to this group
+		void addShader( Shader* s, const String& name )
+		{
+			DEBUG_ASSERT_INFO( !getShader( name ), "A Shader with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
+
+			shaders[ name ] = s;
+
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "shader" );
+		}
+
+		///adds an existing ShaderProgram to this group
+		void addProgram( ShaderProgram* sp, const String& name )
+		{
+			DEBUG_ASSERT_INFO( !getProgram( name ), "A ShaderProgram with this name already exists", "name = " + name );
+			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
+
+			programs[ name ] = sp;
+
+			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "shader program" );
+		}
 		
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		inline void addSubgroup( ResourceGroup* g )
@@ -214,26 +244,38 @@ namespace Dojo
 		
 		inline Font* getFont( const String& name )
 		{
-			DEBUG_ASSERT( name.size(), "getFont: empty name provided" );
+			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Font >( name, RT_FONT );
 		}
 		
 		inline Mesh* getMesh( const String& name )
 		{
-			DEBUG_ASSERT( name.size(), "getMesh: empty name provided" );
+			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Mesh >( name, RT_MESH );
 		}
 
 		inline SoundSet* getSound( const String& name )
 		{
-			DEBUG_ASSERT( name.size(), "getSound: empty name provided" );
+			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< SoundSet >( name, RT_SOUND );
 		}
 		
 		inline Table* getTable( const String& name )
 		{
-			DEBUG_ASSERT( name.size(), "getTable: empty name provided" );
+			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Table >( name, RT_TABLE );
+		}
+
+		inline Shader* getShader( const String& name )
+		{
+			DEBUG_ASSERT( name.size(), "empty name provided" );
+			return find< Shader >( name, RT_SHADER );
+		}
+
+		inline ShaderProgram* getProgram( const String& name )
+		{
+			DEBUG_ASSERT( name.size(), "empty name provided" );
+			return find< ShaderProgram >( name, RT_PROGRAM );
 		}
 		
 		///return the locale of this ResourceGroup, eg: en, it, de, se
@@ -269,6 +311,10 @@ namespace Dojo
 		void addSounds( const String& folder );
 		///add all the Tables in a folder
 		void addTables( const String& folder );
+		///add all the Shaders (.dsh) in a folder
+		void addShaders( const String& folder );
+		///add all the ShaderPrograms (.vsh, .psh, ...) in a folder
+		void addPrograms( const String& folder );
 		
 		///adds the prefab meshes, like quads, cubes, skyboxes...
 		void addPrefabMeshes();
@@ -285,6 +331,8 @@ namespace Dojo
 			addMeshes( folder );
 			addSounds( folder );
 			addTables( folder );
+			addPrograms( folder );
+			addShaders( folder );
 		}
 		
 		///adds a localization folder located in baseFolder, choosing it using the current locale
@@ -316,6 +364,8 @@ namespace Dojo
 			_load< Mesh >( meshes );
 			_load< SoundSet >( sounds );
 			_load< Table >( tables );
+			_load< ShaderProgram >( programs );
+			_load< Shader >( shaders );
 
 			//load sets again to load missing atlases!
 			_load< FrameSet >( frameSets );
@@ -333,6 +383,8 @@ namespace Dojo
 			_unload< Mesh >( meshes, false );
 			_unload< SoundSet >( sounds, false );
 			_unload< Table >( tables, false );
+			_unload< Shader >( shaders, false );
+			_unload< ShaderProgram >( programs, false );
 
 			if( recursive )
 				for( int i = 0; i < subs.size(); ++i )	subs[i]->unloadResources( recursive );
@@ -346,6 +398,8 @@ namespace Dojo
 			_unload< Mesh >( meshes, true );
 			_unload< SoundSet >( sounds, true );
 			_unload< Table >( tables, true );
+			_unload< ShaderProgram >( programs, true );
+			_unload< Shader >( shaders, true );
 
 			if( recursive )
 				for( int i = 0; i < subs.size(); ++i )	subs[i]->softUnloadResources( recursive );
@@ -372,8 +426,10 @@ namespace Dojo
 		MeshMap meshes;
 		SoundMap sounds;
 		TableMap tables;
+		ShaderMap shaders;
+		ProgramMap programs;
 		
-		void* mapArray[5];
+		void* mapArray[ _RT_COUNT ];
 		
 		SubgroupList subs;
 
