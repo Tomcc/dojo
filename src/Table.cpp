@@ -70,13 +70,13 @@ void Table::serialize( String& buf, String indent ) const
 		switch( e->type )
 		{
 		case FT_NUMBER:
-			buf.appendFloat( *((float*)e->getValue() ) );
+			buf.appendFloat( *((float*)e->getRawValue() ) );
 			break;
 		case FT_STRING:
-			buf += '\"' + *((String*)e->getValue() ) + '\"';
+			buf += '\"' + *((String*)e->getRawValue() ) + '\"';
 			break;
 		case FT_VECTOR:
-			v = (Vector*)e->getValue();
+			v = (Vector*)e->getRawValue();
 			buf += '(';
 			buf.appendFloat( v->x );
 			buf += ' ';
@@ -87,7 +87,7 @@ void Table::serialize( String& buf, String indent ) const
 
 			break;
 		case FT_DATA:
-			data = (Data*)e->getValue();
+			data = (Data*)e->getRawValue();
 			buf += '#' + String( data->size ) + ' ';
 
 			buf.appendRaw( data->ptr, data->size );
@@ -95,7 +95,7 @@ void Table::serialize( String& buf, String indent ) const
 			break;
 		case FT_TABLE:
 			buf += String( "{\n" );
-			((Table*)e->getValue())->serialize( buf, indent + '\t' );
+			((Table*)e->getRawValue())->serialize( buf, indent + '\t' );
 
 			buf += indent + '}';
 

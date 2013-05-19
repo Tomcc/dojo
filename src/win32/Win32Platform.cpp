@@ -420,6 +420,7 @@ void Win32Platform::initialise( Game* g )
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
+	//create the appdata user folder
 	CreateDirectoryW( getAppDataPath().c_str(), NULL );
 
 	//load settings
@@ -479,9 +480,13 @@ void Win32Platform::prepareThreadContext()
 
 	req.wait();
 
-	bool success = wglMakeCurrent( hdc, req.contextHandle )>0;
+	int tries = 0;
+	for( ; wglMakeCurrent( hdc, req.contextHandle ) == FALSE && tries < 1000; ++tries ) //be nice, wglMakeCurrent just wants you to ask politely and more than once
+		Poco::Thread::sleep( 20 );
 
-	CHECK_WIN32_ERROR( success, "while sharing context" );
+	while( !wglMakeCurrent( hdc, req.contextHandle ) );
+
+	DEBUG_ASSERT( tries < 10, "Cannot share OpenGL on this thread" );
 
 	glewInit();
 }

@@ -35,6 +35,12 @@ namespace Dojo
 			DEBUG_ASSERT( mContentString.size(), "No shader code was defined (empty string)" );
 		}
 
+		///returns the usage type of this shader, ie. fragment or vertex shader
+		Type getType()
+		{
+			return mType;
+		}
+
 		GLuint getGLShader()
 		{
 			return mGLShader;

@@ -17,7 +17,12 @@ bool RenderState::isAlphaRequired()
 
 void RenderState::applyState()
 {
-	glUseProgram( pShader ? pShader->getGLProgram() : 0 );
+#ifdef DOJO_SHADERS_AVAILABLE
+	if( pShader )
+		pShader->use( this );
+	else
+		glUseProgram( 0 );
+#endif
 
 	for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 	{

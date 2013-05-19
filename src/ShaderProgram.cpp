@@ -20,6 +20,8 @@ ShaderProgram::ShaderProgram( ResourceGroup* creator, const String& filePath ) :
 		DEBUG_FAIL( "Unsupported shader type" );
 }
 
+#ifdef DOJO_SHADERS_AVAILABLE
+
 bool ShaderProgram::_load( const std::string& code )
 {
 	static const GLuint typeGLTypeMap[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
@@ -44,7 +46,7 @@ bool ShaderProgram::_load( const std::string& code )
 		GLint blen = 0;	
 		GLsizei slen = 0;
 
-		glGetShaderiv( mGLShader, GL_INFO_LOG_LENGTH , &blen);       
+		glGetShaderiv( mGLShader, GL_INFO_LOG_LENGTH , &blen);
 		if (blen > 1)
 		{
 			GLchar* compiler_log = (GLchar*)malloc(blen);
@@ -54,10 +56,34 @@ bool ShaderProgram::_load( const std::string& code )
 		}
 
 		DEBUG_FAIL("A shader program failed to compile!");
-	}  
+	}
 
 	return loaded;
 }
+
+void ShaderProgram::onUnload( bool soft /* = false */ )
+{
+	DEBUG_ASSERT( isLoaded(), "This Shader Program is already unloaded" );
+
+	glDeleteShader( mGLShader );
+	mGLShader = GL_NONE;
+
+	loaded = false;
+}
+
+#else
+
+bool ShaderProgram::_load( const std::string& code )
+{
+	DEBUG_FAIL( "Shaders not supported" );
+	return false;
+}
+
+void ShaderProgram::onUnload( bool soft /* = false */ )
+{
+	DEBUG_FAIL( "Shaders not supported" );
+}
+#endif
 
 bool ShaderProgram::onLoad()
 {
@@ -83,14 +109,4 @@ bool ShaderProgram::onLoad()
 	}
 
 	return loaded;
-}
-
-void ShaderProgram::onUnload( bool soft /* = false */ )
-{
-	DEBUG_ASSERT( isLoaded(), "This Shader Program is already unloaded" );
-
-	glDeleteShader( mGLShader );
-	mGLShader = GL_NONE;
-
-	loaded = false;
 }

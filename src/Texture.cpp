@@ -179,6 +179,7 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 
 	loaded = (glGetError() == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "Cannot load an empty texture" );
+
 	return loaded;
 }
 

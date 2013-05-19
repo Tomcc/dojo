@@ -79,7 +79,38 @@ namespace Dojo
 				
 			}
 								
-			virtual void* getValue()=0;
+			///returns a raw unyped pointer to the underlying data
+			virtual void* getRawValue() =0;
+
+			float getAsNumber() 
+			{
+				DEBUG_ASSERT( type == FT_NUMBER, "type mismatch while reading from a Table Entry" );
+				return *(float*)getRawValue();
+			}
+
+			const String& getAsString()
+			{
+				DEBUG_ASSERT( type == FT_STRING, "type mismatch while reading from a Table Entry" );
+				return *(String*)getRawValue();
+			}
+
+			const Vector& getAsVector()
+			{
+				DEBUG_ASSERT( type == FT_VECTOR, "type mismatch while reading from a Table Entry" );
+				return *(Vector*)getRawValue();
+			}
+
+			Table* getAsTable()
+			{
+				DEBUG_ASSERT( type == FT_TABLE, "type mismatch while reading from a Table Entry" );
+				return (Table*)getRawValue();
+			}
+
+			const Data& getAsData()
+			{
+				DEBUG_ASSERT( type == FT_DATA, "type mismatch while reading from a Table Entry" );
+				return *(Data*)getRawValue();
+			}
 
 			virtual Entry* clone()=0;
 		};
@@ -103,7 +134,8 @@ namespace Dojo
 				
 			}
 			
-			virtual void* getValue()
+			///returns the raw value pointer
+			virtual void* getRawValue()
 			{
 				return &value;
 			}
@@ -336,7 +368,7 @@ namespace Dojo
 				{
 					//if it's a table in both tables, inherit
 					if( itr->second->type == FT_TABLE && existing->second->type == FT_TABLE )
-						((Table*)existing->second->getValue())->inherit( (Table*)itr->second->getValue() );
+						((Table*)existing->second->getRawValue())->inherit( (Table*)itr->second->getRawValue() );
 				}
 				else //just clone
 					map[ itr->first ] = itr->second->clone();
@@ -408,7 +440,7 @@ namespace Dojo
 		{			
 			Entry* e = get( key );
 			if( e && e->type == FT_NUMBER )
-				return *( (float*)e->getValue() );
+				return e->getAsNumber();
 			else
 				return defaultValue;
 		}
@@ -422,7 +454,7 @@ namespace Dojo
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_NUMBER )
-				return (*( (float*)e->getValue() )) > 0;
+				return e->getAsNumber() > 0;
 			else
 				return defaultValue;
 		}
@@ -431,7 +463,7 @@ namespace Dojo
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_STRING )
-				return *( (String*)e->getValue() );
+				return e->getAsString();
 			else
 				return defaultValue;
 		}
@@ -440,7 +472,7 @@ namespace Dojo
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
-				return *( (Vector*)e->getValue() );
+				return e->getAsVector();
 			else
 				return defaultValue;
 		}
@@ -449,7 +481,7 @@ namespace Dojo
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
-				return Color( *( (Vector*)e->getValue() ), alpha );
+				return Color( e->getAsVector(), alpha );
 			else
 				return defaultValue;
 		}
@@ -458,7 +490,7 @@ namespace Dojo
 		{			
 			Entry* e = get( key );
 			if( e && e->type == FT_TABLE )
-				return (Table*)e->getValue();
+				return e->getAsTable();
 			else
 				return &EMPTY_TABLE;
 		}
@@ -467,7 +499,7 @@ namespace Dojo
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_DATA )
-				return *( (Data*)e->getValue() );
+				return e->getAsData();
 			else
 				return EMPTY_DATA;
 		}	
@@ -572,6 +604,18 @@ namespace Dojo
 #ifdef _DEBUG			
 			DEBUG_MESSAGE( toString().ASCII() );
 #endif
+		}
+
+		///returns an iterator to the beginning of the internal dictionary
+		EntryMap::iterator begin()
+		{
+			return map.begin();
+		}
+
+		///returns an iterator to the end of the internal dictionary
+		EntryMap::iterator end()
+		{
+			return map.end();
 		}
 				
 	protected:

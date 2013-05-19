@@ -206,8 +206,16 @@ namespace Dojo
 			return textures[ID];
 		}
 
+		///returns the Mesh currently used by this state
 		inline Mesh* getMesh()								{	return mesh;			}
+
+		///returns the Shader currently bound to this state
+		inline Shader* getShader()
+		{
+			return pShader;
+		}
 		
+		///returns the number of used texture units
 		inline int getTextureNumber()
 		{
 			return mTextureNumber;
@@ -225,7 +233,6 @@ namespace Dojo
 			if( s->mesh != mesh )
 				dist += 3;
 			
-			//TODO - this needs to be fixed for texture units
 			for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
 			{
 				if( textures[i] != s->textures[i] )
