@@ -93,6 +93,10 @@
 	#define DOJO_SHADERS_AVAILABLE
 #endif
 
+#ifndef PLATFORM_ANDROID
+	#define DOJO_ANISOTROPIC_FILTERING_AVAILABLE //anisotropic filtering has to be tested on Android //TODO move this to Platform, maybe make a caps class?
+#endif
+
 //#define DOJO_GAMMA_CORRECTION_ENABLED
 
 //do not use the differential state commit //HACK

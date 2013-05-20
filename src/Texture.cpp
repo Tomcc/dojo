@@ -66,11 +66,24 @@ void Texture::bind( uint index )
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 }
 
+void Texture::enableAnisotropicFiltering( float level )
+{
+	bind(0);
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, level );
+}
+
+void Texture::disableAnisotropicFiltering()
+{
+	bind(0);
+	glTexParameterf( GL_TEXTURE_2D, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 0 );
+}
+
 void Texture::enableBilinearFiltering()
 {					
 	bind(0);
 	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
 }
 
 void Texture::disableBilinearFiltering()
@@ -226,6 +239,13 @@ bool Texture::loadFromFile( const String& path )
 		disableTiling();
 	else
 		enableTiling();
+
+	if( isSurface ) //TODO query anisotropic level
+	{
+		GLfloat aniso;
+		glGetFloatv( GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso );
+		enableAnisotropicFiltering( aniso/2 );
+	}
 	
 	destFormat = sourceFormat;
 	

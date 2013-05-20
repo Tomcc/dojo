@@ -57,12 +57,13 @@ namespace Dojo
 		virtual void bind( uint index );
 		
 		void enableBilinearFiltering();
-		
 		void disableBilinearFiltering();
 
 		void enableMipmaps();
-		
 		void disableMipmaps();
+
+		void enableAnisotropicFiltering( float level );
+		void disableAnisotropicFiltering();
 
 		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void enableTiling();
