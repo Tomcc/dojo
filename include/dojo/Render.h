@@ -52,6 +52,14 @@ namespace Dojo {
 
 			}
 		};
+
+		///a struct that exposes current rendering parameters such as transforms
+		struct CurrentState
+		{
+			Matrix view, world, projection, worldView, worldViewProjection;
+			Vector viewDirection;
+
+		} currentState;
 						
 		typedef Array< Layer* > LayerList;
 		typedef Array< Light* > LightList;
@@ -208,7 +216,7 @@ namespace Dojo {
 		LightList lights;
 		Color defaultAmbient;
 		
-		Matrix mCurrentView, mRenderRotation;
+		Matrix mRenderRotation;
 	};		
 }
 

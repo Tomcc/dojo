@@ -6,10 +6,12 @@
 #include "Resource.h"
 #include "Table.h"
 #include "ShaderProgram.h"
+#include "Mesh.h"
 
 namespace Dojo
 {
-	class RenderState;
+	class Renderable;
+	class Render;
 
 	///A Shader is an object representing a VSH+PSH couple and its attributes.
 	/**
@@ -23,7 +25,7 @@ namespace Dojo
 		/**
 		\remark the type of the data is deduced from the types in .ps and the .vs, so it is important to return the right kind of data
 		*/
-		typedef std::function< void*() > UniformCallback;
+		typedef std::function< const void*( Renderable* ) > UniformCallback;
 
 		///A built-in uniform is a uniform shader parameter which Dojo recognizes and provides to the shader being run
 		enum BuiltInUniform
@@ -31,26 +33,53 @@ namespace Dojo
 			BU_NONE,
 
 			BU_TEXTURE_0,	///The texture currently bound to unit 0
+			BU_TEXTURE_N = BU_TEXTURE_0 + DOJO_MAX_TEXTURES-1,
 
-			BU_TEXTURE_0_DIMENSION = BU_TEXTURE_0 + DOJO_MAX_TEXTURE_UNITS, ///The dimensions in pixels of the texture currently bound to unit 0
+			BU_TEXTURE_0_DIMENSION, ///The dimensions in pixels of the texture currently bound to unit 0 (vec2)
+			BU_TEXTURE_N_DIMENSION = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES-1,
 
-			BU_TEXTURE_0_TRANSFORM = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURE_UNITS,
+			BU_TEXTURE_0_TRANSFORM,
+			BU_TEXTURE_N_TRANSFORM = BU_TEXTURE_0_TRANSFORM + DOJO_MAX_TEXTURES-1,
 
-			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURE_UNITS,			///The world matrix
+			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES,			///The world matrix
 			BU_VIEW,			///The view matrix
 			BU_PROJECTION,		///The projection matrix
 			BU_WORLDVIEWPROJ,	///The complete transformation matrix
-			BU_OBJECT_COLOR,	///The object's color
+			BU_OBJECT_COLOR,	///The object's color (vec4)
+
+			BU_VIEW_DIRECTION,	///The current world-space direction of the view (vec3)
 			
-			BU_TIME,			///Time in seconds since the start of the program
+			BU_TIME,			///Time in seconds since the start of the program (float)
+			BU_TARGET_DIMENSION	///The dimensions in pixels of the currently bound target (vec2)
 		};
 
-		///Creates a new Shader from a file path
-		Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
-			Resource( creator, filePath )
+		///A VertexAttribute represents a "attribute" binding in a vertex shader
+		struct VertexAttribute
 		{
-			memset( pProgram, 0, sizeof( pProgram ) ); //init to null
-		}
+			GLint location;
+			GLint count; ///the array size *for a single vertex*
+
+			Mesh::VertexField builtInAttribute;
+
+			VertexAttribute()
+			{
+
+			}
+
+			VertexAttribute( GLint loc, GLint size, Mesh::VertexField bia ) :
+				location( loc ),
+				count( size ),
+				builtInAttribute( bia )
+			{
+				DEBUG_ASSERT( location >= 0, "Invalid VertexAttribute location" );
+				DEBUG_ASSERT( count > 0, "Invalid element count" );
+			}
+		};
+
+		typedef std::unordered_map< std::string, VertexAttribute > NameAttributeMap;
+
+		///Creates a new Shader from a file path
+		Shader( Dojo::ResourceGroup* creator, const String& filePath );
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**
@@ -70,8 +99,13 @@ namespace Dojo
 			return mGLProgram;
 		}
 
-		///binds the shader to the OpenGL state
-		virtual void use( RenderState* user );
+		const NameAttributeMap& getAttributes()
+		{
+			return mAttributeMap;
+		}
+
+		///binds the shader to the OpenGL state with the object that is using it
+		virtual void use( Renderable* user );
 
 		virtual bool onLoad();
 
@@ -87,7 +121,7 @@ namespace Dojo
 			GLenum type;
 
 			BuiltInUniform builtInUniform;
-			UniformCallback userUniformBinder;
+			UniformCallback userUniformCallback;
 
 			Uniform()
 			{
@@ -102,27 +136,34 @@ namespace Dojo
 			{
 				DEBUG_ASSERT( location >= 0, "Invalid Uniform location" );
 				DEBUG_ASSERT( count > 0, "Invalid element count" );
-
-				//TODO: find the element count using type+size
 			}
 		};
 
 		typedef std::unordered_map< std::string, Uniform > NameUniformMap;
 
 		typedef std::unordered_map< std::string, BuiltInUniform > NameBuiltInUniformMap;
+		typedef std::unordered_map< std::string, Mesh::VertexField > NameBuiltInAttributeMap;
 
 		static NameBuiltInUniformMap sBuiltiInUniformsNameMap;
+		static NameBuiltInAttributeMap sBuiltInAttributeNameMap;
 
 		static void _populateUniformNameMap();
+		static void _populateAttributeNameMap();
 
 		static BuiltInUniform _getUniformForName( const std::string& name );
+		static Mesh::VertexField _getAttributeForName( const std::string& name );
+
+		std::string mPreprocessorHeader;
 
 		NameUniformMap mUniformMap;
+		NameAttributeMap mAttributeMap;
 
 		GLuint mGLProgram;
 
 		ShaderProgram* pProgram[ ShaderProgram::_SPT_COUNT ];
 		bool mOwnsProgram[ ShaderProgram::_SPT_COUNT ];
+
+		Render* pRender;
 
 		void _assignProgram( const Table& desc, ShaderProgram::Type type );
 

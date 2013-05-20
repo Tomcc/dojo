@@ -91,6 +91,12 @@ namespace Dojo
 				return rotation;
 			}
 
+			inline const Matrix& getTransform()
+			{
+				static const Matrix identityMatrix;
+				return isTransformRequired() ? *optTransform : identityMatrix;
+			}
+
 			inline bool isTransformRequired()
 			{
 				return optTransform != nullptr;
@@ -144,7 +150,7 @@ namespace Dojo
 		
 		virtual ~RenderState()
 		{
-			for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
+			for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
 				delete textures[i];
 		}
 		
@@ -162,7 +168,7 @@ namespace Dojo
 		inline void setTexture( Texture* tex, int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0, "Passed a negative texture ID to setTexture()" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 
 			if( textures[ID] == NULL ) //adding a new one
 			{                
@@ -190,7 +196,7 @@ namespace Dojo
 		inline Texture* getTexture( int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative texture ID" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 	
 			if( textures[ID] )
 				return textures[ID]->texture;
@@ -201,7 +207,7 @@ namespace Dojo
 		inline TextureUnit* getTextureUnit( int ID )
 		{
 			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative textureUnit" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURE_UNITS, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS" );
+			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS" );
 
 			return textures[ID];
 		}
@@ -233,7 +239,7 @@ namespace Dojo
 			if( s->mesh != mesh )
 				dist += 3;
 			
-			for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
+			for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
 			{
 				if( textures[i] != s->textures[i] )
 					dist += 2;
@@ -269,7 +275,7 @@ namespace Dojo
 			
 		bool blendingEnabled;
 		
-		TextureUnit* textures[ DOJO_MAX_TEXTURE_UNITS ];
+		TextureUnit* textures[ DOJO_MAX_TEXTURES ];
 		int mTextureNumber;
 
 		Mesh* mesh;

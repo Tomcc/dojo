@@ -46,6 +46,14 @@ namespace Dojo
 			return mGLShader;
 		}
 
+		///creates a new ShaderProgram using the source of this one, concatenated with the given preprocessor header
+		ShaderProgram* cloneWithHeader( const std::string& preprocessorHeader )
+		{
+			DEBUG_ASSERT( preprocessorHeader.size(), "The preprocessor header can't be empty" );
+			
+			return new ShaderProgram( mType, preprocessorHeader + mContentString );
+		}
+
 		virtual bool onLoad();
 		virtual void onUnload( bool soft = false );
 
@@ -56,7 +64,7 @@ namespace Dojo
 		Type mType;
 		GLuint mGLShader;
 
-		bool _load( const std::string& code );
+		bool _load();
 	};
 }
 

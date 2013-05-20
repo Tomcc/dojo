@@ -261,7 +261,7 @@ void ResourceGroup::addPrefabMeshes()
 	m->setTriangleMode( Mesh::TM_STRIP );
 
 	m->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-	m->setVertexFieldEnabled( Mesh::VF_UV );
+	m->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	m->begin(4);	
 	
@@ -285,7 +285,7 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh( this );
 	m->setTriangleMode( Mesh::TM_STRIP );
 	m->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-	m->setVertexFieldEnabled( Mesh::VF_UV );
+	m->setVertexFieldEnabled( Mesh::VF_UV_0 );
 
 	m->begin(4);	
 
@@ -314,7 +314,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 24 );
 	
@@ -372,7 +372,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	//-Z
@@ -392,7 +392,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	//+X
@@ -412,7 +412,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	//+Z
@@ -432,7 +432,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	//-X
@@ -452,7 +452,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	
@@ -472,7 +472,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube->setTriangleMode( Mesh::TM_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
-	cube->setVertexFieldEnabled( Mesh::VF_UV );
+	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	
 	cube->begin( 4 );
 	

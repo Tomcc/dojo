@@ -49,9 +49,7 @@ Texture::~Texture()
 }
 
 void Texture::bind( uint index )
-{
-	DEBUG_ASSERT( index < DOJO_MAX_TEXTURE_UNITS, "The texture index is greater than DOJO_MAX_TEXTURE_UNITS" );
-	
+{	
 	//create the gl texture if still not created!
 	if( !glhandle )
 	{
@@ -336,7 +334,7 @@ void Texture::_buildOptimalBillboard()
 	
 		//build or rebuild the OBB
 		OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-		OBB->setVertexFieldEnabled( Mesh::VF_UV );
+		OBB->setVertexFieldEnabled( Mesh::VF_UV_0 );
 	}
 	
 	OBB->begin( 4 );

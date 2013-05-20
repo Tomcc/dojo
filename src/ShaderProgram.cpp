@@ -22,12 +22,12 @@ ShaderProgram::ShaderProgram( ResourceGroup* creator, const String& filePath ) :
 
 #ifdef DOJO_SHADERS_AVAILABLE
 
-bool ShaderProgram::_load( const std::string& code )
+bool ShaderProgram::_load()
 {
 	static const GLuint typeGLTypeMap[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 
-	GLint compiled, sourceLength = code.size();
-	const char* src = code.c_str();
+	GLint compiled, sourceLength = mContentString.size();
+	const char* src = mContentString.c_str();
 
 	mGLShader = glCreateShader( typeGLTypeMap[mType] );
 
@@ -53,7 +53,7 @@ bool ShaderProgram::_load( const std::string& code )
 			glGetInfoLogARB( mGLShader, blen, &slen, compiler_log);
 			DEBUG_MESSAGE( "Compiler error:\n" << compiler_log );
 			free (compiler_log);
-		}
+		}	
 
 		DEBUG_FAIL("A shader program failed to compile!");
 	}
@@ -73,7 +73,7 @@ void ShaderProgram::onUnload( bool soft /* = false */ )
 
 #else
 
-bool ShaderProgram::_load( const std::string& code )
+bool ShaderProgram::_load()
 {
 	DEBUG_FAIL( "Shaders not supported" );
 	return false;
@@ -95,17 +95,17 @@ bool ShaderProgram::onLoad()
 
 		if( file->open() ) //open the file
 		{
-			std::string buf;
-			buf.resize( file->getSize() );
+			mContentString.clear();
+			mContentString.resize( file->getSize() );
 
-			file->read( (byte*)buf.c_str(), buf.size() );
+			file->read( (byte*)mContentString.c_str(), mContentString.size() );
 
-			loaded = _load( buf ); //load from the temp buffer
+			loaded = _load(); //load from the temp buffer
 		}
 	}
 	else //load from the in-memory string
 	{
-		loaded = _load( mContentString );
+		loaded = _load();
 	}
 
 	return loaded;

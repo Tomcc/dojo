@@ -17,14 +17,7 @@ bool RenderState::isAlphaRequired()
 
 void RenderState::applyState()
 {
-#ifdef DOJO_SHADERS_AVAILABLE
-	if( pShader )
-		pShader->use( this );
-	else
-		glUseProgram( 0 );
-#endif
-
-	for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
+	for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
 	{
 		//select current slot
 		glActiveTexture( GL_TEXTURE0 + i );
@@ -75,7 +68,7 @@ void RenderState::applyState()
 			break;
 	}
 
-	mesh->bind();
+	mesh->bind( pShader );
 }
 
 void RenderState::commitChanges( RenderState* pastState )

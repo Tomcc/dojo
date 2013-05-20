@@ -98,7 +98,11 @@
 //do not use the differential state commit //HACK
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
-#define DOJO_MAX_TEXTURE_UNITS 2
+///the cap for the textures bound to a single object
+#define DOJO_MAX_TEXTURES 8
+
+///the cap for the texture coords in a single vertex
+#define DOJO_MAX_TEXTURE_COORDS 2
 
 //There is VAO experimental support but Valve states that VAOs are slower on all platforms
 //source: https://developer.nvidia.com/sites/default/files/akamai/gamedev/docs/Porting%20Source%20to%20Linux.pdf

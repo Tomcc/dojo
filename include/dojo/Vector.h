@@ -19,7 +19,7 @@ namespace Dojo
 
 	typedef glm::mat4x4 Matrix;
 	typedef glm::quat Quaternion;
-	
+
 	///a wrapper to glm::tvec3, providing the most common Vector algebra needs
 	class Vector : public glm::vec3
 	{

@@ -3,16 +3,20 @@
 #include "Shader.h"
 
 #include "ResourceGroup.h"
-#include "RenderState.h"
+#include "Renderable.h"
+#include "GameState.h"
+#include "Viewport.h"
+#include "Render.h"
 
 using namespace Dojo;
 
 Shader::NameBuiltInUniformMap Shader::sBuiltiInUniformsNameMap; //TODO implement this with an initializer list when VS decides to work with it
+Shader::NameBuiltInAttributeMap Shader::sBuiltInAttributeNameMap; //TODO ^
 
 void Shader::_populateUniformNameMap()
 {
 	DEBUG_ASSERT( sBuiltiInUniformsNameMap.empty(), "The name-> builtinuniform map should be empty when populating" );
-	for( int i = 0; i < DOJO_MAX_TEXTURE_UNITS; ++i )
+	for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
 	{
 		std::string base = "TEXTURE_";
 		base += '0' + (char)i;
@@ -26,8 +30,27 @@ void Shader::_populateUniformNameMap()
 	sBuiltiInUniformsNameMap[ "VIEW" ] = BU_VIEW;
 	sBuiltiInUniformsNameMap[ "PROJECTION" ] = BU_PROJECTION;
 	sBuiltiInUniformsNameMap[ "WORLDVIEWPROJ" ] = BU_WORLDVIEWPROJ;
+	sBuiltiInUniformsNameMap[ "VIEW_DIRECTION" ] = BU_VIEW_DIRECTION;
 	sBuiltiInUniformsNameMap[ "OBJECT_COLOR" ] = BU_OBJECT_COLOR;
 	sBuiltiInUniformsNameMap[ "TIME" ] = BU_TIME;
+	sBuiltiInUniformsNameMap[ "TARGET_DIMENSION" ] = BU_TARGET_DIMENSION;
+}
+
+void Shader::_populateAttributeNameMap()
+{
+	DEBUG_ASSERT( sBuiltInAttributeNameMap.empty(), "The name-> builtinattribute map should be empty when populating" );
+	for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
+	{
+		std::string base = "TEXCOORD_";
+		base += '0' + (char)i;
+
+		sBuiltInAttributeNameMap[ base ] = (Mesh::VertexField)(Mesh::VF_UV_0 + i);
+	}
+
+	sBuiltInAttributeNameMap[ "POSITION" ] = Mesh::VF_POSITION3D;
+	sBuiltInAttributeNameMap[ "POSITION_2D" ] = Mesh::VF_POSITION2D;
+	sBuiltInAttributeNameMap[ "NORMAL" ] = Mesh::VF_NORMAL;
+	sBuiltInAttributeNameMap[ "COLOR" ] = Mesh::VF_COLOR;
 }
 
 Shader::BuiltInUniform Shader::_getUniformForName( const std::string& name )
@@ -39,6 +62,23 @@ Shader::BuiltInUniform Shader::_getUniformForName( const std::string& name )
 	return ( elem != sBuiltiInUniformsNameMap.end() ) ? elem->second : BU_NONE;
 }
 
+Mesh::VertexField Shader::_getAttributeForName( const std::string& name )
+{
+	if( sBuiltInAttributeNameMap.empty() )
+		_populateAttributeNameMap();
+
+	auto elem = sBuiltInAttributeNameMap.find( name );
+	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : Mesh::VF_NONE;
+}
+
+Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
+	Resource( creator, filePath )
+{
+	memset( pProgram, 0, sizeof( pProgram ) ); //init to null
+
+	pRender = Platform::getSingleton()->getRender();
+}
+
 void Shader::_assignProgram( const Table& desc, ShaderProgram::Type type )
 {
 	static const String typeKeyMap[] =	{ "vertexShader", "fragmentShader" };
@@ -46,12 +86,19 @@ void Shader::_assignProgram( const Table& desc, ShaderProgram::Type type )
 	//check if this program is immediate or not
 	//it is file-based if the resource can be found in the current RG
 	auto& keyValue = desc.getString( typeKeyMap[ type ] );
+
+	DEBUG_ASSERT_INFO( keyValue.size(), "No shader found in .shader file", "type = " + typeKeyMap[ type ] );
+	
 	ShaderProgram* program = getCreator()->getProgram( keyValue );
 
-	mOwnsProgram[ type ] = (program == nullptr);
+	mOwnsProgram[ type ] = (program == nullptr) && !mPreprocessorHeader.empty(); //if any preprocessor flag is defined, all programs are compiled as immediate
 
-	if( !program )//load the immediate shader
-		program = new ShaderProgram( type, keyValue.ASCII() );
+	if( !program ) //just load the immediate shader
+		program = new ShaderProgram( type, mPreprocessorHeader + keyValue.ASCII() );
+
+	else if( program && mPreprocessorHeader.size() ) //some preprocessor flags are set - copy the existing program and recompile it
+		program = program->cloneWithHeader( mPreprocessorHeader );
+
 	else
 		DEBUG_ASSERT_INFO( program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[ type ] );
 
@@ -65,7 +112,7 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 	auto elem = mUniformMap.find( name );
 	
 	if( elem != mUniformMap.end() )
-		elem->second.userUniformBinder = dataBinder; //assign the data source to the right uniform
+		elem->second.userUniformCallback = dataBinder; //assign the data source to the right uniform
 
 	else
 		DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" << name << "\". Was it optimized away by the compiler?" );
@@ -73,59 +120,68 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 
 #ifdef DOJO_SHADERS_AVAILABLE
 
-void Shader::use( RenderState* user )
+void Shader::use( Renderable* user )
 {
 	DEBUG_ASSERT( isLoaded(), "tried to use a Shader that wasn't loaded" );
 
-	glUseProgram( mGLProgram );
+	GLint tempInt[2];
 
-	GLint tempInt;
+	glUseProgram( mGLProgram );
 
 	//bind the uniforms and the attributes
 	for( auto& uniform : mUniformMap )
 	{
-		void* ptr = nullptr;
+		const void* ptr = nullptr;
 
-		BuiltInUniform biu = uniform.second.builtInUniform;
-		switch ( biu )
+		switch ( uniform.second.builtInUniform )
 		{
 		case BU_NONE:
-			ptr = uniform.second.userUniformBinder(); //call the user callback and be happy
+			ptr = uniform.second.userUniformCallback( user ); //call the user callback and be happy
 			break;
 		case BU_WORLD:
-			DEBUG_TODO;
+			ptr = &pRender->currentState.world;
 			break;
 		case BU_VIEW:
-			DEBUG_TODO;
+			ptr = &pRender->currentState.view;
 			break;
 		case BU_PROJECTION:
-			DEBUG_TODO;
+			ptr = &pRender->currentState.projection;
 			break;
 		case BU_WORLDVIEWPROJ:
-			DEBUG_TODO;
+			ptr = &pRender->currentState.worldViewProjection;
 			break;
 		case BU_OBJECT_COLOR:
 			ptr = &user->color;
 			break;
+		case BU_VIEW_DIRECTION:
+			ptr = &pRender->currentState.viewDirection;
+			break;
 		case BU_TIME:
 			DEBUG_TODO;
 			break;
+		case BU_TARGET_DIMENSION:
+			DEBUG_TODO;
+			break;
 		default: //texture stuff
-
-			if( biu >= BU_TEXTURE_0 && biu <= BU_TEXTURE_0 + DOJO_MAX_TEXTURE_UNITS )
 			{
-				tempInt = biu - BU_TEXTURE_0;
-				ptr = &tempInt;
+				BuiltInUniform biu = uniform.second.builtInUniform;
+				if( biu >= BU_TEXTURE_0 && biu <= BU_TEXTURE_N )
+				{
+					tempInt[0] = biu - BU_TEXTURE_0;
+					ptr = &tempInt;
+				}
+				else if( biu >= BU_TEXTURE_0_DIMENSION && biu <= BU_TEXTURE_N_DIMENSION )
+				{
+					Texture* t = user->getTexture( biu - BU_TEXTURE_0_DIMENSION );
+					tempInt[0] = t->getWidth();
+					tempInt[1] = t->getHeight();
+					ptr = &tempInt;
+				}
+				else if( biu >= BU_TEXTURE_0_TRANSFORM && biu <= BU_TEXTURE_N_TRANSFORM )
+				{
+					ptr = &user->getTextureUnit( biu - BU_TEXTURE_0_TRANSFORM )->getTransform();
+				}
 			}
-			else if( biu >= BU_TEXTURE_0_DIMENSION && biu <= BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURE_UNITS )
-			{
-				DEBUG_TODO;
-			}
-			else if( biu >= BU_TEXTURE_0_TRANSFORM && biu <= BU_TEXTURE_0_TRANSFORM + DOJO_MAX_TEXTURE_UNITS )
-			{
-				DEBUG_TODO;
-			}
-
 			break;
 		}
 
@@ -134,31 +190,23 @@ void Shader::use( RenderState* user )
 
 		//assign the data to the uniform
 		//yes, this code is ugly...but don't be scared, it's as fast as a single glUniform in release :)
+		//the types supported here are only the GLSL ES 2.0 types specified at 
+		//http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf, page 18
 		switch ( uniform.second.type )
 		{
 		case GL_FLOAT:   glUniform1fv( uniform.second.location, uniform.second.count, (GLfloat*)ptr ); break;
 		case GL_FLOAT_VEC2:   glUniform2fv( uniform.second.location, uniform.second.count, (GLfloat*)ptr ); break;
 		case GL_FLOAT_VEC3:   glUniform3fv( uniform.second.location, uniform.second.count, (GLfloat*)ptr ); break;
 		case GL_FLOAT_VEC4:   glUniform4fv( uniform.second.location, uniform.second.count, (GLfloat*)ptr ); break;
-		case GL_INT: case GL_SAMPLER_2D:	case GL_SAMPLER_1D:		case GL_SAMPLER_3D:	case GL_SAMPLER_CUBE:
+		case GL_INT: case GL_SAMPLER_2D:	case GL_SAMPLER_CUBE:	case GL_BOOL:
 			glUniform1iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break; //this call also sets the samplers
-		case GL_INT_VEC2:   glUniform2iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
-		case GL_INT_VEC3:   glUniform3iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
-		case GL_INT_VEC4:   glUniform4iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
-		case GL_UNSIGNED_INT:	case GL_BOOL:   glUniform1uiv( uniform.second.location, uniform.second.count, (GLuint*)ptr ); break;
-		case GL_UNSIGNED_INT_VEC2:	case GL_BOOL_VEC2:   glUniform2uiv( uniform.second.location, uniform.second.count, (GLuint*)ptr ); break;
-		case GL_UNSIGNED_INT_VEC3:  case GL_BOOL_VEC3: glUniform3uiv( uniform.second.location, uniform.second.count, (GLuint*)ptr ); break;
-		case GL_UNSIGNED_INT_VEC4:  case GL_BOOL_VEC4: glUniform4uiv( uniform.second.location, uniform.second.count, (GLuint*)ptr ); break;
+		case GL_INT_VEC2:   case GL_BOOL_VEC2: glUniform2iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
+		case GL_INT_VEC3:   case GL_BOOL_VEC3: glUniform3iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
+		case GL_INT_VEC4:   case GL_BOOL_VEC4: glUniform4iv( uniform.second.location, uniform.second.count, (GLint*)ptr ); break;
 
 		case GL_FLOAT_MAT2:   glUniformMatrix2fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
 		case GL_FLOAT_MAT3:   glUniformMatrix3fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
 		case GL_FLOAT_MAT4:   glUniformMatrix4fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT2x3:   glUniformMatrix2x3fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT2x4:   glUniformMatrix2x4fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT3x2:   glUniformMatrix3x2fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT3x4:   glUniformMatrix3x4fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT4x2:   glUniformMatrix4x2fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
-		case GL_FLOAT_MAT4x3:   glUniformMatrix4x3fv( uniform.second.location, uniform.second.count, false, (GLfloat*)ptr ); break;
 
 		default:
 			//not found... but it's not possible to warn each frame. Do place a brk here if unsure
@@ -178,6 +226,13 @@ bool Shader::onLoad()
 	//load the descriptor table
 	Table desc;
 	Table::loadFromFile( &desc, filePath );
+
+	//compose preprocessor flags
+	mPreprocessorHeader.clear();
+	Table* defines = desc.getTable( "defines" );
+
+	for( auto& entry : *defines )
+		mPreprocessorHeader += std::string("#define ") + entry.second->getAsString().ASCII() + "\n";
 
 	//grab all types
 	for( int i = 0; i < ShaderProgram::_SPT_COUNT; ++i )
@@ -238,6 +293,27 @@ bool Shader::onLoad()
 				}
 			}
 		}
+
+		//get attributes and their locations
+		for( int i = 0;; ++i )
+		{
+			glGetActiveAttrib( mGLProgram, i, sizeof(namebuf), &nameLength, &size, &type, namebuf );
+
+			if( glGetError() != GL_NO_ERROR )
+				break;
+			else
+			{
+				GLint loc = glGetAttribLocation( mGLProgram, namebuf );
+
+				if( loc >= 0 )
+				{
+					mAttributeMap[ namebuf ] = VertexAttribute(
+						loc,
+						size,
+						_getAttributeForName( namebuf ) );
+				}
+			}
+		}
 	}
 
 	return loaded;
@@ -245,7 +321,7 @@ bool Shader::onLoad()
 
 #else
 
-void Shader::use()
+void Shader::use( Renderable* user )
 {
 	DEBUG_FAIL( "Shaders not supported" );
 }

@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Mesh.h"
 #include "AnimatedQuad.h"
+#include "Shader.h"
 
 #include "Game.h"
 
@@ -238,7 +239,8 @@ void Render::startFrame()
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
-	mCurrentView = viewport->getViewTransform();
+	currentState.view = viewport->getViewTransform();
+	currentState.viewDirection = viewport->getWorldDirection();
     
 	frameStarted = true;
 	
@@ -265,9 +267,22 @@ void Render::renderElement( Renderable* s )
 	//change the renderstate
 	currentRenderState = s;
 	
-	//clone the view matrix on the top of the stack		
+	//clone the view matrix on the top of the stack
+
+	currentState.world = s->getWorldTransform();
+	currentState.worldView = currentState.view * currentState.world;
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf( glm::value_ptr( mCurrentView * s->getWorldTransform() ) );
+	glLoadMatrixf( glm::value_ptr( currentState.worldView ) );
+	
+#ifdef DOJO_SHADERS_AVAILABLE
+	if( s->getShader() )
+	{
+		currentState.worldViewProjection = currentState.projection * currentState.worldView;
+		s->getShader()->use( s );
+	}
+	else
+		glUseProgram( 0 );
+#endif
 		
 	//I'm not sure this actually makes sense
 #ifndef USING_OPENGLES
@@ -322,9 +337,11 @@ void Render::renderLayer( Layer* list )
 	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
-	const Matrix& proj = list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform();
+	//set projection state
+	currentState.projection = mRenderRotation * (list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform());
+	
 	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( glm::value_ptr( mRenderRotation * proj ) );
+	glLoadMatrixf( glm::value_ptr( currentState.projection ) );
 	
 	//we don't want different layers to be depth-checked together?
 	if( list->depthClear )
@@ -339,7 +356,7 @@ void Render::renderLayer( Layer* list )
 		int i = 0;
 		for( ; i < lights.size(); ++i )
 		{
-			lights[i]->bind( i, mCurrentView );
+			lights[i]->bind( i, currentState.view );
 			
 			if( !lights[i]->hasAmbient() )
 				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );

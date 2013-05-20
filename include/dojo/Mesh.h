@@ -18,6 +18,8 @@
 
 namespace Dojo 
 {
+	class Shader;
+
 	///A Mesh is the only primitive Dojo can render.
 	/**
 	But, it is generic enough to allow for fast rendering using GPU-side buffers.
@@ -40,10 +42,12 @@ namespace Dojo
 			VF_POSITION3D,
 			VF_COLOR,
 			VF_NORMAL,
-			VF_UV,
-			VF_UV_1,
+			
+			VF_UV_0,
+			VF_UV_MAX = VF_UV_0 + DOJO_MAX_TEXTURE_COORDS-1,
 
-			_VF_COUNT
+			VF_NONE,
+			_VF_COUNT = VF_NONE
 		};
 		
 		static const uint VERTEX_PAGE_SIZE = 256;
@@ -267,7 +271,7 @@ namespace Dojo
 		{			
 			DEBUG_ASSERT( isEditing(), "uv: this Mesh is not in Edit mode" );
 			
-			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV + set ] );
+			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV_0 + set ] );
 			ptr[0] = u;
 			ptr[1] = v;
 		}
@@ -376,8 +380,8 @@ namespace Dojo
 			}
 		}
 				
-		///binds the mesh buffers
-		virtual void bind();
+		///binds the mesh buffers with the vertex format from the specified shader
+		virtual void bind( Shader* shader );
 				
 		inline bool isIndexed()
 		{
@@ -480,8 +484,30 @@ namespace Dojo
 
 		void _prepareVertex( float x, float y, float z );
 
+		///returns low level binding informations about a vertex field
+		inline void _getVertexFieldData( VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset )
+		{
+			outOffset = (void*)vertexFieldOffset[ field ];
+			outNormalized = false;
+
+			switch ( field )
+			{
+			case VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
+			case VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+			case VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
+			case VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+
+			default: //textures
+				outNormalized = true;
+				outComponentsType = GL_FLOAT;
+				outComponents = 2;
+				outNormalized = false;
+				break;
+			}
+		}
+
 		///binds the attribute arrays and the Buffer Objects required to render the mesh
-		void _bindAttribArrays();
+		void _bindAttribArrays( Shader* shader );
 	};
 }
 
