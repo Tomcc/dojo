@@ -14,8 +14,8 @@ ShaderProgram::ShaderProgram( ResourceGroup* creator, const String& filePath ) :
 	//guess the type from the extension
 	String ext = Utils::getFileExtension( filePath );
 
-	if( ext == L"vs" )	mType = SPT_VERTEX;
-	else if( ext == L"ps" )	mType = SPT_FRAGMENT;
+	if( ext == String("vs") )	mType = SPT_VERTEX;
+	else if( ext == String("ps") )	mType = SPT_FRAGMENT;
 	else
 		DEBUG_FAIL( "Unsupported shader type" );
 }
@@ -37,7 +37,8 @@ bool ShaderProgram::_load()
 
 	CHECK_GL_ERROR;
 
-	glGetObjectParameterivARB( mGLShader, GL_COMPILE_STATUS, &compiled);
+    glGetShaderiv( mGLShader, GL_COMPILE_STATUS, &compiled );
+    
 	loaded = compiled != 0;
 
 	if (!loaded)
@@ -50,7 +51,7 @@ bool ShaderProgram::_load()
 		if (blen > 1)
 		{
 			GLchar* compiler_log = (GLchar*)malloc(blen);
-			glGetInfoLogARB( mGLShader, blen, &slen, compiler_log);
+            glGetShaderInfoLog( mGLShader, blen, &slen, compiler_log );
 			DEBUG_MESSAGE( "Compiler error:\n" << compiler_log );
 			free (compiler_log);
 		}	

@@ -17,6 +17,14 @@
 		431CF7D1147D52050031CB4E /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CC147D52050031CB4E /* libPocoFoundation.a */; };
 		431CF7D2147D52050031CB4E /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CD147D52050031CB4E /* libvorbis.a */; };
 		431CF7D3147D52050031CB4E /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CE147D52050031CB4E /* libvorbisfile.a */; };
+		436D383D174A8BE5003222DC /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383B174A8BE5003222DC /* Shader.h */; };
+		436D383E174A8BE5003222DC /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383B174A8BE5003222DC /* Shader.h */; };
+		436D383F174A8BE5003222DC /* ShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383C174A8BE5003222DC /* ShaderProgram.h */; };
+		436D3840174A8BE5003222DC /* ShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383C174A8BE5003222DC /* ShaderProgram.h */; };
+		436D3843174A8C60003222DC /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436D3841174A8C60003222DC /* Shader.cpp */; };
+		436D3844174A8C60003222DC /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436D3841174A8C60003222DC /* Shader.cpp */; };
+		436D3845174A8C60003222DC /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436D3842174A8C60003222DC /* ShaderProgram.cpp */; };
+		436D3846174A8C60003222DC /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436D3842174A8C60003222DC /* ShaderProgram.cpp */; };
 		4386F3ED16F8EBEF000853F6 /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */; };
 		4386F3EE16F8EBEF000853F6 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 4386F3EC16F8EBEF000853F6 /* ZipArchive.h */; };
 		4386F3EF16F8EC3A000853F6 /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */; };
@@ -464,6 +472,10 @@
 		431CF7CC147D52050031CB4E /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = "dependencies-OSX/lib/libPocoFoundation.a"; sourceTree = "<group>"; };
 		431CF7CD147D52050031CB4E /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "dependencies-OSX/lib/libvorbis.a"; sourceTree = "<group>"; };
 		431CF7CE147D52050031CB4E /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "dependencies-OSX/lib/libvorbisfile.a"; sourceTree = "<group>"; };
+		436D383B174A8BE5003222DC /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		436D383C174A8BE5003222DC /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
+		436D3841174A8C60003222DC /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
+		436D3842174A8C60003222DC /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZipArchive.cpp; sourceTree = "<group>"; };
 		4386F3EC16F8EBEF000853F6 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
 		4395BBAD16BD545B00309AE2 /* AnimatedQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedQuad.h; sourceTree = "<group>"; };
@@ -862,6 +874,8 @@
 		4395BBAC16BD545B00309AE2 /* dojo */ = {
 			isa = PBXGroup;
 			children = (
+				436D383B174A8BE5003222DC /* Shader.h */,
+				436D383C174A8BE5003222DC /* ShaderProgram.h */,
 				43E248F217380A3C00A99984 /* BackgroundQueue.h */,
 				43E248F317380A3C00A99984 /* File.h */,
 				43E248F417380A3C00A99984 /* FileStream.h */,
@@ -1216,6 +1230,8 @@
 		4395BEA616BD549A00309AE2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				436D3841174A8C60003222DC /* Shader.cpp */,
+				436D3842174A8C60003222DC /* ShaderProgram.cpp */,
 				43E2490417380C2400A99984 /* BackgroundQueue.cpp */,
 				4386F3EB16F8EBEF000853F6 /* ZipArchive.cpp */,
 				4386F3EC16F8EBEF000853F6 /* ZipArchive.h */,
@@ -1473,6 +1489,8 @@
 				43E248FE17380A3C00A99984 /* MemoryInputStream.h in Headers */,
 				43E2490017380A3C00A99984 /* Stream.h in Headers */,
 				43E2490217380A3C00A99984 /* Touch.h in Headers */,
+				436D383D174A8BE5003222DC /* Shader.h in Headers */,
+				436D383F174A8BE5003222DC /* ShaderProgram.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1655,6 +1673,8 @@
 				43E248FF17380A3C00A99984 /* MemoryInputStream.h in Headers */,
 				43E2490117380A3C00A99984 /* Stream.h in Headers */,
 				43E2490317380A3C00A99984 /* Touch.h in Headers */,
+				436D383E174A8BE5003222DC /* Shader.h in Headers */,
+				436D3840174A8BE5003222DC /* ShaderProgram.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1766,6 +1786,8 @@
 				4395BF3A16BD54B900309AE2 /* CustomOpenGLView.mm in Sources */,
 				4395BF3B16BD54B900309AE2 /* OSXPlatform.mm in Sources */,
 				43E2490517380C2500A99984 /* BackgroundQueue.cpp in Sources */,
+				436D3843174A8C60003222DC /* Shader.cpp in Sources */,
+				436D3845174A8C60003222DC /* ShaderProgram.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1813,6 +1835,8 @@
 				4395BF3516BD54B200309AE2 /* Application.mm in Sources */,
 				4395BF3616BD54B200309AE2 /* IOSPlatform.mm in Sources */,
 				43E2490617380C2500A99984 /* BackgroundQueue.cpp in Sources */,
+				436D3844174A8C60003222DC /* Shader.cpp in Sources */,
+				436D3846174A8C60003222DC /* ShaderProgram.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
