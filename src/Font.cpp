@@ -77,7 +77,42 @@ void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint dest
 	}
 }
 
-void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics )
+int _moveTo( const FT_Vector* to, void* ptr )
+{
+	auto t = ((Font::Character*)ptr)->getTesselation();
+
+	t->positions.push_back( Vector( to->x, to->y ) );
+
+	return 0;
+}
+
+int _lineTo( const FT_Vector* to, void* ptr )
+{
+	auto t = ((Font::Character*)ptr)->getTesselation();
+	
+	int idx = t->positions.size()-1;
+	t->positions.push_back( Vector( to->x, to->y ) );
+
+	//add indices to the point
+	t->indices.push_back( idx );
+	t->indices.push_back( idx+1 );
+
+	return 0;
+}
+
+int _conicTo( const FT_Vector*  control, const FT_Vector*  to, void* ptr )
+{
+	//TODO implement a real conic
+	return _lineTo( to, ptr );
+}
+
+int _cubicTo( const FT_Vector*  control1, const FT_Vector*  control2, const FT_Vector*  to,	 void* ptr )
+{
+	//TODO implement a real cubic
+	return _lineTo( to, ptr );
+}
+
+void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline )
 {
 	DEBUG_ASSERT( p, "Character needs a non-null parent Page" );
 	DEBUG_ASSERT( metrics, "null FreeType font metrics" );
@@ -106,6 +141,49 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 	bearingV = ((float)(metrics->height - metrics->horiBearingY) * FONT_PPI ) / fh;
 
 	advance = ((float)metrics->horiAdvance * FONT_PPI ) / fw;
+
+	if( page->getFont()->generateEdge || page->getFont()->generateSurface ) //tesselate ALL the things!
+	{
+		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
+		mTesselation = std::unique_ptr< Tessellation >( new Tessellation() );
+
+		FT_Outline_Funcs funcs = { _moveTo, _lineTo, _conicTo, _cubicTo, 0,0 };
+
+		FT_Outline_Decompose( outline, &funcs, this );
+
+		//downscale ALL the points
+		for( auto& point : mTesselation->positions )
+		{
+			point.x /= fsx;
+			point.y /= fsy;
+		}
+
+		//now, the contour should be properly rendered in mTessellation
+
+		//input ALL the points!
+		/*for( int i = 0; i < outline->n_points; ++i )
+			mTesselation->positions.push_back( Vector( outline->points[i].x / fsx, outline->points[i].y / fsy ) );
+
+		//compute the indices from the awkward FT format
+		int lastPointIndex, firstPointIndex = 0;
+		for( int i = 0; i < outline->n_contours; ++i )
+		{
+			lastPointIndex = outline->contours[i];
+
+			//add an index pair for each point in the contour
+			for( int a = firstPointIndex, b = firstPointIndex+1; a < lastPointIndex; ++a, ++b )
+			{
+				mTesselation->indices.push_back( a );
+				mTesselation->indices.push_back( b );
+			}
+
+			firstPointIndex = lastPointIndex+1;
+		}*/
+
+		//now that everything is loaded & in order, tessellate the mesh
+		if( page->getFont()->generateSurface )
+			mTesselation->tessellate( !page->getFont()->generateEdge ); //keep edges if they are needed too
+	}
 }
 
 
@@ -167,11 +245,12 @@ bool Font::Page::onLoad()
 
 			//load character data
 			character->init( 
-				this, 
+				this,
 				c, 
 				x, y,
 				sxp2, syp2, 
-				&(slot->metrics) );
+				&(slot->metrics),
+				&slot->outline );
 
 			FT_Render_Glyph( slot, renderMode );
 
@@ -268,6 +347,8 @@ bool Font::onLoad()
 
 	antialias = t.getBool( "antialias" );
 	kerning = t.getBool( "kerning" );
+	generateEdge = t.getBool( "polyOutline" );
+	generateSurface = t.getBool( "polySurface" );
 	spacing = t.getNumber( "spacing" );
 
 	glowRadius = t.getInt( "glowRadius" );

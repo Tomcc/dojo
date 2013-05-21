@@ -16,6 +16,8 @@
 #include "Texture.h"
 #include "FrameSet.h"
 
+#include "Tessellation.h"
+
 #include "Utils.h"
 
 #define FONT_PPI (1.f/64.f)
@@ -38,7 +40,9 @@ namespace Dojo
 		///A Character defines a single Unicode point, its Page, and its texture rect in the Page
 		class Character
 		{
-		public:			
+		public:		
+
+
 			unichar character;
 			uint gliphIdx;
 			
@@ -52,18 +56,31 @@ namespace Dojo
 			float bearingU, bearingV;
 
 			Page* page;
-						
+
 			Character()
 			{
 
 			}
 
-			void init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics );
+			void init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline );
 
+			///return 
 			inline Texture* getTexture()
 			{
 				return page->getTexture();
 			}
+
+			///returns the triangle tesselation of this character
+			Tessellation* getTesselation()
+			{
+				DEBUG_ASSERT( mTesselation.get(), "Tried to get a tesselation but this Font wasn't tesselated (forgot to specify 'tesselate' in the config?)" );
+
+				return mTesselation.get();
+			}
+
+		protected:
+
+			std::unique_ptr< Tessellation > mTesselation;
 		};
 		
 		///A Page is a single texture which contains FONT_PAGE_SIDE^2 Characters in Unicode
@@ -224,7 +241,7 @@ namespace Dojo
 		String fontName;
 		String fontFile;
 
-		bool antialias, kerning;
+		bool antialias, kerning, generateEdge, generateSurface;
 
 		float spacing;
 
