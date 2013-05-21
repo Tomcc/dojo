@@ -62,8 +62,11 @@ namespace Dojo
 
 		RenderingType mRendering;
 		float mDepth;
+		float mSpaceWidth;
 
 		bool mDirty;
+
+		void _centerLine( int rowStartIdx, float rowWidth );
 
 		void _prepare();
 

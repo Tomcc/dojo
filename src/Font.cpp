@@ -151,34 +151,12 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 
 		FT_Outline_Decompose( outline, &funcs, this );
 
-		//downscale ALL the points
+		//downscale ALL the points normalizing in 0-1 scale
 		for( auto& point : mTesselation->positions )
 		{
-			point.x /= fsx;
-			point.y /= fsy;
+			point.x = (point.x * FONT_PPI) / fw;
+			point.y = (point.y * FONT_PPI) / fh;
 		}
-
-		//now, the contour should be properly rendered in mTessellation
-
-		//input ALL the points!
-		/*for( int i = 0; i < outline->n_points; ++i )
-			mTesselation->positions.push_back( Vector( outline->points[i].x / fsx, outline->points[i].y / fsy ) );
-
-		//compute the indices from the awkward FT format
-		int lastPointIndex, firstPointIndex = 0;
-		for( int i = 0; i < outline->n_contours; ++i )
-		{
-			lastPointIndex = outline->contours[i];
-
-			//add an index pair for each point in the contour
-			for( int a = firstPointIndex, b = firstPointIndex+1; a < lastPointIndex; ++a, ++b )
-			{
-				mTesselation->indices.push_back( a );
-				mTesselation->indices.push_back( b );
-			}
-
-			firstPointIndex = lastPointIndex+1;
-		}*/
 
 		//now that everything is loaded & in order, tessellate the mesh
 		if( page->getFont()->generateSurface )
