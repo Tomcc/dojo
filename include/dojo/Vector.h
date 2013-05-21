@@ -113,11 +113,11 @@ namespace Dojo
 			return Vector( x/l, y/l, z/l );
 		}
 
-		///linearly interpolates the two vectors
-		inline Vector lerp( float s, const Dojo::Vector& v ) const
+		///linearly interpolates the two vectors; s = 0 returns this, s = 1 returns v
+		inline Vector lerpTo( float s, const Dojo::Vector& v ) const
 		{			
 			float invs = 1.f - s;			
-			return Vector( x*s + invs*v.x, y*s + invs*v.y, z*s + invs*v.z);
+			return Vector( v.x*s + invs*x, v.y*s + invs*y, v.z*s + invs*z);
 		}
 		
 		///returns a vector with abs componenents

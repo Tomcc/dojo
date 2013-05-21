@@ -229,6 +229,18 @@ namespace Dojo
 			return kerning;
 		}
 
+		///tells if this Font contains polygon edge informations
+		inline bool hasPolyOutline()
+		{
+			return generateEdge;
+		}
+
+		///tells if this Font contains polygon surface informations
+		inline bool hasPolySurface()
+		{
+			return generateSurface;
+		}
+
 		///forces the loading of the given pages without waiting for lazy-loading
 		inline void preloadPages( const char pages[], uint n ) 
 		{

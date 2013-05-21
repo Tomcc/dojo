@@ -81,7 +81,7 @@ int _moveTo( const FT_Vector* to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->positions.push_back( Vector( to->x, to->y ) );
+	t->addPoint( Vector( to->x, to->y ) );
 
 	return 0;
 }
@@ -89,27 +89,27 @@ int _moveTo( const FT_Vector* to, void* ptr )
 int _lineTo( const FT_Vector* to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
-	
-	int idx = t->positions.size()-1;
-	t->positions.push_back( Vector( to->x, to->y ) );
 
-	//add indices to the point
-	t->indices.push_back( idx );
-	t->indices.push_back( idx+1 );
-
+	t->addSegment( Vector( to->x, to->y ) );
 	return 0;
 }
 
 int _conicTo( const FT_Vector*  control, const FT_Vector*  to, void* ptr )
 {
-	//TODO implement a real conic
-	return _lineTo( to, ptr );
+	auto t = ((Font::Character*)ptr)->getTesselation();
+
+	t->addQuadradratic( Vector( control->x, control->y ), Vector( to->x, to->y ), 4 );
+
+	return 0;
 }
 
 int _cubicTo( const FT_Vector*  control1, const FT_Vector*  control2, const FT_Vector*  to,	 void* ptr )
 {
-	//TODO implement a real cubic
-	return _lineTo( to, ptr );
+	auto t = ((Font::Character*)ptr)->getTesselation();
+
+	t->addCubic( Vector( control1->x, control1->y ), Vector( control2->x, control2->y ), Vector( to->x, to->y ), 4 );
+
+	return 0;
 }
 
 void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline )

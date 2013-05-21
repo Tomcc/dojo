@@ -31,6 +31,7 @@
     <ClInclude Include="include\dojo\Keyboard.h" />
     <ClInclude Include="include\dojo\KeyCode.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
+    <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\ParticlePool.cpp" />
     <ClCompile Include="src\Platform.cpp" />
+    <ClCompile Include="src\PolyTextArea.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderState.cpp" />

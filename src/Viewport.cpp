@@ -208,11 +208,11 @@ Vector Viewport::getRayDirection( const Vector& screenSpacePos )
 	//frustum[3]: top right
 	
 	//find points on each side of the frustum
-	Vector a = worldFrustumVertices[1].lerp( screenSpacePos.y, worldFrustumVertices[0] );
-	Vector b = worldFrustumVertices[2].lerp( screenSpacePos.y, worldFrustumVertices[3] );
+	Vector a = worldFrustumVertices[0].lerpTo( screenSpacePos.y, worldFrustumVertices[1] );
+	Vector b = worldFrustumVertices[3].lerpTo( screenSpacePos.y, worldFrustumVertices[2] );
 		
 	//now we can find the final far plane projection and the ray direction
-	a = b.lerp( screenSpacePos.x, a );
+	a = a.lerpTo( screenSpacePos.x, b );
 	
 	return (a - getWorldPosition()).normalized();
 }

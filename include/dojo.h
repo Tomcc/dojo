@@ -23,6 +23,7 @@
 #include <dojo/ParticlePool.h>
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
+#include <dojo/PolyTextArea.h>
 #include <dojo/Render.h>
 #include <dojo/RenderState.h>
 #include <dojo/Renderable.h>
