@@ -24,6 +24,12 @@ namespace Dojo
 
 		virtual ~PolyTextArea();
 
+		///sets additional interline height
+		void setInterline( float interline )
+		{
+			mInterline = interline;
+		}
+
 		///adds some text to this poly area
 		void addText( const String& str )
 		{
@@ -44,6 +50,12 @@ namespace Dojo
 			mDirty = true;
 		}
 
+		///gets the current interline
+		float getInterline()
+		{
+			return mInterline;
+		}
+
 		virtual void onAction( float dt )
 		{
 			if( mDirty )
@@ -62,7 +74,7 @@ namespace Dojo
 
 		RenderingType mRendering;
 		float mDepth;
-		float mSpaceWidth;
+		float mSpaceWidth, mInterline;
 
 		bool mDirty;
 

@@ -313,6 +313,13 @@ void Render::renderElement( Renderable* s )
 #ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
 #endif
+
+	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
+	if( s->getShader() )
+	{
+		for( auto& attr : s->getShader()->getAttributes() )
+			glDisableVertexAttribArray( attr.second.location );
+	}
 }
 
 void Render::endFrame()

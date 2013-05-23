@@ -1,9 +1,11 @@
 //defines by Dojo
 
 #define TRILIBRARY
-#define CDT_ONLY
+//#define CDT_ONLY
 #define NO_TIMER
 #define ANSI_DECLARATORS
+#define CPU86
+#define SELF_CHECK
 
 /*****************************************************************************/
 /*                                                                           */

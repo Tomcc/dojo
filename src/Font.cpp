@@ -77,11 +77,13 @@ void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint dest
 	}
 }
 
+float gCurrentScale;
+
 int _moveTo( const FT_Vector* to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addPoint( Vector( to->x, to->y ) );
+	t->addPoint( Vector( to->x * gCurrentScale, to->y * gCurrentScale ) );
 
 	return 0;
 }
@@ -90,7 +92,7 @@ int _lineTo( const FT_Vector* to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addSegment( Vector( to->x, to->y ) );
+	t->addSegment( Vector( to->x * gCurrentScale, to->y * gCurrentScale ) );
 	return 0;
 }
 
@@ -98,7 +100,10 @@ int _conicTo( const FT_Vector*  control, const FT_Vector*  to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addQuadradratic( Vector( control->x, control->y ), Vector( to->x, to->y ), 4 );
+	t->addQuadradratic( 
+		Vector( control->x * gCurrentScale, control->y * gCurrentScale), 
+		Vector( to->x * gCurrentScale, to->y * gCurrentScale ), 
+		((Font::Character*)ptr)->page->getFont()->getPolyOutlineQuality() );
 
 	return 0;
 }
@@ -107,7 +112,11 @@ int _cubicTo( const FT_Vector*  control1, const FT_Vector*  control2, const FT_V
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addCubic( Vector( control1->x, control1->y ), Vector( control2->x, control2->y ), Vector( to->x, to->y ), 4 );
+	t->addCubic( 
+		Vector( control1->x * gCurrentScale, control1->y * gCurrentScale ), 
+		Vector( control2->x * gCurrentScale, control2->y * gCurrentScale ), 
+		Vector( to->x * gCurrentScale, to->y * gCurrentScale ), 
+		((Font::Character*)ptr)->page->getFont()->getPolyOutlineQuality() );
 
 	return 0;
 }
@@ -147,19 +156,14 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
 		mTesselation = std::unique_ptr< Tessellation >( new Tessellation() );
 
+		//find the normalizing scale and call the tesselation functions
+		gCurrentScale = (float)FONT_PPI / (float)fw;
 		FT_Outline_Funcs funcs = { _moveTo, _lineTo, _conicTo, _cubicTo, 0,0 };
 
 		FT_Outline_Decompose( outline, &funcs, this );
 
-		//downscale ALL the points normalizing in 0-1 scale
-		for( auto& point : mTesselation->positions )
-		{
-			point.x = (point.x * FONT_PPI) / fw;
-			point.y = (point.y * FONT_PPI) / fh;
-		}
-
 		//now that everything is loaded & in order, tessellate the mesh
-		if( page->getFont()->generateSurface )
+		if( mTesselation->indices.size() && page->getFont()->generateSurface ) //HACK
 			mTesselation->tessellate( !page->getFont()->generateEdge ); //keep edges if they are needed too
 	}
 }
@@ -328,6 +332,8 @@ bool Font::onLoad()
 	generateEdge = t.getBool( "polyOutline" );
 	generateSurface = t.getBool( "polySurface" );
 	spacing = t.getNumber( "spacing" );
+
+	mPolyOutlineQuality = t.getNumber( "polyOutlineQuality", 10 );
 
 	glowRadius = t.getInt( "glowRadius" );
 	glowColor = t.getColor( "glowColor" );

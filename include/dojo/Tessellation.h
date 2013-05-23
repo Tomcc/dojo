@@ -41,9 +41,13 @@ namespace Dojo
 		}
 
 		///adds a quadratic bezier curve (single control point) starting from the last point
-		void addQuadradratic( const Vector& B, const Vector& C, int subdivs )
+		void addQuadradratic( const Vector& B, const Vector& C, float pointsPerUnitLength )
 		{
 			Vector U, V, A = positions.back();
+
+			//TODO actually add points evaluating the "curvyness" of the path
+			float length = A.distance( B ) + B.distance( C ); //compute a rough length of this arc
+			int subdivs = length * pointsPerUnitLength + 1;
 
 			for(int i = 1; i <= subdivs; i++)
 			{
@@ -57,9 +61,13 @@ namespace Dojo
 		}
 
 		///adds a cubic bezier curve (double control point) starting from the last point
-		void addCubic( const Vector& B, const Vector& C, const Vector& D, int subdivs )
+		void addCubic( const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength )
 		{
 			Vector U,V,W,M,N, A = positions.back();
+			
+			//TODO actually add points evaluating the "curvyness" of the path
+			float length = A.distance( B ) + B.distance( C ) + C.distance( D ); //compute a rough length of this arc
+			int subdivs = length * pointsPerUnitLength + 1;
 
 			for( int i = 0; i <= subdivs; i++)
 			{

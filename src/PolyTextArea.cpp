@@ -12,25 +12,32 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 	mDirty( true ), //be sure to init anyways even if the user doesn't write anything
 	pFont( font ),
 	mDepth( extrudeDepth ),
-	mRendering( rt )
+	mRendering( rt ),
+	mInterline( 0 )
 {
 	DEBUG_ASSERT( pFont, "Cannot create a PolyTextArea with a null font" );
-
-	if( mRendering == RT_OUTLINE )
-	{
-		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
-	}
-	else
-	{
-		DEBUG_ASSERT( pFont->hasPolySurface(), "Cannot create a surface PolyTextArea if the font has no surface " );
-	}
 
 	mSpaceWidth = pFont->getCharacter(' ')->advance;
 
 	//create a new mesh with the required parameters
 	mMesh = new Mesh();
-	mMesh->setTriangleMode( (mRendering == PolyTextArea::RT_OUTLINE) ? Mesh::TM_LINE_LIST : Mesh::TM_LIST );
-	mMesh->setVertexFieldEnabled( (mRendering == PolyTextArea::RT_EXTRUDED) ? Mesh::VF_POSITION3D : Mesh::VF_POSITION2D );
+
+	if( mRendering == RT_OUTLINE )
+	{
+		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
+		mMesh->setTriangleMode( Mesh::TM_LINE_LIST );
+		mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+	}
+	else
+	{
+		DEBUG_ASSERT( pFont->hasPolySurface(), "Cannot create a surface PolyTextArea if the font has no surface " );
+		mMesh->setTriangleMode( Mesh::TM_LIST );
+
+		if( mRendering == RT_SURFACE )
+			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+		else
+			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+	}
 
 	setMesh( mMesh );
 }
@@ -82,7 +89,7 @@ void PolyTextArea::_prepare()
 			}
 
 			basePosition.x = 0;
-			basePosition.y -= 1.f;
+			basePosition.y -= 1.f + mInterline;
 		}
 		else if( c == ' ' )
 		{
@@ -99,27 +106,24 @@ void PolyTextArea::_prepare()
 			charPosition.y -= character->bearingV;
 
 			if( pFont->isKerningEnabled() && lastChar )
-				charPosition.x += pFont->getKerning( character, lastChar ); 
+				charPosition.x -= pFont->getKerning( character, lastChar ); 
 
 			//merge this outline in the VBO
-			if( mRendering == RT_OUTLINE )
-			{
-				int baseIdx = mMesh->getVertexCount();
+			int baseIdx = mMesh->getVertexCount();
 
-				for( auto& point : t->positions )
-					mMesh->vertex( charPosition + point );
+			//choose the right data sources for outline/surface
+			auto& vertices = (mRendering == RT_OUTLINE) ? t->positions : t->outPositions;
+			auto& indices = (mRendering == RT_OUTLINE) ? t->indices : t->outIndices;
 
-				for( auto& index : t->indices )
-					mMesh->index( baseIdx + index );
-			}
-			else
-			{
-				DEBUG_TODO;
-			}
+			for( auto& point : vertices )
+				mMesh->vertex( charPosition + point );
+
+			for( auto& index : indices )
+				mMesh->index( baseIdx + index );
 		}
 
 		lastChar = character;
-		basePosition.x += character->advance;
+		basePosition.x += character->advance + pFont->getSpacing();
 	}
 
 	if( mCentered )

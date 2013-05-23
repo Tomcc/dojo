@@ -79,7 +79,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 		return 0;
 
     case WM_MOUSEWHEEL: //mouse wheel moved
-		app->mouseWheelMoved( (int)( (float)HIWORD(wparam) / (float)WHEEL_DELTA ) );
+		app->mouseWheelMoved( (int)( (float)GET_WHEEL_DELTA_WPARAM(wparam) / (float)WHEEL_DELTA ) );
         return 0;
 
     case WM_LBUTTONDOWN:  //left down
@@ -645,11 +645,7 @@ void Win32Platform::mousePressed( int cx, int cy, int id )
 
 void Win32Platform::mouseWheelMoved( int wheelZ )
 {
-	cursorPos.z = (float)wheelZ;
-
-	input->_fireScrollWheelEvent( cursorPos.z - prevCursorPos.z );
-
-	prevCursorPos.z = cursorPos.z;
+	input->_fireScrollWheelEvent( (float)wheelZ );
 }
 
 void Win32Platform::mouseMoved(  int cx, int cy  )

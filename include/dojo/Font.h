@@ -219,6 +219,12 @@ namespace Dojo
 			return FT_Get_Char_Index( face, c->character );
 		}
 
+		///returns how many vertices per unit of lenght are created for the poly outlines of this font
+		float getPolyOutlineQuality()
+		{
+			return mPolyOutlineQuality;
+		}
+
 		inline bool isAntialiased()
 		{
 			return antialias;
@@ -254,6 +260,7 @@ namespace Dojo
 		String fontFile;
 
 		bool antialias, kerning, generateEdge, generateSurface;
+		float mPolyOutlineQuality;
 
 		float spacing;
 
