@@ -123,7 +123,15 @@ void IOSPlatform::_initialiseImpl(Application *application)
     const char* extensions = (char*) glGetString(GL_EXTENSIONS);
     mNPOTEnabled = strstr(extensions, "GL_APPLE_texture_2D_limited_npot") != 0;
     
-    mBackgroundQueue = new BackgroundQueue();
+    //override the config or load it from file
+    Table userConfig;
+    load( &userConfig, getAppDataPath() + "/config.ds" );
+    
+    config.inherit( &userConfig ); //merge the table loaded from file and override with hardcoded directives
+    
+    //create the background task queue
+    int userThreadOverride = config.getNumber( "threads", -1 );
+    mBackgroundQueue = new BackgroundQueue( userThreadOverride );
 	
 	render = new Render( width, height, screenOrientation );
 	

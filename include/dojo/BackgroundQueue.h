@@ -36,14 +36,7 @@ namespace Dojo
 		Tasks are void to void lambdas, ie []() { printf( "Hello World\n" ); }
 		Task execution parameters can be captured with the closure operator.
 		*/
-		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK )
-		{
-			Lock lock( mQueueMutex );
-
-			mQueue.push( TaskCallbackPair( task, callback ) );
-
-			mQueueSemaphore.set();
-		}
+		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK );
 
 		///Waits until this queue stops itself
 		/**

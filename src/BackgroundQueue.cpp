@@ -20,6 +20,23 @@ BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
 		mWorkers.push_back( std::unique_ptr<Worker>(new Worker(this)) );
 }
 
+void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
+{
+    //debug sync mode
+    if( mWorkers.empty() )
+    {
+        task();
+        callback();
+    }
+    else
+    {
+        Lock lock( mQueueMutex );
+        
+        mQueue.push( TaskCallbackPair( task, callback ) );
+        
+        mQueueSemaphore.set();
+    }
+}
 
 void BackgroundQueue::fireCompletedCallbacks()
 {

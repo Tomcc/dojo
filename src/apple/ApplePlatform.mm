@@ -37,9 +37,6 @@ ApplePlatform::ApplePlatform( const Table& config ) :
 Platform( config )
 {
     pool = [[NSAutoreleasePool alloc] init];
-    
-    //find cpu cores
-    mCPUCores = sysconf( _SC_NPROCESSORS_ONLN );
 
 	if( [[NSLocale preferredLanguages] count ] )
 		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );

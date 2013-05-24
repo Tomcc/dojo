@@ -17,6 +17,16 @@
 		431CF7D1147D52050031CB4E /* libPocoFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CC147D52050031CB4E /* libPocoFoundation.a */; };
 		431CF7D2147D52050031CB4E /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CD147D52050031CB4E /* libvorbis.a */; };
 		431CF7D3147D52050031CB4E /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF7CE147D52050031CB4E /* libvorbisfile.a */; };
+		43678B14174F908E00AAEB38 /* PolyTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B10174F908E00AAEB38 /* PolyTextArea.h */; };
+		43678B15174F908E00AAEB38 /* PolyTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B10174F908E00AAEB38 /* PolyTextArea.h */; };
+		43678B16174F908E00AAEB38 /* Tessellation.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B11174F908E00AAEB38 /* Tessellation.h */; };
+		43678B17174F908E00AAEB38 /* Tessellation.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B11174F908E00AAEB38 /* Tessellation.h */; };
+		43678B1A174F908E00AAEB38 /* triangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B13174F908E00AAEB38 /* triangle.h */; };
+		43678B1B174F908E00AAEB38 /* triangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 43678B13174F908E00AAEB38 /* triangle.h */; };
+		43678B1E174F90A500AAEB38 /* PolyTextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43678B1C174F90A500AAEB38 /* PolyTextArea.cpp */; };
+		43678B1F174F90A500AAEB38 /* PolyTextArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43678B1C174F90A500AAEB38 /* PolyTextArea.cpp */; };
+		43678B20174F90A500AAEB38 /* Tessellation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43678B1D174F90A500AAEB38 /* Tessellation.cpp */; };
+		43678B21174F90A500AAEB38 /* Tessellation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43678B1D174F90A500AAEB38 /* Tessellation.cpp */; };
 		436D383D174A8BE5003222DC /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383B174A8BE5003222DC /* Shader.h */; };
 		436D383E174A8BE5003222DC /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383B174A8BE5003222DC /* Shader.h */; };
 		436D383F174A8BE5003222DC /* ShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 436D383C174A8BE5003222DC /* ShaderProgram.h */; };
@@ -472,6 +482,12 @@
 		431CF7CC147D52050031CB4E /* libPocoFoundation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundation.a; path = "dependencies-OSX/lib/libPocoFoundation.a"; sourceTree = "<group>"; };
 		431CF7CD147D52050031CB4E /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "dependencies-OSX/lib/libvorbis.a"; sourceTree = "<group>"; };
 		431CF7CE147D52050031CB4E /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "dependencies-OSX/lib/libvorbisfile.a"; sourceTree = "<group>"; };
+		43678B10174F908E00AAEB38 /* PolyTextArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolyTextArea.h; sourceTree = "<group>"; };
+		43678B11174F908E00AAEB38 /* Tessellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tessellation.h; sourceTree = "<group>"; };
+		43678B12174F908E00AAEB38 /* triangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = triangle.c; sourceTree = "<group>"; };
+		43678B13174F908E00AAEB38 /* triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triangle.h; sourceTree = "<group>"; };
+		43678B1C174F90A500AAEB38 /* PolyTextArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolyTextArea.cpp; sourceTree = "<group>"; };
+		43678B1D174F90A500AAEB38 /* Tessellation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tessellation.cpp; sourceTree = "<group>"; };
 		436D383B174A8BE5003222DC /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		436D383C174A8BE5003222DC /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
 		436D3841174A8C60003222DC /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
@@ -874,6 +890,10 @@
 		4395BBAC16BD545B00309AE2 /* dojo */ = {
 			isa = PBXGroup;
 			children = (
+				43678B10174F908E00AAEB38 /* PolyTextArea.h */,
+				43678B11174F908E00AAEB38 /* Tessellation.h */,
+				43678B12174F908E00AAEB38 /* triangle.c */,
+				43678B13174F908E00AAEB38 /* triangle.h */,
 				436D383B174A8BE5003222DC /* Shader.h */,
 				436D383C174A8BE5003222DC /* ShaderProgram.h */,
 				43E248F217380A3C00A99984 /* BackgroundQueue.h */,
@@ -1230,6 +1250,8 @@
 		4395BEA616BD549A00309AE2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				43678B1C174F90A500AAEB38 /* PolyTextArea.cpp */,
+				43678B1D174F90A500AAEB38 /* Tessellation.cpp */,
 				436D3841174A8C60003222DC /* Shader.cpp */,
 				436D3842174A8C60003222DC /* ShaderProgram.cpp */,
 				43E2490417380C2400A99984 /* BackgroundQueue.cpp */,
@@ -1491,6 +1513,9 @@
 				43E2490217380A3C00A99984 /* Touch.h in Headers */,
 				436D383D174A8BE5003222DC /* Shader.h in Headers */,
 				436D383F174A8BE5003222DC /* ShaderProgram.h in Headers */,
+				43678B14174F908E00AAEB38 /* PolyTextArea.h in Headers */,
+				43678B16174F908E00AAEB38 /* Tessellation.h in Headers */,
+				43678B1A174F908E00AAEB38 /* triangle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1675,6 +1700,9 @@
 				43E2490317380A3C00A99984 /* Touch.h in Headers */,
 				436D383E174A8BE5003222DC /* Shader.h in Headers */,
 				436D3840174A8BE5003222DC /* ShaderProgram.h in Headers */,
+				43678B15174F908E00AAEB38 /* PolyTextArea.h in Headers */,
+				43678B17174F908E00AAEB38 /* Tessellation.h in Headers */,
+				43678B1B174F908E00AAEB38 /* triangle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1788,6 +1816,8 @@
 				43E2490517380C2500A99984 /* BackgroundQueue.cpp in Sources */,
 				436D3843174A8C60003222DC /* Shader.cpp in Sources */,
 				436D3845174A8C60003222DC /* ShaderProgram.cpp in Sources */,
+				43678B1E174F90A500AAEB38 /* PolyTextArea.cpp in Sources */,
+				43678B20174F90A500AAEB38 /* Tessellation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1837,6 +1867,8 @@
 				43E2490617380C2500A99984 /* BackgroundQueue.cpp in Sources */,
 				436D3844174A8C60003222DC /* Shader.cpp in Sources */,
 				436D3846174A8C60003222DC /* ShaderProgram.cpp in Sources */,
+				43678B1F174F90A500AAEB38 /* PolyTextArea.cpp in Sources */,
+				43678B21174F90A500AAEB38 /* Tessellation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1901,7 +1933,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
-				HEADER_SEARCH_PATHS = "dependencies-OSX/include";
+				HEADER_SEARCH_PATHS = (
+					"dependencies-OSX/include",
+					include/dojo,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/dependencies-OSX/lib\"",
@@ -1917,7 +1952,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
-				HEADER_SEARCH_PATHS = "dependencies-OSX/include";
+				HEADER_SEARCH_PATHS = (
+					"dependencies-OSX/include",
+					include/dojo,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/dependencies-OSX/lib\"",
@@ -1939,7 +1977,10 @@
 					"$(inherited)",
 					DOJO_IOS,
 				);
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/dependencies-iOS/include\"";
+				HEADER_SEARCH_PATHS = (
+					include,
+					"dependencies-iOS/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1967,7 +2008,10 @@
 					"$(inherited)",
 					DOJO_IOS,
 				);
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/dependencies-iOS/include\"";
+				HEADER_SEARCH_PATHS = (
+					include,
+					"dependencies-iOS/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

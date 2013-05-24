@@ -30,6 +30,9 @@ ApplePlatform( config )
     screenWidth = [[NSScreen mainScreen] frame].size.width;
     screenHeight = [[NSScreen mainScreen] frame].size.height;
     screenOrientation = DO_LANDSCAPE_LEFT; //always
+    
+    //find cpu cores
+    mCPUCores = sysconf( _SC_NPROCESSORS_ONLN );
 }
 
 
@@ -53,8 +56,10 @@ void OSXPlatform::initialise( Game* g )
 	_createApplicationDirectory();
     
     //override the config or load it from file
-    if( config.size() == 0 )
-        load( &config, getAppDataPath() + "/config.ds" );
+    Table userConfig;
+    load( &userConfig, getAppDataPath() + "/config.ds" );
+
+    config.inherit( &userConfig ); //merge the table loaded from file and override with hardcoded directives    
     
     //override window size
     if( config.exists( "windowSize" ) )
@@ -120,7 +125,8 @@ void OSXPlatform::initialise( Game* g )
 		glEnable(GL_MULTISAMPLE);
     
     //create the background task queue
-    mBackgroundQueue = new BackgroundQueue();
+    int userThreadOverride = config.getNumber( "threads", -1 );
+    mBackgroundQueue = new BackgroundQueue( userThreadOverride );
     
     //create soundmanager
     sound = new SoundManager();
