@@ -13,6 +13,8 @@
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSOpenGL.h>
 #import <AppKit/NSScreen.h>
+#import <AppKit/NSMenuItem.h>
+#import <AppKit/NSMenu.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSURL.h>
 
@@ -30,9 +32,6 @@ ApplePlatform( config )
     screenWidth = [[NSScreen mainScreen] frame].size.width;
     screenHeight = [[NSScreen mainScreen] frame].size.height;
     screenOrientation = DO_LANDSCAPE_LEFT; //always
-    
-    //find cpu cores
-    mCPUCores = sysconf( _SC_NPROCESSORS_ONLN );
 }
 
 
@@ -54,6 +53,20 @@ void OSXPlatform::initialise( Game* g )
     mAppDataPath += "/" + game->getName();
     
 	_createApplicationDirectory();
+    
+    //create the standard app menu
+    {
+        id menubar = [[NSMenu new] autorelease];
+        id appMenuItem = [[NSMenuItem new] autorelease];
+        [menubar addItem:appMenuItem];
+        [NSApp setMainMenu:menubar];
+        id appMenu = [[NSMenu new] autorelease];
+        id appName = [[NSProcessInfo processInfo] processName];
+        id quitTitle = [@"Quit " stringByAppendingString:appName];
+        id quitMenuItem = [[[NSMenuItem alloc] initWithTitle:quitTitle action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+        [appMenu addItem:quitMenuItem];
+        [appMenuItem setSubmenu:appMenu];
+    }
     
     //override the config or load it from file
     Table userConfig;

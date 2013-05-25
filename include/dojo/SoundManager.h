@@ -23,7 +23,10 @@ namespace Dojo {
 		{
 		public:
 			typedef Array< SoundSource* > SoundList;
-
+            
+            typedef std::function< float(float) > Easing;
+            
+            static const Easing LinearEasing;
 			static const float m;
 
 			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
@@ -32,7 +35,7 @@ namespace Dojo {
 				
 				ALpos[0] = vector.x/m;
 				ALpos[1] = vector.y/m;
-				ALpos[2] = 0;
+				ALpos[2] = vector.z/m;
 			}
 
 			SoundManager();
@@ -92,7 +95,7 @@ namespace Dojo {
 			/**
 			\param trackFadeTime the duration of the intro fade-in
 			*/
-			void playMusic( SoundSet* music, float trackFadeTime = 0 );
+			void playMusic( SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing );
 			
 			inline void pauseMusic()
 			{
@@ -104,8 +107,9 @@ namespace Dojo {
 			void resumeMusic();
 
 			///stops the music, with an optional fade-out
-			inline void stopMusic( float stopFadeTime = 0 )
+			inline void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing )
 			{
+                //TODO use easing
                 DEBUG_MESSAGE( "Music fading out in " << stopFadeTime << " s" );
 					
                 fadeState = FS_FADE_OUT;

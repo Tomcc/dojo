@@ -121,6 +121,7 @@ void Mesh::_bindAttribArrays( Shader* shader )
 {
 	glBindBuffer( GL_ARRAY_BUFFER, vertexHandle );
 
+#ifdef DOJO_SHADERS_AVAILABLE
 	if( shader ) //use custom attributes only
 	{
 		GLint components;
@@ -136,7 +137,7 @@ void Mesh::_bindAttribArrays( Shader* shader )
 			_getVertexFieldData( attr.second.builtInAttribute, components, componentsType, normalized, offset );
 
 			glEnableVertexAttribArray( attr.second.location );
-			glVertexAttribPointer( 
+			glVertexAttribPointer(
 				attr.second.location,
 				components,
 				componentsType,
@@ -148,6 +149,7 @@ void Mesh::_bindAttribArrays( Shader* shader )
 		}
 	}
 	else //fixed function vertex binding //TODO remove this
+#endif
 	{
 		//construct attributes
 		for( int i = 0; i < _VF_COUNT; ++i )

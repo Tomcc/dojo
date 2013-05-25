@@ -12,6 +12,11 @@ using namespace Dojo;
 
 const float SoundManager::m = 100;
 
+const SoundManager::Easing SoundManager::LinearEasing = []( float t )
+{
+    return t;
+};
+
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
@@ -103,8 +108,10 @@ SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
 	return fakeSource;
 }
 
-void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */ )
+void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */, const Easing& easing )
 {
+    //TODO use easing
+    
 	DEBUG_ASSERT( next, "null music source passed" );
 
 	//override music activation if the system sound is in use

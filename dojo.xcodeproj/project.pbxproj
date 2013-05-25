@@ -1978,7 +1978,7 @@
 					DOJO_IOS,
 				);
 				HEADER_SEARCH_PATHS = (
-					include,
+					include/dojo,
 					"dependencies-iOS/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -2009,7 +2009,7 @@
 					DOJO_IOS,
 				);
 				HEADER_SEARCH_PATHS = (
-					include,
+					include/dojo,
 					"dependencies-iOS/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;

@@ -314,12 +314,14 @@ void Render::renderElement( Renderable* s )
 	glBindVertexArray( 0 );
 #endif
 
+#ifdef DOJO_SHADERS_AVAILABLE
 	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
 	if( s->getShader() )
 	{
 		for( auto& attr : s->getShader()->getAttributes() )
 			glDisableVertexAttribArray( attr.second.location );
 	}
+#endif
 }
 
 void Render::endFrame()

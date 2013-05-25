@@ -42,6 +42,10 @@ Platform( config )
 		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
 	else
 		locale = "en";
+    
+    
+    //find logic cpu cores count
+    mCPUCores = sysconf( _SC_NPROCESSORS_ONLN );
 }
 
 ApplePlatform::~ApplePlatform()
