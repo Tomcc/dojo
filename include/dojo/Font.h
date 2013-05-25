@@ -40,8 +40,7 @@ namespace Dojo
 		///A Character defines a single Unicode point, its Page, and its texture rect in the Page
 		class Character
 		{
-		public:		
-
+		public:
 
 			unichar character;
 			uint gliphIdx;
@@ -279,7 +278,6 @@ namespace Dojo
 		
 		static void _blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
 		static void _blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
-
 	};
 }
 

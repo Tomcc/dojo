@@ -1,9 +1,6 @@
 /*
  *  dojo_config.h
- *  Ninja Training
- *
  *  Created by Tommaso Checchi on 7/30/10.
- *  Copyright 2010 none. All rights reserved.
  *
  */
 

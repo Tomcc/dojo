@@ -184,6 +184,13 @@ namespace Dojo
 		///enables or disables blending of this RS
 		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
 
+		///sets the blending mode with a single call
+		void setBlending( GLenum src, GLenum dest )
+		{
+			srcBlend = src;
+			destBlend = dest;
+		}
+
 		///sets the Shader material to be used for this RenderState
 		/**
 		\remark the shader may be null to remove shader use

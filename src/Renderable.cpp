@@ -33,7 +33,11 @@ Renderable::Renderable( Object* parent, const Vector& pos, const String& meshNam
 	reset();
 
 	if( meshName.size() )
+	{
 		setMesh( getGameState()->getMesh( meshName ) );
+		
+		DEBUG_ASSERT_INFO( getMesh(), "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
+	}
 }
 
 Renderable::~Renderable()

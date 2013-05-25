@@ -11,15 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
-    <ClInclude Include="include\dojo.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
-    <ClInclude Include="include\dojo\apple\ApplePlatform.h" />
-    <ClInclude Include="include\dojo\apple\iOS\AppDelegate.h" />
-    <ClInclude Include="include\dojo\apple\iOS\Application.h" />
-    <ClInclude Include="include\dojo\apple\iOS\IOSPlatform.h" />
-    <ClInclude Include="include\dojo\apple\OSX\CustomOpenGLView.h" />
-    <ClInclude Include="include\dojo\apple\OSX\OSXPlatform.h" />
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
@@ -45,7 +37,6 @@
     <ClInclude Include="include\dojo\GameState.h" />
     <ClInclude Include="include\dojo\InputSystem.h" />
     <ClInclude Include="include\dojo\Light.h" />
-    <ClInclude Include="include\dojo\linux\LinuxPlatform.h" />
     <ClInclude Include="include\dojo\Mesh.h" />
     <ClInclude Include="include\dojo\Noise.h" />
     <ClInclude Include="include\dojo\Object.h" />
@@ -83,9 +74,6 @@
     <ClInclude Include="include\dojo\win32\XInputJoystick.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimatedQuad.cpp" />

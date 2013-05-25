@@ -424,8 +424,10 @@ void Win32Platform::initialize( Game* g )
 	CreateDirectoryW( getAppDataPath().c_str(), NULL );
 
 	//load settings
-	if( config.isEmpty() )
-		Table::loadFromFile( &config, getAppDataPath() + "/config.ds" );
+	Table userConfig;
+	Table::loadFromFile( &userConfig, getAppDataPath() + "/config.ds" );
+
+	config.inherit( &userConfig ); //use the table that was loaded from file but override any config-passed members
 
 	int w = Math::min( screenWidth, game->getNativeWidth() );
 	int h = Math::min( screenHeight, game->getNativeHeight() );
@@ -460,7 +462,7 @@ void Win32Platform::initialize( Game* g )
 
 	fonts = new FontSystem();
 
-	mBackgroundQueue = new BackgroundQueue();
+	mBackgroundQueue = new BackgroundQueue( config.getInt( "threads", -1) );
 
 	DEBUG_MESSAGE( "---- Game Launched!");
 
@@ -480,13 +482,13 @@ void Win32Platform::prepareThreadContext()
 
 	req.wait();
 
+	//be nice, wglMakeCurrent just wants you to ask politely and more than once
+	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
 	int tries = 0;
-	for( ; wglMakeCurrent( hdc, req.contextHandle ) == FALSE && tries < 1000; ++tries ) //be nice, wglMakeCurrent just wants you to ask politely and more than once
+	for( ; wglMakeCurrent( hdc, req.contextHandle ) == FALSE && tries < 1000; ++tries ) 
 		Poco::Thread::sleep( 20 );
 
-	while( !wglMakeCurrent( hdc, req.contextHandle ) );
-
-	DEBUG_ASSERT( tries < 10, "Cannot share OpenGL on this thread" );
+	DEBUG_ASSERT( tries < 1000, "Cannot share OpenGL on this thread" );
 
 	glewInit();
 }
