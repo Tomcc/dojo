@@ -30,7 +30,7 @@ namespace Dojo
 		}
 
 		///Creates a Noise object drawing numbers from a new random number generator
-		Noise( unsigned int seedInt )
+		Noise( Random::Seed seedInt )
 		{
 			Random r( seedInt );
 			seed( r );

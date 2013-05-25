@@ -32,7 +32,8 @@ namespace Dojo
 	class Random {
 		// Data
 	public:
-		typedef unsigned long uint32;  // unsigned integer type, at least 32 bits
+		typedef size_t Seed;		  //seed is 64 bits on 64 bits platforms
+		typedef unsigned int uint32;  // unsigned 32 bit integer type
 
 		enum { N = 624 };       // length of state vector
 		enum { SAVE = N + 1 };  // length of array for save()
@@ -50,7 +51,7 @@ namespace Dojo
 		Random();  
 
 		///Creates a new Random generator using a seed
-		Random( const uint32 oneSeed );
+		Random( Seed oneSeed );
 
 		///Creates a new Random generator using a big seed in an array
 		Random( uint32 *const bigSeed, uint32 const seedLength = N ); 
@@ -97,7 +98,7 @@ namespace Dojo
 		double randNorm( const double mean = 0.0, const double stddev = 1.0 );
 
 		/// Re-seeding functions with same behavior as initializers
-		void seed( const uint32 oneSeed );
+		void seed( Seed s );
 		void seed( uint32 *const bigSeed, const uint32 seedLength = N );
 		void seed();
 
@@ -150,7 +151,7 @@ namespace Dojo
 		return ( h1 + differ++ ) ^ h2;
 	}
 
-	inline void Random::initialize( const uint32 seed )
+	inline void Random::initialize( Seed seed )
 	{
 		// Initialize generator state with seed
 		// See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
@@ -159,7 +160,7 @@ namespace Dojo
 		register uint32 *s = state;
 		register uint32 *r = state;
 		register int i = 1;
-		*s++ = seed & 0xffffffffUL;
+		*s++ = (uint32)seed & 0xffffffffUL;
 		for( ; i < N; ++i )
 		{
 			*s++ = ( 1812433253UL * ( *r ^ (*r >> 30) ) + i ) & 0xffffffffUL;
@@ -183,10 +184,10 @@ namespace Dojo
 		left = N, pNext = state;
 	}
 
-	inline void Random::seed( const uint32 oneSeed )
+	inline void Random::seed( Seed s )
 	{
 		// Seed the generator with a simple uint32
-		initialize(oneSeed);
+		initialize( s );
 		reload();
 	}
 
@@ -232,11 +233,15 @@ namespace Dojo
 		seed( (uint32)(t.currentTime() * 1000000) );
 	}
 	
-	inline Random::Random( const uint32 oneSeed )
-	{ seed(oneSeed); }
+	inline Random::Random( Seed oneSeed )
+	{ 
+		seed(oneSeed); 
+	}
 
 	inline Random::Random( uint32 *const bigSeed, const uint32 seedLength )
-	{ seed(bigSeed,seedLength); }
+	{ 
+		seed(bigSeed,seedLength); 
+	}
 
 	inline Random::Random( const Random& o )
 	{
