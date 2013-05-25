@@ -108,7 +108,7 @@ namespace Dojo
 		inline bool isRunning()					{	return running; }
 		
 		///initializes the platform and calls Game::onBegin()
-		virtual void initialise( Game* game )=0;
+		virtual void initialize( Game* game )=0;
 
 		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown()=0;
@@ -128,7 +128,7 @@ namespace Dojo
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
 		void run( Game* game )
 		{
-			initialise( game );
+			initialize( game );
 
 			loop( );
 

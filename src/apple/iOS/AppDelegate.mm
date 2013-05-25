@@ -21,7 +21,7 @@ using namespace Dojo;
 
 - (void) applicationDidFinishLaunching:(UIApplication *)application
 {
-	[glView initialise];
+	[glView initialize];
 }
 
 - (void) dealloc

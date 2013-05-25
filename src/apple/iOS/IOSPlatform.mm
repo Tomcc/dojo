@@ -55,11 +55,11 @@ IOSPlatform::~IOSPlatform()
 		[player release];
 }
 
-void IOSPlatform::initialise( Game* newGame )
+void IOSPlatform::initialize( Game* newGame )
 {
     //do not initialize twice
     game = newGame;
-	DEBUG_ASSERT( game != nullptr, "A non-null Game implementation must be provided to initialise()" );
+	DEBUG_ASSERT( game != nullptr, "A non-null Game implementation must be provided to initialize()" );
         
     //swap reported screen and window dimensions if the game requires a different ratio
     if( game->getNativeOrientation() == DO_LANDSCAPE_LEFT || game->getNativeOrientation() == DO_LANDSCAPE_RIGHT )
@@ -69,7 +69,7 @@ void IOSPlatform::initialise( Game* newGame )
     }
 }
 
-void IOSPlatform::_initialiseImpl(Application *application)
+void IOSPlatform::_initializeImpl(Application *application)
 {
     app = application;
 

@@ -49,7 +49,7 @@ using namespace Dojo;
 	platform->step( frameTimer.deltaTime() ); //one step
 }
 
-- (void) initialise
+- (void) initialize
 {
     // Get the layer
     CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
@@ -66,7 +66,7 @@ using namespace Dojo;
     displayLink = nil;
     renderImpl = NULL;
     
-    //initialise accelerometer
+    //initialize accelerometer
     UIAccelerometer* accelerometer = [UIAccelerometer sharedAccelerometer];
     accelerometer.delegate = self;
     lastAccelerationX = lastAccelerationY = lastRoll = 0;
@@ -86,7 +86,7 @@ using namespace Dojo;
 	
 	if( !renderImpl )
 	{        
-		platform->_initialiseImpl( self );
+		platform->_initializeImpl( self );
 	
 		renderImpl = platform->getRender();
 		touchSource = platform->getInput();

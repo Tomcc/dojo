@@ -53,7 +53,7 @@ namespace Dojo
 
 - (Dojo::Game*) game;
 
-- (void) initialise;
+- (void) initialize;
 - (void) startAnimation;
 - (void) stopAnimation;
 - (void) drawView:(id)sender;

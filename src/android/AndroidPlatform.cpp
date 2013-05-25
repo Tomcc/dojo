@@ -231,9 +231,9 @@ void AndroidPlatform::ResetDisplay(){
     isInPause=false;
     //
 }
-void AndroidPlatform::initialise(Game *g)
+void AndroidPlatform::initialize(Game *g)
 {
-    DEBUG_MESSAGE("AndroidPlatform::initialise()");
+    DEBUG_MESSAGE("AndroidPlatform::initialize()");
     //set game
     game=g;
     DEBUG_ASSERT( game );

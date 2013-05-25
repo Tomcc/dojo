@@ -31,7 +31,7 @@ namespace Dojo
 
 		AndroidPlatform(const Table& table);
 
-		virtual void initialise(Game *game);
+		virtual void initialize(Game *game);
 		virtual void shutdown();
 
 		virtual void acquireContext();

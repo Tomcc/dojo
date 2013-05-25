@@ -38,7 +38,7 @@ namespace Dojo
 		
 		virtual ~OSXPlatform();
         
-        virtual void initialise( Game* g );
+        virtual void initialize( Game* g );
 		virtual void loop();
 		virtual void shutdown();
         

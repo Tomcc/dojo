@@ -47,7 +47,7 @@ namespace Dojo
 
 			//TODO actually add points evaluating the "curvyness" of the path
 			float length = A.distance( B ) + B.distance( C ); //compute a rough length of this arc
-			int subdivs = length * pointsPerUnitLength + 1;
+			int subdivs = (int)(length * pointsPerUnitLength + 1);
 
 			for(int i = 1; i <= subdivs; i++)
 			{
@@ -67,7 +67,7 @@ namespace Dojo
 			
 			//TODO actually add points evaluating the "curvyness" of the path
 			float length = A.distance( B ) + B.distance( C ) + C.distance( D ); //compute a rough length of this arc
-			int subdivs = length * pointsPerUnitLength + 1;
+			int subdivs = (int)(length * pointsPerUnitLength + 1);
 
 			for( int i = 0; i <= subdivs; i++)
 			{

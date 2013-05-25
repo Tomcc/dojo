@@ -16,7 +16,7 @@ namespace Dojo
 		LinuxPlatform( const Table& config );
 		
 		///initializes the platform and calls Game::onBegin()
-		virtual void initialise( Game* game );
+		virtual void initialize( Game* game );
 
 		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown();

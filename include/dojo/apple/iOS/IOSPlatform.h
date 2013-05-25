@@ -50,7 +50,7 @@ namespace Dojo
 		
 		virtual ~IOSPlatform();
 				
-		virtual void initialise( Game* game );
+		virtual void initialize( Game* game );
 		virtual void loop();
         virtual void step( float dt );
 		virtual void shutdown();
@@ -118,7 +118,7 @@ namespace Dojo
 		*/
 		 
 #ifdef __OBJC__
-		void _initialiseImpl( Application* application );
+		void _initializeImpl( Application* application );
 		
 		inline Application* getNativeApplication()
 		{			

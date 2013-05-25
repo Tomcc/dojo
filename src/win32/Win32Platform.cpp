@@ -250,7 +250,7 @@ void Win32Platform::_adjustWindow()
     MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 }
 
-bool Win32Platform::_initialiseWindow( const String& windowCaption, uint w, uint h )
+bool Win32Platform::_initializeWindow( const String& windowCaption, uint w, uint h )
 {
 	DEBUG_MESSAGE( "Creating " << w << "x" << h << " window" );
 
@@ -397,10 +397,10 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	save( &config );
 }
 
-void Win32Platform::initialise( Game* g )
+void Win32Platform::initialize( Game* g )
 {
 	game = g;
-	DEBUG_ASSERT( game, "The Game implementation passed to initialise() can't be null" );
+	DEBUG_ASSERT( game, "The Game implementation passed to initialize() can't be null" );
 
 	//init appdata folder
 	TCHAR szPath[MAX_PATH];
@@ -438,7 +438,7 @@ void Win32Platform::initialise( Game* g )
 	mFullscreen = windowWidth == screenWidth && windowHeight == screenHeight && config.getBool( "fullscreen" );
 
 	//just use the game's preferred settings
-	if( !_initialiseWindow( game->getName(), windowWidth, windowHeight ) )
+	if( !_initializeWindow( game->getName(), windowWidth, windowHeight ) )
 		return;
 
 	setVSync( config.getBool( "disable_vsync" ) ? 0 : 1 );		

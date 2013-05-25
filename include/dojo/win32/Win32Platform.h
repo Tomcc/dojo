@@ -27,7 +27,7 @@ namespace Dojo
 		Win32Platform( const Table& config );
 		virtual ~Win32Platform();
 
-		virtual void initialise( Game* g );
+		virtual void initialize( Game* g );
 		virtual void shutdown();
 
 		void prepareThreadContext();
@@ -128,7 +128,7 @@ namespace Dojo
 		ContextRequestsQueue mContextRequestsQueue;
 		Poco::Mutex mCRQMutex;
 
-		bool _initialiseWindow( const String& caption, uint w, uint h );
+		bool _initializeWindow( const String& caption, uint w, uint h );
 		
 	private:
 
