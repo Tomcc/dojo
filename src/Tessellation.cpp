@@ -15,11 +15,94 @@ extern "C"
 
 using namespace Dojo;
 
+void Tessellation::mergePoints( int i1, int i2 )
+{
+	//remove i2 from the list
+	positions.erase( positions.begin() + i2 );
+
+	//replace all the occurrences of i2 with i1; move all the indices > i2 down by one
+	for( auto& idx : indices )
+	{
+		if( idx == i2 )
+			idx = i1;
+		else if( idx > i2 )
+			--idx;
+	}
+}
+
+void Tessellation::mergeDuplicatePoints()
+{
+	//TODO: make faster? it is already a quite specific/fast NN implementation but takes 4x Delaunay
+	std::unordered_map< Vector, int > positionToIndexMap;
+
+	//iterate over all of the points
+	for( int i = 0; i < positions.size(); ++i )
+	{
+		auto& p = positions[i];
+		//try to find the new position in the map
+		auto elem = positionToIndexMap.find( p );
+
+		//if it isn't in the set, add it with its current index
+		if( elem == positionToIndexMap.end() )
+			positionToIndexMap[ p ] = i;
+
+		else //discard this point and map all the existing segments to its replacement
+			mergePoints( elem->second, i-- );
+	}
+}
+
+Tessellation::LoopList Tessellation::findLoops()
+{
+	//a loop is defined by a list of segments which start and end at the same index
+	LoopList loops;
+
+	//build a "streaks" list containing where "streaks" of concatenated segments start and end
+	struct Streak
+	{
+		int start, end, startIdx, endIdx;
+	};
+
+	std::vector< Streak > streaks;
+
+	Streak currentStreak;
+	currentStreak.start = 0;
+	currentStreak.startIdx = indices[ currentStreak.start ];
+	
+	int prevEnd = indices[1];
+	for( int i = 2; i < indices.size(); i += 2 )
+	{
+		int start = indices[i];
+
+		if( start != prevEnd ) //streak ended!
+		{
+			currentStreak.end = i-1;
+			currentStreak.endIdx = prevEnd;
+
+			streaks.push_back( currentStreak ); 
+			
+			//init the streak again
+			currentStreak.start = i; 
+			currentStreak.startIdx = start;
+		}
+
+		prevEnd = indices[ i+1 ]; 
+	}
+
+	//try to concatenate streaks and get loops
+
+	return loops;
+}
+
 void Tessellation::tessellate( bool clearInputs /* = true */ )
 {
 	Timer timer;
 
 	DEBUG_ASSERT( !positions.empty() && !indices.empty(), "Cannot tesselate an empty contour" );
+
+	//remove duplicate points
+	mergeDuplicatePoints();
+
+//	LoopList loops = findLoops();
 
 	struct triangulateio in, out;
 
@@ -48,12 +131,6 @@ void Tessellation::tessellate( bool clearInputs /* = true */ )
 	in.segmentmarkerlist = nullptr;
 
 	memcpy( in.segmentlist, indices.data(), indices.size() * sizeof( int ) );
-
-	/*for( int i = 0; i < in.numberofsegments; ++i ) //all the segments we're adding are boundary segments (1)
-		segmentmarkerlist.push_back( 1 );
-
-	in.segmentmarkerlist = segmentmarkerlist.data();*/
-	//out
 
 	//z - indices numbered from 0
 	//Q - no printf

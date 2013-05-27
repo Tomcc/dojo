@@ -56,7 +56,13 @@ void SoundBuffer::onUnload(bool soft)
 
 	//just push the event to all its chunks
 	for( auto chunk : mChunks )
-		chunk->onUnload( soft );
+	{
+		if( !isStreaming() ) //non-streaming buffers own all of their chunk (to avoid them being released each time)
+			chunk->release();
+
+		if( chunk->isLoaded() )
+			chunk->onUnload( soft );
+	}
 }
 
 ////-------------------------------------////-------------------------------------////------------------------------------
@@ -186,13 +192,14 @@ void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 	{
 		DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
         DEBUG_ASSERT( alBuffer != AL_NONE, "tried to delete an invalid alBuffer" );
+		DEBUG_ASSERT( references == 0, "Tried to unload a Chunk that is still in use" );
 
 		alDeleteBuffers( 1, &alBuffer );
-		alBuffer = 0;
-
-		loaded = false;
 
 		CHECK_AL_ERROR;
+
+		alBuffer = 0;
+		loaded = false;
 	}
 }
 

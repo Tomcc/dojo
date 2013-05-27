@@ -1,5 +1,5 @@
-#ifndef Tesselation_h__
-#define Tesselation_h__
+#ifndef Tessellation_h__
+#define Tessellation_h__
 
 #include "dojo_common_header.h"
 
@@ -15,6 +15,24 @@ namespace Dojo
 	class Tessellation
 	{
 	public:
+
+		///a Loop defines a closed circuit of segments using their start and end index-indices
+		struct Loop
+		{
+			int start, end;
+			bool hole; 
+
+			Loop( int s, int e, bool h ) :
+				start( s ),
+				end( e ),
+				hole( h )
+			{
+
+			}
+		};
+
+		typedef std::vector< Loop > LoopList;
+
 		std::vector< Vector > positions, outPositions;
 		std::vector< int > indices, outIndices;
 
@@ -87,6 +105,21 @@ namespace Dojo
 				addSegment( M.lerpTo( t, N ) );
 			}
 		}
+
+		///removes i2 from the point list and rearranges all the indices to point to i1
+		void mergePoints( int i1, int i2 );
+
+		///merges all the points that share the same position
+		/**
+		this method will be automatically run by tessellate() as the triangulation algorithm doesn't allow for duplicate points
+		*/
+		void mergeDuplicatePoints();
+
+		///discovers and returns all the loops in this tesselation
+		/**
+		they are represented by the index of the start and end index.
+		*/
+		LoopList findLoops();
 
 		///tessellates the countour mesh producing a triangle mesh
 		/**
