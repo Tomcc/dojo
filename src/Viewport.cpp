@@ -150,8 +150,8 @@ void Viewport::_updateTransforms()
                               getHalfSize().x,
                               -getHalfSize().y,
                               getHalfSize().y,
-                                 zNear,
-                                 zFar );
+                              0.f,  //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
+                              zFar );
        
     //compute frustum projection
     mFrustumTransform = glm::perspective( 

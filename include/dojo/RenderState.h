@@ -28,6 +28,14 @@ namespace Dojo
 	{
 	public:
 
+		///an enum describing high-level photoshop-like blending modes
+		enum BlendingMode
+		{
+			BM_ALPHA,
+			BM_MULTIPLY,
+			BM_ADD
+		};
+
 		class TextureUnit
 		{
 		public:
@@ -189,6 +197,18 @@ namespace Dojo
 		{
 			srcBlend = src;
 			destBlend = dest;
+		}
+
+		///sets an abstract photoshop-like blending mode
+		void setBlending( BlendingMode mode )
+		{
+			static const GLenum modeToGLTable[] = {
+				GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, //alphablend
+				GL_DST_COLOR, GL_ZERO, //multiply
+				GL_ONE, GL_ONE, //add
+			};
+
+			setBlending( modeToGLTable[mode*2], modeToGLTable[mode*2+1] );
 		}
 
 		///sets the Shader material to be used for this RenderState
