@@ -153,6 +153,8 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 
 	if( page->getFont()->generateEdge || page->getFont()->generateSurface ) //tesselate ALL the things!
 	{
+		Timer timer;
+
 		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
 		mTesselation = std::unique_ptr< Tessellation >( new Tessellation() );
 
@@ -163,8 +165,10 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 		FT_Outline_Decompose( outline, &funcs, this );
 
 		//now that everything is loaded & in order, tessellate the mesh
-		if( mTesselation->indices.size() && page->getFont()->generateSurface ) //HACK
+		if( mTesselation->segments.size() && page->getFont()->generateSurface ) //HACK
 			mTesselation->tessellate( !page->getFont()->generateEdge ); //keep edges if they are needed too
+
+		DEBUG_MESSAGE( "Tesselated a character in " << timer.deltaTime() * 1000. << " ms" );
 	}
 }
 

@@ -27,6 +27,7 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
 		mMesh->setTriangleMode( Mesh::TM_LINE_LIST );
 		mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+		mMesh->setVertexFieldEnabled( Mesh::VF_COLOR );
 	}
 	else
 	{
@@ -108,18 +109,28 @@ void PolyTextArea::_prepare()
 			if( pFont->isKerningEnabled() && lastChar )
 				charPosition.x -= pFont->getKerning( character, lastChar ); 
 
-			//merge this outline in the VBO
+			//merge this mesh in the VBO
 			int baseIdx = mMesh->getVertexCount();
 
-			//choose the right data sources for outline/surface
-			auto& vertices = (mRendering == RT_OUTLINE) ? t->positions : t->outPositions;
-			auto& indices = (mRendering == RT_OUTLINE) ? t->indices : t->outIndices;
+			for( int i = 0; i < t->positions.size(); ++i )
+			{
+				mMesh->vertex( charPosition + t->positions[i].toVec() );
 
-			for( auto& point : vertices )
-				mMesh->vertex( charPosition + point );
+				if( mMesh->isVertexFieldEnabled( Mesh::VF_COLOR ) )
+					mMesh->color( t->colors[i] );
+			}
 
-			for( auto& index : indices )
-				mMesh->index( baseIdx + index );
+			if( mRendering == RT_SURFACE )
+			{
+				for( auto& index : t->outIndices )
+					mMesh->index( baseIdx + index );
+			}
+			else //HACK do not actually use contours here
+			{
+				for( auto& contour : t->contours )
+					for( auto& index : contour.indices )
+						mMesh->index( baseIdx + index );
+			}
 		}
 
 		lastChar = character;

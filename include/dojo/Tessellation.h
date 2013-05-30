@@ -8,33 +8,93 @@
 namespace Dojo
 {
 	
-	///A Tesselation is a 2D triangle mesh created by the tesselation of an area enclosed by edges using Constrained Delaunay Triangulation
+	///A Tessellation is a 2D triangle mesh created by the tessellation of an area enclosed by edges using Constrained Delaunay Triangulation
 	/**
-	The tesselation class can tesselate any given countour mesh that is initialized in its "positions" and "indices" arrays.
+	The tessellation class can tessellate any given countour mesh that is initialized in its "positions" and "indices" arrays.
+
+	\remark if a contour is not closed or one or more contours intersect, the results of the tessellation are undefined
 	*/
 	class Tessellation
 	{
 	public:
 
-		///a Loop defines a closed circuit of segments using their start and end index-indices
-		struct Loop
+		struct Position
 		{
-			int start, end;
-			bool hole; 
+			double x, y;
 
-			Loop( int s, int e, bool h ) :
-				start( s ),
-				end( e ),
-				hole( h )
+			Position( const Vector& p ) :
+				x( p.x ),
+				y( p.y )
 			{
 
 			}
+
+			Position( double X, double Y ) : 
+				x( X ),
+				y( Y )
+			{
+
+			}
+
+			Vector toVec()
+			{
+				return Vector( (float)x, (float)y );
+			}
 		};
 
-		typedef std::vector< Loop > LoopList;
+		struct Segment
+		{
+			int i1, i2;
 
-		std::vector< Vector > positions, outPositions;
-		std::vector< int > indices, outIndices;
+			Segment( int a, int b ) :
+				i1( a ),
+				i2( b )
+			{
+				DEBUG_ASSERT( a >= 0, "Invalid negative index" );
+				DEBUG_ASSERT( b >= 0, "Invalid negative index" );
+				DEBUG_ASSERT( a != b, "A segment can't start and end at the same vertex" );
+			}
+		};
+
+		///a Loop defines a closed circuit of segments using their start and end index-indices
+		struct Contour
+		{
+			std::vector< int > indices;
+
+			int parity;
+			bool closed;
+
+			Contour( ) :
+				parity( -1 ),
+				closed( false )
+			{
+
+			}
+
+			///adds a segment to this contour, marks it as closed if end == start
+			void _addSegment( int start, int end )
+			{
+				indices.push_back( start );
+				indices.push_back( end );
+				
+				closed = (end == indices.front());
+			}
+		};
+
+		typedef std::vector< Contour > ContourList;
+
+		//in
+		std::vector< Position > positions;
+		std::vector< Segment > segments;
+		std::vector< unsigned int > colors; //HACK
+
+		//mid
+		ContourList contours;
+		std::vector< int > contourForSegment;
+		std::vector< Position > holes;
+
+		//out
+		std::vector< int > outIndices;
 
 		///Creates an empty 2D Tesselation object
 		Tessellation()
@@ -42,26 +102,27 @@ namespace Dojo
 
 		}
 
+		///Adds a 2D point to the tessellation contour
 		void addPoint( const Vector& p )
 		{
 			positions.push_back( p );
+			colors.push_back( 0xffff0000 ); //HACK
 		}
 
 		///adds a point and the indices to construct a single segment starting from the last point
 		void addSegment( const Vector& p )
 		{
 			int idx = positions.size()-1;
-			positions.push_back( p );
+			addPoint( p );
 
 			//add indices to the point
-			indices.push_back( idx );
-			indices.push_back( idx+1 );
+			segments.push_back( Segment( idx, idx+1 ) );
 		}
 
 		///adds a quadratic bezier curve (single control point) starting from the last point
 		void addQuadradratic( const Vector& B, const Vector& C, float pointsPerUnitLength )
 		{
-			Vector U, V, A = positions.back();
+			Vector U, V, A = positions.back().toVec();
 
 			//TODO actually add points evaluating the "curvyness" of the path
 			float length = A.distance( B ) + B.distance( C ); //compute a rough length of this arc
@@ -81,7 +142,7 @@ namespace Dojo
 		///adds a cubic bezier curve (double control point) starting from the last point
 		void addCubic( const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength )
 		{
-			Vector U,V,W,M,N, A = positions.back();
+			Vector U,V,W,M,N, A = positions.back().toVec();
 			
 			//TODO actually add points evaluating the "curvyness" of the path
 			float length = A.distance( B ) + B.distance( C ) + C.distance( D ); //compute a rough length of this arc
@@ -105,7 +166,7 @@ namespace Dojo
 				addSegment( M.lerpTo( t, N ) );
 			}
 		}
-
+		
 		///removes i2 from the point list and rearranges all the indices to point to i1
 		void mergePoints( int i1, int i2 );
 
@@ -115,17 +176,23 @@ namespace Dojo
 		*/
 		void mergeDuplicatePoints();
 
-		///discovers and returns all the loops in this tesselation
+		///builds the internal "loops" structure, representing all the contours of this tessellation
 		/**
-		they are represented by the index of the start and end index.
+		each loop contains a copy of all of its segments
 		*/
-		LoopList findLoops();
+		void findContours();
 
 		///tessellates the countour mesh producing a triangle mesh
 		/**
 		\param clearInputs auto-clears the input vectors
 		*/
 		void tessellate( bool clearInputs = true );
+
+	protected:
+
+		bool _raycastSegmentAlongX( const Segment& segment, const Position& startPosition );
+
+		int _assignToIncompleteContour( int start, int end );
 	};
 }
 

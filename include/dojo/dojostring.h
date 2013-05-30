@@ -61,6 +61,11 @@ namespace Dojo
 			append( 1, (unichar)s );
 		}
 		
+		String( unichar c )
+		{
+			append( 1, c );
+		}
+
 		String( const char * s ) :
 		_ustring()
 		{
