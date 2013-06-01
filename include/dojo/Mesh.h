@@ -488,7 +488,6 @@ namespace Dojo
 		inline void _getVertexFieldData( VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset )
 		{
 			outOffset = (void*)vertexFieldOffset[ field ];
-			outNormalized = false;
 
 			switch ( field )
 			{
@@ -498,7 +497,6 @@ namespace Dojo
 			case VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
 
 			default: //textures
-				outNormalized = true;
 				outComponentsType = GL_FLOAT;
 				outComponents = 2;
 				outNormalized = false;

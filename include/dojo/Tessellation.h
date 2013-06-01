@@ -152,10 +152,6 @@ namespace Dojo
 			{
 				float t = (float)i / subdivs;
 
-				U = (1.0f - t) * A + t * B;
-				V = (1.0f - t) * B + t * C;
-				W = (1.0f - t) * C + t * D;
-
 				U = A.lerpTo( t, B );
 				V = B.lerpTo( t, C );
 				W = C.lerpTo( t, D );

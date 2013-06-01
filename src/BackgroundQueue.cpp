@@ -43,7 +43,7 @@ void BackgroundQueue::fireCompletedCallbacks()
 	mCompletedQueueMutex.lock();
 
 	auto localQueue = mCompletedQueue; //copy the queue for async access
-	while( mCompletedQueue.size() ) //and empty it again
+	while( !mCompletedQueue.empty() ) //and empty it again
 		mCompletedQueue.pop();
 
 	mCompletedQueueMutex.unlock();

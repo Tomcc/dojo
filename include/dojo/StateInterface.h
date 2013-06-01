@@ -14,7 +14,7 @@
 
 namespace Dojo
 {
-	///StateInterface is the State and State machine class
+	///Objects inheriting from StateInterface are at the same time a State, and a State Machine themselves; most of the gameplay logic of a Dojo game should be implemented overriding onBegin, onLoop and onEnd protected events
 	class StateInterface
 	{
 	public:
@@ -23,7 +23,8 @@ namespace Dojo
 		currentState(-1),
 		currentStatePtr( NULL ),
 		mTransitionCompleted( true ),
-		mCanSetNextState( true )
+		mCanSetNextState( true ),
+		mAutoDeleteState( false )
 		{
 			nextState = -1;
 			nextStatePtr = NULL;
@@ -150,30 +151,52 @@ namespace Dojo
 		bool mTransitionCompleted, mCanSetNextState, mAutoDeleteState;
 				
 		//------ state events
+
+		///onBegin is called each time *this* State is made current on the parent state.
+		/**
+		For example, Game's onBegin() is called only when the application starts.
+		*/
 		virtual void onBegin()
 		{
 			
 		}
+
+		///onLoop contains all of the game's "non-event-response code", as it is called once per frame on each object that listens to it
 		virtual void onLoop( float dt )
 		{
 			
 		}
+
+		///onEnd is called when this State is replaced by another State in the parent, or if the parent itself is destroyed
 		virtual void onEnd()
 		{
 			
 		}
 		
 		//----- immediate substate events
+
+		///onStateBegin is called each time an implicit substate of this State is made current
+		/**
+		You can check which State has begun using isCurrentState()
+		*/
 		virtual void onStateBegin()
 		{
 			
 		}
 		
+		///onStateLoop is called each frame on the current (implicit) state.
+		/**
+		You can check which State is current using isCurrentState()
+		*/
 		virtual void onStateLoop( float dt )
 		{
 			
 		}
 		
+		///onStateBegin is called each time an implicit substate of this State has been replaced, or the parent has been destroyed.
+		/**
+		You can check which State has ended using isCurrentState()
+		*/
 		virtual void onStateEnd()
 		{
 			

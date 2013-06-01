@@ -209,7 +209,6 @@ bool Font::Page::onLoad()
 	FT_GlyphSlot slot = font->face->glyph;
 	FT_Bitmap* bitmap;
 	uint gliphidx;
-	int err;
 
 	font->_prepareFace();
 
@@ -224,7 +223,7 @@ bool Font::Page::onLoad()
 		for( uint j = 0; j < FONT_PAGE_SIDE; ++j, ++c, ++character )
 		{
 			gliphidx = FT_Get_Char_Index( font->face, c );
-			err = FT_Load_Glyph( font->face, gliphidx, FT_LOAD_DEFAULT );
+			int err = FT_Load_Glyph( font->face, gliphidx, FT_LOAD_DEFAULT );
 
 			x = j * font->mCellWidth;
 			y = i * font->mCellHeight;

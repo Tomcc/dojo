@@ -240,8 +240,6 @@ namespace Dojo
 
 	protected:
 
-		bool mEOF;
-
 		const String* wcharStr;
 		const std::string* utf8Str;
 

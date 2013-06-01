@@ -53,10 +53,8 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 
 	case WM_PAINT:
 		{
-			HDC hdc;
 			PAINTSTRUCT ps;
-			hdc = BeginPaint( hwnd, &ps );
-			// don't draw here.  draw in the draw() function.
+			BeginPaint( hwnd, &ps );
 			EndPaint( hwnd, &ps );
 		}
 		return 0;
@@ -557,7 +555,7 @@ void Win32Platform::step( float dt )
 	
 	//check if some other thread requested a new context
 	mCRQMutex.lock();
-	while( mContextRequestsQueue.size() )
+	while( !mContextRequestsQueue.empty() )
 	{
 		ContextShareRequest* req = mContextRequestsQueue.front();
 		mContextRequestsQueue.pop();
@@ -711,15 +709,13 @@ void Win32Platform::keyReleased( int kc )
 
 GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
-	//image format
-	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	//pointer to the image, once loaded
 	FIBITMAP *dib = NULL;
 
 	std::string ansipath = path.ASCII();
 
 	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
-	fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
 	//if still unkown, return failure
 	if(fif == FIF_UNKNOWN)
 	{

@@ -1,0 +1,1 @@
+cppcheck src -j 8 --force --enable=all -i include/dojo/triangle.c -isrc/android/lodepng.cpp -I dependencies-win32/include/ -I include/dojo/ 2> cppcheck_result.txt

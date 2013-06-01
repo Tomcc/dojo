@@ -33,12 +33,8 @@ namespace Dojo
 
 		FT_Face getFace( const String& fileName )
 		{
-			if(faceMap.size()>0){
-				FaceMap::iterator _where = faceMap.find( fileName );
-				if( _where != faceMap.end() )	
-							return _where->second;
-			}
-			return _createFaceForFile( fileName );
+			FaceMap::iterator where = faceMap.find( fileName );
+			return where != faceMap.end() ? where->second : _createFaceForFile( fileName );
 		}
 
 		FT_Stroker getStroker( float width )

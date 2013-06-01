@@ -132,7 +132,7 @@ namespace Dojo
 
 			loop( );
 
-			Platform::shutdownPlatform();
+			shutdownPlatform();
 		}
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;

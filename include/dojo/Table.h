@@ -582,7 +582,7 @@ namespace Dojo
 
 		inline bool isEmpty() const
 		{
-			return map.size() == 0;
+			return map.empty();
 		}
 		
 		///write the table in string form over buf
