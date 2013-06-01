@@ -57,7 +57,10 @@ currentFadeTime(0)
 			break;
 	}
 
-	DEBUG_ASSERT( idleSoundPool.size() >= NUM_SOURCES_MIN, "OpenAL could not preload at least NUM_SOURCES_MIN sources" ); //ensure at least MIN sources have been built
+	//ensure at least MIN sources have been built
+	DEBUG_ASSERT_INFO( 
+		idleSoundPool.size() >= NUM_SOURCES_MIN, 
+		"OpenAL could not preload the minimum sources number", String("NUM_SOURCES_MIN = ") + NUM_SOURCES_MIN ); 
 
 	//dummy source to manage source shortage
 	fakeSource = new SoundSource( 0 );
@@ -78,6 +81,8 @@ SoundManager::~SoundManager()
 		SAFE_DELETE( idleSoundPool.at(i) );
 
 	SAFE_DELETE( fakeSource );
+
+	alcCloseDevice( device );
 }
 
 SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )

@@ -22,7 +22,6 @@ namespace Dojo
 		StateInterface( bool autoDelete = true ) :
 		currentState(-1),
 		currentStatePtr( NULL ),
-		autoDelete( autoDelete ),
 		mTransitionCompleted( true ),
 		mCanSetNextState( true )
 		{
@@ -32,7 +31,7 @@ namespace Dojo
 		
 		virtual ~StateInterface()
 		{			
-			if( currentStatePtr )
+			if( currentStatePtr && mAutoDeleteState )
 				SAFE_DELETE( currentStatePtr );
 		}
 		
@@ -80,17 +79,20 @@ namespace Dojo
 		 -Immediately when there's no current state, eg. at begin
 		 -at the next loop when it replaces a previous state
 		 
-		 Warning, calling setState
+		 \param autoDelete the child state is destroyed when replaced or when the parent (this) state is destroyed
+
+		 \remark calling setState
 		 -with a pending state change
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		inline void setState( StateInterface* child )
+		inline void setState( StateInterface* child, bool autoDelete = true )
 		{
 			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
  			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
 			
 			nextStatePtr = child;
+			mAutoDeleteState = autoDelete;
 						
 			//start immediately if we have no current state
 			if( !hasCurrentState() )
@@ -102,7 +104,6 @@ namespace Dojo
 		
 		inline bool isCurrentState( int state )			{	return currentState == state;	}
 		inline bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
-		inline bool isAutoDeleted()						{	return autoDelete;				}
 
 		inline bool hasChildState()						{	return currentStatePtr != NULL;	}
 		
@@ -144,11 +145,9 @@ namespace Dojo
 		int nextState;
 		StateInterface* nextStatePtr;
 		
-		bool autoDelete;
-		
 	private:
 		
-		bool mTransitionCompleted, mCanSetNextState;
+		bool mTransitionCompleted, mCanSetNextState, mAutoDeleteState;
 				
 		//------ state events
 		virtual void onBegin()
@@ -220,7 +219,7 @@ namespace Dojo
 			{
 				_subStateEnd();
 			
-				if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+				if( currentStatePtr && mAutoDeleteState )
 					SAFE_DELETE( currentStatePtr );
 			}
 			
@@ -245,7 +244,7 @@ namespace Dojo
 			{
 				_subStateEnd();
 			
-				if( currentStatePtr && currentStatePtr->isAutoDeleted() )
+				if( currentStatePtr && mAutoDeleteState )
 					SAFE_DELETE( currentStatePtr );
 			}
 			

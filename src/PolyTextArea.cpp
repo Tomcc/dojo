@@ -112,21 +112,47 @@ void PolyTextArea::_prepare()
 			//merge this mesh in the VBO
 			int baseIdx = mMesh->getVertexCount();
 
-			for( int i = 0; i < t->positions.size(); ++i )
-			{
-				mMesh->vertex( charPosition + t->positions[i].toVec() );
-
-				if( mMesh->isVertexFieldEnabled( Mesh::VF_COLOR ) )
-					mMesh->color( t->colors[i] );
-			}
 
 			if( mRendering == RT_SURFACE )
 			{
+				for( auto& pos : t->positions )
+					mMesh->vertex( charPosition + pos.toVec() );
+			
 				for( auto& index : t->outIndices )
 					mMesh->index( baseIdx + index );
 			}
+			else if( mRendering == RT_EXTRUDED )
+			{
+				for( auto& pos : t->positions )
+					mMesh->vertex( charPosition + pos.toVec() );
+
+				for( auto& index : t->outIndices )
+					mMesh->index( baseIdx + index );
+
+				baseIdx = mMesh->getVertexCount();
+
+				for( auto& pos : t->positions )
+					mMesh->vertex( charPosition + pos.toVec() - Vector( 0,0, mDepth ) );
+
+				//flip index winding to flip the face
+				for( int i = 0; i < t->outIndices.size(); i += 3 )
+				{
+					mMesh->index( baseIdx + t->outIndices[i+2] );
+					mMesh->index( baseIdx + t->outIndices[i+1] );
+					mMesh->index( baseIdx + t->outIndices[i] );
+				}
+
+				//create a strip to bind the two faces together
+				//TODO
+			}
 			else //HACK do not actually use contours here
 			{
+				for( int i = 0; i < t->positions.size(); ++i )
+				{
+					mMesh->vertex( charPosition + t->positions[i].toVec() );
+					mMesh->color( t->colors[i] );
+				}
+
 				for( auto& contour : t->contours )
 					for( auto& index : contour.indices )
 						mMesh->index( baseIdx + index );

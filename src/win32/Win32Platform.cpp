@@ -199,12 +199,10 @@ mFramesToAdvance( 0 )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
 #endif
 	*/
+	//TODO detect locale code
+	locale = "en";
 
-	//TODO detect locale
-	locale = "it";
-
-	//if no config is supplied, try to load it from an user file
-
+	//detect monitor size
 	screenWidth = GetSystemMetrics( SM_CXSCREEN );
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
 
