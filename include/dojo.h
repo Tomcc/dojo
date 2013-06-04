@@ -2,11 +2,13 @@
 #define DOJO_H
 
 #include <dojo/AnimatedQuad.h>
+#include <dojo/ApplicationListener.h>
 #include <dojo/Array.h>
 #include <dojo/AStar.h>
 #include <dojo/Resource.h>
 #include <dojo/Color.h>
-#include <dojo/ApplicationListener.h>
+#include <dojo/Console.h>
+#include <dojo/DebugUtils.h>
 #include <dojo/Font.h>
 #include <dojo/FontSystem.h>
 #include <dojo/FrameSet.h>
@@ -16,6 +18,7 @@
 #include <dojo/InputDevice.h>
 #include <dojo/Keyboard.h>
 #include <dojo/Light.h>
+#include <dojo/Log.h>
 #include <dojo/Mesh.h>
 #include <dojo/Noise.h>
 #include <dojo/Object.h>

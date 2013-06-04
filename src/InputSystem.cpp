@@ -103,7 +103,7 @@ void InputSystem::_fireDeviceConnected( Dojo::InputDevice* j )
 	for( Listener* l : listeners )
 		l->onDeviceConnected( j );
 
-	DEBUG_MESSAGE( "Connected a " << j->getType().ASCII().c_str() << "!" );
+	DEBUG_MESSAGE( "Connected a " + j->getType() + "!" );
 }
 
 void InputSystem::_fireDeviceDisconnected( Dojo::InputDevice* j )

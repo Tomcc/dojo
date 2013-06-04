@@ -72,7 +72,14 @@ namespace Dojo
 		///sets an additional spacing between chars (default 0)
 		inline void setCharSpacing( float c )	{	charSpacing = c;	}
 		
+		///returns the spacing between each line (0-1), proportional to the font height
 		inline float getInterline()				{	return interline;	}
+
+		///returns the height in pixel of a line of this TextArea
+		int getLineHeight()
+		{
+			return font->getFontHeight() * (1.f + getInterline() );
+		}
 
 		///returns the number of characters that are currently shown
 		inline uint getVisibleCharacters()		{	return visibleCharsNumber;	}

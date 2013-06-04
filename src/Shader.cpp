@@ -115,7 +115,7 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 		elem->second.userUniformCallback = dataBinder; //assign the data source to the right uniform
 
 	else
-		DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" << name << "\". Was it optimized away by the compiler?" );
+		DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
 }
 
 #ifdef DOJO_SHADERS_AVAILABLE

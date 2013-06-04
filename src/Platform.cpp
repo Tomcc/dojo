@@ -8,6 +8,8 @@
 #include "File.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
+#include "BackgroundQueue.h"
+#include "Log.h"
 
 #if defined (PLATFORM_WIN32)
 	#include "win32/Win32Platform.h"
@@ -80,7 +82,15 @@ Platform::Platform( const Table& configTable ) :
 {
 	addZipFormat( ".zip" );
 	addZipFormat( ".dpk" );
+
+	gp_log = mLog = new Log();
+	mLog->addListener( new Log::Stdout() );
 }	
+
+Platform::~Platform()
+{
+	SAFE_DELETE( mLog );
+}
 
 int Platform::_findZipExtension( const String & path )
 {

@@ -38,6 +38,9 @@ namespace Dojo
 		*/
 		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK );
 
+		///queues a function to be executed on the main thread
+		void queueOnMainThread( const Callback& c );
+
 		///Waits until this queue stops itself
 		/**
 		be sure that no tasks are stalling it!
@@ -96,6 +99,8 @@ namespace Dojo
 
 		WorkerList mWorkers;
 
+		Poco::Thread::TID mMainThreadID;
+
 		///waits for a task, returns false if the thread has to close
 		bool _waitForTaskOrClose( TaskCallbackPair& out )
 		{
@@ -109,14 +114,6 @@ namespace Dojo
 				return true;
 			}
 			else return false;
-		}
-
-		///adds a completion callback to the queue
-		void _queueCompletionCallback( const Callback& c )
-		{
-			Lock l( mCompletedQueueMutex );
-
-			mCompletedQueue.push( c );
 		}
 
 	private:

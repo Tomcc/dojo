@@ -12,7 +12,7 @@ using namespace Dojo;
 Renderable::Renderable( Object* parent, const Vector& pos, Mesh* m ) :
 	Object( parent, pos, Vector::ONE ),
 	visible( true ),
-	layer(0),
+	layer( INT_MIN ),
 	renderingOrder(0),
 	currentFadeTime(0),
 	mCulled( false )

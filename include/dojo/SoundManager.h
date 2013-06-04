@@ -110,7 +110,7 @@ namespace Dojo {
 			inline void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing )
 			{
                 //TODO use easing
-                DEBUG_MESSAGE( "Music fading out in " << stopFadeTime << " s" );
+                DEBUG_MESSAGE( "Music fading out in " + String( stopFadeTime ) + " s" );
 					
                 fadeState = FS_FADE_OUT;
                 nextMusicTrack = NULL;

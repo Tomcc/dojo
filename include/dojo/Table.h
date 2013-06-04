@@ -9,6 +9,7 @@
 #include "StringReader.h"
 #include "dojostring.h"
 #include "Resource.h"
+#include "Log.h"
 
 namespace Dojo
 {
@@ -602,7 +603,7 @@ namespace Dojo
 		inline void debugPrint() const
 		{
 #ifdef _DEBUG			
-			DEBUG_MESSAGE( toString().ASCII() );
+			DEBUG_MESSAGE( toString() );
 #endif
 		}
 

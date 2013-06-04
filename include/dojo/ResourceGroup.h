@@ -19,6 +19,7 @@
 #include "Table.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "Log.h"
 
 #undef RT_FONT
 
@@ -121,7 +122,7 @@ namespace Dojo
 			
 			frameSets[name] = set;
 			
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "set" );
+			DEBUG_MESSAGE( "+" + name + "\t\t set" );
 		}
 		
 		inline void addFont( Font* f, const String& name )
@@ -131,7 +132,7 @@ namespace Dojo
 			
 			fonts[name] = f;
 			
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "font" );
+			DEBUG_MESSAGE( "+" + name + "\t\t font" );
 		}
 		
 		inline void addMesh( Mesh* m, const String& name )
@@ -141,7 +142,7 @@ namespace Dojo
 			
 			meshes[ name ] = m;
 			
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "mesh" );
+			DEBUG_MESSAGE( "+" + name + "\t\t mesh" );
 		}
 		
 		inline void addSound( SoundSet* sb, const String& name )
@@ -151,7 +152,7 @@ namespace Dojo
 			
 			sounds[ name ] = sb;
 			
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "sound" );
+			DEBUG_MESSAGE( "+" + name + "\t\t sound" );
 		}
 		
 		void addTable( Table* t );
@@ -164,7 +165,7 @@ namespace Dojo
 
 			shaders[ name ] = s;
 
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "shader" );
+			DEBUG_MESSAGE( "+" + name + "\t\t shader" );
 		}
 
 		///adds an existing ShaderProgram to this group
@@ -175,7 +176,7 @@ namespace Dojo
 
 			programs[ name ] = sp;
 
-			DEBUG_MESSAGE( "+" << name.ASCII() << "\t\t" << "shader program" );
+			DEBUG_MESSAGE( "+" + name + "\t\t shader program" );
 		}
 		
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
@@ -324,7 +325,7 @@ namespace Dojo
 		\remark all the assets without a version are by default version 0*/
 		void addFolderSimple( const String& folder, int version = 0 )
 		{
-			DEBUG_MESSAGE( "[" << folder.ASCII() << "]" );
+			DEBUG_MESSAGE( "[" + folder + "]" );
 			
 			addSets( folder, version );
 			addFonts( folder, version );
@@ -457,12 +458,12 @@ namespace Dojo
 				//delete too?
 				if( !softUnload )
 				{
-					DEBUG_MESSAGE( "-" << resourcePair.first.ASCII() );
+					DEBUG_MESSAGE( "-" + resourcePair.first );
 					SAFE_DELETE( resourcePair.second );
 				}
 				else if( !resourcePair.second->isLoaded() )
 				{
-					DEBUG_MESSAGE( "~" << resourcePair.first.ASCII() );
+					DEBUG_MESSAGE( "~" + resourcePair.first );
 				}
 			}
 

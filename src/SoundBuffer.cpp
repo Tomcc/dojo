@@ -7,6 +7,7 @@
 #include "FileStream.h"
 #include "Utils.h"
 #include "Platform.h"
+#include "BackgroundQueue.h"
 
 using namespace Dojo;
 
@@ -175,7 +176,7 @@ void SoundBuffer::Chunk::loadAsync()
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
 	//async load
-	Platform::getSingleton()->getBackgroundQueue().queueTask( [ & ]()
+	Platform::getSingleton()->getBackgroundQueue()->queueTask( [ & ]()
 	{
 		onLoad();
 	},

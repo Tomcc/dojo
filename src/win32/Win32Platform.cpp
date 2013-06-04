@@ -12,6 +12,7 @@
 #include "dojomath.h"
 #include "SoundManager.h"
 #include "InputSystem.h"
+#include "BackgroundQueue.h"
 
 #include "Keyboard.h"
 
@@ -248,7 +249,7 @@ void Win32Platform::_adjustWindow()
 
 bool Win32Platform::_initializeWindow( const String& windowCaption, uint w, uint h )
 {
-	DEBUG_MESSAGE( "Creating " << w << "x" << h << " window" );
+	DEBUG_MESSAGE( "Creating " + String(w) + "x" + String(h) + " window" );
 
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 

@@ -15,6 +15,7 @@
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
+    <ClInclude Include="include\dojo\Console.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\File.h" />
@@ -22,6 +23,7 @@
     <ClInclude Include="include\dojo\InputDevice.h" />
     <ClInclude Include="include\dojo\Keyboard.h" />
     <ClInclude Include="include\dojo\KeyCode.h" />
+    <ClInclude Include="include\dojo\Log.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\Resource.h" />
@@ -80,6 +82,7 @@
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundQueue.cpp" />
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />
@@ -87,6 +90,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Noise.cpp" />

@@ -82,8 +82,12 @@ namespace Dojo
 			fading = false;
 		}
 		
+		///returns the ID of the Render::Layer this object is assigned to
 		inline int getLayer()				{	return layer;			}
 		inline uint getRenderingOrder()		{	return renderingOrder;	}
+
+		///true if this object has been assigned to a Render::Layer
+		bool hasLayer()						{	return layer != INT_MIN;	}
 		
 		///tells if the object is either visible or has a mesh
 		inline bool isVisible()				{	return visible && mesh;	}

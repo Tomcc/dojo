@@ -2,6 +2,7 @@
 
 #include "dojo_common_header.h"
 #include "DebugUtils.h"
+#include "Log.h"
 
 #include "dojo_common_header.h"
 
@@ -15,13 +16,13 @@ std::stringstream  debug_stream_android;
 //the default assert fail implementation
 void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char* info, int line, const char* file, const char* function )
 {
-	DEBUG_MESSAGE( "Assertion failed: " << desc );
-	DEBUG_MESSAGE( "Condition is false: " << arg );
+	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) );
+	DEBUG_MESSAGE( "Condition is false: " + String( arg ) );
 	
 	if( info )
-		DEBUG_MESSAGE( "with " << info );
+		DEBUG_MESSAGE( "with " + String( info ) );
 
-	DEBUG_MESSAGE( "Function: " << function << " in " << file << " @ " << line );
+	DEBUG_MESSAGE( "Function: " + String(function) + " in " + String(file) + " @ " + String(line) );
 
 	//either catch this as a breakpoint in the debugger or abort (if not debugged)
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_OSX )
@@ -104,3 +105,5 @@ bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line, con
 }
 
 Dojo::AssertHandlerPtr Dojo::gp_assert_handler = Dojo::DEFAULT_ASSERT_HANDLER;
+
+Dojo::Log* Dojo::gp_log = nullptr;

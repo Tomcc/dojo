@@ -33,9 +33,9 @@ backLayer( NULL )
 
 	DEBUG_MESSAGE( "Creating OpenGL context...");
 	DEBUG_MESSAGE ("querying GL info... ");
-	DEBUG_MESSAGE ("vendor: " << glGetString (GL_VENDOR));
-	DEBUG_MESSAGE ("renderer: " << glGetString (GL_RENDERER));
-	DEBUG_MESSAGE ("version: OpenGL " << glGetString (GL_VERSION));
+	DEBUG_MESSAGE ("vendor: " + String( (const char*)glGetString (GL_VENDOR)));
+	DEBUG_MESSAGE ("renderer: " + String( (const char*)glGetString (GL_RENDERER)));
+	DEBUG_MESSAGE ("version: OpenGL " + String( (const char*)glGetString (GL_VERSION)));
 	
 	//clean errors (some drivers leave errors on the stack)
 	CHECK_GL_ERROR;

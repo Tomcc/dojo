@@ -27,7 +27,7 @@
 		#else
 		
 		#define DEBUG_OUT( T ) std::cout << T << ' '
-		#define DEBUG_MESSAGE( T ) std::cout << T << std::endl
+		#define DEBUG_MESSAGE( T ) Dojo::gp_log->append( (T) )
 
 	#endif
 	
@@ -65,6 +65,9 @@ namespace Dojo
 
 	///the globally define assertion handler pointer
 	extern AssertHandlerPtr gp_assert_handler;
+
+	class Log;
+	extern Log* gp_log;
 
 	///the default assertion handler
 	void DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char*, int line, const char* file, const char* function );

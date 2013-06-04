@@ -3,7 +3,7 @@
 
 #include "dojo_common_header.h"
 #include "Table.h"
-#include "BackgroundQueue.h"
+#include "Log.h"
 
 namespace Dojo 
 {
@@ -15,6 +15,7 @@ namespace Dojo
 	class Email;
 	class ApplicationListener;
 	class FileStream;
+	class BackgroundQueue;
 	
 	///Platform is the base of the engine; it runs the main loop, creates the windows and updates the Game
 	/** the Platform is the first object to be initialized in a Dojo game, using the static method Platform::create() */
@@ -40,10 +41,7 @@ namespace Dojo
 			return singleton;
 		}	
 		
-		virtual ~Platform()
-		{
-			
-		}
+		virtual ~Platform();
 		
 		inline Game* getGame()
 		{
@@ -65,9 +63,11 @@ namespace Dojo
 		inline InputSystem* getInput()			{	return input;	}
 		///returns the FontSystem instance
 		inline FontSystem* getFontSystem()		{	return fonts;	}
+		///returns the system Log
+		Log* getLog()						{	return mLog;	}
 
 		///returns the default BackgroundQueue
-		BackgroundQueue& getBackgroundQueue()	{	return *mBackgroundQueue;	}
+		BackgroundQueue* getBackgroundQueue()	{	return mBackgroundQueue;	}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
 		/**
@@ -247,6 +247,7 @@ namespace Dojo
 		
 		float realFrameTime;
 
+		Log* mLog;
 		BackgroundQueue* mBackgroundQueue;
 
 		Dojo::Array< ApplicationListener* > focusListeners;

@@ -12,6 +12,8 @@ BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
 	mQueueSemaphore( 0, 0xffff ),
 	mRunning( true )
 {
+	mMainThreadID = Poco::Thread::currentTid();
+
 	if( poolSize < 0 )
 		poolSize = Platform::getSingleton()->getCPUCoreCount();
 
@@ -36,6 +38,18 @@ void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
         
         mQueueSemaphore.set();
     }
+}
+
+void BackgroundQueue::queueOnMainThread( const Callback& c )
+{
+	if( Poco::Thread::currentTid() == mMainThreadID ) //is this already the main thread? just execute
+		c();
+	else
+	{
+		Lock l( mCompletedQueueMutex );
+
+		mCompletedQueue.push( c );
+	}
 }
 
 void BackgroundQueue::fireCompletedCallbacks()
@@ -70,6 +84,6 @@ void BackgroundQueue::Worker::run()
 		pair.first(); //execute the task
 
 		//push the callback on the completed queue
-		pParent->_queueCompletionCallback( pair.second );
+		pParent->queueOnMainThread( pair.second );
 	}
 }

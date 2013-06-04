@@ -52,7 +52,7 @@ bool ShaderProgram::_load()
 		{
 			GLchar* compiler_log = (GLchar*)malloc(blen);
             glGetShaderInfoLog( mGLShader, blen, &slen, compiler_log );
-			DEBUG_MESSAGE( "Compiler error:\n" << compiler_log );
+			DEBUG_MESSAGE( String( "Compiler error:\n" ) + compiler_log );
 			free (compiler_log);
 		}	
 
