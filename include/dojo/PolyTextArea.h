@@ -20,9 +20,25 @@ namespace Dojo
 		};
 
 		///creates a new PolyTextArea object at position, using "font", centered or not around the center, using rendering options RT
-		PolyTextArea( Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt, float extrudeDepth = 0.1 );
+		PolyTextArea( Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt );
 
 		virtual ~PolyTextArea();
+
+		///sets the extrusion parameters, changes taking effect once per frame
+		/**to disable beveled extrusion, pass 0 to both bevelDepth and inflateRadius
+		\param depth the depth of the extrusion as a fraction of the font height
+		\param bevelDepth the depth of the bevel as a fraction of the font height
+		\param inflateRadius the radius of the bevel's inflation as a fraction of the font height
+		*/
+		void setExtrusionParameters( float depth, float bevelDepth=0, float inflateRadius=0 )
+		{
+			DEBUG_ASSERT( depth > 0, "extrusion depth must be a positive number" );
+			DEBUG_ASSERT( bevelDepth >= 0 && bevelDepth < depth*0.5, "the depth of the bevel must not exceed half of the total depth" );
+
+			mDepth = depth;
+			mBevelDepth = bevelDepth;
+			mInflateRadius = inflateRadius;
+		}
 
 		///sets additional interline height
 		void setInterline( float interline )
@@ -73,14 +89,19 @@ namespace Dojo
 		Font* pFont;
 
 		RenderingType mRendering;
-		float mDepth;
+		float mDepth, mBevelDepth, mInflateRadius;
 		float mSpaceWidth, mInterline;
 
 		bool mDirty;
 
+		int mPrevLayerIdx;
+
 		void _centerLine( int rowStartIdx, float rowWidth );
 
 		void _prepare();
+
+		void _tesselateExtrusionStrip( Tessellation* t, int layerAbaseIdx, int layerBbaseIdx );
+		void _addExtrusionLayer( Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal = NULL );
 
 	private:
 	};

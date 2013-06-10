@@ -90,6 +90,63 @@ bool Tessellation::_raycastSegmentAlongX( const Segment& segment, const Position
 	return x > 0;
 }
 
+void Tessellation::_assignNormal( const Vector& n, Segment& s, int i, std::vector< Segment >& additionalSegmentsBuffer )
+{
+	auto& vert = extrusionContourVertices[ s[i] ];
+	auto& dest = vert.normal;
+
+	if( dest == Vector::ZERO )
+		dest = n;
+	else
+	{
+		float divergence = dest * n;
+		if( abs( divergence ) < 0.6 )
+		{
+			//create a new vertex with the new normal
+			int newIndex = extrusionContourVertices.size();
+			extrusionContourVertices.push_back( ExtrusionVertex( vert.position, n ) );
+
+			//create a new "degenerate" segment between the two new vertices
+			//this closes gaps in extrusions that are inflated
+			additionalSegmentsBuffer.push_back( Segment( s[i], newIndex ) );
+			s[i] = newIndex;
+		}
+		else
+		{
+			dest += n; //TODO this doesn't really make sense?
+			dest = dest.normalized();
+		}
+	}
+}
+
+void Tessellation::generateExtrusionContour()
+{
+	for( auto& pos : positions )
+		extrusionContourVertices.push_back( pos );
+
+	extrusionContourIndices = segments;
+
+	SegmentList additionalSegments;
+
+	Vector n;
+	int originalSegments = extrusionContourIndices.size();
+	for( auto& segment : extrusionContourIndices )
+	{
+		auto& a = positions[ segment.i1 ];
+		auto& b = positions[ segment.i2 ];
+
+		n.x = a.y - b.y;
+		n.y = b.x - a.x;
+		n = n.normalized();
+
+		_assignNormal( n, segment, 0, additionalSegments );
+		_assignNormal( n, segment, 1, additionalSegments );
+	}
+
+	//add the created segments to the extrusion segments
+	extrusionContourIndices.insert( extrusionContourIndices.end(), additionalSegments.begin(), additionalSegments.end() );
+}
+
 void Tessellation::findContours()
 {
 	//TODO sort segments? this might break if they are added in a unexpected manner?
@@ -125,9 +182,6 @@ void Tessellation::findContours()
 			{
 				if( _raycastSegmentAlongX( segments[j], startPos ) ) //has hit segment i, check to which contour it belongs
 				{
-					//HACK set in BLUE the vertices of the segment that has been hit
-					colors[ segments[j].i1 ] = colors[ segments[j].i2 ] = 0xff0000ff;
-
 					if( contourForSegment[j] != i ) //didn't hit the contour we're tracing for
 						++intersections;
 				}
@@ -153,6 +207,7 @@ void Tessellation::tessellate( bool clearInputs /* = true */ )
 	//remove duplicate points
 	mergeDuplicatePoints();
 
+	generateExtrusionContour();
 	findContours();
 
 	static struct triangulateio in, out;

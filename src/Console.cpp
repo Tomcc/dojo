@@ -21,7 +21,7 @@ Console::Console( Object* parent, const Vector& topLeft, const Vector& bottomRig
 //	mText->setMaxLineLength( scale.x );
 
 	//find how many lines of this textArea can be contained in this console
-	Vector fontSize;
+	Vector fontSize; 
 	parent->getGameState()->getViewport()->makeScreenSize( fontSize,
 		mText->getFont()->getFontWidth(), 
 		mText->getLineHeight() ); 

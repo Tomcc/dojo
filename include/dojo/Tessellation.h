@@ -54,6 +54,11 @@ namespace Dojo
 				DEBUG_ASSERT( b >= 0, "Invalid negative index" );
 				DEBUG_ASSERT( a != b, "A segment can't start and end at the same vertex" );
 			}
+
+			int& operator[] ( int i )
+			{
+				return i == 0 ? i1 : i2;
+			}
 		};
 
 		///a Loop defines a closed circuit of segments using their start and end index-indices
@@ -71,6 +76,15 @@ namespace Dojo
 
 			}
 
+			///returns the nth segment of the contour - it is unbounded, so oob locations are wrapped into the contour
+			int operator[]( int n )
+			{
+				while( n < 0 )
+					n += indices.size();
+
+				return indices[ n % indices.size() ];
+			}
+
 			///adds a segment to this contour, marks it as closed if end == start
 			void _addSegment( int start, int end )
 			{
@@ -82,16 +96,37 @@ namespace Dojo
 		};
 
 		typedef std::vector< Contour > ContourList;
+		typedef std::vector< Segment > SegmentList;
 
 		//in
 		std::vector< Position > positions;
-		std::vector< Segment > segments;
-		std::vector< unsigned int > colors; //HACK
+		SegmentList segments;
 
 		//mid
 		ContourList contours;
 		std::vector< int > contourForSegment;
 		std::vector< Position > holes;
+
+		struct ExtrusionVertex
+		{
+			Vector position, normal;
+
+			ExtrusionVertex( const Position& p ) :
+				position( (float)p.x, (float)p.y )
+			{
+
+			}
+
+			ExtrusionVertex( const Vector& p, const Vector& n ) :
+				position( p ),
+				normal( n )
+			{
+
+			}
+		};
+
+		std::vector< ExtrusionVertex > extrusionContourVertices;
+		SegmentList extrusionContourIndices;
 
 		//out
 		std::vector< int > outIndices;
@@ -106,7 +141,6 @@ namespace Dojo
 		void addPoint( const Vector& p )
 		{
 			positions.push_back( p );
-			colors.push_back( 0xffff0000 ); //HACK
 		}
 
 		///adds a point and the indices to construct a single segment starting from the last point
@@ -172,6 +206,9 @@ namespace Dojo
 		*/
 		void mergeDuplicatePoints();
 
+		///generates an extrusion contour mesh - it is different from the normal contour because vertices with an excessive angles are split
+		void generateExtrusionContour();
+
 		///builds the internal "loops" structure, representing all the contours of this tessellation
 		/**
 		each loop contains a copy of all of its segments
@@ -189,6 +226,8 @@ namespace Dojo
 		bool _raycastSegmentAlongX( const Segment& segment, const Position& startPosition );
 
 		int _assignToIncompleteContour( int start, int end );
+
+		void _assignNormal( const Vector& n, Segment& s, int i, SegmentList& additionalSegmentsBuffer );
 	};
 }
 

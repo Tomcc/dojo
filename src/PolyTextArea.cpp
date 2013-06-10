@@ -6,14 +6,16 @@
 
 using namespace Dojo;
 
-PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt, float extrudeDepth ) :
+PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt ) :
 	Renderable( parent, position ),
 	mCentered( centered ),
 	mDirty( true ), //be sure to init anyways even if the user doesn't write anything
 	pFont( font ),
-	mDepth( extrudeDepth ),
 	mRendering( rt ),
-	mInterline( 0 )
+	mInterline( 0 ),
+	mInflateRadius( 0.01 ),
+	mDepth( 0.15 ),
+	mBevelDepth( 0.015 )
 {
 	DEBUG_ASSERT( pFont, "Cannot create a PolyTextArea with a null font" );
 
@@ -27,7 +29,6 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
 		mMesh->setTriangleMode( Mesh::TM_LINE_LIST );
 		mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-		mMesh->setVertexFieldEnabled( Mesh::VF_COLOR );
 	}
 	else
 	{
@@ -35,9 +36,17 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 		mMesh->setTriangleMode( Mesh::TM_LIST );
 
 		if( mRendering == RT_SURFACE )
+		{
 			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+			//the normal here is unbound and defaults to 0,0,1 apparently, which is correct
+			//and allows for a substantial bandwidth saving
+			//TODO check if this works on every driver (tested on Intel HD4000, NV 630)
+		}
 		else
+		{
 			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION3D );
+			mMesh->setVertexFieldEnabled( Mesh::VF_NORMAL );
+		}
 	}
 
 	setMesh( mMesh );
@@ -62,6 +71,40 @@ void PolyTextArea::_centerLine( int rowStartIdx, float rowWidth )
 		float* v = mMesh->_getVertex( i );
 		v[0] -= halfRow;
 	}
+}
+
+void PolyTextArea::_tesselateExtrusionStrip( Tessellation* t, int baseIdx, int layerBbaseIdx )
+{
+	int backFaceOffset = layerBbaseIdx - baseIdx;
+
+	//create a strip to bind the two faces together
+	for( auto& segment : t->extrusionContourIndices )
+		{
+			mMesh->triangle( 
+				baseIdx + segment.i2, 
+				baseIdx + segment.i1 + backFaceOffset,
+				baseIdx + segment.i1 );
+			mMesh->triangle( 
+				baseIdx + segment.i2, 
+				baseIdx + segment.i2 + backFaceOffset,
+				baseIdx + segment.i1 + backFaceOffset );
+		}
+}
+
+void PolyTextArea::_addExtrusionLayer( Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal )
+{
+	int layerIdx = mMesh->getVertexCount();
+
+	for( auto& vertex : t->extrusionContourVertices )
+	{
+		mMesh->vertex( origin + vertex.position + vertex.normal * inflate );
+		mMesh->normal( forcedNormal ? *forcedNormal : vertex.normal );
+	}
+
+	if( mPrevLayerIdx >= 0 )
+		_tesselateExtrusionStrip( t, mPrevLayerIdx, layerIdx );
+
+	mPrevLayerIdx = layerIdx;
 }
 
 void PolyTextArea::_prepare()
@@ -112,7 +155,6 @@ void PolyTextArea::_prepare()
 			//merge this mesh in the VBO
 			int baseIdx = mMesh->getVertexCount();
 
-
 			if( mRendering == RT_SURFACE )
 			{
 				for( auto& pos : t->positions )
@@ -123,34 +165,35 @@ void PolyTextArea::_prepare()
 			}
 			else if( mRendering == RT_EXTRUDED )
 			{
-				for( auto& pos : t->positions )
-					mMesh->vertex( charPosition + pos.toVec() );
-
+				//tesselate front face
 				for( auto& index : t->outIndices )
 					mMesh->index( baseIdx + index );
 
-				baseIdx = mMesh->getVertexCount();
+				//extrude the character
+				mPrevLayerIdx = -1;
 
-				for( auto& pos : t->positions )
-					mMesh->vertex( charPosition + pos.toVec() - Vector( 0,0, mDepth ) );
+				_addExtrusionLayer( t, charPosition, 0, &Vector::UNIT_Z );
 
-				//flip index winding to flip the face
-				for( int i = 0; i < t->outIndices.size(); i += 3 )
+				if( mInflateRadius && mBevelDepth > 0 ) //use a rounded extrusion only if the inflation and the bevel are valid
 				{
-					mMesh->index( baseIdx + t->outIndices[i+2] );
-					mMesh->index( baseIdx + t->outIndices[i+1] );
-					mMesh->index( baseIdx + t->outIndices[i] );
+					_addExtrusionLayer( t, charPosition - Vector( 0,0, mBevelDepth ), mInflateRadius, nullptr );
+					_addExtrusionLayer( t, charPosition - Vector( 0,0, mDepth - mBevelDepth ), mInflateRadius, nullptr );
 				}
 
-				//create a strip to bind the two faces together
-				//TODO
+				_addExtrusionLayer( t, charPosition - Vector(0,0,mDepth), 0, &Vector::NEGATIVE_UNIT_Z );
+
+				//add backface - flip index winding to flip the face
+				for( int i = 0; i < t->outIndices.size(); i += 3 )
+					mMesh->triangle( 
+						mPrevLayerIdx + t->outIndices[i+2], 
+						mPrevLayerIdx + t->outIndices[i+1], 
+						mPrevLayerIdx + t->outIndices[i] );
 			}
 			else //HACK do not actually use contours here
 			{
 				for( int i = 0; i < t->positions.size(); ++i )
 				{
 					mMesh->vertex( charPosition + t->positions[i].toVec() );
-					mMesh->color( t->colors[i] );
 				}
 
 				for( auto& contour : t->contours )
