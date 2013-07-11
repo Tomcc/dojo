@@ -66,6 +66,11 @@ void Texture::bind( uint index )
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 }
 
+void Texture::bindAsRenderTarget()
+{
+	DEBUG_TODO;
+}
+
 void Texture::enableAnisotropicFiltering( float level )
 {
 	bind(0);

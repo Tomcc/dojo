@@ -17,7 +17,6 @@ using namespace Dojo;
 
 Render::Render( uint w, uint h, Orientation deviceOr ) :
 frameStarted( false ),
-viewport( NULL ),
 valid( true ),
 width( w ),
 height( h ),
@@ -186,12 +185,12 @@ void Render::removeRenderable( Renderable* s )
 	}
 }
 
-void Render::setViewport( Viewport* v )		
-{	
-	DEBUG_ASSERT( v, "Cannot set a null Viewport" );
-	
-	viewport = v;
-}	
+void Render::addViewport( Viewport* v )
+{
+	DEBUG_ASSERT( v, "cannot add a null vieport" );
+
+	mViewportList.add( v );
+}
 
 void Render::setInterfaceOrientation( Orientation o )		
 {	
@@ -200,61 +199,12 @@ void Render::setInterfaceOrientation( Orientation o )
 	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
 	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
-	    
-	nativeToScreenRatio = (float)viewportHeight / (float)platform->getWindowHeight();
-    
-	//swap height and width values used in-game if the render has been rotated
-	if( renderRotation == 0 || renderRotation == 180 )
-	{
-		viewportWidth = width;
-		viewportHeight = height;	
-	}
-	else 
-	{
-		viewportWidth = height;
-		viewportHeight = width;
-	}    
 	
 	//compute matrix
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
-void Render::startFrame()
-{	
-	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
-	DEBUG_ASSERT( viewport, "Rendering requires a Viewport to be set" );
-
-	platform->acquireContext();
-	
-	frameVertexCount = frameTriCount = frameBatchCount = 0;
-						
-	glViewport( 0, 0, width, height );
-		
-	//clear the viewport
-	glClearColor( 
-				 viewport->getClearColor().r, 
-				 viewport->getClearColor().g, 
-				 viewport->getClearColor().b, 
-				 viewport->getClearColor().a );
-	
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    
-	currentState.view = viewport->getViewTransform();
-	currentState.viewDirection = viewport->getWorldDirection();
-    
-	frameStarted = true;
-	
-	//draw the backdrop
-	Renderable* backdrop = viewport->getBackgroundSprite();
-	if( backdrop )
-	{
-		backLayer->at(0) = backdrop;
-		renderLayer( backLayer );
-	}
-	
-}
-
-void Render::renderElement( Renderable* s )
+void Render::renderElement( Viewport* viewport, Renderable* s )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT( viewport, "Rendering requires a Viewport to be set" );
@@ -324,16 +274,7 @@ void Render::renderElement( Renderable* s )
 #endif
 }
 
-void Render::endFrame()
-{			
-	DEBUG_ASSERT( frameStarted, "Tried to end rendering but the frame was not started" );
-	
-	platform->present();
-	
-	frameStarted = false;
-}
-
-void Render::renderLayer( Layer* list )
+void Render::renderLayer( Viewport* viewport, Layer* list )
 {
 	if( !list->size() || !list->visible )
 		return;
@@ -390,7 +331,7 @@ void Render::renderLayer( Layer* list )
 			
 			//HACK use some 2D culling
 			if( s->isVisible() )
-				renderElement( s );
+				renderElement( viewport, s );
 		}
 	}
 
@@ -404,8 +345,79 @@ void Render::renderLayer( Layer* list )
 			s->_notifyCulled( !viewport->isContainedInFrustum( s ) );
 			
 			if( s->isVisible() && s->isInView() )
-				renderElement( s );
+				renderElement( viewport, s );
 		}
 	}
 }
 
+void Render::renderViewport( Viewport* viewport )
+{
+	DEBUG_ASSERT( viewport, "Cannot render with a null viewport" );
+
+	Texture* rt = viewport->getRenderTarget();
+
+	if( rt )
+		rt->bindAsRenderTarget();
+	else
+		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+	glViewport( 0, 0, 
+		rt ? rt->getWidth() : width, rt ? 
+		rt->getHeight() : height );
+
+	//clear the viewport
+	glClearColor( 
+		viewport->getClearColor().r, 
+		viewport->getClearColor().g, 
+		viewport->getClearColor().b, 
+		viewport->getClearColor().a );
+
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	currentState.view = viewport->getViewTransform();
+	currentState.viewDirection = viewport->getWorldDirection();
+
+	frameStarted = true;
+
+	if( viewport->getVisibleLayers().empty() ) //use the custom layer ordering/visibility
+	{
+		//first render from the most negative to -1
+		if( negativeLayers.size() > 0 )
+		{				
+			for( int i = negativeLayers.size()-1; i >= 0; --i )
+				renderLayer( viewport, negativeLayers[i] );
+		}
+
+		//then from 0 to the most positive
+		for( int i = 0; i < positiveLayers.size(); ++i )
+			renderLayer( viewport, positiveLayers[i] );
+	}
+	else  //using the default layer ordering/visibility
+	{
+		for( auto& layer : viewport->getVisibleLayers() )
+		{
+			Layer* l = layer < 0 ? negativeLayers[-layer] : positiveLayers[layer];
+			renderLayer( viewport, l );
+		}
+	}
+}
+
+void Render::render()
+{
+	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
+
+	//HACK is this even needed? could be slow on windows
+	//platform->acquireContext();
+
+	frameVertexCount = frameTriCount = frameBatchCount = 0;
+	frameStarted = true;
+
+	//render all the viewports
+	for( auto viewport : mViewportList )
+		renderViewport( viewport );
+
+	//end the frame
+	platform->present();
+
+	frameStarted = false;
+}

@@ -284,7 +284,7 @@ namespace Dojo
 			return ( memcmp(vectorArray, f._getArrayPointer(), sizeof(T) * elements) == 0);
 		}
 		
-		FV_INLINE bool isEmpty()	{	return (elements == 0);	}
+		FV_INLINE bool isEmpty() const	{	return (elements == 0);	}
 		
 		///returns true if this element is found in the Array - linear search
 		FV_INLINE bool exists(T& e)

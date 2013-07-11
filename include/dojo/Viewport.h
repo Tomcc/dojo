@@ -36,6 +36,8 @@ namespace Dojo
 	class Viewport : public Object
 	{
 	public:
+
+		typedef std::vector< int > LayerList;
 					
 		Viewport( 
 			GameState* level, 
@@ -60,10 +62,20 @@ namespace Dojo
 		
 		///orients the camera to look at a given 3D point
 		void lookAt( const Vector& worldPos );
-
-		void setBackgroundSprite( const String& name, float frameTime = 0 );
 				
-		inline void setClearColor( const Color& color)	{	clearColor = color;	}	
+		inline void setClearColor( const Color& color)	{	clearColor = color;	}
+
+		///sets which subset of Render Layers this Viewport is able to "see"
+		void setVisibleLayers( const LayerList& layers );
+
+		///returns the subset of visible layers that has been set by setVisibleLayers
+		/**
+		by default, the set is empty, which means "all layers"
+		*/
+		const LayerList& getVisibleLayers()
+		{
+			return mLayerList;
+		}
 
 		///set the pixel size of the "virtual rendering area"
 		/**
@@ -76,7 +88,6 @@ namespace Dojo
 		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 		
 		inline const Color& getClearColor()				{	return clearColor;	}
-		inline AnimatedQuad* getBackgroundSprite()		{	return background;	}
 		inline Renderable* getFader()					{	return fadeObject;	}
 		inline float getVFOV()							{	return VFOV;		}
 		inline float getZFar()							{	return zFar;		}
@@ -85,6 +96,12 @@ namespace Dojo
 		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 		inline const Vector& getTargetSize()			{   return targetSize;  }
 		inline const Matrix& getViewTransform()			{	return mViewTransform;	}
+
+		///returns the Texture this Viewport draws to
+		Texture* getRenderTarget()
+		{
+			return mRT;
+		}
 
 		///returns the on-screen position of the given world-space vector
 		Vector getScreenPosition( const Vector& pos );
@@ -163,14 +180,11 @@ namespace Dojo
 
 		bool cullingEnabled;	
 		
-		AnimatedQuad* background;
 		Renderable* fadeObject;
 				
 		Color clearColor;
         
         Matrix mViewTransform, mOrthoTransform, mFrustumTransform;
-
-		float nativeToScreenRatio;
 
 		//frustum data
 		bool frustumCullingEnabled;
@@ -182,6 +196,9 @@ namespace Dojo
 
 		float VFOV, zNear, zFar;
 		Vector farPlaneSide;
+
+		LayerList mLayerList;
+		Texture* mRT;
 
 		void _updateFrustum();
         void _updateTransforms();

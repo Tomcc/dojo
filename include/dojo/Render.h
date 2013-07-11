@@ -63,6 +63,7 @@ namespace Dojo {
 						
 		typedef Array< Layer* > LayerList;
 		typedef Array< Light* > LightList;
+		typedef Array< Viewport* > ViewportList;
 		
 		Render( uint width, uint height, Orientation renderOrientation );		
 		
@@ -113,7 +114,7 @@ namespace Dojo {
 			positiveLayers.clear();
 		}
 		
-		void setViewport( Viewport* v );
+		void addViewport( Viewport* v );
 						
 		void setInterfaceOrientation( Orientation o );
 
@@ -148,9 +149,6 @@ namespace Dojo {
 		{
 			return positiveLayers.size();
 		}
-		
-		inline float getNativeToScreenRatio()		{	return nativeToScreenRatio;	}
-		inline Viewport* getViewport()				{	return viewport;	}
 
 		inline uint getLastFrameVertexCount()		{	return frameVertexCount;	}
 		inline uint getLastFrameTriCount()			{	return frameTriCount;		}
@@ -159,33 +157,18 @@ namespace Dojo {
 		const Color& getDefaultAmbient()			{	return defaultAmbient;		}
 		
 		inline bool isValid()						{	return valid;		}
-						
-		void startFrame();
 		
-		void renderElement( Renderable* r );
+		///renders a single element using the given viewport
+		void renderElement( Viewport* v, Renderable* r );
 		
-		void renderLayer( Layer* list );
-		
-		void endFrame();
+		///renders a whole layer on the given viewport
+		void renderLayer( Viewport* v, Layer* list );
+
+		///renders a viewport and all its visible layers
+		void renderViewport( Viewport* v );
 		
 		//renders all the layers and their contained Renderables in the given order
-		void render()
-		{
-			startFrame();
-
-			//first render from the most negative to -1
-			if( negativeLayers.size() > 0 )
-			{				
-				for( int i = negativeLayers.size()-1; i >= 0; --i )
-					renderLayer( negativeLayers.at(i) );
-			}
-
-			//then from 0 to the most positive
-			for( int i = 0; i < positiveLayers.size(); ++i )
-				renderLayer( positiveLayers.at(i) );
-
-			endFrame();
-		}
+		void render();
 				
 	protected:	
 
@@ -193,15 +176,13 @@ namespace Dojo {
 		
 		bool valid;
 						
-		// The pixel dimensions of the CAEAGLLayer
-		int width, height, viewportWidth, viewportHeight;
+		// The pixel dimensions of the target system view
+		int width, height;
 		
 		float renderRotation;
 		Orientation renderOrientation, deviceOrientation;
-		
-		float nativeToScreenRatio;
-						
-		Viewport* viewport;
+
+		ViewportList mViewportList;
 		
 		RenderState* currentRenderState, *firstRenderState;
 		Layer* currentLayer;

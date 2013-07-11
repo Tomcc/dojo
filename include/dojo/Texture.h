@@ -54,8 +54,12 @@ namespace Dojo
 		
 		bool isLoaded()			{	return loaded;			}
 						
+		///internal - binds this texture as the current GL active one
 		virtual void bind( uint index );
-		
+
+		///internal - binds this texture as the current Render Target
+		void bindAsRenderTarget();
+
 		void enableBilinearFiltering();
 		void disableBilinearFiltering();
 

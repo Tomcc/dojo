@@ -17,7 +17,7 @@ Object( this, Vector::ZERO, Vector::ONE ),
 ResourceGroup(),
 game( parentGame ),
 timeElapsed(0),
-camera(NULL)
+camera(nullptr)
 {
 	mNeedsAABB = true;
 
@@ -43,7 +43,7 @@ void GameState::setViewport( Viewport* v )
 	
 	camera = v;
 	
-	Platform::getSingleton()->getRender()->setViewport( v );
+	Platform::getSingleton()->getRender()->addViewport( v );
 }
 
 void GameState::touchAreaAtPoint( Touch* touch )

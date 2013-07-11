@@ -22,18 +22,16 @@ Viewport::Viewport(
 Object( level, pos, size ),
 cullingEnabled( true ),
 fadeObject( NULL ),
-background( NULL ),
 clearColor( clear ),
 frustumCullingEnabled( false ),
 VFOV( 0 ),
 zNear( 0 ),
-zFar( 1000 )
+zFar( 1000 ),
+mRT( nullptr )
 {
     mNeedsAABB = true;
     
 	Render* render = Platform::getSingleton()->getRender();
-	
-	nativeToScreenRatio = render->getNativeToScreenRatio();
 	
 	//default size is window size
 	targetSize.x = (float)Platform::getSingleton()->getWindowWidth();
@@ -62,26 +60,6 @@ void Viewport::addFader( int layer )
 void Viewport::lookAt(  const Vector& worldPos )
 {
 	setRotation( glm::quat_cast( glm::lookAt( getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y ) ) ); //HACK why negative does work? Up is +Y
-}
-
-void Viewport::setBackgroundSprite( const String& name, float frameTime )
-{
-	if( background )
-		destroyChild( background );
-	
-	background = new Sprite( gameState, Vector::ZERO, name, frameTime );
-	background->setBlendingEnabled( false );
-	background->setVisible( true );
-	
-	//force the proportions to fill screen
-	background->_updateScreenSize();
-	
-	//the background image must not be stretched on different aspect ratios
-	//so we just pick the pixel size for the horizontal			
-	background->pixelScale.x = (float)background->getTexture(0)->getWidth() / (float)targetSize.x;
-	background->pixelScale.y = background->pixelScale.x;	
-	
-	addChild( background );
 }
 
 void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
@@ -222,3 +200,7 @@ void Viewport::makeScreenSize( Vector& dest, Texture* tex )
 	makeScreenSize( dest, tex->getWidth(), tex->getHeight() );
 }
 
+void Viewport::setVisibleLayers( const LayerList& layers )
+{
+	mLayerList = layers;
+}

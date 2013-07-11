@@ -65,10 +65,10 @@ namespace Dojo
 		///returns the parent Game
 		inline Game* getGame()				{	return game;			}
 				
-		///returns the Viewport that is active on this GameState
+		///returns the Viewport that is primary on this GameState
 		inline Viewport* getViewport()		{	return camera;			}
 		
-		///sets the active Viewport (ie. camera) on this GameState
+		///sets the primary Viewport (ie. camera) on this GameState, needed for pixel-perfect behaviour! (Sprites and TextAreas)
 		void setViewport( Viewport* v );
 		
 		///"touches" all the touchAreas with the given touch
