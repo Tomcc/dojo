@@ -9,7 +9,7 @@
 using namespace Dojo;
 
 Texture::Texture( ResourceGroup* creator ) :
-Resource( creator ),
+	Resource( creator ),
 	width(0),
 	height(0),
 	internalWidth(0),
@@ -20,24 +20,26 @@ Resource( creator ),
 	OBB( NULL ),
 	ownerFrameSet( NULL ),
 	mMipmapsEnabled( true ),
-	internalFormat( GL_NONE )
+	internalFormat( GL_NONE ),
+	mFBO( GL_NONE )
 {			
 
 }
 
 Texture::Texture( ResourceGroup* creator, const String& path ) :
-Resource( creator, path ),
-width(0),
-height(0),
-internalWidth(0),
-internalHeight(0),
-glhandle( 0 ),
-npot( false ),
-parentAtlas( NULL ),
-OBB( NULL ),
-ownerFrameSet( NULL ),
-mMipmapsEnabled( true ),
-internalFormat( GL_NONE )
+	Resource( creator, path ),
+	width(0),
+	height(0),
+	internalWidth(0),
+	internalHeight(0),
+	glhandle( 0 ),
+	npot( false ),
+	parentAtlas( NULL ),
+	OBB( NULL ),
+	ownerFrameSet( NULL ),
+	mMipmapsEnabled( true ),
+	internalFormat( GL_NONE ),
+	mFBO( GL_NONE )
 {			
 
 }
@@ -68,7 +70,23 @@ void Texture::bind( uint index )
 
 void Texture::bindAsRenderTarget()
 {
-	DEBUG_TODO;
+	if( !mFBO ) //create a new RT on the fly at the first request
+	{
+		glGenFramebuffers(1, &mFBO); 
+		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+
+		CHECK_GL_ERROR;
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glhandle, 0);
+
+		GLenum status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+
+		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "An invalid framebuffer was created" );
+
+		CHECK_GL_ERROR;
+	}
+	else
+		glBindFramebuffer( GL_FRAMEBUFFER, mFBO );	
 }
 
 void Texture::enableAnisotropicFiltering( float level )
@@ -147,6 +165,8 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 
 	bind(0);
 
+	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
+
 	//Assume formats are either GL_RGB or GL_RGBA
 	int destPixelSize = (destFormat == GL_RGBA) ? 4 : 3;
 
@@ -177,6 +197,10 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 		internalFormat = destFormat;
 		size = internalWidth * internalHeight * destPixelSize;
 
+		//HACK
+		void* HACK = malloc( size );
+		memset( HACK, 255, size );
+
 		//create an empty GPU mem space
 		glTexImage2D(
 			GL_TEXTURE_2D, 
@@ -187,7 +211,7 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 			0, 
 			internalFormat, //it's not like we're loading anything anyway
 			GL_UNSIGNED_BYTE, 
-			NULL );
+			HACK );
 	}
 
 	UVSize.x = (float)width/(float)internalWidth;
@@ -204,8 +228,6 @@ bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sou
 	DEBUG_ASSERT( imageData, "null image data" );
 
 	loadEmpty( width, height, destFormat );
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
 
 	//paste the actual data inside the image, works with NPOT devices too
 	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
@@ -344,6 +366,12 @@ void Texture::onUnload( bool soft )
 			internalWidth = internalHeight = 0;
 			internalFormat = GL_NONE;
 			glhandle = 0;
+
+			if( mFBO ) //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
+			{
+				glDeleteFramebuffers( 1, &mFBO );
+				mFBO = GL_NONE;
+			}
 		}
 
 		loaded = false;

@@ -145,6 +145,8 @@ namespace Dojo
 			
 		Vector screenSize;
 
+		GLuint mFBO;
+
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _buildOptimalBillboard();
 

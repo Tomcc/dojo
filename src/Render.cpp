@@ -217,10 +217,9 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 	//change the renderstate
 	currentRenderState = s;
 	
-	//clone the view matrix on the top of the stack
-
 	currentState.world = s->getWorldTransform();
 	currentState.worldView = currentState.view * currentState.world;
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf( glm::value_ptr( currentState.worldView ) );
 	
@@ -362,8 +361,8 @@ void Render::renderViewport( Viewport* viewport )
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
 	glViewport( 0, 0, 
-		rt ? rt->getWidth() : width, rt ? 
-		rt->getHeight() : height );
+		rt ? rt->getWidth() : width, 
+		rt ? rt->getHeight() : height );
 
 	//clear the viewport
 	glClearColor( 
@@ -407,7 +406,7 @@ void Render::render()
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
 
 	//HACK is this even needed? could be slow on windows
-	//platform->acquireContext();
+	platform->acquireContext();
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	frameStarted = true;

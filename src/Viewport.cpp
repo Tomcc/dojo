@@ -136,6 +136,12 @@ void Viewport::_updateTransforms()
                                          VFOV, targetSize.x / targetSize.y, 
                                          zNear, 
                                          zFar );
+
+	if( getRenderTarget() ) //flip the projections to flip the image
+	{
+		mOrthoTransform[1][1] *= -1;
+		mFrustumTransform[1][1] *= -1;
+	}
 }
 
 bool Viewport::isContainedInFrustum( Renderable* r )

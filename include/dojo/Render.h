@@ -81,6 +81,16 @@ namespace Dojo {
 			for( int i = 0; i < positiveLayers.size(); ++i )
 				positiveLayers.at(i)->clear();
 		}
+
+		void removeViewport( Viewport* v )
+		{
+			mViewportList.remove( v );
+		}
+
+		void removeAllViewports()
+		{
+			mViewportList.clear();
+		}
 		
 		inline void addLight( Light* l )
 		{
