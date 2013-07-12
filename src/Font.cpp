@@ -167,8 +167,6 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 		//now that everything is loaded & in order, tessellate the mesh
 		if( mTesselation->segments.size() && page->getFont()->generateSurface ) //HACK
 			mTesselation->tessellate( !page->getFont()->generateEdge ); //keep edges if they are needed too
-
-		DEBUG_MESSAGE( "Tesselated a character in " + String( (float)timer.deltaTime() * 1000.f ) + " ms" );
 	}
 }
 

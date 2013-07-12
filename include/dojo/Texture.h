@@ -58,7 +58,7 @@ namespace Dojo
 		virtual void bind( uint index );
 
 		///internal - binds this texture as the current Render Target
-		void bindAsRenderTarget();
+		void bindAsRenderTarget( bool useDepthBuffer );
 
 		void enableBilinearFiltering();
 		void disableBilinearFiltering();
@@ -141,7 +141,7 @@ namespace Dojo
 		
 		Mesh* OBB;
 		
-		uint glhandle;
+		GLuint glhandle, mDepthBuffer;
 			
 		Vector screenSize;
 

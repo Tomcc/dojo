@@ -68,16 +68,28 @@ void Texture::bind( uint index )
 	glBindTexture( GL_TEXTURE_2D, glhandle );
 }
 
-void Texture::bindAsRenderTarget()
+void Texture::bindAsRenderTarget( bool depthBuffer )
 {
 	if( !mFBO ) //create a new RT on the fly at the first request
 	{
+
 		glGenFramebuffers(1, &mFBO); 
 		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
 		CHECK_GL_ERROR;
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glhandle, 0);
+
+		//create the depth attachment if needed
+		if( depthBuffer )
+		{
+			glGenTextures( 1, &mDepthBuffer );
+			glBindTexture( GL_TEXTURE_2D, mDepthBuffer );
+			glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, nullptr );
+			glBindTexture( GL_TEXTURE_2D, 0 );
+
+			glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthBuffer, 0 );
+		}
 
 		GLenum status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
 

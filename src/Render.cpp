@@ -356,9 +356,11 @@ void Render::renderViewport( Viewport* viewport )
 	Texture* rt = viewport->getRenderTarget();
 
 	if( rt )
-		rt->bindAsRenderTarget();
+		rt->bindAsRenderTarget( true ); //TODO guess if this viewport doesn't render 3D layers to save memory?
 	else
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+	glFrontFace( rt ? GL_CW : GL_CCW ); //invert vertex winding when inverting the view
 
 	glViewport( 0, 0, 
 		rt ? rt->getWidth() : width, 
