@@ -234,6 +234,17 @@ namespace Dojo {
 			p.z <= worldUpperBound.z && 
 			p.z >= worldLowerBound.z;
 		}
+
+		inline bool contains2D( const Vector& p )
+		{
+			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
+
+			return 
+				p.x <= worldUpperBound.x && 
+				p.x >= worldLowerBound.x && 
+				p.y <= worldUpperBound.y && 
+				p.y >= worldLowerBound.y;
+		}
 		
 		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{		

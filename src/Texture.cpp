@@ -209,10 +209,6 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 		internalFormat = destFormat;
 		size = internalWidth * internalHeight * destPixelSize;
 
-		//HACK
-		void* HACK = malloc( size );
-		memset( HACK, 255, size );
-
 		//create an empty GPU mem space
 		glTexImage2D(
 			GL_TEXTURE_2D, 
@@ -221,15 +217,16 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 			internalWidth, 
 			internalHeight,
 			0, 
-			internalFormat, //it's not like we're loading anything anyway
+			internalFormat,
 			GL_UNSIGNED_BYTE, 
-			HACK );
+			nullptr );
 	}
 
 	UVSize.x = (float)width/(float)internalWidth;
 	UVSize.y = (float)height/(float)internalHeight;
 
-	loaded = (glGetError() == GL_NO_ERROR);
+	GLenum err = glGetError();
+	loaded = (err == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "Cannot load an empty texture" );
 
 	return loaded;
@@ -241,8 +238,19 @@ bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sou
 
 	loadEmpty( width, height, destFormat );
 
+	//HACK
+	glTexImage2D(
+		GL_TEXTURE_2D, 
+		0, 
+		internalFormat,
+		internalWidth, 
+		internalHeight,
+		0, 
+		internalFormat,
+		GL_UNSIGNED_BYTE, 
+		imageData );
 	//paste the actual data inside the image, works with NPOT devices too
-	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
+	//glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
 
 	loaded = (glGetError() == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );	

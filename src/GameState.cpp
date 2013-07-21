@@ -55,7 +55,7 @@ void GameState::touchAreaAtPoint( Touch* touch )
 	
 	for( auto t : mTouchAreas )
 	{		
-		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains( pointer ) )
+		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains2D( pointer ) )
 		{
 			//new highest layer - discard lowest layers found
 			if( t->getLayer() > topMostLayer )

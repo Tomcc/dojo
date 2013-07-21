@@ -384,7 +384,7 @@ void Render::renderViewport( Viewport* viewport )
 	{
 		//first render from the most negative to -1
 		if( negativeLayers.size() > 0 )
-		{				
+		{	
 			for( int i = negativeLayers.size()-1; i >= 0; --i )
 				renderLayer( viewport, negativeLayers[i] );
 		}

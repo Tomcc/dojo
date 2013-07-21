@@ -187,7 +187,7 @@ void Object::updateChilds( float dt )
 	{
 		collectChilds();
 		
-		for( int i = 0; i < childs->size(); ++i )
+		for( int i = 0; childs && i < childs->size(); ++i )
 		{
 			if( childs->at(i )->isActive() )
 				childs->at(i)->onAction(dt);

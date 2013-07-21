@@ -744,7 +744,7 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 		return 0;
 
 	//retrieve the image data
-	void* data = (void*)FreeImage_GetBits(dib);
+	byte* data = (byte*)FreeImage_GetBits(dib);
 
 	//get the image width and height, and size per pixel
 	width = FreeImage_GetWidth(dib);
@@ -753,7 +753,9 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	
 	pixelSize = FreeImage_GetBPP(dib)/8;
 	
-	int size = width*height*pixelSize;
+	DEBUG_ASSERT( pixelSize == 3 || pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
+	
+	int size = pitch*height;
 	bufptr = malloc( size );
 	
 	{
@@ -763,7 +765,7 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 			ii = height - i -1;
 			for( int j = 0; j < width; ++j )
 			{
-				out = (byte*)bufptr + (j + i*width)*pixelSize;
+				out = (byte*)bufptr + j * pixelSize + i * pitch;
 				in = (byte*)data + j * pixelSize + ii * pitch;
 
 				if( pixelSize >= 4 )
