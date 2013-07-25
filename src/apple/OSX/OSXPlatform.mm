@@ -23,6 +23,7 @@
 #include "Table.h"
 #include "FontSystem.h"
 #include "SoundManager.h"
+#include "BackgroundQueue.h"
 
 using namespace Dojo;
 

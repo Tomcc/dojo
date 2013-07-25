@@ -110,7 +110,7 @@ namespace Dojo
 		Random& operator=( const Random& o );
 
 	protected:
-		void initialize( const uint32 oneSeed );
+		void initialize( Seed oneSeed );
 		void reload();
 		uint32 hiBit( const uint32 u ) const { return u & 0x80000000UL; }
 		uint32 loBit( const uint32 u ) const { return u & 0x00000001UL; }

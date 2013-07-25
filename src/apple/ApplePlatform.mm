@@ -29,6 +29,7 @@
 #include "Table.h"
 #include "dojostring.h"
 #include "StringReader.h"
+#include "BackgroundQueue.h"
 
 using namespace Dojo;
 using namespace std;
