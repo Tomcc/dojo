@@ -209,7 +209,9 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 		internalFormat = destFormat;
 		size = internalWidth * internalHeight * destPixelSize;
 
-		//create an empty GPU mem space
+        std::string dummyData(size, 0 ); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
+        
+        //create an empty GPU mem space
 		glTexImage2D(
 			GL_TEXTURE_2D, 
 			0, 
@@ -219,7 +221,7 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 			0, 
 			internalFormat,
 			GL_UNSIGNED_BYTE, 
-			nullptr );
+			dummyData.c_str() );
 	}
 
 	UVSize.x = (float)width/(float)internalWidth;

@@ -168,6 +168,11 @@ namespace Dojo
 		{
 			return size.x / targetSize.x;
 		}
+        
+        void setEyeTransform( const Matrix& t )
+        {
+            mPerspectiveEyeTransform = t;
+        }
 
 		virtual void onAction( float dt )
 		{
@@ -190,7 +195,7 @@ namespace Dojo
 				
 		Color clearColor;
         
-        Matrix mViewTransform, mOrthoTransform, mFrustumTransform;
+        Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
 
 		//frustum data
 		bool frustumCullingEnabled;

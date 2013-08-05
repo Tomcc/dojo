@@ -132,7 +132,7 @@ void Viewport::_updateTransforms()
                               zFar );
        
     //compute frustum projection
-    mFrustumTransform = glm::perspective( 
+    mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
                                          VFOV, targetSize.x / targetSize.y, 
                                          zNear, 
                                          zFar );
