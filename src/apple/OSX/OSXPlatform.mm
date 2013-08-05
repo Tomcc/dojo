@@ -72,21 +72,29 @@ void OSXPlatform::initialize( Game* g )
     //override the config or load it from file
     Table userConfig;
     load( &userConfig, getAppDataPath() + "/config.ds" );
-
-    config.inherit( &userConfig ); //merge the table loaded from file and override with hardcoded directives    
     
+    config.inherit( &userConfig ); //merge the table loaded from file and override with hardcoded directives
+    
+    //get the right screen
+    NSScreen* screen = [NSScreen mainScreen];
+    if( config.exists("screen" ) )
+    {
+        int screenID = config.getInt("screen");
+        
+        if( screenID < [[NSScreen screens] count] )
+        {
+            screen = [[NSScreen screens] objectAtIndex:screenID ];
+            screenWidth = [screen frame].size.width;
+            screenHeight = [screen frame].size.height;
+            
+            game->onWindowResolutionChanged( screenWidth, screenHeight );
+        }
+    }
+        
     //override window size
-    if( config.exists( "windowSize" ) )
-    {
-        Vector dim = config.getVector( "windowSize" );
-        windowWidth = dim.x;
-        windowHeight = dim.y;
-    }
-    else //use the defaults
-    {
-        windowWidth = game->getNativeWidth();
-        windowHeight = game->getNativeHeight();
-    }
+    Vector dim = config.getVector( "windowSize", Vector( game->getNativeWidth(), game->getNativeHeight() ) );
+    windowWidth = dim.x;
+    windowHeight = dim.y;
     
     //auto-choose dimensions?
     if( windowWidth == 0 )  windowWidth = screenWidth;
@@ -95,8 +103,8 @@ void OSXPlatform::initialize( Game* g )
     //TODO read fullscreen
     
     NSRect frame;
-    frame.origin.x = 10;
-    frame.origin.y = 768;
+    frame.origin.x = 0;
+    frame.origin.y = 0;
     frame.size.width = windowWidth;
     frame.size.height = windowHeight;
 	
@@ -112,13 +120,16 @@ void OSXPlatform::initialize( Game* g )
 		
         (NSOpenGLPixelFormatAttribute)nil
     };
+    
+    NSUInteger style = config.getBool("noTitleBar") ? (NSBorderlessWindowMask) : (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask);
 	
     //create the window
 	window = [[NSWindow alloc]
               initWithContentRect: frame
-              styleMask: (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask)
+              styleMask: style
               backing: NSBackingStoreBuffered
-              defer: YES];
+              defer: YES
+              screen:screen];
 	
 	[window setReleasedWhenClosed:false];
 	    

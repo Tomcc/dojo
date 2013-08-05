@@ -75,6 +75,11 @@ namespace Dojo
 		{
 			return nativeOrientation;
 		}
+        
+        virtual void onWindowResolutionChanged( int w, int h )
+        {
+            
+        }
 		
 	protected:
 		

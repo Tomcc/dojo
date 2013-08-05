@@ -67,11 +67,12 @@
 	#define glCheckFramebufferStatus	glCheckFramebufferStatusOES
 	#define glBlendEquation             glBlendEquationOES
 
-    #define glGenVertexArrays   glGenVertexArraysOES
-    #define glBindVertexArray   glBindVertexArrayOES
-    #define glDeleteVertexArrays     glDeleteVertexArraysOES
+    #define glGenVertexArrays           glGenVertexArraysOES
+    #define glBindVertexArray           glBindVertexArrayOES
+    #define glDeleteVertexArrays        glDeleteVertexArraysOES
 
 	#define GL_FUNC_ADD GL_FUNC_ADD_OES
+    #define GL_FRAMEBUFFER              GL_FRAMEBUFFER_OES
 
     #define GL_NONE 0
 

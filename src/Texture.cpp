@@ -238,19 +238,7 @@ bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sou
 
 	loadEmpty( width, height, destFormat );
 
-	//HACK
-	glTexImage2D(
-		GL_TEXTURE_2D, 
-		0, 
-		internalFormat,
-		internalWidth, 
-		internalHeight,
-		0, 
-		internalFormat,
-		GL_UNSIGNED_BYTE, 
-		imageData );
-	//paste the actual data inside the image, works with NPOT devices too
-	//glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
+	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
 
 	loaded = (glGetError() == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );	

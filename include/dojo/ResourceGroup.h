@@ -453,7 +453,8 @@ namespace Dojo
 			for( auto resourcePair : map )
 			{
 				//unload either if reloadable or if we're purging memory
-				resourcePair.second->onUnload( softUnload );
+                if(resourcePair.second->isLoaded() )
+                    resourcePair.second->onUnload( softUnload );
 
 				//delete too?
 				if( !softUnload )

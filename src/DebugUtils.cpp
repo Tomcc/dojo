@@ -16,7 +16,7 @@ std::stringstream  debug_stream_android;
 //the default assert fail implementation
 void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char* info, int line, const char* file, const char* function )
 {
-	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) );
+	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) ); 
 	DEBUG_MESSAGE( "Condition is false: " + String( arg ) );
 	
 	if( info )

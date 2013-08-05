@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4301698E17A326AF00883ABE /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4301698C17A326AF00883ABE /* Console.cpp */; };
+		4301698F17A326AF00883ABE /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4301698C17A326AF00883ABE /* Console.cpp */; };
+		4301699017A326AF00883ABE /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4301698D17A326AF00883ABE /* Log.cpp */; };
+		4301699117A326AF00883ABE /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4301698D17A326AF00883ABE /* Log.cpp */; };
 		430328F816FCA46B00242A3F /* IOSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 430328F716FCA46B00242A3F /* IOSPlatform.h */; };
 		430A122C16FA2060000591D8 /* libzzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 430A122B16FA2060000591D8 /* libzzip.a */; };
 		431CF687147D4E0B0031CB4E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431CF686147D4E0A0031CB4E /* Cocoa.framework */; };
@@ -469,6 +473,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4301698C17A326AF00883ABE /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
+		4301698D17A326AF00883ABE /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		430328F716FCA46B00242A3F /* IOSPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSPlatform.h; sourceTree = "<group>"; };
 		430A122B16FA2060000591D8 /* libzzip.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzzip.a; path = "dependencies-OSX/lib/libzzip.a"; sourceTree = "<group>"; };
 		431CF683147D4E0A0031CB4E /* libdojo-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1250,6 +1256,8 @@
 		4395BEA616BD549A00309AE2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				4301698C17A326AF00883ABE /* Console.cpp */,
+				4301698D17A326AF00883ABE /* Log.cpp */,
 				43678B1C174F90A500AAEB38 /* PolyTextArea.cpp */,
 				43678B1D174F90A500AAEB38 /* Tessellation.cpp */,
 				436D3841174A8C60003222DC /* Shader.cpp */,
@@ -1818,6 +1826,8 @@
 				436D3845174A8C60003222DC /* ShaderProgram.cpp in Sources */,
 				43678B1E174F90A500AAEB38 /* PolyTextArea.cpp in Sources */,
 				43678B20174F90A500AAEB38 /* Tessellation.cpp in Sources */,
+				4301698E17A326AF00883ABE /* Console.cpp in Sources */,
+				4301699017A326AF00883ABE /* Log.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1869,6 +1879,8 @@
 				436D3846174A8C60003222DC /* ShaderProgram.cpp in Sources */,
 				43678B1F174F90A500AAEB38 /* PolyTextArea.cpp in Sources */,
 				43678B21174F90A500AAEB38 /* Tessellation.cpp in Sources */,
+				4301698F17A326AF00883ABE /* Console.cpp in Sources */,
+				4301699117A326AF00883ABE /* Log.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
