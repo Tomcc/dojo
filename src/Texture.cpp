@@ -85,7 +85,7 @@ void Texture::bindAsRenderTarget( bool depthBuffer )
 		{
 			glGenTextures( 1, &mDepthBuffer );
 			glBindTexture( GL_TEXTURE_2D, mDepthBuffer );
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, nullptr );
+			glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, width, height, 0, GL_DEPTH_COMPONENT16, GL_UNSIGNED_SHORT, nullptr );
 			glBindTexture( GL_TEXTURE_2D, 0 );
 
 			glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthBuffer, 0 );

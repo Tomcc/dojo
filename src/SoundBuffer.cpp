@@ -179,6 +179,8 @@ void SoundBuffer::Chunk::loadAsync()
 	Platform::getSingleton()->getBackgroundQueue()->queueTask( [ & ]()
 	{
 		onLoad();
+        
+        Poco::Thread::sleep(100); //HACK
 	},
 	[&]() //then,
 	{

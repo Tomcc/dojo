@@ -19,6 +19,7 @@
 #include "Game.h"
 #include "Table.h"
 #include "Texture.h"
+#include "BackgroundQueue.h"
 
 #include "AppDelegate.h"
 #include "Application.h"

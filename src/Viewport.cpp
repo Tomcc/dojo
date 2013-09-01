@@ -57,6 +57,15 @@ void Viewport::addFader( int layer )
 	addChild( fadeObject, layer );
 }
 
+void Viewport::setRenderTarget(Dojo::Texture *target)
+{
+    mRT = target;
+    
+    setTargetSize( target ?
+                  Vector( target->getWidth(), target->getHeight() ) :
+                  Vector( Platform::getSingleton()->getWindowWidth(), Platform::getSingleton()->getWindowHeight() ) );
+}
+
 void Viewport::lookAt(  const Vector& worldPos )
 {
 	setRotation( glm::quat_cast( glm::lookAt( getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y ) ) ); //HACK why negative does work? Up is +Y

@@ -4,14 +4,14 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>dojo-ios.xcscheme</key>
+		<key>dojo-ios.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>isShown</key>
 			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>dojo-osx.xcscheme</key>
+		<key>dojo-osx.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>isShown</key>
 			<true/>

@@ -481,7 +481,6 @@
 		431CF686147D4E0A0031CB4E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		431CF768147D4E680031CB4E /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
 		431CF769147D4E680031CB4E /* dojo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "dojo-Prefix.pch"; sourceTree = "<group>"; };
-		431CF76A147D4E680031CB4E /* create_dojo_h.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = create_dojo_h.sh; sourceTree = "<group>"; };
 		431CF795147D4FCE0031CB4E /* libdojo-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdojo-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		431CF7CA147D52050031CB4E /* libFreeType.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFreeType.a; path = "dependencies-OSX/lib/libFreeType.a"; sourceTree = "<group>"; };
 		431CF7CB147D52050031CB4E /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "dependencies-OSX/lib/libogg.a"; sourceTree = "<group>"; };
@@ -854,7 +853,6 @@
 			children = (
 				431CF768147D4E680031CB4E /* stdafx.h */,
 				431CF769147D4E680031CB4E /* dojo-Prefix.pch */,
-				431CF76A147D4E680031CB4E /* create_dojo_h.sh */,
 				431CF69A147D4E5B0031CB4E /* include */,
 				4395BEA616BD549A00309AE2 /* src */,
 				431CF7C9147D51E50031CB4E /* Frameworks-OSX */,

@@ -70,9 +70,14 @@
     #define glGenVertexArrays           glGenVertexArraysOES
     #define glBindVertexArray           glBindVertexArrayOES
     #define glDeleteVertexArrays        glDeleteVertexArraysOES
+    #define glFramebufferTexture2D      glFramebufferTexture2DOES
 
-	#define GL_FUNC_ADD GL_FUNC_ADD_OES
+	#define GL_FUNC_ADD                 GL_FUNC_ADD_OES
     #define GL_FRAMEBUFFER              GL_FRAMEBUFFER_OES
+    #define GL_COLOR_ATTACHMENT0        GL_COLOR_ATTACHMENT0_OES
+    #define GL_DEPTH_COMPONENT16        GL_DEPTH_COMPONENT16_OES
+    #define GL_DEPTH_ATTACHMENT         GL_DEPTH_ATTACHMENT_OES
+    #define GL_FRAMEBUFFER_COMPLETE     GL_FRAMEBUFFER_COMPLETE_OES
 
     #define GL_NONE 0
 

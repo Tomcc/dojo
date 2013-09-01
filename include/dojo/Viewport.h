@@ -66,11 +66,8 @@ namespace Dojo
 		inline void setClearColor( const Color& color)	{	clearColor = color;	}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
-		void setRenderTarget( Texture* target )
-		{
-			mRT = target;
-		}
-
+		void setRenderTarget( Texture* target );
+        
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers( const LayerList& layers );
 
