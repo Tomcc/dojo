@@ -44,6 +44,7 @@ namespace Dojo
 			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES,			///The world matrix
 			BU_VIEW,			///The view matrix
 			BU_PROJECTION,		///The projection matrix
+            BU_WORLDVIEW,
 			BU_WORLDVIEWPROJ,	///The complete transformation matrix
 			BU_OBJECT_COLOR,	///The object's color (vec4)
 
@@ -166,6 +167,8 @@ namespace Dojo
 		Render* pRender;
 
 		void _assignProgram( const Table& desc, ShaderProgram::Type type );
+        
+        const void* _getUniformData( const Uniform& uniform, Renderable* user );
 
 	private:
 	};

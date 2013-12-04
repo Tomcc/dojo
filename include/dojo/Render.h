@@ -57,7 +57,7 @@ namespace Dojo {
 		struct CurrentState
 		{
 			Matrix view, world, projection, worldView, worldViewProjection;
-			Vector viewDirection;
+			Vector viewDirection, targetDimension;
 
 		} currentState;
 						

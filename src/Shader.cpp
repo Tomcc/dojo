@@ -120,70 +120,65 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 
 #ifdef DOJO_SHADERS_AVAILABLE
 
+const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
+{
+	static GLint tempInt[2];
+    auto builtin = uniform.builtInUniform;
+    switch ( builtin )
+    {
+		case BU_NONE:
+			return uniform.userUniformCallback( user ); //call the user callback and be happy
+		case BU_WORLD:
+			return &pRender->currentState.world;
+		case BU_VIEW:
+			return &pRender->currentState.view;
+		case BU_PROJECTION:
+			return &pRender->currentState.projection;
+        case BU_WORLDVIEW:
+            return &(pRender->currentState.worldView);
+		case BU_WORLDVIEWPROJ:
+			return &pRender->currentState.worldViewProjection;
+		case BU_OBJECT_COLOR:
+			return &user->color;
+		case BU_VIEW_DIRECTION:
+			return &pRender->currentState.viewDirection;
+		case BU_TIME:
+			DEBUG_TODO;
+			return nullptr;
+		case BU_TARGET_DIMENSION:
+            return &pRender->currentState.targetDimension;
+		default: //texture stuff
+        {
+            if( builtin >= BU_TEXTURE_0 && builtin <= BU_TEXTURE_N )
+            {
+                tempInt[0] = builtin - BU_TEXTURE_0;
+                return &tempInt;
+            }
+            else if( builtin >= BU_TEXTURE_0_DIMENSION && builtin <= BU_TEXTURE_N_DIMENSION )
+            {
+                Texture* t = user->getTexture( builtin - BU_TEXTURE_0_DIMENSION );
+                tempInt[0] = t->getWidth();
+                tempInt[1] = t->getHeight();
+                return &tempInt;
+            }
+            else if( builtin >= BU_TEXTURE_0_TRANSFORM && builtin <= BU_TEXTURE_N_TRANSFORM )
+            {
+                return &user->getTextureUnit( builtin - BU_TEXTURE_0_TRANSFORM )->getTransform();
+            }
+        }
+    }
+}
+
 void Shader::use( Renderable* user )
 {
 	DEBUG_ASSERT( isLoaded(), "tried to use a Shader that wasn't loaded" );
-
-	GLint tempInt[2];
 
 	glUseProgram( mGLProgram );
 
 	//bind the uniforms and the attributes
 	for( auto& uniform : mUniformMap )
 	{
-		const void* ptr = nullptr;
-
-		switch ( uniform.second.builtInUniform )
-		{
-		case BU_NONE:
-			ptr = uniform.second.userUniformCallback( user ); //call the user callback and be happy
-			break;
-		case BU_WORLD:
-			ptr = &pRender->currentState.world;
-			break;
-		case BU_VIEW:
-			ptr = &pRender->currentState.view;
-			break;
-		case BU_PROJECTION:
-			ptr = &pRender->currentState.projection;
-			break;
-		case BU_WORLDVIEWPROJ:
-			ptr = &pRender->currentState.worldViewProjection;
-			break;
-		case BU_OBJECT_COLOR:
-			ptr = &user->color;
-			break;
-		case BU_VIEW_DIRECTION:
-			ptr = &pRender->currentState.viewDirection;
-			break;
-		case BU_TIME:
-			DEBUG_TODO;
-			break;
-		case BU_TARGET_DIMENSION:
-			DEBUG_TODO;
-			break;
-		default: //texture stuff
-			{
-				BuiltInUniform biu = uniform.second.builtInUniform;
-				if( biu >= BU_TEXTURE_0 && biu <= BU_TEXTURE_N )
-				{
-					tempInt[0] = biu - BU_TEXTURE_0;
-					ptr = &tempInt;
-				}
-				else if( biu >= BU_TEXTURE_0_DIMENSION && biu <= BU_TEXTURE_N_DIMENSION )
-				{
-					Texture* t = user->getTexture( biu - BU_TEXTURE_0_DIMENSION );
-					tempInt[0] = t->getWidth();
-					tempInt[1] = t->getHeight();
-					ptr = &tempInt;
-				}
-				else if( biu >= BU_TEXTURE_0_TRANSFORM && biu <= BU_TEXTURE_N_TRANSFORM )
-				{
-					ptr = &user->getTextureUnit( biu - BU_TEXTURE_0_TRANSFORM )->getTransform();
-				}
-			}
-			break;
-		}
+		const void* ptr = _getUniformData( uniform.second, user );
 
 		if( ptr == nullptr ) //no data provided, skip
 			break;

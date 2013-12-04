@@ -8,3 +8,8 @@ dependencies-*
 *.lib
 *.dll
 *.orig
+Debug
+Release
+dojo.xcodeproj/xcshareddata
+lib/dojo.bsc
+lib/dojo_d.bsc
