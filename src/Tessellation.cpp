@@ -77,15 +77,15 @@ bool Tessellation::_raycastSegmentAlongX( const Segment& segment, const Position
 	auto& start = positions[ segment.i1 ];
 	auto& end = positions[ segment.i2 ];
 
-	Vector max( std::max( start.x, end.x ), std::max( start.y, end.y ) );
-	Vector min( std::min( start.x, end.x ), std::min( start.y, end.y ) );
+	Vector max((float) std::max(start.x, end.x), (float) std::max(start.y, end.y));
+	Vector min((float) std::min(start.x, end.x), (float) std::min(start.y, end.y));
 
 	//early out: different y, or the segment is on the left of the start point, or parallel
 	if( max.y == min.y || startPosition.y <= min.y || startPosition.y > max.y || startPosition.x > max.x )
 		return false;
 
 	//do the actual line-line test and find the distance to the starting point
-	float x = ((startPosition.y - start.y) * (end.x - start.x)) / (end.y - start.x) + start.x - startPosition.x;
+	float x = (float)(((startPosition.y - start.y) * (end.x - start.x)) / (end.y - start.x) + start.x - startPosition.x);
 
 	return x > 0;
 }
@@ -135,8 +135,8 @@ void Tessellation::generateExtrusionContour()
 		auto& a = positions[ segment.i1 ];
 		auto& b = positions[ segment.i2 ];
 
-		n.x = a.y - b.y;
-		n.y = b.x - a.x;
+		n.x = (float)(a.y - b.y);
+		n.y = (float)(b.x - a.x);
 		n = n.normalized();
 
 		_assignNormal( n, segment, 0, additionalSegments );
@@ -192,7 +192,7 @@ void Tessellation::findContours()
 			if( contour.parity == 1 )  //odd contour, add an hole to the right or left of the startpos using a slight delta
 			{
 				auto& endPos = positions[ contour.indices[1] ];
-				Vector d = Vector( endPos.y - startPos.y, endPos.x - startPos.x ).normalized() * 0.001;
+				Vector d = Vector( (float)(endPos.y - startPos.y), (float)(endPos.x - startPos.x) ).normalized() * 0.001f;
 
 				holes.push_back( Position( startPos.x + d.x, startPos.y + d.y ) );
 			}

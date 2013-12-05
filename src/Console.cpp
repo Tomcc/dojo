@@ -16,7 +16,7 @@ Console::Console( Object* parent, const Vector& topLeft, const Vector& bottomRig
 	color = Color( 0,0,0,0.5 );
 
 	//create the textArea centered in topleft
-	mText = new TextArea( parent, fontName, Vector( -scale.x*0.5 + 0.3, scale.y * 0.5 - 0.2) );
+	mText = new TextArea( parent, fontName, Vector( -scale.x*0.5f + 0.3f, scale.y * 0.5f - 0.2f) );
 	mText->inheritScale = false;
 //	mText->setMaxLineLength( scale.x );
 
@@ -25,7 +25,7 @@ Console::Console( Object* parent, const Vector& topLeft, const Vector& bottomRig
 	parent->getGameState()->getViewport()->makeScreenSize( fontSize,
 		mText->getFont()->getFontWidth(), 
 		mText->getLineHeight() ); 
-	mMaxLines = (scale.y-0.2) / fontSize.y;
+	mMaxLines = (int)((scale.y-0.2f) / fontSize.y);
 	
 	addLog( source );
 }

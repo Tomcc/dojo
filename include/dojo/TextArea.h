@@ -78,7 +78,7 @@ namespace Dojo
 		///returns the height in pixel of a line of this TextArea
 		int getLineHeight()
 		{
-			return font->getFontHeight() * (1.f + getInterline() );
+			return font->getFontHeight() * (1 + (int)getInterline() );
 		}
 
 		///returns the number of characters that are currently shown

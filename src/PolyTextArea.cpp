@@ -13,9 +13,9 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 	pFont( font ),
 	mRendering( rt ),
 	mInterline( 0 ),
-	mInflateRadius( 0.01 ),
-	mDepth( 0.15 ),
-	mBevelDepth( 0.015 )
+	mInflateRadius( 0.01f ),
+	mDepth( 0.15f ),
+	mBevelDepth( 0.015f )
 {
 	DEBUG_ASSERT( pFont, "Cannot create a PolyTextArea with a null font" );
 

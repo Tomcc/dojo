@@ -62,8 +62,8 @@ void Viewport::setRenderTarget(Dojo::Texture *target)
     mRT = target;
     
     setTargetSize( target ?
-                  Vector( target->getWidth(), target->getHeight() ) :
-                  Vector( Platform::getSingleton()->getWindowWidth(), Platform::getSingleton()->getWindowHeight() ) );
+                  Vector( (float)target->getWidth(), (float)target->getHeight() ) :
+                  Vector( (float)Platform::getSingleton()->getWindowWidth(), (float)Platform::getSingleton()->getWindowHeight() ) );
 }
 
 void Viewport::lookAt(  const Vector& worldPos )

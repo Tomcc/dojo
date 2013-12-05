@@ -362,10 +362,10 @@ void Render::renderViewport( Viewport* viewport )
 
 	glFrontFace( rt ? GL_CW : GL_CCW ); //invert vertex winding when inverting the view
 
-    currentState.targetDimension.x = rt ? rt->getWidth() : width;
-    currentState.targetDimension.y = rt ? rt->getHeight() : height;
+    currentState.targetDimension.x = (float)(rt ? rt->getWidth() : width);
+    currentState.targetDimension.y = (float)(rt ? rt->getHeight() : height);
     
-	glViewport( 0, 0, currentState.targetDimension.x, currentState.targetDimension.y );
+	glViewport(0, 0, (GLsizei) currentState.targetDimension.x, (GLsizei)currentState.targetDimension.y);
 
 	//clear the viewport
 	glClearColor( 

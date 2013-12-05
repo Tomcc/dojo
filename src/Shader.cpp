@@ -165,6 +165,11 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
             {
                 return &user->getTextureUnit( builtin - BU_TEXTURE_0_TRANSFORM )->getTransform();
             }
+			else
+			{
+				DEBUG_ASSERT(false, "Shader built-in not recognized");
+				return nullptr;
+			}
         }
     }
 }

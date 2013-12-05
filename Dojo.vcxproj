@@ -176,16 +176,16 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;include/dojo;dependencies-win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BrowseInformation>true</BrowseInformation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlibd.lib;zziplibd.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -217,6 +217,8 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <EnablePREfast>false</EnablePREfast>
       <BrowseInformation>true</BrowseInformation>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundation.lib;%(AdditionalDependencies)</AdditionalDependencies>
