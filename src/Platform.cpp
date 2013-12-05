@@ -103,18 +103,18 @@ int Platform::_findZipExtension( const String & path )
 	return String::npos;
 }
 
-String Platform::_replaceFoldersWithExistingZips( const String& absPath )
+String Platform::_replaceFoldersWithExistingZips( const String& relPath )
 {
 	//find the root (on windows it is not the first character)
-	int next, prev = absPath.find_first_of( '/' );
+	int next, prev = 0;
 
-	String res = absPath.substr( 0, prev );
-
+	String res = relPath.substr( 0, prev );
+	
 	do
 	{
-		next = absPath.find_first_of( '/', prev+1 );
+		next = relPath.find_first_of('/', prev + 1);
 
-		String currentFolder = absPath.substr( prev, next-prev );
+		String currentFolder = relPath.substr(prev, next - prev);
 
 		//for each possibile zip extension, search a zip named like that
 		bool found = false;
@@ -181,10 +181,9 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
 {
-	String cleanAbsPath = getResourcesPath() + "/" + wpath;
 
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
-	String absPath = _replaceFoldersWithExistingZips( cleanAbsPath );
+	String absPath = getResourcesPath() + "/" +  _replaceFoldersWithExistingZips( wpath );
 
 	int idx = _findZipExtension( absPath );
 	if( idx != String::npos ) //there's at least one zip in the path
