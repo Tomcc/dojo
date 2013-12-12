@@ -133,7 +133,6 @@ namespace Dojo
 		
 	private:
 
-
 		uint lastPressedText;
 
 		float frameInterval;
@@ -144,6 +143,7 @@ namespace Dojo
 		KeyCode mKeyMap[ 256 ];
 
 		Keyboard mKeyboard;
+		int clientAreaYOffset;
 
 		XInputJoystick* mXInputJoystick[ 4 ];
 

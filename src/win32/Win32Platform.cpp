@@ -191,7 +191,8 @@ mMousePressed( false ),
 cursorPos( Vector::ZERO ),
 frameStart( 0, 1 ),
 frameInterval(0),
-mFramesToAdvance( 0 )
+mFramesToAdvance( 0 ),
+clientAreaYOffset(0)
 {
 	/*
 #ifdef _DEBUG
@@ -245,6 +246,17 @@ void Win32Platform::_adjustWindow()
         SWP_SHOWWINDOW);
 
     MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
+
+	//get the new area and see what happened, get the offset
+	if (!isFullscreen())
+	{
+		RECT rcClient, rcWind;
+		GetClientRect(hwnd, &rcClient);
+		GetWindowRect(hwnd, &rcWind);
+
+		clientAreaYOffset = rcWind.top - rcClient.top;
+	}
+
 }
 
 bool Win32Platform::_initializeWindow( const String& windowCaption, uint w, uint h )
@@ -375,6 +387,8 @@ void Win32Platform::_setFullscreen( bool fullscreen )
 
 		//WARNING MoveWindow can change backbuffer size
 		MoveWindow(hwnd, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
+
+		clientAreaYOffset = 0;
 	}
 
 	ShowCursor( !fullscreen );
@@ -637,7 +651,7 @@ void Win32Platform::mousePressed(int cx, int cy, Touch::Type type)
 	dragging = true;
 
 	cursorPos.x = (float)cx;
-	cursorPos.y = (float)cy;
+	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	input->_fireTouchBeginEvent( cursorPos, type );
 }
@@ -650,7 +664,7 @@ void Win32Platform::mouseWheelMoved( int wheelZ )
 void Win32Platform::mouseMoved(int cx, int cy )
 {
 	cursorPos.x = (float)cx;
-	cursorPos.y = (float)cy;
+	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::TT_LEFT_CLICK ); //TODO this doesn't really work but Win doesn't tell
 	else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
@@ -669,7 +683,7 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 	dragging = false;
 
 	cursorPos.x = (float)cx;
-	cursorPos.y = (float)cy;
+	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	input->_fireTouchEndEvent( cursorPos, type );
 }
