@@ -85,14 +85,14 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
 
-		app->mousePressed( LOWORD( lparam ), HIWORD( lparam ), WM_LBUTTONDOWN - message );
+		app->mousePressed( LOWORD( lparam ), HIWORD( lparam ), (Touch::Type)(Touch::TT_LEFT_CLICK + (WM_LBUTTONDOWN - message)) );
         return 0;
 
     case WM_LBUTTONUP:   //left up
     case WM_RBUTTONUP:
     case WM_MBUTTONUP:
 
-		app->mouseReleased( LOWORD( lparam ), HIWORD( lparam ), WM_LBUTTONUP - message );
+		app->mouseReleased(LOWORD(lparam), HIWORD(lparam), (Touch::Type)(Touch::TT_LEFT_CLICK + (WM_LBUTTONDOWN - message)));
         return 0;
 
     case WM_MOUSEMOVE:
@@ -630,7 +630,7 @@ void Win32Platform::loop()
 	}
 }
 
-void Win32Platform::mousePressed( int cx, int cy, int id )
+void Win32Platform::mousePressed(int cx, int cy, Touch::Type type)
 {
 	//TODO use the button ID!
 	mMousePressed = true;
@@ -639,7 +639,7 @@ void Win32Platform::mousePressed( int cx, int cy, int id )
 	cursorPos.x = (float)cx;
 	cursorPos.y = (float)cy;
 
-	input->_fireTouchBeginEvent( cursorPos );
+	input->_fireTouchBeginEvent( cursorPos, type );
 }
 
 void Win32Platform::mouseWheelMoved( int wheelZ )
@@ -647,23 +647,23 @@ void Win32Platform::mouseWheelMoved( int wheelZ )
 	input->_fireScrollWheelEvent( (float)wheelZ );
 }
 
-void Win32Platform::mouseMoved(  int cx, int cy  )
+void Win32Platform::mouseMoved(int cx, int cy )
 {
 	cursorPos.x = (float)cx;
 	cursorPos.y = (float)cy;
 
-	if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos );
+	if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::TT_LEFT_CLICK ); //TODO this doesn't really work but Win doesn't tell
 	else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
 
 	prevCursorPos = cursorPos;
 }
 
-void Win32Platform::mouseReleased( int cx, int cy, int id )
+void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 {
 	//windows can actually send "released" messages whose "pressed" event was sent to another window
 	//or used to awake the current one - send a fake mousePressed event if this happens!
 	if( !mMousePressed  )
-		mousePressed( cx, cy, id );
+		mousePressed( cx, cy, type );
 
 	mMousePressed  = false;
 	dragging = false;
@@ -671,7 +671,7 @@ void Win32Platform::mouseReleased( int cx, int cy, int id )
 	cursorPos.x = (float)cx;
 	cursorPos.y = (float)cy;
 
-	input->_fireTouchEndEvent( cursorPos );
+	input->_fireTouchEndEvent( cursorPos, type );
 }
 
 void Win32Platform::keyPressed( int kc )

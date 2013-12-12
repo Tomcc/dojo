@@ -24,23 +24,23 @@ void InputSystem::poll(float dt)
         device->poll( dt );
 };
 
-void InputSystem::_fireTouchBeginEvent( const Vector& point )
+void InputSystem::_fireTouchBeginEvent(const Vector& point, Touch::Type type)
 {
     if( enabled )
     {
         //create a new Touch
-        Touch* t = _registertouch( point );
+        Touch* t = _registertouch( point, type );
         
         for( int i = 0; i < listeners.size(); ++i )
             listeners.at(i)->onTouchBegan( *t );
     }
 }
 
-void InputSystem::_fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos )
+void InputSystem::_fireTouchMoveEvent(const Vector& currentPos, const Vector& prevPos, Touch::Type type)
 {
     if( enabled )
     {
-        Touch* t = _getExistingTouch( prevPos );
+        Touch* t = _getExistingTouch( prevPos, type );
         
         t->point = currentPos;
         t->speed = prevPos - currentPos; //get translation
@@ -50,11 +50,11 @@ void InputSystem::_fireTouchMoveEvent( const Vector& currentPos, const Vector& p
     }
 }
 
-void InputSystem::_fireTouchEndEvent( const Vector& point )
+void InputSystem::_fireTouchEndEvent(const Vector& point, Touch::Type type)
 {
     if( enabled )
     {
-        Touch* t = _popExistingTouch( point );
+        Touch* t = _popExistingTouch( point, type );
         t->point = point;
         
         for( int i = 0; i < listeners.size(); ++i )

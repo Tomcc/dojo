@@ -12,16 +12,26 @@ namespace Dojo
 	{
 	public:
 
+		enum Type {
+			TT_HOVER,
+			TT_TAP,
+			TT_LEFT_CLICK,
+			TT_RIGHT_CLICK,
+			TT_MIDDLE_CLICK
+		};
+
 		int ID;
+		Type type;
 		Vector point, speed;
 
 		///first frame is only set in the first frame where the touch has appeared
 		int firstFrame;
 
-		Touch( int _ID, const Vector& _point ) :
+		Touch( int _ID, const Vector& _point, Type type ) :
 			ID( _ID ),
 			point( _point ),
 			speed( Vector::ZERO ),
+			type( type ),
 			firstFrame( 2 ) //this is 2 because InputSystem::poll is called just after Touch creation - so it has to actually skip a frame
 		{
 

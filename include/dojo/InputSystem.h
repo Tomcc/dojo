@@ -158,9 +158,9 @@ namespace Dojo
 			//TODO
 		}
 
-		void _fireTouchBeginEvent( const Vector& point );		
-		void _fireTouchMoveEvent( const Vector& currentPos, const Vector& prevPos );		
-		void _fireTouchEndEvent( const Vector& point );		
+		void _fireTouchBeginEvent(const Vector& point, Touch::Type type);
+		void _fireTouchMoveEvent(const Vector& currentPos, const Vector& prevPos, Touch::Type type);
+		void _fireTouchEndEvent(const Vector& point, Touch::Type type);
 		
 		void _fireMouseMoveEvent( const Vector& currentPos, const Vector& prevPos );		
 		void _fireScrollWheelEvent( float scroll );		
@@ -179,16 +179,16 @@ namespace Dojo
 
 		DeviceList mDeviceList;
 				
-		inline Touch* _registertouch( const Vector& point )
+		inline Touch* _registertouch( const Vector& point, Touch::Type type )
 		{
-			Touch* t = new Touch( mAssignedTouches++, point );
+			Touch* t = new Touch( mAssignedTouches++, point, type );
 			
 			mTouchList.add( t );
 			
 			return t;
 		}
 		
-		inline int _getExistingTouchID( const Vector& point )
+		inline int _getExistingTouchID(const Vector& point, Touch::Type type)
 		{
 			//find the nearest touch to this position
 			float minDist = FLT_MAX;
@@ -196,6 +196,9 @@ namespace Dojo
 			
 			for( int i = 0; i < mTouchList.size(); ++i )
 			{
+				if ( type != type )
+					continue;
+
 				float d = mTouchList[i]->point.distance( point );
 				
 				if( d < minDist )
@@ -208,14 +211,14 @@ namespace Dojo
 			return nearest;
 		}
 		
-		inline Touch* _getExistingTouch( const Vector& point )
+		inline Touch* _getExistingTouch(const Vector& point, Touch::Type type)
 		{
-			return mTouchList[ _getExistingTouchID( point ) ];
+			return mTouchList[ _getExistingTouchID( point, type ) ];
 		}
 		
-		inline Touch* _popExistingTouch( const Vector& point )
+		inline Touch* _popExistingTouch(const Vector& point, Touch::Type type)
 		{
-			int idx = _getExistingTouchID( point );
+			int idx = _getExistingTouchID( point, type );
 
 			DEBUG_ASSERT( idx >= 0, "Needed to remove an existing touch but it was not found" );
 

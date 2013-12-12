@@ -29,6 +29,7 @@ void Shader::_populateUniformNameMap()
 	sBuiltiInUniformsNameMap[ "WORLD" ] = BU_WORLD;
 	sBuiltiInUniformsNameMap[ "VIEW" ] = BU_VIEW;
 	sBuiltiInUniformsNameMap[ "PROJECTION" ] = BU_PROJECTION;
+	sBuiltiInUniformsNameMap[ "WORLDVIEW" ] = BU_WORLDVIEW;
 	sBuiltiInUniformsNameMap[ "WORLDVIEWPROJ" ] = BU_WORLDVIEWPROJ;
 	sBuiltiInUniformsNameMap[ "VIEW_DIRECTION" ] = BU_VIEW_DIRECTION;
 	sBuiltiInUniformsNameMap[ "OBJECT_COLOR" ] = BU_OBJECT_COLOR;

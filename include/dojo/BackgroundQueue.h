@@ -91,10 +91,10 @@ namespace Dojo
 		bool mRunning;
 
 		TaskQueue mQueue;
-		Mutex mQueueMutex;
+		PocoMutex mQueueMutex;
 		Poco::Semaphore mQueueSemaphore;
 
-		Mutex mCompletedQueueMutex;
+		PocoMutex mCompletedQueueMutex;
 		CompletedTaskQueue mCompletedQueue;
 
 		WorkerList mWorkers;
@@ -108,7 +108,7 @@ namespace Dojo
 
 			if( mRunning ) //fetch a new task from the queue
 			{
-				Lock l( mQueueMutex );
+				PocoLock l( mQueueMutex );
 				out = mQueue.front();
 				mQueue.pop();
 				return true;

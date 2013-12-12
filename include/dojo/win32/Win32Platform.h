@@ -53,10 +53,11 @@ namespace Dojo
 		
 		virtual void openWebPage( const String& site );
 
-		void mouseMoved( int cursorX, int cursorY );
 		void mouseWheelMoved( int wheelZ );
-		void mousePressed( int cursorX, int cursorY, int id );
-		void mouseReleased(	int cursorX, int cursorY, int id );
+
+		void mousePressed(int cursorX, int cursorY, Touch::Type type);
+		void mouseMoved(int cursorX, int cursorY );
+		void mouseReleased(int cursorX, int cursorY, Touch::Type type);
 
 		void keyPressed( int kc );
 		void keyReleased( int kc );	

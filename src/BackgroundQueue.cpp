@@ -32,7 +32,7 @@ void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
     }
     else
     {
-        Lock lock( mQueueMutex );
+        PocoLock lock( mQueueMutex );
         
         mQueue.push( TaskCallbackPair( task, callback ) );
         
@@ -46,7 +46,7 @@ void BackgroundQueue::queueOnMainThread( const Callback& c )
 		c();
 	else
 	{
-		Lock l( mCompletedQueueMutex );
+		PocoLock l( mCompletedQueueMutex );
 
 		mCompletedQueue.push( c );
 	}

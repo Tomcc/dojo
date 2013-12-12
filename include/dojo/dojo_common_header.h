@@ -122,10 +122,10 @@
 //typedefs
 namespace Dojo
 {
-	typedef Poco::FastMutex Mutex;
-	typedef Poco::Mutex RecursiveMutex;
-	typedef Poco::ScopedLock< Mutex > Lock;
-	typedef Poco::ScopedLock< RecursiveMutex > RecursiveLock;
+	typedef Poco::FastMutex PocoMutex;
+	typedef Poco::Mutex PocoRecursiveMutex;
+	typedef Poco::ScopedLock< PocoMutex > PocoLock;
+	typedef Poco::ScopedLock< PocoRecursiveMutex > RecursiveLock;
 }
 
 #endif // dojo_common_headers_h__
