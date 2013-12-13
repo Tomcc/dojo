@@ -25,6 +25,7 @@
     <ClInclude Include="include\dojo\KeyCode.h" />
     <ClInclude Include="include\dojo\Log.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
+    <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />

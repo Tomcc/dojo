@@ -3,6 +3,8 @@
 
 #include "dojo_common_header.h"
 
+#include "Pipe.h"
+
 namespace Dojo
 {
 	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool
@@ -49,10 +51,6 @@ namespace Dojo
 		{
 			mRunning = false;
 
-			//signal each for each thread in the pool so that they can be closed
-			for( int i = 0; i < mWorkers.size(); ++i )
-				mQueueSemaphore.set();
-
 			for( auto& w : mWorkers )
 				w->join();
 		}
@@ -84,17 +82,13 @@ namespace Dojo
 		};
 
 		typedef std::pair< Task, Callback > TaskCallbackPair;
-		typedef std::queue< TaskCallbackPair > TaskQueue;
-		typedef std::queue< Task > CompletedTaskQueue;
+		typedef Pipe< TaskCallbackPair > TaskQueue;
+		typedef Pipe< Task > CompletedTaskQueue;
 		typedef std::vector< std::unique_ptr< Worker > > WorkerList;
 
 		bool mRunning;
 
 		TaskQueue mQueue;
-		PocoMutex mQueueMutex;
-		Poco::Semaphore mQueueSemaphore;
-
-		PocoMutex mCompletedQueueMutex;
 		CompletedTaskQueue mCompletedQueue;
 
 		WorkerList mWorkers;
@@ -104,15 +98,9 @@ namespace Dojo
 		///waits for a task, returns false if the thread has to close
 		bool _waitForTaskOrClose( TaskCallbackPair& out )
 		{
-			mQueueSemaphore.wait();
-
 			if( mRunning ) //fetch a new task from the queue
-			{
-				PocoLock l( mQueueMutex );
-				out = mQueue.front();
-				mQueue.pop();
-				return true;
-			}
+				return mQueue.tryPop(out);
+
 			else return false;
 		}
 

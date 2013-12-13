@@ -9,7 +9,6 @@ using namespace Dojo;
 const BackgroundQueue::Callback BackgroundQueue::NOP_CALLBACK = [](){};
 
 BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
-	mQueueSemaphore( 0, 0xffff ),
 	mRunning( true )
 {
 	mMainThreadID = Poco::Thread::currentTid();
@@ -31,13 +30,7 @@ void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
         callback();
     }
     else
-    {
-        PocoLock lock( mQueueMutex );
-        
-        mQueue.push( TaskCallbackPair( task, callback ) );
-        
-        mQueueSemaphore.set();
-    }
+		mQueue.queue(TaskCallbackPair(task, callback));
 }
 
 void BackgroundQueue::queueOnMainThread( const Callback& c )
@@ -45,29 +38,16 @@ void BackgroundQueue::queueOnMainThread( const Callback& c )
 	if( Poco::Thread::currentTid() == mMainThreadID ) //is this already the main thread? just execute
 		c();
 	else
-	{
-		PocoLock l( mCompletedQueueMutex );
-
-		mCompletedQueue.push( c );
-	}
+		mCompletedQueue.queue(c);
 }
 
 void BackgroundQueue::fireCompletedCallbacks()
 {
-	mCompletedQueueMutex.lock();
-
-	auto localQueue = mCompletedQueue; //copy the queue for async access
-	while( !mCompletedQueue.empty() ) //and empty it again
-		mCompletedQueue.pop();
-
-	mCompletedQueueMutex.unlock();
-
 	//now, execute the callbacks on the main thread
-	while ( localQueue.size() )
-	{
-		localQueue.front()();
-		localQueue.pop();
-	}
+	Task callback;
+
+	while ( mCompletedQueue.tryPop(callback) )
+		callback();
 }
 
 void BackgroundQueue::Worker::run()

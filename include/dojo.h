@@ -5,6 +5,7 @@
 #include <dojo/ApplicationListener.h>
 #include <dojo/Array.h>
 #include <dojo/AStar.h>
+#include <dojo/Pipe.h>
 #include <dojo/BackgroundQueue.h>
 #include <dojo/Resource.h>
 #include <dojo/Color.h>
