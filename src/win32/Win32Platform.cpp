@@ -439,7 +439,12 @@ void Win32Platform::initialize( Game* g )
 
 	//load settings
 	Table userConfig;
-	Table::loadFromFile( &userConfig, getAppDataPath() + "/config.ds" );
+
+	//check for a local override file
+	Table::loadFromFile(&userConfig, mRootPath + "/config.ds");
+
+	if ( userConfig.isEmpty() ) //also look in appdata
+		Table::loadFromFile( &userConfig, getAppDataPath() + "/config.ds" );
 
 	config.inherit( &userConfig ); //use the table that was loaded from file but override any config-passed members
 
@@ -534,8 +539,8 @@ void Win32Platform::acquireContext()
 
 void Win32Platform::present()
 {
-	//take the time before swapBuffers because on some implementations it is blocking
-	realFrameTime = (float)mStepTimer.getElapsedTime();	
+	if ( isFullscreen() )
+		glFinish(); //WAT //HACK if this is not called in fullscreen, the app actually blocks in the first next glUseProgram making realTime useless!
 
 	SwapBuffers( hdc );
 }
@@ -556,7 +561,7 @@ void Win32Platform::_pollDevices( float dt )
 void Win32Platform::step( float dt )
 {
 	mStepTimer.reset();
-	
+
 	//check if some other thread requested a new context
 	ContextShareRequest* req;
 	while (mContextRequestsQueue.tryPop(req))
@@ -582,6 +587,11 @@ void Win32Platform::step( float dt )
 	sound->update( dt );
 
 	render->render();
+
+	//take the time before swapBuffers because on some implementations it is blocking
+	realFrameTime = (float) mStepTimer.getElapsedTime();
+
+	present();
 }
 
 void Win32Platform::loop()

@@ -40,7 +40,7 @@ namespace Dojo
 		typedef std::vector< int > LayerList;
 					
 		Viewport( 
-			GameState* level, 
+			Object* level, 
 			const Vector& pos,
 			const Vector& size, 
 			const Color& clear, 

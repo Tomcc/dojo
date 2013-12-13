@@ -408,8 +408,6 @@ void Render::render()
 {
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
 
-	//HACK is this even needed? could be slow on windows
-	platform->acquireContext();
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	frameStarted = true;
@@ -417,9 +415,6 @@ void Render::render()
 	//render all the viewports
 	for( auto viewport : mViewportList )
 		renderViewport( viewport );
-
-	//end the frame
-	platform->present();
 
 	frameStarted = false;
 }

@@ -12,14 +12,14 @@
 using namespace Dojo;
 
 Viewport::Viewport( 
-		 GameState* level, 
+		 Object* parent, 
 		 const Vector& pos,
 		 const Vector& size, 
 		 const Color& clear, 
 		 float _VFOV, 
 		 float _zNear,
 		 float _zFar ) :
-Object( level, pos, size ),
+Object( parent, pos, size ),
 cullingEnabled( true ),
 fadeObject( NULL ),
 clearColor( clear ),
