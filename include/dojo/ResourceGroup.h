@@ -86,7 +86,7 @@ namespace Dojo
 		template < class R >
 		inline std::unordered_map< String, R* >* getResourceMap( ResourceType r ) const
 		{
-			return (std::unordered_map< String, R* >*)mapArray[ (uint)r ];
+			return (std::unordered_map< String, R* >*)mapArray[ (int)r ];
 		}
 		
 		///finds a named resource of type R

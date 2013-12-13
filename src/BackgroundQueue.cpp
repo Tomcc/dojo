@@ -11,7 +11,7 @@ const BackgroundQueue::Callback BackgroundQueue::NOP_CALLBACK = [](){};
 BackgroundQueue::BackgroundQueue( int poolSize /* = -1 */ ) :
 	mRunning( true )
 {
-	mMainThreadID = Poco::Thread::currentTid();
+	mMainThreadID = std::this_thread::get_id();
 
 	if( poolSize < 0 )
 		poolSize = Platform::getSingleton()->getCPUCoreCount();
@@ -35,7 +35,7 @@ void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
 
 void BackgroundQueue::queueOnMainThread( const Callback& c )
 {
-	if( Poco::Thread::currentTid() == mMainThreadID ) //is this already the main thread? just execute
+	if( std::this_thread::get_id() == mMainThreadID ) //is this already the main thread? just execute
 		c();
 	else
 		mCompletedQueue.queue(c);
@@ -50,20 +50,27 @@ void BackgroundQueue::fireCompletedCallbacks()
 		callback();
 }
 
-void BackgroundQueue::Worker::run()
+BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
+pParent(parent)
 {
-	Platform::getSingleton()->prepareThreadContext();
+	DEBUG_ASSERT(pParent, "the parent can't be null");
 
-	while( 1 )
+	thread = std::thread([&]()
 	{
-		TaskCallbackPair pair;
+		Platform::getSingleton()->prepareThreadContext();
 
-		if( !pParent->_waitForTaskOrClose( pair ) ) //wait for a new task or close
-			break;
+		while( 1 )
+		{
+			TaskCallbackPair pair;
 
-		pair.first(); //execute the task
+			if( !pParent->_waitForTaskOrClose( pair ) ) //wait for a new task or close
+				break;
 
-		//push the callback on the completed queue
-		pParent->queueOnMainThread( pair.second );
-	}
+			pair.first(); //execute the task
+
+			//push the callback on the completed queue
+			pParent->queueOnMainThread( pair.second );
+		}
+	});
 }
+	

@@ -109,7 +109,7 @@ namespace Dojo
 		ResourceGroup* creator;
 		
 		bool loaded;
-		uint size;
+		int size;
 		
 		String filePath;
 		DataProvider* pDataProvider;

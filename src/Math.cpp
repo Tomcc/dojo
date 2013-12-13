@@ -9,10 +9,10 @@ const float Math::TAU = 6.2831853071796f;
 const float Math::EULER_TO_RADIANS = 0.01745329251994329f;
 const float Math::RADIANS_TO_EULER = 57.295779513082325f;
 
-void Math::seedRandom( uint seed )
+void Math::seedRandom(unsigned int seed)
 {
 	if( !seed )
-		seed = (uint)time( NULL );
+		seed = (unsigned int) time(NULL);
 
 	srand( seed );
 }

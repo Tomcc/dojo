@@ -42,7 +42,7 @@ namespace Dojo
 		{
 		public:
 			void* ptr;
-			uint size;
+			int size;
 			
 			Data() :
 			ptr( NULL ),
@@ -51,7 +51,7 @@ namespace Dojo
 
 			}
 
-			Data( void* p, uint s) :
+			Data( void* p, int s) :
 			ptr( p ),
 			size( s )
 			{
@@ -152,7 +152,7 @@ namespace Dojo
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
-		inline static String index( uint i )
+		inline static String index( int i )
 		{
 			return '_' + String(i);
 		}
@@ -223,7 +223,7 @@ namespace Dojo
 		returns "B" for a key such as "A.B.key" */
 		Table* getParentTable( const String& key, String& realKey ) const
 		{
-			int dotIdx = 0;
+			size_t dotIdx = 0;
 			for(; dotIdx< key.size() && key[dotIdx] != '.'; ++dotIdx ); 
 
 			if( dotIdx == key.size() )
@@ -273,11 +273,6 @@ namespace Dojo
 		}
 
 		inline void set( const String& key, int value )
-		{
-			set( key, (float)value );
-		}
-
-		inline void set( const String& key, uint value )
 		{
 			set( key, (float)value );
 		}
@@ -513,42 +508,42 @@ namespace Dojo
 			return '_' + String( idx );
 		}
 		
-		inline float getNumber( uint idx ) const
+		inline float getNumber( int idx ) const
 		{			
 			return getNumber( autoMemberName( idx ) );
 		}
 		
-		inline int getInt( uint idx ) const
+		inline int getInt( int idx ) const
 		{
 			return (int)getNumber( idx );
 		}
 		
-		inline bool getBool( uint idx ) const
+		inline bool getBool( int idx ) const
 		{
 			return getNumber(idx) > 0.f;
 		}
 		
-		inline const String& getString( uint idx ) const
+		inline const String& getString( int idx ) const
 		{
 			return getString( autoMemberName(idx) );
 		}
 		
-		inline const Dojo::Vector& getVector( uint idx ) const
+		inline const Dojo::Vector& getVector( int idx ) const
 		{
 			return  getVector( autoMemberName(idx ) );
 		}
 		
-		inline const Dojo::Color getColor( uint idx, float alpha = 1.f ) const
+		inline const Dojo::Color getColor( int idx, float alpha = 1.f ) const
 		{
 			return Color( getVector( idx ), alpha );
 		}
 		
-		inline Table* getTable( uint idx ) const
+		inline Table* getTable( int idx ) const
 		{			
 			return getTable( autoMemberName(idx) );
 		}
 		
-		inline const Data& getData( uint idx ) const
+		inline const Data& getData( int idx ) const
 		{
 			return getData( autoMemberName( idx ) );
 		}	
@@ -625,7 +620,7 @@ namespace Dojo
 		
 		EntryMap map;
 
-		uint unnamedMembers;
+		int unnamedMembers;
 	};
 }
 

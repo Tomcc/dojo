@@ -33,7 +33,7 @@ namespace Dojo
 		}
 		
 		///seeds the random either using the given seed, or current time if omitted
-		static void seedRandom( uint seed = 0 );
+		static void seedRandom( unsigned int seed = 0 );
 		
 		///quick and dirty random (see Random class for a more reliable implementation)
 		static float random();
@@ -135,7 +135,7 @@ namespace Dojo
 		}
 
 		///returns the smallest power of two greater than val
-		static inline uint nextPowerOfTwo( uint val )
+		static inline unsigned int nextPowerOfTwo( unsigned int val )
 		{
 			--val;
 			val = (val >> 1) | val;

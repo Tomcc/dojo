@@ -198,7 +198,7 @@ void ResourceGroup::addSounds( const String& subdirectory )
 
 	Platform::getSingleton()->getFilePathsForType( "ogg", subdirectory, paths );
 	
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 	{
 		name = Utils::getFileName( paths[i] );
 		
@@ -223,7 +223,7 @@ void ResourceGroup::addTables( const String& folder )
 	
 	Platform::getSingleton()->getFilePathsForType("ds", folder, paths );
 	
-	for( uint i = 0; i < paths.size(); ++i )
+	for( int i = 0; i < paths.size(); ++i )
 		addTable( new Table( this, paths[i] ) );
 }
 

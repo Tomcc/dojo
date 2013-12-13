@@ -176,11 +176,11 @@ void SoundBuffer::Chunk::loadAsync()
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
 	//async load
-	Platform::getSingleton()->getBackgroundQueue()->queueTask( [ & ]()
+	Platform::getSingleton()->getBackgroundQueue()->queueTask([&]()
 	{
 		onLoad();
-        
-        Poco::Thread::sleep(100); //HACK
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK
 	},
 	[&]() //then,
 	{

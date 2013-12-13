@@ -47,7 +47,7 @@ namespace Dojo
 		/**
 		n can be higher than the current character count; all the characters will be shown
 		*/
-		inline void setVisibleCharacters( uint n )
+		inline void setVisibleCharacters( int n )
 		{
 			if( n != visibleCharsNumber )
 			{
@@ -64,7 +64,7 @@ namespace Dojo
 		}
 				
 		///sets the max pixel length for this line.
-		void setMaxLineLength( uint l );
+		void setMaxLineLength( int l );
 		
 		///sets the space between lines
 		inline void setInterline( float i )		{	interline = i;		}
@@ -82,7 +82,7 @@ namespace Dojo
 		}
 
 		///returns the number of characters that are currently shown
-		inline uint getVisibleCharacters()		{	return visibleCharsNumber;	}
+		inline int getVisibleCharacters()		{	return visibleCharsNumber;	}
 		
 		///empties this text area
 		void clearText();
@@ -91,10 +91,10 @@ namespace Dojo
 		void addText( const String& text );
 		
 		///adds a number to this TextArea
-		void addText( uint n, char paddingChar = 0, uint digits = 0 );
+		void addText( int n, char paddingChar = 0, int digits = 0 );
 					
 		///adds a Time string using a number of seconds
-		inline void addTimeSeconds( uint n )
+		inline void addTimeSeconds( int n )
 		{		
 			addText( n / 60 );
 			addText( " : " );
@@ -104,7 +104,7 @@ namespace Dojo
 		inline Font* getFont()					{	return font;			}		
 
 		///returns the number of added chars
-		inline uint getLenght()					{	return characters.size();	}
+		inline int getLenght()					{	return characters.size();	}
 
 		///returns the text content in String format
 		inline const String& getContent()		{	return content;			}
@@ -149,7 +149,7 @@ namespace Dojo
         
 		void _prepare();
 
-		void _centerLastLine( uint startingAt, float size );
+		void _centerLastLine( int startingAt, float size );
 
 		///create a mesh to be used for text
 		Mesh* _createMesh();

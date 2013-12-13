@@ -91,7 +91,7 @@ namespace Dojo
 		 */
 		Array(int firstPageSize = 64, int newPageSize = 64, int validElements = 0)
 		{
-			DEBUG_ASSERT( validElements <= (size_t)firstPageSize, "The first page must contain at least 'validElements' elements" );
+			DEBUG_ASSERT( validElements <= firstPageSize, "The first page must contain at least 'validElements' elements" );
 			
 			pageSize = newPageSize;			
 			elements = validElements;

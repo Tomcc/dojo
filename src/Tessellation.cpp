@@ -37,7 +37,7 @@ void Tessellation::mergeDuplicatePoints()
 	std::unordered_map< Vector, int > positionToIndexMap;
 
 	//iterate over all of the points
-	for( int i = 0; i < positions.size(); ++i )
+	for( size_t i = 0; i < positions.size(); ++i )
 	{
 		auto p = positions[i].toVec();
 		//try to find the new position in the map
@@ -55,7 +55,7 @@ void Tessellation::mergeDuplicatePoints()
 int Tessellation::_assignToIncompleteContour( int start, int end )
 {
 	//look for an incomplete contour (still open) that ends with start
-	for( int i = 0; i < contours.size(); ++i )
+	for( size_t i = 0; i < contours.size(); ++i )
 	{
 		auto& cont = contours[i];
 		if( !cont.closed && cont.indices.back() == start )
@@ -160,7 +160,7 @@ void Tessellation::findContours()
 	}
 
 	//trim still incomplete contours, they're just useless as everything is "out" of them
-	for( int i = 0; i < contours.size(); ++i )
+	for( size_t i = 0; i < contours.size(); ++i )
 	{
 		if( !contours[i].closed )
 			contours.erase( contours.begin() + i-- );
@@ -171,14 +171,14 @@ void Tessellation::findContours()
 	else
 	{
 		//compute the parity of each contour
-		for( int i = 0; i < contours.size(); ++i )
+		for( size_t i = 0; i < contours.size(); ++i )
 		{
 			//choose a random point in the contour and start going right
 			//count the number of intersections with the contour's segments to compute parity
 			int intersections = 0;
 			auto& contour = contours[i];
 			auto& startPos = positions[ contour.indices[0] ];
-			for( int j = 0; j < segments.size(); ++j )
+			for( size_t j = 0; j < segments.size(); ++j )
 			{
 				if( _raycastSegmentAlongX( segments[j], startPos ) ) //has hit segment i, check to which contour it belongs
 				{
@@ -245,7 +245,7 @@ void Tessellation::tessellate( bool clearInputs /* = true */ )
 
 	triangulate( "pzQNBP", &in, &out, nullptr );
 
-	DEBUG_ASSERT( outIndices.size() >= out.numberoftriangles * 3, "didn't allocate enough space for the indices" );
+	DEBUG_ASSERT( outIndices.size() >= (size_t)out.numberoftriangles * 3, "didn't allocate enough space for the indices" );
 
 	//resize to fit exactly the produced triangles
 	outIndices.resize( out.numberoftriangles*3 );

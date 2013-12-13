@@ -9,12 +9,12 @@
 
 using namespace Dojo;
 
-void Font::_blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
+void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside)
 {
 	DEBUG_ASSERT( dest, "null destination buffer" );
 	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
-	uint rowy, idx;
+	int rowy, idx;
 	if( bitmap->pixel_mode != FT_PIXEL_MODE_MONO )
 	{
 		for( int i = 0; i < bitmap->rows; ++i )
@@ -49,12 +49,12 @@ void Font::_blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside )
 	}
 }
 
-void Font::_blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col )
+void Font::_blitborder(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col)
 {
 	DEBUG_ASSERT( dest, "null destination buffer" );
 	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
-	uint rowy;
+	int rowy;
 	byte* ptr;
 
 	for( int i = 0; i < bitmap->rows; ++i )
@@ -206,19 +206,19 @@ bool Font::Page::onLoad()
 	FT_Render_Mode renderMode = ( font->isAntialiased() ) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
 	FT_GlyphSlot slot = font->face->glyph;
 	FT_Bitmap* bitmap;
-	uint gliphidx;
+	int gliphidx;
 
 	font->_prepareFace();
 
 	unichar c = firstCharIdx;
 	Font::Character* character = chars;
-	uint x, y;
+	int x, y;
 
 	Timer timer;
 
-	for( uint i = 0; i < FONT_PAGE_SIDE; ++i )
+	for (int i = 0; i < FONT_PAGE_SIDE; ++i)
 	{
-		for( uint j = 0; j < FONT_PAGE_SIDE; ++j, ++c, ++character )
+		for (int j = 0; j < FONT_PAGE_SIDE; ++j, ++c, ++character)
 		{
 			gliphidx = FT_Get_Char_Index( font->face, c );
 			int err = FT_Load_Glyph( font->face, gliphidx, FT_LOAD_DEFAULT );
@@ -408,7 +408,7 @@ int Font::getPixelLength( const String& str )
 
 	Character* lastChar = nullptr;
 
-	for( int i = 0; i < str.size(); ++i )
+	for( size_t i = 0; i < str.size(); ++i )
 	{
 		Character* chr = getCharacter( str[i] );
 		l += (int)(chr->advance * chr->pixelWidth);

@@ -79,7 +79,7 @@ namespace Dojo
 			return pool.at( i );
 		}
 
-		inline uint getActiveParticleNumber()			{	return firstIdleIdx;	}
+		inline int getActiveParticleNumber()			{	return firstIdleIdx;	}
 					
 		inline void update( float dt )
 		{

@@ -35,6 +35,7 @@ namespace Dojo
 	class Mesh : public Resource 
 	{
 	public:
+		typedef unsigned int IndexType;
 		
 		enum VertexField
 		{
@@ -50,10 +51,10 @@ namespace Dojo
 			_VF_COUNT = VF_NONE
 		};
 		
-		static const uint VERTEX_PAGE_SIZE = 256;
-		static const uint INDEX_PAGE_SIZE = 256;
+		static const int VERTEX_PAGE_SIZE = 256;
+		static const int INDEX_PAGE_SIZE = 256;
 		
-		static const uint VERTEX_FIELD_SIZES[];
+		static const int VERTEX_FIELD_SIZES[];
 		
 		enum TriangleMode
 		{
@@ -179,10 +180,10 @@ namespace Dojo
 		///reserves count elements on the vertex buffer, to avoid costly reallocations
 		/** 
 		only effective after the right vertex fields have been enabled! */
-		void setVertexCap( uint count );
+		void setVertexCap( IndexType count );
 
 		///reserves count indices on the index buffer, to avoid costly reallocations
-		void setIndexCap( uint count );
+		void setIndexCap( int count );
 		
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
 		inline void setDynamic( bool d, bool destroyBuffersOnEnd = true )
@@ -226,7 +227,7 @@ namespace Dojo
 		/**
 		\param extimatedVertes number of vertices that have to be reserved
 		*/
-		inline void begin( uint extimatedVerts = 1 )
+		inline void begin( int extimatedVerts = 1 )
 		{			
 			//be sure that we aren't already building
 			DEBUG_ASSERT( extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0" );
@@ -311,7 +312,7 @@ namespace Dojo
 		}
 
 		///adds one index
-		inline void index( uint idx )
+		inline void index(IndexType idx)
 		{		
 			DEBUG_ASSERT( isEditing(), "index: this Mesh is not in Edit mode" );
 			DEBUG_ASSERT( idx <= indexMaxValue, "index: the index passed is too big to be contained in this mesh's index format, see setIndexByteSize" );
@@ -328,7 +329,7 @@ namespace Dojo
 				((unsigned short*)indices)[ indexCount ] = idx;
 				break;
 			case 4:
-				((uint*)indices)[ indexCount ] = idx;
+				((unsigned int*) indices)[indexCount] = idx;
 				break;
 			}
 
@@ -336,7 +337,7 @@ namespace Dojo
 		}
 		
 		///adds 3 clockwise indices to make a triangle
-		inline void triangle( uint i1, uint i2, uint i3 )
+		inline void triangle(unsigned int i1, unsigned int i2, unsigned int i3)
 		{
 			index(i1);
 			index(i2);
@@ -344,7 +345,7 @@ namespace Dojo
 		}
 
 		///adds 2 clockwise triangles (6 indices) to make a quad
-		inline void quad( uint i11, uint i12, uint i21, uint i22 )
+		inline void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22)
 		{
 			triangle(i11,i21,i12);
 			triangle(i21,i22,i12);
@@ -398,24 +399,24 @@ namespace Dojo
 			return vertexFields[f];
 		}
 		
-		inline int getVertexCount()
+		inline IndexType getVertexCount()
 		{
 			return vertexCount;
 		}
 		
-		inline uint getIndexCount()
+		inline int getIndexCount()
 		{
 			return indexCount;
 		}
 
 		///returns the total triangle count in this mesh
-		inline uint getTriangleCount()
+		inline int getTriangleCount()
 		{
 			return triangleCount;
 		}
 				
 		///returns a pointer to the memory of the vertex with index i
-		inline float* _getVertex( int i )
+		inline float* _getVertex(IndexType i)
 		{			
 			DEBUG_ASSERT( i >= 0, "i is negative" );
 			DEBUG_ASSERT( i < vertexCount, "i is OOB" );
@@ -427,26 +428,26 @@ namespace Dojo
 
 		Vector max, min, center, dimensions;
 				
-		uint vertexSize, vertexCount, vertexMaxCount;
+		int vertexSize; 
+		IndexType vertexCount, vertexMaxCount;
 		byte* currentVertex;
 		byte* vertices;
 		
-		uint indexCount, indexMaxCount;
+		int indexCount, indexMaxCount;
 		byte indexByteSize;
-		uint indexMaxValue;
+		IndexType indexMaxValue;
 		GLenum indexGLType;
 		byte* indices;//indices have varying size
 
 		GLuint vertexArrayDesc;
+		GLuint vertexHandle, indexHandle;
 
-		uint triangleCount;
+		int triangleCount;
 		
 		bool vertexFields[ _VF_COUNT ];		
-		uint vertexFieldOffset[ _VF_COUNT ];
+		int vertexFieldOffset[ _VF_COUNT ];
 		
 		TriangleMode triangleMode;
-		
-		uint vertexHandle, indexHandle;
 		
 		bool dynamic;
 		bool mDestroyBuffersOnEnd;
@@ -454,8 +455,8 @@ namespace Dojo
 				
 		void _buildFieldOffsets()
 		{
-			uint offset = 0;
-			for( uint i = 0; i < _VF_COUNT; ++i )
+			int offset = 0;
+			for( int i = 0; i < _VF_COUNT; ++i )
 			{
 				if( isVertexFieldEnabled( (VertexField)i ) )
 				{

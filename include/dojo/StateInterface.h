@@ -235,7 +235,7 @@ namespace Dojo
 				onStateEnd();
 		}
 				
-		inline void _nextState( uint newState )		
+		inline void _nextState( int newState )		
 		{
 			//first try, call substate end
 			if( mTransitionCompleted )

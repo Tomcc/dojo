@@ -40,11 +40,11 @@ namespace Dojo
 			return c >= '0' && c <= '9';
 		}
 
-		static uint toInt( const String& str, uint startPos = 0 )
+		static int toInt( const String& str, int startPos = 0 )
 		{
-			uint num = 0; 
+			int num = 0; 
 			unichar c;
-			for( uint i = startPos; i < str.size(); ++i )
+			for( size_t i = startPos; i < str.size(); ++i )
 			{
 				c = (char)str[i];
 				
@@ -96,7 +96,7 @@ namespace Dojo
 		///replace any "\\" in the path with the canonical / and removes any last /
 		inline static void makeCanonicalPath( String& path )
 		{			
-			for( uint i = 0; i < path.size(); ++i )
+			for( size_t i = 0; i < path.size(); ++i )
 			{
 				if( path[i] == '\\' )
 					path[i] = '/';

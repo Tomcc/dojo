@@ -75,7 +75,7 @@ void TextArea::clearText()
 	lastSpace = 0;
 }
 
-void TextArea::setMaxLineLength( uint l )
+void TextArea::setMaxLineLength( int l )
 {		
 	//HACK PAZZESCOH
 	maxLineLenght = (int)(l * ((float)gameState->getGame()->getNativeWidth() / (float)640 ));
@@ -119,7 +119,7 @@ void TextArea::addText( const String& text )
 	changed = true;			
 }
 
-void TextArea::addText( uint n, char paddingChar, uint digits )
+void TextArea::addText( int n, char paddingChar, int digits )
 {
 	//TODO String already does this! remove
 
@@ -129,15 +129,15 @@ void TextArea::addText( uint n, char paddingChar, uint digits )
 	if( paddingChar != 0 )
 	{				
 		//forget most significative digits
-		if( number.size() > digits )
+		if( (int)number.size() > digits )
 			number = number.substr( number.size() - digits );
 
 		//pad to fill
-		else if( number.size() < digits )
+		else if ((int) number.size() < digits)
 		{
 			String padding;
 
-			for( uint i = 0; i < digits - number.size(); ++i )
+			for( size_t i = 0; i < digits - number.size(); ++i )
 				padding += paddingChar;
 
 			number = padding + number;
@@ -328,14 +328,14 @@ void TextArea::_prepare()
 	changed = false;
 }
 
-void TextArea::_centerLastLine( uint startingAt, float size )
+void TextArea::_centerLastLine( int startingAt, float size )
 {
 	if( mesh->getVertexCount() == 0 )
 		return;
 	
 	float halfWidth = size * 0.5f;
 	
-	for( uint i = startingAt; i < mesh->getVertexCount(); ++i )
+	for( Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i )
 		*(mesh->_getVertex( i )) -= halfWidth;		
 }
 

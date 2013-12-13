@@ -50,7 +50,7 @@ Texture::~Texture()
 		SAFE_DELETE( OBB );
 }
 
-void Texture::bind( uint index )
+void Texture::bind( GLuint index )
 {	
 	//create the gl texture if still not created!
 	if( !glhandle )
@@ -324,7 +324,7 @@ bool Texture::_setupAtlas()
 	return (loaded = true);
 }
 
-bool Texture::loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy )
+bool Texture::loadFromAtlas( Texture* tex, int x, int y, int sx, int sy )
 {
 	DEBUG_ASSERT( tex, "null atlas texture" );
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );	

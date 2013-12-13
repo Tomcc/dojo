@@ -76,7 +76,7 @@ namespace Dojo
 		}
 
 		///binds this light to the given slot for OpenGL rendering
-		void bind( uint slot, const Matrix& viewProj );
+		void bind( int slot, const Matrix& viewProj );
 		
 	protected:
 		

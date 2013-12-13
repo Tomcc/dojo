@@ -8,12 +8,7 @@
 #include "Timer.h"
 #include "InputSystem.h"
 #include "Keyboard.h"
-
-#include <Poco/Thread.h>
-#include <Poco/Mutex.h>
-#include <Poco/Semaphore.h>
-#include <Poco/Timer.h>
-#include <queue>
+#include "Pipe.h"
 
 namespace Dojo
 {
@@ -90,9 +85,6 @@ namespace Dojo
 			}
 		}
 
-		///invoke function called by the frame timer
-		void _invoke( Poco::Timer& timer );
-
 	protected:
 
 		HINSTANCE hInstance;    // window app instance
@@ -106,34 +98,32 @@ namespace Dojo
 
 		Timer frameTimer;
 
-		Poco::Semaphore frameStart;
-
 		Vector cursorPos, prevCursorPos;
 
 		bool dragging;
 		bool mMousePressed;
 
 		//context sharing stuff needed for multithread creation
-		struct ContextShareRequest : public Poco::Semaphore
+		struct ContextShareRequest
 		{
+			std::atomic<bool> done;
 			ContextShareRequest() :
-				Poco::Semaphore(1)
+				done(false)
 			{
-				wait();
+
 			}
 
 			HGLRC contextHandle;
 		};
 
-		typedef std::queue< ContextShareRequest* > ContextRequestsQueue;
+		typedef Pipe< ContextShareRequest* > ContextRequestsQueue;
 		ContextRequestsQueue mContextRequestsQueue;
-		Poco::Mutex mCRQMutex;
 
-		bool _initializeWindow( const String& caption, uint w, uint h );
+		bool _initializeWindow( const String& caption, int w, int h );
 		
 	private:
 
-		uint lastPressedText;
+		int lastPressedText;
 
 		float frameInterval;
 		int mFramesToAdvance;

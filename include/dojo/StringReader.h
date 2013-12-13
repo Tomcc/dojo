@@ -243,7 +243,7 @@ namespace Dojo
 		const String* wcharStr;
 		const std::string* utf8Str;
 
-		uint idx;
+		size_t idx;
 	};
 }
 #endif // StringReader_h__

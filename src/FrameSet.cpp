@@ -19,10 +19,10 @@ void FrameSet::setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider 
 	Texture* atlas = atlasSet->getFrame(0);
 
 	mPreferredAnimationTime = atlasTable->getNumber( "animationFrameTime" );
-
+	
 	Table* tiles = atlasTable->getTable( "tiles" );
 
-	uint x, y, sx, sy;
+	int x, y, sx, sy;
 	for( int i = 0; i < tiles->getAutoMembers(); ++i )
 	{
 		Table* tile = tiles->getTable( i );

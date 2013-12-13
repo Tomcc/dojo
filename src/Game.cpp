@@ -10,7 +10,7 @@
 
 using namespace Dojo;
 
-Game::Game( const String& gamename, uint w, uint h, Orientation r, float nativedt, float maximumdt ) :
+Game::Game( const String& gamename, int w, int h, Orientation r, float nativedt, float maximumdt ) :
 name( gamename ),
 nativeWidth( w ),
 nativeHeight( h ),

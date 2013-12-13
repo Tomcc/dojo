@@ -10,11 +10,7 @@
 #define STRING_MAX_FLOAT_DIGITS 6
 
 namespace Dojo 
-{
-#ifndef PLATFORM_LINUX
-	typedef unsigned int uint;
-#endif
-	
+{	
 #ifndef PLATFORM_WIN32
 	typedef unsigned char byte;
 #endif
@@ -85,12 +81,6 @@ namespace Dojo
 			appendInt( i, paddingChar );
 		}
 		
-		String( uint i, unichar paddingChar = 0 ) :
-		_ustring()
-		{
-			appendInt( i, paddingChar );
-		}
-		
 		String( float f ) :
 		_ustring()
 		{
@@ -130,7 +120,7 @@ namespace Dojo
 			std::string res;
 			
 			unichar c;
-			for( uint i = 0; i < size(); ++i )
+			for( size_t i = 0; i < size(); ++i )
 			{
 				c = at(i);
 				if( c <= 0xff )
@@ -162,7 +152,7 @@ namespace Dojo
 		
 		void appendInt( int i, unichar paddingChar = 0 )
 		{
-			uint div = 1000000000;
+			int div = 1000000000;
 			unichar c;
 
 			if( i < 0 )
@@ -218,7 +208,7 @@ namespace Dojo
 		}
 		
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
-		inline void appendRaw( void* data, uint sz )
+		inline void appendRaw( void* data, int sz )
 		{
 			DEBUG_ASSERT( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
 			
@@ -241,7 +231,7 @@ namespace Dojo
 		{
 			DEBUG_ASSERT( nss, "NSString was null" );
 			
-			uint sz = size();
+			auto sz = size();
 			resize( sz + [nss length] );
 			
 			///copy the whole string verbatim

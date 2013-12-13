@@ -132,7 +132,7 @@ namespace Dojo
 		}
 		
 		///returns how many Textures this FrameSet contains
-		inline uint getFrameNumber()				{	return frames.size();	}
+		inline int getFrameNumber()				{	return frames.size();	}
 		
 		///returns the Frame Index of this Texture if it belongs to the FS, or -1 if not
 		int getFrameIndex( Texture* frame )

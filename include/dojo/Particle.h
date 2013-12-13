@@ -39,7 +39,7 @@ namespace Dojo
 
 		Vector acceleration;
 		
-		Particle( ParticlePool* p, Object* level, uint i ) :
+		Particle( ParticlePool* p, Object* level, int i ) :
 		AnimatedQuad( level, Vector::ZERO ),
 		pool( p ),
 		index( i ),
@@ -105,12 +105,12 @@ namespace Dojo
 			}*/
 		}
 		
-		inline void _setPoolIdx( uint i )	{	index = i;			}
-		inline uint _getPoolIdx()			{	return index;		}
+		inline void _setPoolIdx( int i )	{	index = i;			}
+		inline int _getPoolIdx()			{	return index;		}
 		
 	protected:
 
-		uint index;
+		int index;
 		
 		ParticlePool* pool;
 		

@@ -43,12 +43,12 @@ namespace Dojo
 		public:
 
 			unichar character;
-			uint gliphIdx;
+			int gliphIdx;
 			
 			Vector uvPos;
 			float uvWidth, uvHeight;
 			
-			uint pixelWidth;
+			int pixelWidth;
 			float widthRatio, heightRatio; //the ratio of the cell that is occupied
 			float advance;
 
@@ -132,7 +132,7 @@ namespace Dojo
 
 			Font* font;
 			Texture* texture;
-			uint index;
+			int index;
 			unichar firstCharIdx;
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
@@ -143,7 +143,7 @@ namespace Dojo
 			}
 		};
 
-		typedef std::unordered_map< uint, Page* > PageMap;
+		typedef std::unordered_map< int, Page* > PageMap;
 		
 		///A Font represents a single .font file, and is bound to a .ttf TrueType font definition
 		/**
@@ -164,12 +164,12 @@ namespace Dojo
 		}
 		
 		///returns the maximum width of a character (cell height)
-		inline uint getFontWidth()			{	return fontWidth;	}
+		inline int getFontWidth()			{	return fontWidth;	}
 		///returns the maximum height of a character (cell width)
-		inline uint getFontHeight()			{	return fontHeight;	}
+		inline int getFontHeight()			{	return fontHeight;	}
 
 		///returns (and lazy-loads) the character Page with the given index
-		inline Page* getPage( uint index )
+		inline Page* getPage( int index )
 		{
 			DEBUG_ASSERT( index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index" );
 
@@ -213,7 +213,7 @@ namespace Dojo
 		///returns the length in pixel for the given string
 		int getPixelLength( const String& s );
 
-		inline uint getCharIndex( Character* c )
+		inline int getCharIndex( Character* c )
 		{
 			return FT_Get_Char_Index( face, c->character );
 		}
@@ -247,9 +247,9 @@ namespace Dojo
 		}
 
 		///forces the loading of the given pages without waiting for lazy-loading
-		inline void preloadPages( const char pages[], uint n ) 
+		inline void preloadPages( const char pages[], int n ) 
 		{
-			for( uint i = 0; i < n; ++i )
+			for( int i = 0; i < n; ++i )
 				getPage( pages[i] );
 		}
 		
@@ -276,8 +276,8 @@ namespace Dojo
 		
 		PageMap pages;
 		
-		static void _blit( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside );
-		static void _blitborder( byte* dest, FT_Bitmap* bitmap, uint x, uint y, uint destside, const Color& col );
+		static void _blit( byte* dest, FT_Bitmap* bitmap, int x, int y, int destside );
+		static void _blitborder( byte* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col );
 	};
 }
 

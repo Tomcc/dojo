@@ -257,11 +257,11 @@ namespace Dojo
 		bool isAlphaRequired();
 		
 		///returns the "weight" of the changes needed to pass from "this" to "s"
-		inline uint getDistance( RenderState* s )
+		inline int getDistance( RenderState* s )
 		{
 			DEBUG_ASSERT( s, "getDistance: The input RenderState is null" );
 			
-			uint dist = 0;
+			int dist = 0;
 			
 			if( s->mesh != mesh )
 				dist += 3;

@@ -15,7 +15,7 @@
 
 using namespace Dojo;
 
-Render::Render( uint w, uint h, Orientation deviceOr ) :
+Render::Render( int w, int h, Orientation deviceOr ) :
 frameStarted( false ),
 valid( true ),
 width( w ),
@@ -198,7 +198,7 @@ void Render::setInterfaceOrientation( Orientation o )
 	
 	static float orientations[] = 	{ 0, 180, 90, -90 };
 	
-	renderRotation = orientations[ (uint)renderOrientation ] + orientations[ (uint)deviceOrientation ];
+	renderRotation = orientations[ (int)renderOrientation ] + orientations[ (int)deviceOrientation ];
 	
 	//compute matrix
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );

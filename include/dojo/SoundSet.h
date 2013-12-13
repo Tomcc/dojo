@@ -51,7 +51,7 @@ namespace Dojo
 			return buffers.at(i);
 		}
 
-		inline uint getResourceNb()	{	return buffers.size();	 }
+		inline int getResourceNb()	{	return buffers.size();	 }
 
 		inline const String& getName()	{	return name;	}
 

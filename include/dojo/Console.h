@@ -40,7 +40,7 @@ namespace Dojo
 			
 			mOutput.push_back( message.text );
 
-			if( mOutput.size() > mMaxLines )
+			if( mOutput.size() > (size_t)mMaxLines )
 				mOutput.erase( mOutput.begin() );
 		}
 

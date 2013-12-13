@@ -63,7 +63,7 @@ inline void toFV( float* fv, const Vector& v, float w )
 	fv[3] = w;
 }
 
-void Light::bind( uint i, const Matrix& view )
+void Light::bind( int i, const Matrix& view )
 {
 	GLenum light = GL_LIGHT0 + i;
 	

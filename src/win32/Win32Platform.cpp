@@ -28,7 +28,7 @@ void _debugWin32Error( const char* msg, const char *file_source, int line, const
 	DWORD error = GetLastError();
 
 	Dojo::gp_assert_handler( 
-		("Win32 encountered an error: " + String( (unsigned int)error ) + " (" + msg + ")" ).ASCII().c_str(),
+		("Win32 encountered an error: " + String( (int)error ) + " (" + msg + ")" ).ASCII().c_str(),
 		"error != GL_NO_ERROR",
 		NULL, 
 		line, 
@@ -189,7 +189,6 @@ Platform( configTable ),
 dragging( false ),
 mMousePressed( false ),
 cursorPos( Vector::ZERO ),
-frameStart( 0, 1 ),
 frameInterval(0),
 mFramesToAdvance( 0 ),
 clientAreaYOffset(0)
@@ -259,7 +258,7 @@ void Win32Platform::_adjustWindow()
 
 }
 
-bool Win32Platform::_initializeWindow( const String& windowCaption, uint w, uint h )
+bool Win32Platform::_initializeWindow( const String& windowCaption, int w, int h )
 {
 	DEBUG_MESSAGE( "Creating " + String(w) + "x" + String(h) + " window" );
 
@@ -426,7 +425,11 @@ void Win32Platform::initialize( Game* g )
 	mAppDataPath = String(szPath) + '/' + game->getName();
 	Utils::makeCanonicalPath( mAppDataPath );
 
-	mRootPath = Poco::Path::current();
+	//get root path
+	mRootPath.resize(MAX_PATH);
+	mRootPath.resize(GetModuleFileName(NULL, (TCHAR*) mRootPath.data(), MAX_PATH));
+	mRootPath.resize(mRootPath.find_last_of(L"\\/"));
+
 	Utils::makeCanonicalPath( mRootPath );
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
@@ -483,21 +486,20 @@ void Win32Platform::initialize( Game* g )
 
 void Win32Platform::prepareThreadContext()
 {
+
 	ContextShareRequest req;
 
-	mCRQMutex.lock();
-
-	mContextRequestsQueue.push( &req );
+	mContextRequestsQueue.queue( &req );
 			
-	mCRQMutex.unlock();
-
-	req.wait();
+	//wait for the request
+	while (!req.done)
+		std::this_thread::yield();
 
 	//be nice, wglMakeCurrent just wants you to ask politely and more than once
 	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
 	int tries = 0;
-	for( ; wglMakeCurrent( hdc, req.contextHandle ) == FALSE && tries < 1000; ++tries ) 
-		Poco::Thread::sleep( 20 );
+	for (; wglMakeCurrent(hdc, req.contextHandle) == FALSE && tries < 1000; ++tries)
+		std::this_thread::yield();
 
 	DEBUG_ASSERT( tries < 1000, "Cannot share OpenGL on this thread" );
 
@@ -538,19 +540,6 @@ void Win32Platform::present()
 	SwapBuffers( hdc );
 }
 
-///this function is called by Poco::Timer on the timer thread
-void Win32Platform::_invoke( Poco::Timer& timer )
-{
-	try 
-	{
-		frameStart.set(); //enable the main loop to run again
-	}
-	catch(...)
-	{
-
-	}
-}
-
 void Win32Platform::_pollDevices( float dt )
 {
 	input->poll( dt );
@@ -569,12 +558,9 @@ void Win32Platform::step( float dt )
 	mStepTimer.reset();
 	
 	//check if some other thread requested a new context
-	mCRQMutex.lock();
-	while( !mContextRequestsQueue.empty() )
+	ContextShareRequest* req;
+	while (mContextRequestsQueue.tryPop(req))
 	{
-		ContextShareRequest* req = mContextRequestsQueue.front();
-		mContextRequestsQueue.pop();
-
 		req->contextHandle = wglCreateContext(hdc); 
 		
 		bool success = wglShareLists(hglrc, req->contextHandle) != 0;
@@ -582,9 +568,8 @@ void Win32Platform::step( float dt )
 		CHECK_WIN32_ERROR( success, "while creating and sharing a new context" );
 
 		//signal the caller
-		req->set();
+		req->done = true;
 	}
-	mCRQMutex.unlock();
 
 	//update input
 	_pollDevices( dt );
@@ -607,18 +592,10 @@ void Win32Platform::loop()
 
 	frameTimer.reset();
 
-	//start timer thread
-	Poco::Timer frameCaller( 0, (long)(frameInterval * 1000.f) );
-	Poco::TimerCallback< Win32Platform > callback( *this, &Win32Platform::_invoke );
-	frameCaller.start( callback );
-
 	Timer timer;
 	running = true;
 	while( running )
 	{
-		if( frameInterval > 0 )
-			frameStart.wait();
-
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
 			if( msg.message == WM_QUIT )

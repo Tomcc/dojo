@@ -84,7 +84,7 @@ namespace Dojo
 		
 		///returns the ID of the Render::Layer this object is assigned to
 		inline int getLayer()				{	return layer;			}
-		inline uint getRenderingOrder()		{	return renderingOrder;	}
+		inline int getRenderingOrder()		{	return renderingOrder;	}
 
 		///true if this object has been assigned to a Render::Layer
 		bool hasLayer()						{	return layer != INT_MIN;	}
@@ -126,7 +126,7 @@ namespace Dojo
 		
 		virtual void onAction( float dt );		
 		
-		inline void _notifyRenderInfo( Render* r, int layerID, uint renderIdx )
+		inline void _notifyRenderInfo( Render* r, int layerID, int renderIdx )
 		{			
 			render = r;
 			layer = layerID;
@@ -146,7 +146,7 @@ namespace Dojo
 		
 		Render* render;
 		int layer;
-		uint renderingOrder;
+		int renderingOrder;
 		
 		bool fading;
 		float currentFadeTime;

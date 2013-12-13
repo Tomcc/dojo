@@ -49,10 +49,12 @@ namespace Dojo
 		*/
 		void stop()
 		{
-			mRunning = false;
+			if (mRunning) {
+				mRunning = false;
 
-			for( auto& w : mWorkers )
-				w->join();
+				for( auto& w : mWorkers )
+					w->join();
+			}
 		}
 
 		///causes the queue to fire the completion listeners on the main thread.
@@ -63,22 +65,19 @@ namespace Dojo
 
 	protected:
 
-		class Worker : public Poco::Thread, public Poco::Runnable
+		class Worker
 		{
 		public:
 
-			Worker( BackgroundQueue* parent ) :
-			pParent( parent )
-			{
-				DEBUG_ASSERT( pParent, "the parent can't be null" );
+			Worker(BackgroundQueue* parent);
 
-				start( *this );
+			void join() {
+				thread.join();
 			}
-
-			virtual void run();
 
 		protected:
 			BackgroundQueue* pParent;
+			std::thread thread;
 		};
 
 		typedef std::pair< Task, Callback > TaskCallbackPair;
@@ -86,14 +85,14 @@ namespace Dojo
 		typedef Pipe< Task > CompletedTaskQueue;
 		typedef std::vector< std::unique_ptr< Worker > > WorkerList;
 
-		bool mRunning;
+		std::atomic<bool> mRunning;
 
 		TaskQueue mQueue;
 		CompletedTaskQueue mCompletedQueue;
 
 		WorkerList mWorkers;
 
-		Poco::Thread::TID mMainThreadID;
+		std::thread::id mMainThreadID;
 
 		///waits for a task, returns false if the thread has to close
 		bool _waitForTaskOrClose( TaskCallbackPair& out )

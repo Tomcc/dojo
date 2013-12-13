@@ -45,7 +45,7 @@ namespace Dojo
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		/** 
 		a texture of this kind is loaded via an .atlasinfo and doesn't use VRAM in itself */
-		bool loadFromAtlas( Texture* tex, uint x, uint y, uint sx, uint sy );
+		bool loadFromAtlas( Texture* tex, int x, int y, int sx, int sy );
 
 		///loads the texture with the given parameters
 		virtual bool onLoad();
@@ -55,7 +55,7 @@ namespace Dojo
 		bool isLoaded()			{	return loaded;			}
 						
 		///internal - binds this texture as the current GL active one
-		virtual void bind( uint index );
+		virtual void bind( GLuint index );
 
 		///internal - binds this texture as the current Render Target
 		void bindAsRenderTarget( bool useDepthBuffer );
@@ -74,19 +74,19 @@ namespace Dojo
 		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void disableTiling();
 				
-		inline uint getWidth()					{	return width;		}
-		inline uint getHeight()					{	return height;		}
+		inline int getWidth()					{	return width;		}
+		inline int getHeight()					{	return height;		}
 
 		///returns the texture size in the UV space of the parent atlas/padded image
 		inline const Vector& getUVSize()		{	return UVSize;		}
 		///returns the texture offset in the UV space of the parent atlas/padded image
 		inline const Vector& getUVOffset()		{	return UVOffset;	}
 
-		inline uint getInternalWidth()
+		inline int getInternalWidth()
 		{
 			return internalWidth;
 		}
-		inline uint getInternalHeight()
+		inline int getInternalHeight()
 		{
 			return internalHeight;
 		}

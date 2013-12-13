@@ -21,6 +21,8 @@
 #include <memory>
 #include <functional>
 #include <queue>
+#include <atomic>
+#include <thread>
 
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
@@ -31,17 +33,11 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include <Poco/Path.h>
-#include <Poco/Timer.h>
-#include <Poco/Semaphore.h>
-#include <Poco/Mutex.h>
-
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #endif
 
 #if defined(PLATFORM_WIN32)
-
 	#include <al.h>
 	#include <alc.h>
 
@@ -59,8 +55,6 @@
 
 	#endif
 	
-	#define NOMINMAX
-	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <ShellAPI.h>
 	#include <ShlObj.h>
@@ -118,14 +112,5 @@
 
 //keycode.h is a plain enum
 #include "KeyCode.h"
-
-//typedefs
-namespace Dojo
-{
-	typedef Poco::FastMutex PocoMutex;
-	typedef Poco::Mutex PocoRecursiveMutex;
-	typedef Poco::ScopedLock< PocoMutex > PocoLock;
-	typedef Poco::ScopedLock< PocoRecursiveMutex > RecursiveLock;
-}
 
 #endif // dojo_common_headers_h__

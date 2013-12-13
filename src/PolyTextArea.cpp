@@ -65,7 +65,7 @@ void PolyTextArea::_centerLine( int rowStartIdx, float rowWidth )
 	DEBUG_ASSERT( mesh->isEditing(), "Cannot center a row if mesh is locked" );
 
 	float halfRow = rowWidth * 0.5f;
-	for( int i = rowStartIdx; i < mMesh->getVertexCount(); ++i )
+	for (Mesh::IndexType i = rowStartIdx; i < mMesh->getVertexCount(); ++i)
 	{
 		//change back each
 		float* v = mMesh->_getVertex( i );
@@ -183,7 +183,7 @@ void PolyTextArea::_prepare()
 				_addExtrusionLayer( t, charPosition - Vector(0,0,mDepth), 0, &Vector::NEGATIVE_UNIT_Z );
 
 				//add backface - flip index winding to flip the face
-				for( int i = 0; i < t->outIndices.size(); i += 3 )
+				for( size_t i = 0; i < t->outIndices.size(); i += 3 )
 					mMesh->triangle( 
 						mPrevLayerIdx + t->outIndices[i+2], 
 						mPrevLayerIdx + t->outIndices[i+1], 
@@ -191,7 +191,7 @@ void PolyTextArea::_prepare()
 			}
 			else //HACK do not actually use contours here
 			{
-				for( int i = 0; i < t->positions.size(); ++i )
+				for( size_t i = 0; i < t->positions.size(); ++i )
 				{
 					mMesh->vertex( charPosition + t->positions[i].toVec() );
 				}

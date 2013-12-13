@@ -18,7 +18,7 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
 
-const uint Mesh::VERTEX_FIELD_SIZES[] = { 
+const int Mesh::VERTEX_FIELD_SIZES[] = { 
 	2 * sizeof( GLfloat ), //position 2D
 	3 * sizeof( GLfloat ),  //position 3D
 	4 * sizeof( GLubyte ),  //color
@@ -28,7 +28,7 @@ const uint Mesh::VERTEX_FIELD_SIZES[] = {
 };
 
 ///Tells the buffer to allocate at least "vertices" vertices
-void Mesh::setVertexCap( uint count )
+void Mesh::setVertexCap(IndexType count)
 {
 	DEBUG_ASSERT( count <= indexMaxValue, "setVertexCap: the requested cap is too high and can't be indexed with the current indices size" );
 
@@ -49,7 +49,7 @@ void Mesh::setVertexCap( uint count )
 	}
 }	
 
-void Mesh::setIndexCap( uint count )
+void Mesh::setIndexCap( int count )
 {
 	if( count < indexMaxCount ) //no need to grow the buffer
 		return;
@@ -202,7 +202,7 @@ bool Mesh::end()
 	if( !vertexHandle )
 		glGenBuffers(1, &vertexHandle );
 
-	uint usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	GLenum usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
 
@@ -242,7 +242,7 @@ bool Mesh::end()
 	currentVertex = NULL;
 
 	//guess triangle count
-	uint elemCount = isIndexed() ? getIndexCount() : getVertexCount();
+	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	
 	switch ( triangleMode ) {
 		case TM_LIST:       triangleCount = elemCount / 3;  break;
@@ -314,11 +314,11 @@ bool Mesh::onLoad()
 	ptr += sizeof( Vector );
 	
 	//vertex count
-	uint vc = *((int*)ptr);
+	IndexType vc = *((int*) ptr);
 	ptr += sizeof( int );
 	
 	//index count
-	uint ic = *((int*)ptr);
+	int ic = *((int*)ptr);
 	ptr += sizeof( int );
 		
 	setDynamic( false );

@@ -42,7 +42,7 @@ namespace Dojo
 		\param nativeFrequency the update rate of this game, or how much should a frame last. Default is 1/60 s or the VSync duration if enabled
 		\param maxFrameLength the max frame dt that will be propagated to the game, to avoid integration glitch on long frames
 		*/
-		Game( const String& name, uint nativeWidth = 0, uint nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f/60.f, float maxFrameLength = 1.f/30.f );
+		Game( const String& name, int nativeWidth = 0, int nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f/60.f, float maxFrameLength = 1.f/30.f );
 		
 		virtual ~Game();
 

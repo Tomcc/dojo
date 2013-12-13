@@ -65,7 +65,7 @@ namespace Dojo {
 		typedef Array< Light* > LightList;
 		typedef Array< Viewport* > ViewportList;
 		
-		Render( uint width, uint height, Orientation renderOrientation );		
+		Render( int width, int height, Orientation renderOrientation );		
 		
 		~Render();		
 						
@@ -145,7 +145,7 @@ namespace Dojo {
 		
 		bool hasLayer( int layerID );
 
-		uint getLayerNumber()
+		int getLayerNumber()
 		{
 			return positiveLayers.size() + negativeLayers.size();
 		}
@@ -160,9 +160,9 @@ namespace Dojo {
 			return positiveLayers.size();
 		}
 
-		inline uint getLastFrameVertexCount()		{	return frameVertexCount;	}
-		inline uint getLastFrameTriCount()			{	return frameTriCount;		}
-		inline uint getLastFrameBatchCount()		{	return frameBatchCount;		}
+		inline int getLastFrameVertexCount()		{	return frameVertexCount;	}
+		inline int getLastFrameTriCount()			{	return frameTriCount;		}
+		inline int getLastFrameBatchCount()		{	return frameBatchCount;		}
 
 		const Color& getDefaultAmbient()			{	return defaultAmbient;		}
 		

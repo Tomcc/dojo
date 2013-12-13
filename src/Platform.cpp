@@ -181,7 +181,6 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap( const String& path, Str
 
 void Platform::getFilePathsForType( const String& type, const String& wpath, std::vector<String>& out )
 {
-
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
 	String absPath = getResourcesPath() + "/" +  _replaceFoldersWithExistingZips( wpath );
 
