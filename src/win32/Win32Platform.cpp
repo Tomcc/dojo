@@ -466,6 +466,12 @@ void Win32Platform::initialize( Game* g )
 
 	input = new InputSystem();
 
+	//setup mouse
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	prevCursorPos.x = (float)mousePos.x;
+	prevCursorPos.y = (float)mousePos.y;
+
 	//add the keyboard
 	input->addDevice( &mKeyboard );
 	//create xinput persistent joysticks

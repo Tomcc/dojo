@@ -161,15 +161,13 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 void Object::updateWorldTransform()
 {	
 	//compute local matrix from position and orientation
-	if( !parent )
+	if (!parent)
 		mWorldTransform = Matrix(1);
-	else if( inheritScale )
-		mWorldTransform = parent->getWorldTransform();
-	else //build a wt without scale
+	else 
 	{
-		mWorldTransform = Matrix(1);
-		mWorldTransform = glm::translate( mWorldTransform, parent->position );
-		mWorldTransform *= mat4_cast( parent->rotation );
+		mWorldTransform = parent->getWorldTransform();
+		if (!inheritScale)
+			mWorldTransform = glm::scale(mWorldTransform, 1.f / parent->scale);
 	}
 
 	mWorldTransform = glm::translate( mWorldTransform, position );

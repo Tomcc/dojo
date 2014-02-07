@@ -33,7 +33,8 @@ namespace Dojo
 		{
 			BM_ALPHA,
 			BM_MULTIPLY,
-			BM_ADD
+			BM_ADD,
+			BM_INVERT
 		};
 
 		class TextureUnit
@@ -206,6 +207,7 @@ namespace Dojo
 				GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, //alphablend
 				GL_DST_COLOR, GL_ZERO, //multiply
 				GL_ONE, GL_ONE, //add
+				GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR //invert
 			};
 
 			setBlending( modeToGLTable[mode*2], modeToGLTable[mode*2+1] );

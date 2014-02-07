@@ -123,7 +123,7 @@ namespace Dojo {
 		///returns the world coordinates' position of this Object
 		inline const Vector getWorldPosition()
 		{
-			return getWorldPosition( position );
+			return getWorldPosition( Vector::ZERO );
 		}
 
 		///returns the position in local coordinates of the given world position
