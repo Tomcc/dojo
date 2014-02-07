@@ -77,8 +77,7 @@ Platform::Platform( const Table& configTable ) :
 	realFrameTime( 0 ),
 	mFullscreen( 0 ),
 	mFrameSteppingEnabled( false ),
-	mBackgroundQueue( nullptr ),
-	mCPUCores( 1 )
+	mBackgroundQueue( nullptr )
 {
 	addZipFormat( ".zip" );
 	addZipFormat( ".dpk" );

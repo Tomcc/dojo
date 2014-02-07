@@ -117,7 +117,7 @@ namespace Dojo
 		};
 
 		typedef Pipe< ContextShareRequest* > ContextRequestsQueue;
-		ContextRequestsQueue mContextRequestsQueue;
+		std::unique_ptr<ContextRequestsQueue> mContextRequestsQueue;
 
 		bool _initializeWindow( const String& caption, int w, int h );
 		

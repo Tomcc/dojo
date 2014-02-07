@@ -191,7 +191,8 @@ mMousePressed( false ),
 cursorPos( Vector::ZERO ),
 frameInterval(0),
 mFramesToAdvance( 0 ),
-clientAreaYOffset(0)
+clientAreaYOffset(0),
+mContextRequestsQueue(new ContextRequestsQueue )
 {
 	/*
 #ifdef _DEBUG
@@ -204,11 +205,6 @@ clientAreaYOffset(0)
 	//detect monitor size
 	screenWidth = GetSystemMetrics( SM_CXSCREEN );
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
-
-	//detect CPU cores
-	SYSTEM_INFO sysinfo;
-	GetSystemInfo( &sysinfo );
-	mCPUCores = sysinfo.dwNumberOfProcessors;
 
 	_initKeyMap();
 }
@@ -494,7 +490,7 @@ void Win32Platform::prepareThreadContext()
 
 	ContextShareRequest req;
 
-	mContextRequestsQueue.queue( &req );
+	mContextRequestsQueue->queue( &req );
 			
 	//wait for the request
 	while (!req.done)
@@ -564,7 +560,7 @@ void Win32Platform::step( float dt )
 
 	//check if some other thread requested a new context
 	ContextShareRequest* req;
-	while (mContextRequestsQueue.tryPop(req))
+	while (mContextRequestsQueue->tryPop(req))
 	{
 		req->contextHandle = wglCreateContext(hdc); 
 		

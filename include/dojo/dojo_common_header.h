@@ -10,7 +10,7 @@
 #include <cstring>
 #include <cfloat>
 #include <climits>
-#include <stdint.h>
+#include <cstdint>
 
 #include <string>
 #include <vector>
@@ -23,6 +23,10 @@
 #include <queue>
 #include <atomic>
 #include <thread>
+#include <type_traits>
+#include <utility>
+#include <stdexcept>
+
 
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>

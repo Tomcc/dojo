@@ -87,8 +87,8 @@ namespace Dojo
 
 		std::atomic<bool> mRunning;
 
-		TaskQueue mQueue;
-		CompletedTaskQueue mCompletedQueue;
+		std::unique_ptr<TaskQueue> mQueue;
+		std::unique_ptr<CompletedTaskQueue> mCompletedQueue;
 
 		WorkerList mWorkers;
 
@@ -98,7 +98,7 @@ namespace Dojo
 		bool _waitForTaskOrClose( TaskCallbackPair& out )
 		{
 			if( mRunning ) //fetch a new task from the queue
-				return mQueue.tryPop(out);
+				return mQueue->tryPop(out);
 
 			else return false;
 		}

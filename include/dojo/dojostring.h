@@ -178,7 +178,7 @@ namespace Dojo
 			
 		}
 		
-		inline void appendFloat( float f, byte digits = 4 )
+		inline void appendFloat( float f, byte digits = 2 )
 		{
 			if( f < 0 )
 			{
@@ -189,9 +189,6 @@ namespace Dojo
 			appendInt((int)f);
 
 			f -= floor( f );
-
-			if( f == 0 )
-				return;
 
 			*this += '.';
 
