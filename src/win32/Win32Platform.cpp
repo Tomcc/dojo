@@ -655,10 +655,25 @@ void Win32Platform::mouseMoved(int cx, int cy )
 	cursorPos.x = (float)cx;
 	cursorPos.y = (float)cy - clientAreaYOffset;
 
-	if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::TT_LEFT_CLICK ); //TODO this doesn't really work but Win doesn't tell
-	else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
+	if (realMouseEvent)
+	{
+		if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::TT_LEFT_CLICK ); //TODO this doesn't really work but Win doesn't tell
+		else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
+	}
 
 	prevCursorPos = cursorPos;
+
+	if (realMouseEvent) {
+		if (mouseLocked) //put the cursor back in the center
+		{
+			realMouseEvent = false; //setcursor will cause another mouseMoved event, avoid to trigger a loop!
+			POINT center = { width / 2, height / 2 };
+			ClientToScreen(hwnd, &center);
+			SetCursorPos(center.x, center.y);
+		}
+	}
+	else
+		realMouseEvent = true;
 }
 
 void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
@@ -676,6 +691,18 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 
 	input->_fireTouchEndEvent( cursorPos, type );
 }
+
+void Dojo::Win32Platform::setMouseLocked(bool locked)
+{
+	if (mouseLocked != locked) {
+
+		ShowCursor(!locked);
+		ShowCursor(!locked);
+
+		mouseLocked = locked;
+	}
+}
+
 
 void Win32Platform::keyPressed( int kc )
 {
@@ -815,7 +842,6 @@ void Win32Platform::openWebPage( const String& site )
 {
 	ShellExecuteW(hwnd, L"open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
-
 
 //init key map
 void Win32Platform::_initKeyMap()

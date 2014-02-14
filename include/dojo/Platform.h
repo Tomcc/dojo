@@ -97,6 +97,10 @@ namespace Dojo
 		bool isFullscreen()		{	return mFullscreen; }
 		
 		inline bool isRunning()					{	return running; }
+
+		virtual void setMouseLocked(bool locked) {
+
+		}
 		
 		///initializes the platform and calls Game::onBegin()
 		virtual void initialize( Game* game )=0;

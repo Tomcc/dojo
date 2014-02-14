@@ -48,6 +48,8 @@ namespace Dojo
 		
 		virtual void openWebPage( const String& site );
 
+		virtual void setMouseLocked(bool locked) override;
+
 		void mouseWheelMoved( int wheelZ );
 
 		void mousePressed(int cursorX, int cursorY, Touch::Type type);
@@ -127,6 +129,8 @@ namespace Dojo
 
 		float frameInterval;
 		int mFramesToAdvance;
+		bool mouseLocked = false;
+		bool realMouseEvent = true;
 
 		FT_Library freeType;
 
