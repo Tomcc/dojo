@@ -93,6 +93,7 @@
     <ClCompile Include="src\FrameSet.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\InputDevice.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />

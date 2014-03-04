@@ -311,7 +311,7 @@ void ResourceGroup::addPrefabMeshes()
 	Mesh* cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -369,7 +369,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -389,7 +389,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -409,7 +409,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -429,7 +429,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -449,7 +449,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );
@@ -469,7 +469,7 @@ void ResourceGroup::addPrefabMeshes()
 	cube = new Mesh( this );
 	
 	cube->setIndexByteSize( 1 ); //byte indices
-	cube->setTriangleMode( Mesh::TM_LIST );
+	cube->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 	cube->setVertexFieldEnabled( Mesh::VF_POSITION3D );
 	cube->setVertexFieldEnabled( Mesh::VF_NORMAL );
 	cube->setVertexFieldEnabled( Mesh::VF_UV_0 );

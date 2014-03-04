@@ -59,7 +59,7 @@ namespace Dojo
 		enum TriangleMode
 		{
 			TM_STRIP,
-			TM_LIST,
+			TM_TRIANGLE_LIST,
 			TM_LINE_STRIP,
 			TM_LINE_LIST
 		};

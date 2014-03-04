@@ -138,7 +138,7 @@ namespace Dojo
 		}
 
 		///Adds a 2D point to the tessellation contour
-		void addPoint( const Vector& p )
+		void startPath( const Vector& p )
 		{
 			positions.push_back( p );
 		}
@@ -147,7 +147,7 @@ namespace Dojo
 		void addSegment( const Vector& p )
 		{
 			int idx = positions.size()-1;
-			addPoint( p );
+			positions.push_back(p);
 
 			//add indices to the point
 			segments.push_back( Segment( idx, idx+1 ) );
@@ -196,6 +196,12 @@ namespace Dojo
 				addSegment( M.lerpTo( t, N ) );
 			}
 		}
+
+		///manually signals that whatever surface chunk enclosing this marker is an hole
+		void addHoleMarker(const Vector& pos)
+		{
+			holes.push_back(Position(pos.x, pos.z));
+		}
 		
 		///removes i2 from the point list and rearranges all the indices to point to i1
 		void mergePoints( int i1, int i2 );
@@ -213,13 +219,13 @@ namespace Dojo
 		/**
 		each loop contains a copy of all of its segments
 		*/
-		void findContours();
+		void findContours(bool generateHoles);
 
 		///tessellates the countour mesh producing a triangle mesh
 		/**
 		\param clearInputs auto-clears the input vectors
 		*/
-		void tessellate( bool clearInputs = true );
+		void tessellate( bool clearInputs, bool prepareForExtrusion, bool guessHoles );
 
 	protected:
 
@@ -228,6 +234,9 @@ namespace Dojo
 		int _assignToIncompleteContour( int start, int end );
 
 		void _assignNormal( const Vector& n, Segment& s, int i, SegmentList& additionalSegmentsBuffer );
+
+		bool _areJoined(const Contour& a, const Contour& b);
+		int _hasJoinedContour(const Contour& c);
 	};
 }
 

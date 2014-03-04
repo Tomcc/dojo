@@ -143,7 +143,6 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	worldUpperBound = Vector::MIN;
 	worldLowerBound = Vector::MAX;
 	
-
 	Vector vertex;    
 	
 	for( int i = 0; i < 8; ++i )
@@ -158,6 +157,12 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	}
 }
 
+Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
+{
+	Matrix m = glm::translate(parent, position) * mat4_cast(rotation);
+	return (scale == Vector::ONE) ? m : glm::scale(m, scale);
+}
+
 void Object::updateWorldTransform()
 {	
 	//compute local matrix from position and orientation
@@ -170,9 +175,7 @@ void Object::updateWorldTransform()
 			mWorldTransform = glm::scale(mWorldTransform, 1.f / parent->scale);
 	}
 
-	mWorldTransform = glm::translate( mWorldTransform, position );
-	mWorldTransform *= mat4_cast( rotation );
-	mWorldTransform = glm::scale( mWorldTransform, scale );
+	mWorldTransform = getFullTransformRelativeTo(mWorldTransform);
 
 	//update AABB if needed
 	if( mNeedsAABB )

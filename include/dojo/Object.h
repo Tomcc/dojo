@@ -103,10 +103,10 @@ namespace Dojo {
             return false;
         }
 				
-		inline const Vector& getSize()		{	return size;	}			
-		inline const Vector& getHalfSize()	{	return halfSize;}	
+		inline const Vector& getSize() const 		{	return size;	}			
+		inline const Vector& getHalfSize() const 	{	return halfSize;}	
 		
-		inline GameState* getGameState()	{	return gameState;	}
+		inline GameState* getGameState() const	{	return gameState;	}
 
 		///returns the world position of a point in local space
 		inline Vector getWorldPosition( const Vector& localPos )
@@ -200,6 +200,8 @@ namespace Dojo {
 		{
 			return (childs) ? childs->size() : 0;
 		}
+
+		Matrix getFullTransformRelativeTo(const Matrix & parent) const;
 		
 		///adds a non-renderable child
 		void addChild( Object* o );

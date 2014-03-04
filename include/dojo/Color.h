@@ -73,7 +73,7 @@ namespace Dojo
 		}
 			
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)
-		inline RGBAPixel toRGBA()
+		inline RGBAPixel toRGBA() const
 		{
 			RGBAPixel p;
 			byte* ch = (byte*)&p;

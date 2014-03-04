@@ -33,22 +33,36 @@ void Tessellation::mergePoints( int i1, int i2 )
 
 void Tessellation::mergeDuplicatePoints()
 {
-	//TODO: make faster? it is already a quite specific/fast NN implementation but takes 4x Delaunay
-	std::unordered_map< Vector, int > positionToIndexMap;
+	Position max(-DBL_MAX, -DBL_MAX), min(DBL_MAX, DBL_MAX);
 
-	//iterate over all of the points
-	for( size_t i = 0; i < positions.size(); ++i )
+	for (auto& p : positions) {
+		max.x = std::max(p.x, max.x);
+		max.y = std::max(p.y, max.y);
+
+		min.x = std::min(p.x, min.x);
+		min.y = std::min(p.y, min.y);
+	}
+
+	const int N = 1024;
+	static std::vector<int> indexGrid;
+	indexGrid.clear();
+	indexGrid.resize(N*N, -1);
+
+	for (size_t i = 0; i < positions.size(); ++i)
 	{
-		auto p = positions[i].toVec();
-		//try to find the new position in the map
-		auto elem = positionToIndexMap.find( p );
+		auto& p = positions[i];
+		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (N-1));
+		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (N-1));
 
-		//if it isn't in the set, add it with its current index
-		if( elem == positionToIndexMap.end() )
-			positionToIndexMap[ p ] = i;
+		int& slot = indexGrid[x + y * N];
 
-		else //discard this point and map all the existing segments to its replacement
-			mergePoints( elem->second, i-- );
+		if (slot < 0)
+			slot = i; //store the index
+		else
+		{
+			//merge with preexisting vertex
+			mergePoints(slot, i--);
+		}
 	}
 }
 
@@ -147,7 +161,7 @@ void Tessellation::generateExtrusionContour()
 	extrusionContourIndices.insert( extrusionContourIndices.end(), additionalSegments.begin(), additionalSegments.end() );
 }
 
-void Tessellation::findContours()
+void Tessellation::findContours(bool generateHoles)
 {
 	//TODO sort segments? this might break if they are added in a unexpected manner?
 
@@ -165,50 +179,88 @@ void Tessellation::findContours()
 		if( !contours[i].closed )
 			contours.erase( contours.begin() + i-- );
 	}
+// 
+// 	if (mergeStraightLines)
+// 	{
+// 		//run over all the contours; if the angle between two consecutive segments is not significant, delete it
+// 		for (auto contour : contours)
+// 		{
+// 			auto& indices = contour.indices;
+// 			for (int ii = 0; ii < (int)indices.size(); ii += 2 )
+// 			{
+// 				int previi = ii < 2 ? indices.size() - 2 : ii - 2;
+// 				int i1 = indices[previi];
+// 				int i2 = indices[ii];
+// 				int i3 = indices[ii + 1];
+// 
+// 				DEBUG_ASSERT(i2 == indices[previi + 1], "this and indices[previi+1] should be the same");
+// 
+// 				auto& A = positions[i1];
+// 				auto& B = positions[i2];
+// 				auto& C = positions[i3];
+// 
+// 				if (fabs((A.y - B.y) * (A.x - C.x) - (A.y - C.y) * (A.x - B.x)) <= 1e-9)
+// 				{
+// 					//merge the two segments and erase the current one
+// 					indices[previi + 1] = indices[ii + 1];
+// 
+// 					indices.erase(indices.begin() + ii);
+// 					indices.erase(indices.begin() + ii + 1);
+// 
+// 					ii -= 2;
+// 				}
+// 			}
+// 		}
+// 	}
 
-	if( contours.size() == 1 )
-		contours.begin()->parity = 0; //obviously parity 0
-	else
+	if (generateHoles)
 	{
-		//compute the parity of each contour
-		for( size_t i = 0; i < contours.size(); ++i )
+		if (contours.size() == 1)
+			contours.begin()->parity = 0; //obviously parity 0
+		else
 		{
-			//choose a random point in the contour and start going right
-			//count the number of intersections with the contour's segments to compute parity
-			int intersections = 0;
-			auto& contour = contours[i];
-			auto& startPos = positions[ contour.indices[0] ];
-			for( size_t j = 0; j < segments.size(); ++j )
+			//compute the parity of each contour
+			for (size_t i = 0; i < contours.size(); ++i)
 			{
-				if( _raycastSegmentAlongX( segments[j], startPos ) ) //has hit segment i, check to which contour it belongs
+				//choose a random point in the contour and start going right
+				//count the number of intersections with the contour's segments to compute parity
+				int intersections = 0;
+				auto& contour = contours[i];
+				auto& startPos = positions[contour.indices[0]];
+				for (size_t j = 0; j < segments.size(); ++j)
 				{
-					if( contourForSegment[j] != i ) //didn't hit the contour we're tracing for
-						++intersections;
+					if (_raycastSegmentAlongX(segments[j], startPos)) //has hit segment i, check to which contour it belongs
+					{
+						if (contourForSegment[j] != i) //didn't hit the contour we're tracing for
+							++intersections;
+					}
 				}
-			}
 
-			contour.parity = intersections % 2;
+				contour.parity = intersections % 2;
 
-			if( contour.parity == 1 )  //odd contour, add an hole to the right or left of the startpos using a slight delta
-			{
-				auto& endPos = positions[ contour.indices[1] ];
-				Vector d = Vector( (float)(endPos.y - startPos.y), (float)(endPos.x - startPos.x) ).normalized() * 0.001f;
+				if (contour.parity == 1)  //odd contour, add an hole to the right or left of the startpos using a slight delta
+				{
+					auto& endPos = positions[contour.indices[1]];
+					Vector d = Vector((float)(endPos.y - startPos.y), (float)(endPos.x - startPos.x)).normalized() * 0.001f;
 
-				holes.push_back( Position( startPos.x + d.x, startPos.y + d.y ) );
+					holes.push_back(Position(startPos.x + d.x, startPos.y + d.y));
+				}
 			}
 		}
 	}
 }
 
-void Tessellation::tessellate( bool clearInputs /* = true */ )
+void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool generateHoles )
 {
 	DEBUG_ASSERT( !positions.empty() && !segments.empty(), "Cannot tesselate an empty contour" );
 
 	//remove duplicate points
 	mergeDuplicatePoints();
 
-	generateExtrusionContour();
-	findContours();
+	if ( prepareForExtrusion )
+		generateExtrusionContour();
+
+	findContours(generateHoles);
 
 	static struct triangulateio in, out;
 

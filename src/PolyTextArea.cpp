@@ -33,7 +33,7 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 	else
 	{
 		DEBUG_ASSERT( pFont->hasPolySurface(), "Cannot create a surface PolyTextArea if the font has no surface " );
-		mMesh->setTriangleMode( Mesh::TM_LIST );
+		mMesh->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
 
 		if( mRendering == RT_SURFACE )
 		{

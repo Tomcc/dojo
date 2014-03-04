@@ -128,8 +128,6 @@ namespace Dojo {
 						
 		void setInterfaceOrientation( Orientation o );
 
-		void setWireframe( bool wireframe );
-		
 		inline void setDefaultAmbient( const Color& a )
 		{
 			defaultAmbient = a;

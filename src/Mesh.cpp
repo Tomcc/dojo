@@ -245,7 +245,7 @@ bool Mesh::end()
 	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	
 	switch ( triangleMode ) {
-		case TM_LIST:       triangleCount = elemCount / 3;  break;
+		case TM_TRIANGLE_LIST:       triangleCount = elemCount / 3;  break;
 		case TM_STRIP:      triangleCount = elemCount-2;    break;
 		case TM_LINE_STRIP:
         case TM_LINE_LIST:

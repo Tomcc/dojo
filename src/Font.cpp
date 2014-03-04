@@ -83,7 +83,7 @@ int _moveTo( const FT_Vector* to, void* ptr )
 {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addPoint( Vector( to->x * gCurrentScale, to->y * gCurrentScale ) );
+	t->startPath( Vector( to->x * gCurrentScale, to->y * gCurrentScale ) );
 
 	return 0;
 }
@@ -166,7 +166,7 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 
 		//now that everything is loaded & in order, tessellate the mesh
 		if( mTesselation->segments.size() && page->getFont()->generateSurface ) //HACK
-			mTesselation->tessellate( !page->getFont()->generateEdge ); //keep edges if they are needed too
+			mTesselation->tessellate( !page->getFont()->generateEdge, true, true ); //keep edges if they are needed too
 	}
 }
 

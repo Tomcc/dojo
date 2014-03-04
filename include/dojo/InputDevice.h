@@ -68,6 +68,8 @@ namespace Dojo
 			return elem != mButton.end() ? elem->second : false;
 		}
 
+		bool isKeyDown(int action);
+ 
 		///returns the instant state of this axis
 		virtual float getAxis( Axis axis )
 		{
@@ -78,12 +80,12 @@ namespace Dojo
 		/*
 		for example, 0..3 for XBox controllers, or 0..n for each control method mapped to the keyboard
 		*/
-		inline int getID()
+		int getID()
 		{
 			return mID;
 		}
 
-		inline void addListener( Listener* l )
+		void addListener( Listener* l )
 		{
 			DEBUG_ASSERT( l, "Adding a null listener" );
 			DEBUG_ASSERT( !pListeners.exists( l ), "The listener is already registered" );
@@ -91,7 +93,7 @@ namespace Dojo
 			pListeners.add( l );
 		}
 
-		inline void removeListener( Listener* l )
+		void removeListener( Listener* l )
 		{
 			DEBUG_ASSERT( l, "The passed listener is NULL");
 			DEBUG_ASSERT( pListeners.exists( l ), "The listened to be removed is not registered" );
@@ -105,21 +107,18 @@ namespace Dojo
 		the same action can be bound to more than one KeyCode to allow for easy input configuration.
 		\remark the default Action for a key is the key number itself
 		*/
-		inline void addBinding( int action, KeyCode key )
-		{
-			mBindings[ key ] = action;
-		}
+		void addBinding( int action, KeyCode key );
 
 		///returns the action bound to this KeyCode
 		/** 
 		/remark the default action for unassigned keys is the key number itself */
-		inline int getActionForKey( KeyCode key )
+		int getActionForKey( KeyCode key )
 		{
 			KeyActionMap::iterator elem = mBindings.find( key );
 			return elem != mBindings.end() ? elem->second : key;
 		}
 
-		inline const String& getType()
+		const String& getType()
 		{
 			return mType;
 		}
@@ -131,7 +130,7 @@ namespace Dojo
 		}
 
 		///internal
-		inline void _notifyButtonState( KeyCode key, bool pressed )
+		void _notifyButtonState( KeyCode key, bool pressed )
 		{
 			if( isKeyDown( key ) != pressed )
 			{
@@ -148,7 +147,7 @@ namespace Dojo
 		}
 
 		///internal
-		inline void _notifyAxis( Axis a, float state)
+		void _notifyAxis( Axis a, float state)
 		{
 			//apply the dead zone
 			if( abs(state) < mDeadZone[a] )
@@ -165,7 +164,7 @@ namespace Dojo
 		}
 
 		///internal
-		inline void _fireDisconnected()
+		void _fireDisconnected()
 		{
 			for( Listener* l : pListeners )
 				l->onDisconnected( this );
@@ -175,6 +174,7 @@ namespace Dojo
 
 		typedef Dojo::Array< Listener* > ListenerList;
 		typedef std::unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
+		typedef std::unordered_multimap< int, KeyCode > ActionKeyMap;
 		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
 		typedef Dojo::Array< float > FloatList;
 
@@ -187,6 +187,7 @@ namespace Dojo
 		FloatList mAxis, mDeadZone;
 
 		KeyActionMap mBindings;
+		ActionKeyMap mInverseBindings;
 
 		int mID;
 	};

@@ -91,15 +91,6 @@ Render::~Render()
 	clearLayers();
 }
 
-void Render::setWireframe( bool wireframe )
-{
-#ifndef USING_OPENGLES
-	glPolygonMode( GL_FRONT_AND_BACK, (wireframe) ? GL_LINE : GL_FILL );
-#else
-    DEBUG_FAIL( "Wireframe mode is not supported on OpenGLES!" );
-#endif
-}
-
 Render::Layer* Render::getLayer( int layerID )
 {	
 	LayerList* layerList = &positiveLayers;
@@ -248,7 +239,7 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 	GLenum mode;
 	switch( m->getTriangleMode() )
 	{
-		case Mesh::TM_LIST:         mode = GL_TRIANGLES;        break;
+		case Mesh::TM_TRIANGLE_LIST:         mode = GL_TRIANGLES;        break;
 		case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
 		case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
 		case Mesh::TM_LINE_LIST:	mode = GL_LINES;			break;
@@ -279,7 +270,7 @@ void Render::renderLayer( Viewport* viewport, Layer* list )
 		return;
 	
 #ifdef DOJO_WIREFRAME_AVAILABLE
-	setWireframe( list->wireframe );
+	glPolygonMode(GL_FRONT_AND_BACK, list->wireframe ? GL_LINE : GL_FILL);
 #endif
 
 	//make state changes
