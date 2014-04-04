@@ -84,14 +84,14 @@ namespace Dojo
 		
 		///returns the map containing the required resource type
 		template < class R >
-		inline std::unordered_map< String, R* >* getResourceMap( ResourceType r ) const
+		std::unordered_map< String, R* >* getResourceMap( ResourceType r ) const
 		{
 			return (std::unordered_map< String, R* >*)mapArray[ (int)r ];
 		}
 		
 		///finds a named resource of type R
 		template < class R >
-		inline R* find( const String& name, ResourceType r )
+		R* find( const String& name, ResourceType r ) const
 		{
 			typedef std::unordered_map< String, R* > RMap;
 			
@@ -115,7 +115,7 @@ namespace Dojo
 			return NULL;
 		}
 		
-		inline void addFrameSet( FrameSet* set, const String& name )
+		void addFrameSet( FrameSet* set, const String& name )
 		{
 			DEBUG_ASSERT_INFO( !getFrameSet( name ), "A FrameSet with this name already exists", "name = " + name );
 			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
@@ -125,7 +125,7 @@ namespace Dojo
 			DEBUG_MESSAGE( "+" + name + "\t\t set" );
 		}
 		
-		inline void addFont( Font* f, const String& name )
+		void addFont( Font* f, const String& name )
 		{
 			DEBUG_ASSERT_INFO( !getFont( name ), "A Sound with this name already exists", "name = " + name );
 			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
@@ -135,7 +135,7 @@ namespace Dojo
 			DEBUG_MESSAGE( "+" + name + "\t\t font" );
 		}
 		
-		inline void addMesh( Mesh* m, const String& name )
+		void addMesh( Mesh* m, const String& name )
 		{
 			DEBUG_ASSERT_INFO( !getMesh( name ), "A Mesh with this name already exists", "name = " + name );
 			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
@@ -145,7 +145,7 @@ namespace Dojo
 			DEBUG_MESSAGE( "+" + name + "\t\t mesh" );
 		}
 		
-		inline void addSound( SoundSet* sb, const String& name )
+		void addSound( SoundSet* sb, const String& name )
 		{
 			DEBUG_ASSERT_INFO( !getSound( name ), "A Sound with this name already exists", "name = " + name );
 			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
@@ -180,7 +180,7 @@ namespace Dojo
 		}
 		
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
-		inline void addSubgroup( ResourceGroup* g )
+		void addSubgroup( ResourceGroup* g )
 		{
 			DEBUG_ASSERT( g != nullptr, "Adding a null subgroup" );
 			
@@ -188,7 +188,7 @@ namespace Dojo
 		}
 		
 		///removes a subgroup
-		inline void removeSubgroup( ResourceGroup* g )
+		void removeSubgroup( ResourceGroup* g )
 		{
 			DEBUG_ASSERT( g != nullptr, "Removing a null subgroup" );
 			
@@ -201,101 +201,104 @@ namespace Dojo
 			subs.clear();
 		}
 		
-		inline void removeFrameSet( const String& name )
+		void removeFrameSet( const String& name )
 		{
 			frameSets.erase( name );
 		}
 		
-		inline void removeFont( const String& name )
+		void removeFont( const String& name )
 		{
 			fonts.erase( name );
 		}
 		
-		inline void removeMesh( const String& name )
+		void removeMesh( const String& name )
 		{
 			meshes.erase( name );
 		}
 		
-		inline void removeSound( const String& name )
+		void removeSound( const String& name )
 		{
 			sounds.erase( name );
 		}
 		
-		inline void removeTable( const String& name )
+		void removeTable( const String& name )
 		{
 			tables.erase( name );
 		}
 
 		///returns a dummy empty FrameSet
-		inline FrameSet* getEmptyFrameSet()			{	return empty;	}
+		FrameSet* getEmptyFrameSet() const 
+		{	
+			return empty;	
+		}
 
-		inline FrameSet* getFrameSet( const String& name )
+		FrameSet* getFrameSet( const String& name ) const
 		{
 			DEBUG_ASSERT( name.size(), "getFrameSet: empty name provided" );
 
 			return find< FrameSet >( name, RT_FRAMESET );
 		}
 		
-		inline Texture* getTexture( const String& name )
+		Texture* getTexture(const String& name) const
 		{
 			FrameSet* s = getFrameSet( name );
 			
 			return s ? s->getFrame(0) : NULL;
 		}
 		
-		inline Font* getFont( const String& name )
+		Font* getFont(const String& name) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Font >( name, RT_FONT );
 		}
 		
-		inline Mesh* getMesh( const String& name )
+		Mesh* getMesh(const String& name) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Mesh >( name, RT_MESH );
 		}
 
-		inline SoundSet* getSound( const String& name )
+		SoundSet* getSound( const String& name ) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< SoundSet >( name, RT_SOUND );
 		}
 		
-		inline Table* getTable( const String& name )
+		Table* getTable(const String& name) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Table >( name, RT_TABLE );
 		}
 
-		inline Shader* getShader( const String& name )
+		Shader* getShader(const String& name) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< Shader >( name, RT_SHADER );
 		}
 
-		inline ShaderProgram* getProgram( const String& name )
+		ShaderProgram* getProgram(const String& name) const
 		{
 			DEBUG_ASSERT( name.size(), "empty name provided" );
 			return find< ShaderProgram >( name, RT_PROGRAM );
 		}
 		
 		///return the locale of this ResourceGroup, eg: en, it, de, se
-		inline const String& getLocale()
+		const String& getLocale() const
 		{
 			return locale;
 		}
 
 		///returns if this group is finalized, meaning that its loading is finished
 		/**\remark useful for loading subgroups in the background! */
-		inline bool isFinalized()
+		bool isFinalized() const
 		{
 			return finalized;
 		}
 		
 		///true if localization-specific folders will be added too when adding a folder
-		inline bool isLocalizationRequired()
+		bool isLocalizationRequired() const
 		{
-			return this->locale.size() > 0;
+			return locale.size() > 0;
 		}
 		
 		///add all the Sets in a folder
@@ -376,7 +379,7 @@ namespace Dojo
 		}
 
 		///empties the group destroying all the resources
-		inline void unloadResources( bool recursive = false )
+		void unloadResources( bool recursive = false )
 		{
 			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
 			_unload< Font >( fonts, false );
@@ -392,7 +395,7 @@ namespace Dojo
 		}
 
 		///unloads re-loadable resources without actually destroying resource objects
-		inline void softUnloadResources( bool recursive = false )
+		void softUnloadResources( bool recursive = false )
 		{
 			_unload< Font >( fonts, true );
 			_unload< FrameSet >( frameSets, true );
@@ -406,11 +409,11 @@ namespace Dojo
 				for( int i = 0; i < subs.size(); ++i )	subs[i]->softUnloadResources( recursive );
 		}
 			
-		inline FrameSetMap::const_iterator getFrameSets() const
+		FrameSetMap::const_iterator getFrameSets() const
 		{
 			return frameSets.begin();
 		}
-		inline FrameSetMap::const_iterator getFrameSetsEnd() const 
+		FrameSetMap::const_iterator getFrameSetsEnd() const 
 		{
 			return frameSets.end();
 		}

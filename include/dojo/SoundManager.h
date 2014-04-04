@@ -72,22 +72,22 @@ namespace Dojo {
 			}
 
 			///Plays the given set without spatial positioning
-			inline SoundSource* playSound( SoundSet* set )
+			inline SoundSource* playSound(SoundSet* set, float volume = 1.0f)
 			{
 				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				 
 				SoundSource* s = getSoundSource( set );
-				s->play();
+				s->play(volume);
 				return s;
 			}
 
 			///Plays the given set at pos
-			inline SoundSource* playSound( const Vector& pos, SoundSet* set )
+			inline SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f )
 			{
 				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				
 				SoundSource* s = getSoundSource( pos, set );
-				s->play();
+				s->play(volume);
 				return s;
 			}
 						
@@ -173,25 +173,8 @@ namespace Dojo {
             ///is the music already playing?
             inline bool isMusicPlaying()    {   return musicTrack != NULL;      }
 			
-			///sets the openAL Listener's position
-			inline void setListenerPosition( const Vector& pos )
-			{				
-				vectorToALfloat(pos , listenerPos );
-				
-				alListenerfv(AL_POSITION, listenerPos);
-			}
-			///sets the openAL Listener's orientation
-			inline void setListenerOrientation( const Vector& forward, const Vector& up )
-			{				
-				orientation[0] = forward.x;
-				orientation[1] = forward.y;
-				orientation[2] = forward.z;
-				orientation[3] = up.x;
-				orientation[4] = up.y;
-				orientation[5] = up.z;
-				
-				alListenerfv(AL_ORIENTATION, orientation);
-			}
+			///sets the openAL Listener's world transform
+			void setListenerTransform( const Matrix& worldTransform );
 
 			void update( float dt );
 
@@ -207,8 +190,7 @@ namespace Dojo {
 			ALCcontext *context;
 			ALCdevice *device;
 
-			ALfloat listenerPos[3];					
-			ALfloat orientation[6];
+			glm::vec4 lastListenerPos;
 
 			//pool di suoni
 			SoundList idleSoundPool;

@@ -48,11 +48,7 @@ namespace Dojo
 			float _zNear = 0,
 			float _zFar = 100 );
 		
-		virtual ~Viewport()
-		{
-			
-		}	
-
+		virtual ~Viewport();
 
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum( float VFOV, float zNear, float zFar );
@@ -144,12 +140,7 @@ namespace Dojo
 		}
 
 		///returns the world position of the given screenPoint
-		inline Vector makeWorldCoordinates( int x, int y )
-		{
-			return Vector(
-						  getWorldMin().x + ((float)x / Platform::getSingleton()->getWindowWidth()) * size.x,
-						  getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y );
-		}
+		Vector makeWorldCoordinates( int x, int y );
 			
 		///converts the w and h pixel sizes in a screen space size
 		inline void makeScreenSize( Vector& dest, int w, int h )
@@ -171,22 +162,13 @@ namespace Dojo
             mPerspectiveEyeTransform = t;
         }
 
-		virtual void onAction( float dt )
-		{
-			Object::onAction(dt);
-            
-            _updateTransforms();
-
-			//do not call if not explicitly required
-			if( frustumCullingEnabled )
-				_updateFrustum();
-		}
+		virtual void onAction( float dt );
 				
 	protected:
 		
 		Vector targetSize;
 
-		bool cullingEnabled;	
+		bool cullingEnabled;
 		
 		Renderable* fadeObject;
 				

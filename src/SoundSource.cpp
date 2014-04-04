@@ -9,7 +9,7 @@ using namespace Dojo;
 SoundSource::SoundSource( ALuint src ) :
 buffer( NULL ),
 source( src ),
-pos(0,0),
+position(0,0),
 positionChanged( true )
 {
 	_reset();
@@ -19,7 +19,7 @@ void SoundSource::_reset()
 {
 	state = SS_INITIALISING;
 	
-	pos = Vector::ZERO;
+	position = Vector::ZERO;
 	positionChanged = true;
 	buffer = NULL;
 	mFrontChunk = mBackChunk = nullptr;
@@ -100,21 +100,14 @@ void SoundSource::play( float volume )
 		setVolume( volume );
 		setPitch( pitch );
 		setLooping( looping );		
-		
-		//it can be moving, update pos
-		if(positionChanged)
-		{
-			SoundManager::vectorToALfloat( pos , position);
-			
-			alSourcefv(source, AL_POSITION, position);
-			
-			positionChanged = false;
-		}
-		
+	
 		//actually play the sound
 		alSourcePlay( source );
 
-		alGetSourcefv(source, AL_POSITION, position);
+		alSourcefv(source, AL_POSITION, position.data() );
+		alSourcefv(source, AL_VELOCITY, Vector::ZERO.data());
+		lastPosition = position;
+		positionChanged = false;
 			
 		state = SS_PLAYING;	
 
@@ -143,16 +136,20 @@ void SoundSource::rewind()
 }
 
 
-void SoundSource::_update()
+void SoundSource::_update(float dt)
 {
 	//it can be moving, update pos
+	timeSincePositionChange += dt;
 	if(positionChanged)
 	{
-		SoundManager::vectorToALfloat( pos , position);
-		
-		alSourcefv(source, AL_POSITION, position);
-		
+		Vector v = (position - lastPosition) * timeSincePositionChange;
+
+		alSourcefv(source, AL_POSITION, position.data() );
+		alSourcefv(source, AL_VELOCITY, v.data() );
+
+		timeSincePositionChange = 0;
 		positionChanged = false;
+		CHECK_AL_ERROR;
 	}
 	
     //if streaming, check if buffers have been used and replenish the queue

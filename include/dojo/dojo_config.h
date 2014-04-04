@@ -90,8 +90,6 @@
 	#define USING_OPENGLES
 #endif
 
-//general configuration
-
 #ifndef USING_OPENGLES
 	#define DOJO_32BIT_INDICES_AVAILABLE
 	#define DOJO_WIREFRAME_AVAILABLE //WIREFRAME not avaiable on iOS/Android devices

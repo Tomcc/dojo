@@ -62,7 +62,7 @@ namespace Dojo
 
 		}
 				
-		inline const Vector& operator += ( const Vector& v )
+		const Vector& operator += ( const Vector& v )
 		{
 			x += v.x;
 			y += v.y;
@@ -71,7 +71,7 @@ namespace Dojo
 			return *this;
 		}
 		
-		inline const Vector& operator -= ( const Vector& v )
+		const Vector& operator -= ( const Vector& v )
 		{
 			x -= v.x;
 			y -= v.y;
@@ -80,112 +80,116 @@ namespace Dojo
 			return *this;
 		}
 
-		inline Vector operator - ( const Vector& v ) const 
+		Vector operator - ( const Vector& v ) const 
 		{
 			return Vector( x - v.x, y - v.y, z - v.z );
 		}
 
-		inline Vector operator * ( float s ) const 
+		Vector operator * ( float s ) const 
 		{			
 			return Vector( x * s, y * s, z * s );
 		}
 
-		inline float operator * ( const Vector& v ) const 
+		float operator * ( const Vector& v ) const 
 		{
 			return glm::dot( (const glm::vec3&)(*this), (const glm::vec3&)v );
 		}
 
-		inline Vector operator ^ ( const Vector& v ) const 
+		Vector operator ^ ( const Vector& v ) const 
 		{
 			return glm::cross( *this, v );
 		}
 
 		///returns the length of this Vector
-		inline const float length() const
+		const float length() const
 		{
 			return sqrtf( x*x + y*y + z*z );
 		}
 		
 		///returns a normalized copy of this Vector
-		inline Vector normalized() const
+		Vector normalized() const
 		{
 			float l = length();
 			return Vector( x/l, y/l, z/l );
 		}
 
 		///linearly interpolates the two vectors; s = 0 returns this, s = 1 returns v
-		inline Vector lerpTo( float s, const Dojo::Vector& v ) const
+		Vector lerpTo( float s, const Dojo::Vector& v ) const
 		{			
 			float invs = 1.f - s;			
 			return Vector( v.x*s + invs*x, v.y*s + invs*y, v.z*s + invs*z);
 		}
 		
 		///returns a vector with abs componenents
-		inline Vector absComponents() const
+		Vector absComponents() const
 		{
 			return Vector( abs(x), abs(y), abs(z) );
 		}
 		
 		///multiplies component by component
-		inline Vector mulComponents( const Vector& v ) const
+		Vector mulComponents( const Vector& v ) const
 		{
 			return Vector( x*v.x, y*v.y, z*v.z );
 		}
 
 		///divides component by component
-		inline Vector divideComponents( const Vector& v ) const
+		Vector divideComponents( const Vector& v ) const
 		{
 			return Vector( x/v.x, y/v.y, z/v.z );
 		}
 
 		///returns the distance from this to v
-		inline float distance( const Vector& v ) const 
+		float distance( const Vector& v ) const 
 		{
 			return sqrt( distanceSquared(v) );
 		}
 
 		///returns the squared (and faster to compute) distance from this to v
-		inline float distanceSquared( const Vector& v ) const
+		float distanceSquared( const Vector& v ) const
 		{
 			return (x-v.x)*(x-v.x) + (y-v.y)*(y-v.y) + (z-v.z)*(z-v.z);
 		}
 
 		///returns true if this vector is near to v within the given threshold
-		inline bool isNear( const Vector& v, float threshold = 0.1 )
+		bool isNear( const Vector& v, float threshold = 0.1 )
 		{
 			return distanceSquared( v ) < threshold*threshold;
 		}
 
 		///returns true when all the components of the vector are 0
-		inline bool isZero() const
+		bool isZero() const
 		{
 			return x == 0.f && y == 0.f && z == 0.f;
 		}
 
 		///returns the dot product with this vector with only positive components
-		inline float absDot( const Vector& v ) const 
+		float absDot( const Vector& v ) const 
 		{
 			return abs( x * v.x ) + abs( y * v.y ) + abs( z * v.z );
 		}
 		
-		inline String toString() const
+		String toString() const
 		{
 			return "(" + String( x ) + "," + String( y ) + "," + String( z ) + ")";
 		}
 				
-		inline size_t getHash() const
+		size_t getHash() const
 		{
 			return (((size_t)x) * 73856093) ^ (((size_t)y) * 19349663) ^ (((size_t)z) * 83492791);
 		}
 
 		///reflect this vector on the plane with the given normal
-		inline Vector reflect( const Vector& normal ) const
+		Vector reflect( const Vector& normal ) const
 		{
 			return 2.f * normal * ( normal * *this ) - *this;
 		}
 
+		float* const data() const {
+			return (float* const)this;
+		}
+
 		///refracts this vector on the plane with the given normal, where eta is the refraction indices ratio
-		inline Vector refract( const Vector& n, float eta ) const
+		Vector refract( const Vector& n, float eta ) const
 		{
 			const Vector& i = -*this;
 

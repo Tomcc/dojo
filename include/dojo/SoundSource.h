@@ -6,8 +6,6 @@
 #include "Vector.h"
 #include "SoundBuffer.h"
 
-#include <queue>
-
 namespace Dojo
 {
 		class SoundManager;
@@ -39,7 +37,7 @@ namespace Dojo
 			///sets the Source's position	
 			void setPosition(const Vector& newPos)			
 			{	
-				pos = newPos;			
+				position = newPos;			
 				positionChanged = true;
 			}
 
@@ -127,7 +125,7 @@ namespace Dojo
 				return (state == SS_PAUSED);
 			}
 
-			void _update();
+			void _update(float dt);
 
 			void _setup( SoundBuffer* b )
 			{
@@ -144,13 +142,13 @@ namespace Dojo
 
 			typedef std::queue< SoundBuffer::Chunk* > ChunkQueue;
 			
-			Vector pos;
+			Vector position, lastPosition;
 			bool positionChanged;
+			float timeSincePositionChange = 0;
 
 			//members			
 			SoundBuffer* buffer;
 			ALuint source;
-			ALfloat position[3];
 			ALint playState;
 
 			int mCurrentChunkID, mQueuedChunks;

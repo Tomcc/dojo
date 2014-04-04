@@ -8,6 +8,7 @@
 #include "AnimatedQuad.h"
 #include "Sprite.h"
 #include "GameState.h"
+#include "SoundManager.h"
 
 using namespace Dojo;
 
@@ -39,7 +40,20 @@ mRT( nullptr )
 	
 	if( _VFOV > 0 )
 		enableFrustum( _VFOV, _zNear, _zFar );
-}	
+}
+
+
+Dojo::Viewport::~Viewport()
+{
+
+}
+
+Dojo::Vector Dojo::Viewport::makeWorldCoordinates(int x, int y)
+{
+	return Vector(
+		getWorldMin().x + ((float)x / Platform::getSingleton()->getWindowWidth()) * size.x,
+		getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y);
+}
 
 void Viewport::addFader( int layer )
 {
@@ -221,3 +235,19 @@ void Viewport::setVisibleLayers( const LayerList& layers )
 {
 	mLayerList = layers;
 }
+
+void Viewport::onAction(float dt)
+{
+	Object::onAction(dt);
+
+	_updateTransforms();
+
+	//do not call if not explicitly required
+	if (frustumCullingEnabled)
+		_updateFrustum();
+
+	//if it has no RT, it's the main viewport - use it to set the sound listener
+	if (!mRT)
+		Platform::getSingleton()->getSoundManager()->setListenerTransform( getWorldTransform() );
+}
+

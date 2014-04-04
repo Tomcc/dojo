@@ -65,8 +65,7 @@ currentFadeTime(0)
 	//dummy source to manage source shortage
 	fakeSource = new SoundSource( 0 );
 
-	setListenerPosition( Vector::ZERO );
-	setListenerOrientation( Vector::UNIT_Z, Vector::UNIT_Y );
+	setListenerTransform(Matrix(1));
 
 	CHECK_AL_ERROR;
 }
@@ -153,7 +152,7 @@ void SoundManager::update( float dt )
 	for( int i = 0; i < busySoundPool.size(); ++i)
 	{
 		current = busySoundPool[i];
-		current->_update();
+		current->_update(dt);
 
 		//resetta i suoni finiti
 		if( current->_isWaitingForDelete() )
@@ -222,4 +221,24 @@ void SoundManager::resumeMusic()
 	//resume music, but only if the user didn't enable itunes meanwhile!
 	if( musicTrack && !Platform::getSingleton()->isSystemSoundInUse() )
 		musicTrack->play();
+}
+
+void Dojo::SoundManager::setListenerTransform(const Matrix& worldTransform)
+{
+	glm::vec4 pos(0.f, 0.f, 0.f, 1.f), up(0.f,1.f,0.f,0.f), forward(0.f,0.f,-1.f, 0.f);
+
+	pos = worldTransform * pos;
+	forward = worldTransform * forward;
+	up = worldTransform * up;
+
+	ALfloat orientation[6] = { 
+		forward.x, forward.y, forward.z,
+		up.x, up.y,	up.z
+	};
+
+	alListenerfv(AL_POSITION, glm::value_ptr(pos));
+	alListenerfv(AL_VELOCITY, glm::value_ptr(pos - lastListenerPos));
+	alListenerfv(AL_ORIENTATION, orientation);
+
+	lastListenerPos = pos;
 }
