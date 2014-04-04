@@ -45,7 +45,7 @@ namespace Dojo
 			/**
 			with v > 1, hearing range still increases but the actual maximum volume does not
 			*/
-			void setVolume( float v );
+			void setVolume(float v);
 			
 			///sets the sound as looping. Looping sounds are never garbage collected.
 			inline void setLooping(bool l)
@@ -134,6 +134,11 @@ namespace Dojo
 				buffer = b;
 			}
 
+			bool isActive() const 
+			{
+				return state == SS_INITIALISING || state == SS_PAUSED || state == SS_PLAYING;
+			}
+
 			void _reset();
 			
 			void _loadResources();
@@ -158,7 +163,7 @@ namespace Dojo
 
 			//params
 			bool looping, autoRemove;	
-			float volume, pitch;
+			float baseVolume, pitch;
 		};
 }
 

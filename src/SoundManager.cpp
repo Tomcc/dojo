@@ -134,15 +134,18 @@ void SoundManager::setMasterVolume( float volume )
 {	
 	DEBUG_ASSERT( volume >= 0, "Volumes cannot be negative" );
 
-	masterVolume = volume;
+	if (std::abs(masterVolume - volume) > 0.01f || volume == 0) //avoid doing this too often
+	{
+		masterVolume = volume;
 
-	//update volumes (masterVolume is used inside setVolume!)
-	if( !nextMusicTrack && musicTrack )
-		musicTrack->setVolume( musicVolume );
+		//update volumes (masterVolume is used inside setVolume!)
+		if (!nextMusicTrack && musicTrack)
+			musicTrack->setVolume(musicVolume);
 
-	//update all the existing sounds
-	for( SoundSource* s : busySoundPool )
-		s->setVolume( s->getVolume() );
+		//update all the existing sounds
+		for (SoundSource* s : busySoundPool)
+			s->setVolume(s->getVolume());
+	}
 }
 
 void SoundManager::update( float dt )

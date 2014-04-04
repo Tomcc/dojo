@@ -26,7 +26,7 @@ void SoundSource::_reset()
 	mCurrentChunkID = 0;
 
 	//set default parameters
-	volume = 1.0f;
+	baseVolume = 1.0f;
 	pitch = 1.0f;
 	looping = false;
 
@@ -42,18 +42,19 @@ SoundSource::~SoundSource()
 void SoundSource::setVolume( float v )
 {	
 	DEBUG_ASSERT( v >= 0, "Sound volumes cannot be negative" );
+	baseVolume = v;
 	
-	volume = v * Platform::getSingleton()->getSoundManager()->getMasterVolume();
-	
-	if( source ) alSourcef (source, AL_GAIN, volume );		
+	if ( isActive() ) {
+		alSourcef(
+			source, 
+			AL_GAIN, 
+			baseVolume * Platform::getSingleton()->getSoundManager()->getMasterVolume());
+	}
 }
-
 
 float SoundSource::getVolume()
 {
-	float volume;
-	alGetSourcef( source, AL_GAIN, &volume );
-	return volume;
+	return baseVolume;
 }
 
 void SoundSource::play( float volume )
