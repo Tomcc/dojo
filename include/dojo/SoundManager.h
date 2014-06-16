@@ -167,6 +167,11 @@ namespace Dojo {
 						s->stop();
 				}
 			}
+
+			const SoundList& getActiveSounds() const 
+			{
+				return busySoundPool;
+			}
 			
 			///true if the music is fading
 			inline bool isMusicFading()		{	return fadeState != FS_NONE;	}

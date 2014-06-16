@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "dojomath.h"
+#include "Random.h"
 
 using namespace Dojo;
 
@@ -9,24 +10,31 @@ const float Math::TAU = 6.2831853071796f;
 const float Math::EULER_TO_RADIANS = 0.01745329251994329f;
 const float Math::RADIANS_TO_EULER = 57.295779513082325f;
 
+static Random randomImpl;
+
 void Math::seedRandom(unsigned int seed)
 {
 	if( !seed )
 		seed = (unsigned int) time(NULL);
 
-	srand( seed );
+	randomImpl = Random(seed);
 }
 
 float Math::random()
 {
-	return (float)rand()/(float)RAND_MAX;
+	return (float)randomImpl.rand();
+}
+
+bool Math::oneEvery(int n) 
+{
+	return randomImpl.randInt(n) == 0;
 }
 
 float Math::rangeRandom( float min, float max )
 {
 	DEBUG_ASSERT( min <= max, "The min end of a random range must be less or equal than the max end" );
 
-	return ((float)rand()/(float)RAND_MAX)*(max-min) + min;
+	return (float)randomImpl.rand(min, max);
 }
 
 Vector Math::randomVector( const Vector& min, const Vector& max )

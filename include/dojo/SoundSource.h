@@ -48,19 +48,9 @@ namespace Dojo
 			void setVolume(float v);
 			
 			///sets the sound as looping. Looping sounds are never garbage collected.
-			inline void setLooping(bool l)
-			{
-				looping = l;
-				if( source ) //do not use this looping flag on streaming sounds, we handle it in the update 
-					alSourcei (source, AL_LOOPING, isStreaming() ? false : looping );
-			}
+			void setLooping(bool l);
 
-			inline void setPitch( float p)			
-			{		
-				pitch = p;
-				if( source ) 
-					alSourcef (source, AL_PITCH,  pitch);			
-			}
+			void setPitch( float p);
 			
 			///if autoremove is disabled, SoundManager won't garbage collect this Source
 			inline void setAutoRemove(bool a)				{	autoRemove = a;		}	

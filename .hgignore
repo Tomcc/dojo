@@ -12,3 +12,6 @@ Debug/
 Release/
 lib\dojo.bsc
 lib\dojo_d.bsc
+OBJCooker/.idea/
+OBJCooker/out/
+OBJCooker\OBJCooker.iml

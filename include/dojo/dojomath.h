@@ -38,6 +38,8 @@ namespace Dojo
 		///quick and dirty random (see Random class for a more reliable implementation)
 		static float random();
 
+		static bool oneEvery(int n); //returns true one time in n
+
 		///returns a random float in the range [min...max[
 		static float rangeRandom( float min, float max );
 
@@ -146,9 +148,9 @@ namespace Dojo
 			return ++val; 
 		}
 		
-		static inline float lerp( float a, float b, float s )
+		static inline float lerp( float to, float from, float s )
 		{
-			return a * s + b * (1.f-s);
+			return to * s + from * (1.f-s);
 		}
 		
 		///returns if a is inside ]b-bias, b+bias[

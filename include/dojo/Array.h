@@ -340,6 +340,16 @@ namespace Dojo
 			return iterator( Range( *this, size() ) );
 		}
 
+		FV_INLINE T& back() const {
+			DEBUG_ASSERT(elements > 0, "Out of Bounds");
+			return vectorArray[elements-1];
+		}
+
+		FV_INLINE T& front() const {
+			DEBUG_ASSERT(elements > 0, "Out of Bounds");
+			return vectorArray[0];
+		}
+
 		///returns an iterable range starting at start and ending at end (not included) or the natural end
 		FV_INLINE Range range( int start, int end = -1 ) const
 		{

@@ -27,7 +27,7 @@ void SoundSource::_reset()
 
 	//set default parameters
 	baseVolume = 1.0f;
-	pitch = 1.0f;
+	pitch = 0.1f;
 	looping = false;
 
 	setAutoRemove(true);
@@ -208,4 +208,18 @@ void SoundSource::_update(float dt)
 
 		state = SS_FINISHED;
 	}
+}
+
+void Dojo::SoundSource::setPitch(float p)
+{
+	pitch = p;
+	if (isActive())
+		alSourcef(source, AL_PITCH, pitch);
+}
+
+void Dojo::SoundSource::setLooping(bool l)
+{
+	looping = l;
+	if (isActive()) //do not use this looping flag on streaming sounds, we handle it in the update 
+		alSourcei(source, AL_LOOPING, isStreaming() ? false : looping);
 }
