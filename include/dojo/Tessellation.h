@@ -107,6 +107,8 @@ namespace Dojo
 		std::vector< int > contourForSegment;
 		std::vector< Position > holes;
 
+		std::vector<int> indexGrid;
+
 		struct ExtrusionVertex
 		{
 			Vector position, normal;
@@ -225,7 +227,7 @@ namespace Dojo
 		/**
 		\param clearInputs auto-clears the input vectors
 		*/
-		void tessellate( bool clearInputs, bool prepareForExtrusion, bool guessHoles );
+		void tessellate( bool clearInputs, bool prepareForExtrusion, bool guessHoles, int maxIndices = 1000 );
 
 	protected:
 

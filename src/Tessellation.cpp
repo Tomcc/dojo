@@ -43,8 +43,9 @@ void Tessellation::mergeDuplicatePoints()
 		min.y = std::min(p.y, min.y);
 	}
 
+	DEBUG_ASSERT(max.x > min.x && max.y > min.y, "Degenerate set, fully lies on a line/point");
+
 	const int N = 1024;
-	static std::vector<int> indexGrid;
 	indexGrid.clear();
 	indexGrid.resize(N*N, -1);
 
@@ -53,6 +54,8 @@ void Tessellation::mergeDuplicatePoints()
 		auto& p = positions[i];
 		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (N-1));
 		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (N-1));
+
+		DEBUG_ASSERT(x < N && y < N && x >= 0 && y >= 0, "OOB");
 
 		int& slot = indexGrid[x + y * N];
 
@@ -250,9 +253,9 @@ void Tessellation::findContours(bool generateHoles)
 	}
 }
 
-void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool generateHoles )
+void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool generateHoles, int maxIndices )
 {
-	DEBUG_ASSERT( !positions.empty() && !segments.empty(), "Cannot tesselate an empty contour" );
+	DEBUG_ASSERT( !positions.empty(), "Cannot tesselate an empty contour" );
 
 	//remove duplicate points
 	mergeDuplicatePoints();
@@ -285,7 +288,8 @@ void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool 
 	in.holelist = (REAL*)holes.data();
 
 	//resize the indices to a "reasonable" max size //TODO find what is "reasonable"!
-	outIndices.resize( 1000 );
+	outIndices.clear();
+	outIndices.resize( maxIndices );
 	out.trianglelist = outIndices.data();
 
 	//p - triangulates "in"
@@ -295,7 +299,7 @@ void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool 
 	//B - no boundary markers (read: no out.segmentmarkerlist)
 	//P - no out.segmentlist (we're not interested thanks)
 
-	triangulate( "pzQNBP", &in, &out, nullptr );
+	triangulate(segments.empty() ? "zQNBP" : "pzQNBP", &in, &out, nullptr);
 
 	DEBUG_ASSERT( outIndices.size() >= (size_t)out.numberoftriangles * 3, "didn't allocate enough space for the indices" );
 
