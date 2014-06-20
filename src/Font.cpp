@@ -165,8 +165,14 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 		FT_Outline_Decompose( outline, &funcs, this );
 
 		//now that everything is loaded & in order, tessellate the mesh
-		if( mTesselation->segments.size() && page->getFont()->generateSurface ) //HACK
-			mTesselation->tessellate( !page->getFont()->generateEdge, true, true ); //keep edges if they are needed too
+		if (mTesselation->segments.size() && page->getFont()->generateSurface) { //HACK
+
+			int options = Tessellation::PREPARE_EXTRUSION | Tessellation::GUESS_HOLES;
+			if (!page->getFont()->generateEdge)
+				options |= Tessellation::CLEAR_INPUTS;
+
+			mTesselation->tessellate(options); //keep edges if they are needed too
+		}
 	}
 }
 

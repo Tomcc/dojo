@@ -46,6 +46,10 @@ namespace Dojo
 		{
 			int i1, i2;
 
+			Segment() : i1(0), i2(0) {
+
+			}
+
 			Segment( int a, int b ) :
 				i1( a ),
 				i2( b )
@@ -127,11 +131,14 @@ namespace Dojo
 			}
 		};
 
+
+
 		std::vector< ExtrusionVertex > extrusionContourVertices;
 		SegmentList extrusionContourIndices;
 
 		//out
 		std::vector< int > outIndices;
+		SegmentList outHullSegments;
 
 		///Creates an empty 2D Tesselation object
 		Tessellation()
@@ -227,7 +234,10 @@ namespace Dojo
 		/**
 		\param clearInputs auto-clears the input vectors
 		*/
-		void tessellate( bool clearInputs, bool prepareForExtrusion, bool guessHoles, int maxIndices = 1000 );
+
+		static int CLEAR_INPUTS, PREPARE_EXTRUSION, GUESS_HOLES, DONT_MERGE_POINTS, GENERATE_HULL;
+
+		void tessellate( int flags, int maxIndices = 1000 );
 
 	protected:
 

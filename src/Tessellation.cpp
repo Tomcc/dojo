@@ -15,6 +15,12 @@ extern "C"
 
 using namespace Dojo;
 
+int Tessellation::CLEAR_INPUTS = 0x1,
+Tessellation::PREPARE_EXTRUSION = 0x1 << 1,
+Tessellation::GUESS_HOLES = 0x1 << 2,
+Tessellation::DONT_MERGE_POINTS = 0x1 << 3,
+Tessellation::GENERATE_HULL = 0x1 << 4;
+
 void Tessellation::mergePoints( int i1, int i2 )
 {
 	//remove i2 from the list
@@ -253,19 +259,20 @@ void Tessellation::findContours(bool generateHoles)
 	}
 }
 
-void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool generateHoles, int maxIndices )
+void Tessellation::tessellate( int flags, int maxIndices )
 {
 	DEBUG_ASSERT( !positions.empty(), "Cannot tesselate an empty contour" );
 
 	//remove duplicate points
-	mergeDuplicatePoints();
+	if (!(flags & DONT_MERGE_POINTS))
+		mergeDuplicatePoints();
 
-	if ( prepareForExtrusion )
+	if ( flags & PREPARE_EXTRUSION )
 		generateExtrusionContour();
 
-	findContours(generateHoles);
+	findContours( (flags & GUESS_HOLES) > 0 );
 
-	static struct triangulateio in, out;
+	struct triangulateio in, out;
 
 	memset( &out, 0, sizeof(out) );
 
@@ -292,23 +299,36 @@ void Tessellation::tessellate( bool clearInputs, bool prepareForExtrusion, bool 
 	outIndices.resize( maxIndices );
 	out.trianglelist = outIndices.data();
 
+	std::string commandLine = segments.empty() ? "zQNB" : "pzQNB";
+
+	if (flags & GENERATE_HULL) {
+		outHullSegments.resize(1000);
+		out.segmentlist = (int*)outHullSegments.data();
+		commandLine += "c"; //generate enclosing hull
+	}
+	else
+		commandLine += "P"; //ignore enclosing hull
+	
 	//p - triangulates "in"
 	//z - indices numbered from 0
 	//Q - no printf
+	//e - generate enclosing edges
 	//N - no memory is allocated for out.point* structures (we keep the same input points anyway)
 	//B - no boundary markers (read: no out.segmentmarkerlist)
 	//P - no out.segmentlist (we're not interested thanks)
 
-	triangulate(segments.empty() ? "zQNBP" : "pzQNBP", &in, &out, nullptr);
+	triangulate((char*)commandLine.c_str(), &in, &out, nullptr);
 
 	DEBUG_ASSERT( outIndices.size() >= (size_t)out.numberoftriangles * 3, "didn't allocate enough space for the indices" );
 
 	//resize to fit exactly the produced triangles
 	outIndices.resize( out.numberoftriangles*3 );
+	outHullSegments.resize(out.numberofsegments);
 
-	if( clearInputs )
+	if( flags & CLEAR_INPUTS )
 	{
 		positions.clear();
 		segments.clear();
 	}
 }
+
