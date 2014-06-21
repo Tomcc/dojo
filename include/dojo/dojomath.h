@@ -26,7 +26,7 @@ namespace Dojo
 		static const float RADIANS_TO_EULER;  ///magic number which multiplied to a radian value converts it to euler
 		
 		///returns if this machine is little endian
-		static inline bool isLittleEndian()
+		static bool isLittleEndian()
 		{
 			unsigned short x = 0x0001;
 			return *((byte*)&x) != 0;
@@ -49,17 +49,17 @@ namespace Dojo
 		///returns a random point in the given space rectangle (2D)
 		static Vector randomVector2D( const Vector& min, const Vector& max, float z = 0 );
 
-		static inline float toRadian( float euler )
+		static float toRadian( float euler )
 		{
 			return euler * EULER_TO_RADIANS;
 		}
 		
-		static inline float toEuler( float radian )
+		static float toEuler( float radian )
 		{
 			return radian * RADIANS_TO_EULER;
 		}
 		
-		static inline float sign( float f )
+		static float sign( float f )
 		{
 			if( f > 0 )
 				return 1;
@@ -69,40 +69,40 @@ namespace Dojo
 				return 0;
 		}
 
-		static inline float min( float a, float b )
+		static float min( float a, float b )
 		{
 			return (a < b) ? a : b;
 		}
 
-		static inline float max( float a, float b )
+		static float max( float a, float b )
 		{
 			return (a > b) ? a : b;
 		}
 
-		static inline int min( int a, int b )
+		static int min( int a, int b )
 		{
 			return (a < b) ? a : b;
 		}
 
-		static inline int max( int a, int b )
+		static int max( int a, int b )
 		{
 			return (a > b) ? a : b;
 		}
 		
 		///returns a vector which components are the component-wise max of a and b
-		static inline Vector max( const Vector& a, const Vector& b ) 
+		static Vector max( const Vector& a, const Vector& b ) 
 		{
 			return Vector( max( a.x,b.x ), max( a.y,b.y ), max( a.z, b.z ) );
 		}
 		
 		///returns a vector which components are the component-wise min of a and b
-		static inline Vector min( const Vector& a, const Vector& b )
+		static Vector min( const Vector& a, const Vector& b )
 		{
 			return Vector( min( a.x,b.x ), min( a.y,b.y ), min( a.z, b.z ) );
 		}
 
 		///clamps n between max and min
-		static inline float clamp( float n, float max, float min )
+		static float clamp( float n, float max, float min )
 		{
 			DEBUG_ASSERT( max >= min, "clamp: max must be >= than min" );
 			
@@ -111,8 +111,17 @@ namespace Dojo
 			return n;
 		}
 		
+		static Vector clamp(const Vector& val, const Vector& max, const Vector& min)
+		{
+			return Vector(
+				clamp(val.x, max.x, min.x),
+				clamp(val.y, max.y, min.y),
+				clamp(val.z, max.z, min.z));
+		}
+
+
 		///gets the nth bit in the mask i
-		static inline bool getBit( int i, byte n )
+		static bool getBit( int i, byte n )
 		{
 			DEBUG_ASSERT( n < 32, "getBit: byte number was more than 32" );
 			
@@ -131,13 +140,13 @@ namespace Dojo
 		}
 
 		///clamps in [0..1[
-		static inline float saturate( float n )
+		static float saturate( float n )
 		{
 			return clamp( n, 1, 0 );
 		}
 
 		///returns the smallest power of two greater than val
-		static inline unsigned int nextPowerOfTwo( unsigned int val )
+		static unsigned int nextPowerOfTwo( unsigned int val )
 		{
 			--val;
 			val = (val >> 1) | val;
@@ -148,33 +157,33 @@ namespace Dojo
 			return ++val; 
 		}
 		
-		static inline float lerp( float to, float from, float s )
+		static float lerp( float to, float from, float s )
 		{
 			return to * s + from * (1.f-s);
 		}
 		
 		///returns if a is inside ]b-bias, b+bias[
-		static inline bool isNear( float a, float b, float bias )
+		static bool isNear( float a, float b, float bias )
 		{
 			return a < b + bias && a > b - bias;
 		}
 		
-		static inline float abs( float a )
+		static float abs( float a )
 		{
 			return ( a >= 0 ) ? a : -a;
 		}
 		
-		static inline bool AABBContains( const Vector& max, const Vector& min, const Vector& point )
+		static bool AABBContains( const Vector& max, const Vector& min, const Vector& point )
 		{
 			return max.x >= point.x && max.y >= point.y && max.z >= point.z && min.x <= point.x && min.y <= point.y && min.z <= point.z;
 		}
 		
-		static inline bool AABBContainsAABB( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
+		static bool AABBContainsAABB( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
 		{
 			return AABBContains( maxA, minA, maxB ) && AABBContains( maxA, minA, minB );
 		}
 		
-		static inline bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
+		static bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
 		{
 			float cx = maxA.x - minB.x;
 			float cy = maxA.y - minB.y;

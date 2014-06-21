@@ -164,7 +164,14 @@ void Mesh::vertex(const Vector& v)
 {
 	_prepareVertex(v);
 
-	*((Vector*)currentVertex) = v;
+	if (isVertexFieldEnabled(Mesh::VF_POSITION3D))
+		*((Vector*)currentVertex) = v;
+	else {
+		float* ptr = (float*)currentVertex;
+
+		ptr[0] = v.x;
+		ptr[1] = v.y;
+	}
 }
 
 void Mesh::vertex( float x, float y, float z )
@@ -359,6 +366,10 @@ bool Mesh::end()
 
 	if( !dynamic ) //won't be updated ever again
 		destroyBuffers();
+	else {
+		vertices.clear();
+		indices.clear();
+	}
 	
 	return loaded;
 }
