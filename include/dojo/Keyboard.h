@@ -22,6 +22,10 @@ namespace Dojo
 				max(max) {
 
 			}
+
+			bool operator == (const FakeAxis& other) const {
+				return axis == other.axis && min == other.min && max == other.max;
+			}
 		};
 		typedef std::vector< FakeAxis > FakeAxes;
 
@@ -34,7 +38,11 @@ namespace Dojo
 
 		void addFakeAxis( Axis axis, KeyCode min, KeyCode max )
 		{
-			mFakeAxes.emplace_back(axis, min, max);
+			FakeAxis x(axis, min, max);
+			auto elem = std::find(mFakeAxes.begin(), mFakeAxes.end(), x);
+
+			if (elem == mFakeAxes.end())
+				mFakeAxes.emplace_back(x);
 		}
 
 		virtual void poll( float dt )
