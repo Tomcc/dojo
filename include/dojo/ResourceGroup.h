@@ -53,7 +53,7 @@ namespace Dojo
 		};
 				
 		//various resource properties TODO: refactor
-		bool disableBilinear, disableMipmaps, disableTiling;
+		bool disableBilinear, disableMipmaps, disableTiling, logchanges = true;
 		
 		typedef std::unordered_map<String, FrameSet*> FrameSetMap;
 		typedef std::unordered_map<String, Font*> FontMap;
@@ -122,7 +122,8 @@ namespace Dojo
 			
 			frameSets[name] = set;
 			
-			DEBUG_MESSAGE( "+" + name + "\t\t set" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t set");
 		}
 		
 		void addFont( Font* f, const String& name )
@@ -132,7 +133,8 @@ namespace Dojo
 			
 			fonts[name] = f;
 			
-			DEBUG_MESSAGE( "+" + name + "\t\t font" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t font");
 		}
 		
 		void addMesh( Mesh* m, const String& name )
@@ -142,7 +144,8 @@ namespace Dojo
 			
 			meshes[ name ] = m;
 			
-			DEBUG_MESSAGE( "+" + name + "\t\t mesh" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t mesh");
 		}
 		
 		void addSound( SoundSet* sb, const String& name )
@@ -152,7 +155,8 @@ namespace Dojo
 			
 			sounds[ name ] = sb;
 			
-			DEBUG_MESSAGE( "+" + name + "\t\t sound" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t sound");
 		}
 		
 		void addTable( Table* t );
@@ -165,7 +169,8 @@ namespace Dojo
 
 			shaders[ name ] = s;
 
-			DEBUG_MESSAGE( "+" + name + "\t\t shader" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t shader");
 		}
 
 		///adds an existing ShaderProgram to this group
@@ -176,7 +181,8 @@ namespace Dojo
 
 			programs[ name ] = sp;
 
-			DEBUG_MESSAGE( "+" + name + "\t\t shader program" );
+			if (logchanges)
+				DEBUG_MESSAGE("+" + name + "\t\t shader program");
 		}
 		
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
@@ -328,7 +334,8 @@ namespace Dojo
 		\remark all the assets without a version are by default version 0*/
 		void addFolderSimple( const String& folder, int version = 0 )
 		{
-			DEBUG_MESSAGE( "[" + folder + "]" );
+			if (logchanges)
+				DEBUG_MESSAGE( "[" + folder + "]" );
 			
 			addSets( folder, version );
 			addFonts( folder, version );
@@ -461,13 +468,15 @@ namespace Dojo
 
 				//delete too?
 				if( !softUnload )
-				{
-					DEBUG_MESSAGE( "-" + resourcePair.first );
+				{	
+					if (logchanges)
+						DEBUG_MESSAGE("-" + resourcePair.first);
 					SAFE_DELETE( resourcePair.second );
 				}
 				else if( !resourcePair.second->isLoaded() )
 				{
-					DEBUG_MESSAGE( "~" + resourcePair.first );
+					if (logchanges)
+						DEBUG_MESSAGE("~" + resourcePair.first);
 				}
 			}
 

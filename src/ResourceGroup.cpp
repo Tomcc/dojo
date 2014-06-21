@@ -66,7 +66,8 @@ void ResourceGroup::addTable( Table* t )
 	
 	tables[ t->getName() ] = t;
 	
-	DEBUG_MESSAGE( "+" + t->getName() + "\t\t table" );
+	if (logchanges)
+		DEBUG_MESSAGE( "+" + t->getName() + "\t\t table" );
 }
 
 void ResourceGroup::addSets( const String& subdirectory, int version )
