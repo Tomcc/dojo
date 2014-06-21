@@ -55,7 +55,7 @@ void Light::initSpotlight( const Vector& dir, float fov, float exponent, float a
     //angle = dir.angleFromDirection();
 }
 
-inline void toFV( float* fv, const Vector& v, float w )
+void toFV( float* fv, const Vector& v, float w )
 {
 	fv[0] = v.x;
 	fv[1] = v.y;

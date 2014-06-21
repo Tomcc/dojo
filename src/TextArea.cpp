@@ -336,7 +336,7 @@ void TextArea::_centerLastLine( int startingAt, float size )
 	float halfWidth = size * 0.5f;
 	
 	for( Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i )
-		*(mesh->_getVertex( i )) -= halfWidth;		
+		mesh->getVertex( i ).x -= halfWidth;		
 }
 
 ///create a mesh to be used for text

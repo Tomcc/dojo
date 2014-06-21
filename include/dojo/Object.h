@@ -177,14 +177,14 @@ namespace Dojo {
 			return childs->at( i );
 		}
 		
-		inline Vector& getWorldMax()
+		inline const Vector& getWorldMax() const
 		{
 			DEBUG_ASSERT( mNeedsAABB, "getWorldMax: this Object has no AABB" );
 			
 			return worldUpperBound;
 		}
 		
-		inline Vector& getWorldMin()
+		inline const Vector& getWorldMin() const
 		{
 			DEBUG_ASSERT( mNeedsAABB, "getWorldMin: this Object has no AABB" );
 			

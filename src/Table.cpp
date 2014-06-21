@@ -129,27 +129,27 @@ enum ParseTarget
 	PT_IMPLICITTRUE
 };
 
-inline bool isNameStarter( unichar c )
+bool isNameStarter( unichar c )
 {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-inline bool isNumber( unichar c )
+bool isNumber( unichar c )
 {
 	return (c >= '0' && c <= '9') || c == '-';  //- is part of a number!!!
 }
 
-inline bool isName( unichar c )
+bool isName( unichar c )
 {
 	return isNameStarter(c) || isNumber(c) || c == '_';
 }
 
-inline bool isValidFloat( unichar c )
+bool isValidFloat( unichar c )
 {
 	return isNumber( c ) || c == '.';
 }
 
-inline bool isWhiteSpace( unichar c )
+bool isWhiteSpace( unichar c )
 {
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
@@ -285,14 +285,14 @@ void Table::deserialize( StringReader& buf )
 
 		case PT_DATA:
 			data.size = (int)buf.readFloat();
-			data.ptr = malloc( data.size );
+			data.ptr = malloc(data.size);
 
 			//skip space
 			buf.get();
 
-			buf.readBytes( data.ptr, data.size );
+			buf.readBytes(data.ptr, data.size);
 
-			set( curName, data.ptr, data.size, true ); //always retain deserialized data
+			set(curName, data.ptr, data.size, true); //always retain deserialized data
 			break;
 
 		case PT_CHILD:

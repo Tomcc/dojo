@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "Platform.h"
 #include "Shader.h"
+#include "dojomath.h"
 
 using namespace Dojo;
 
@@ -27,78 +28,131 @@ const int Mesh::VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat )
 };
 
-///Tells the buffer to allocate at least "vertices" vertices
-void Mesh::setVertexCap(IndexType count)
+void Dojo::Mesh::destroyBuffers() {
+	auto cleanup = std::move(vertices);
+	cleanup = std::move(indices);
+}
+
+void Dojo::Mesh::begin(int extimatedVerts /*= 1 */) {
+	//be sure that we aren't already building
+	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
+	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
+
+	vertices.reserve(extimatedVerts*vertexSize);
+
+	vertexCount = indexCount = 0;
+	currentVertex = nullptr;
+
+	max = Vector::MIN;
+	min = Vector::MAX;
+
+	editing = true;
+}
+
+Dojo::Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
+Resource(creator)
 {
-	DEBUG_ASSERT( count <= indexMaxValue, "setVertexCap: the requested cap is too high and can't be indexed with the current indices size" );
+	//set all fields to zero
+	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
 
-	if( count < vertexMaxCount ) //no need to grow the buffer
-		return;
+	//default index size is 16
+	setIndexByteSize(sizeof(GLushort));
+}
 
-	vertexMaxCount = (count/VERTEX_PAGE_SIZE + 1 ) * VERTEX_PAGE_SIZE;
+Dojo::Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
+Resource(creator, filePath) 
+{
+	//set all fields to zero
+	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
 
-	if( !vertices )
-	{					
-		vertices = (byte*)malloc( vertexSize * vertexMaxCount );
+	//default index size is 16
+	setIndexByteSize(sizeof(GLushort));
+}
 
-		_buildFieldOffsets();	//build the offsets for each field	
-	}			
-	else
+void Dojo::Mesh::setIndexByteSize(byte bytenumber) {
+	DEBUG_ASSERT(!editing, "setIndexByteSize must be called BEFORE begin!");
+	DEBUG_ASSERT(
+		bytenumber == 1 ||
+		bytenumber == 2 ||
+		bytenumber == 4, "setIndexByteSize: byteNumber must be either 1,2 or 4");
+
+	indexSize = bytenumber;
+
+	if (indexSize == 1)
 	{
-		vertices = (byte*)realloc( vertices, vertexSize * vertexMaxCount );
+		indexGLType = GL_UNSIGNED_BYTE;
+		indexMaxValue = 0xff;
 	}
-}	
-
-void Mesh::setIndexCap( int count )
-{
-	if( count < indexMaxCount ) //no need to grow the buffer
-		return;
-
-	indexMaxCount = (count/INDEX_PAGE_SIZE + 1 ) * INDEX_PAGE_SIZE;
-
-	if( !indices )
-	{					
-		indices = (byte*)malloc( indexByteSize * indexMaxCount );
+	else if (indexSize == 2)
+	{
+		indexGLType = GL_UNSIGNED_SHORT;
+		indexMaxValue = 0xffff;
 	}
-	else
-	{	
-		//TODO MAKE THIS ACTUALLY WORK
-		indices = (byte*)realloc( indices, indexByteSize * indexMaxCount );
-
-		/*GLint* temp = (GLint*)malloc( sizeof(GLint) * indexMaxCount );
-		memcpy( temp, indices, sizeof( GLint ) * indexCount );
-		free( indices );
-
-		indices = temp;*/
+	else if (indexSize == 4)
+	{
+#ifdef DOJO_32BIT_INDICES_AVAILABLE
+		indexGLType = GL_UNSIGNED_INT;
+		indexMaxValue = 0xffffffff;
+#else
+		DEBUG_FAIL("32 bit indices are disabled (force enabled defining DOJO_32BIT_INDICES_AVAILABLE)");
+#endif
 	}
 }
 
+void Dojo::Mesh::setVertexFieldEnabled(VertexField f) {
+	DEBUG_ASSERT(!editing, "setVertexFieldEnabled must be called BEFORE begin!");
 
-void Mesh::_prepareVertex( float x, float y, float z )
+	vertexFieldOffset[f] = vertexSize;
+	vertexSize += VERTEX_FIELD_SIZES[f];
+}
+
+void Dojo::Mesh::setDynamic(bool d) {
+	dynamic = d;
+}
+
+void Dojo::Mesh::index(IndexType idx) {
+	DEBUG_ASSERT(isEditing(), "index: this Mesh is not in Edit mode");
+	DEBUG_ASSERT(idx <= indexMaxValue, "index: the index passed is too big to be contained in this mesh's index format, see setIndexByteSize");
+
+	auto curSize = indices.size();
+	indices.resize(curSize + indexSize);
+
+	switch (indexSize)
+	{
+	case 1:
+		indices.back() = idx;
+		break;
+	case 2:
+		*((unsigned short*)(indices.data() + curSize)) = idx;
+		break;
+	case 4:
+		*((unsigned int*)(indices.data() + curSize)) = idx;
+		break;
+	}
+
+	++indexCount;
+}
+
+
+void Mesh::_prepareVertex(const Vector& v)
 {
 	DEBUG_ASSERT( isEditing(), "_prepareVertex: this Mesh is not in Edit mode" );
 
-	//grow the buffer to the needed size			
-	if( vertexCount >= vertexMaxCount )
-		setVertexCap( vertexCount+1 );
+	//grow the buffer to the needed size
+	auto curSize = vertices.size();
+	vertices.resize(curSize + vertexSize);
 
-	currentVertex = vertices + vertexCount * vertexSize;
+	currentVertex = (byte*)vertices.data() + curSize;
 
-	if( x > max.x )	max.x = x;
-	else if( x < min.x ) min.x = x;
-
-	if( y > max.y ) max.y = y;
-	else if( y < min.y ) min.y = y;
-
-	if( z > max.z ) max.z = z;
-	else if( z < min.z ) min.z = z;
+	min = Math::min(v, min);
+	max = Math::max(v, max);
 
 	++vertexCount;
 }
 
 void Mesh::vertex( float x, float y )
 {				
-	_prepareVertex(x,y,0);
+	_prepareVertex(Vector(x,y));
 
 	float* ptr = (float*)currentVertex;
 
@@ -106,15 +160,63 @@ void Mesh::vertex( float x, float y )
 	ptr[1] = y;
 }
 
+void Mesh::vertex(const Vector& v) 
+{
+	_prepareVertex(v);
+
+	*((Vector*)currentVertex) = v;
+}
+
 void Mesh::vertex( float x, float y, float z )
-{				
-	_prepareVertex(x,y,z);
+{		
+	vertex(Vector(x, y, z));
+}
 
-	float* ptr = (float*)currentVertex;
+void Dojo::Mesh::uv(float u, float v, byte set /*= 0 */) {
+	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
-	ptr[0] = x;
-	ptr[1] = y;
-	ptr[2] = z;
+	float* ptr = (float*)(currentVertex + vertexFieldOffset[VF_UV_0 + set]);
+	ptr[0] = u;
+	ptr[1] = v;
+}
+
+void Dojo::Mesh::color(const Color& c) {
+
+	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
+
+	*((Color::RGBAPixel*)(currentVertex + vertexFieldOffset[VF_COLOR])) = c.toRGBA();
+}
+
+void Dojo::Mesh::color(float r, float g, float b, float a) {
+	color(Color(r, g, b, a));
+}
+
+void Dojo::Mesh::normal(const Vector& n) {
+	*((Vector*)(currentVertex + vertexFieldOffset[VF_NORMAL])) = n;
+}
+
+void Dojo::Mesh::normal(float x, float y, float z) {
+	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
+
+	normal(Vector(x,y,z));
+}
+
+void Dojo::Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset) {
+	outOffset = (void*)vertexFieldOffset[field];
+
+	switch (field)
+	{
+	case VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
+	case VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	case VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
+	case VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+
+	default: //textures
+		outComponentsType = GL_FLOAT;
+		outComponents = 2;
+		outNormalized = false;
+		break;
+	}
 }
 
 void Mesh::_bindAttribArrays( Shader* shader )
@@ -193,10 +295,10 @@ void Mesh::_bindAttribArrays( Shader* shader )
 
 bool Mesh::end()
 {
+	DEBUG_ASSERT(editing, "Can't call end() before begin()!");
 	editing = false;
 	
-	if( !dynamic && isLoaded() ) //already loaded and not dynamic?
-		return false;
+	DEBUG_ASSERT(!isLoaded() || dynamic, "Can't update a static mesh");
 
 	//create the VBO
 	if( !vertexHandle )
@@ -204,7 +306,7 @@ bool Mesh::end()
 
 	GLenum usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
-	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices, usage);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size(), vertices.data(), usage);
 
 	CHECK_GL_ERROR;
 
@@ -215,7 +317,7 @@ bool Mesh::end()
 			glGenBuffers(1, &indexHandle );
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexByteSize * indexCount, indices, usage);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), usage);
 
 		CHECK_GL_ERROR;						
 	}
@@ -234,12 +336,9 @@ bool Mesh::end()
 	glBindVertexArray( 0 );
 #endif
 	
-	if( mDestroyBuffersOnEnd ) //won't be updated ever again
-		_destroyBuffers();
-	
 	loaded = glGetError() == GL_NO_ERROR;
 	
-	currentVertex = NULL;
+	currentVertex = nullptr;
 
 	//guess triangle count
 	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
@@ -254,12 +353,13 @@ bool Mesh::end()
 	}
 	
 	//geometric hints
-	center.x = (max.x + min.x)*0.5f;
-	center.y = (max.y + min.y)*0.5f;
-	center.z = (max.z + min.z)*0.5f;
+	center = (max + min)*0.5f;
 	
 	dimensions = max - min;
 
+	if( !dynamic ) //won't be updated ever again
+		destroyBuffers();
+	
 	return loaded;
 }
 
@@ -326,16 +426,15 @@ bool Mesh::onLoad()
 	begin( vc );
 	
 	//grab vertex data
-	memcpy( vertices, ptr, vc * vertexSize );
+	vertices.resize(vc*vertexSize);
+	memcpy( (char*)vertices.data(), ptr, vc * vertexSize );
 	ptr += vc * vertexSize;
-	vertexCount = vc;
 	
 	//grab index data
 	if( ic )
 	{
-		setIndexCap( ic );
-		memcpy( indices, ptr, ic * indexByteSize );
-		indexCount = ic;
+		indices.resize(ic*indexSize);
+		memcpy( (char*)indices.data(), ptr, ic * indexSize );
 	}
 	
 	max = loadedMax;
@@ -344,3 +443,27 @@ bool Mesh::onLoad()
 	//push over to GPU
 	return end();
 }
+
+void Dojo::Mesh::onUnload(bool soft /*= false */) {
+	DEBUG_ASSERT(isLoaded(), "onUnload: Mesh is not loaded");
+
+	//when soft unloading, only unload file-based meshes
+	if (!soft || isReloadable())
+	{
+		glDeleteBuffers(1, &vertexHandle);
+		glDeleteBuffers(1, &indexHandle);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		vertexHandle = indexHandle = 0;
+
+		destroyBuffers(); //free CPU side memory
+
+		loaded = false;
+	}
+}
+
+
+
+
+

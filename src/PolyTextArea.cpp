@@ -66,11 +66,7 @@ void PolyTextArea::_centerLine( int rowStartIdx, float rowWidth )
 
 	float halfRow = rowWidth * 0.5f;
 	for (Mesh::IndexType i = rowStartIdx; i < mMesh->getVertexCount(); ++i)
-	{
-		//change back each
-		float* v = mMesh->_getVertex( i );
-		v[0] -= halfRow;
-	}
+		mMesh->getVertex(i).x -= halfRow; //change back each
 }
 
 void PolyTextArea::_tesselateExtrusionStrip( Tessellation* t, int baseIdx, int layerBbaseIdx )

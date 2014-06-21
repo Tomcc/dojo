@@ -65,65 +65,10 @@ namespace Dojo
 		};
 		
 		///Creates a new empty Mesh
-		Mesh( ResourceGroup* creator = NULL ) :
-		Resource( creator ),
-			vertexSize(0),
-			vertexCount( 0 ),		
-			vertexMaxCount( 0 ),
-			currentVertex( NULL ),
-			vertices( NULL ),
-			indexCount( 0 ),
-			indexMaxCount( 0 ),
-			indexByteSize(0),
-			indexMaxValue(0),
-			indexGLType(0),
-			indices( NULL ),
-			triangleCount(0),
-			triangleMode( TM_STRIP ),
-			vertexHandle(0),
-			indexHandle(0),
-			dynamic( false ),
-			editing( false ),
-			mDestroyBuffersOnEnd( true ),
-			vertexArrayDesc( 0 )
-		{
-			//set all fields to zero
-			memset( vertexFields, 0, sizeof( vertexFields ) );
-			memset( vertexFieldOffset, 0, sizeof( vertexFieldOffset ) );
-
-			//default index size is 16
-			setIndexByteSize( sizeof(GLushort) );
-		}
+		Mesh( ResourceGroup* creator = NULL );
 
 		///Creates a new Mesh bound to the file at filePath
-		Mesh( ResourceGroup* creator, const String& filePath ) :
-		Resource( creator, filePath ),
-		vertexSize(0),
-		vertexCount( 0 ),		
-		vertexMaxCount( 0 ),
-		currentVertex( NULL ),
-		vertices( NULL ),
-		indexCount( 0 ),
-		indexMaxCount( 0 ),
-		indexByteSize(0),
-		indexMaxValue(0),
-		indexGLType(0),
-		indices( NULL ),
-		triangleCount(0),
-		triangleMode( TM_STRIP ),
-		vertexHandle(0),
-		indexHandle(0),
-		dynamic( false ),
-		editing( false ),
-		mDestroyBuffersOnEnd( true )
-		{
-			//set all fields to zero
-			memset( vertexFields, 0, sizeof( vertexFields ) );
-			memset( vertexFieldOffset, 0, sizeof( vertexFieldOffset ) );
-
-			//default index size is 16
-			setIndexByteSize( sizeof(GLushort) );
-		}
+		Mesh( ResourceGroup* creator, const String& filePath );
 		
 		virtual ~Mesh()
 		{
@@ -133,92 +78,48 @@ namespace Dojo
 		#endif
 		}
 
+		///frees all CPU-side memory (done automatically on static meshes)
+		void destroyBuffers();
+
 		///sets the dimension of a single index in this mesh
 		/**
 			MUST be called only before the first begin ever!
 		*/
-		inline void setIndexByteSize( byte bytenumber )
-		{
-			DEBUG_ASSERT( !indices, "setIndexByteSize must be called BEFORE begin!" );
-			DEBUG_ASSERT( 
-				bytenumber == 1 || 
-				bytenumber == 2 || 
-				bytenumber == 4, "setIndexByteSize: byteNumber must be either 1,2 or 4" );
-
-			indexByteSize = bytenumber;
-
-			if( indexByteSize == 1 )
-			{
-				indexGLType = GL_UNSIGNED_BYTE;
-				indexMaxValue = 0xff;
-			}
-			else if( indexByteSize == 2 )
-			{
-				indexGLType = GL_UNSIGNED_SHORT;
-				indexMaxValue = 0xffff;
-			}
-			else if( indexByteSize == 4 )
-			{
-#ifdef DOJO_32BIT_INDICES_AVAILABLE
-				indexGLType = GL_UNSIGNED_INT;
-				indexMaxValue = 0xffffffff;
-#else
-				DEBUG_FAIL( "32 bit indices are disabled (force enabled defining DOJO_32BIT_INDICES_AVAILABLE)" );
-#endif
-			}
-		}		
+		void setIndexByteSize( byte bytenumber );		
 		
 		///enables a new VertexField
-		void setVertexFieldEnabled( VertexField f )
-		{
-			DEBUG_ASSERT( !vertices, "setVertexFieldEnabled must be called BEFORE begin!" );
-
-			vertexFields[f] = true;
-			vertexSize += VERTEX_FIELD_SIZES[ f ];
-		}
-		
-		///reserves count elements on the vertex buffer, to avoid costly reallocations
-		/** 
-		only effective after the right vertex fields have been enabled! */
-		void setVertexCap( IndexType count );
-
-		///reserves count indices on the index buffer, to avoid costly reallocations
-		void setIndexCap( int count );
+		void setVertexFieldEnabled( VertexField f );
 		
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
-		inline void setDynamic( bool d, bool destroyBuffersOnEnd = true )
-		{
-			dynamic = d;
-			mDestroyBuffersOnEnd = destroyBuffersOnEnd;
-		}		
+		void setDynamic( bool d);		
 		
 		///Sets the primitive for the rendering of this mesh
-		inline void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
+		void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
 		
-		inline TriangleMode getTriangleMode()	{	return triangleMode;	}
+		TriangleMode getTriangleMode()	{	return triangleMode;	}
 
-		inline const Vector& getMax()
+		const Vector& getMax()
 		{
 			return max;
 		}
 
-		inline const Vector& getMin()
+		const Vector& getMin()
 		{
 			return min;
 		}
 
-		inline const Vector& getDimensions()
+		const Vector& getDimensions()
 		{
 			return dimensions;
 		}
 
-		inline const Vector& getCenter()
+		const Vector& getCenter()
 		{
 			return center;
 		}
 		
 		///tells if begin() has been called not followed by an end()
-		inline bool isEditing()
+		bool isEditing()
 		{
 			return editing;
 		}
@@ -227,117 +128,34 @@ namespace Dojo
 		/**
 		\param extimatedVertes number of vertices that have to be reserved
 		*/
-		inline void begin( int extimatedVerts = 1 )
-		{			
-			//be sure that we aren't already building
-			DEBUG_ASSERT( extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0" );
-			DEBUG_ASSERT( !isEditing(), "begin: this Mesh is already in Edit mode" );
+		void begin( int extimatedVerts = 1 );
 
-			//the buffer is too small for extimated vertex count?
-			setVertexCap( extimatedVerts );
-			
-			currentVertex = NULL;
-			vertexCount = 0;
-			indexCount = 0;
-
-			max.x = max.y = max.z = -FLT_MAX;
-			min.x = min.y = min.z = FLT_MAX;
-			
-			editing = true;			
-		}
-
-		///starts the update after the last added vertex - useful for sequential updates
-		inline void append()
-		{
-			DEBUG_ASSERT( !isEditing(), "append: this Mesh is already in Edit mode" );
-
-			currentVertex = vertices + vertexSize * (vertexCount-1);
-
-			editing = true;
-		}
-					
 		///adds a vertex at the given position
 		void vertex( float x, float y );
 		
 		///adds a vertex at the given position
 		void vertex( float x, float y, float z );
 
-		inline void vertex( const Vector& v )
-		{
-			vertex( v.x, v.y, v.z );
-		}
+		void vertex(const Vector& v);
 				
 		///sets the uv of the given UV set				
-		inline void uv( float u, float v, byte set = 0 )
-		{			
-			DEBUG_ASSERT( isEditing(), "uv: this Mesh is not in Edit mode" );
-			
-			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_UV_0 + set ] );
-			ptr[0] = u;
-			ptr[1] = v;
-		}
+		void uv( float u, float v, byte set = 0 );
 
 		///sets the color of the current vertex		
-		inline void color( float r, float g, float b, float a  )
-		{		
-			DEBUG_ASSERT( isEditing(), "color: this Mesh is not in Edit mode" );
-			
-			GLubyte* ptr = (GLubyte*)( currentVertex + vertexFieldOffset[ VF_COLOR ] );
-			ptr[0] = (GLubyte)(r*255);
-			ptr[1] = (GLubyte)(g*255);
-			ptr[2] = (GLubyte)(b*255);
-			ptr[3] = (GLubyte)(a*255);
-		}
+		void color( float r, float g, float b, float a  );
 
-		inline void color( const Color& c )
-		{
-			color( c.r, c.g, c.b, c.a );
-		}
+		void color( const Color& c );
 		
 		///adds a vertex at the given position
-		inline void normal( float x, float y, float z )
-		{		
-			DEBUG_ASSERT( isEditing(), "normal: this Mesh is not in Edit mode" );
-			
-			float* ptr = (float*)( currentVertex + vertexFieldOffset[ VF_NORMAL ] );
-			
-			ptr[0] = x;
-			ptr[1] = y;
-			ptr[2] = z;
-		}
+		void normal( float x, float y, float z );
 		
-		inline void normal( const Vector& n )
-		{
-			normal( n.x, n.y, n.z );
-		}
+		void normal( const Vector& n );
 
 		///adds one index
-		inline void index(IndexType idx)
-		{		
-			DEBUG_ASSERT( isEditing(), "index: this Mesh is not in Edit mode" );
-			DEBUG_ASSERT( idx <= indexMaxValue, "index: the index passed is too big to be contained in this mesh's index format, see setIndexByteSize" );
-			
-			if( indexCount >= indexMaxCount )
-				setIndexCap( indexCount + 1 );
-
-			switch( indexByteSize )
-			{
-			case 1:
-				indices[ indexCount ] = idx;
-				break;
-			case 2:
-				((unsigned short*)indices)[ indexCount ] = idx;
-				break;
-			case 4:
-				((unsigned int*) indices)[indexCount] = idx;
-				break;
-			}
-
-			++indexCount;
-		}
+		void index(IndexType idx);
 		
 		///adds 3 clockwise indices to make a triangle
-		inline void triangle(unsigned int i1, unsigned int i2, unsigned int i3)
+		void triangle(unsigned int i1, unsigned int i2, unsigned int i3)
 		{
 			index(i1);
 			index(i2);
@@ -345,7 +163,7 @@ namespace Dojo
 		}
 
 		///adds 2 clockwise triangles (6 indices) to make a quad
-		inline void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22)
+		void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22)
 		{
 			triangle(i11,i21,i12);
 			triangle(i21,i22,i12);
@@ -361,149 +179,74 @@ namespace Dojo
 		///loads the whole file passed in the constructor
 		virtual bool onLoad();
 		
-		virtual void onUnload( bool soft = false )
-		{
-			DEBUG_ASSERT( isLoaded(), "onUnload: Mesh is not loaded" );
-
-			//when soft unloading, only unload file-based meshes
-			if( !soft || isReloadable() )
-			{
-				glDeleteBuffers( 1, &vertexHandle );
-				glDeleteBuffers( 1, &indexHandle );
-
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-				vertexHandle = indexHandle = 0;
-
-				_destroyBuffers(); //free CPU side memory
-
-				loaded = false;
-			}
-		}
+		virtual void onUnload( bool soft = false );
 				
 		///binds the mesh buffers with the vertex format from the specified shader
 		virtual void bind( Shader* shader );
 				
-		inline bool isIndexed()
+		bool isIndexed()
 		{
-			return indices || indexHandle;
+			return !indices.empty() || indexHandle;
 		}
 
-		inline GLenum getIndexGLType()
+		GLenum getIndexGLType()
 		{
 			return indexGLType;
 		}
 		
-		inline bool isVertexFieldEnabled( VertexField f )
+		bool isVertexFieldEnabled( VertexField f )
 		{
-			return vertexFields[f];
+			return vertexFieldOffset[f] != 0xff;
 		}
 		
-		inline IndexType getVertexCount()
+		IndexType getVertexCount() const
 		{
 			return vertexCount;
 		}
 		
-		inline int getIndexCount()
+		int getIndexCount() const
 		{
 			return indexCount;
 		}
 
 		///returns the total triangle count in this mesh
-		inline int getTriangleCount()
+		int getTriangleCount()
 		{
 			return triangleCount;
 		}
-				
-		///returns a pointer to the memory of the vertex with index i
-		inline float* _getVertex(IndexType i)
-		{			
-			DEBUG_ASSERT( i >= 0, "i is negative" );
-			DEBUG_ASSERT( i < vertexCount, "i is OOB" );
-			
-			return (float*)(vertices + vertexSize * i);
+
+		Vector& getVertex(int idx) {
+			return *((Vector*)vertices[idx * vertexSize]);
 		}
 				
 	protected:
-
 		Vector max, min, center, dimensions;
 				
-		int vertexSize; 
-		IndexType vertexCount, vertexMaxCount;
-		byte* currentVertex;
-		byte* vertices;
+		int vertexSize = 0;
+		byte* currentVertex = nullptr;
+		std::vector<byte> vertices;
 		
-		int indexCount, indexMaxCount;
-		byte indexByteSize;
-		IndexType indexMaxValue;
-		GLenum indexGLType;
-		byte* indices;//indices have varying size
+		byte indexSize = 0;
+		IndexType indexMaxValue = 0;
+		GLenum indexGLType = 0;
+		std::vector<byte> indices;//indices have varying size
 
-		GLuint vertexArrayDesc;
-		GLuint vertexHandle, indexHandle;
+		GLuint vertexArrayDesc = 0;
+		GLuint vertexHandle = 0, indexHandle = 0;
 
-		int triangleCount;
+		int vertexCount = 0, indexCount = 0, triangleCount = 0;
 		
-		bool vertexFields[ _VF_COUNT ];		
-		int vertexFieldOffset[ _VF_COUNT ];
+		byte vertexFieldOffset[ _VF_COUNT ];
 		
-		TriangleMode triangleMode;
+		TriangleMode triangleMode = TM_STRIP;
 		
-		bool dynamic;
-		bool mDestroyBuffersOnEnd;
-		bool editing;
+		bool dynamic = false;
+		bool editing = false;
 				
-		void _buildFieldOffsets()
-		{
-			int offset = 0;
-			for( int i = 0; i < _VF_COUNT; ++i )
-			{
-				if( isVertexFieldEnabled( (VertexField)i ) )
-				{
-					vertexFieldOffset[ i ] = offset;
-					offset += VERTEX_FIELD_SIZES[ i ];
-				}
-			}			
-		}
-				
-		void _destroyBuffers()
-		{
-			if( vertices )
-			{
-				free( vertices );
-				vertices = NULL;
-				vertexMaxCount = 0;
-			}
-			
-			if( indices )
-			{
-				free( indices );
-				indices = NULL;
-				indexMaxCount = 0;
-			}
-		}
-
-		void _prepareVertex( float x, float y, float z );
+		void _prepareVertex(const Vector& v);
 
 		///returns low level binding informations about a vertex field
-		inline void _getVertexFieldData( VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset )
-		{
-			outOffset = (void*)vertexFieldOffset[ field ];
-
-			switch ( field )
-			{
-			case VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
-			case VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
-			case VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
-			case VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
-
-			default: //textures
-				outComponentsType = GL_FLOAT;
-				outComponents = 2;
-				outNormalized = false;
-				break;
-			}
-		}
+		void _getVertexFieldData( VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset );
 
 		///binds the attribute arrays and the Buffer Objects required to render the mesh
 		void _bindAttribArrays( Shader* shader );
