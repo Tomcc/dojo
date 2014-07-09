@@ -170,7 +170,7 @@ Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 		
 		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );	
 		
-		touchSource->_fireTouchBeginEvent( pos );		
+		touchSource->_fireTouchBeginEvent( pos, Touch::TT_TAP );
 	}	
 }
 
@@ -187,7 +187,7 @@ Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );
         Vector prevPos = getInterfaceOrientatedPoint( prevLoc, renderImpl, self );
 		
-		touchSource->_fireTouchMoveEvent( pos, prevPos );
+		touchSource->_fireTouchMoveEvent( pos, prevPos, Touch::TT_TAP );
 	}
 }	
 
@@ -201,7 +201,7 @@ Vector getInterfaceOrientatedPoint( const CGPoint& pos, Render* r, UIView* v)
 				
 		Vector pos = getInterfaceOrientatedPoint( loc, renderImpl, self );
 		
-		touchSource->_fireTouchEndEvent( pos );		
+		touchSource->_fireTouchEndEvent( pos, Touch::TT_TAP );
 	}	
 }
 

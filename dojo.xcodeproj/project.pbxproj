@@ -1944,7 +1944,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"dependencies-OSX/include",
+					dependencies/OSX/include,
 					include/dojo,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -1963,7 +1963,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dojo-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"dependencies-OSX/include",
+					dependencies/OSX/include,
 					include/dojo,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -1989,7 +1989,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					include/dojo,
-					"dependencies-iOS/include",
+					dependencies/iOS/include,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -2020,7 +2020,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					include/dojo,
-					"dependencies-iOS/include",
+					dependencies/iOS/include,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (

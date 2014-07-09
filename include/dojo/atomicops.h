@@ -167,7 +167,7 @@ AE_FORCEINLINE void fence(memory_order order)
 // Use standard library of atomics
 #include <atomic>
 
-namespace moodycamel {
+namespace Dojo {
 
 AE_FORCEINLINE void compiler_fence(memory_order order)
 {
