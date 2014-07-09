@@ -2,3 +2,6 @@
 /Debug/*
 /Release/*
 /lib/*
+DerivedData
+contents.xcworkspacedata
+dojo.xcodeproj/project.xcworkspace/xcuserdata
