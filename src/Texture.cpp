@@ -70,8 +70,11 @@ void Texture::bind( GLuint index )
 
 void Texture::bindAsRenderTarget( bool depthBuffer )
 {
+	DEBUG_ASSERT(!mMipmapsEnabled, "Can't use a texture with mipmaps as a rendertarget");
+
 	if( !mFBO ) //create a new RT on the fly at the first request
 	{
+		bind(0);
 
 		glGenFramebuffers(1, &mFBO); 
 		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -80,22 +83,21 @@ void Texture::bindAsRenderTarget( bool depthBuffer )
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glhandle, 0);
 
+		CHECK_GL_ERROR;
+
 		//create the depth attachment if needed
 		if( depthBuffer )
 		{
-			glGenTextures( 1, &mDepthBuffer );
-			glBindTexture( GL_TEXTURE_2D, mDepthBuffer );
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, width, height, 0, GL_DEPTH_COMPONENT16, GL_UNSIGNED_SHORT, nullptr );
-			glBindTexture( GL_TEXTURE_2D, 0 );
-
-			glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthBuffer, 0 );
+			glGenRenderbuffersEXT(1, &mDepthBuffer);
+			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
+			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
+			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, mDepthBuffer);
 		}
 
-		GLenum status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-
-		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "An invalid framebuffer was created" );
-
 		CHECK_GL_ERROR;
+
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete" );
 	}
 	else
 		glBindFramebuffer( GL_FRAMEBUFFER, mFBO );	
@@ -158,8 +160,8 @@ void Texture::enableMipmaps()
 void Texture::disableMipmaps() 
 {
 	mMipmapsEnabled = false;
-	
-	if( glhandle )
+
+	if (glhandle)
 	{
 		bind(0);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -177,7 +179,10 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 
 	bind(0);
 
-	glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mMipmapsEnabled );
+	if (mMipmapsEnabled)
+		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, true );
+	else
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	//Assume formats are either GL_RGB or GL_RGBA
 	int destPixelSize = (destFormat == GL_RGBA) ? 4 : 3;

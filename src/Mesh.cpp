@@ -451,6 +451,9 @@ bool Mesh::onLoad()
 	max = loadedMax;
 	min = loadedMin;
 
+	vertexCount = vc;
+	indexCount = ic;
+
 	//push over to GPU
 	return end();
 }

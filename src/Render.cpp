@@ -245,10 +245,14 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 		case Mesh::TM_LINE_LIST:	mode = GL_LINES;			break;
 	}
 
+	DEBUG_ASSERT(m->getVertexCount() > 0, "Rendering a mesh with no vertices");
+
 	if( !m->isIndexed() )
 		glDrawArrays( mode, 0, m->getVertexCount() );
-	else
-		glDrawElements( mode, m->getIndexCount(), m->getIndexGLType(), 0 );  //on OpenGLES, we have max 65536 indices!!!
+	else {
+		DEBUG_ASSERT(m->getIndexCount() > 0, "Rendering an indexed mesh with no indices");
+		glDrawElements(mode, m->getIndexCount(), m->getIndexGLType(), 0);  //on OpenGLES, we have max 65536 indices!!!
+	}
 
 #ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
@@ -388,10 +392,7 @@ void Render::renderViewport( Viewport* viewport )
 	else  //using the default layer ordering/visibility
 	{
 		for( auto& layer : viewport->getVisibleLayers() )
-		{
-			Layer* l = layer < 0 ? negativeLayers[-layer] : positiveLayers[layer];
-			renderLayer( viewport, l );
-		}
+			renderLayer(viewport, getLayer(layer));
 	}
 }
 
