@@ -74,34 +74,34 @@ namespace Dojo
 		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void disableTiling();
 				
-		inline int getWidth()					{	return width;		}
-		inline int getHeight()					{	return height;		}
+		int getWidth()					{	return width;		}
+		int getHeight()					{	return height;		}
 
 		///returns the texture size in the UV space of the parent atlas/padded image
-		inline const Vector& getUVSize()		{	return UVSize;		}
+		const Vector& getUVSize()		{	return UVSize;		}
 		///returns the texture offset in the UV space of the parent atlas/padded image
-		inline const Vector& getUVOffset()		{	return UVOffset;	}
+		const Vector& getUVOffset()		{	return UVOffset;	}
 
-		inline int getInternalWidth()
+		int getInternalWidth()
 		{
 			return internalWidth;
 		}
-		inline int getInternalHeight()
+		int getInternalHeight()
 		{
 			return internalHeight;
 		}
 		
 		///Returns a parent atlas Texture if this texture is a "fake" tile atlas
-		inline Texture* getParentAtlas()		{	return parentAtlas;	}
+		Texture* getParentAtlas()		{	return parentAtlas;	}
 
 		///returns the FrameSet that will load and delete this Texture
-		inline FrameSet* getOwnerFrameSet()		{	return ownerFrameSet;}
+		FrameSet* getOwnerFrameSet()		{	return ownerFrameSet;}
 		
 		///returns the size this texture would have on-screen if drawn in a pixel-perfect way
-		inline const Vector& getScreenSize()	{	return screenSize;	}
+		const Vector& getScreenSize()	{	return screenSize;	}
 		
 		///obtain the optimal billboard to use this texture as a sprite, when the device does not support Power of 2 Textures
-		inline Mesh* getOptimalBillboard()
+		Mesh* getOptimalBillboard()
 		{
 			if( !OBB )
 				_buildOptimalBillboard();
@@ -109,18 +109,18 @@ namespace Dojo
 			return OBB;
 		}
 		
-		inline bool isNonPowerOfTwo()			{	return npot;		}
+		bool isNonPowerOfTwo()			{	return npot;		}
 
 		///true if it belongs to an atlas
-		inline bool isAtlasTile()				{	return parentAtlas != NULL;	}
+		bool isAtlasTile()				{	return parentAtlas != NULL;	}
 		
-		inline void _notifyScreenSize( const Vector& ss )
+		void _notifyScreenSize( const Vector& ss )
 		{
 			screenSize.x = ss.x;
 			screenSize.y = ss.y;
 		}
 		
-		inline void _notifyOwnerFrameSet( FrameSet* s )
+		void _notifyOwnerFrameSet( FrameSet* s )
 		{
 			DEBUG_ASSERT( ownerFrameSet == NULL, "Tried to set an owner on an already owned Texture" );
 			DEBUG_ASSERT( s, "Tried to set a NULL owner on a Texture");

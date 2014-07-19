@@ -46,7 +46,7 @@ namespace Dojo
 			-during a state change (onStateBegin, onTransition, onStateEnd)
 			is an error and a failed ASSERT.
 		*/
-		inline void setState( int newState )		
+		void setState( int newState )		
 		{			
 			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
 			
@@ -66,7 +66,7 @@ namespace Dojo
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		inline void setStateImmediate( int newState )		
+		void setStateImmediate( int newState )		
 		{			
 			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
 			
@@ -87,7 +87,7 @@ namespace Dojo
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		inline void setState( StateInterface* child, bool autoDelete = true )
+		void setState( StateInterface* child, bool autoDelete = true )
 		{
 			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
  			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
@@ -100,27 +100,27 @@ namespace Dojo
 				_applyNextState();
 		}
 		
-		inline int getCurrentState()					{	return currentState;	}
-		inline StateInterface* getChildState()			{	return currentStatePtr;	}
+		int getCurrentState()					{	return currentState;	}
+		StateInterface* getChildState()			{	return currentStatePtr;	}
 		
-		inline bool isCurrentState( int state )			{	return currentState == state;	}
-		inline bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
+		bool isCurrentState( int state )			{	return currentState == state;	}
+		bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
 
-		inline bool hasChildState()						{	return currentStatePtr != NULL;	}
+		bool hasChildState()						{	return currentStatePtr != NULL;	}
 		
-		inline bool hasCurrentState()					{	return currentStatePtr != NULL || currentState != -1; }
-		inline bool hasNextState()						{	return nextStatePtr != NULL || nextState != -1; }
+		bool hasCurrentState()					{	return currentStatePtr != NULL || currentState != -1; }
+		bool hasNextState()						{	return nextStatePtr != NULL || nextState != -1; }
 		
-		inline bool hasPendingTransition()				{	return !mTransitionCompleted;	}
+		bool hasPendingTransition()				{	return !mTransitionCompleted;	}
 		
 		///begin the execution of this state
-		inline void begin()
+		void begin()
 		{
 			onBegin();
 		}
 		
 		///loop the execution of this state (and its childs)
-		inline void loop( float dt )
+		void loop( float dt )
 		{			
 			if( mTransitionCompleted )  //do not call a loop if the current state is not "active" (ie-transition in progress)
 				_subStateLoop( dt );
@@ -132,7 +132,7 @@ namespace Dojo
 		}
 		
 		///end the execution of this state (and its childs)
-		inline void end()
+		void end()
 		{
 			_subStateEnd();
 			
@@ -211,7 +211,7 @@ namespace Dojo
 			return true;
 		}
 				
-		inline void _subStateBegin()
+		void _subStateBegin()
 		{
 			if( currentStatePtr )
 				currentStatePtr->begin();
@@ -219,7 +219,7 @@ namespace Dojo
 				onStateBegin();
 		}
 		
-		inline void _subStateLoop( float dt )
+		void _subStateLoop( float dt )
 		{
 			if( currentStatePtr )
 				currentStatePtr->loop( dt );
@@ -227,7 +227,7 @@ namespace Dojo
 				onStateLoop( dt );
 		}
 		
-		inline void _subStateEnd()
+		void _subStateEnd()
 		{
 			if( currentStatePtr )
 				currentStatePtr->end();
@@ -235,7 +235,7 @@ namespace Dojo
 				onStateEnd();
 		}
 				
-		inline void _nextState( int newState )		
+		void _nextState( int newState )		
 		{
 			//first try, call substate end
 			if( mTransitionCompleted )
@@ -258,7 +258,7 @@ namespace Dojo
 			}
 		}
 		
-		inline void _nextState( StateInterface* child )
+		void _nextState( StateInterface* child )
 		{
 			DEBUG_ASSERT( child != nullptr, "null substate passed" );
 			
@@ -283,7 +283,7 @@ namespace Dojo
 			}			
 		}
 		
-		inline void _applyNextState()
+		void _applyNextState()
 		{
 			DEBUG_ASSERT( hasNextState(), "_applyNextState was called but not next state was defined" );
 						

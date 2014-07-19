@@ -94,7 +94,7 @@ namespace Dojo
 		}
 		
 		///if found, replace the given substr with the given replacement - they can be of different lengths.
-		inline void replaceToken( const String& substring, const String& replacement )
+		void replaceToken( const String& substring, const String& replacement )
 		{
 			DEBUG_ASSERT( substring.size(), "The substring to replace is empty" );
 			
@@ -109,13 +109,13 @@ namespace Dojo
 			}
 		}
 		
-		inline size_t byteSize()
+		size_t byteSize()
 		{
 			return size() * sizeof( unichar );
 		}
 		
 		///converts this string into ASCII. WARNING: fails silently on unsupported chars!!!
-		inline std::string ASCII() const 
+		std::string ASCII() const 
 		{
 			std::string res;
 			
@@ -130,13 +130,13 @@ namespace Dojo
 			return res;
 		}
 		
-		inline std::string UTF8() const 
+		std::string UTF8() const 
 		{
 			//HACK!!!!! make a real parser!!!
 			return ASCII();
 		}
 		
-		inline void appendASCII( const char* s )
+		void appendASCII( const char* s )
 		{
 			DEBUG_ASSERT( s, "Tried to append a NULL ASCII string" );
 
@@ -144,7 +144,7 @@ namespace Dojo
 				append( 1, (unichar)s[i] );
 		}
 		
-		inline void appendUTF8( const std::string& utf8 )
+		void appendUTF8( const std::string& utf8 )
 		{
 			//TODO do it better
 			appendASCII( utf8.c_str() );
@@ -178,7 +178,7 @@ namespace Dojo
 			
 		}
 		
-		inline void appendFloat( float f, byte digits = 2 )
+		void appendFloat( float f, byte digits = 2 )
 		{
 			if( f < 0 )
 			{
@@ -205,7 +205,7 @@ namespace Dojo
 		}
 		
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
-		inline void appendRaw( void* data, int sz )
+		void appendRaw( void* data, int sz )
 		{
 			DEBUG_ASSERT( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
 			
@@ -213,7 +213,7 @@ namespace Dojo
 		}
 				
 #ifdef __OBJC__
-		inline NSString* toNSString() const 
+		NSString* toNSString() const 
 		{                       
 			return [ NSString stringWithCharacters: data() length: size() ];
 		}
@@ -224,7 +224,7 @@ namespace Dojo
 			appendNSString( nss );
 		}
 		
-		inline String& appendNSString( NSString* nss )
+		String& appendNSString( NSString* nss )
 		{
 			DEBUG_ASSERT( nss, "NSString was null" );
 			

@@ -31,7 +31,7 @@ namespace Dojo
 		}
 		
 		///returns a new unicode character or 0 if the stream ended
-		inline unichar get()
+		unichar get()
 		{
             DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str), "StringReader is uninitialized" );
 
@@ -51,57 +51,57 @@ namespace Dojo
 			}
 		}
 		
-		inline void back()
+		void back()
 		{
             DEBUG_ASSERT( idx > 0, "back: The StringReader is already at the start of the stream" );
             
 			--idx;
 		}
 		
-		inline static bool isNumber( unichar c )
+		static bool isNumber( unichar c )
 		{
 			return c >= '0' && c <= '9';
 		}
 
-		inline static bool isLowerCaseLetter( unichar c )
+		static bool isLowerCaseLetter( unichar c )
 		{
 			return c >= 'a' && c <= 'z';
 		}
 		
-		inline static bool isUpperCaseLetter( unichar c )
+		static bool isUpperCaseLetter( unichar c )
 		{
 			return c >= 'A' && c <= 'Z';
 		}
 
-		inline static bool isLetter( unichar c )
+		static bool isLetter( unichar c )
 		{
 			return isLowerCaseLetter(c) || isUpperCaseLetter( c );
 		}
 
 		///returns if the given char is ok for a name, 0-9A-Za-z
-		inline static bool isNameCharacter( unichar c )
+		static bool isNameCharacter( unichar c )
 		{
 			return isNumber( c ) || isLetter( c );
 		}
         
-        inline static bool isHex( unichar c )
+        static bool isHex( unichar c )
         {
             return isNumber( c ) || ( c >= 'a' && c <= 'f' );
         }
 
-		inline static bool isWhiteSpace( unichar c )
+		static bool isWhiteSpace( unichar c )
 		{
 			return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 		}
 
-		inline void skipWhiteSpace()
+		void skipWhiteSpace()
 		{
 			while( isWhiteSpace( get() ) );
 
 			back(); //put back first non whitespace char
 		}
         
-        inline byte getHexValue( unichar c )
+        byte getHexValue( unichar c )
         {
             if( isNumber( c ) )
                 return c - '0';
@@ -114,7 +114,7 @@ namespace Dojo
             }
         }
 
-		inline int getCurrentIndex()
+		int getCurrentIndex()
 		{
 			return idx;
 		}
@@ -218,7 +218,7 @@ namespace Dojo
 		}
 
 		///reads n raw bytes from the file
-		inline void readBytes( void* dest, int sizeBytes )
+		void readBytes( void* dest, int sizeBytes )
 		{
 			DEBUG_ASSERT( (wcharStr && !utf8Str) || (!wcharStr && utf8Str), "Reading bytes from an uninitialized StringReader" );
 

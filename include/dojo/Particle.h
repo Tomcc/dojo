@@ -61,21 +61,21 @@ namespace Dojo
 			listener = NULL;
 		}
 		
-		inline void setTimedEvent( EventListener* l, float lifeTime )
+		void setTimedEvent( EventListener* l, float lifeTime )
 		{			
 			eventTime = lifeTime;
 			listener = l;
 		}
 		
-		inline void removeTimedEvent()
+		void removeTimedEvent()
 		{
 			listener = NULL;
 			eventTime = 0;
 		}
 		
-		inline EventListener* getListener()		{	return listener;	}
+		EventListener* getListener()		{	return listener;	}
 		
-		inline bool launchTimedEvent()		
+		bool launchTimedEvent()		
 		{
 			return listener && lifeTime < eventTime;
 		}
@@ -105,8 +105,8 @@ namespace Dojo
 			}*/
 		}
 		
-		inline void _setPoolIdx( int i )	{	index = i;			}
-		inline int _getPoolIdx()			{	return index;		}
+		void _setPoolIdx( int i )	{	index = i;			}
+		int _getPoolIdx()			{	return index;		}
 		
 	protected:
 

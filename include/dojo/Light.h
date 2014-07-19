@@ -50,27 +50,27 @@ namespace Dojo
 		///setups this light to be a spotlight
 		void initSpotlight( const Vector& dir, float fov, float exponent, float attenuation );
 		
-		inline Type getType()
+		Type getType()
 		{
 			return type;
 		}
 		
-		inline const Color& getDiffuse()
+		const Color& getDiffuse()
 		{
 			return diffuse;
 		}
 		
-		inline const Color& getSpecular()
+		const Color& getSpecular()
 		{
 			return specular;
 		}
 		
-		inline const Color& getAmbient()
+		const Color& getAmbient()
 		{
 			return ambient;
 		}
 		
-		inline bool hasAmbient()
+		bool hasAmbient()
 		{
 			return ambient.a + ambient.r + ambient.g + ambient.b > 0;
 		}

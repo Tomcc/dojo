@@ -55,7 +55,7 @@ namespace Dojo
 		/**
 		If timePerFrame is not specified, the animation tries to use the frameset's preferred
 		*/
-		inline int registerAnimation( FrameSet* set, float timePerFrame = -1 )
+		int registerAnimation( FrameSet* set, float timePerFrame = -1 )
 		{
 			DEBUG_ASSERT( set != nullptr, "registering a null frameset" );
 
@@ -79,7 +79,7 @@ namespace Dojo
 		int registerAnimation( const String& base, float timePerFrame = -1 );
 				
 		///sets the animation at the given index
-		inline void setAnimation( int i ) 	
+		void setAnimation( int i ) 	
 		{
 			mAnimationIdx = i;
 
@@ -97,7 +97,7 @@ namespace Dojo
 		}
 
 		///returns the current animation Index
-		inline int getAnimationIndex()
+		int getAnimationIndex()
 		{
 			return mAnimationIdx;
 		}

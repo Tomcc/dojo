@@ -29,7 +29,7 @@ namespace Dojo {
             static const Easing LinearEasing;
 			static const float m;
 
-			inline static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
+			static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
 			{
 				DEBUG_ASSERT( ALpos, "null AL position vector" );
 				
@@ -61,7 +61,7 @@ namespace Dojo {
 			SoundSource* getSoundSource( SoundSet* set, int i = -1 );
 
 			///Returns a sound source ready to play a new sound, with the position already set
-			inline SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
+			SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
 			{
 				DEBUG_ASSERT( set, "Getting a Source for a NULL sound" );
 				
@@ -72,7 +72,7 @@ namespace Dojo {
 			}
 
 			///Plays the given set without spatial positioning
-			inline SoundSource* playSound(SoundSet* set, float volume = 1.0f)
+			SoundSource* playSound(SoundSet* set, float volume = 1.0f)
 			{
 				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				 
@@ -82,7 +82,7 @@ namespace Dojo {
 			}
 
 			///Plays the given set at pos
-			inline SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f )
+			SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f )
 			{
 				DEBUG_ASSERT( set, "Playing a NULL sound" );
 				
@@ -97,7 +97,7 @@ namespace Dojo {
 			*/
 			void playMusic( SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing );
 			
-			inline void pauseMusic()
+			void pauseMusic()
 			{
                 DEBUG_ASSERT( isMusicPlaying(), "pauseMusic: music is not playing" );
                 
@@ -107,7 +107,7 @@ namespace Dojo {
 			void resumeMusic();
 
 			///stops the music, with an optional fade-out
-			inline void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing )
+			void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing )
 			{
                 //TODO use easing
                 DEBUG_MESSAGE( "Music fading out in " + String( stopFadeTime ) + " s" );
@@ -119,7 +119,7 @@ namespace Dojo {
                 currentFadeTime = 0;
 			}
 
-			inline void setMusicVolume( float volume )			
+			void setMusicVolume( float volume )			
 			{	
 				DEBUG_ASSERT( volume >= 0, "setMusicVolume: volume is negative" );
 				
@@ -131,10 +131,10 @@ namespace Dojo {
 			
 			void setMasterVolume( float volume );
 			
-			inline float getMasterVolume()				{	return masterVolume;		}
-			inline float getMusicVolume()				{	return musicVolume;			}
+			float getMasterVolume()				{	return masterVolume;		}
+			float getMusicVolume()				{	return musicVolume;			}
 			
-			inline SoundSource* getMusicTrack()
+			SoundSource* getMusicTrack()
 			{
 				return musicTrack;
 			}
@@ -174,9 +174,9 @@ namespace Dojo {
 			}
 			
 			///true if the music is fading
-			inline bool isMusicFading()		{	return fadeState != FS_NONE;	}
+			bool isMusicFading()		{	return fadeState != FS_NONE;	}
             ///is the music already playing?
-            inline bool isMusicPlaying()    {   return musicTrack != NULL;      }
+            bool isMusicPlaying()    {   return musicTrack != NULL;      }
 			
 			///sets the openAL Listener's world transform
 			void setListenerTransform( const Matrix& worldTransform );

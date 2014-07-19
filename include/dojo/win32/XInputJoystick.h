@@ -29,7 +29,7 @@ namespace Dojo
 			mDeadZone[ AI_RY ] = 0.15f;
 		}
 
-		inline bool isConnected()
+		bool isConnected()
 		{
 			return mConnected;
 		}

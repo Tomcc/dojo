@@ -117,18 +117,18 @@ namespace Dojo
 		virtual void onUnload( bool soft = false );
 
 		///tells the memory size of this SoundBuffer
-		inline int getSize()					{	return size;	}
+		int getSize()					{	return size;	}
 
 		///returns the number of chunks that compose this sound
-		inline int getChunkNumber()
+		int getChunkNumber()
 		{
 			return mChunks.size();
 		}
 
 		///tells the duration in seconds of this SoundBuffer
-		inline float getDuration()				{	return mDuration;}
+		float getDuration()				{	return mDuration;}
 
-		inline bool isLoaded()					
+		bool isLoaded()					
 		{
 			return !mChunks.isEmpty();
 		}

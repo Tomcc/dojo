@@ -43,14 +43,14 @@ namespace Dojo
 		}
 		
 		///Creates a plane with the given normal and distance from the origin
-		inline void setup( const Vector& normal, float distance )
+		void setup( const Vector& normal, float distance )
 		{
 			n = normal;
 			d = distance;
 		}
 		
 		///Creates a plane centered in C and passing from points A and B
-		inline void setup( const Vector& center, const Vector& A, const Vector& B )
+		void setup( const Vector& center, const Vector& A, const Vector& B )
 		{
 			n = ((A-center) ^ (B-center)).normalized();
 			
@@ -58,13 +58,13 @@ namespace Dojo
 		}
 
 		///Returns the distance of a point from the given plane
-		inline float getDistance( const Vector& point )
+		float getDistance( const Vector& point )
 		{
 			return point * n + d;
 		}
 				
 		///tells which side of this plane the AABB lies in. -1 is negative, 0 is on the line, 1 is positive
-		inline int getSide( const Vector& center, const Vector& halfsize )
+		int getSide( const Vector& center, const Vector& halfsize )
 		{
 			float dist = getDistance( center );
 			
@@ -79,7 +79,7 @@ namespace Dojo
 		}
 
 		///returns the vector placed at the intersection between the line passing between these two points and the plane, or false if the line is parallel
-		inline bool intersection( const Vector& origin, const Vector& direction, Vector& out )
+		bool intersection( const Vector& origin, const Vector& direction, Vector& out )
 		{
 			Vector planeOrigin = n * -d;
 			float num = (planeOrigin - origin) * n;

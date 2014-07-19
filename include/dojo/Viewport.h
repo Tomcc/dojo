@@ -59,7 +59,7 @@ namespace Dojo
 		///orients the camera to look at a given 3D point
 		void lookAt( const Vector& worldPos );
 				
-		inline void setClearColor( const Color& color)	{	clearColor = color;	}
+		void setClearColor( const Color& color)	{	clearColor = color;	}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
 		void setRenderTarget( Texture* target );
@@ -81,20 +81,20 @@ namespace Dojo
 		all the rendering is then scaled to have the virtual rendering area fit inside the real rendering area.
 		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
 		*/
-		inline void setTargetSize( const Vector& size )		{ targetSize = size; }
+		void setTargetSize( const Vector& size )		{ targetSize = size; }
 
 		///enables or disables 3D culling of hidden objects
-		inline void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
+		void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 		
-		inline const Color& getClearColor()				{	return clearColor;	}
-		inline Renderable* getFader()					{	return fadeObject;	}
-		inline float getVFOV()							{	return VFOV;		}
-		inline float getZFar()							{	return zFar;		}
-		inline float getZNear()							{	return zNear;		}
-		inline const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
-		inline const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
-		inline const Vector& getTargetSize()			{   return targetSize;  }
-		inline const Matrix& getViewTransform()			{	return mViewTransform;	}
+		const Color& getClearColor()				{	return clearColor;	}
+		Renderable* getFader()					{	return fadeObject;	}
+		float getVFOV()							{	return VFOV;		}
+		float getZFar()							{	return zFar;		}
+		float getZNear()							{	return zNear;		}
+		const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
+		const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
+		const Vector& getTargetSize()			{   return targetSize;  }
+		const Matrix& getViewTransform()			{	return mViewTransform;	}
 
 		///returns the Texture this Viewport draws to
 		Texture* getRenderTarget()
@@ -108,25 +108,25 @@ namespace Dojo
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
 		Vector getRayDirection( const Vector& screenSpacePos );
         
-        inline const Matrix& getOrthoProjectionTransform()
+        const Matrix& getOrthoProjectionTransform()
         {
             return mOrthoTransform;
         }
-        inline const Matrix& getPerspectiveProjectionTransform()
+        const Matrix& getPerspectiveProjectionTransform()
         {
             return mFrustumTransform;
         }
 
 		bool isContainedInFrustum( Renderable* r );
 
-		inline bool isSeeing( Renderable* s )
+		bool isSeeing( Renderable* s )
 		{
 			DEBUG_ASSERT( s, "isSeeing: null renderable passed" );
 
 			return cullingEnabled && s->isVisible() && touches( s );
 		}
 
-		inline bool touches( Renderable* r )
+		bool touches( Renderable* r )
 		{
 			DEBUG_ASSERT( r != nullptr, "touches: null renderable passed" );
 
@@ -134,7 +134,7 @@ namespace Dojo
 		}
 		
 		///returns the world position of the given screenPoint
-		inline Vector makeWorldCoordinates( const Vector& screenPoint )
+		Vector makeWorldCoordinates( const Vector& screenPoint )
 		{
 			return makeWorldCoordinates( (int)screenPoint.x, (int)screenPoint.y );
 		}
@@ -143,7 +143,7 @@ namespace Dojo
 		Vector makeWorldCoordinates( int x, int y );
 			
 		///converts the w and h pixel sizes in a screen space size
-		inline void makeScreenSize( Vector& dest, int w, int h )
+		void makeScreenSize( Vector& dest, int w, int h )
 		{	
 			dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
 			dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
@@ -152,7 +152,7 @@ namespace Dojo
 		///converts the texture pixel sizes in a screen space size
 		void makeScreenSize( Vector& dest, Texture* tex );
 		
-		inline float getPixelSide()
+		float getPixelSide()
 		{
 			return size.x / targetSize.x;
 		}

@@ -69,37 +69,37 @@ namespace Dojo
 		virtual bool onLoad()=0;
 		virtual void onUnload( bool soft = false )=0;
 		
-		inline bool isLoaded()
+		bool isLoaded()
 		{
 			return loaded;
 		}
 
-		inline int getByteSize()
+		int getByteSize()
 		{
 			return size;
 		}
 		
-		inline ResourceGroup* getCreator()
+		ResourceGroup* getCreator()
 		{			
 			return creator;
 		}
 		
-		inline const String& getFilePath()
+		const String& getFilePath()
 		{
 			return filePath;
 		}
 
-		inline DataProvider* getDataProvider()
+		DataProvider* getDataProvider()
 		{
 			return pDataProvider;
 		}
 
-		inline bool isFiledBased()
+		bool isFiledBased()
 		{
 			return filePath.size() > 0;
 		}
 
-		inline bool isReloadable()
+		bool isReloadable()
 		{
 			return isFiledBased() || getDataProvider();
 		}

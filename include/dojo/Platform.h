@@ -34,7 +34,7 @@ namespace Dojo
 		///shuts down the platform and the game
 		static void shutdownPlatform();
 
-		inline static  Platform* getSingleton()
+		static  Platform* getSingleton()
 		{
 			DEBUG_ASSERT( singleton, "The Platform singleton was not created, use Platform::create() to create it" );
 
@@ -43,26 +43,26 @@ namespace Dojo
 		
 		virtual ~Platform();
 		
-		inline Game* getGame()
+		Game* getGame()
 		{
 			return game;
 		}
 
 		///add a format that will be recognized as a zip package by the file loader
-		inline void addZipFormat( const String& ext )
+		void addZipFormat( const String& ext )
 		{
 			DEBUG_ASSERT( ext.size(), "addZipFormat: empty format string" );
 			mZipExtensions.push_back( ext );
 		}
 
 		///returns the SoundManager instance
-		inline SoundManager* getSoundManager()	{	return sound;	}
+		SoundManager* getSoundManager()	{	return sound;	}
 		///returns the Render instance
-		inline Render* getRender()				{	return render;	}
+		Render* getRender()				{	return render;	}
 		///returns the InputSystem instance
-		inline InputSystem* getInput()			{	return input;	}
+		InputSystem* getInput()			{	return input;	}
 		///returns the FontSystem instance
-		inline FontSystem* getFontSystem()		{	return fonts;	}
+		FontSystem* getFontSystem()		{	return fonts;	}
 		///returns the system Log
 		Log* getLog()						{	return mLog;	}
 
@@ -73,30 +73,30 @@ namespace Dojo
 		/**
 		useful to evaluate performance when FPS are locked by the fixed run loop.
 		*/
-		inline double getRealFrameTime()		{	return realFrameTime;	}
+		double getRealFrameTime()		{	return realFrameTime;	}
 
 		///gets the ISO locale code, es: en, it, de, se, fr
-		inline const String& getLocale()		{	return locale;	}
+		const String& getLocale()		{	return locale;	}
 		
 		///gets the physical screen width
-		inline int getScreenWidth()             {   return screenWidth;     }
+		int getScreenWidth()             {   return screenWidth;     }
 		///gets the physical screen height
-		inline int getScreenHeight()			{   return screenHeight;    }
+		int getScreenHeight()			{   return screenHeight;    }
 
 		///gets the physical screen orientation
-		inline Orientation getScreenOrientation()       {   return screenOrientation;   }
+		Orientation getScreenOrientation()       {   return screenOrientation;   }
 
 		///gets the window width
-		inline int getWindowWidth()             {   return windowWidth;     }
+		int getWindowWidth()             {   return windowWidth;     }
 		///gets the window height
-		inline int getWindowHeight()            {   return windowHeight;    }
+		int getWindowHeight()            {   return windowHeight;    }
 
 		bool isPortrait()       {   return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE; }
 
 		///tells if it is running fullscreen
 		bool isFullscreen()		{	return mFullscreen; }
 		
-		inline bool isRunning()					{	return running; }
+		bool isRunning()					{	return running; }
 
 		virtual void setMouseLocked(bool locked) {
 
@@ -132,7 +132,7 @@ namespace Dojo
 
 		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
-		inline void addApplicationListener( ApplicationListener* f )
+		void addApplicationListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f, "addApplicationListener: null listener passed" );
 			DEBUG_ASSERT( !focusListeners.exists( f ), "addApplicationListener: this listener is already registered" );
@@ -140,7 +140,7 @@ namespace Dojo
 			focusListeners.add( f );
 		}
 
-		inline void removeApplicationListener( ApplicationListener* f )
+		void removeApplicationListener( ApplicationListener* f )
 		{
 			DEBUG_ASSERT( f, "removeApplicationListener: null listener passed" );
 

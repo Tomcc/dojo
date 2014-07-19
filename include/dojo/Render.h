@@ -92,7 +92,7 @@ namespace Dojo {
 			mViewportList.clear();
 		}
 		
-		inline void addLight( Light* l )
+		void addLight( Light* l )
 		{
 			DEBUG_ASSERT( l, "addLight: null light passed" );
 			DEBUG_ASSERT( lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)" );
@@ -100,7 +100,7 @@ namespace Dojo {
 			lights.add( l );
 		}
 		
-		inline void removeLight( Light* l )
+		void removeLight( Light* l )
 		{
 			DEBUG_ASSERT( l, "removeLight: null light passed" );
 			
@@ -111,7 +111,7 @@ namespace Dojo {
 		}
 		
 		///completely removes all layers!
-		inline void clearLayers()
+		void clearLayers()
 		{
 			for( int i = 0; i < negativeLayers.size(); ++i )
 				SAFE_DELETE( negativeLayers[i] );
@@ -128,13 +128,13 @@ namespace Dojo {
 						
 		void setInterfaceOrientation( Orientation o );
 
-		inline void setDefaultAmbient( const Color& a )
+		void setDefaultAmbient( const Color& a )
 		{
 			defaultAmbient = a;
 			defaultAmbient.a = 1;
 		}
 		
-		inline Orientation getInterfaceOrientation()
+		Orientation getInterfaceOrientation()
 		{
 			return renderOrientation;
 		}
@@ -148,23 +148,23 @@ namespace Dojo {
 			return positiveLayers.size() + negativeLayers.size();
 		}
 		
-		inline int getFirstLayerID()
+		int getFirstLayerID()
 		{
 			return -negativeLayers.size();	
 		}
 		
-		inline int getLastLayerID()
+		int getLastLayerID()
 		{
 			return positiveLayers.size();
 		}
 
-		inline int getLastFrameVertexCount()		{	return frameVertexCount;	}
-		inline int getLastFrameTriCount()			{	return frameTriCount;		}
-		inline int getLastFrameBatchCount()		{	return frameBatchCount;		}
+		int getLastFrameVertexCount()		{	return frameVertexCount;	}
+		int getLastFrameTriCount()			{	return frameTriCount;		}
+		int getLastFrameBatchCount()		{	return frameBatchCount;		}
 
 		const Color& getDefaultAmbient()			{	return defaultAmbient;		}
 		
-		inline bool isValid()						{	return valid;		}
+		bool isValid()						{	return valid;		}
 		
 		///renders a single element using the given viewport
 		void renderElement( Viewport* v, Renderable* r );

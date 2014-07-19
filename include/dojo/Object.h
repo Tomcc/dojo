@@ -63,7 +63,7 @@ namespace Dojo {
 		void updateWorldTransform();
 
 		///sets a AABB size
-		inline void setSize( const Vector& bbSize )
+		void setSize( const Vector& bbSize )
 		{
 			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0, "Malformed size (one component was less or equal to 0)" );
 
@@ -72,30 +72,30 @@ namespace Dojo {
 
 		}
 		///sets a 2D AABB size
-		inline void setSize( float x, float y )
+		void setSize( float x, float y )
 		{						
 			setSize( Vector( x,y) );
 		}
 		
 		///set the orientation quaternion for this object
-		inline void setRotation( const Quaternion& quat )
+		void setRotation( const Quaternion& quat )
 		{
 			rotation = quat;
 		}
 
 		///rotates (in euler angles) the object starting from the current orientation around the given axis
-		inline void rotate( float r, const Vector& axis = Vector::UNIT_Z )
+		void rotate( float r, const Vector& axis = Vector::UNIT_Z )
 		{
 			rotation = glm::rotate( rotation, r, axis );
 		}
 		
 		///sets the full orientation using a vector made of euler angles around x,y,z
-		inline void setRotation( const Vector& eulerAngles )
+		void setRotation( const Vector& eulerAngles )
 		{
 			setRotation( Quaternion( eulerAngles ) );
 		}
 				
-		inline void setActive( bool a )		{	active = a;	}
+		void setActive( bool a )		{	active = a;	}
         
         ///tells if this object is a renderable
         virtual bool isRenderable()
@@ -103,13 +103,13 @@ namespace Dojo {
             return false;
         }
 				
-		inline const Vector& getSize() const 		{	return size;	}			
-		inline const Vector& getHalfSize() const 	{	return halfSize;}	
+		const Vector& getSize() const 		{	return size;	}			
+		const Vector& getHalfSize() const 	{	return halfSize;}	
 		
-		inline GameState* getGameState() const	{	return gameState;	}
+		GameState* getGameState() const	{	return gameState;	}
 
 		///returns the world position of a point in local space
-		inline Vector getWorldPosition( const Vector& localPos )
+		Vector getWorldPosition( const Vector& localPos )
 		{
 			if( parent )
 			{
@@ -121,13 +121,13 @@ namespace Dojo {
 		}
 				
 		///returns the world coordinates' position of this Object
-		inline const Vector getWorldPosition()
+		const Vector getWorldPosition()
 		{
 			return getWorldPosition( Vector::ZERO );
 		}
 
 		///returns the position in local coordinates of the given world position
-		inline Vector getLocalPosition( const Vector& worldPos )
+		Vector getLocalPosition( const Vector& worldPos )
 		{
 			Matrix inv = glm::inverse( getWorldTransform() ); //TODO make faster for gods' sake
 			glm::vec4 p( worldPos.x, worldPos.y, worldPos.z, 1 );
@@ -137,7 +137,7 @@ namespace Dojo {
 		}
 		
 		///returns a local direction in world space
-		inline Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
+		Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
 		{
 			glm::vec4 dir( dir3, 0 );
 			dir = getWorldTransform() * dir;
@@ -145,31 +145,31 @@ namespace Dojo {
 			return Vector( dir.x, dir.y, dir.z );
 		}
 
-		inline Vector getLocalDirection( const Vector& worldDir )
+		Vector getLocalDirection( const Vector& worldDir )
 		{
 			DEBUG_TODO;
 
 			return Vector::ZERO;
 		}
 		
-		inline const Quaternion getRotation()
+		const Quaternion getRotation()
 		{
 			return rotation;
 		}
 						
-		inline bool isActive()				{	return active;	}
+		bool isActive()				{	return active;	}
 		
-		inline bool hasChilds()
+		bool hasChilds()
 		{
 			return childs != NULL && childs->size() > 0;
 		}
 
-		inline const Matrix& getWorldTransform()    
+		const Matrix& getWorldTransform()    
 		{  
 			return mWorldTransform; 
 		}
 
-		inline Object* getChild( int i )				
+		Object* getChild( int i )				
 		{
 			DEBUG_ASSERT( hasChilds(), "Tried to retrieve a child from an object with no childs" );
 			DEBUG_ASSERT( childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child" );
@@ -177,26 +177,26 @@ namespace Dojo {
 			return childs->at( i );
 		}
 		
-		inline const Vector& getWorldMax() const
+		const Vector& getWorldMax() const
 		{
 			DEBUG_ASSERT( mNeedsAABB, "getWorldMax: this Object has no AABB" );
 			
 			return worldUpperBound;
 		}
 		
-		inline const Vector& getWorldMin() const
+		const Vector& getWorldMin() const
 		{
 			DEBUG_ASSERT( mNeedsAABB, "getWorldMin: this Object has no AABB" );
 			
 			return worldLowerBound;
 		}
 		
-		inline Object* getParent()
+		Object* getParent()
 		{
 			return parent;
 		}
 		
-		inline int getChildNumber()
+		int getChildNumber()
 		{
 			return (childs) ? childs->size() : 0;
 		}
@@ -224,7 +224,7 @@ namespace Dojo {
 		
 		void updateChilds( float dt );
 		
-		inline bool contains( const Vector& p )
+		bool contains( const Vector& p )
 		{
 			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
 			
@@ -237,7 +237,7 @@ namespace Dojo {
 			p.z >= worldLowerBound.z;
 		}
 
-		inline bool contains2D( const Vector& p )
+		bool contains2D( const Vector& p )
 		{
 			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
 
@@ -248,14 +248,14 @@ namespace Dojo {
 				p.y >= worldLowerBound.y;
 		}
 		
-		inline bool collidesWith( const Vector& MAX, const Vector& MIN )
+		bool collidesWith( const Vector& MAX, const Vector& MIN )
 		{		
 			DEBUG_ASSERT( mNeedsAABB, "collides: this Object has no AABB" );
 			
 			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
 		}
 		
-		inline bool collidesWith( Object * t )
+		bool collidesWith( Object * t )
 		{			
 			DEBUG_ASSERT( t, "collidesWith: colliding Object is NULL" );
 			DEBUG_ASSERT( mNeedsAABB, "collidesWith: this Object has no AABB" );

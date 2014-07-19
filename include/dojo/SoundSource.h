@@ -53,7 +53,7 @@ namespace Dojo
 			void setPitch( float p);
 			
 			///if autoremove is disabled, SoundManager won't garbage collect this Source
-			inline void setAutoRemove(bool a)				{	autoRemove = a;		}	
+			void setAutoRemove(bool a)				{	autoRemove = a;		}	
 
 			///Plays the sound with a given volume
 			void play( float volume = 1.0f );
@@ -61,7 +61,7 @@ namespace Dojo
 			void pause();
 
 			///Stops the sound; it will be garbage collected from now on
-			inline void stop()
+			void stop()
 			{
  				alSourceStop(source);
 			}
@@ -69,8 +69,8 @@ namespace Dojo
 			void rewind();
 
 			///returns the Source's playing state
-			inline SoundState getState()		{	return state;	}
-			inline bool isPlaying()				{	return state == SS_PLAYING;	}
+			SoundState getState()		{	return state;	}
+			bool isPlaying()				{	return state == SS_PLAYING;	}
 
 			///tells if this source is bound to a streaming SoundBuffer
 			bool isStreaming()
@@ -78,7 +78,7 @@ namespace Dojo
 				return buffer && buffer->isStreaming();
 			}
 
-			inline ALuint getSource()			{	return source;	}
+			ALuint getSource()			{	return source;	}
 
 			float getVolume();	
 
@@ -89,7 +89,7 @@ namespace Dojo
 			}
 
 			///returns the elapsed time since source play 
-			inline float getElapsedTime()
+			float getElapsedTime()
 			{
 				float elapsed = 0;
 				alGetSourcef( source, AL_SEC_OFFSET, &elapsed );
@@ -105,12 +105,12 @@ namespace Dojo
 				return source != 0;
 			}
 
-			inline bool _isWaitingForDelete()
+			bool _isWaitingForDelete()
 			{
 				return (state == SS_FINISHED);
 			}
 
-			inline bool _isPaused()
+			bool _isPaused()
 			{
 				return (state == SS_PAUSED);
 			}

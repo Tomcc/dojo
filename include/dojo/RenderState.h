@@ -67,46 +67,46 @@ namespace Dojo
 				glLoadMatrixf( glm::value_ptr( *optTransform ) );
 			}
 
-			inline void setOffset( const Vector& v )
+			void setOffset( const Vector& v )
 			{
 				offset = v;
 				_updateTransform();
 			}
 
-			inline void setScale( const Vector& v )
+			void setScale( const Vector& v )
 			{
 				scale = v;
 				_updateTransform();
 			}
 
-			inline void setRotation( const float r )
+			void setRotation( const float r )
 			{
 				rotation = r;
 				_updateTransform();
 			}
 
-			inline const Vector& getOffset()
+			const Vector& getOffset()
 			{
 				return offset;
 			}
 
-			inline const Vector& getScale()
+			const Vector& getScale()
 			{
 				return scale;
 			}
 
-			inline float getRotation()
+			float getRotation()
 			{
 				return rotation;
 			}
 
-			inline const Matrix& getTransform()
+			const Matrix& getTransform()
 			{
 				static const Matrix identityMatrix;
 				return isTransformRequired() ? *optTransform : identityMatrix;
 			}
 
-			inline bool isTransformRequired()
+			bool isTransformRequired()
 			{
 				return optTransform != nullptr;
 			}
@@ -163,7 +163,7 @@ namespace Dojo
 				delete textures[i];
 		}
 		
-		inline void setMesh( Mesh* m )
+		void setMesh( Mesh* m )
 		{			
 			DEBUG_ASSERT( m, "setMesh requires a non-null mesh" );
 
@@ -174,7 +174,7 @@ namespace Dojo
 		/**
 		It can be NULL, which means that the slot is disabled.
 		*/
-		inline void setTexture( Texture* tex, int ID = 0 )
+		void setTexture( Texture* tex, int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0, "Passed a negative texture ID to setTexture()" );
 			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
@@ -191,7 +191,7 @@ namespace Dojo
 		}
 
 		///enables or disables blending of this RS
-		inline void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
+		void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
 
 		///sets the blending mode with a single call
 		void setBlending( GLenum src, GLenum dest )
@@ -222,7 +222,7 @@ namespace Dojo
 			pShader = shader;
 		}
 				
-		inline Texture* getTexture( int ID = 0 )
+		Texture* getTexture( int ID = 0 )
 		{
 			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative texture ID" );
 			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
@@ -233,7 +233,7 @@ namespace Dojo
 				return NULL;
 		}
 
-		inline TextureUnit* getTextureUnit( int ID )
+		TextureUnit* getTextureUnit( int ID )
 		{
 			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative textureUnit" );
 			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS" );
@@ -242,16 +242,16 @@ namespace Dojo
 		}
 
 		///returns the Mesh currently used by this state
-		inline Mesh* getMesh()								{	return mesh;			}
+		Mesh* getMesh()								{	return mesh;			}
 
 		///returns the Shader currently bound to this state
-		inline Shader* getShader()
+		Shader* getShader()
 		{
 			return pShader;
 		}
 		
 		///returns the number of used texture units
-		inline int getTextureNumber()
+		int getTextureNumber()
 		{
 			return mTextureNumber;
 		}
@@ -259,7 +259,7 @@ namespace Dojo
 		bool isAlphaRequired();
 		
 		///returns the "weight" of the changes needed to pass from "this" to "s"
-		inline int getDistance( RenderState* s )
+		int getDistance( RenderState* s )
 		{
 			DEBUG_ASSERT( s, "getDistance: The input RenderState is null" );
 			

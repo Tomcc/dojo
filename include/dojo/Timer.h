@@ -23,41 +23,41 @@ namespace Dojo
 		}
 
 		///resets the Timer to the current time
-		inline void reset()
+		void reset()
 		{
 			eventTime = currentTime();
 		}
 
-		inline void disable()
+		void disable()
 		{
 			eventTime = -1;
 		}
 
 		///sets the timer as looping - to be used with loopElapsed()
-		inline void setLoop( double period )
+		void setLoop( double period )
 		{
 			mPeriod = (period > 0) ? period : 0;
 		}
 
 		///removes the loop
-		inline void disableLoop()
+		void disableLoop()
 		{
 			mPeriod = 0;
 		}
 
 		///get the time from the last "reset event"
-		inline double getElapsedTime()
+		double getElapsedTime()
 		{
 			return (eventTime > 0) ? currentTime() - eventTime : 0;
 		}
 
-		inline bool isEnabled()
+		bool isEnabled()
 		{
 			return eventTime > 0;
 		}
 
 		///gets the time from the last reset and then resets the timer
-		inline double deltaTime()
+		double deltaTime()
 		{
 			double t = getElapsedTime();
 			reset();
@@ -70,7 +70,7 @@ namespace Dojo
 		When the method is called and period has passed, it returns the real cycle time
 		\remark If loop is disabled, this method always returns true.
 		*/
-		inline bool loopElapsed( double* actualPeriod = NULL )
+		bool loopElapsed( double* actualPeriod = NULL )
 		{
 			double t = getElapsedTime();
 			if( t >= mPeriod)
@@ -84,7 +84,7 @@ namespace Dojo
 
 		}
 
-		inline bool isLooping()
+		bool isLooping()
 		{
 			return mPeriod != 0;
 		}

@@ -37,7 +37,7 @@ namespace Dojo
 		
 		virtual Particle* getParticle( const Vector& pos, float timeToLive, FrameSet* set, float timePerFrame = 0 );
 		
-		inline void release( Particle* p )
+		void release( Particle* p )
 		{
 			DEBUG_ASSERT( p, "particle is null" );
 			
@@ -59,7 +59,7 @@ namespace Dojo
 			p->_setPoolIdx( firstIdleIdx );
 		}
 		
-		inline void releaseAll()
+		void releaseAll()
 		{
 			Particle* p;
 			for( int i = 0; i < pool.size(); ++i )
@@ -73,15 +73,15 @@ namespace Dojo
 			firstIdleIdx = 0;
 		}
 							
-		inline GameState* getGameState()				{	return gameState;		}
-		inline Particle* getParticle( int i )			
+		GameState* getGameState()				{	return gameState;		}
+		Particle* getParticle( int i )			
 		{
 			return pool.at( i );
 		}
 
-		inline int getActiveParticleNumber()			{	return firstIdleIdx;	}
+		int getActiveParticleNumber()			{	return firstIdleIdx;	}
 					
-		inline void update( float dt )
+		void update( float dt )
 		{
 			//update all the active particles
 			Particle* p;
@@ -115,7 +115,7 @@ namespace Dojo
 		int destLayer;		
 		int firstIdleIdx;
 											
-		inline Particle* _getUnused()
+		Particle* _getUnused()
 		{			
 			if( firstIdleIdx < pool.size() )
 				return pool.at( firstIdleIdx );

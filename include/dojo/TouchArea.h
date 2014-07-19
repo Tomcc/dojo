@@ -59,20 +59,20 @@ namespace Dojo
         
         virtual ~TouchArea();
                 
-        inline void setListener( Listener* l )
+        void setListener( Listener* l )
         {
             DEBUG_ASSERT( l, "cannot set a null listener" );
     
             listener = l;
         }
         
-        inline int getLayer()
+        int getLayer()
         {
             return mLayer;
         }
 
 		///returns a list of the touches that entered this toucharea in the last frame
-		inline const TouchList& getTouchList()
+		const TouchList& getTouchList()
 		{
 			return mTouches;
 		}
@@ -83,7 +83,7 @@ namespace Dojo
 			return mPressed;
 		}
                 
-        inline void _fireOnTouchUsingCurrentTouches()
+        void _fireOnTouchUsingCurrentTouches()
         {
             //set the state to clicked if there's at least one touch
             bool active = mTouches.size() > 0;
@@ -112,7 +112,7 @@ namespace Dojo
             }
         }
         
-        inline void _notifyLayer( int l )
+        void _notifyLayer( int l )
         {
             mLayer = l;
 		}

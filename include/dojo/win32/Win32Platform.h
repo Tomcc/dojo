@@ -61,7 +61,7 @@ namespace Dojo
 
 		void _callbackThread( float frameLength );
 
-		inline float getFrameInterval()
+		float getFrameInterval()
 		{
 			return frameInterval;
 		}

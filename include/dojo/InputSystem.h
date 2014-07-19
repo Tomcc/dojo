@@ -53,7 +53,7 @@ namespace Dojo
 					source->removeListener( this );
 			}
 			
-			inline InputSystem* getSource()	{	return source;	}
+			InputSystem* getSource()	{	return source;	}
 			
 			virtual void onTouchBegan( const Touch& touch ) {}
 			virtual void onTouchMove( const Touch& touch )  {}
@@ -69,7 +69,7 @@ namespace Dojo
 			virtual void onDeviceConnected( Dojo::InputDevice* j ) {}
 			virtual void onDeviceDisconnected( Dojo::InputDevice* j ) {}
 
-			inline void _notifySource( InputSystem* src )	{	source = src;	}
+			void _notifySource( InputSystem* src )	{	source = src;	}
 			
 		protected:
 			
@@ -88,7 +88,7 @@ namespace Dojo
 		///registers a new device to this InputSystem
 		/** 
 		and sends an event about its connection to the listeners */
-		inline void addDevice( InputDevice* device )
+		void addDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( !mDeviceList.exists( device ), "addDevice: this device was already registered" );
 
@@ -100,7 +100,7 @@ namespace Dojo
 		///unregisters a new device to this InputSystem
 		/** 
 		and sends an event about its disconnection to the listeners */
-		inline void removeDevice( InputDevice* device )
+		void removeDevice( InputDevice* device )
 		{
 			DEBUG_ASSERT( mDeviceList.exists( device ), "removeDevice: this device was not registered" );
 
@@ -109,7 +109,7 @@ namespace Dojo
 			mDeviceList.remove( device );			
 		}
 		
-		inline void addListener( Listener* l )
+		void addListener( Listener* l )
 		{
 			DEBUG_ASSERT( l != nullptr, "addListener: null listener passed " );
 			
@@ -120,7 +120,7 @@ namespace Dojo
 			}
 		}
 		
-		inline void removeListener( Listener* l )
+		void removeListener( Listener* l )
 		{
 			DEBUG_ASSERT( l != nullptr, "removeListener: null listener passed " );
 			
@@ -135,19 +135,19 @@ namespace Dojo
         void poll( float dt );
         
 		///enables or disables the whole input
-		inline void setEnabled( bool e )
+		void setEnabled( bool e )
 		{
 			enabled = e;
 		}
 		
 		///returns a list of the touches that existed in the last frame (that either began, or were kept still)
-		inline const TouchList& getTouchList()
+		const TouchList& getTouchList()
 		{
 			return mTouchList;
 		}
 
 		///returns a list of the already connected devices
-		inline const DeviceList& getDeviceList() const
+		const DeviceList& getDeviceList() const
 		{
 			return mDeviceList;
 		}
@@ -179,7 +179,7 @@ namespace Dojo
 
 		DeviceList mDeviceList;
 				
-		inline Touch* _registertouch( const Vector& point, Touch::Type type )
+		Touch* _registertouch( const Vector& point, Touch::Type type )
 		{
 			Touch* t = new Touch( mAssignedTouches++, point, type );
 			
@@ -188,7 +188,7 @@ namespace Dojo
 			return t;
 		}
 		
-		inline int _getExistingTouchID(const Vector& point, Touch::Type type)
+		int _getExistingTouchID(const Vector& point, Touch::Type type)
 		{
 			//find the nearest touch to this position
 			float minDist = FLT_MAX;
@@ -211,12 +211,12 @@ namespace Dojo
 			return nearest;
 		}
 		
-		inline Touch* _getExistingTouch(const Vector& point, Touch::Type type)
+		Touch* _getExistingTouch(const Vector& point, Touch::Type type)
 		{
 			return mTouchList[ _getExistingTouchID( point, type ) ];
 		}
 		
-		inline Touch* _popExistingTouch(const Vector& point, Touch::Type type)
+		Touch* _popExistingTouch(const Vector& point, Touch::Type type)
 		{
 			int idx = _getExistingTouchID( point, type );
 

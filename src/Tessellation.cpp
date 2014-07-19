@@ -6,7 +6,7 @@
 
 #undef REAL
 
-//the triangle library is included inline here
+//the triangle library is included here
 extern "C"
 {
 	//credits and documentation from http://www.cs.cmu.edu/~quake/triangle.html

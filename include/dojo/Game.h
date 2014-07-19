@@ -46,32 +46,32 @@ namespace Dojo
 		
 		virtual ~Game();
 
-		inline const String& getName()
+		const String& getName()
 		{
 			return name;	
 		}
 		
-		inline int getNativeWidth()
+		int getNativeWidth()
 		{
 			return nativeWidth;
 		}
 		
-		inline int getNativeHeight()
+		int getNativeHeight()
 		{
 			return nativeHeight;
 		}
 		
-		inline float getNativeFrameLength()
+		float getNativeFrameLength()
 		{
 			return mNativeFrameLength;
 		}
 		
-		inline float getMaximumFrameLength()
+		float getMaximumFrameLength()
 		{
 			return mMaxFrameLength;
 		}
 		
-		inline Orientation getNativeOrientation()
+		Orientation getNativeOrientation()
 		{
 			return nativeOrientation;
 		}

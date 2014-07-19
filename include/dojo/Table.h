@@ -152,7 +152,7 @@ namespace Dojo
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
-		inline static String index( int i )
+		static String index( int i )
 		{
 			return '_' + String(i);
 		}
@@ -210,7 +210,7 @@ namespace Dojo
 		}
 		
 		///sets the Table name
-		inline void setName( const String& newName )
+		void setName( const String& newName )
 		{
 			DEBUG_ASSERT( newName.size() > 0, "Setting an empty Table name" );
 
@@ -242,7 +242,7 @@ namespace Dojo
 		}
 
 		template< class T >
-		inline void setImpl( const String& key, FieldType type, const T& value )
+		void setImpl( const String& key, FieldType type, const T& value )
 		{
 			//generate name
 			if( key.size() == 0 )
@@ -257,7 +257,7 @@ namespace Dojo
 		}
 
 		template< class T >
-		inline void set( const String& key, FieldType type, const T& value )
+		void set( const String& key, FieldType type, const T& value )
 		{			
 			String actualKey;
 			Table* t = getParentTable( key, actualKey );
@@ -267,39 +267,39 @@ namespace Dojo
 			t->setImpl( actualKey, type, value );
 		}
 		
-		inline void set( const String& key, float value )
+		void set( const String& key, float value )
 		{			
 			set(key, FT_NUMBER, value );
 		}
 
-		inline void set( const String& key, int value )
+		void set( const String& key, int value )
 		{
 			set( key, (float)value );
 		}
 
 		///boolean has to be specified as C has the ugly habit of casting everything to it without complaining
-		inline void setBoolean( const String& key, bool value )
+		void setBoolean( const String& key, bool value )
 		{
 			set( key, (float)value );
 		}
 		
-		inline void set( const String& key, const String& value )
+		void set( const String& key, const String& value )
 		{			
 			set(key, FT_STRING, value );
 		}
 
-		inline void set( const String& key, const Vector& value )
+		void set( const String& key, const Vector& value )
 		{
 			set( key, FT_VECTOR, value );
 		}
 		
-		inline void set( const String& key, const Color& value )
+		void set( const String& key, const Color& value )
 		{
 			set( key, FT_VECTOR, Vector( value.r, value.g, value.b ) );
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		inline void set( const String& key, void* value, int size, bool managed = false )
+		void set( const String& key, void* value, int size, bool managed = false )
 		{
 			DEBUG_ASSERT( value, "Setting a NULL Data value" );
 			DEBUG_ASSERT( size >= 0, "Setting a Data value size <= 0" );
@@ -307,7 +307,7 @@ namespace Dojo
 			set(key, FT_DATA, Data( value, size ) );
 		}
 		
-		inline void set( const Table& value )
+		void set( const Table& value )
 		{						
 			set( value.getName(), FT_TABLE, value );
 		}		
@@ -315,7 +315,7 @@ namespace Dojo
 		///creates a new nested table named key
 		/** 
 		nested Tables always have name == key */
-		inline Table* createTable( const String& key = String::EMPTY )
+		Table* createTable( const String& key = String::EMPTY )
 		{	
 			String name;
 			
@@ -372,34 +372,34 @@ namespace Dojo
 		}
 
 		///total number of entries
-		inline int size()
+		int size()
 		{
 			return (int)map.size();
 		}
 		
-		inline const String& getName() const
+		const String& getName() const
 		{
 			return name;
 		}
 
 		///returns the total number of unnamed members
-		inline int getAutoMembers() const
+		int getAutoMembers() const
 		{
 			return unnamedMembers;
 		}
 
-		inline bool isEmpty()
+		bool isEmpty()
 		{
 			return map.empty();
 		}
 
-		inline bool hasName() const
+		bool hasName() const
 		{
 			return name.size() > 0;
 		}
 
 		///returns true if this Table contains key
-		inline bool exists( const String& key ) const
+		bool exists( const String& key ) const
 		{
 			DEBUG_ASSERT( key.size(), "exists: key is empty" );
 
@@ -407,7 +407,7 @@ namespace Dojo
 		}
 
 		///returns true if this Table contains key and the value is of type t
-		inline bool existsAs( const String& key, FieldType t ) const
+		bool existsAs( const String& key, FieldType t ) const
 		{
 			EntryMap::const_iterator itr = map.find( key );
 						
@@ -420,7 +420,7 @@ namespace Dojo
 		}
 		
 		///generic get
-		inline Entry* get( const String& key ) const
+		Entry* get( const String& key ) const
 		{
 			String actualKey;
 			const Table* container = getParentTable( key, actualKey );
@@ -432,7 +432,7 @@ namespace Dojo
 			return elem != container->map.end() ? elem->second : NULL;
 		}
 		
-		inline float getNumber( const String& key, float defaultValue = 0 ) const
+		float getNumber( const String& key, float defaultValue = 0 ) const
 		{			
 			Entry* e = get( key );
 			if( e && e->type == FT_NUMBER )
@@ -441,12 +441,12 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		inline int getInt( const String& key, int defaultValue = 0 ) const
+		int getInt( const String& key, int defaultValue = 0 ) const
 		{
 			return (int)getNumber(key , (float)defaultValue);
 		}
 		
-		inline bool getBool( const String& key, bool defaultValue = false ) const
+		bool getBool( const String& key, bool defaultValue = false ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_NUMBER )
@@ -455,7 +455,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		inline const String& getString( const String& key, const String& defaultValue = String::EMPTY ) const
+		const String& getString( const String& key, const String& defaultValue = String::EMPTY ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_STRING )
@@ -464,7 +464,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		inline const Dojo::Vector& getVector( const String& key, const Dojo::Vector& defaultValue = Vector::ZERO ) const
+		const Dojo::Vector& getVector( const String& key, const Dojo::Vector& defaultValue = Vector::ZERO ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
@@ -473,7 +473,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		inline const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& defaultValue = Color::BLACK ) const
+		const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& defaultValue = Color::BLACK ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
@@ -482,7 +482,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		inline Table* getTable( const String& key ) const
+		Table* getTable( const String& key ) const
 		{			
 			Entry* e = get( key );
 			if( e && e->type == FT_TABLE )
@@ -491,7 +491,7 @@ namespace Dojo
 				return &EMPTY_TABLE;
 		}
 		
-		inline const Data& getData( const String& key ) const
+		const Data& getData( const String& key ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_DATA )
@@ -500,7 +500,7 @@ namespace Dojo
 				return EMPTY_DATA;
 		}	
 		
-		inline String autoMemberName( int idx ) const 
+		String autoMemberName( int idx ) const 
 		{
 			DEBUG_ASSERT( idx >= 0, "autoMemberName: idx is negative" );
 			DEBUG_ASSERT_INFO( idx < getAutoMembers(), "autoMemberName: idx is OOB", String("idx = ") + idx );
@@ -508,75 +508,75 @@ namespace Dojo
 			return '_' + String( idx );
 		}
 		
-		inline float getNumber( int idx ) const
+		float getNumber( int idx ) const
 		{			
 			return getNumber( autoMemberName( idx ) );
 		}
 		
-		inline int getInt( int idx ) const
+		int getInt( int idx ) const
 		{
 			return (int)getNumber( idx );
 		}
 		
-		inline bool getBool( int idx ) const
+		bool getBool( int idx ) const
 		{
 			return getNumber(idx) > 0.f;
 		}
 		
-		inline const String& getString( int idx ) const
+		const String& getString( int idx ) const
 		{
 			return getString( autoMemberName(idx) );
 		}
 		
-		inline const Dojo::Vector& getVector( int idx ) const
+		const Dojo::Vector& getVector( int idx ) const
 		{
 			return  getVector( autoMemberName(idx ) );
 		}
 		
-		inline const Dojo::Color getColor( int idx, float alpha = 1.f ) const
+		const Dojo::Color getColor( int idx, float alpha = 1.f ) const
 		{
 			return Color( getVector( idx ), alpha );
 		}
 		
-		inline Table* getTable( int idx ) const
+		Table* getTable( int idx ) const
 		{			
 			return getTable( autoMemberName(idx) );
 		}
 		
-		inline const Data& getData( int idx ) const
+		const Data& getData( int idx ) const
 		{
 			return getData( autoMemberName( idx ) );
 		}	
 
 		///returns a new unique anoymous id for a new "array member"
-		inline String autoname()
+		String autoname()
 		{
 			return '_' + String( unnamedMembers++ );
 		}
 		
-		inline const EntryMap::const_iterator begin() const
+		const EntryMap::const_iterator begin() const
 		{
 			return map.begin();
 		}
 		
-		inline const EntryMap::const_iterator end() const
+		const EntryMap::const_iterator end() const
 		{
 			return map.end();
 		}
 		
 		///removes a member named key
-		inline void remove( const Dojo::String& key )
+		void remove( const Dojo::String& key )
 		{
 			map.erase( key );
 		}
 		
 		///removes the unnamed member index idx
-		inline void remove( int idx )
+		void remove( int idx )
 		{
 			map.erase( autoMemberName( idx ) );
 		}
 
-		inline bool isEmpty() const
+		bool isEmpty() const
 		{
 			return map.empty();
 		}
@@ -587,7 +587,7 @@ namespace Dojo
 		void deserialize( StringReader& buf );
 		
 		///diagnostic method that serializes the table in a string
-		inline String toString() const
+		String toString() const
 		{
 			String str = getName() + '\n';
 			serialize( str );
@@ -595,7 +595,7 @@ namespace Dojo
 			return str;
 		}
 		
-		inline void debugPrint() const
+		void debugPrint() const
 		{
 #ifdef _DEBUG			
 			DEBUG_MESSAGE( toString() );

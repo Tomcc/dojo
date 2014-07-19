@@ -177,7 +177,7 @@ namespace Dojo
 		}
 
 		///returns the total length of the solved path
-		inline float getLength()
+		float getLength()
 		{
 			return mTotalLength;
 		}
@@ -186,7 +186,7 @@ namespace Dojo
 
 		float mTotalLength;
 
-		inline float _distance( Node* A, Node* B )
+		float _distance( Node* A, Node* B )
 		{
 			DEBUG_ASSERT( A, "A Node is NULL" );
 			DEBUG_ASSERT( B, "B Node is NULL" );
@@ -194,7 +194,7 @@ namespace Dojo
 			return A->position.distance( B->position );
 		}
 
-		inline Node* _nearest( const Graph& set, const Vector& pos )
+		Node* _nearest( const Graph& set, const Vector& pos )
 		{
 			DEBUG_ASSERT( set.size(), "Can't find a nearest Node on an empty set" );
 

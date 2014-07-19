@@ -47,7 +47,7 @@ namespace Dojo
 		/**
 		n can be higher than the current character count; all the characters will be shown
 		*/
-		inline void setVisibleCharacters( int n )
+		void setVisibleCharacters( int n )
 		{
 			if( n != visibleCharsNumber )
 			{
@@ -58,7 +58,7 @@ namespace Dojo
 		}
 		
 		///increments by 1 the number of visibile characters
-		inline void showNextChar()
+		void showNextChar()
 		{
 			setVisibleCharacters( getVisibleCharacters() + 1 );
 		}
@@ -67,13 +67,13 @@ namespace Dojo
 		void setMaxLineLength( int l );
 		
 		///sets the space between lines
-		inline void setInterline( float i )		{	interline = i;		}
+		void setInterline( float i )		{	interline = i;		}
 
 		///sets an additional spacing between chars (default 0)
-		inline void setCharSpacing( float c )	{	charSpacing = c;	}
+		void setCharSpacing( float c )	{	charSpacing = c;	}
 		
 		///returns the spacing between each line (0-1), proportional to the font height
-		inline float getInterline()				{	return interline;	}
+		float getInterline()				{	return interline;	}
 
 		///returns the height in pixel of a line of this TextArea
 		int getLineHeight()
@@ -82,7 +82,7 @@ namespace Dojo
 		}
 
 		///returns the number of characters that are currently shown
-		inline int getVisibleCharacters()		{	return visibleCharsNumber;	}
+		int getVisibleCharacters()		{	return visibleCharsNumber;	}
 		
 		///empties this text area
 		void clearText();
@@ -94,29 +94,29 @@ namespace Dojo
 		void addText( int n, char paddingChar = 0, int digits = 0 );
 					
 		///adds a Time string using a number of seconds
-		inline void addTimeSeconds( int n )
+		void addTimeSeconds( int n )
 		{		
 			addText( n / 60 );
 			addText( " : " );
 			addText( n % 60 );
 		}
 		
-		inline Font* getFont()					{	return font;			}		
+		Font* getFont()					{	return font;			}		
 
 		///returns the number of added chars
-		inline int getLenght()					{	return characters.size();	}
+		int getLenght()					{	return characters.size();	}
 
 		///returns the text content in String format
-		inline const String& getContent()		{	return content;			}
+		const String& getContent()		{	return content;			}
 				
 		///returns the size in screen coordinates for UI
-		inline const Vector& getScreenSize()	{	return screenSize;		}
+		const Vector& getScreenSize()	{	return screenSize;		}
 
 		bool canBeRendered() {
 			return actualCharacters > 0;
 		}
 		
-		inline void _notifyScreenSize( const Vector& ss )
+		void _notifyScreenSize( const Vector& ss )
 		{
 			screenSize.x = ss.x;
 			screenSize.y = ss.y;
@@ -166,7 +166,7 @@ namespace Dojo
 		Renderable* _enableLayer( Texture* tex );
 
 		///get the layer assigned to this texture
-		inline Renderable* _getLayer( Texture* tex )
+		Renderable* _getLayer( Texture* tex )
 		{
 			DEBUG_ASSERT( tex, "Cannot get a layer for a null texture" );
 
@@ -189,7 +189,7 @@ namespace Dojo
 
 		void _destroyLayer( Renderable* r );
 
-		inline void _destroyLayers()
+		void _destroyLayers()
 		{
 			for( int i = 0; i < busyLayers.size(); ++i )
 				_destroyLayer( busyLayers[i] );

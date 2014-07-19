@@ -44,7 +44,7 @@ namespace Dojo
 		virtual ~GameState();
         
 		///Registers an existing TouchArea in this GameState
-        inline void addTouchArea( TouchArea* t )
+        void addTouchArea( TouchArea* t )
         {
             DEBUG_ASSERT( t != nullptr, "addTouchArea: area passed was null" );
             
@@ -52,7 +52,7 @@ namespace Dojo
         }
 
         ///Unregisters an existing TouchArea in this GameState
-        inline void removeTouchArea( TouchArea* t )
+        void removeTouchArea( TouchArea* t )
         {
             DEBUG_ASSERT( t != nullptr, "removeTouchArea: area passed was null" );
             
@@ -63,10 +63,10 @@ namespace Dojo
 		virtual void clear();
 		
 		///returns the parent Game
-		inline Game* getGame()				{	return game;			}
+		Game* getGame()				{	return game;			}
 				
 		///returns the Viewport that is primary on this GameState
-		inline Viewport* getViewport()		{	return camera;			}
+		Viewport* getViewport()		{	return camera;			}
 		
 		///sets the primary Viewport (ie. camera) on this GameState, needed for pixel-perfect behaviour! (Sprites and TextAreas)
 		void setViewport( Viewport* v );

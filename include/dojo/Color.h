@@ -73,7 +73,7 @@ namespace Dojo
 		}
 			
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)
-		inline RGBAPixel toRGBA() const
+		RGBAPixel toRGBA() const
 		{
 			RGBAPixel p;
 			byte* ch = (byte*)&p;
@@ -87,25 +87,25 @@ namespace Dojo
 		}
 
 		///scales each color's component except alpha
-		inline Color operator * ( float s ) const 
+		Color operator * ( float s ) const 
 		{			
 			return Color( r * s, g * s, b * s, a );
 		}
 		
 		///multiplies two colors component-wise
-		inline Color operator * ( const Color& c ) const 
+		Color operator * ( const Color& c ) const 
 		{			
 			return Color( r * c.r, g * c.g, b * c.b, a * c.a );
 		}
 
 		///sums two colors component-wise
-		inline Color operator + ( float s ) const
+		Color operator + ( float s ) const
 		{
 			return Color( r + s, g + s, b + s, a + s );
 		}
 
 		///linearly interpolates two colors
-		inline Color lerp( float s, const Color& c ) const
+		Color lerp( float s, const Color& c ) const
 		{
 			float invs = 1.f-s;
 			return Color( 
@@ -115,14 +115,14 @@ namespace Dojo
 				a*invs + c.a*s );
 		}
 		
-		inline void operator *= ( float s )
+		void operator *= ( float s )
 		{
 			r *= s;
 			g *= s;
 			b *= s;
 		}
 
-		inline void operator += ( const Color& c )
+		void operator += ( const Color& c )
 		{
 			r += c.r;
 			g += c.g;

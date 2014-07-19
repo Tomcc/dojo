@@ -64,7 +64,7 @@ namespace Dojo
 			void init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline );
 
 			///return 
-			inline Texture* getTexture()
+			Texture* getTexture()
 			{
 				return page->getTexture();
 			}
@@ -110,20 +110,20 @@ namespace Dojo
 				return true;
 			}
 
-			inline Texture* getTexture() 
+			Texture* getTexture() 
 			{
 				return texture;
 			}
 
 			///get the char in this page
-			inline Character* getChar( unichar c )
+			Character* getChar( unichar c )
 			{
 				DEBUG_ASSERT( _charInPage(c), "getChar: the requested char doesn't belong to this page" );
 
 				return &( chars[ c - firstCharIdx ] );
 			}
 
-			inline Font* getFont()
+			Font* getFont()
 			{
 				return font;
 			}
@@ -137,7 +137,7 @@ namespace Dojo
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
 
-			inline bool _charInPage( unichar c ) 
+			bool _charInPage( unichar c ) 
 			{
 				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
 			}
@@ -158,18 +158,18 @@ namespace Dojo
 		///purges all the loaded pages from memory and prompts a rebuild
 		virtual void onUnload( bool soft = false );
 
-		inline const String& getName()
+		const String& getName()
 		{
 			return fontName;
 		}
 		
 		///returns the maximum width of a character (cell height)
-		inline int getFontWidth()			{	return fontWidth;	}
+		int getFontWidth()			{	return fontWidth;	}
 		///returns the maximum height of a character (cell width)
-		inline int getFontHeight()			{	return fontHeight;	}
+		int getFontHeight()			{	return fontHeight;	}
 
 		///returns (and lazy-loads) the character Page with the given index
-		inline Page* getPage( int index )
+		Page* getPage( int index )
 		{
 			DEBUG_ASSERT( index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index" );
 
@@ -186,26 +186,26 @@ namespace Dojo
 		}
 
 		///returns (and lazy-loads) the Page containing this Unicode character
-		inline Page* getPageForChar( unichar c )
+		Page* getPageForChar( unichar c )
 		{
 			return getPage( c / FONT_CHARS_PER_PAGE );
 		}
 
 		///returns (and lazy-loads) the Character internal representation of this Unicode character
-		inline Character* getCharacter( unichar c )
+		Character* getCharacter( unichar c )
 		{
 			return getPageForChar( c )->getChar( c );
 		}
 
 		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
-		inline Texture* getTexture( unichar c )
+		Texture* getTexture( unichar c )
 		{
 			return getPageForChar( c )->getTexture();
 		}
 
 		float getKerning( Character* next, Character* prev );
 
-		inline float getSpacing()
+		float getSpacing()
 		{
 			return spacing;
 		}
@@ -213,7 +213,7 @@ namespace Dojo
 		///returns the length in pixel for the given string
 		int getPixelLength( const String& s );
 
-		inline int getCharIndex( Character* c )
+		int getCharIndex( Character* c )
 		{
 			return FT_Get_Char_Index( face, c->character );
 		}
@@ -224,30 +224,30 @@ namespace Dojo
 			return mPolyOutlineQuality;
 		}
 
-		inline bool isAntialiased()
+		bool isAntialiased()
 		{
 			return antialias;
 		}
 
-		inline bool isKerningEnabled()
+		bool isKerningEnabled()
 		{
 			return kerning;
 		}
 
 		///tells if this Font contains polygon edge informations
-		inline bool hasPolyOutline()
+		bool hasPolyOutline()
 		{
 			return generateEdge;
 		}
 
 		///tells if this Font contains polygon surface informations
-		inline bool hasPolySurface()
+		bool hasPolySurface()
 		{
 			return generateSurface;
 		}
 
 		///forces the loading of the given pages without waiting for lazy-loading
-		inline void preloadPages( const char pages[], int n ) 
+		void preloadPages( const char pages[], int n ) 
 		{
 			for( int i = 0; i < n; ++i )
 				getPage( pages[i] );

@@ -35,7 +35,7 @@ namespace Dojo
 		virtual void onUnload( bool soft = true );
 
 		///returns a random buffer (-1) or the one at index i
-		inline SoundBuffer* getBuffer( int i = -1 )
+		SoundBuffer* getBuffer( int i = -1 )
 		{
 			DEBUG_ASSERT( buffers.size(), "This SoundSet is empty" );
 			DEBUG_ASSERT_INFO( (int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + String( i ) );
@@ -51,11 +51,11 @@ namespace Dojo
 			return buffers.at(i);
 		}
 
-		inline int getResourceNb()	{	return buffers.size();	 }
+		int getResourceNb()	{	return buffers.size();	 }
 
-		inline const String& getName()	{	return name;	}
+		const String& getName()	{	return name;	}
 
-		inline void addBuffer( SoundBuffer* b )
+		void addBuffer( SoundBuffer* b )
 		{
 			DEBUG_ASSERT( b, "Adding a NULL SoundBuffer" );
 			

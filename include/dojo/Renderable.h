@@ -44,10 +44,10 @@ namespace Dojo
 			scale.x = scale.y = 1;
 		}
 				
-		inline void setVisible( bool v )				{	visible = v;		}
+		void setVisible( bool v )				{	visible = v;		}
 		
 		///starts a linear fade on the color of this Renderable, from start to end and "duration" seconds long
-		inline void startFade( const Color& start, const Color& end, float duration )
+		void startFade( const Color& start, const Color& end, float duration )
 		{			
 			DEBUG_ASSERT( duration > 0, "The duration of a fade must be greater than 0" );
 			
@@ -66,7 +66,7 @@ namespace Dojo
 		}
 		
 		///starts a linear fade on the alpha of this Renderable, from start to end and "duration" seconds long
-		inline void startFade( float startAlpha, float endAlpha, float duration )
+		void startFade( float startAlpha, float endAlpha, float duration )
 		{			
 			color.a = startAlpha;
 			
@@ -83,24 +83,24 @@ namespace Dojo
 		}
 		
 		///returns the ID of the Render::Layer this object is assigned to
-		inline int getLayer()				{	return layer;			}
-		inline int getRenderingOrder()		{	return renderingOrder;	}
+		int getLayer()				{	return layer;			}
+		int getRenderingOrder()		{	return renderingOrder;	}
 
 		///true if this object has been assigned to a Render::Layer
 		bool hasLayer()						{	return layer != INT_MIN;	}
 		
 		///tells if the object is either visible or has a mesh
-		inline bool isVisible()				{	return visible && mesh;	}
-		inline bool isFading()				{	return fading;			}
+		bool isVisible()				{	return visible && mesh;	}
+		bool isFading()				{	return fading;			}
         
         virtual bool isRenderable()         {   return true;            }
 					
-		inline bool isInView()
+		bool isInView()
 		{
 			return !mCulled;
 		}
 
-		inline void advanceFade( float dt )		
+		void advanceFade( float dt )		
 		{			
 			if( fading ) //fade is scheduled
 			{
@@ -126,14 +126,14 @@ namespace Dojo
 		
 		virtual void onAction( float dt );		
 		
-		inline void _notifyRenderInfo( Render* r, int layerID, int renderIdx )
+		void _notifyRenderInfo( Render* r, int layerID, int renderIdx )
 		{			
 			render = r;
 			layer = layerID;
 			renderingOrder = renderIdx;
 		}
 		
-		inline void _notifyCulled( bool culled )
+		void _notifyCulled( bool culled )
 		{
 			mCulled = culled;
 		}

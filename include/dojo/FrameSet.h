@@ -66,7 +66,7 @@ namespace Dojo
 		/**
 		It is the frame time used if this FrameSet is used for an animation and an explicit frame time is not specified.
 		*/
-		inline void setPreferredAnimationTime( float t )
+		void setPreferredAnimationTime( float t )
 		{
 			DEBUG_ASSERT( t > 0, "setPreferredAnimationTime: t must be more than 0" );
 
@@ -96,7 +96,7 @@ namespace Dojo
 		\param t the texture
 		\param owner specifies  if this FrameSet is the only owner for garbage collection purposes
 		*/
-		inline void addTexture( Texture* t, bool owner = false )
+		void addTexture( Texture* t, bool owner = false )
 		{
 			DEBUG_ASSERT( t != nullptr, "Adding a NULL texture" );
 			DEBUG_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL), "This Texture already has an owner FrameSet" );
@@ -110,29 +110,29 @@ namespace Dojo
 		///returns the (looped!) frame at index i
 		/** 
 		if i > number of frames, i is looped over n as in i % size() */
-		inline Texture* getFrame( int i )			
+		Texture* getFrame( int i )			
 		{	
 			return frames.at( i%frames.size() );	
 		}
 		
 		///returns a random frame
-		inline Texture* getRandomFrame()
+		Texture* getRandomFrame()
 		{
 			return frames.at( (int)Math::rangeRandom( 0, (float)frames.size() ) );
 		}
 
-		inline float getPreferredAnimationTime()
+		float getPreferredAnimationTime()
 		{
 			return mPreferredAnimationTime;
 		}
 
-		inline bool hasPreferredAnimationTime()
+		bool hasPreferredAnimationTime()
 		{
 			return mPreferredAnimationTime >= 0;
 		}
 		
 		///returns how many Textures this FrameSet contains
-		inline int getFrameNumber()				{	return frames.size();	}
+		int getFrameNumber()				{	return frames.size();	}
 		
 		///returns the Frame Index of this Texture if it belongs to the FS, or -1 if not
 		int getFrameIndex( Texture* frame )
