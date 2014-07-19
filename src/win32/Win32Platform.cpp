@@ -483,7 +483,7 @@ void Win32Platform::initialize( Game* g )
 
 	fonts = new FontSystem();
 
-	mBackgroundQueue = new BackgroundQueue( config.getInt( "threads", -1) );
+	//mBackgroundQueue = new BackgroundQueue( config.getInt( "threads", -1) );
 
 	DEBUG_MESSAGE( "---- Game Launched!");
 
@@ -582,7 +582,7 @@ void Win32Platform::step( float dt )
 	_pollDevices( dt );
 
 	//update completed tasks
-	mBackgroundQueue->fireCompletedCallbacks();
+	//mBackgroundQueue->fireCompletedCallbacks();
 
 	game->loop( dt);
 

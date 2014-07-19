@@ -477,6 +477,13 @@ void Dojo::Mesh::onUnload(bool soft /*= false */) {
 	}
 }
 
+Vector& Dojo::Mesh::getVertex(int idx) {
+	int offset = isVertexFieldEnabled(VF_POSITION3D) ? vertexFieldOffset[VF_POSITION3D] : vertexFieldOffset[VF_POSITION2D];
+	byte* ptr = (byte*)vertices.data() + (idx * vertexSize) + offset;
+
+	return *(Vector*)ptr;
+}
+
 
 
 

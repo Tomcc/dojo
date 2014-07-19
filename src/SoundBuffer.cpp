@@ -127,7 +127,7 @@ bool SoundBuffer::Chunk::onLoad()
 	int wordSize = 2;
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
-	int bitrate = info->rate;// * info->channels;
+	int bitrate = info->rate * 10; //wtf, why * 10 //HACK
 
 	//read all vorbis packets in the same buffer
 	long read = 0;
@@ -207,6 +207,7 @@ void SoundBuffer::Chunk::onUnload( bool soft /* = false */ )
 }
 
 bool SoundBuffer::_loadOgg( Stream* source )
+
 {
 	DEBUG_ASSERT( source, "the data source cannot be null" );
 
@@ -237,7 +238,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 
 	//find the number of chunks that we want
 	int chunkN = 1;
-	for( ; uncompressedSize / chunkN > Chunk::MAX_SIZE; chunkN++ );
+	//HACK for( ; uncompressedSize / chunkN > Chunk::MAX_SIZE; chunkN++ );
 	ogg_int64_t chunkPCM = totalPCM / chunkN;
 
 	mDuration = (float)totalPCM / (float)info->rate;
@@ -249,9 +250,8 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	while(1)
 	{
 		pcmEnd = min( totalPCM, pcmStart + chunkPCM );
-		ov_pcm_seek_page( &file, pcmEnd );
 
-		pcmEnd = ov_pcm_tell( &file );
+		ov_pcm_seek_page( &file, pcmEnd );
 		fileEnd = ov_raw_tell( &file );
 
 		if( fileStart == fileEnd ) //check if EOF

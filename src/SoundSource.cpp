@@ -223,3 +223,16 @@ void Dojo::SoundSource::setLooping(bool l)
 	if (isActive()) //do not use this looping flag on streaming sounds, we handle it in the update 
 		alSourcei(source, AL_LOOPING, isStreaming() ? false : looping);
 }
+
+void Dojo::SoundSource::stop() {
+
+	if (isActive()) {
+		alSourceStop(source);
+
+		alSourcei(source, AL_BUFFER, AL_NONE);
+
+		mFrontChunk->release();
+		if (mBackChunk)
+			mBackChunk->release();
+	}
+}

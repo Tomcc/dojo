@@ -159,7 +159,7 @@ namespace Dojo {
 			}
 			
 			///stops all the active SoundSources (excluding the background music!)
-			void stopAll()
+			void stopAllSounds()
 			{
 				for( SoundSource* s : busySoundPool )
 				{

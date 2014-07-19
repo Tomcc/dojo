@@ -67,7 +67,7 @@ namespace Dojo
 			///releases one reference to this Chunk, and unloads it if needed
 			void release()
 			{
-				DEBUG_ASSERT( references >= 0, "References should never be less than 0" );
+				DEBUG_ASSERT( references > 0, "References should never be less than 0" );
 
 				if( --references == 0 ) //unload it when dereferenced last time
 					onUnload();

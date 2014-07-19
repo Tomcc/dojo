@@ -61,10 +61,7 @@ namespace Dojo
 			void pause();
 
 			///Stops the sound; it will be garbage collected from now on
-			void stop()
-			{
- 				alSourceStop(source);
-			}
+			void stop();
 			///Sets the playback to the beginning of the sound, and pauses it
 			void rewind();
 

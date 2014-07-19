@@ -157,6 +157,16 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	}
 }
 
+Dojo::Vector Dojo::Object::getWorldPosition(const Vector& localPos) {
+	if (parent)
+	{
+		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
+		return Vector(pos.x, pos.y, pos.z);
+	}
+	else
+		return localPos;
+}
+
 Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
 {
 	Matrix m = glm::translate(parent, position) * mat4_cast(rotation);

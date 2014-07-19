@@ -215,9 +215,7 @@ namespace Dojo
 			return triangleCount;
 		}
 
-		Vector& getVertex(int idx) {
-			return *((Vector*)vertices[idx * vertexSize]);
-		}
+		Vector& getVertex(int idx);
 				
 	protected:
 		Vector max, min, center, dimensions;

@@ -109,16 +109,7 @@ namespace Dojo {
 		GameState* getGameState() const	{	return gameState;	}
 
 		///returns the world position of a point in local space
-		Vector getWorldPosition( const Vector& localPos )
-		{
-			if( parent )
-			{
-				glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f );
-				return Vector( pos.x , pos.y, pos.z );                
-			}
-			else
-				return localPos;
-		}
+		Vector getWorldPosition( const Vector& localPos );
 				
 		///returns the world coordinates' position of this Object
 		const Vector getWorldPosition()

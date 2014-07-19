@@ -203,6 +203,18 @@ namespace Dojo
 				f -= floor( f );
 			} 
 		}
+
+		String toUpper() {
+
+			//WARNING THIS DOES NOT EVEN KNOW WHAT UNICODE IS
+			String res;
+			for (auto& c : *this) {
+				if (c >= 'a' && c <= 'z')
+					c -= 32;
+				res += c;
+			}
+			return res;
+		}
 		
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
 		void appendRaw( void* data, int sz )
