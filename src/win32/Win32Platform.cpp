@@ -606,7 +606,7 @@ void Win32Platform::loop()
 
 	Timer timer;
 	running = true;
-	while( running )
+	while( running && game->isRunning() )
 	{
 		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
@@ -620,15 +620,17 @@ void Win32Platform::loop()
 			DispatchMessage( &msg );
 		}
 
-		//never send a dt lower than the minimum!
-		float dt = min( game->getMaximumFrameLength(), (float)timer.deltaTime() );
+		if (running) {
+			//never send a dt lower than the minimum!
+			float dt = min(game->getMaximumFrameLength(), (float)timer.deltaTime());
 
-		if( !mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0 ) )
-		{
-			step( dt );
+			if (!mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0))
+			{
+				step(dt);
 
-			if( mFrameSteppingEnabled )
-				--mFramesToAdvance;
+				if (mFrameSteppingEnabled)
+					--mFramesToAdvance;
+			}
 		}
 	}
 }

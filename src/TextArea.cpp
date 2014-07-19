@@ -189,6 +189,7 @@ void TextArea::_hideLayers()
 		freeLayers.add( l );
 	}
 	
+	actualCharacters = 0;
 	busyLayers.clear();
 }
 
@@ -209,8 +210,7 @@ void TextArea::_destroyLayer( Renderable* r )
 }
 
 
-void TextArea::_prepare()
-{
+void Dojo::TextArea::_prepare() {
 	//not changed
 	if( !changed )
 		return;
@@ -300,6 +300,7 @@ void TextArea::_prepare()
 			cursorPosition.x += rep->advance + charSpacing;
 
 			lastRep = rep;
+			++actualCharacters;
 		}	
 
 		//update size to contain cursorPos to the longest line

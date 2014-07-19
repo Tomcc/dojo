@@ -80,6 +80,14 @@ namespace Dojo
         {
             
         }
+
+		bool isRunning() const {
+			return running;
+		}
+
+		void stop() {
+			running = false;
+		}
 		
 	protected:
 		
@@ -89,6 +97,8 @@ namespace Dojo
 		Orientation nativeOrientation;
 
 		String name;
+
+		bool running;
 	};
 }
 

@@ -111,6 +111,10 @@ namespace Dojo
 				
 		///returns the size in screen coordinates for UI
 		inline const Vector& getScreenSize()	{	return screenSize;		}
+
+		bool canBeRendered() {
+			return actualCharacters > 0;
+		}
 		
 		inline void _notifyScreenSize( const Vector& ss )
 		{
@@ -146,6 +150,7 @@ namespace Dojo
 		Vector mLayersLowerBound, mLayersUpperBound;
 
 		LayerList busyLayers, freeLayers;
+		int actualCharacters = 0;
         
 		void _prepare();
 
