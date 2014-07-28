@@ -304,8 +304,12 @@ bool Mesh::end()
 {
 	DEBUG_ASSERT(editing, "Can't call end() before begin()!");
 	editing = false;
-	
+
 	DEBUG_ASSERT(!isLoaded() || dynamic, "Can't update a static mesh");
+
+	//don't load empty meshes
+	if (getVertexCount() == 0)
+		return false;
 
 	//create the VBO
 	if( !vertexHandle )

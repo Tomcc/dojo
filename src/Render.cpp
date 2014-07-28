@@ -245,6 +245,7 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 		case Mesh::TM_LINE_LIST:	mode = GL_LINES;			break;
 	}
 
+	DEBUG_ASSERT(m->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(m->getVertexCount() > 0, "Rendering a mesh with no vertices");
 
 	if( !m->isIndexed() )
@@ -324,7 +325,7 @@ void Render::renderLayer( Viewport* viewport, Layer* list )
 			s = list->at(i);
 			
 			//HACK use some 2D culling
-			if( s->isVisible() )
+			if( s->canBeRendered() )
 				renderElement( viewport, s );
 		}
 	}
@@ -338,7 +339,7 @@ void Render::renderLayer( Viewport* viewport, Layer* list )
 
 			s->_notifyCulled( !viewport->isContainedInFrustum( s ) );
 			
-			if( s->isVisible() && s->isInView() )
+			if (s->canBeRendered() && s->isInView())
 				renderElement( viewport, s );
 		}
 	}

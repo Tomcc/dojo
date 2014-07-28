@@ -119,12 +119,7 @@ namespace Dojo
 
 		bool isContainedInFrustum( Renderable* r );
 
-		bool isSeeing( Renderable* s )
-		{
-			DEBUG_ASSERT( s, "isSeeing: null renderable passed" );
-
-			return cullingEnabled && s->isVisible() && touches( s );
-		}
+		bool isSeeing( Renderable* s );
 
 		bool touches( Renderable* r )
 		{

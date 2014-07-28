@@ -55,6 +55,12 @@ Dojo::Vector Dojo::Viewport::makeWorldCoordinates(int x, int y)
 		getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y);
 }
 
+bool Dojo::Viewport::isSeeing(Renderable* s) {
+	DEBUG_ASSERT(s, "isSeeing: null renderable passed");
+
+	return cullingEnabled && s->isVisible() && touches(s);
+}
+
 void Viewport::addFader( int layer )
 {
 	DEBUG_ASSERT( !fadeObject, "A fade overlay object already exists" );
