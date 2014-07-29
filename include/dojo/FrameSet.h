@@ -12,12 +12,13 @@
 #include "dojo_common_header.h"
 
 #include "Array.h"
-#include "dojomath.h"
-#include "Texture.h"
-#include "Table.h"
+#include "Resource.h"
 
 namespace Dojo 
 {
+	class Texture;
+	class Table;
+
 	///A FrameSet represents a sequence of Textures, with an unique "prefix name" used by Animations and ResourceGroups (which do not manage Textures directly)
 	/** 
 	there are two ways to specify a FrameSet:
@@ -46,31 +47,15 @@ namespace Dojo
 		typedef Array<Texture*> TextureList;
 		
 		///Creates a single FrameSet with the given "prefix name"
-		FrameSet( ResourceGroup* creator, const String& prefixName ) :
-		Resource( creator ),
-		name( prefixName ),
-		mPreferredAnimationTime( 0 )
-		{
-			
-		}
+		FrameSet( ResourceGroup* creator, const String& prefixName );
 		
-		virtual ~FrameSet()
-		{
-			//destroy child textures
-			for( int i = 0; i < frames.size(); ++i )
-				SAFE_DELETE( frames[i] );
-		}
+		virtual ~FrameSet();
 
 		///sets the "preferred animation time" of this FrameSet
 		/**
 		It is the frame time used if this FrameSet is used for an animation and an explicit frame time is not specified.
 		*/
-		void setPreferredAnimationTime( float t )
-		{
-			DEBUG_ASSERT( t > 0, "setPreferredAnimationTime: t must be more than 0" );
-
-			mPreferredAnimationTime = t;
-		}
+		void setPreferredAnimationTime( float t );
 		
 		///Loads this FrameSet from an Atlas, or a Texture+Definition Table combo
 		/**
@@ -80,31 +65,15 @@ namespace Dojo
 
 		virtual bool onLoad();
 		
-		virtual void onUnload( bool soft ) //unload all of the content
-		{
-			DEBUG_ASSERT( loaded, "onUnload: this FrameSet is not loaded" );
-			
-			for( int i = 0; i < frames.size(); ++i )
-				frames.at(i)->onUnload( soft );
-			
-			loaded = false;
-		}
+		///unload all of the content;
+		virtual void onUnload(bool soft);
 				
 		///adds a texture to this frame set
 		/*
 		\param t the texture
 		\param owner specifies  if this FrameSet is the only owner for garbage collection purposes
 		*/
-		void addTexture( Texture* t, bool owner = false )
-		{
-			DEBUG_ASSERT( t != nullptr, "Adding a NULL texture" );
-			DEBUG_ASSERT( !owner || (owner && t->getOwnerFrameSet() == NULL), "This Texture already has an owner FrameSet" );
-			
-			if( owner )
-				t->_notifyOwnerFrameSet( this );
-			
-			frames.add( t );
-		}
+		void addTexture( Texture* t, bool owner = false );
 		
 		///returns the (looped!) frame at index i
 		/** 
@@ -115,10 +84,7 @@ namespace Dojo
 		}
 		
 		///returns a random frame
-		Texture* getRandomFrame()
-		{
-			return frames.at( (int)Math::rangeRandom( 0, (float)frames.size() ) );
-		}
+		Texture* getRandomFrame();
 
 		float getPreferredAnimationTime()
 		{

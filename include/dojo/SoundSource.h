@@ -85,15 +85,7 @@ namespace Dojo
 			}
 
 			///returns the elapsed time since source play 
-			float getElapsedTime()
-			{
-				float elapsed = 0;
-				alGetSourcef( source, AL_SEC_OFFSET, &elapsed );
-				
-				CHECK_AL_ERROR;
-
-				return elapsed;
-			}
+			float getElapsedTime();
 			
 			///is this a dummy sound?
 			bool isValid()

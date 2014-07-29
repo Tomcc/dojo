@@ -3,15 +3,17 @@
 #include "dojo_common_header.h"
 
 #include "Renderable.h"
-#include "TextArea.h"
-#include "Log.h"
+#include "LogListener.h"
 
 namespace Dojo
 {
+	class TextArea;
+	class Log;
+
 	///A Console is a renderable console widget that displays the contents of a Log in realtime
 	class Console : 
 		public Renderable,
-		public Log::Listener
+		public LogListener
 	{
 	public:
 
@@ -19,37 +21,13 @@ namespace Dojo
 		Console( Object* parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source = Dojo::gp_log );
 
 		///adds a log to the listened logs - if getOldMessages is true, all of the messages in the log are added to the console
-		void addLog( Log* l, bool getOldMessages = true )
-		{
-			DEBUG_ASSERT( l, "Passed a NULL Log to a Console" );
-			
-			pLogs.push_back( l );
-			l->addListener( this );
+		void addLog( Log* l, bool getOldMessages = true );
 
-			if( getOldMessages )
-			{
-				for( auto& entry : *l )
-					onLogUpdated( l, entry );
-			}
-		}
-
-		virtual void onLogUpdated( Log* l, const Log::Entry& message )
-		{
-			mDirty = true;
-			
-			mOutput.push_back( message.text );
-
-			if( mOutput.size() > (size_t)mMaxLines )
-				mOutput.erase( mOutput.begin() );
-		}
+		virtual void onLogUpdated( Log* l, const LogEntry& message );
 
 		virtual void onAction( float dt );
 
-		virtual void onDestruction()
-		{
-			for( auto log : pLogs )
-				log->removeListener( this );
-		}
+		virtual void onDestruction();
 
 	protected:
 
@@ -59,7 +37,7 @@ namespace Dojo
 		bool mDirty;
 		String mFontName;
 
-		Dojo::TextArea* mText;
+		TextArea* mText;
 
 		std::vector< Log* > pLogs;
 

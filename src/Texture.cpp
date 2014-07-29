@@ -401,8 +401,7 @@ void Texture::_buildOptimalBillboard()
 		OBB = new Mesh();
 	
 		//build or rebuild the OBB
-		OBB->setVertexFieldEnabled( Mesh::VF_POSITION2D );
-		OBB->setVertexFieldEnabled( Mesh::VF_UV_0 );
+		OBB->setVertexFields({ VertexField::VF_POSITION2D, VertexField::VF_UV_0 });
 	}
 	
 	OBB->begin( 4 );

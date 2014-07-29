@@ -20,17 +20,9 @@ namespace Dojo
 		\param write open the file for writing, create if necessary
 		this WILL NOT open the file for i/o, remember to use open()
 		*/
-		FileStream( const String& path, bool write = false ) :
-		mPath( path ),
-		mWrite( write )
-		{
-			DEBUG_ASSERT( path.size() > 0, "File path cannot be empty" );
-		}
+		FileStream( const String& path, bool write = false );
         
-        virtual ~FileStream()
-        {
-            
-        }
+        virtual ~FileStream();
 
 		///opens the file
 		/**

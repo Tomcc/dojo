@@ -25,11 +25,7 @@
 #include <type_traits>
 #include <utility>
 #include <stdexcept>
-
-
-#include <ogg/ogg.h>
-#include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
+#include <map>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -43,12 +39,6 @@
 #if defined(PLATFORM_WIN32)
 	#include <al.h>
 	#include <alc.h>
-
-	#include <GL/glew.h>
-	#include <GL/glext.h>
-	#include <GL/gl.h>
-	#include <gl/glu.h>
-	#include <gl/wglext.h>
 
 	//this cant be in config.h as it breaks successive system includes
 	#ifdef _DEBUG
@@ -68,24 +58,13 @@
 	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
 
-	#include <OpenGL/gl.h>
-	#include <OpenGL/glext.h>
-
 #elif defined( PLATFORM_LINUX )
 	#include <AL/al.h>
 	#include <AL/alc.h>
-
-	#include <GL/glew.h>
-	#include <GL/glext.h>
-	#include <GL/gl.h>
-
 	#include <signal.h>
 	#include <stdint.h>
 
 #elif defined( PLATFORM_IOS )
-	#include <OpenGLES/ES1/gl.h>
-	#include <OpenGLES/ES1/glext.h>
-
 	#include <OpenAL/al.h>
 	#include <OpenAL/alc.h>
 
@@ -103,6 +82,8 @@
 	#error "No Platform defined!"
 	
 #endif
+
+#include "dojo_gl_header.h" //TODO remove all the various GLEnum/GLUint from the code so we can remove GL from the interface
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

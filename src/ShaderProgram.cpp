@@ -14,10 +14,17 @@ ShaderProgram::ShaderProgram( ResourceGroup* creator, const String& filePath ) :
 	//guess the type from the extension
 	String ext = Utils::getFileExtension( filePath );
 
-	if( ext == String("vs") )	mType = SPT_VERTEX;
-	else if( ext == String("ps") )	mType = SPT_FRAGMENT;
+	if( ext == String("vs") )	mType = ShaderProgramType::VertexShader;
+	else if( ext == String("ps") )	mType = ShaderProgramType::FragmentShader;
 	else
 		DEBUG_FAIL( "Unsupported shader type" );
+}
+
+Dojo::ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
+Resource(nullptr),
+mContentString(contents),
+mType(type) {
+	DEBUG_ASSERT(mContentString.size(), "No shader code was defined (empty string)");
 }
 
 #ifdef DOJO_SHADERS_AVAILABLE
@@ -29,7 +36,7 @@ bool ShaderProgram::_load()
 	GLint compiled, sourceLength = mContentString.size();
 	const char* src = mContentString.c_str();
 
-	mGLShader = glCreateShader( typeGLTypeMap[mType] );
+	mGLShader = glCreateShader( typeGLTypeMap[(byte)mType] );
 
 	glShaderSource( mGLShader, 1, &src, &sourceLength ); //load the program source
 
@@ -110,4 +117,10 @@ bool ShaderProgram::onLoad()
 	}
 
 	return loaded;
+}
+
+ShaderProgram* Dojo::ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
+	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
+
+	return new ShaderProgram(mType, preprocessorHeader + mContentString);
 }

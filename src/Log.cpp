@@ -3,12 +3,13 @@
 #include "Log.h"
 #include "Platform.h"
 #include "BackgroundQueue.h"
+#include "LogListener.h"
 
 using namespace Dojo;
 
-void Log::_append( const String& message, Entry::Level level )
+void Log::_append( const String& message, LogEntry::Level level )
 {
-	mOutput.push_back( Entry( message, level ) );
+	mOutput.push_back( LogEntry( message, level ) );
 
 	if( mOutput.size() == mMaxLines )
 		mOutput.erase( mOutput.begin() );
@@ -17,7 +18,7 @@ void Log::_append( const String& message, Entry::Level level )
 }
 
 ///appends another message to the log, with an optional severity level
-void Log::append( const String& message, Entry::Level level )
+void Log::append( const String& message, LogEntry::Level level )
 {
 	//execute the appending & notifying on the main thread!
 	auto q = Platform::getSingleton()->getBackgroundQueue();
@@ -32,4 +33,9 @@ void Log::append( const String& message, Entry::Level level )
 		} );
 	else
 		_append(message,level);
+}
+
+void Log::_fireOnLogUpdated(const LogEntry& e) {
+	for (auto listener : pListeners)
+		listener->onLogUpdated(this, getLastMessage());
 }

@@ -3,6 +3,7 @@
 #include "TouchArea.h"
 
 #include "GameState.h"
+#include "Renderable.h"
 
 using namespace Dojo;
 

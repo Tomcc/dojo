@@ -13,9 +13,7 @@
 
 #include "Object.h"
 #include "ResourceGroup.h"
-#include "Renderable.h"
 #include "StateInterface.h"
-#include "Touch.h"
 
 namespace Dojo 
 {	
@@ -23,7 +21,8 @@ namespace Dojo
 	class SoundManager;
 	class Game;
     class TouchArea;
-	
+	class Touch;
+
 	///GameState is the Dojo's Level class
 	/**
 	each GameState is in itself an Object, and represents the root node of its Object tree;

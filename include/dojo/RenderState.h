@@ -42,29 +42,11 @@ namespace Dojo
 
 			Texture* texture;
 
-			TextureUnit() :
-			scale( 1,1 ),
-			rotation( 0 ),
-			offset( 0,0 ),
-			texture( nullptr ),
-			optTransform( nullptr )
-			{
+			TextureUnit();
 
-			}
+			~TextureUnit();
 
-			~TextureUnit()
-			{
-				if( optTransform )
-					SAFE_DELETE( optTransform );
-			}
-
-			void applyTransform()
-			{
-				DEBUG_ASSERT( optTransform, "Tried to apply a non-existing texture transform" );
-
-				glMatrixMode( GL_TEXTURE );
-				glLoadMatrixf( glm::value_ptr( *optTransform ) );
-			}
+			void applyTransform();
 
 			void setOffset( const Vector& v )
 			{
@@ -99,11 +81,7 @@ namespace Dojo
 				return rotation;
 			}
 
-			const Matrix& getTransform()
-			{
-				static const Matrix identityMatrix;
-				return isTransformRequired() ? *optTransform : identityMatrix;
-			}
+			const Matrix& getTransform();
 
 			bool isTransformRequired()
 			{
@@ -117,16 +95,7 @@ namespace Dojo
 
 			Matrix* optTransform;
 
-			void _updateTransform()
-			{
-				if( !optTransform )
-					optTransform = new Matrix;
-
-				//build the transform
-				*optTransform = glm::scale( Matrix(1), scale );
-				*optTransform = glm::translate( *optTransform, offset );
-				*optTransform = glm::rotate( *optTransform, Math::toEuler(rotation), Vector::UNIT_Z );
-			}
+			void _updateTransform();
 
 		};
 
@@ -143,24 +112,9 @@ namespace Dojo
 
 		CullMode cullMode;
 
-		RenderState() :
-		mTextureNumber( 0 ),
-		cullMode( CM_BACK ),
-		blendingEnabled( true ),
-		srcBlend( GL_SRC_ALPHA ),
-		destBlend( GL_ONE_MINUS_SRC_ALPHA ),
-		blendEquation( GL_FUNC_ADD ),
-		mesh( nullptr ),
-		pShader( nullptr )
-		{
-			memset( textures, 0, sizeof( textures ) ); //zero all the textures
-		}
+		RenderState();
 		
-		virtual ~RenderState()
-		{
-			for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
-				delete textures[i];
-		}
+		virtual ~RenderState();
 		
 		void setMesh( Mesh* m )
 		{			
@@ -173,21 +127,7 @@ namespace Dojo
 		/**
 		It can be NULL, which means that the slot is disabled.
 		*/
-		void setTexture( Texture* tex, int ID = 0 )
-		{
-			DEBUG_ASSERT( ID >= 0, "Passed a negative texture ID to setTexture()" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
-
-			if( textures[ID] == NULL ) //adding a new one
-			{                
-				++mTextureNumber;
-				textures[ID] = new TextureUnit();
-			}
-			else if( tex == NULL )
-				SAFE_DELETE( textures[ID] );
-
-			textures[ID]->texture = tex;
-		}
+		void setTexture( Texture* tex, int ID = 0 );
 
 		///enables or disables blending of this RS
 		void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
@@ -200,45 +140,17 @@ namespace Dojo
 		}
 
 		///sets an abstract photoshop-like blending mode
-		void setBlending( BlendingMode mode )
-		{
-			static const GLenum modeToGLTable[] = {
-				GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, //alphablend
-				GL_DST_COLOR, GL_ZERO, //multiply
-				GL_ONE, GL_ONE, //add
-				GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR //invert
-			};
-
-			setBlending( modeToGLTable[mode*2], modeToGLTable[mode*2+1] );
-		}
+		void setBlending( BlendingMode mode );
 
 		///sets the Shader material to be used for this RenderState
 		/**
 		\remark the shader may be null to remove shader use
 		*/
-		void setShader( Shader* shader )
-		{
-			pShader = shader;
-		}
+		void setShader( Shader* shader );
 				
-		Texture* getTexture( int ID = 0 )
-		{
-			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative texture ID" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS" );
-	
-			if( textures[ID] )
-				return textures[ID]->texture;
-			else
-				return NULL;
-		}
+		Texture* getTexture( int ID = 0 );
 
-		TextureUnit* getTextureUnit( int ID )
-		{
-			DEBUG_ASSERT( ID >= 0, "Can't retrieve a negative textureUnit" );
-			DEBUG_ASSERT( ID < DOJO_MAX_TEXTURES, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS" );
-
-			return textures[ID];
-		}
+		TextureUnit* getTextureUnit( int ID );
 
 		///returns the Mesh currently used by this state
 		Mesh* getMesh()								{	return mesh;			}
@@ -258,46 +170,17 @@ namespace Dojo
 		bool isAlphaRequired();
 		
 		///returns the "weight" of the changes needed to pass from "this" to "s"
-		int getDistance( RenderState* s )
-		{
-			DEBUG_ASSERT( s, "getDistance: The input RenderState is null" );
-			
-			int dist = 0;
-			
-			if( s->mesh != mesh )
-				dist += 3;
-			
-			for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
-			{
-				if( textures[i] != s->textures[i] )
-					dist += 2;
-			}
-			
-			if( s->isAlphaRequired() != isAlphaRequired() )
-				dist += 1;
-			
-			return dist;
-		}
+		int getDistance( RenderState* s );
 		
 		void applyState();
 		
 		void commitChanges( RenderState* nextState );
 
 		///sets up destBlend and srcBlend to use normal alpha blending
-		void useAlphaBlend()
-		{
-			srcBlend = GL_SRC_ALPHA;
-			destBlend = GL_ONE_MINUS_SRC_ALPHA;
-			blendEquation = GL_FUNC_ADD;
-		}
+		void useAlphaBlend();
 
 		///sets up destBlend and srcBlend to use alpha+additive blending
-		void useAdditiveBlend()
-		{
-			destBlend = GL_ONE;
-			srcBlend = GL_SRC_ALPHA;
-			blendEquation = GL_FUNC_ADD;
-		}
+		void useAdditiveBlend();
 				
 	protected:
 			

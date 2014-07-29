@@ -50,13 +50,7 @@ namespace Dojo {
 
 		virtual ~Object();
 		
-		virtual void reset()
-		{
-			active = true;
-			speed.x = speed.y = 0;
-						
-			updateWorldTransform();
-		}
+		virtual void reset();
 		
 		//forces an update of the world transform
 		void updateWorldTransform();
@@ -117,30 +111,12 @@ namespace Dojo {
 		}
 
 		///returns the position in local coordinates of the given world position
-		Vector getLocalPosition( const Vector& worldPos )
-		{
-			Matrix inv = glm::inverse( getWorldTransform() ); //TODO make faster for gods' sake
-			glm::vec4 p( worldPos.x, worldPos.y, worldPos.z, 1 );
-			p = inv * p;
-
-			return Vector( p.x, p.y, p.z );
-		}
+		Vector getLocalPosition( const Vector& worldPos );
 		
 		///returns a local direction in world space
-		Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z )
-		{
-			glm::vec4 dir( dir3, 0 );
-			dir = getWorldTransform() * dir;
-			
-			return Vector( dir.x, dir.y, dir.z );
-		}
+		Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z );
 
-		Vector getLocalDirection( const Vector& worldDir )
-		{
-			DEBUG_TODO;
-
-			return Vector::ZERO;
-		}
+		Vector getLocalDirection( const Vector& worldDir );
 		
 		const Quaternion getRotation()
 		{
@@ -159,13 +135,7 @@ namespace Dojo {
 			return mWorldTransform; 
 		}
 
-		Object* getChild( int i )				
-		{
-			DEBUG_ASSERT( hasChilds(), "Tried to retrieve a child from an object with no childs" );
-			DEBUG_ASSERT( childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child" );
-			
-			return childs->at( i );
-		}
+		Object* getChild( int i );
 		
 		const Vector& getWorldMax() const
 		{
@@ -214,44 +184,13 @@ namespace Dojo {
 		
 		void updateChilds( float dt );
 		
-		bool contains( const Vector& p )
-		{
-			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
-			
-			return 
-			p.x <= worldUpperBound.x && 
-			p.x >= worldLowerBound.x && 
-			p.y <= worldUpperBound.y && 
-			p.y >= worldLowerBound.y &&
-			p.z <= worldUpperBound.z && 
-			p.z >= worldLowerBound.z;
-		}
+		bool contains( const Vector& p );
 
-		bool contains2D( const Vector& p )
-		{
-			DEBUG_ASSERT( mNeedsAABB, "contains: this Object has no AABB" );
-
-			return 
-				p.x <= worldUpperBound.x && 
-				p.x >= worldLowerBound.x && 
-				p.y <= worldUpperBound.y && 
-				p.y >= worldLowerBound.y;
-		}
+		bool contains2D( const Vector& p );
 		
-		bool collidesWith( const Vector& MAX, const Vector& MIN )
-		{		
-			DEBUG_ASSERT( mNeedsAABB, "collides: this Object has no AABB" );
-			
-			return Math::AABBsCollide( getWorldMax(), getWorldMin(), MAX, MIN );
-		}
+		bool collidesWith( const Vector& MAX, const Vector& MIN );
 		
-		bool collidesWith( Object * t )
-		{			
-			DEBUG_ASSERT( t, "collidesWith: colliding Object is NULL" );
-			DEBUG_ASSERT( mNeedsAABB, "collidesWith: this Object has no AABB" );
-
-			return collidesWith( t->getWorldMax(), t->getWorldMin() );
-		}
+		bool collidesWith( Object * t );
 		
 		virtual void onAction( float dt );
 

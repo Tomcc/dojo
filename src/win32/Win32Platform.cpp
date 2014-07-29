@@ -27,7 +27,7 @@ void _debugWin32Error( const char* msg, const char *file_source, int line, const
 {
 	DWORD error = GetLastError();
 
-	Dojo::gp_assert_handler( 
+	gp_assert_handler( 
 		("Win32 encountered an error: " + String( (int)error ) + " (" + msg + ")" ).ASCII().c_str(),
 		"error != GL_NO_ERROR",
 		NULL, 
@@ -694,7 +694,7 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 	input->_fireTouchEndEvent( cursorPos, type );
 }
 
-void Dojo::Win32Platform::setMouseLocked(bool locked)
+void Win32Platform::setMouseLocked(bool locked)
 {
 	if (mouseLocked != locked) {
 
@@ -705,13 +705,33 @@ void Dojo::Win32Platform::setMouseLocked(bool locked)
 	}
 }
 
+void Win32Platform::setVSync(int interval/*=1*/) {
+	typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
+
+	char *extensions = (char*)glGetString(GL_EXTENSIONS);
+
+	if (strstr(extensions, "WGL_EXT_swap_control") == 0)
+	{
+		DEBUG_MESSAGE("Warning: \"WGL_EXT_swap_control\" extension not supported on your computer, disabling vsync");
+		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
+	}
+	else
+	{
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+		if (wglSwapIntervalEXT)
+			wglSwapIntervalEXT(interval);
+	}
+}
+
 
 void Win32Platform::keyPressed( int kc )
 {
 	//TODO reimplement text!
 	lastPressedText = 0; 
 
-	Dojo::KeyCode key = mKeyMap[ kc ];
+	KeyCode key = mKeyMap[ kc ];
 
 #ifdef _DEBUG
 	if( key == KC_DIVIDE )	

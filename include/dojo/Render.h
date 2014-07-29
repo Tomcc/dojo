@@ -72,66 +72,24 @@ namespace Dojo {
 				
 		void removeRenderable( Renderable* s );
 		
-		void removeAllRenderables()
-		{
-			for( int i = 0; i < negativeLayers.size(); ++i )
-				negativeLayers.at(i)->clear();
-			
-			for( int i = 0; i < positiveLayers.size(); ++i )
-				positiveLayers.at(i)->clear();
-		}
+		void removeAllRenderables();
 
-		void removeViewport( Viewport* v )
-		{
-			mViewportList.remove( v );
-		}
+		void removeViewport( Viewport* v );
 
-		void removeAllViewports()
-		{
-			mViewportList.clear();
-		}
+		void removeAllViewports();
 		
-		void addLight( Light* l )
-		{
-			DEBUG_ASSERT( l, "addLight: null light passed" );
-			DEBUG_ASSERT( lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)" );
-			
-			lights.add( l );
-		}
+		void addLight( Light* l );
 		
-		void removeLight( Light* l )
-		{
-			DEBUG_ASSERT( l, "removeLight: null light passed" );
-			
-			lights.remove( l );	
-			
-			//remove removes always the last element in the list - just disable the last index now
-			glDisable( GL_LIGHT0 + lights.size() );
-		}
+		void removeLight( Light* l );
 		
 		///completely removes all layers!
-		void clearLayers()
-		{
-			for( int i = 0; i < negativeLayers.size(); ++i )
-				SAFE_DELETE( negativeLayers[i] );
-			
-			negativeLayers.clear();
-			
-			for( int i = 0; i < positiveLayers.size(); ++i )
-				SAFE_DELETE( positiveLayers[i] );
-			
-			positiveLayers.clear();
-		}
+		void clearLayers();
 		
 		void addViewport( Viewport* v );
 						
 		void setInterfaceOrientation( Orientation o );
 
-		void setDefaultAmbient( const Color& a )
-		{
-			defaultAmbient = a;
-			defaultAmbient.a = 1;
-		}
+		void setDefaultAmbient( const Color& a );
 		
 		Orientation getInterfaceOrientation()
 		{

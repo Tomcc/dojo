@@ -140,10 +140,7 @@ namespace Dojo
 		SegmentList outHullSegments;
 
 		///Creates an empty 2D Tesselation object
-		Tessellation()
-		{
-
-		}
+		Tessellation();
 
 		///Adds a 2D point to the tessellation contour
 		void startPath( const Vector& p )
@@ -152,58 +149,13 @@ namespace Dojo
 		}
 
 		///adds a point and the indices to construct a single segment starting from the last point
-		void addSegment( const Vector& p )
-		{
-			int idx = positions.size()-1;
-			positions.push_back(p);
-
-			//add indices to the point
-			segments.push_back( Segment( idx, idx+1 ) );
-		}
+		void addSegment( const Vector& p );
 
 		///adds a quadratic bezier curve (single control point) starting from the last point
-		void addQuadradratic( const Vector& B, const Vector& C, float pointsPerUnitLength )
-		{
-			Vector U, V, A = positions.back().toVec();
-
-			//TODO actually add points evaluating the "curvyness" of the path
-			float length = A.distance( B ) + B.distance( C ); //compute a rough length of this arc
-			int subdivs = (int)(length * pointsPerUnitLength + 1);
-
-			for(int i = 1; i <= subdivs; i++)
-			{
-				float t = (float)i / subdivs;
-				
-				U = A.lerpTo( t, B );
-				V = B.lerpTo( t, C );
-
-				addSegment( U.lerpTo( t, V ) );
-			}
-		}
+		void addQuadradratic( const Vector& B, const Vector& C, float pointsPerUnitLength );
 
 		///adds a cubic bezier curve (double control point) starting from the last point
-		void addCubic( const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength )
-		{
-			Vector U,V,W,M,N, A = positions.back().toVec();
-			
-			//TODO actually add points evaluating the "curvyness" of the path
-			float length = A.distance( B ) + B.distance( C ) + C.distance( D ); //compute a rough length of this arc
-			int subdivs = (int)(length * pointsPerUnitLength + 1);
-
-			for( int i = 0; i <= subdivs; i++)
-			{
-				float t = (float)i / subdivs;
-
-				U = A.lerpTo( t, B );
-				V = B.lerpTo( t, C );
-				W = C.lerpTo( t, D );
-
-				M = U.lerpTo( t, V );
-				N = V.lerpTo( t, W );
-
-				addSegment( M.lerpTo( t, N ) );
-			}
-		}
+		void addCubic( const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength );
 
 		///manually signals that whatever surface chunk enclosing this marker is an hole
 		void addHoleMarker(const Vector& pos)

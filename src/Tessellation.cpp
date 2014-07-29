@@ -21,6 +21,10 @@ Tessellation::GUESS_HOLES = 0x1 << 2,
 Tessellation::DONT_MERGE_POINTS = 0x1 << 3,
 Tessellation::GENERATE_HULL = 0x1 << 4;
 
+Tessellation::Tessellation() {
+
+}
+
 void Tessellation::mergePoints( int i1, int i2 )
 {
 	//remove i2 from the list
@@ -34,6 +38,54 @@ void Tessellation::mergePoints( int i1, int i2 )
 
 		if( segment.i2 == i2 )			segment.i2 = i1;
 		else if( segment.i2 > i2 )		--segment.i2;
+	}
+}
+
+void Tessellation::addSegment(const Vector& p) {
+	int idx = positions.size() - 1;
+	positions.push_back(p);
+
+	//add indices to the point
+	segments.push_back(Segment(idx, idx + 1));
+}
+
+void Tessellation::addQuadradratic(const Vector& B, const Vector& C, float pointsPerUnitLength) {
+	Vector U, V, A = positions.back().toVec();
+
+	//TODO actually add points evaluating the "curvyness" of the path
+	float length = A.distance(B) + B.distance(C); //compute a rough length of this arc
+	int subdivs = (int)(length * pointsPerUnitLength + 1);
+
+	for (int i = 1; i <= subdivs; i++)
+	{
+		float t = (float)i / subdivs;
+
+		U = A.lerpTo(t, B);
+		V = B.lerpTo(t, C);
+
+		addSegment(U.lerpTo(t, V));
+	}
+}
+
+void Tessellation::addCubic(const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength) {
+	Vector U, V, W, M, N, A = positions.back().toVec();
+
+	//TODO actually add points evaluating the "curvyness" of the path
+	float length = A.distance(B) + B.distance(C) + C.distance(D); //compute a rough length of this arc
+	int subdivs = (int)(length * pointsPerUnitLength + 1);
+
+	for (int i = 0; i <= subdivs; i++)
+	{
+		float t = (float)i / subdivs;
+
+		U = A.lerpTo(t, B);
+		V = B.lerpTo(t, C);
+		W = C.lerpTo(t, D);
+
+		M = U.lerpTo(t, V);
+		N = V.lerpTo(t, W);
+
+		addSegment(M.lerpTo(t, N));
 	}
 }
 

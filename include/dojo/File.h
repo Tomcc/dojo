@@ -11,100 +11,28 @@ namespace Dojo
 	{
 	public:
 
-		File( const String & path, bool write = false ) :
-		FileStream( path, write ),
-		mAccess( SA_BAD_FILE ),
-		mFile( nullptr ),
-		mSize( 0 )
-		{
+		File( const String & path, bool write = false );
 
-		}
-
-        virtual ~File()
-        {
-            if( isOpen() )
-                close();
-        }
+        virtual ~File();
         
-		virtual Access open()
-		{
-			DEBUG_ASSERT( !isOpen(), "The file was already open" );
+		virtual Access open();
 
-			//open the file
-			const char* openmode = mWrite ? "wb" : "rb";
-			mFile = fopen( mPath.UTF8().c_str(), openmode );
+		virtual long getSize();
 
-			if( mFile )
-			{
-				mAccess = mWrite ? SA_WRITEONLY : SA_READONLY;
-				_updateSize();
-			}
-			else
-				mAccess = SA_BAD_FILE;
+		virtual Access getAccess();
 
-			return getAccess();
-		}
+		virtual long getCurrentPosition();
 
-		virtual long getSize()
-		{
-			DEBUG_ASSERT( isReadable(), "The file must be readable to get its size" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
+		virtual int seek( long offset, int fromWhere = SEEK_SET );
 
-			return mSize;
-		}
+		virtual int read(  byte* buf, int number );
 
-		virtual Access getAccess()
-		{
-			return mAccess;
-		}
+		virtual void write( byte* buf, int size );
 
-		virtual long getCurrentPosition()
-		{
-			DEBUG_ASSERT( isOpen(), "The file must be open" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			return ftell( mFile );
-		}
-
-		virtual int seek( long offset, int fromWhere = SEEK_SET )
-		{
-			DEBUG_ASSERT( isOpen(), "The file must be open" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			return fseek( mFile, offset, fromWhere );
-		}
-
-		virtual int read(  byte* buf, int number )
-		{
-			DEBUG_ASSERT( isReadable(), "The file must be open and readable" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			return fread( buf, 1, number, mFile );
-		}
-
-		virtual void write( byte* buf, int size )
-		{
-			DEBUG_ASSERT( isWriteable(), "The file must be open and write enabled" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			fwrite( buf, 1, size, mFile );
-		}
-
-		virtual void close()
-		{
-			DEBUG_ASSERT( isOpen(), "Tried to close a file which wasn't open" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			fclose( mFile );
-			mFile = nullptr;
-			mAccess = SA_BAD_FILE;
-		}
+		virtual void close();
         
         ///creates a new File* to read the underlying file. Does not copy reading status
-        virtual Stream* copy()
-        {
-            return new File( mPath, mWrite );
-        }
+        virtual Stream* copy();
 
 	protected:
 
@@ -113,16 +41,7 @@ namespace Dojo
 
 		Access mAccess;
 
-		void _updateSize()
-		{
-			DEBUG_ASSERT( isReadable(), "The file must be readable to get its size" );
-			DEBUG_ASSERT( mFile, "The C file is invalid" );
-
-			long curptr = ftell( mFile );
-			fseek( mFile, 0, SEEK_END );
-			mSize = ftell( mFile );
-			fseek( mFile, curptr, SEEK_SET );
-		}
+		void _updateSize();
 	private:
 	};
 }

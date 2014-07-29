@@ -12,7 +12,6 @@
 #include "dojo_common_header.h"
 
 #include "Array.h"
-
 #include "AnimatedQuad.h"
 
 namespace Dojo
@@ -34,66 +33,21 @@ namespace Dojo
 			\param pixelPerfect if pixelPerfect, an objects' scale is bound to the pixel size of the current frame and to the pixel size of the current Viewport. A pixelPerfect object can still be scaled using pixelScale.*/
 		Sprite( Object* parent, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = -1, bool pixelPerfect = true );
 				
-		virtual ~Sprite()
-		{
-			for( int i = 0; i < animations.size(); ++i )
-				SAFE_DELETE( animations.at(i) );
-						
-			//frames have to be released manually from the group!
-		}		
+		virtual ~Sprite();		
 
-		virtual void reset()
-		{
-			AnimatedQuad::reset();
-
-			if( animations.size() )
-				setAnimation(0);
-		}
+		virtual void reset();
 
 		///registers the given animation and returns its handle
 		/**
 		If timePerFrame is not specified, the animation tries to use the frameset's preferred
 		*/
-		int registerAnimation( FrameSet* set, float timePerFrame = -1 )
-		{
-			DEBUG_ASSERT( set != nullptr, "registering a null frameset" );
-
-			if( timePerFrame < 0 )
-				timePerFrame = set->getPreferredAnimationTime();
-
-			DEBUG_ASSERT( timePerFrame >= 0, "the time per frame of an animation can't be negative" );
-						
-			Animation* a = new Animation( set, timePerFrame );
-		
-			animations.add( a );		
-			
-			//if no current animation, set this as default
-			if( mAnimationIdx == -1 )
-				setAnimation( 0 );
-			
-			return animations.size()-1;
-		}
+		int registerAnimation( FrameSet* set, float timePerFrame = -1 );
 		
 		///registers an animation using the FrameSet named base
 		int registerAnimation( const String& base, float timePerFrame = -1 );
 				
 		///sets the animation at the given index
-		void setAnimation( int i ) 	
-		{
-			mAnimationIdx = i;
-
-			DEBUG_ASSERT( mAnimationIdx >= 0, "negative animation index" );
-			DEBUG_ASSERT( animations.size() > mAnimationIdx, "OOB animation index" );
-			
-			if( animation )
-				animation->_unset();
-
-			animation = animations.at( mAnimationIdx );
-			
-			_setTexture( animation->getCurrentFrame() );
-			
-			_updateScreenSize();
-		}
+		void setAnimation( int i );
 
 		///returns the current animation Index
 		int getAnimationIndex()

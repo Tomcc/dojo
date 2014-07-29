@@ -3,14 +3,15 @@
 #include "dojo_common_header.h"
 
 #include "Resource.h"
-#include "Table.h"
-#include "ShaderProgram.h"
-#include "Mesh.h"
+#include "ShaderProgramType.h"
+#include "VertexField.h"
 
 namespace Dojo
 {
 	class Renderable;
 	class Render;
+	class ShaderProgram;
+	class Table;
 
 	///A Shader is an object representing a VSH+PSH couple and its attributes.
 	/**
@@ -59,14 +60,14 @@ namespace Dojo
 			GLint location;
 			GLint count; ///the array size *for a single vertex*
 
-			Mesh::VertexField builtInAttribute;
+			VertexField builtInAttribute;
 
 			VertexAttribute()
 			{
 
 			}
 
-			VertexAttribute( GLint loc, GLint size, Mesh::VertexField bia ) :
+			VertexAttribute( GLint loc, GLint size, VertexField bia ) :
 				location( loc ),
 				count( size ),
 				builtInAttribute( bia )
@@ -88,9 +89,9 @@ namespace Dojo
 		void setUniformCallback( const String& name, const UniformCallback& dataBinder );
 
 		///returns the program currently bound for "type" pipeline pass
-		ShaderProgram* getProgramFor( ShaderProgram::Type type )
+		ShaderProgram* getProgramFor(ShaderProgramType type)
 		{
-			return pProgram[ type ];
+			return pProgram[ (unsigned char)type ];
 		}
 
 		///returns the GL program handle
@@ -142,7 +143,7 @@ namespace Dojo
 		typedef std::unordered_map< std::string, Uniform > NameUniformMap;
 
 		typedef std::unordered_map< std::string, BuiltInUniform > NameBuiltInUniformMap;
-		typedef std::unordered_map< std::string, Mesh::VertexField > NameBuiltInAttributeMap;
+		typedef std::unordered_map< std::string, VertexField > NameBuiltInAttributeMap;
 
 		static NameBuiltInUniformMap sBuiltiInUniformsNameMap;
 		static NameBuiltInAttributeMap sBuiltInAttributeNameMap;
@@ -151,7 +152,7 @@ namespace Dojo
 		static void _populateAttributeNameMap();
 
 		static BuiltInUniform _getUniformForName( const std::string& name );
-		static Mesh::VertexField _getAttributeForName( const std::string& name );
+		static VertexField _getAttributeForName( const std::string& name );
 
 		std::string mPreprocessorHeader;
 
@@ -160,12 +161,12 @@ namespace Dojo
 
 		GLuint mGLProgram;
 
-		ShaderProgram* pProgram[ ShaderProgram::_SPT_COUNT ];
-		bool mOwnsProgram[ ShaderProgram::_SPT_COUNT ];
+		ShaderProgram* pProgram[ (byte)ShaderProgramType::_Count ];
+		bool mOwnsProgram[ (byte)ShaderProgramType::_Count ];
 
 		Render* pRender;
 
-		void _assignProgram( const Table& desc, ShaderProgram::Type type );
+		void _assignProgram(const Table& desc, ShaderProgramType type);
         
         const void* _getUniformData( const Uniform& uniform, Renderable* user );
 

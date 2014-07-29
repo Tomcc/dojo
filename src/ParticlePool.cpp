@@ -6,6 +6,8 @@
 #include "Platform.h"
 #include "Render.h"
 #include "GameState.h"
+#include "FrameSet.h"
+#include "Texture.h"
 
 using namespace Dojo;
 

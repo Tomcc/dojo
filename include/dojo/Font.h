@@ -12,12 +12,8 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Texture.h"
-#include "FrameSet.h"
-
-#include "Tessellation.h"
-
-#include "Utils.h"
+#include "Color.h"
+#include "Resource.h"
 
 #define FONT_PPI (1.f/64.f)
 
@@ -27,7 +23,9 @@
 
 namespace Dojo 
 {
+	class Texture;
 	class ResourceGroup;
+	class Tessellation;
 
 	class Font : public Dojo::Resource
 	{
@@ -55,26 +53,15 @@ namespace Dojo
 
 			Page* page;
 
-			Character()
-			{
-
-			}
+			Character();
 
 			void init( Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline );
 
 			///return 
-			Texture* getTexture()
-			{
-				return page->getTexture();
-			}
+			Texture* getTexture();
 
 			///returns the triangle tesselation of this character
-			Tessellation* getTesselation()
-			{
-				DEBUG_ASSERT( mTesselation.get(), "Tried to get a tesselation but this Font wasn't tesselated (forgot to specify 'tesselate' in the config?)" );
-
-				return mTesselation.get();
-			}
+			Tessellation* getTesselation();
 
 		protected:
 
@@ -89,20 +76,11 @@ namespace Dojo
 			///create a new page for the given index
 			Page( Font* font, int index );
 
-			virtual ~Page()
-			{
-				SAFE_DELETE( texture );
-			}
+			virtual ~Page();
 
 			virtual bool onLoad();
 
-			virtual void onUnload( bool soft = false )
-			{
-				//a font page can always unload
-				texture->onUnload(); //force unload
-
-				loaded = false;
-			}
+			virtual void onUnload( bool soft = false );
 
 			virtual bool isReloadable()
 			{
@@ -168,21 +146,7 @@ namespace Dojo
 		int getFontHeight()			{	return fontHeight;	}
 
 		///returns (and lazy-loads) the character Page with the given index
-		Page* getPage( int index )
-		{
-			DEBUG_ASSERT( index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index" );
-
-			PageMap::iterator itr = pages.find( index );
-
-			if( itr == pages.end() )
-			{
-				Page* p = new Page( this, index );
-				pages[ index ] = p;
-				p->onLoad();
-				return p;
-			}
-			else return itr->second;
-		}
+		Page* getPage( int index );
 
 		///returns (and lazy-loads) the Page containing this Unicode character
 		Page* getPageForChar( unichar c )
@@ -191,16 +155,10 @@ namespace Dojo
 		}
 
 		///returns (and lazy-loads) the Character internal representation of this Unicode character
-		Character* getCharacter( unichar c )
-		{
-			return getPageForChar( c )->getChar( c );
-		}
+		Character* getCharacter( unichar c );
 
 		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
-		Texture* getTexture( unichar c )
-		{
-			return getPageForChar( c )->getTexture();
-		}
+		Texture* getTexture( unichar c );
 
 		float getKerning( Character* next, Character* prev );
 
@@ -212,10 +170,7 @@ namespace Dojo
 		///returns the length in pixel for the given string
 		int getPixelLength( const String& s );
 
-		int getCharIndex( Character* c )
-		{
-			return FT_Get_Char_Index( face, c->character );
-		}
+		int getCharIndex( Character* c );
 
 		///returns how many vertices per unit of lenght are created for the poly outlines of this font
 		float getPolyOutlineQuality()
@@ -246,11 +201,7 @@ namespace Dojo
 		}
 
 		///forces the loading of the given pages without waiting for lazy-loading
-		void preloadPages( const char pages[], int n ) 
-		{
-			for( int i = 0; i < n; ++i )
-				getPage( pages[i] );
-		}
+		void preloadPages( const char pages[], int n );
 		
 	protected:
 		

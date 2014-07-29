@@ -4,8 +4,29 @@
 
 #include "ResourceGroup.h"
 #include "Platform.h"
+#include "Texture.h"
+#include "Table.h"
 
 using namespace Dojo;
+
+FrameSet::FrameSet(ResourceGroup* creator, const String& prefixName) :
+Resource(creator),
+name(prefixName),
+mPreferredAnimationTime(0) {
+
+}
+
+FrameSet::~FrameSet() {
+	//destroy child textures
+	for (int i = 0; i < frames.size(); ++i)
+		SAFE_DELETE(frames[i]);
+}
+
+void FrameSet::setPreferredAnimationTime(float t) {
+	DEBUG_ASSERT(t > 0, "setPreferredAnimationTime: t must be more than 0");
+
+	mPreferredAnimationTime = t;
+}
 
 void FrameSet::setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider )
 {
@@ -63,4 +84,26 @@ bool FrameSet::onLoad()
 	return loaded;	
 }
 
+void FrameSet::onUnload(bool soft) 
+{
+	DEBUG_ASSERT(loaded, "onUnload: this FrameSet is not loaded");
 
+	for (int i = 0; i < frames.size(); ++i)
+		frames.at(i)->onUnload(soft);
+
+	loaded = false;
+}
+
+void FrameSet::addTexture(Texture* t, bool owner /*= false */) {
+	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture");
+	DEBUG_ASSERT(!owner || (owner && t->getOwnerFrameSet() == NULL), "This Texture already has an owner FrameSet");
+
+	if (owner)
+		t->_notifyOwnerFrameSet(this);
+
+	frames.add(t);
+}
+
+Texture* Dojo::FrameSet::getRandomFrame() {
+	return frames.at((int)Math::rangeRandom(0, (float)frames.size()));
+}

@@ -28,12 +28,12 @@ const int Mesh::VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat )
 };
 
-void Dojo::Mesh::destroyBuffers() {
+void Mesh::destroyBuffers() {
 	auto cleanup = std::move(vertices);
 	cleanup = std::move(indices);
 }
 
-void Dojo::Mesh::begin(int extimatedVerts /*= 1 */) {
+void Mesh::begin(int extimatedVerts /*= 1 */) {
 	//be sure that we aren't already building
 	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
 	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
@@ -49,7 +49,7 @@ void Dojo::Mesh::begin(int extimatedVerts /*= 1 */) {
 	editing = true;
 }
 
-Dojo::Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
+Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
 Resource(creator)
 {
 	//set all fields to zero
@@ -59,7 +59,7 @@ Resource(creator)
 	setIndexByteSize(sizeof(GLushort));
 }
 
-Dojo::Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
+Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
 Resource(creator, filePath) 
 {
 	//set all fields to zero
@@ -69,7 +69,7 @@ Resource(creator, filePath)
 	setIndexByteSize(sizeof(GLushort));
 }
 
-void Dojo::Mesh::setIndexByteSize(byte bytenumber) {
+void Mesh::setIndexByteSize(byte bytenumber) {
 	DEBUG_ASSERT(!editing, "setIndexByteSize must be called BEFORE begin!");
 	DEBUG_ASSERT(
 		bytenumber == 1 ||
@@ -99,18 +99,24 @@ void Dojo::Mesh::setIndexByteSize(byte bytenumber) {
 	}
 }
 
-void Dojo::Mesh::setVertexFieldEnabled(VertexField f) {
+void Mesh::setVertexFieldEnabled(VertexField f) {
 	DEBUG_ASSERT(!editing, "setVertexFieldEnabled must be called BEFORE begin!");
 
-	vertexFieldOffset[f] = vertexSize;
-	vertexSize += VERTEX_FIELD_SIZES[f];
+	_offset(f) = vertexSize;
+	vertexSize += VERTEX_FIELD_SIZES[(byte)f];
 }
 
-void Dojo::Mesh::setDynamic(bool d) {
+void Dojo::Mesh::setVertexFields(std::initializer_list<VertexField> fs) {
+	for (auto f : fs)
+		setVertexFieldEnabled(f);
+}
+
+
+void Mesh::setDynamic(bool d) {
 	dynamic = d;
 }
 
-void Dojo::Mesh::index(IndexType idx) {
+void Mesh::index(IndexType idx) {
 	DEBUG_ASSERT(isEditing(), "index: this Mesh is not in Edit mode");
 	DEBUG_ASSERT(idx <= indexMaxValue, "index: the index passed is too big to be contained in this mesh's index format, see setIndexByteSize");
 
@@ -164,7 +170,7 @@ void Mesh::vertex(const Vector& v)
 {
 	_prepareVertex(v);
 
-	if (isVertexFieldEnabled(Mesh::VF_POSITION3D))
+	if (isVertexFieldEnabled(VertexField::VF_POSITION3D))
 		*((Vector*)currentVertex) = v;
 	else {
 		float* ptr = (float*)currentVertex;
@@ -174,49 +180,58 @@ void Mesh::vertex(const Vector& v)
 	}
 }
 
+byte& Dojo::Mesh::_offset(VertexField f) {
+	return vertexFieldOffset[(byte)f];
+}
+
+
+byte& Dojo::Mesh::_offset(VertexField f, int subID) {
+	return vertexFieldOffset[(byte)((int)f + subID)];
+}
+
 void Mesh::vertex( float x, float y, float z )
 {		
 	vertex(Vector(x, y, z));
 }
 
-void Dojo::Mesh::uv(float u, float v, byte set /*= 0 */) {
+void Mesh::uv(float u, float v, byte set /*= 0 */) {
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
-	float* ptr = (float*)(currentVertex + vertexFieldOffset[VF_UV_0 + set]);
+	float* ptr = (float*)(currentVertex + _offset(VertexField::VF_UV_0, set));
 	ptr[0] = u;
 	ptr[1] = v;
 }
 
-void Dojo::Mesh::color(const Color& c) {
+void Mesh::color(const Color& c) {
 
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
-	*((Color::RGBAPixel*)(currentVertex + vertexFieldOffset[VF_COLOR])) = c.toRGBA();
+	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::VF_COLOR))) = c.toRGBA();
 }
 
-void Dojo::Mesh::color(float r, float g, float b, float a) {
+void Mesh::color(float r, float g, float b, float a) {
 	color(Color(r, g, b, a));
 }
 
-void Dojo::Mesh::normal(const Vector& n) {
-	*((Vector*)(currentVertex + vertexFieldOffset[VF_NORMAL])) = n;
+void Mesh::normal(const Vector& n) {
+	*((Vector*)(currentVertex + _offset(VertexField::VF_NORMAL))) = n;
 }
 
-void Dojo::Mesh::normal(float x, float y, float z) {
+void Mesh::normal(float x, float y, float z) {
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
 	normal(Vector(x,y,z));
 }
 
-void Dojo::Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset) {
-	outOffset = (void*)vertexFieldOffset[field];
+void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset) {
+	outOffset = (void*)_offset(field);
 
 	switch (field)
 	{
-	case VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
-	case VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
-	case VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
-	case VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	case VertexField::VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
+	case VertexField::VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	case VertexField::VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
+	case VertexField::VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
 
 	default: //textures
 		outComponentsType = GL_FLOAT;
@@ -240,7 +255,7 @@ void Mesh::_bindAttribArrays( Shader* shader )
 
 		for( auto& attr : shader->getAttributes() )
 		{
-			if( attr.second.builtInAttribute == VF_NONE || !isVertexFieldEnabled( attr.second.builtInAttribute ) )		//skip non-provided attributes
+			if( attr.second.builtInAttribute == VertexField::VF_NONE || !isVertexFieldEnabled( attr.second.builtInAttribute ) )		//skip non-provided attributes
 				continue;
 
 			_getVertexFieldData( attr.second.builtInAttribute, components, componentsType, normalized, offset );
@@ -261,29 +276,29 @@ void Mesh::_bindAttribArrays( Shader* shader )
 #endif
 	{
 		//construct attributes
-		for( int i = 0; i < _VF_COUNT; ++i )
+		for( int i = 0; i < (int)VertexField::_VF_COUNT; ++i )
 		{
 			GLenum state = glFeatureStateMap[i];
 			VertexField ft = (VertexField)i;
 
-			if( ft >= VF_UV_0 && ft <= VF_UV_MAX ) //a texture
-				glClientActiveTexture( GL_TEXTURE0 + (ft - VF_UV_0) ); //bind the correct texture (this has to be called *before* EnableClientState
+			if (ft >= VertexField::VF_UV_0 && ft <= VertexField::VF_UV_MAX) //a texture
+				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::VF_UV_0)); //bind the correct texture (this has to be called *before* EnableClientState
 
 			if( isVertexFieldEnabled( ft ) )	//bind data and client states
 			{
 				glEnableClientState( state );
 				CHECK_GL_ERROR;
 
-				void* fieldOffset = (void*)vertexFieldOffset[ ft ];
+				void* fieldOffset = (void*)_offset(ft);
 
 				switch( ft )
 				{
-				case VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset );	break;
-				case VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset ); break;
-				case VF_NORMAL:				glNormalPointer( GL_FLOAT, vertexSize, fieldOffset );	break;
-				case VF_COLOR:				glColorPointer( 4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset );	break;
+				case VertexField::VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);	break;
+				case VertexField::VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset); break;
+				case VertexField::VF_NORMAL:				glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);	break;
+				case VertexField::VF_COLOR:				glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);	break;
 				default: 
-					if( ft >= VF_UV_0 && ft <= VF_UV_MAX ) //texture binding						
+					if (ft >= VertexField::VF_UV_0 && ft <= VertexField::VF_UV_MAX) //texture binding						
 						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset );	
 					break;
 				};
@@ -413,7 +428,7 @@ bool Mesh::onLoad()
 	setTriangleMode( (TriangleMode)*ptr++ );
 	
 	//fields
-	for( int i = 0; i < _VF_COUNT; ++i )
+	for (int i = 0; i < (int)VertexField::_VF_COUNT; ++i)
 	{
 		if( *ptr++ )
 			setVertexFieldEnabled( (VertexField)i );
@@ -462,7 +477,7 @@ bool Mesh::onLoad()
 	return end();
 }
 
-void Dojo::Mesh::onUnload(bool soft /*= false */) {
+void Mesh::onUnload(bool soft /*= false */) {
 	DEBUG_ASSERT(isLoaded(), "onUnload: Mesh is not loaded");
 
 	//when soft unloading, only unload file-based meshes
@@ -481,13 +496,12 @@ void Dojo::Mesh::onUnload(bool soft /*= false */) {
 	}
 }
 
-Vector& Dojo::Mesh::getVertex(int idx) {
-	int offset = isVertexFieldEnabled(VF_POSITION3D) ? vertexFieldOffset[VF_POSITION3D] : vertexFieldOffset[VF_POSITION2D];
+Vector& Mesh::getVertex(int idx) {
+	int offset = isVertexFieldEnabled(VertexField::VF_POSITION3D) ? _offset(VertexField::VF_POSITION3D) : _offset(VertexField::VF_POSITION2D);
 	byte* ptr = (byte*)vertices.data() + (idx * vertexSize) + offset;
 
 	return *(Vector*)ptr;
 }
-
 
 
 

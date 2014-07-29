@@ -3,10 +3,12 @@
 #include "dojo_common_header.h"
 
 #include "Renderable.h"
-#include "Font.h"
 
 namespace Dojo
 {
+	class Font;
+	class Tessellation;
+
 	class PolyTextArea : public Renderable
 	{
 	public:

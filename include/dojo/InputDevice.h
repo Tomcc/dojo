@@ -6,6 +6,8 @@
 
 namespace Dojo
 {
+	class InputDeviceListener;
+
 	///a generic interface over the actual device implementations
 	class InputDevice
 	{
@@ -30,50 +32,16 @@ namespace Dojo
 			_AI_COUNT
 		};
 
-		///A Device Listener receives events about buttons and axis changes on the device it listens to
-		class Listener
-		{
-		public:
-			///ButtonPressed events are sent when the button bound to "action" is pressed on the device j
-			virtual void onButtonPressed( Dojo::InputDevice* j, int action )	{}
-			///ButtonReleased events are sent when the button bound to "action" is released on the device j
-			virtual void onButtonReleased( Dojo::InputDevice* j, int action )	{}
-
-			///AxisMoved events are sent when the axis a is changed on the device j, with a current state of "state" and with the reported relative speed
-			virtual void onAxisMoved( Dojo::InputDevice* j, Dojo::InputDevice::Axis a, float state, float speed )	{}
-
-			///this event is fired just before the device is disconnected and the InputDevice object deleted
-			virtual void onDisconnected( Dojo::InputDevice* j ) {}
-		};
-
 		///Creates a new InputDevice of the given type, bound to the ID slot, supporting "buttonNumber" buttons and "axisNumber" axes
-		InputDevice( String name, int ID, int buttonNumber, int axisNumber ) :
-		mID( ID ),
-		mButtonNumber( buttonNumber ),
-		mAxisNumber( axisNumber ),
-		mType( name )
-		{
-			for( int i = 0; i < mAxisNumber; ++i )
-			{
-				mAxis.add( 0 );
-				mDeadZone.add( 0 );
-			}
-		}
+		InputDevice( String name, int ID, int buttonNumber, int axisNumber );
 
 		///returns if the given action is pressed
-		virtual bool isKeyDown( KeyCode key )
-		{
-			KeyPressedMap::iterator elem = mButton.find( key );
-			return elem != mButton.end() ? elem->second : false;
-		}
+		virtual bool isKeyDown( KeyCode key );
 
 		bool isKeyDown(int action);
  
 		///returns the instant state of this axis
-		virtual float getAxis( Axis axis )
-		{
-			return mAxis[ axis ];
-		}
+		virtual float getAxis( Axis axis );
 
 		///returns the bound slot for this Device
 		/*
@@ -84,21 +52,9 @@ namespace Dojo
 			return mID;
 		}
 
-		void addListener( Listener* l )
-		{
-			DEBUG_ASSERT( l, "Adding a null listener" );
-			DEBUG_ASSERT( !pListeners.exists( l ), "The listener is already registered" );
+		void addListener( InputDeviceListener* l );
 
-			pListeners.add( l );
-		}
-
-		void removeListener( Listener* l )
-		{
-			DEBUG_ASSERT( l, "The passed listener is NULL");
-			DEBUG_ASSERT( pListeners.exists( l ), "The listened to be removed is not registered" );
-
-			pListeners.remove( l );
-		}
+		void removeListener( InputDeviceListener* l );
 
 		///Adds an "Action Binding" to this device
 		/**
@@ -111,11 +67,7 @@ namespace Dojo
 		///returns the action bound to this KeyCode
 		/** 
 		/remark the default action for unassigned keys is the key number itself */
-		int getActionForKey( KeyCode key )
-		{
-			KeyActionMap::iterator elem = mBindings.find( key );
-			return elem != mBindings.end() ? elem->second : key;
-		}
+		int getActionForKey( KeyCode key );
 
 		const String& getType()
 		{
@@ -123,55 +75,20 @@ namespace Dojo
 		}
 
 		///each device can be polled each frame if needed
-		virtual void poll( float dt )
-		{
-
-		}
+		virtual void poll( float dt );
 
 		///internal
-		void _notifyButtonState( KeyCode key, bool pressed )
-		{
-			if( isKeyDown( key ) != pressed )
-			{
-				mButton[key] = pressed; //buffer state
-
-				int action = getActionForKey( key );
-
-				if( pressed ) for( Listener* l : pListeners )
-					l->onButtonPressed( this, action );
-
-				else for( Listener* l : pListeners )
-					l->onButtonReleased( this, action );
-			}
-		}
+		void _notifyButtonState( KeyCode key, bool pressed );
 
 		///internal
-		void _notifyAxis( Axis a, float state)
-		{
-			//apply the dead zone
-			if( abs(state) < mDeadZone[a] )
-				state = 0;
-
-			if( mAxis[a] != state )
-			{
-				float change = mAxis[ a ] - state;
-				mAxis[ a ] = state;
-
-				for( Listener* l : pListeners )
-					l->onAxisMoved( this, a, state, change );
-			}
-		}
+		void _notifyAxis( Axis a, float state);
 
 		///internal
-		void _fireDisconnected()
-		{
-			for( Listener* l : pListeners )
-				l->onDisconnected( this );
-		}
+		void _fireDisconnected();
 
 	protected:
 
-		typedef Dojo::Array< Listener* > ListenerList;
+		typedef Dojo::Array< InputDeviceListener* > ListenerList;
 		typedef std::unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
 		typedef std::unordered_multimap< int, KeyCode > ActionKeyMap;
 		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;

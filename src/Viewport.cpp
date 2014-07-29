@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "GameState.h"
 #include "SoundManager.h"
+#include "Texture.h"
 
 using namespace Dojo;
 
@@ -43,19 +44,19 @@ mRT( nullptr )
 }
 
 
-Dojo::Viewport::~Viewport()
+Viewport::~Viewport()
 {
 
 }
 
-Dojo::Vector Dojo::Viewport::makeWorldCoordinates(int x, int y)
+Vector Viewport::makeWorldCoordinates(int x, int y)
 {
 	return Vector(
 		getWorldMin().x + ((float)x / Platform::getSingleton()->getWindowWidth()) * size.x,
 		getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y);
 }
 
-bool Dojo::Viewport::isSeeing(Renderable* s) {
+bool Viewport::isSeeing(Renderable* s) {
 	DEBUG_ASSERT(s, "isSeeing: null renderable passed");
 
 	return cullingEnabled && s->isVisible() && touches(s);
@@ -77,7 +78,7 @@ void Viewport::addFader( int layer )
 	addChild( fadeObject, layer );
 }
 
-void Viewport::setRenderTarget(Dojo::Texture *target)
+void Viewport::setRenderTarget(Texture *target)
 {
     mRT = target;
     

@@ -20,6 +20,7 @@ namespace Dojo
 {
 	class Renderable;
 	class InputDevice;
+	class InputSystemListener;
 	
 	///InputSystem manages the input at the lower level in Dojo
 	/**
@@ -32,103 +33,28 @@ namespace Dojo
 	class InputSystem : public ApplicationListener
 	{
 	public:
-		
+
 		typedef Array< Touch* > TouchList;
 		typedef Array< InputDevice* > DeviceList;
-			
-		class Listener
-		{
-		public:
-			
-			Listener() :
-			source( NULL )
-			{
-				
-			}		
-			
-			virtual ~Listener()
-			{
-				if( source )
-					source->removeListener( this );
-			}
-			
-			InputSystem* getSource()	{	return source;	}
-			
-			virtual void onTouchBegan( const Touch& touch ) {}
-			virtual void onTouchMove( const Touch& touch )  {}
-			virtual void onTouchEnd( const Touch& touch )   {}
-			
-			virtual void onMouseMove( const Dojo::Vector& curPos, const Dojo::Vector& oldPos )	{}
-			virtual void onScrollWheel( float scroll )	{}
-			
-			virtual void onShake()	{}
-			
-			virtual void onAcceleration( const Dojo::Vector& accel, float roll )	{}
-
-			virtual void onDeviceConnected( Dojo::InputDevice* j ) {}
-			virtual void onDeviceDisconnected( Dojo::InputDevice* j ) {}
-
-			void _notifySource( InputSystem* src )	{	source = src;	}
-			
-		protected:
-			
-			InputSystem* source;
-		};	
-				
-		typedef Array<Listener*> ListenerList;
+		typedef Array<InputSystemListener*> ListenerList;
 		
 		InputSystem( bool enable = true );
 		
-		virtual ~InputSystem()
-		{
-			
-		}
+		virtual ~InputSystem();
 
 		///registers a new device to this InputSystem
 		/** 
 		and sends an event about its connection to the listeners */
-		void addDevice( InputDevice* device )
-		{
-			DEBUG_ASSERT( !mDeviceList.exists( device ), "addDevice: this device was already registered" );
-
-			mDeviceList.add( device );
-
-			_fireDeviceConnected( device );
-		}
+		void addDevice( InputDevice* device );
 
 		///unregisters a new device to this InputSystem
 		/** 
 		and sends an event about its disconnection to the listeners */
-		void removeDevice( InputDevice* device )
-		{
-			DEBUG_ASSERT( mDeviceList.exists( device ), "removeDevice: this device was not registered" );
-
-			_fireDeviceDisconnected( device );
-
-			mDeviceList.remove( device );			
-		}
+		void removeDevice( InputDevice* device );
 		
-		void addListener( Listener* l )
-		{
-			DEBUG_ASSERT( l != nullptr, "addListener: null listener passed " );
-			
-			if( l->getSource() == NULL )
-			{
-				listeners.add( l );				
-				l->_notifySource( this );
-			}
-		}
+		void addListener( InputSystemListener* l );
 		
-		void removeListener( Listener* l )
-		{
-			DEBUG_ASSERT( l != nullptr, "removeListener: null listener passed " );
-			
-			if( l->getSource() == this )
-			{
-				listeners.remove( l );
-				l->_notifySource(NULL);
-			}
-		}
+		void removeListener( InputSystemListener* l );
         
         ///polls all the registered devices
         void poll( float dt );
@@ -178,55 +104,13 @@ namespace Dojo
 
 		DeviceList mDeviceList;
 				
-		Touch* _registertouch( const Vector& point, Touch::Type type )
-		{
-			Touch* t = new Touch( mAssignedTouches++, point, type );
-			
-			mTouchList.add( t );
-			
-			return t;
-		}
+		Touch* _registertouch( const Vector& point, Touch::Type type );
 		
-		int _getExistingTouchID(const Vector& point, Touch::Type type)
-		{
-			//find the nearest touch to this position
-			float minDist = FLT_MAX;
-			int nearest = -1;
-			
-			for( int i = 0; i < mTouchList.size(); ++i )
-			{
-				if ( type != type )
-					continue;
-
-				float d = mTouchList[i]->point.distance( point );
-				
-				if( d < minDist )
-				{
-					nearest = i;
-					minDist = d;
-				}
-			}
-			
-			return nearest;
-		}
+		int _getExistingTouchID(const Vector& point, Touch::Type type);
 		
-		Touch* _getExistingTouch(const Vector& point, Touch::Type type)
-		{
-			return mTouchList[ _getExistingTouchID( point, type ) ];
-		}
+		Touch* _getExistingTouch(const Vector& point, Touch::Type type);
 		
-		Touch* _popExistingTouch(const Vector& point, Touch::Type type)
-		{
-			int idx = _getExistingTouchID( point, type );
-
-			DEBUG_ASSERT( idx >= 0, "Needed to remove an existing touch but it was not found" );
-
-			Touch* t = mTouchList[idx];
-			
-			mTouchList.remove( idx );
-			
-			return t;
-		}
+		Touch* _popExistingTouch(const Vector& point, Touch::Type type);
 
 		void _fireDeviceConnected( Dojo::InputDevice* j );
 		void _fireDeviceDisconnected( Dojo::InputDevice* j );

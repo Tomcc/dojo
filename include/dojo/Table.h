@@ -463,7 +463,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		const Dojo::Vector& getVector( const String& key, const Dojo::Vector& defaultValue = Vector::ZERO ) const
+		const Vector& getVector( const String& key, const Vector& defaultValue = Vector::ZERO ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
@@ -472,7 +472,7 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		const Dojo::Color getColor( const String& key, float alpha = 1.f, const Dojo::Color& defaultValue = Color::BLACK ) const
+		const Color getColor( const String& key, float alpha = 1.f, const Color& defaultValue = Color::BLACK ) const
 		{
 			Entry* e = get( key );
 			if( e && e->type == FT_VECTOR )
@@ -527,12 +527,12 @@ namespace Dojo
 			return getString( autoMemberName(idx) );
 		}
 		
-		const Dojo::Vector& getVector( int idx ) const
+		const Vector& getVector( int idx ) const
 		{
 			return  getVector( autoMemberName(idx ) );
 		}
 		
-		const Dojo::Color getColor( int idx, float alpha = 1.f ) const
+		const Color getColor( int idx, float alpha = 1.f ) const
 		{
 			return Color( getVector( idx ), alpha );
 		}
@@ -564,7 +564,7 @@ namespace Dojo
 		}
 		
 		///removes a member named key
-		void remove( const Dojo::String& key )
+		void remove( const String& key )
 		{
 			map.erase( key );
 		}

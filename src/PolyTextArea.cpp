@@ -3,6 +3,8 @@
 #include "PolyTextArea.h"
 
 #include "Mesh.h"
+#include "Tessellation.h"
+#include "Font.h"
 
 using namespace Dojo;
 
@@ -28,7 +30,7 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 	{
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
 		mMesh->setTriangleMode( Mesh::TM_LINE_LIST );
-		mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+		mMesh->setVertexFieldEnabled( VertexField::VF_POSITION2D );
 	}
 	else
 	{
@@ -37,15 +39,15 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 
 		if( mRendering == RT_SURFACE )
 		{
-			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION2D );
+			mMesh->setVertexFieldEnabled( VertexField::VF_POSITION2D );
 			//the normal here is unbound and defaults to 0,0,1 apparently, which is correct
 			//and allows for a substantial bandwidth saving
 			//TODO check if this works on every driver (tested on Intel HD4000, NV 630)
 		}
 		else
 		{
-			mMesh->setVertexFieldEnabled( Mesh::VF_POSITION3D );
-			mMesh->setVertexFieldEnabled( Mesh::VF_NORMAL );
+			mMesh->setVertexFieldEnabled( VertexField::VF_POSITION3D );
+			mMesh->setVertexFieldEnabled( VertexField::VF_NORMAL );
 		}
 	}
 

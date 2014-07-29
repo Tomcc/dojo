@@ -13,10 +13,12 @@
 
 #include "Resource.h"
 #include "Vector.h"
-#include "Color.h"
+#include "VertexField.h"
 
 namespace Dojo 
 {
+	class Color;
+	class ResourceGroup;
 	class Shader;
 
 	///A Mesh is the only primitive Dojo can render.
@@ -35,20 +37,6 @@ namespace Dojo
 	{
 	public:
 		typedef unsigned int IndexType;
-		
-		enum VertexField
-		{
-			VF_POSITION2D,
-			VF_POSITION3D,
-			VF_COLOR,
-			VF_NORMAL,
-			
-			VF_UV_0,
-			VF_UV_MAX = VF_UV_0 + DOJO_MAX_TEXTURE_COORDS-1,
-
-			VF_NONE,
-			_VF_COUNT = VF_NONE
-		};
 		
 		static const int VERTEX_PAGE_SIZE = 256;
 		static const int INDEX_PAGE_SIZE = 256;
@@ -88,6 +76,9 @@ namespace Dojo
 		
 		///enables a new VertexField
 		void setVertexFieldEnabled( VertexField f );
+
+		///enables a list of VertexFields
+		void setVertexFields(std::initializer_list<VertexField> fs);
 		
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
 		void setDynamic( bool d);		
@@ -195,7 +186,7 @@ namespace Dojo
 		
 		bool isVertexFieldEnabled( VertexField f )
 		{
-			return vertexFieldOffset[f] != 0xff;
+			return vertexFieldOffset[(unsigned char)f] != 0xff;
 		}
 		
 		IndexType getVertexCount() const
@@ -233,7 +224,7 @@ namespace Dojo
 
 		int vertexCount = 0, indexCount = 0, triangleCount = 0;
 		
-		byte vertexFieldOffset[ _VF_COUNT ];
+		byte vertexFieldOffset[ (int)VertexField::_VF_COUNT ];
 		
 		TriangleMode triangleMode = TM_STRIP;
 		
@@ -247,6 +238,9 @@ namespace Dojo
 
 		///binds the attribute arrays and the Buffer Objects required to render the mesh
 		void _bindAttribArrays( Shader* shader );
+
+		byte& _offset(VertexField f);
+		byte& _offset(VertexField f, int subID);
 	};
 }
 

@@ -1,5 +1,9 @@
 #include "stdafx.h"
 
+#include <ogg/ogg.h>
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
+
 #include "SoundBuffer.h"
 
 #include "SoundManager.h"
@@ -11,16 +15,86 @@
 
 using namespace Dojo;
 
+//STATIC CALLBACKS
+size_t _vorbisRead(void* out, size_t size, size_t count, void* userdata)
+{
+	Stream* source = (Stream*)userdata;
+
+	return source->read((byte*)out, size * count);
+}
+
+int _vorbisSeek(void *userdata, ogg_int64_t offset, int whence)
+{
+	Stream* source = (Stream*)userdata;
+
+	return source->seek((long)offset, whence);
+}
+
+int _vorbisClose(void *userdata)
+{
+	Stream* source = (Stream*)userdata;
+
+	source->close();
+	return 0;
+}
+
+long _vorbisTell(void *userdata)
+{
+	return ((Stream*)userdata)->getCurrentPosition();
+}
+
+
 #define OGG_ENDIAN 0
 
 //store the callbacks
-ov_callbacks SoundBuffer::VORBIS_CALLBACKS = 
+ov_callbacks VORBIS_CALLBACKS = 
 { 
-	SoundBuffer::_vorbisRead, 
-	SoundBuffer::_vorbisSeek, 
-	SoundBuffer::_vorbisClose, 
-	SoundBuffer::_vorbisTell 
+	_vorbisRead, 
+	_vorbisSeek, 
+	_vorbisClose, 
+	_vorbisTell 
 };
+
+
+SoundBuffer::Chunk::Chunk(SoundBuffer* parent, long streamStartPosition, long uncompressedSize) :
+size(0),
+alBuffer(AL_NONE),
+references(0),
+pParent(parent),
+mStartPosition(streamStartPosition),
+mUncompressedSize(uncompressedSize) {
+	DEBUG_ASSERT(parent, "invalid parent");
+	DEBUG_ASSERT(streamStartPosition >= 0, "invalid starting position");
+	DEBUG_ASSERT(uncompressedSize > 0, "invalid PCM span size");
+}
+
+SoundBuffer::Chunk::~Chunk() {
+	alDeleteBuffers(1, &alBuffer);
+}
+
+void SoundBuffer::Chunk::getAsync() {
+	if (references++ == 0 && !isLoaded()) //load it when referenced the first time
+		loadAsync();
+}
+
+void SoundBuffer::Chunk::get() {
+	if (references++ == 0 && !isLoaded()) //load it when referenced the first time
+		onLoad();
+}
+
+void SoundBuffer::Chunk::release() {
+	DEBUG_ASSERT(references > 0, "References should never be less than 0");
+
+	if (--references == 0) //unload it when dereferenced last time
+		onUnload();
+}
+
+ALuint SoundBuffer::Chunk::getOpenALBuffer() {
+	DEBUG_ASSERT(isLoaded(), "This buffer is not loaded and has no AL buffer");
+
+	return alBuffer;
+}
+
 
 ///////////////////////////////////////
 
@@ -64,36 +138,6 @@ void SoundBuffer::onUnload(bool soft)
 		if( chunk->isLoaded() )
 			chunk->onUnload( soft );
 	}
-}
-
-////-------------------------------------////-------------------------------------////------------------------------------
-//	STATIC VORBIS CALLBACK METHODS
-
-size_t SoundBuffer::_vorbisRead( void* out, size_t size, size_t count, void* userdata )
-{
-	Stream* source = (Stream*)userdata;
-
-	return source->read( (byte*)out, size * count );
-}
-
-int SoundBuffer::_vorbisSeek( void *userdata, ogg_int64_t offset, int whence )
-{
-	Stream* source = (Stream*)userdata;
-
-	return source->seek( (long)offset, whence );
-}
-
-int SoundBuffer::_vorbisClose( void *userdata )
-{
-	Stream* source = (Stream*)userdata;
-
-	source->close();
-	return 0;
-}
-
-long SoundBuffer::_vorbisTell( void *userdata )
-{
-	return ((Stream*)userdata)->getCurrentPosition();
 }
 
 bool SoundBuffer::Chunk::onLoad()
@@ -283,4 +327,15 @@ bool SoundBuffer::_loadOggFromFile()
 	_loadOgg( mSource );
 
 	return isLoaded();
+}
+
+SoundBuffer::Chunk* SoundBuffer::getChunk(int n, bool loadAsync /*= false */) {
+	DEBUG_ASSERT(n >= 0 && n < mChunks.size(), "The requested chunk is out of bounds");
+
+	if (loadAsync)
+		mChunks[n]->getAsync();
+	else
+		mChunks[n]->get();
+
+	return mChunks[n];
 }

@@ -16,7 +16,9 @@
 #include <dojo/Game.h>
 #include <dojo/GameState.h>
 #include <dojo/InputSystem.h>
+#include <dojo/InputSystemListener.h>
 #include <dojo/InputDevice.h>
+#include <dojo/InputDeviceListener.h>
 #include <dojo/Keyboard.h>
 #include <dojo/Light.h>
 #include <dojo/Log.h>
@@ -28,6 +30,7 @@
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
 #include <dojo/PolyTextArea.h>
+#include <dojo/Random.h>
 #include <dojo/Render.h>
 #include <dojo/RenderState.h>
 #include <dojo/Renderable.h>
@@ -40,6 +43,7 @@
 #include <dojo/StateInterface.h>
 #include <dojo/StringReader.h>
 #include <dojo/Table.h>
+#include <dojo/Tessellation.h>
 #include <dojo/TextArea.h>
 #include <dojo/Texture.h>
 #include <dojo/Timer.h>

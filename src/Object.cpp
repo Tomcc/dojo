@@ -157,7 +157,7 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	}
 }
 
-Dojo::Vector Dojo::Object::getWorldPosition(const Vector& localPos) {
+Vector Object::getWorldPosition(const Vector& localPos) {
 	if (parent)
 	{
 		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
@@ -165,6 +165,76 @@ Dojo::Vector Dojo::Object::getWorldPosition(const Vector& localPos) {
 	}
 	else
 		return localPos;
+}
+
+void Object::reset() {
+	active = true;
+	speed.x = speed.y = 0;
+
+	updateWorldTransform();
+}
+
+Vector Object::getLocalPosition(const Vector& worldPos) {
+	Matrix inv = glm::inverse(getWorldTransform()); //TODO make faster for gods' sake
+	glm::vec4 p(worldPos.x, worldPos.y, worldPos.z, 1);
+	p = inv * p;
+
+	return Vector(p.x, p.y, p.z);
+}
+
+Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z */) {
+	glm::vec4 dir(dir3, 0);
+	dir = getWorldTransform() * dir;
+
+	return Vector(dir.x, dir.y, dir.z);
+}
+
+Vector Object::getLocalDirection(const Vector& worldDir) {
+	DEBUG_TODO;
+
+	return Vector::ZERO;
+}
+
+Object* Object::getChild(int i) {
+	DEBUG_ASSERT(hasChilds(), "Tried to retrieve a child from an object with no childs");
+	DEBUG_ASSERT(childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child");
+
+	return childs->at(i);
+}
+
+bool Object::contains(const Vector& p) {
+	DEBUG_ASSERT(mNeedsAABB, "contains: this Object has no AABB");
+
+	return
+		p.x <= worldUpperBound.x &&
+		p.x >= worldLowerBound.x &&
+		p.y <= worldUpperBound.y &&
+		p.y >= worldLowerBound.y &&
+		p.z <= worldUpperBound.z &&
+		p.z >= worldLowerBound.z;
+}
+
+bool Object::contains2D(const Vector& p) {
+	DEBUG_ASSERT(mNeedsAABB, "contains: this Object has no AABB");
+
+	return
+		p.x <= worldUpperBound.x &&
+		p.x >= worldLowerBound.x &&
+		p.y <= worldUpperBound.y &&
+		p.y >= worldLowerBound.y;
+}
+
+bool Object::collidesWith(const Vector& MAX, const Vector& MIN) {
+	DEBUG_ASSERT(mNeedsAABB, "collides: this Object has no AABB");
+
+	return Math::AABBsCollide(getWorldMax(), getWorldMin(), MAX, MIN);
+}
+
+bool Object::collidesWith(Object * t) {
+	DEBUG_ASSERT(t, "collidesWith: colliding Object is NULL");
+	DEBUG_ASSERT(mNeedsAABB, "collidesWith: this Object has no AABB");
+
+	return collidesWith(t->getWorldMax(), t->getWorldMin());
 }
 
 Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const

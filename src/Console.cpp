@@ -3,6 +3,8 @@
 #include "Console.h"
 #include "GameState.h"
 #include "Viewport.h"
+#include "TextArea.h"
+#include "Log.h"
 
 using namespace Dojo;
 
@@ -49,4 +51,31 @@ void Console::onAction( float dt )
 	mText->setVisible( isVisible() );
 
 	Renderable::onAction( dt );
+}
+
+void Console::addLog(Log* l, bool getOldMessages /*= true */) {
+	DEBUG_ASSERT(l, "Passed a NULL Log to a Console");
+
+	pLogs.push_back(l);
+	l->addListener(this);
+
+	if (getOldMessages)
+	{
+		for (auto& entry : *l)
+			onLogUpdated(l, entry);
+	}
+}
+
+void Console::onLogUpdated(Log* l, const LogEntry& message) {
+	mDirty = true;
+
+	mOutput.push_back(message.text);
+
+	if (mOutput.size() > (size_t)mMaxLines)
+		mOutput.erase(mOutput.begin());
+}
+
+void Console::onDestruction() {
+	for (auto log : pLogs)
+		log->removeListener(this);
 }

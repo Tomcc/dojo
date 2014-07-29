@@ -28,67 +28,26 @@ namespace Dojo {
             static const Easing LinearEasing;
 			static const float m;
 
-			static void vectorToALfloat(const Vector& vector, ALfloat* ALpos )
-			{
-				DEBUG_ASSERT( ALpos, "null AL position vector" );
-				
-				ALpos[0] = vector.x/m;
-				ALpos[1] = vector.y/m;
-				ALpos[2] = vector.z/m;
-			}
+			static void vectorToALfloat(const Vector& vector, ALfloat* ALpos );
 
 			SoundManager();
 
 			~SoundManager();
 			
 			///clear() destroys the sound pool - use wisely!
-			void clear()
-			{
-				for( int i = 0; i < busySoundPool.size(); ++i )
-				{
-					SoundSource* s = busySoundPool.top();
-					busySoundPool.pop();
-					s->stop();
-					SAFE_DELETE( s );
-				}
-				
-				musicTrack = NULL;
-				fadeState = FS_NONE;
-			}
+			void clear();
 
 			///Returns a sound source ready to play a new sound
 			SoundSource* getSoundSource( SoundSet* set, int i = -1 );
 
 			///Returns a sound source ready to play a new sound, with the position already set
-			SoundSource* getSoundSource( const Vector& pos, SoundSet* set )
-			{
-				DEBUG_ASSERT( set, "Getting a Source for a NULL sound" );
-				
-				SoundSource* s = getSoundSource( set );
-				s->setPosition( pos );
-
-				return s;
-			}
+			SoundSource* getSoundSource( const Vector& pos, SoundSet* set );
 
 			///Plays the given set without spatial positioning
-			SoundSource* playSound(SoundSet* set, float volume = 1.0f)
-			{
-				DEBUG_ASSERT( set, "Playing a NULL sound" );
-				 
-				SoundSource* s = getSoundSource( set );
-				s->play(volume);
-				return s;
-			}
+			SoundSource* playSound(SoundSet* set, float volume = 1.0f);
 
 			///Plays the given set at pos
-			SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f )
-			{
-				DEBUG_ASSERT( set, "Playing a NULL sound" );
-				
-				SoundSource* s = getSoundSource( pos, set );
-				s->play(volume);
-				return s;
-			}
+			SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f );
 						
 			///Starts a new sound using it as background music
 			/**
@@ -96,37 +55,14 @@ namespace Dojo {
 			*/
 			void playMusic( SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing );
 			
-			void pauseMusic()
-			{
-                DEBUG_ASSERT( isMusicPlaying(), "pauseMusic: music is not playing" );
-                
-				musicTrack->pause();
-			}
+			void pauseMusic();
 			
 			void resumeMusic();
 
 			///stops the music, with an optional fade-out
-			void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing )
-			{
-                //TODO use easing
-                DEBUG_MESSAGE( "Music fading out in " + String( stopFadeTime ) + " s" );
-					
-                fadeState = FS_FADE_OUT;
-                nextMusicTrack = NULL;
+			void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing );
 
-                halfFadeTime = stopFadeTime;
-                currentFadeTime = 0;
-			}
-
-			void setMusicVolume( float volume )			
-			{	
-				DEBUG_ASSERT( volume >= 0, "setMusicVolume: volume is negative" );
-				
-				musicVolume = volume;	
-
-				if( !nextMusicTrack && musicTrack )
-					musicTrack->setVolume( musicVolume );
-			}
+			void setMusicVolume( float volume );
 			
 			void setMasterVolume( float volume );
 			
@@ -139,33 +75,12 @@ namespace Dojo {
 			}
 			
 			///pauses all the active SoundSources (excluding the background music!)
-			void pauseAll()
-			{
-				for( SoundSource* s : busySoundPool )
-				{
-					if( s != musicTrack )
-						s->pause();
-				}
-			}
+			void pauseAll();
 			///resumes all the active SoundSources (excluding the background music!)
-			void resumeAll()
-			{
-				for( SoundSource* s : busySoundPool )
-				{
-					if( s != musicTrack )
-						s->play();
-				}
-			}
+			void resumeAll();
 			
 			///stops all the active SoundSources (excluding the background music!)
-			void stopAllSounds()
-			{
-				for( SoundSource* s : busySoundPool )
-				{
-					if( s != musicTrack )
-						s->stop();
-				}
-			}
+			void stopAllSounds();
 
 			const SoundList& getActiveSounds() const 
 			{

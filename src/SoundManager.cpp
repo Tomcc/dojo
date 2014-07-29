@@ -17,6 +17,14 @@ const SoundManager::Easing SoundManager::LinearEasing = []( float t )
     return t;
 };
 
+void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
+	DEBUG_ASSERT(ALpos, "null AL position vector");
+
+	ALpos[0] = vector.x / m;
+	ALpos[1] = vector.y / m;
+	ALpos[2] = vector.z / m;
+}
+
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
@@ -69,6 +77,21 @@ currentFadeTime(0)
 
 	CHECK_AL_ERROR;
 }
+
+
+void SoundManager::clear() {
+	for (int i = 0; i < busySoundPool.size(); ++i)
+	{
+		SoundSource* s = busySoundPool.top();
+		busySoundPool.pop();
+		s->stop();
+		SAFE_DELETE(s);
+	}
+
+	musicTrack = NULL;
+	fadeState = FS_NONE;
+}
+
 
 SoundManager::~SoundManager()
 {
@@ -226,7 +249,7 @@ void SoundManager::resumeMusic()
 		musicTrack->play();
 }
 
-void Dojo::SoundManager::setListenerTransform(const Matrix& worldTransform)
+void SoundManager::setListenerTransform(const Matrix& worldTransform)
 {
 	glm::vec4 pos(0.f, 0.f, 0.f, 1.f), up(0.f,1.f,0.f,0.f), forward(0.f,0.f,-1.f, 0.f);
 
@@ -244,4 +267,79 @@ void Dojo::SoundManager::setListenerTransform(const Matrix& worldTransform)
 	alListenerfv(AL_ORIENTATION, orientation);
 
 	lastListenerPos = pos;
+}
+
+SoundSource* SoundManager::getSoundSource(const Vector& pos, SoundSet* set) {
+	DEBUG_ASSERT(set, "Getting a Source for a NULL sound");
+
+	SoundSource* s = getSoundSource(set);
+	s->setPosition(pos);
+
+	return s;
+}
+
+SoundSource* SoundManager::playSound(SoundSet* set, float volume /*= 1.0f*/) {
+	DEBUG_ASSERT(set, "Playing a NULL sound");
+
+	SoundSource* s = getSoundSource(set);
+	s->play(volume);
+	return s;
+}
+
+SoundSource* SoundManager::playSound(const Vector& pos, SoundSet* set, float volume /*= 1.0f */) {
+	DEBUG_ASSERT(set, "Playing a NULL sound");
+
+	SoundSource* s = getSoundSource(pos, set);
+	s->play(volume);
+	return s;
+}
+
+void SoundManager::pauseMusic() {
+	DEBUG_ASSERT(isMusicPlaying(), "pauseMusic: music is not playing");
+
+	musicTrack->pause();
+}
+
+void SoundManager::stopMusic(float stopFadeTime /*= 0*/, const Easing& fadeEasing /*= LinearEasing */) {
+	//TODO use easing
+	DEBUG_MESSAGE("Music fading out in " + String(stopFadeTime) + " s");
+
+	fadeState = FS_FADE_OUT;
+	nextMusicTrack = NULL;
+
+	halfFadeTime = stopFadeTime;
+	currentFadeTime = 0;
+}
+
+void SoundManager::setMusicVolume(float volume) {
+	DEBUG_ASSERT(volume >= 0, "setMusicVolume: volume is negative");
+
+	musicVolume = volume;
+
+	if (!nextMusicTrack && musicTrack)
+		musicTrack->setVolume(musicVolume);
+}
+
+void SoundManager::pauseAll() {
+	for (SoundSource* s : busySoundPool)
+	{
+		if (s != musicTrack)
+			s->pause();
+	}
+}
+
+void SoundManager::resumeAll() {
+	for (SoundSource* s : busySoundPool)
+	{
+		if (s != musicTrack)
+			s->play();
+	}
+}
+
+void SoundManager::stopAllSounds() {
+	for (SoundSource* s : busySoundPool)
+	{
+		if (s != musicTrack)
+			s->stop();
+	}
 }

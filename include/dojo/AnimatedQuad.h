@@ -12,10 +12,11 @@
 #include "dojo_common_header.h"
 
 #include "Renderable.h"
-#include "FrameSet.h"
 
 namespace Dojo
 {	
+	class FrameSet;
+	
 	class AnimatedQuad : public Renderable
 	{
 	public:
@@ -31,32 +32,10 @@ namespace Dojo
 			FrameSet* frames;
 			
 			///Creates a new animation with frames from FrameSet, advancing frame each timePerFrame seconds
-			Animation( FrameSet* set, float timePerFrame ) :
-			currentFrame( NULL ),
-			mElapsedLoops(0)
-			{
-				setup( set, timePerFrame );
-			}			
+			Animation( FrameSet* set, float timePerFrame );			
 						
 			///Sets up an existing animation with frames from FrameSet, advancing frame each timePerFrame seconds
-			void setup( FrameSet* set, float tpf )
-			{
-				DEBUG_ASSERT( tpf >= 0, "Cannot set a negative time per frame" );
-				
-				animationTime = 0;
-				timePerFrame = tpf;			
-				frames = set;
-				
-				if( frames )
-				{
-					totalTime = timePerFrame * frames->getFrameNumber();
-					
-					if( frames->getFrameNumber() > 0 )
-						currentFrame = frames->getFrame( 0 );
-				}
-				else
-					totalTime = 1;
-			}
+			void setup( FrameSet* set, float tpf );
 
 			void _unset()
 			{
@@ -71,10 +50,7 @@ namespace Dojo
 			}			
 			
 			///gets the current texture ID in the FrameSet
-			int getCurrentFrameNumber()
-			{
-				return frames->getFrameIndex( currentFrame );
-			}
+			int getCurrentFrameNumber();
 			
 			///gets the duration of each frame in seconds
 			float getTimePerFrame()
@@ -106,46 +82,13 @@ namespace Dojo
 			/**
 			if i is out of bounds, it will be wrapped on the existing frames.
 			*/
-			void setFrame( int i )
-			{
-				DEBUG_ASSERT( frames, "Animation has no frames" );
-				
-				currentFrame = frames->getFrame( i );
-				
-				animationTime = i * timePerFrame;
-			}
+			void setFrame( int i );
 			
 			///forces the animation to a given time
-			void setAnimationTime( float t )
-			{				
-				DEBUG_ASSERT( frames, "Animation has no frames" );
-				
-				if( timePerFrame == 0 )
-					return;
-				
-				if( frames->getFrameNumber() <= 1 ) //can't set time on a void or one-frame animation
-					return;
-								
-				animationTime = t;
-				
-				//clamp in the time interval
-				while( animationTime >= totalTime )
-				{
-					++mElapsedLoops;
-					animationTime -= totalTime;
-				}
-				
-				while( animationTime < 0 )
-					animationTime += totalTime;
-								
-				currentFrame = frames->getFrame( (int)(animationTime/timePerFrame ) );
-			}
+			void setAnimationTime( float t );
 			
 			///advances the animation of dt seconds; usually this needs to be called each frame
-			void advance( float dt )
-			{				
-				setAnimationTime( animationTime + dt );				
-			}
+			void advance( float dt );
 			
 		protected:			
 			
@@ -177,14 +120,7 @@ namespace Dojo
 		virtual void reset();
 		
 		///forces an animation with the given frameSet
-		void immediateAnimation( FrameSet* s, float timePerFrame )
-		{
-			DEBUG_ASSERT( s, "immediateAnimation: setting a NULL animation" );
-			
-			animation->setup( s, timePerFrame );
-			
-			_setTexture( animation->getCurrentFrame() );
-		}
+		void immediateAnimation( FrameSet* s, float timePerFrame );
 		
 		///forces an animation with the given FrameSet
 		/**
@@ -227,59 +163,21 @@ namespace Dojo
 		}
 
 		///forces the animation to a given time
-		void setAnimationTime( float t )
-		{
-			DEBUG_ASSERT( animation != nullptr, "setAnimationTime: no animation set" );
-			
-			animation->setAnimationTime( t );
-			
-			_setTexture( animation->getCurrentFrame() );
-		}
+		void setAnimationTime( float t );
 		
 		///forces the animation to a given time ratio
 		/** 
 		\param t a ratio value where 0 is animation start and 1 is animation end; a value outside [0..1] will make the animation loop. */
-		void setAnimationPercent( float t )
-		{
-			DEBUG_ASSERT( animation != nullptr, "setAnimationPercent: no animation set" );
-			
-			setAnimationTime( t * animation->getTotalTime() );
-		}
+		void setAnimationPercent( float t );
 						
 		///advances the current animation and changes the current texture if the frame was changed
-		void advanceAnim( float dt )		
-		{				
-			DEBUG_ASSERT( animation != nullptr, "advanceAnim: no animation set" );
-					
-			//active animation?
-			if( animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0 )		
-			{
-				DEBUG_ASSERT( animation->frames->getFrameNumber() > 0, "advanceAnim: the current Animation has no frames" );
-				
-				//update the renderState using the animation
-				animation->advance( dt * animationSpeedMultiplier );	
-				
-				_setTexture( animation->getCurrentFrame() );
-			}
-		}
+		void advanceAnim( float dt );
 		
 		///forces a to display the FrameSet frame i of the current Animation
-		void setFrame( int i )
-		{
-			DEBUG_ASSERT( animation != nullptr, "setFrame: no animation set" );
-			
-			animation->setFrame( i );
-			
-			_setTexture( animation->getCurrentFrame() );
-		}
+		void setFrame( int i );
 		
 		///sets the speed multiplier that is used by advanceFrame. m = 1 means normal speed, m = 2 double speed, ...
-		void setAnimationSpeedMultiplier( float m )
-		{
-			DEBUG_ASSERT( m >= 0, "setAnimationSpeedMultiplier: multiplier must be >= 0" );
-			
-			animationSpeedMultiplier = m;
-		}
+		void setAnimationSpeedMultiplier( float m );
 		
 		virtual void onAction( float dt );
 		
@@ -296,16 +194,7 @@ namespace Dojo
 		//assigned animation
 		Animation* animation;
 				
-		void _setTexture( Texture* t )
-		{			
-			DEBUG_ASSERT( t, "texture is null" );
-
-			setTexture( t, 0 );
-
-			mesh = t->getOptimalBillboard();
-
-			_updateScreenSize();
-		}		
+		void _setTexture( Texture* t );		
 	};
 }
 

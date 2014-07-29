@@ -236,3 +236,12 @@ void Dojo::SoundSource::stop() {
 			mBackChunk->release();
 	}
 }
+
+float Dojo::SoundSource::getElapsedTime() {
+	float elapsed = 0;
+	alGetSourcef(source, AL_SEC_OFFSET, &elapsed);
+
+	CHECK_AL_ERROR;
+
+	return elapsed;
+}

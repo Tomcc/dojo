@@ -6,8 +6,27 @@
 #include "FontSystem.h"
 #include "Timer.h"
 #include "ResourceGroup.h"
+#include "Texture.h"
+#include "FrameSet.h"
+#include "Tessellation.h"
+#include "Utils.h"
 
 using namespace Dojo;
+
+
+Font::Character::Character() {
+
+}
+
+Texture* Font::Character::getTexture() {
+	return page->getTexture();
+}
+
+Tessellation* Font::Character::getTesselation() {
+	DEBUG_ASSERT(mTesselation.get(), "Tried to get a tesselation but this Font wasn't tesselated (forgot to specify 'tesselate' in the config?)");
+
+	return mTesselation.get();
+}
 
 void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside)
 {
@@ -189,6 +208,11 @@ texture( NULL )
 	texture = new Texture();
 }
 
+Font::Page::~Page() {
+	SAFE_DELETE(texture);
+}
+
+
 bool Font::Page::onLoad()
 {
 	//create the texture
@@ -306,6 +330,15 @@ bool Font::Page::onLoad()
 
 	return loaded;
 }
+
+
+void Font::Page::onUnload(bool soft /*= false */) {
+	//a font page can always unload
+	texture->onUnload(); //force unload
+
+	loaded = false;
+}
+
 
 /// --------------------------------------------------------------------------------
 
@@ -426,4 +459,36 @@ int Font::getPixelLength( const String& str )
 	}
 
 	return l;
+}
+
+Font::Page* Font::getPage(int index) {
+	DEBUG_ASSERT(index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index");
+
+	PageMap::iterator itr = pages.find(index);
+
+	if (itr == pages.end())
+	{
+		Page* p = new Page(this, index);
+		pages[index] = p;
+		p->onLoad();
+		return p;
+	}
+	else return itr->second;
+}
+
+int Font::getCharIndex(Character* c) {
+	return FT_Get_Char_Index(face, c->character);
+}
+
+Font::Character* Font::getCharacter(unichar c) {
+	return getPageForChar(c)->getChar(c);
+}
+
+Texture* Font::getTexture(unichar c) {
+	return getPageForChar(c)->getTexture();
+}
+
+void Font::preloadPages(const char pages[], int n) {
+	for (int i = 0; i < n; ++i)
+		getPage(pages[i]);
 }

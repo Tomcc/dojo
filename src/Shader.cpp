@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "Viewport.h"
 #include "Render.h"
+#include "Texture.h"
 
 using namespace Dojo;
 
@@ -45,13 +46,13 @@ void Shader::_populateAttributeNameMap()
 		std::string base = "TEXCOORD_";
 		base += '0' + (char)i;
 
-		sBuiltInAttributeNameMap[ base ] = (Mesh::VertexField)(Mesh::VF_UV_0 + i);
+		sBuiltInAttributeNameMap[base] = (VertexField)((byte)VertexField::VF_UV_0 + i);
 	}
 
-	sBuiltInAttributeNameMap[ "POSITION" ] = Mesh::VF_POSITION3D;
-	sBuiltInAttributeNameMap[ "POSITION_2D" ] = Mesh::VF_POSITION2D;
-	sBuiltInAttributeNameMap[ "NORMAL" ] = Mesh::VF_NORMAL;
-	sBuiltInAttributeNameMap[ "COLOR" ] = Mesh::VF_COLOR;
+	sBuiltInAttributeNameMap["POSITION"] = VertexField::VF_POSITION3D;
+	sBuiltInAttributeNameMap["POSITION_2D"] = VertexField::VF_POSITION2D;
+	sBuiltInAttributeNameMap["NORMAL"] = VertexField::VF_NORMAL;
+	sBuiltInAttributeNameMap["COLOR"] = VertexField::VF_COLOR;
 }
 
 Shader::BuiltInUniform Shader::_getUniformForName( const std::string& name )
@@ -63,13 +64,13 @@ Shader::BuiltInUniform Shader::_getUniformForName( const std::string& name )
 	return ( elem != sBuiltiInUniformsNameMap.end() ) ? elem->second : BU_NONE;
 }
 
-Mesh::VertexField Shader::_getAttributeForName( const std::string& name )
+VertexField Shader::_getAttributeForName( const std::string& name )
 {
 	if( sBuiltInAttributeNameMap.empty() )
 		_populateAttributeNameMap();
 
 	auto elem = sBuiltInAttributeNameMap.find( name );
-	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : Mesh::VF_NONE;
+	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::VF_NONE;
 }
 
 Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
@@ -80,19 +81,20 @@ Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
 	pRender = Platform::getSingleton()->getRender();
 }
 
-void Shader::_assignProgram( const Table& desc, ShaderProgram::Type type )
+void Shader::_assignProgram( const Table& desc, ShaderProgramType type )
 {
 	static const String typeKeyMap[] =	{ "vertexShader", "fragmentShader" };
+	auto typeID = (unsigned char)type;
 
 	//check if this program is immediate or not
 	//it is file-based if the resource can be found in the current RG
-	auto& keyValue = desc.getString( typeKeyMap[ type ] );
+	auto& keyValue = desc.getString(typeKeyMap[typeID]);
 
-	DEBUG_ASSERT_INFO( keyValue.size(), "No shader found in .shader file", "type = " + typeKeyMap[ type ] );
+	DEBUG_ASSERT_INFO(keyValue.size(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
 	
 	ShaderProgram* program = getCreator()->getProgram( keyValue );
 
-	mOwnsProgram[ type ] = (program == nullptr) && !mPreprocessorHeader.empty(); //if any preprocessor flag is defined, all programs are compiled as immediate
+	mOwnsProgram[typeID] = (program == nullptr) && !mPreprocessorHeader.empty(); //if any preprocessor flag is defined, all programs are compiled as immediate
 
 	if( !program ) //just load the immediate shader
 		program = new ShaderProgram( type, mPreprocessorHeader + keyValue.ASCII() );
@@ -101,9 +103,9 @@ void Shader::_assignProgram( const Table& desc, ShaderProgram::Type type )
 		program = program->cloneWithHeader( mPreprocessorHeader );
 
 	else
-		DEBUG_ASSERT_INFO( program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[ type ] );
+		DEBUG_ASSERT_INFO(program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
 
-	pProgram[ type ] = program;
+	pProgram[typeID] = program;
 }
 
 void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& dataBinder )
@@ -236,8 +238,8 @@ bool Shader::onLoad()
 		mPreprocessorHeader += std::string("#define ") + entry.second->getAsString().ASCII() + "\n";
 
 	//grab all types
-	for( int i = 0; i < ShaderProgram::_SPT_COUNT; ++i )
-		_assignProgram( desc, (ShaderProgram::Type)i );
+	for( int i = 0; i < (int)ShaderProgramType::_Count; ++i )
+		_assignProgram( desc, (ShaderProgramType)i );
 
 	//ensure they're loaded
 	for( auto program : pProgram )
@@ -341,7 +343,7 @@ void Shader::onUnload( bool soft /* = false */ )
 	DEBUG_ASSERT( isLoaded(), "This shader was already unloaded" );
 
 	//only manage the programs that aren't shared
-	for( int i = 0; i < ShaderProgram::_SPT_COUNT; ++i )
+	for( int i = 0; i < (int)ShaderProgramType::_Count; ++i )
 	{
 		if( mOwnsProgram[i] )
 		{

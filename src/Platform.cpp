@@ -33,6 +33,7 @@
 
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Exception.h>
+#include "LogListener.h"
 
 using namespace Dojo;
 
@@ -83,7 +84,7 @@ Platform::Platform( const Table& configTable ) :
 	addZipFormat( ".dpk" );
 
 	gp_log = mLog = new Log();
-	mLog->addListener( new Log::Stdout() );
+	mLog->addListener( new StdoutLog() );
 }	
 
 Platform::~Platform()

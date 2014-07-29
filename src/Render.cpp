@@ -12,6 +12,7 @@
 #include "Shader.h"
 
 #include "Game.h"
+#include "Texture.h"
 
 using namespace Dojo;
 
@@ -174,6 +175,55 @@ void Render::removeRenderable( Renderable* s )
 		//firstRenderState->commitChanges( currentRenderState );
 		currentRenderState = firstRenderState;
 	}
+}
+
+void Dojo::Render::removeAllRenderables() {
+	for (int i = 0; i < negativeLayers.size(); ++i)
+		negativeLayers.at(i)->clear();
+
+	for (int i = 0; i < positiveLayers.size(); ++i)
+		positiveLayers.at(i)->clear();
+}
+
+void Dojo::Render::removeViewport(Viewport* v) {
+	mViewportList.remove(v);
+}
+
+void Dojo::Render::removeAllViewports() {
+	mViewportList.clear();
+}
+
+void Dojo::Render::addLight(Light* l) {
+	DEBUG_ASSERT(l, "addLight: null light passed");
+	DEBUG_ASSERT(lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)");
+
+	lights.add(l);
+}
+
+void Dojo::Render::removeLight(Light* l) {
+	DEBUG_ASSERT(l, "removeLight: null light passed");
+
+	lights.remove(l);
+
+	//remove removes always the last element in the list - just disable the last index now
+	glDisable(GL_LIGHT0 + lights.size());
+}
+
+void Dojo::Render::clearLayers() {
+	for (int i = 0; i < negativeLayers.size(); ++i)
+		SAFE_DELETE(negativeLayers[i]);
+
+	negativeLayers.clear();
+
+	for (int i = 0; i < positiveLayers.size(); ++i)
+		SAFE_DELETE(positiveLayers[i]);
+
+	positiveLayers.clear();
+}
+
+void Render::setDefaultAmbient(const Color& a) {
+	defaultAmbient = a;
+	defaultAmbient.a = 1;
 }
 
 void Render::addViewport( Viewport* v )

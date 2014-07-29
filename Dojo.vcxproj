@@ -22,13 +22,18 @@
     <ClInclude Include="include\dojo\Console.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
+    <ClInclude Include="include\dojo\dojo_gl_header.h" />
     <ClInclude Include="include\dojo\FBPipe.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />
     <ClInclude Include="include\dojo\InputDevice.h" />
+    <ClInclude Include="include\dojo\InputDeviceListener.h" />
+    <ClInclude Include="include\dojo\InputSystemListener.h" />
     <ClInclude Include="include\dojo\Keyboard.h" />
     <ClInclude Include="include\dojo\KeyCode.h" />
     <ClInclude Include="include\dojo\Log.h" />
+    <ClInclude Include="include\dojo\LogEntry.h" />
+    <ClInclude Include="include\dojo\LogListener.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
@@ -59,6 +64,7 @@
     <ClInclude Include="include\dojo\ResourceGroup.h" />
     <ClInclude Include="include\dojo\Shader.h" />
     <ClInclude Include="include\dojo\ShaderProgram.h" />
+    <ClInclude Include="include\dojo\ShaderProgramType.h" />
     <ClInclude Include="include\dojo\SoundBuffer.h" />
     <ClInclude Include="include\dojo\SoundManager.h" />
     <ClInclude Include="include\dojo\SoundSet.h" />
@@ -76,6 +82,7 @@
     <ClInclude Include="include\dojo\TouchArea.h" />
     <ClInclude Include="include\dojo\Utils.h" />
     <ClInclude Include="include\dojo\Vector.h" />
+    <ClInclude Include="include\dojo\VertexField.h" />
     <ClInclude Include="include\dojo\Viewport.h" />
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
@@ -84,6 +91,12 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\dojo\File.cpp" />
+    <ClCompile Include="include\dojo\FileStream.cpp" />
+    <ClCompile Include="include\dojo\InputSystemListener.cpp" />
+    <ClCompile Include="include\dojo\Keyboard.cpp" />
+    <ClCompile Include="include\dojo\LogListener.cpp" />
+    <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundQueue.cpp" />
@@ -210,7 +223,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BrowseInformation>true</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlibd.lib;zziplibd.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImaged.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>

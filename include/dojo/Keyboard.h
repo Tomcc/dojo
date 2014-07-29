@@ -29,34 +29,11 @@ namespace Dojo
 		typedef std::vector< FakeAxis > FakeAxes;
 
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
-		Keyboard() :
-		InputDevice( "keyboard", 0, KC_JOYPAD_1, 3 )
-		{
+		Keyboard();
 
-		}
+		void addFakeAxis( Axis axis, KeyCode min, KeyCode max );
 
-		void addFakeAxis( Axis axis, KeyCode min, KeyCode max )
-		{
-			FakeAxis x(axis, min, max);
-			auto elem = std::find(mFakeAxes.begin(), mFakeAxes.end(), x);
-
-			if (elem == mFakeAxes.end())
-				mFakeAxes.emplace_back(x);
-		}
-
-		virtual void poll( float dt )
-		{
-			float accum[Axis::_AI_COUNT] = { 0 };
-
-			for( auto& fakeAxis : mFakeAxes )
-			{
-				accum[fakeAxis.axis] += isKeyDown( fakeAxis.max ) ? 1.f : 0.f;
-				accum[fakeAxis.axis] -= isKeyDown( fakeAxis.min ) ? 1.f : 0.f;
-			}
-
-			for (int x = 0; x < mAxisNumber; ++x)
-				_notifyAxis((Axis)x, accum[x]);
-		}
+		virtual void poll( float dt ) override;
 
 	protected:
 
