@@ -29,25 +29,25 @@ PolyTextArea::PolyTextArea( Object* parent, const Vector& position, Font* font, 
 	if( mRendering == RT_OUTLINE )
 	{
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
-		mMesh->setTriangleMode( Mesh::TM_LINE_LIST );
-		mMesh->setVertexFieldEnabled( VertexField::VF_POSITION2D );
+		mMesh->setTriangleMode( TriangleMode::LineList );
+		mMesh->setVertexFieldEnabled( VertexField::Position2D );
 	}
 	else
 	{
 		DEBUG_ASSERT( pFont->hasPolySurface(), "Cannot create a surface PolyTextArea if the font has no surface " );
-		mMesh->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
+		mMesh->setTriangleMode( TriangleMode::TriangleList );
 
 		if( mRendering == RT_SURFACE )
 		{
-			mMesh->setVertexFieldEnabled( VertexField::VF_POSITION2D );
+			mMesh->setVertexFieldEnabled( VertexField::Position2D );
 			//the normal here is unbound and defaults to 0,0,1 apparently, which is correct
 			//and allows for a substantial bandwidth saving
 			//TODO check if this works on every driver (tested on Intel HD4000, NV 630)
 		}
 		else
 		{
-			mMesh->setVertexFieldEnabled( VertexField::VF_POSITION3D );
-			mMesh->setVertexFieldEnabled( VertexField::VF_NORMAL );
+			mMesh->setVertexFieldEnabled( VertexField::Position3D );
+			mMesh->setVertexFieldEnabled( VertexField::Normal );
 		}
 	}
 

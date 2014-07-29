@@ -260,8 +260,8 @@ void ResourceGroup::addPrefabMeshes()
 {
 	//create an empty texturedQuad
 	Mesh* m = new Mesh(this);
-	m->setTriangleMode(Mesh::TM_STRIP);
-	m->setVertexFields({ VertexField::VF_POSITION2D, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleStrip);
+	m->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
 
 	m->begin(4);
 
@@ -283,8 +283,8 @@ void ResourceGroup::addPrefabMeshes()
 
 	//textured quad xz
 	m = new Mesh(this);
-	m->setTriangleMode(Mesh::TM_STRIP);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleStrip);
+	m->setVertexFields({ VertexField::Position3D, VertexField::UV0 });
 
 	m->begin(4);
 
@@ -310,8 +310,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(24);
 
@@ -366,8 +366,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(4);
 	//-Z
@@ -384,8 +384,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(4);
 	//+X
@@ -402,8 +402,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(4);
 	//+Z
@@ -420,8 +420,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(4);
 	//-X
@@ -438,8 +438,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({ VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0 });
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
 	m->begin(4);
 
@@ -456,8 +456,8 @@ void ResourceGroup::addPrefabMeshes()
 	m = new Mesh(this);
 
 	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(Mesh::TM_TRIANGLE_LIST);
-	m->setVertexFields({VertexField::VF_POSITION3D, VertexField::VF_NORMAL, VertexField::VF_UV_0});
+	m->setTriangleMode(TriangleMode::TriangleList);
+	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
 	
 	m->begin( 4 );
 	
@@ -475,8 +475,8 @@ void ResourceGroup::addPrefabMeshes()
 	
 	//add cube for wireframe use
 	m = new Mesh( this );
-	m->setTriangleMode( Mesh::TM_LINE_STRIP );
-	m->setVertexFieldEnabled( VertexField::VF_POSITION2D );
+	m->setTriangleMode( TriangleMode::LineStrip );
+	m->setVertexFieldEnabled( VertexField::Position2D );
 	
 	m->begin(4);	
 	

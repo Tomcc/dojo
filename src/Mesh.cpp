@@ -6,6 +6,7 @@
 #include "Platform.h"
 #include "Shader.h"
 #include "dojomath.h"
+#include "TriangleMode.h"
 
 using namespace Dojo;
 
@@ -170,7 +171,7 @@ void Mesh::vertex(const Vector& v)
 {
 	_prepareVertex(v);
 
-	if (isVertexFieldEnabled(VertexField::VF_POSITION3D))
+	if (isVertexFieldEnabled(VertexField::Position3D))
 		*((Vector*)currentVertex) = v;
 	else {
 		float* ptr = (float*)currentVertex;
@@ -197,7 +198,7 @@ void Mesh::vertex( float x, float y, float z )
 void Mesh::uv(float u, float v, byte set /*= 0 */) {
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
-	float* ptr = (float*)(currentVertex + _offset(VertexField::VF_UV_0, set));
+	float* ptr = (float*)(currentVertex + _offset(VertexField::UV0, set));
 	ptr[0] = u;
 	ptr[1] = v;
 }
@@ -206,7 +207,7 @@ void Mesh::color(const Color& c) {
 
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
-	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::VF_COLOR))) = c.toRGBA();
+	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
 }
 
 void Mesh::color(float r, float g, float b, float a) {
@@ -214,7 +215,7 @@ void Mesh::color(float r, float g, float b, float a) {
 }
 
 void Mesh::normal(const Vector& n) {
-	*((Vector*)(currentVertex + _offset(VertexField::VF_NORMAL))) = n;
+	*((Vector*)(currentVertex + _offset(VertexField::Normal))) = n;
 }
 
 void Mesh::normal(float x, float y, float z) {
@@ -228,10 +229,10 @@ void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& ou
 
 	switch (field)
 	{
-	case VertexField::VF_POSITION2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
-	case VertexField::VF_POSITION3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
-	case VertexField::VF_COLOR: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
-	case VertexField::VF_NORMAL: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	case VertexField::Position2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
+	case VertexField::Position3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	case VertexField::Color: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
+	case VertexField::Normal: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
 
 	default: //textures
 		outComponentsType = GL_FLOAT;
@@ -255,7 +256,7 @@ void Mesh::_bindAttribArrays( Shader* shader )
 
 		for( auto& attr : shader->getAttributes() )
 		{
-			if( attr.second.builtInAttribute == VertexField::VF_NONE || !isVertexFieldEnabled( attr.second.builtInAttribute ) )		//skip non-provided attributes
+			if( attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled( attr.second.builtInAttribute ) )		//skip non-provided attributes
 				continue;
 
 			_getVertexFieldData( attr.second.builtInAttribute, components, componentsType, normalized, offset );
@@ -276,13 +277,13 @@ void Mesh::_bindAttribArrays( Shader* shader )
 #endif
 	{
 		//construct attributes
-		for( int i = 0; i < (int)VertexField::_VF_COUNT; ++i )
+		for( int i = 0; i < (int)VertexField::_Count; ++i )
 		{
 			GLenum state = glFeatureStateMap[i];
 			VertexField ft = (VertexField)i;
 
-			if (ft >= VertexField::VF_UV_0 && ft <= VertexField::VF_UV_MAX) //a texture
-				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::VF_UV_0)); //bind the correct texture (this has to be called *before* EnableClientState
+			if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //a texture
+				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0)); //bind the correct texture (this has to be called *before* EnableClientState
 
 			if( isVertexFieldEnabled( ft ) )	//bind data and client states
 			{
@@ -293,12 +294,12 @@ void Mesh::_bindAttribArrays( Shader* shader )
 
 				switch( ft )
 				{
-				case VertexField::VF_POSITION3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);	break;
-				case VertexField::VF_POSITION2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset); break;
-				case VertexField::VF_NORMAL:				glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);	break;
-				case VertexField::VF_COLOR:				glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);	break;
+				case VertexField::Position3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);	break;
+				case VertexField::Position2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset); break;
+				case VertexField::Normal:				glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);	break;
+				case VertexField::Color:				glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);	break;
 				default: 
-					if (ft >= VertexField::VF_UV_0 && ft <= VertexField::VF_UV_MAX) //texture binding						
+					if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //texture binding						
 						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset );	
 					break;
 				};
@@ -370,10 +371,10 @@ bool Mesh::end()
 	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	
 	switch ( triangleMode ) {
-		case TM_TRIANGLE_LIST:       triangleCount = elemCount / 3;  break;
-		case TM_STRIP:      triangleCount = elemCount-2;    break;
-		case TM_LINE_STRIP:
-        case TM_LINE_LIST:
+		case TriangleMode::TriangleList:       triangleCount = elemCount / 3;  break;
+		case TriangleMode::TriangleStrip:      triangleCount = elemCount-2;    break;
+		case TriangleMode::LineStrip:
+        case TriangleMode::LineList:
             triangleCount = 0;
             break;
 	}
@@ -428,7 +429,7 @@ bool Mesh::onLoad()
 	setTriangleMode( (TriangleMode)*ptr++ );
 	
 	//fields
-	for (int i = 0; i < (int)VertexField::_VF_COUNT; ++i)
+	for (int i = 0; i < (int)VertexField::_Count; ++i)
 	{
 		if( *ptr++ )
 			setVertexFieldEnabled( (VertexField)i );
@@ -497,7 +498,7 @@ void Mesh::onUnload(bool soft /*= false */) {
 }
 
 Vector& Mesh::getVertex(int idx) {
-	int offset = isVertexFieldEnabled(VertexField::VF_POSITION3D) ? _offset(VertexField::VF_POSITION3D) : _offset(VertexField::VF_POSITION2D);
+	int offset = isVertexFieldEnabled(VertexField::Position3D) ? _offset(VertexField::Position3D) : _offset(VertexField::Position2D);
 	byte* ptr = (byte*)vertices.data() + (idx * vertexSize) + offset;
 
 	return *(Vector*)ptr;

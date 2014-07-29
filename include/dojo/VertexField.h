@@ -5,16 +5,16 @@
 namespace Dojo {
 	enum class VertexField
 	{
-		VF_POSITION2D,
-		VF_POSITION3D,
-		VF_COLOR,
-		VF_NORMAL,
+		Position2D,
+		Position3D,
+		Color,
+		Normal,
 
-		VF_UV_0,
-		VF_UV_MAX = VF_UV_0 + DOJO_MAX_TEXTURE_COORDS - 1,
+		UV0,
+		UVMax = UV0 + DOJO_MAX_TEXTURE_COORDS - 1,
 
-		VF_NONE,
-		_VF_COUNT = VF_NONE
+		None,
+		_Count = None
 	};
 
 }

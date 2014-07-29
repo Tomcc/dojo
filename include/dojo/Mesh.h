@@ -14,6 +14,7 @@
 #include "Resource.h"
 #include "Vector.h"
 #include "VertexField.h"
+#include "TriangleMode.h"
 
 namespace Dojo 
 {
@@ -42,14 +43,6 @@ namespace Dojo
 		static const int INDEX_PAGE_SIZE = 256;
 		
 		static const int VERTEX_FIELD_SIZES[];
-		
-		enum TriangleMode
-		{
-			TM_STRIP,
-			TM_TRIANGLE_LIST,
-			TM_LINE_STRIP,
-			TM_LINE_LIST
-		};
 		
 		///Creates a new empty Mesh
 		Mesh( ResourceGroup* creator = NULL );
@@ -224,9 +217,9 @@ namespace Dojo
 
 		int vertexCount = 0, indexCount = 0, triangleCount = 0;
 		
-		byte vertexFieldOffset[ (int)VertexField::_VF_COUNT ];
+		byte vertexFieldOffset[ (int)VertexField::_Count ];
 		
-		TriangleMode triangleMode = TM_STRIP;
+		TriangleMode triangleMode = TriangleMode::TriangleStrip;
 		
 		bool dynamic = false;
 		bool editing = false;

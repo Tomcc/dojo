@@ -248,7 +248,9 @@ void Render::setInterfaceOrientation( Orientation o )
 void Render::renderElement( Viewport* viewport, Renderable* s )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
-	DEBUG_ASSERT( viewport, "Rendering requires a Viewport to be set" );
+	DEBUG_ASSERT(viewport, "Rendering requires a Viewport to be set");
+	DEBUG_ASSERT(s->getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
+	DEBUG_ASSERT(s->getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
 
 	frameVertexCount += s->getMesh()->getVertexCount();
 	frameTriCount += s->getMesh()->getTriangleCount();
@@ -284,19 +286,15 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 
 	s->commitChanges( currentRenderState );
 
+	static const GLenum glModeMap[] = {
+		GL_TRIANGLE_STRIP, //TriangleStrip,
+		GL_TRIANGLES, //TriangleList,
+		GL_LINE_STRIP, //LineStrip,
+		GL_LINES //LineList
+	};
+
 	Mesh* m = currentRenderState->getMesh();
-
-	GLenum mode;
-	switch( m->getTriangleMode() )
-	{
-		case Mesh::TM_TRIANGLE_LIST:         mode = GL_TRIANGLES;        break;
-		case Mesh::TM_STRIP:    	mode = GL_TRIANGLE_STRIP;   break;
-		case Mesh::TM_LINE_STRIP:   mode = GL_LINE_STRIP;       break;
-		case Mesh::TM_LINE_LIST:	mode = GL_LINES;			break;
-	}
-
-	DEBUG_ASSERT(m->isLoaded(), "Rendering with a mesh with no GPU data!");
-	DEBUG_ASSERT(m->getVertexCount() > 0, "Rendering a mesh with no vertices");
+	GLenum mode = glModeMap[(byte)m->getTriangleMode()];
 
 	if( !m->isIndexed() )
 		glDrawArrays( mode, 0, m->getVertexCount() );

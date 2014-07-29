@@ -345,8 +345,8 @@ Mesh* TextArea::_createMesh()
 {
 	Mesh * mesh = new Mesh();
 	mesh->setDynamic( true );
-	mesh->setVertexFields({ VertexField::VF_POSITION2D, VertexField::VF_UV_0 });
-	mesh->setTriangleMode( Mesh::TM_TRIANGLE_LIST );
+	mesh->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
+	mesh->setTriangleMode( TriangleMode::TriangleList );
 	
 	return mesh;
 }

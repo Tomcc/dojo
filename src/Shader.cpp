@@ -46,13 +46,13 @@ void Shader::_populateAttributeNameMap()
 		std::string base = "TEXCOORD_";
 		base += '0' + (char)i;
 
-		sBuiltInAttributeNameMap[base] = (VertexField)((byte)VertexField::VF_UV_0 + i);
+		sBuiltInAttributeNameMap[base] = (VertexField)((byte)VertexField::UV0 + i);
 	}
 
-	sBuiltInAttributeNameMap["POSITION"] = VertexField::VF_POSITION3D;
-	sBuiltInAttributeNameMap["POSITION_2D"] = VertexField::VF_POSITION2D;
-	sBuiltInAttributeNameMap["NORMAL"] = VertexField::VF_NORMAL;
-	sBuiltInAttributeNameMap["COLOR"] = VertexField::VF_COLOR;
+	sBuiltInAttributeNameMap["POSITION"] = VertexField::Position3D;
+	sBuiltInAttributeNameMap["POSITION_2D"] = VertexField::Position2D;
+	sBuiltInAttributeNameMap["NORMAL"] = VertexField::Normal;
+	sBuiltInAttributeNameMap["COLOR"] = VertexField::Color;
 }
 
 Shader::BuiltInUniform Shader::_getUniformForName( const std::string& name )
@@ -70,7 +70,7 @@ VertexField Shader::_getAttributeForName( const std::string& name )
 		_populateAttributeNameMap();
 
 	auto elem = sBuiltInAttributeNameMap.find( name );
-	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::VF_NONE;
+	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
 }
 
 Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
