@@ -39,6 +39,8 @@ void Mesh::begin(int extimatedVerts /*= 1 */) {
 	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
 	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
 
+	vertices.clear();
+	indices.clear();
 	vertices.reserve(extimatedVerts*vertexSize);
 
 	vertexCount = indexCount = 0;
@@ -49,6 +51,44 @@ void Mesh::begin(int extimatedVerts /*= 1 */) {
 
 	editing = true;
 }
+
+void Mesh::beginAppend() {
+	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
+	DEBUG_ASSERT(dynamic, "can't call append() on a static mesh");
+	DEBUG_ASSERT(vertices.size() > 0, "This mesh was never begin'd!");
+
+	editing = true;
+}
+
+void Mesh::cutSection(IndexType i1, IndexType i2) {
+	DEBUG_ASSERT(isEditing(), "cutSection: this Mesh is not in Edit mode");
+	DEBUG_ASSERT(i1 < getVertexCount() && i2 < getVertexCount() && i1 <= i2, "Invalid indices passed");
+
+	//easy part: cut out the vertex data
+	auto diff = i2 - i1;
+	auto size = diff * vertexSize;
+	auto start = vertices.begin() + i1 * vertexSize;
+	vertices.erase(start, start + size);
+
+	//remove the indices
+	if (isIndexed()) {
+
+		for (int i = 0; i < getIndexCount(); ++i) {
+			auto idx = getIndex(i);
+
+			if (idx >= i1 && idx < i2) {
+				eraseIndex(i);
+				--i;
+			}
+			else if( idx >= i2 ) { //offset the new value
+				setIndex(i, idx - diff);
+			}
+		}
+	}
+
+	//TODO recompute max and min
+}
+
 
 Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
 Resource(creator)
@@ -107,7 +147,7 @@ void Mesh::setVertexFieldEnabled(VertexField f) {
 	vertexSize += VERTEX_FIELD_SIZES[(byte)f];
 }
 
-void Dojo::Mesh::setVertexFields(std::initializer_list<VertexField> fs) {
+void Mesh::setVertexFields(std::initializer_list<VertexField> fs) {
 	for (auto f : fs)
 		setVertexFieldEnabled(f);
 }
@@ -181,13 +221,26 @@ void Mesh::vertex(const Vector& v)
 	}
 }
 
-byte& Dojo::Mesh::_offset(VertexField f) {
+byte& Mesh::_offset(VertexField f) {
 	return vertexFieldOffset[(byte)f];
 }
 
 
-byte& Dojo::Mesh::_offset(VertexField f, int subID) {
+byte& Mesh::_offset(VertexField f, int subID) {
 	return vertexFieldOffset[(byte)((int)f + subID)];
+}
+
+int Mesh::getPrimitiveCount() const {
+	auto elemCount = isIndexed() ? getIndexCount() : getVertexCount();
+	switch (triangleMode) {
+	case TriangleMode::TriangleList:		return elemCount / 3;
+	case TriangleMode::TriangleStrip:		return elemCount - 2;
+	case TriangleMode::LineStrip:			return elemCount - 1;
+	case TriangleMode::LineList:            return elemCount / 2;
+	default:
+		DEBUG_FAIL("Invalid triangle mode");
+		return 0;
+	}
 }
 
 void Mesh::vertex( float x, float y, float z )
@@ -370,15 +423,6 @@ bool Mesh::end()
 	//guess triangle count
 	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	
-	switch ( triangleMode ) {
-		case TriangleMode::TriangleList:       triangleCount = elemCount / 3;  break;
-		case TriangleMode::TriangleStrip:      triangleCount = elemCount-2;    break;
-		case TriangleMode::LineStrip:
-        case TriangleMode::LineList:
-            triangleCount = 0;
-            break;
-	}
-	
 	//geometric hints
 	center = (max + min)*0.5f;
 	
@@ -386,10 +430,6 @@ bool Mesh::end()
 
 	if( !dynamic ) //won't be updated ever again
 		destroyBuffers();
-	else {
-		vertices.clear();
-		indices.clear();
-	}
 	
 	return loaded;
 }
@@ -504,6 +544,42 @@ Vector& Mesh::getVertex(int idx) {
 	return *(Vector*)ptr;
 }
 
+void Dojo::Mesh::setIndex(int idxidx, IndexType idx) {
+	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
 
+	switch (indexSize)
+	{
+	case 1:
+		indices[idxidx] = idx;
+		return;
+	case 2:
+		((unsigned short*)indices.data())[idxidx] = idx;
+		return;
+	default:
+		((unsigned int*)indices.data())[idxidx] = idx;
+		return;
+	}
+}
 
+Mesh::IndexType Mesh::getIndex(int idxidx) {
+	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
+
+	switch (indexSize)
+	{
+	case 1:
+		return indices[idxidx];
+	case 2:
+		return ((unsigned short*)indices.data())[idxidx];
+	default:
+		return ((unsigned int*)indices.data())[idxidx];
+	}
+}
+
+void Mesh::eraseIndex(int idxidx) {
+	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
+
+	auto i = indices.begin() + (idxidx * indexSize);
+	indices.erase(i, i + indexSize);
+	--indexCount;
+}
 

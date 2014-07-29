@@ -252,10 +252,13 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 	DEBUG_ASSERT(s->getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(s->getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
 
+#ifndef PUBLISH
 	frameVertexCount += s->getMesh()->getVertexCount();
-	frameTriCount += s->getMesh()->getTriangleCount();
+	frameTriCount += s->getMesh()->getPrimitiveCount();
+
 	//each renderable is a single batch
 	++frameBatchCount;
+#endif // !PUBLISH
 	
 	//change the renderstate
 	currentRenderState = s;

@@ -113,6 +113,12 @@ namespace Dojo
 		*/
 		void begin( int extimatedVerts = 1 );
 
+		///starts editing a dynamic mesh that was already begin'd and end'ed
+		/**
+			pointers are placed at the bottom
+		*/
+		void beginAppend();
+
 		///adds a vertex at the given position
 		void vertex( float x, float y );
 		
@@ -158,6 +164,9 @@ namespace Dojo
 		-if the buffer is dynamic, this can be called again to update device data
 		*/
 		bool end();
+
+		//Removes the given vertices from the mesh
+		void cutSection(IndexType i1, IndexType i2);
 		
 		///loads the whole file passed in the constructor
 		virtual bool onLoad();
@@ -167,7 +176,7 @@ namespace Dojo
 		///binds the mesh buffers with the vertex format from the specified shader
 		virtual void bind( Shader* shader );
 				
-		bool isIndexed()
+		bool isIndexed() const
 		{
 			return !indices.empty() || indexHandle;
 		}
@@ -193,12 +202,15 @@ namespace Dojo
 		}
 
 		///returns the total triangle count in this mesh
-		int getTriangleCount()
-		{
-			return triangleCount;
-		}
+		int getPrimitiveCount() const;
 
 		Vector& getVertex(int idx);
+
+		IndexType getIndex(int idxidx);
+
+		void eraseIndex(int idxidx);
+
+		void setIndex(int idxidx, IndexType idx);
 				
 	protected:
 		Vector max, min, center, dimensions;
@@ -215,7 +227,7 @@ namespace Dojo
 		GLuint vertexArrayDesc = 0;
 		GLuint vertexHandle = 0, indexHandle = 0;
 
-		int vertexCount = 0, indexCount = 0, triangleCount = 0;
+		int vertexCount = 0, indexCount = 0;
 		
 		byte vertexFieldOffset[ (int)VertexField::_Count ];
 		
