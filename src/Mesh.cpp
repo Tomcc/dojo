@@ -557,7 +557,7 @@ void Mesh::eraseIndex(int idxidx) {
 
 void Mesh::cutSection(IndexType i1, IndexType i2) {
 	DEBUG_ASSERT(isEditing(), "cutSection: this Mesh is not in Edit mode");
-	DEBUG_ASSERT(i1 < getVertexCount() && i2 < getVertexCount() && i1 <= i2, "Invalid indices passed");
+	DEBUG_ASSERT(i1 < getVertexCount() && i2 <= getVertexCount() && i1 <= i2, "Invalid indices passed");
 
 	//easy part: cut out the vertex data
 	auto diff = i2 - i1;
@@ -616,7 +616,7 @@ std::unique_ptr<Mesh> Dojo::Mesh::cloneFromSlice(IndexType vertexStart, IndexTyp
 
 		for (int i = 0; i < c->vertexCount; ++i) {
 			auto& v = c->getVertex(i);
-			v = v - translation;
+			v += translation;
 
 			c->max = Math::max(c->max, v);
 			c->min = Math::min(c->min, v);
