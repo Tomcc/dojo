@@ -29,6 +29,26 @@ const int Mesh::VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat )
 };
 
+Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
+Resource(creator)
+{
+	//set all fields to zero
+	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
+
+	//default index size is 16
+	setIndexByteSize(sizeof(GLushort));
+}
+
+Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
+Resource(creator, filePath) 
+{
+	//set all fields to zero
+	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
+
+	//default index size is 16
+	setIndexByteSize(sizeof(GLushort));
+}
+
 void Mesh::destroyBuffers() {
 	auto cleanup = std::move(vertices);
 	cleanup = std::move(indices);
@@ -58,56 +78,6 @@ void Mesh::beginAppend() {
 	DEBUG_ASSERT(vertices.size() > 0, "This mesh was never begin'd!");
 
 	editing = true;
-}
-
-void Mesh::cutSection(IndexType i1, IndexType i2) {
-	DEBUG_ASSERT(isEditing(), "cutSection: this Mesh is not in Edit mode");
-	DEBUG_ASSERT(i1 < getVertexCount() && i2 < getVertexCount() && i1 <= i2, "Invalid indices passed");
-
-	//easy part: cut out the vertex data
-	auto diff = i2 - i1;
-	auto size = diff * vertexSize;
-	auto start = vertices.begin() + i1 * vertexSize;
-	vertices.erase(start, start + size);
-
-	//remove the indices
-	if (isIndexed()) {
-
-		for (int i = 0; i < getIndexCount(); ++i) {
-			auto idx = getIndex(i);
-
-			if (idx >= i1 && idx < i2) {
-				eraseIndex(i);
-				--i;
-			}
-			else if( idx >= i2 ) { //offset the new value
-				setIndex(i, idx - diff);
-			}
-		}
-	}
-
-	//TODO recompute max and min
-}
-
-
-Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
-Resource(creator)
-{
-	//set all fields to zero
-	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
-
-	//default index size is 16
-	setIndexByteSize(sizeof(GLushort));
-}
-
-Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
-Resource(creator, filePath) 
-{
-	//set all fields to zero
-	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
-
-	//default index size is 16
-	setIndexByteSize(sizeof(GLushort));
 }
 
 void Mesh::setIndexByteSize(byte bytenumber) {
@@ -561,7 +531,8 @@ void Dojo::Mesh::setIndex(int idxidx, IndexType idx) {
 	}
 }
 
-Mesh::IndexType Mesh::getIndex(int idxidx) {
+
+Mesh::IndexType Mesh::getIndex(int idxidx) const {
 	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
 
 	switch (indexSize)
@@ -583,3 +554,85 @@ void Mesh::eraseIndex(int idxidx) {
 	--indexCount;
 }
 
+
+void Mesh::cutSection(IndexType i1, IndexType i2) {
+	DEBUG_ASSERT(isEditing(), "cutSection: this Mesh is not in Edit mode");
+	DEBUG_ASSERT(i1 < getVertexCount() && i2 < getVertexCount() && i1 <= i2, "Invalid indices passed");
+
+	//easy part: cut out the vertex data
+	auto diff = i2 - i1;
+	auto size = diff * vertexSize;
+	auto start = vertices.begin() + i1 * vertexSize;
+	vertices.erase(start, start + size);
+
+	//remove the indices
+	if (isIndexed()) {
+
+		for (int i = 0; i < getIndexCount(); ++i) {
+			auto idx = getIndex(i);
+
+			if (idx >= i1 && idx < i2) {
+				eraseIndex(i);
+				--i;
+			}
+			else if (idx >= i2) { //offset the new value
+				setIndex(i, idx - diff);
+			}
+		}
+	}
+
+	//TODO recompute max and min
+}
+
+std::unique_ptr<Mesh> Mesh::cloneWithSameFormat() const {
+	auto c = make_unique<Mesh>();
+
+	c->setIndexByteSize(indexSize);
+	c->setTriangleMode(triangleMode);
+	c->vertexSize = vertexSize;
+	memcpy(c->vertexFieldOffset, vertexFieldOffset, sizeof(vertexFieldOffset));
+
+	return c;
+}
+
+std::unique_ptr<Mesh> Dojo::Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
+	DEBUG_ASSERT(!vertices.empty(), "This mesh is empty");
+	DEBUG_ASSERT(vertexStart < getVertexCount() && vertexEnd <= getVertexCount() && vertexStart <= vertexEnd, "Indices out of bounds");
+
+	auto c = cloneWithSameFormat();
+
+	int n = vertexEnd - vertexStart;
+	int off = vertexStart * vertexSize;
+	int size = n * vertexSize;
+
+	c->begin(n);
+
+	//copy the vertices in the new mesh
+	{
+		c->vertexCount = n;
+		c->vertices.resize(c->vertexCount * vertexSize);
+
+		memcpy(c->vertices.data(), vertices.data() + off, size);
+
+		for (int i = 0; i < c->vertexCount; ++i) {
+			auto& v = c->getVertex(i);
+			v = v - translation;
+
+			c->max = Math::max(c->max, v);
+			c->min = Math::min(c->min, v);
+		}
+	}
+
+	//find the indices that were pointing to these vertices
+	//and place new indices that replicate the same structure
+	if (isIndexed()) {
+		for (int i = 0; i < getIndexCount(); ++i) {
+			auto idx = getIndex(i);
+			if (idx >= vertexStart && idx < vertexEnd)
+				c->index(idx - vertexStart);
+		}
+	}
+
+
+	return c;
+}

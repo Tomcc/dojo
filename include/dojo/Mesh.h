@@ -206,11 +206,17 @@ namespace Dojo
 
 		Vector& getVertex(int idx);
 
-		IndexType getIndex(int idxidx);
+		IndexType getIndex(int idxidx) const;
 
 		void eraseIndex(int idxidx);
 
 		void setIndex(int idxidx, IndexType idx);
+
+		///Creates a new empty mesh with the same format of this one
+		std::unique_ptr<Mesh> cloneWithSameFormat() const;
+
+		///creates a new mesh from a slice of this one
+		std::unique_ptr<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
 				
 	protected:
 		Vector max, min, center, dimensions;
