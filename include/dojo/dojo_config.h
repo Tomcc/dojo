@@ -4,8 +4,7 @@
  *
  */
 
-#ifndef DojoConfig_h__
-#define DojoConfig_h__
+#pragma once
 
 //are we on windows?
 #if defined ( WIN32 )
@@ -128,4 +127,3 @@ namespace Dojo
 	};
 }
 
-#endif

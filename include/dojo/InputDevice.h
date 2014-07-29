@@ -1,5 +1,4 @@
-#ifndef InputDevice_h__
-#define InputDevice_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -192,4 +191,4 @@ namespace Dojo
 		int mID;
 	};
 }
-#endif // Joystick_h__
+

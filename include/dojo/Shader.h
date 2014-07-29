@@ -1,5 +1,4 @@
-#ifndef Shader_h__
-#define Shader_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -174,4 +173,4 @@ namespace Dojo
 	};
 }
 
-#endif // Shader_h__
+

@@ -1,5 +1,4 @@
-#ifndef Console_h__
-#define Console_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -68,5 +67,5 @@ namespace Dojo
 	};
 }
 
-#endif // Console_h__
+
 	

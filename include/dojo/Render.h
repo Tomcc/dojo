@@ -5,8 +5,7 @@
 //  Created by Tommaso Checchi on 4/23/10.
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
-#ifndef Render_h__
-#define Render_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -209,4 +208,3 @@ namespace Dojo {
 	};		
 }
 
-#endif

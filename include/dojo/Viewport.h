@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef Viewport_h__
-#define Viewport_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -189,6 +188,4 @@ namespace Dojo
         void _updateTransforms();
 	};
 }
-
-#endif
 

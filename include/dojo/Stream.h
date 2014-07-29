@@ -1,5 +1,4 @@
-#ifndef Stream_h__
-#define Stream_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -101,4 +100,3 @@ namespace Dojo
 	};
 }
 
-#endif // Stream_h__

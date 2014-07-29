@@ -6,8 +6,7 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
-#ifndef Game_h__
-#define Game_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -102,4 +101,3 @@ namespace Dojo
 	};
 }
 
-#endif

@@ -6,8 +6,7 @@
 //  Copyright 2011 none. All rights reserved.
 //
 
-#ifndef __OSXPlatform_h
-#define __OSXPlatform_h
+#pragma once
 
 #include "ApplePlatform.h"
 
@@ -81,4 +80,3 @@ namespace Dojo
     };
 }
 
-#endif

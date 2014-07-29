@@ -1,5 +1,4 @@
-#ifndef Keyboard_h__
-#define Keyboard_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -66,4 +65,4 @@ namespace Dojo
 	};
 }
 
-#endif // Keyboard_h__
+

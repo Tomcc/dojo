@@ -1,5 +1,4 @@
-#ifndef ANDROIDPLATFORM_H
-#define ANDROIDPLATFORM_H
+#pragma once
 
 #include "Platform.h"
 #include "InputSystem.h"
@@ -104,4 +103,3 @@ namespace Dojo
 
 #endif
 
-#endif

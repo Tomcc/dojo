@@ -1,5 +1,4 @@
-#ifndef StringReader_h__
-#define StringReader_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -246,4 +245,3 @@ namespace Dojo
 		size_t idx;
 	};
 }
-#endif // StringReader_h__

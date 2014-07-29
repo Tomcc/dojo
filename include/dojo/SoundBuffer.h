@@ -1,5 +1,4 @@
-#ifndef SOUNDBUFFER_H
-#define SOUNDBUFFER_H
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -181,4 +180,3 @@ namespace Dojo
 	};
 }
 
-#endif

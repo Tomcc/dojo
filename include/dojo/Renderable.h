@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef Renderable_h__
-#define Renderable_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -91,4 +90,3 @@ namespace Dojo
 		bool mCulled;
 	};
 }
-#endif

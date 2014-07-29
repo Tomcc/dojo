@@ -1,5 +1,4 @@
-#ifndef Platform_h__
-#define Platform_h__
+#pragma once
 
 #include "dojo_common_header.h"
 #include "Table.h"
@@ -263,13 +262,3 @@ namespace Dojo
 		Platform( const Table& configTable );
 	};
 }
-
-#endif/*
- *  Platform.h
- *  Drafted
- *
- *  Created by Tommaso Checchi on 1/24/11.
- *  Copyright 2011 none. All rights reserved.
- *
- */
-

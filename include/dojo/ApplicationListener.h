@@ -5,8 +5,7 @@
 //  Copyright (c) 2011 none. All rights reserved.
 //
 
-#ifndef Dojo_FocusListener_h
-#define Dojo_FocusListener_h
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -43,4 +42,3 @@ namespace Dojo
 	};
 }
 
-#endif

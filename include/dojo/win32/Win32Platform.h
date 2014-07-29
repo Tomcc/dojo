@@ -1,5 +1,4 @@
-#ifndef Win32Platform_h__
-#define Win32Platform_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -154,5 +153,3 @@ namespace Dojo
 		void _pollDevices( float dt );
 	};
 }
-
-#endif // Win32Platform_h__

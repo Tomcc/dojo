@@ -1,5 +1,4 @@
-#ifndef PolyTextArea_h__
-#define PolyTextArea_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -108,4 +107,3 @@ namespace Dojo
 }
 
 
-#endif // PolyTextArea_h__

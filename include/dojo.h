@@ -1,5 +1,4 @@
-#ifndef DOJO_H
-#define DOJO_H
+#pragma once
 
 #include <dojo/AnimatedQuad.h>
 #include <dojo/ApplicationListener.h>
@@ -53,4 +52,3 @@
 #include <dojo/dojomath.h>
 #include <dojo/dojostring.h>
 
-#endif

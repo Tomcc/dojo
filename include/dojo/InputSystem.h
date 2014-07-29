@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef InputSystem_h__
-#define InputSystem_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -235,4 +234,3 @@ namespace Dojo
 	};
 }
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef SOUNDMANAGER_H_
-#define SOUNDMANAGER_H_
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -216,4 +215,3 @@ namespace Dojo {
 		};
 }
 
-#endif

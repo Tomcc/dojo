@@ -1,5 +1,4 @@
-#ifndef ANDROIDGLEXTERN_H
-#define ANDROIDGLEXTERN_H
+#pragma once
 
 	#ifndef GL_GLEXT_PROTOTYPES
 	#define GL_GLEXT_PROTOTYPES 1
@@ -44,4 +43,3 @@
 
 	extern void ExternInitOpenGL();
 	
-#endif

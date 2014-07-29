@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 none. All rights reserved.
 //
 
-#ifndef dojo_TouchArea_h
-#define dojo_TouchArea_h
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -139,4 +138,3 @@ namespace Dojo
     };
 }
 
-#endif

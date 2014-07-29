@@ -1,5 +1,4 @@
-#ifndef BackgroundQueue_h__
-#define BackgroundQueue_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -106,5 +105,3 @@ namespace Dojo
 	private:
 	};
 }
-
-#endif // BackgroundQueue_h__

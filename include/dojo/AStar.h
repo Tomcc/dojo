@@ -1,5 +1,4 @@
-#ifndef AStar_h__
-#define AStar_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -215,6 +214,3 @@ namespace Dojo
 		}
 	};
 }
-
-
-#endif // AStar_h__

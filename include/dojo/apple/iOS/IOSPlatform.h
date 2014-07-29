@@ -1,5 +1,4 @@
-#ifndef IOSPlatform_h__
-#define IOSPlatform_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -156,4 +155,3 @@ namespace Dojo
 	};
 }
 
-#endif

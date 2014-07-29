@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef Object_h__
-#define Object_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -289,4 +288,3 @@ namespace Dojo {
 	};
 }
 
-#endif

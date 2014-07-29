@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef Font_h__
-#define Font_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -281,4 +280,3 @@ namespace Dojo
 	};
 }
 
-#endif

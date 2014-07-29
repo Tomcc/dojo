@@ -1,5 +1,4 @@
-#ifndef dojo_common_header
-#define dojo_common_header
+#pragma once
 
 #include "dojo_config.h"
 
@@ -116,5 +115,3 @@
 
 //keycode.h is a plain enum
 #include "KeyCode.h"
-
-#endif // dojo_common_headers_h__

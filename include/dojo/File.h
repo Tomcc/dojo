@@ -1,5 +1,4 @@
-#ifndef FileStreamImpl_h__
-#define FileStreamImpl_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -127,4 +126,4 @@ namespace Dojo
 	private:
 	};
 }
-#endif // File_h__
+

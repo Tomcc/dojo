@@ -1,5 +1,4 @@
-#ifndef Tessellation_h__
-#define Tessellation_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -252,4 +251,3 @@ namespace Dojo
 	};
 }
 
-#endif // Tesselation_h__

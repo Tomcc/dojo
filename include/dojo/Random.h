@@ -19,8 +19,7 @@
 // Copyright (C) 2000 - 2009, Richard J. Wagner
 // All rights reserved.
 
-#ifndef Random_h__
-#define Random_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -391,4 +390,4 @@ namespace Dojo
 	}
 }
 
-#endif // Random_h__
+

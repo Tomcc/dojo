@@ -2,8 +2,7 @@
 // Distributed under the simplified BSD license (see the license file that
 // should have come with this header).
 
-#ifndef atomicops_h__
-#define atomicops_h__
+#pragma once
 
 // Provides portable (VC++2010+, Intel ICC 13, GCC 4.7+, and anything C++11 compliant) implementation
 // of low-level memory barriers, plus a few semi-portable utility macros (for inlining and alignment).
@@ -271,4 +270,4 @@ private:
 #ifdef AE_VCPP
 #pragma warning(pop)
 #endif
-#endif // atomicops_h__
+

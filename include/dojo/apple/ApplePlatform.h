@@ -7,8 +7,7 @@
 //
 
 
-#ifndef __ApplePlatform_h
-#define __ApplePlatform_h
+#pragma once
 
 #include "../dojo_common_header.h"
 
@@ -60,4 +59,3 @@ namespace Dojo
     };
 }
 
-#endif

@@ -6,8 +6,7 @@
 //  Copyright 2011 none. All rights reserved.
 //
 
-#ifndef Dice_Plane_h
-#define Dice_Plane_h
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -94,4 +93,3 @@ namespace Dojo
 	};
 }
 
-#endif

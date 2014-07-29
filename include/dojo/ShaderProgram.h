@@ -1,5 +1,4 @@
-#ifndef ShaderProgram_h__
-#define ShaderProgram_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -67,5 +66,3 @@ namespace Dojo
 		bool _load();
 	};
 }
-
-#endif // ShaderProgram_h__

@@ -6,8 +6,7 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
-#ifndef Vector_h__
-#define Vector_h__
+#pragma once
 
 #include "dojo_common_header.h"
 
@@ -218,4 +217,3 @@ namespace std
 		};
 }
 
-#endif

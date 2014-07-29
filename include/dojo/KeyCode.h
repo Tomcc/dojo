@@ -1,5 +1,4 @@
-#ifndef KeyCode_h__
-#define KeyCode_h__
+#pragma once
 
 namespace Dojo
 {
@@ -180,5 +179,3 @@ namespace Dojo
 		KC_KEY_COUNT
 	};
 }
-
-#endif // KeyCode_h__

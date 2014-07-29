@@ -1,5 +1,4 @@
-#ifndef FASTVECTOR_H
-#define FASTVECTOR_H
+#pragma once
 
 #define FV_INLINE inline
 
@@ -390,4 +389,3 @@ namespace Dojo
 	}
 }
 
-#endif

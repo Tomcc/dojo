@@ -1,5 +1,4 @@
-#ifndef DebugUtils_h__
-#define DebugUtils_h__ 
+#pragma once
 
 #ifndef PUBLISH
 	
@@ -78,5 +77,3 @@ namespace Dojo
 	///the default openAL assertion handler
 	bool DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line, const char* function );
 }
-
-#endif // DebugUtils_h__
