@@ -186,6 +186,8 @@ namespace Dojo
 		KC_XBOX_B = KC_JOYPAD_14,
 		KC_XBOX_X = KC_JOYPAD_15,
 		KC_XBOX_Y = KC_JOYPAD_16,
+		KC_XBOX_LT = KC_JOYPAD_17, //these two keys are FAKE keys on the xbox controller
+		KC_XBOX_RT = KC_JOYPAD_18,
 
 		KC_MOUSE_LEFT  = 0x102,
 		KC_MOUSE_RIGHT = 0x103,

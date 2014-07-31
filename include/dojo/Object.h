@@ -118,10 +118,13 @@ namespace Dojo {
 
 		Vector getLocalDirection( const Vector& worldDir );
 		
-		const Quaternion getRotation()
+		const Quaternion& getRotation() const
 		{
 			return rotation;
 		}
+
+		///returns the euclidean "roll" angle, or rotation around Z
+		float getRoll() const;
 						
 		bool isActive()				{	return active;	}
 		

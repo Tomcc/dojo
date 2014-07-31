@@ -87,7 +87,7 @@
     <ClInclude Include="include\dojo\Viewport.h" />
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
-    <ClInclude Include="include\dojo\win32\XInputJoystick.h" />
+    <ClInclude Include="include\dojo\win32\XInputController.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -98,6 +98,7 @@
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
+    <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundQueue.cpp" />

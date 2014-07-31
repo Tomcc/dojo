@@ -2,7 +2,7 @@
 
 #include "win32/Win32Platform.h"
 #include "win32/WGL_ARB_multisample.h"
-#include "win32/XInputJoystick.h"
+#include "win32/XInputController.h"
 
 #include "Render.h"
 #include "Game.h"
@@ -477,7 +477,7 @@ void Win32Platform::initialize( Game* g )
 	//create xinput persistent joysticks
 	for( int i = 0; i < 4; ++i ) 
 	{
-		mXInputJoystick[ i ] = new XInputJoystick( i );
+		mXInputJoystick[ i ] = new XInputController( i );
 		mXInputJoystick[i]->poll( 1 ); //force detection of already connected pads
 	}
 

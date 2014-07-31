@@ -10,11 +10,8 @@ InputDevice("keyboard", 0, KC_JOYPAD_1, 3) {
 }
 
 void Keyboard::addFakeAxis(Axis axis, KeyCode min, KeyCode max) {
-	FakeAxis x(axis, min, max);
-	auto elem = std::find(mFakeAxes.begin(), mFakeAxes.end(), x);
-
-	if (elem == mFakeAxes.end())
-		mFakeAxes.emplace_back(x);
+	if (!hasAxis(axis))
+		mFakeAxes.emplace_back(axis, min, max);
 }
 
 void Keyboard::poll(float dt) {
@@ -28,4 +25,13 @@ void Keyboard::poll(float dt) {
 
 	for (int x = 0; x < mAxisNumber; ++x)
 		_notifyAxis((Axis)x, accum[x]);
+}
+
+bool Dojo::Keyboard::hasAxis(Axis x) const  {
+	for (auto& a : mFakeAxes) {
+		if (a.axis == x)
+			return true;
+	}
+	
+	return false;
 }

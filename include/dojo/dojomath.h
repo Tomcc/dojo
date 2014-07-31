@@ -160,6 +160,13 @@ namespace Dojo
 		{
 			return to * s + from * (1.f-s);
 		}
+
+		static Vector lerp(const Vector& to, const Vector& from, float s) {
+			return Vector(
+				lerp(to.x, from.x, s),
+				lerp(to.y, from.y, s),
+				lerp(to.z, from.z, s));
+		}
 		
 		///returns if a is inside ]b-bias, b+bias[
 		static bool isNear( float a, float b, float bias )

@@ -195,6 +195,10 @@ Vector Object::getLocalDirection(const Vector& worldDir) {
 	return Vector::ZERO;
 }
 
+float Object::getRoll() const {
+	return glm::roll(rotation);
+}
+
 Object* Object::getChild(int i) {
 	DEBUG_ASSERT(hasChilds(), "Tried to retrieve a child from an object with no childs");
 	DEBUG_ASSERT(childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child");
@@ -284,3 +288,4 @@ void Object::onAction( float dt )
 	
 	updateChilds( dt );
 }
+

@@ -43,6 +43,9 @@ namespace Dojo
 		///returns the instant state of this axis
 		virtual float getAxis( Axis axis );
 
+		///returns true if this device supports the requested axis
+		virtual bool hasAxis(Axis axis) const = 0;
+
 		///returns the bound slot for this Device
 		/*
 		for example, 0..3 for XBox controllers, or 0..n for each control method mapped to the keyboard

@@ -11,7 +11,7 @@
 
 namespace Dojo
 {
-	class XInputJoystick;
+	class XInputController;
 	class Keyboard;
 
 	class Win32Platform : public Platform
@@ -119,7 +119,7 @@ namespace Dojo
 		Keyboard mKeyboard;
 		int clientAreaYOffset;
 
-		XInputJoystick* mXInputJoystick[ 4 ];
+		XInputController* mXInputJoystick[ 4 ];
 
 		Timer mStepTimer;
 

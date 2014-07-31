@@ -35,6 +35,8 @@ namespace Dojo
 
 		virtual void poll( float dt ) override;
 
+		virtual bool hasAxis(Axis a) const override;
+
 	protected:
 
 		FakeAxes mFakeAxes;
