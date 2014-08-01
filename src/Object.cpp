@@ -17,13 +17,11 @@ speed(0,0,0),
 active( true ),
 scale( 1,1,1 ),
 childs( NULL ),
-parent( parentObject ),
+parent( nullptr ),
 dispose( false ),
 mNeedsAABB( true ),
 inheritScale( true )
 {
-	DEBUG_ASSERT( parent, "Null parent provided: any Object needs to have a non-null parent, except GameState" );
-	
 	setSize( bbSize );
 }
 
@@ -35,7 +33,9 @@ Object::~Object()
 void Object::addChild( Object* o )
 {    
 	DEBUG_ASSERT( o, "Child to add is null" );
-	
+	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
+
+
 	if( !childs )
 		childs = new ChildList(10,10);
 
@@ -157,7 +157,7 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 	}
 }
 
-Vector Object::getWorldPosition(const Vector& localPos) {
+Vector Object::getWorldPosition(const Vector& localPos) const {
 	if (parent)
 	{
 		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
@@ -173,6 +173,11 @@ void Object::reset() {
 
 	updateWorldTransform();
 }
+
+void Object::setRoll(float r) {
+	setRotation(Vector(0, 0, r));
+}
+
 
 Vector Object::getLocalPosition(const Vector& worldPos) {
 	Matrix inv = glm::inverse(getWorldTransform()); //TODO make faster for gods' sake
@@ -288,4 +293,3 @@ void Object::onAction( float dt )
 	
 	updateChilds( dt );
 }
-

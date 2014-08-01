@@ -32,9 +32,7 @@ zFar( 1000 ),
 mRT( nullptr )
 {
     mNeedsAABB = true;
-    
-	Render* render = Platform::getSingleton()->getRender();
-	
+
 	//default size is window size
 	targetSize.x = (float)Platform::getSingleton()->getWindowWidth();
 	targetSize.y = (float)Platform::getSingleton()->getWindowHeight();

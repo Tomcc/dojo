@@ -21,7 +21,6 @@ namespace Dojo {
 		virtual void onTouchBegan(const Touch& touch) {}
 		virtual void onTouchMove(const Touch& touch)  {}
 		virtual void onTouchEnd(const Touch& touch)   {}
-
 		virtual void onMouseMove(const Dojo::Vector& curPos, const Dojo::Vector& oldPos)	{}
 		virtual void onScrollWheel(float scroll)	{}
 

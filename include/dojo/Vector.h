@@ -89,6 +89,15 @@ namespace Dojo
 			return Vector( x * s, y * s, z * s );
 		}
 
+		Vector operator + (float s) const 
+		{
+			return Vector(x + s, y + s, z + s);
+		}
+		Vector operator - (float s) const
+		{
+			return Vector(x - s, y - s, z - s);
+		}
+
 		float operator * ( const Vector& v ) const 
 		{
 			return glm::dot( (const glm::vec3&)(*this), (const glm::vec3&)v );

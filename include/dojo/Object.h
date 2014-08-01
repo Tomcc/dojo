@@ -76,6 +76,9 @@ namespace Dojo {
 			rotation = quat;
 		}
 
+		///sets the rotation around the Z axis (2D rotation) for this object
+		void setRoll(float r);
+
 		///rotates (in euler angles) the object starting from the current orientation around the given axis
 		void rotate( float r, const Vector& axis = Vector::UNIT_Z )
 		{
@@ -102,10 +105,10 @@ namespace Dojo {
 		GameState* getGameState() const	{	return gameState;	}
 
 		///returns the world position of a point in local space
-		Vector getWorldPosition( const Vector& localPos );
+		Vector getWorldPosition( const Vector& localPos ) const;
 				
 		///returns the world coordinates' position of this Object
-		const Vector getWorldPosition()
+		Vector getWorldPosition() const
 		{
 			return getWorldPosition( Vector::ZERO );
 		}
@@ -133,7 +136,7 @@ namespace Dojo {
 			return childs != NULL && childs->size() > 0;
 		}
 
-		const Matrix& getWorldTransform()    
+		const Matrix& getWorldTransform() const
 		{  
 			return mWorldTransform; 
 		}
