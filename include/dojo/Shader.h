@@ -32,33 +32,33 @@ namespace Dojo
 		{
 			BU_NONE,
 
-			BU_TEXTURE_0,	///The texture currently bound to unit 0
+			BU_TEXTURE_0,	///<The texture currently bound to unit 0
 			BU_TEXTURE_N = BU_TEXTURE_0 + DOJO_MAX_TEXTURES-1,
 
-			BU_TEXTURE_0_DIMENSION, ///The dimensions in pixels of the texture currently bound to unit 0 (vec2)
+			BU_TEXTURE_0_DIMENSION, ///<The dimensions in pixels of the texture currently bound to unit 0 (vec2)
 			BU_TEXTURE_N_DIMENSION = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES-1,
 
 			BU_TEXTURE_0_TRANSFORM,
 			BU_TEXTURE_N_TRANSFORM = BU_TEXTURE_0_TRANSFORM + DOJO_MAX_TEXTURES-1,
 
-			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES,			///The world matrix
-			BU_VIEW,			///The view matrix
-			BU_PROJECTION,		///The projection matrix
-            BU_WORLDVIEW,
-			BU_WORLDVIEWPROJ,	///The complete transformation matrix
-			BU_OBJECT_COLOR,	///The object's color (vec4)
+			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES,			///<The world matrix
+			BU_VIEW,		///<The view matrix
+			BU_PROJECTION,		///<The projection matrix
+        		BU_WORLDVIEW,           ///<The world view matrix
+			BU_WORLDVIEWPROJ,	///<The complete transformation matrix
+			BU_OBJECT_COLOR,	///<The object's color (vec4)
 
-			BU_VIEW_DIRECTION,	///The current world-space direction of the view (vec3)
+			BU_VIEW_DIRECTION,	///<The current world-space direction of the view (vec3)
 			
-			BU_TIME,			///Time in seconds since the start of the program (float)
-			BU_TARGET_DIMENSION	///The dimensions in pixels of the currently bound target (vec2)
+			BU_TIME,		///<Time in seconds since the start of the program (float)
+			BU_TARGET_DIMENSION	///<The dimensions in pixels of the currently bound target (vec2)
 		};
 
 		///A VertexAttribute represents a "attribute" binding in a vertex shader
 		struct VertexAttribute
 		{
 			GLint location;
-			GLint count; ///the array size *for a single vertex*
+			GLint count; ///<The array size *for a single vertex*
 
 			VertexField builtInAttribute;
 
