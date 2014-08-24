@@ -293,7 +293,8 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 		GL_TRIANGLE_STRIP, //TriangleStrip,
 		GL_TRIANGLES, //TriangleList,
 		GL_LINE_STRIP, //LineStrip,
-		GL_LINES //LineList
+		GL_LINES, //LineList
+		GL_POINTS
 	};
 
 	Mesh* m = currentRenderState->getMesh();

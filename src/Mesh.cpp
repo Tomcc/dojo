@@ -200,6 +200,21 @@ byte& Mesh::_offset(VertexField f, int subID) {
 	return vertexFieldOffset[(byte)((int)f + subID)];
 }
 
+
+void Mesh::appendRawVertexData(void* data, IndexType count) {
+	int blobSize = count * vertexSize;
+	int oldSize = vertices.size();
+
+	vertices.resize(oldSize + blobSize);
+
+	auto start = vertices.data() + oldSize;
+	memcpy(start, data, blobSize);
+
+	//TODO max and min??
+
+	vertexCount += count;
+}
+
 int Mesh::getPrimitiveCount() const {
 	auto elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	switch (triangleMode) {
@@ -207,6 +222,7 @@ int Mesh::getPrimitiveCount() const {
 	case TriangleMode::TriangleStrip:		return elemCount - 2;
 	case TriangleMode::LineStrip:			return elemCount - 1;
 	case TriangleMode::LineList:            return elemCount / 2;
+	case TriangleMode::PointList:			return elemCount;
 	default:
 		DEBUG_FAIL("Invalid triangle mode");
 		return 0;
@@ -389,9 +405,6 @@ bool Mesh::end()
 	loaded = glGetError() == GL_NO_ERROR;
 	
 	currentVertex = nullptr;
-
-	//guess triangle count
-	IndexType elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	
 	//geometric hints
 	center = (max + min)*0.5f;

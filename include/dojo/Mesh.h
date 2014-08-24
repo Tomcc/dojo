@@ -140,6 +140,9 @@ namespace Dojo
 		
 		void normal( const Vector& n );
 
+		///appends a raw blob of vertices to the vertex array
+		void appendRawVertexData(void* data, IndexType vertexCount);
+
 		///adds one index
 		void index(IndexType idx);
 		

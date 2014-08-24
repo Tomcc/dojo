@@ -6,7 +6,8 @@ namespace Dojo {
 		TriangleStrip,
 		TriangleList,
 		LineStrip,
-		LineList
+		LineList,
+		PointList
 	};
 
 }

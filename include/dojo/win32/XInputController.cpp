@@ -13,7 +13,7 @@
 using namespace Dojo;
 
 Dojo::XInputController::XInputController(int n) :
-InputDevice("XInput Joystick", n, 16, 8),
+InputDevice(InputDevice::Type::Xbox, n, 16, 8),
 mConnectionCheckTimer(0),
 mConnected(false) {
 	//set default dead zones

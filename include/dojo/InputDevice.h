@@ -15,6 +15,12 @@ namespace Dojo
 
 		const static int BUTTON_MAX = 16;
 
+		enum class Type {
+			Keyboard,
+			Mouse,
+			Xbox,
+		};
+
 		//! each pad has a number of analog inputs; each one is a float
 		enum Axis
 		{
@@ -32,8 +38,10 @@ namespace Dojo
 			_AI_COUNT
 		};
 
+		const Type type;
+
 		///Creates a new InputDevice of the given type, bound to the ID slot, supporting "buttonNumber" buttons and "axisNumber" axes
-		InputDevice( String name, int ID, int buttonNumber, int axisNumber );
+		InputDevice( Type type, int ID, int buttonNumber, int axisNumber );
 
 		///returns if the given action is pressed
 		virtual bool isKeyDown( KeyCode key );
@@ -72,11 +80,6 @@ namespace Dojo
 		/remark the default action for unassigned keys is the key number itself */
 		int getActionForKey( KeyCode key );
 
-		const String& getType()
-		{
-			return mType;
-		}
-
 		///each device can be polled each frame if needed
 		virtual void poll( float dt );
 
@@ -97,7 +100,6 @@ namespace Dojo
 		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
 		typedef Dojo::Array< float > FloatList;
 
-		String mType;
 		int mAxisNumber, mButtonNumber;
 
 		ListenerList pListeners;

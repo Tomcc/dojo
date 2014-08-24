@@ -189,9 +189,9 @@ void InputSystem::_fireDeviceConnected( InputDevice* j )
 {
 	//notify listeners
 	for( InputSystemListener* l : listeners )
-		l->onDeviceConnected( j );
+		l->onDeviceConnected(j);
 
-	DEBUG_MESSAGE( "Connected a " + j->getType() + "!" );
+	DEBUG_MESSAGE("Connected a new input device!");
 }
 
 void InputSystem::_fireDeviceDisconnected( InputDevice* j )

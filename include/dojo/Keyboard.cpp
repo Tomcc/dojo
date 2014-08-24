@@ -5,7 +5,7 @@
 using namespace Dojo;
 
 Keyboard::Keyboard() :
-InputDevice("keyboard", 0, KC_JOYPAD_1, 3) {
+InputDevice(Type::Keyboard, 0, KC_JOYPAD_1, 3) {
 
 }
 

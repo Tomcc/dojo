@@ -5,11 +5,11 @@
 
 using namespace Dojo;
 
-InputDevice::InputDevice(String name, int ID, int buttonNumber, int axisNumber) :
+InputDevice::InputDevice(Type type, int ID, int buttonNumber, int axisNumber) :
 mID(ID),
 mButtonNumber(buttonNumber),
 mAxisNumber(axisNumber),
-mType(name) {
+type(type) {
 	for (int i = 0; i < mAxisNumber; ++i)
 	{
 		mAxis.add(0);

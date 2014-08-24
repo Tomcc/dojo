@@ -42,6 +42,24 @@ void _debugWin32Error( const char* msg, const char *file_source, int line, const
 	#define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
 
+Touch::Type win32messageToMouseButton(UINT message) {
+	switch (message)
+	{
+	case WM_LBUTTONDOWN:  //left down
+	case WM_LBUTTONUP:
+		return Touch::TT_LEFT_CLICK;
+	case WM_RBUTTONDOWN: //right up
+	case WM_RBUTTONUP:
+		return Touch::TT_RIGHT_CLICK;
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+		return Touch::TT_MIDDLE_CLICK;
+	default:
+		DEBUG_FAIL("unknown mouse message");
+		return Touch::TT_TAP;
+	}
+}
+
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
 	Win32Platform* app = (Win32Platform*)Platform::getSingleton();
@@ -84,15 +102,14 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
     case WM_LBUTTONDOWN:  //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-
-		app->mousePressed( LOWORD( lparam ), HIWORD( lparam ), (Touch::Type)(Touch::TT_LEFT_CLICK + (WM_LBUTTONDOWN - message)) );
+		app->mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
         return 0;
 
     case WM_LBUTTONUP:   //left up
     case WM_RBUTTONUP:
     case WM_MBUTTONUP:
 
-		app->mouseReleased(LOWORD(lparam), HIWORD(lparam), (Touch::Type)(Touch::TT_LEFT_CLICK + (WM_LBUTTONDOWN - message)));
+		app->mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
         return 0;
 
     case WM_MOUSEMOVE:
@@ -635,6 +652,14 @@ void Win32Platform::loop()
 	}
 }
 
+const KeyCode touchTypeToKeyMap[] = {
+	KC_UNASSIGNED,	// 	TT_HOVER,
+	KC_UNASSIGNED,	// 	TT_TAP,
+	KC_MOUSE_LEFT,	// 	TT_LEFT_CLICK,
+	KC_MOUSE_RIGHT,	// 	TT_RIGHT_CLICK,
+	KC_MOUSE_MIDDLE	// 	TT_MIDDLE_CLICK
+};
+
 void Win32Platform::mousePressed(int cx, int cy, Touch::Type type)
 {
 	//TODO use the button ID!
@@ -645,6 +670,9 @@ void Win32Platform::mousePressed(int cx, int cy, Touch::Type type)
 	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	input->_fireTouchBeginEvent( cursorPos, type );
+
+	//small good-will hack- map the mouse keys on the keyboard!
+	mKeyboard._notifyButtonState(touchTypeToKeyMap[type], true);
 }
 
 void Win32Platform::mouseWheelMoved( int wheelZ )
@@ -692,6 +720,9 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	input->_fireTouchEndEvent( cursorPos, type );
+
+	//small good-will hack- map the mouse keys on the keyboard!
+	mKeyboard._notifyButtonState(touchTypeToKeyMap[type], false);
 }
 
 void Win32Platform::setMouseLocked(bool locked)
