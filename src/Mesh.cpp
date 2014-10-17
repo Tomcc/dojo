@@ -49,6 +49,16 @@ Resource(creator, filePath)
 	setIndexByteSize(sizeof(GLushort));
 }
 
+Dojo::Mesh::~Mesh() {
+#ifndef DOJO_DISABLE_VAOS
+	if (vertexArrayDesc)
+		glDeleteVertexArrays(1, &vertexArrayDesc);
+#endif
+
+	if (loaded)
+		onUnload();
+}
+
 void Mesh::destroyBuffers() {
 	auto cleanup = std::move(vertices);
 	cleanup = std::move(indices);
@@ -117,7 +127,7 @@ void Mesh::setVertexFieldEnabled(VertexField f) {
 	vertexSize += VERTEX_FIELD_SIZES[(byte)f];
 }
 
-void Mesh::setVertexFields(std::initializer_list<VertexField> fs) {
+void Mesh::setVertexFields(const std::initializer_list<VertexField>& fs) {
 	for (auto f : fs)
 		setVertexFieldEnabled(f);
 }

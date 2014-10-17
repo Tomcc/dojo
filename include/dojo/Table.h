@@ -327,7 +327,7 @@ namespace Dojo
 			
 			return getTable( name ); //TODO don't do another search
 		}
-		
+
 		///empties the map and deletes every value
 		void clear()
 		{					
@@ -551,6 +551,11 @@ namespace Dojo
 		String autoname()
 		{
 			return '_' + String( unnamedMembers++ );
+		}
+
+		template<typename T>
+		void push(const T& t) {
+			set(autoname(), t);
 		}
 		
 		const EntryMap::const_iterator begin() const

@@ -50,13 +50,7 @@ namespace Dojo
 		///Creates a new Mesh bound to the file at filePath
 		Mesh( ResourceGroup* creator, const String& filePath );
 		
-		virtual ~Mesh()
-		{
-		#ifndef DOJO_DISABLE_VAOS
-			if( vertexArrayDesc )
-				glDeleteVertexArrays( 1, &vertexArrayDesc );
-		#endif
-		}
+		virtual ~Mesh();
 
 		///frees all CPU-side memory (done automatically on static meshes)
 		void destroyBuffers();
@@ -71,7 +65,7 @@ namespace Dojo
 		void setVertexFieldEnabled( VertexField f );
 
 		///enables a list of VertexFields
-		void setVertexFields(std::initializer_list<VertexField> fs);
+		void setVertexFields(const std::initializer_list<VertexField>& fs);
 		
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
 		void setDynamic( bool d);		
