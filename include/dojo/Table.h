@@ -159,10 +159,9 @@ namespace Dojo
 		///loads the file at path into dest
 		static void loadFromFile( Table* dest, const String& path );
 		
-		///Creates a new table optionally named tablename
+		///Creates a new table
 		Table( const String& tablename = String::EMPTY ) :
 		Resource(),
-		name( tablename ),
 		unnamedMembers( 0 )
 		{
 
@@ -171,7 +170,6 @@ namespace Dojo
 		///copy constructor
 		Table( const Table& t ) :
 		Resource(),
-		name( t.name ),
 		unnamedMembers( t.unnamedMembers )
 		{
 			EntryMap::const_iterator itr = t.map.begin(),
@@ -185,7 +183,6 @@ namespace Dojo
 		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
 		Table( ResourceGroup* creator, const String& path ) :
 		Resource( creator, path ),
-		name( Utils::getFileName( path ) ),
 		unnamedMembers( 0 )
 		{
 
@@ -206,14 +203,6 @@ namespace Dojo
 
 				loaded = false;
 			}
-		}
-		
-		///sets the Table name
-		void setName( const String& newName )
-		{
-			DEBUG_ASSERT( newName.size() > 0, "Setting an empty Table name" );
-
-			name = newName;
 		}
 
 		///returns the table which contains the given "dot formatted" key
@@ -306,15 +295,15 @@ namespace Dojo
 			set(key, FT_DATA, Data( value, size ) );
 		}
 		
-		void set( const Table& value )
+		void set( const String& key, const Table& value )
 		{						
-			set( value.getName(), FT_TABLE, value );
+			set( key, FT_TABLE, value );
 		}		
 		
 		///creates a new nested table named key
 		/** 
 		nested Tables always have name == key */
-		Table* createTable( const String& key = String::EMPTY )
+		Table& createTable( const String& key = String::EMPTY )
 		{	
 			String name;
 			
@@ -323,9 +312,9 @@ namespace Dojo
 			else
 				name = key;
 							
-			set( Table( name ) ); //always retain created tables
+			set( key, Table( name ) ); //always retain created tables
 			
-			return getTable( name ); //TODO don't do another search
+			return *getTable( name ); //TODO don't do another search
 		}
 
 		///empties the map and deletes every value
@@ -376,11 +365,6 @@ namespace Dojo
 			return (int)map.size();
 		}
 		
-		const String& getName() const
-		{
-			return name;
-		}
-
 		///returns the total number of unnamed members
 		int getAutoMembers() const
 		{
@@ -390,11 +374,6 @@ namespace Dojo
 		bool isEmpty()
 		{
 			return map.empty();
-		}
-
-		bool hasName() const
-		{
-			return name.size() > 0;
 		}
 
 		///returns true if this Table contains key
@@ -593,7 +572,7 @@ namespace Dojo
 		///diagnostic method that serializes the table in a string
 		String toString() const
 		{
-			String str = getName() + '\n';
+			String str;
 			serialize( str );
 			
 			return str;
@@ -619,8 +598,6 @@ namespace Dojo
 		}
 				
 	protected:
-		
-		String name;
 		
 		EntryMap map;
 

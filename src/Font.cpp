@@ -362,8 +362,6 @@ bool Font::onLoad()
 	Table t;
 	Platform::getSingleton()->load( &t, filePath );
 
-	fontName = t.getName();
-
 	fontFile = Utils::getDirectory( filePath ) + '/' + t.getString( "truetype" );
 	fontWidth = fontHeight = t.getInt( "size" );	
 

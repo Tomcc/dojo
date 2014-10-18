@@ -91,6 +91,10 @@ namespace Dojo
 
 			return str.substr( 0, end );
 		}
+
+		static bool isAbsolutePath(const String& str) {
+			return str[1] == ':' || str[0] == '/';
+		}
 		
 		///replace any "\\" in the path with the canonical / and removes any last /
 		static void makeCanonicalPath( String& path )

@@ -135,11 +135,6 @@ namespace Dojo
 		///purges all the loaded pages from memory and prompts a rebuild
 		virtual void onUnload( bool soft = false );
 
-		const String& getName()
-		{
-			return fontName;
-		}
-		
 		///returns the maximum width of a character (cell height)
 		int getFontWidth()			{	return fontWidth;	}
 		///returns the maximum height of a character (cell width)
@@ -205,7 +200,6 @@ namespace Dojo
 		
 	protected:
 		
-		String fontName;
 		String fontFile;
 
 		bool antialias, kerning, generateEdge, generateSurface;

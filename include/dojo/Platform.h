@@ -185,11 +185,11 @@ namespace Dojo
 
 		///loads the table found at absPath into dest
 		/**if absPath is empty, the table file is loaded from $(Appdata)/$(GameName)/$(TableName).ds */
-		void load( Table* dest, const String& absPath = String::EMPTY );
+		void load( Table* dest, const String& absPathOrName );
 		
 		///saves the table found at absPath into dest
 		/**if absPath is empty, the table file is saved to $(Appdata)/$(GameName)/$(TableName).ds */
-		void save( Table* table, const String& absPath = String::EMPTY );
+		void save( Table* table, const String& absPathOrName );
 		
 		///returns true if an application is blocking the system output for this app, eg. a call or the mp3 player on iOS
 		virtual bool isSystemSoundInUse()
@@ -249,7 +249,7 @@ namespace Dojo
 		ZipFileMapping mZipFileMaps;
 		ZipExtensionList mZipExtensions;
 
-		String _getTablePath( Table* dest, const String& absPath );
+		String _getTablePath( const String& absPathOrName );
 
 		///for each component in the path, check if a directory.zip file exists
 		String _replaceFoldersWithExistingZips( const String& absPath );

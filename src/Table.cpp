@@ -21,8 +21,6 @@ void Table::loadFromFile( Table* dest, const String& path )
 
 		file->read( (byte*)buf.c_str(), buf.size() );
 
-		dest->setName( Utils::getFileName( path ) );
-
 		StringReader reader( buf );
 		dest->deserialize( reader );
 	}
@@ -163,7 +161,6 @@ void Table::deserialize( StringReader& buf )
 	float number;
 	Vector vec;
 	Data data;
-	Table* table;
 	Color col;
 
 	//clear old
@@ -295,13 +292,13 @@ void Table::deserialize( StringReader& buf )
 			set(curName, data.ptr, data.size, true); //always retain deserialized data
 			break;
 
-		case PT_CHILD:
+		case PT_CHILD: {
 
-			table = createTable(curName);
-			table->deserialize( buf );
-
-			break;
-        default: ;
+			createTable(curName).deserialize(buf);
+		}
+		break;
+        
+		default: ;
 		}
 
 		if( target ) //read something

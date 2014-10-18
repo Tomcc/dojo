@@ -417,7 +417,7 @@ void Win32Platform::setFullscreen( bool fullscreen )
 
 	//store the new setting into config.ds
 	config.setBoolean( "fullscreen", mFullscreen );
-	save( &config );
+	save( &config, "config" );
 }
 
 void Win32Platform::initialize( Game* g )

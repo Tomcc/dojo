@@ -290,32 +290,30 @@ int Platform::loadFileContent( char*& bufptr, const String& path )
 	return size;
 }
 
-String Platform::_getTablePath( Table* dest, const String& absPath )
+String Platform::_getTablePath( const String& absPathOrName )
 {
-	if( absPath.size() == 0 )
-	{
-		DEBUG_ASSERT( dest->hasName(), "Cannot get a path for an unnamed table" );
-		
-		//look for this file inside the prefs
-		return getAppDataPath() + '/' + dest->getName() + ".ds";
-	}
+	DEBUG_ASSERT(absPathOrName.size() > 0, "Cannot get a path for an unnamed table");
+	
+	if (Utils::isAbsolutePath(absPathOrName))
+		return absPathOrName;
 	else
-		return absPath;
+		//look for this file inside the prefs
+		return getAppDataPath() + '/' + absPathOrName + ".ds";
 }
 
-void Platform::load( Table* dest, const String& absPath )
+void Platform::load(Table* dest, const String& absPathOrName)
 {
 	DEBUG_ASSERT( dest, "Destination table is null" );
 	
 	using namespace std;
 	
 	String buf;
-	String path = _getTablePath( dest, absPath );
+	String path = _getTablePath(absPathOrName);
 	
 	Table::loadFromFile( dest, path );
 }
 
-void Platform::save( Table* src, const String& absPath )
+void Platform::save(Table* src, const String& absPathOrName)
 {
 	DEBUG_ASSERT( src, "The table to be saved is null" );
 	
@@ -325,7 +323,7 @@ void Platform::save( Table* src, const String& absPath )
 	
 	src->serialize( buf );
 	
-	String path = _getTablePath(src, absPath);
+	String path = _getTablePath(absPathOrName);
 
 	DEBUG_MESSAGE( path.ASCII() );
 	FILE* f = fopen( path.ASCII().c_str(), "w+" );

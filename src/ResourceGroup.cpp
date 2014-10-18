@@ -59,16 +59,15 @@ void ResourceGroup::addLocalizedFolder( const String& basefolder, int version )
 		addFolderSimple( lid + fallbackLocale, version );
 }
 
-void ResourceGroup::addTable( Table* t )
+void Dojo::ResourceGroup::addTable( const String& name, std::unique_ptr<Table> t )
 {
-	DEBUG_ASSERT( t != nullptr, "addTable: Table is null" );
-	DEBUG_ASSERT( !getTable( t->getName() ), "addTable: a table with this name was already added" );
+	DEBUG_ASSERT( !name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 	
-	tables[ t->getName() ] = t;
+	tables[ name ] = t.release();
 	
 	if (logchanges)
-		DEBUG_MESSAGE( "+" + t->getName() + "\t\t table" );
+		DEBUG_MESSAGE( "+" + name.ASCII() + "\t\t table" );
 }
 
 void ResourceGroup::addSets( const String& subdirectory, int version )
@@ -225,8 +224,11 @@ void ResourceGroup::addTables( const String& folder )
 	
 	Platform::getSingleton()->getFilePathsForType("ds", folder, paths );
 	
-	for( int i = 0; i < paths.size(); ++i )
-		addTable( new Table( this, paths[i] ) );
+	for (int i = 0; i < paths.size(); ++i)
+		addTable(
+			Utils::getFileName(paths[i]), 
+			make_unique<Table>(this, paths[i])
+		);
 }
 
 void ResourceGroup::addPrograms( const String& folder )
