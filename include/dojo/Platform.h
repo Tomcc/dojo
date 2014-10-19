@@ -185,11 +185,11 @@ namespace Dojo
 
 		///loads the table found at absPath into dest
 		/**if absPath is empty, the table file is loaded from $(Appdata)/$(GameName)/$(TableName).ds */
-		void load( Table* dest, const String& absPathOrName );
+		void load( Table& dest, const String& absPathOrName );
 		
 		///saves the table found at absPath into dest
 		/**if absPath is empty, the table file is saved to $(Appdata)/$(GameName)/$(TableName).ds */
-		void save( Table* table, const String& absPathOrName );
+		void save( const Table& table, const String& absPathOrName );
 		
 		///returns true if an application is blocking the system output for this app, eg. a call or the mp3 player on iOS
 		virtual bool isSystemSoundInUse()

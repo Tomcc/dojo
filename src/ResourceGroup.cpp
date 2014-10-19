@@ -123,23 +123,23 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 
 		name = Utils::removeVersion( name );
 
-		Platform::getSingleton()->load( &def, paths[i] );
+		Platform::getSingleton()->load( def, paths[i] );
 
 		//standard flat atlasinfo
 		if( def.getAutoMembers() == 0 )
 		{			
 			currentSet = new FrameSet( this, name );
-			currentSet->setAtlas( &def, this );
+			currentSet->setAtlas( def, *this );
 		
 			addFrameSet( currentSet, name );
 		}
 		else for( int i = 0; i < def.getAutoMembers(); ++i )
 		{
-			Table* sub = def.getTable(i);
-			const String& name = sub->getString("name");
+			auto& sub = def.getTable(i);
+			const String& name = sub.getString("name");
 
 			currentSet = new FrameSet( this, name );
-			currentSet->setAtlas( sub, this );
+			currentSet->setAtlas( sub, *this );
 
 			addFrameSet( currentSet, name );
 		}

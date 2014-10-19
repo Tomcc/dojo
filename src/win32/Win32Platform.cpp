@@ -417,7 +417,7 @@ void Win32Platform::setFullscreen( bool fullscreen )
 
 	//store the new setting into config.ds
 	config.setBoolean( "fullscreen", mFullscreen );
-	save( &config, "config" );
+	save( config, "config" );
 }
 
 void Win32Platform::initialize( Game* g )
@@ -451,13 +451,10 @@ void Win32Platform::initialize( Game* g )
 	CreateDirectoryW( getAppDataPath().c_str(), NULL );
 
 	//load settings
-	Table userConfig;
-
-	//check for a local override file
-	Table::loadFromFile(&userConfig, mRootPath + "/config.ds");
+	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
 
 	if ( userConfig.isEmpty() ) //also look in appdata
-		Table::loadFromFile( &userConfig, getAppDataPath() + "/config.ds" );
+		userConfig = Table::loadFromFile( getAppDataPath() + "/config.ds" );
 
 	config.inherit( &userConfig ); //use the table that was loaded from file but override any config-passed members
 

@@ -156,8 +156,8 @@ namespace Dojo
 			return '_' + String(i);
 		}
 
-		///loads the file at path into dest
-		static void loadFromFile( Table* dest, const String& path );
+		///loads the file at path
+		static Table loadFromFile( const String& path );
 		
 		///Creates a new table
 		Table( const String& tablename = String::EMPTY ) :
@@ -167,17 +167,19 @@ namespace Dojo
 
 		}
 
-		///copy constructor
-		Table( const Table& t ) :
-		Resource(),
-		unnamedMembers( t.unnamedMembers )
+		Table(Table&& t) :
+			Resource(),
+			unnamedMembers(t.unnamedMembers),
+			map(std::move(t.map))
 		{
-			EntryMap::const_iterator itr = t.map.begin(),
-								end = t.map.end();
+			t.unnamedMembers = 0;
+		}
 
-			//do a deep copy
-			for( ; itr != end; ++itr )
-				map[ itr->first ] = itr->second->clone();
+		Table& operator=(Table&& t) 
+		{
+			unnamedMembers = t.unnamedMembers;
+			map = std::move(t.map);
+			return *this;
 		}
 
 		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
@@ -222,11 +224,11 @@ namespace Dojo
 
 			String partialKey = key.substr( dotIdx+1 );
 			String childName = key.substr( 0, dotIdx );
-			Table* child = getTable( childName );
+			auto& child = getTable( childName );
 
-			DEBUG_ASSERT_INFO( child->size() > 0, "A part of a dot-formatted key referred to a non-existing table", "childName = " + childName );
+			DEBUG_ASSERT_INFO( child.size() > 0, "A part of a dot-formatted key referred to a non-existing table", "childName = " + childName );
 
-			return child->getParentTable( partialKey, realKey );
+			return child.getParentTable( partialKey, realKey );
 		}
 
 		template< class T >
@@ -314,7 +316,7 @@ namespace Dojo
 							
 			set( key, Table( name ) ); //always retain created tables
 			
-			return *getTable( name ); //TODO don't do another search
+			return getTable( name ); //TODO don't do another search
 		}
 
 		///empties the map and deletes every value
@@ -460,13 +462,13 @@ namespace Dojo
 				return defaultValue;
 		}
 		
-		Table* getTable( const String& key ) const
+		Table& getTable( const String& key ) const
 		{			
 			Entry* e = get( key );
 			if( e && e->type == FT_TABLE )
-				return e->getAsTable();
+				return *e->getAsTable();
 			else
-				return &EMPTY_TABLE;
+				return EMPTY_TABLE;
 		}
 		
 		const Data& getData( const String& key ) const
@@ -516,7 +518,7 @@ namespace Dojo
 			return Color( getVector( idx ), alpha );
 		}
 		
-		Table* getTable( int idx ) const
+		Table& getTable( int idx ) const
 		{			
 			return getTable( autoMemberName(idx) );
 		}

@@ -61,7 +61,7 @@ namespace Dojo
 		/**
 		the required texture must have been already loaded inside atlasTextureProvider
 		*/
-		void setAtlas( Table* atlasTable, ResourceGroup* atlasTextureProvider );
+		void setAtlas( const Table& atlasTable, ResourceGroup& atlasTextureProvider );
 
 		virtual bool onLoad();
 		

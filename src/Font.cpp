@@ -360,7 +360,7 @@ bool Font::onLoad()
 	DEBUG_ASSERT( !isLoaded(), "onLoad: this font is already loaded" );
 
 	Table t;
-	Platform::getSingleton()->load( &t, filePath );
+	Platform::getSingleton()->load( t, filePath );
 
 	fontFile = Utils::getDirectory( filePath ) + '/' + t.getString( "truetype" );
 	fontWidth = fontHeight = t.getInt( "size" );	
@@ -381,9 +381,9 @@ bool Font::onLoad()
 
 	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
 
-	Table* preload = t.getTable( "preloadedPages" );
-	for( int i = 0; i < preload->getAutoMembers(); ++i )
-		getPage( preload->getInt( i ) );
+	auto& preload = t.getTable( "preloadedPages" );
+	for( int i = 0; i < preload.getAutoMembers(); ++i )
+		getPage( preload.getInt( i ) );
 
 	//load existing pages that were trimmed during a previous unload
 	for( auto& pair : pages )

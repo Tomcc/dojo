@@ -6,13 +6,13 @@
 
 using namespace Dojo;
 
-void Table::loadFromFile( Table* dest, const String& path )
+Table Table::loadFromFile( const String& path )
 {
-	DEBUG_ASSERT( dest != nullptr, "The destination table is null" );
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
     auto file = Platform::getSingleton()->getFile( path );
 	
+	Table dest;
 	if( file->open() )
 	{
 		//read the contents directly in a string
@@ -22,8 +22,10 @@ void Table::loadFromFile( Table* dest, const String& path )
 		file->read( (byte*)buf.c_str(), buf.size() );
 
 		StringReader reader( buf );
-		dest->deserialize( reader );
+		dest.deserialize( reader );
 	}
+
+	return dest;
 }
 
 Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
@@ -39,7 +41,7 @@ bool Table::onLoad()
 	if( !isReloadable() )
 		return false;
 
-	Platform::getSingleton()->load( this, filePath );
+	Platform::getSingleton()->load( *this, filePath );
 
 	return (loaded = !isEmpty());
 }

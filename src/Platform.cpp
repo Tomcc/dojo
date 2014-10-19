@@ -301,27 +301,19 @@ String Platform::_getTablePath( const String& absPathOrName )
 		return getAppDataPath() + '/' + absPathOrName + ".ds";
 }
 
-void Platform::load(Table* dest, const String& absPathOrName)
-{
-	DEBUG_ASSERT( dest, "Destination table is null" );
-	
-	using namespace std;
-	
+void Platform::load(Table& dest, const String& absPathOrName)
+{		
 	String buf;
 	String path = _getTablePath(absPathOrName);
 	
-	Table::loadFromFile( dest, path );
+	dest = Table::loadFromFile( path );
 }
 
-void Platform::save(Table* src, const String& absPathOrName)
+void Platform::save(const Table& src, const String& absPathOrName)
 {
-	DEBUG_ASSERT( src, "The table to be saved is null" );
-	
-	using namespace std;
-	
 	String buf;
 	
-	src->serialize( buf );
+	src.serialize( buf );
 	
 	String path = _getTablePath(absPathOrName);
 

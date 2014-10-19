@@ -227,14 +227,13 @@ bool Shader::onLoad()
 	loaded = false;
 
 	//load the descriptor table
-	Table desc;
-	Table::loadFromFile( &desc, filePath );
+	auto desc =	Table::loadFromFile( filePath );
 
 	//compose preprocessor flags
 	mPreprocessorHeader.clear();
-	Table* defines = desc.getTable( "defines" );
+	auto& defines = desc.getTable( "defines" );
 
-	for( auto& entry : *defines )
+	for( auto& entry : defines )
 		mPreprocessorHeader += std::string("#define ") + entry.second->getAsString().ASCII() + "\n";
 
 	//grab all types
