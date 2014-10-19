@@ -114,7 +114,7 @@ namespace Dojo
 				return *(Table::Data*)getRawValue();
 			}
 
-			virtual Entry* clone() = 0;
+			virtual std::unique_ptr<Entry> clone() = 0;
 		};
 
 		template <class T>
@@ -142,13 +142,13 @@ namespace Dojo
 				return &value;
 			}
 
-			virtual Entry* clone()
+			virtual std::unique_ptr<Entry> clone()
 			{
-				return new TypedEntry<T>(type, value);
+				return make_unique< TypedEntry<T> >(type, value);
 			}
 		};
 
-		typedef std::unordered_map< String, Entry* > EntryMap;
+		typedef std::unordered_map< String, std::unique_ptr<Entry> > EntryMap;
 
 		static Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
@@ -190,16 +190,7 @@ namespace Dojo
 		template< class T >
 		void setImpl( const String& key, FieldType type, const T& value )
 		{
-			//generate name
-			if( key.size() == 0 )
-				map[ autoname() ] = new TypedEntry< T >( type, value );
-			else
-			{
-				if( exists( key ) )
-					SAFE_DELETE( map[key] );
-
-				map[ key ] = new TypedEntry< T >( type, value );
-			}
+			map[ key.empty() ? autoname() : key ] = make_unique< TypedEntry< T > >( type, value );
 		}
 
 		template< class T >
@@ -253,7 +244,7 @@ namespace Dojo
 			set(key, FT_DATA, Data( value, size ) );
 		}
 		
-		void set( const String& key, const   Table& value )
+		void set( const String& key, const Table& value )
 		{						
 			set( key, FT_TABLE, value );
 		}		

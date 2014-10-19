@@ -420,6 +420,19 @@ void Win32Platform::setFullscreen( bool fullscreen )
 	save( config, "config" );
 }
 
+String _cleanPath(const String& name) {
+	String path = name;
+	for (size_t i = 0; i < path.size(); ++i) {
+		auto& c = path[i];
+		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
+			path.erase(path.begin() + i);
+			--i;
+		}
+	}
+
+	return path;
+}
+
 void Win32Platform::initialize( Game* g )
 {
 	game = g;
@@ -435,7 +448,7 @@ void Win32Platform::initialize( Game* g )
 		0, 
 		szPath);
 
-	mAppDataPath = String(szPath) + '/' + game->getName();
+	mAppDataPath = String(szPath) + '/' + _cleanPath(game->getName());
 	Utils::makeCanonicalPath( mAppDataPath );
 
 	//get root path

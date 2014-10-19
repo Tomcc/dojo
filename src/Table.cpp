@@ -58,7 +58,7 @@ void Table::serialize( String& buf, String indent ) const
 	
 	for( ; itr != map.end(); ++itr ) 
 	{
-		Entry* e = itr->second;
+		auto& e = *itr->second;
 
 		if( indent.size() )
 			buf += indent;
@@ -67,16 +67,16 @@ void Table::serialize( String& buf, String indent ) const
 		if( itr->first[0] != '_' )
 			buf += itr->first + " = ";
 
-		switch( e->type )
+		switch( e.type )
 		{
 		case FT_NUMBER:
-			buf.appendFloat( *((float*)e->getRawValue() ) );
+			buf.appendFloat( *((float*)e.getRawValue() ) );
 			break;
 		case FT_STRING:
-			buf += '\"' + *((String*)e->getRawValue() ) + '\"';
+			buf += '\"' + *((String*)e.getRawValue() ) + '\"';
 			break;
 		case FT_VECTOR:
-			v = (Vector*)e->getRawValue();
+			v = (Vector*)e.getRawValue();
 			buf += '(';
 			buf.appendFloat( v->x );
 			buf += ' ';
@@ -87,7 +87,7 @@ void Table::serialize( String& buf, String indent ) const
 
 			break;
 		case FT_DATA:
-			data = (Data*)e->getRawValue();
+			data = (Data*)e.getRawValue();
 			buf += '#' + String( data->size ) + ' ';
 
 			buf.appendRaw( data->ptr, data->size );
@@ -95,7 +95,7 @@ void Table::serialize( String& buf, String indent ) const
 			break;
 		case FT_TABLE:
 			buf += String( "{\n" );
-			((Table*)e->getRawValue())->serialize( buf, indent + '\t' );
+			((Table*)e.getRawValue())->serialize( buf, indent + '\t' );
 
 			buf += indent + '}';
 
@@ -390,10 +390,6 @@ Table& Table::createTable(const String& key /*= String::EMPTY */) {
 void Table::clear() {
 	unnamedMembers = 0;
 
-	//clean up every entry
-	for (auto entry : map)
-		SAFE_DELETE(entry.second);
-
 	map.clear();
 }
 
@@ -430,10 +426,8 @@ bool Table::existsAs(const String& key, FieldType t) const {
 	EntryMap::const_iterator itr = map.find(key);
 
 	if (itr != map.end())
-	{
-		Entry* e = itr->second;
-		return e->type == t;
-	}
+		return itr->second->type == t;
+	
 	return false;
 }
 
@@ -442,10 +436,10 @@ Table::Entry* Table::get(const String& key) const {
 	const Table* container = getParentTable(key, actualKey);
 
 	if (!container)
-		return NULL;
+		return nullptr;
 
 	auto elem = container->map.find(actualKey);
-	return elem != container->map.end() ? elem->second : NULL;
+	return elem != container->map.end() ? elem->second.get() : nullptr;
 }
 
 float Table::getNumber(const String& key, float defaultValue /*= 0 */) const {
