@@ -99,7 +99,7 @@ bool ShaderProgram::onLoad()
 
 	if( getFilePath().size() ) //try loading from file
 	{
-		auto file = Platform::getSingleton()->getFile( filePath );
+		auto file = Platform::singleton().getFile( filePath );
 
 		if( file->open() ) //open the file
 		{

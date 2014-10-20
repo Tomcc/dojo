@@ -78,7 +78,7 @@ Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
 {
 	memset( pProgram, 0, sizeof( pProgram ) ); //init to null
 
-	pRender = Platform::getSingleton()->getRender();
+	pRender = Platform::singleton().getRender();
 }
 
 void Shader::_assignProgram( const Table& desc, ShaderProgramType type )

@@ -102,10 +102,10 @@ namespace Dojo
 				return *(Vector*)getRawValue();
 			}
 
-			Table* getAsTable()
+			Table& getAsTable()
 			{
 				DEBUG_ASSERT(type == Table::FT_TABLE, "type mismatch while reading from a Table Entry");
-				return (Table*)getRawValue();
+				return *(Table*)getRawValue();
 			}
 
 			const Table::Data& getAsData()
@@ -150,7 +150,7 @@ namespace Dojo
 
 		typedef std::unordered_map< String, std::unique_ptr<Entry> > EntryMap;
 
-		static Table EMPTY_TABLE;
+		static const Table EMPTY_TABLE;
 		static const Data EMPTY_DATA;
 		
 		static String index( int i )
@@ -162,7 +162,7 @@ namespace Dojo
 		static Table loadFromFile( const String& path );
 		
 		///Creates a new table
-		Table( const String& tablename = String::EMPTY );
+		Table();
 
 		Table(Table&& t);
 
@@ -266,13 +266,13 @@ namespace Dojo
 		void inherit( Table* t );
 
 		///total number of entries
-		int size()
+		int size() const
 		{
 			return (int)map.size();
 		}
 		
 		///returns the total number of unnamed members
-		int getAutoMembers() const
+		int getArrayLength() const
 		{
 			return unnamedMembers;
 		}
@@ -303,7 +303,7 @@ namespace Dojo
 		
 		const Color getColor( const String& key, float alpha = 1.f, const Color& defaultValue = Color::BLACK ) const;
 		
-		Table& getTable( const String& key ) const;
+		const Table& getTable( const String& key ) const;
 		
 		const Data& getData( const String& key ) const;	
 		
@@ -336,7 +336,7 @@ namespace Dojo
 			return Color( getVector( idx ), alpha );
 		}
 		
-		Table& getTable( int idx ) const
+		const Table& getTable( int idx ) const
 		{			
 			return getTable( autoMemberName(idx) );
 		}

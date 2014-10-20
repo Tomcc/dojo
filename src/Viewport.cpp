@@ -34,8 +34,8 @@ mRT( nullptr )
     mNeedsAABB = true;
 
 	//default size is window size
-	targetSize.x = (float)Platform::getSingleton()->getWindowWidth();
-	targetSize.y = (float)Platform::getSingleton()->getWindowHeight();
+	targetSize.x = (float)Platform::singleton().getWindowWidth();
+	targetSize.y = (float)Platform::singleton().getWindowHeight();
 	
 	if( _VFOV > 0 )
 		enableFrustum( _VFOV, _zNear, _zFar );
@@ -50,8 +50,8 @@ Viewport::~Viewport()
 Vector Viewport::makeWorldCoordinates(int x, int y)
 {
 	return Vector(
-		getWorldMin().x + ((float)x / Platform::getSingleton()->getWindowWidth()) * size.x,
-		getWorldMax().y - ((float)y / Platform::getSingleton()->getWindowHeight()) * size.y);
+		getWorldMin().x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
+		getWorldMax().y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
 bool Viewport::isSeeing(Renderable* s) {
@@ -82,7 +82,7 @@ void Viewport::setRenderTarget(Texture *target)
     
     setTargetSize( target ?
                   Vector( (float)target->getWidth(), (float)target->getHeight() ) :
-                  Vector( (float)Platform::getSingleton()->getWindowWidth(), (float)Platform::getSingleton()->getWindowHeight() ) );
+                  Vector( (float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight() ) );
 }
 
 void Viewport::lookAt(  const Vector& worldPos )
@@ -218,8 +218,8 @@ Vector Viewport::getRayDirection( const Vector& screenSpacePos )
 	//frustum[1]: bottom left
 	//frustum[2]: bottom right
 	//frustum[3]: top right
-	float xf = 1.f - (screenSpacePos.x / (float) Platform::getSingleton()->getScreenWidth());
-	float yf = screenSpacePos.y / (float) Platform::getSingleton()->getScreenHeight();
+	float xf = 1.f - (screenSpacePos.x / (float) Platform::singleton().getScreenWidth());
+	float yf = screenSpacePos.y / (float) Platform::singleton().getScreenHeight();
 	
 	//find points on each side of the frustum
 	Vector a = worldFrustumVertices[0].lerpTo( xf, worldFrustumVertices[1] );
@@ -253,6 +253,6 @@ void Viewport::onAction(float dt)
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)
-		Platform::getSingleton()->getSoundManager()->setListenerTransform( getWorldTransform() );
+		Platform::singleton().getSoundManager()->setListenerTransform( getWorldTransform() );
 }
 

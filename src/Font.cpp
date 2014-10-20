@@ -219,7 +219,7 @@ bool Font::Page::onLoad()
 	int sx = font->mCellWidth * FONT_PAGE_SIDE;
 	int sy = font->mCellHeight * FONT_PAGE_SIDE;
 
-	bool npot = Platform::getSingleton()->isNPOTEnabled();
+	bool npot = Platform::singleton().isNPOTEnabled();
 	int sxp2 = npot ? sx : Math::nextPowerOfTwo( sx );
 	int syp2 = npot ? sy : Math::nextPowerOfTwo( sy );
 
@@ -359,8 +359,7 @@ bool Font::onLoad()
 {
 	DEBUG_ASSERT( !isLoaded(), "onLoad: this font is already loaded" );
 
-	Table t;
-	Platform::getSingleton()->load( t, filePath );
+	Table t = Platform::singleton().load( filePath );
 
 	fontFile = Utils::getDirectory( filePath ) + '/' + t.getString( "truetype" );
 	fontWidth = fontHeight = t.getInt( "size" );	
@@ -379,10 +378,10 @@ bool Font::onLoad()
 	mCellWidth = fontWidth + glowRadius * 2;
 	mCellHeight = fontHeight + glowRadius * 2;
 
-	face = Platform::getSingleton()->getFontSystem()->getFace( fontFile );
+	face = Platform::singleton().getFontSystem()->getFace( fontFile );
 
 	auto& preload = t.getTable( "preloadedPages" );
-	for( int i = 0; i < preload.getAutoMembers(); ++i )
+	for( int i = 0; i < preload.getArrayLength(); ++i )
 		getPage( preload.getInt( i ) );
 
 	//load existing pages that were trimmed during a previous unload

@@ -44,7 +44,7 @@ void FrameSet::setAtlas( const Table& atlasTable, ResourceGroup& atlasTexturePro
 	auto& tiles = atlasTable.getTable( "tiles" );
 
 	int x, y, sx, sy;
-	for( int i = 0; i < tiles.getAutoMembers(); ++i )
+	for( int i = 0; i < tiles.getArrayLength(); ++i )
 	{
 		auto& tile = tiles.getTable( i );
 

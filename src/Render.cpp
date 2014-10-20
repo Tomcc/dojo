@@ -29,8 +29,6 @@ frameTriCount(0),
 frameBatchCount(0),
 backLayer( NULL )
 {
-	platform = Platform::getSingleton();	
-
 	DEBUG_MESSAGE( "Creating OpenGL context...");
 	DEBUG_MESSAGE ("querying GL info... ");
 	DEBUG_MESSAGE ("vendor: " + String( (const char*)glGetString (GL_VENDOR)));
@@ -77,7 +75,7 @@ backLayer( NULL )
 	backLayer = new Layer();
 	backLayer->add( NULL ); //add a dummy element
 
-	setInterfaceOrientation( platform->getGame()->getNativeOrientation() );
+	setInterfaceOrientation( Platform::singleton().getGame()->getNativeOrientation() );
 	
 	setDefaultAmbient( Color::BLACK );
 

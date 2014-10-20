@@ -449,7 +449,7 @@ bool Mesh::onLoad()
 
 	//load binary mesh
 	char* data;
-	Platform::getSingleton()->loadFileContent( data, filePath );
+	Platform::singleton().loadFileContent( data, filePath );
 		
 	DEBUG_ASSERT_INFO( data, "onLoad: cannot find or read file", "path = " + filePath );
 	

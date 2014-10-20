@@ -37,35 +37,35 @@
 
 using namespace Dojo;
 
-Platform * Platform::singleton = NULL;
+std::unique_ptr<Platform> Platform::singletonPtr;
 
-Platform* Platform::create( const Table & config )
+Platform& Dojo::Platform::create( const Table& config /*= Table::EMPTY_TABLE */ )
 { 
 #if defined (PLATFORM_WIN32)
-    singleton = new Win32Platform( config );
+	singletonPtr = make_unique<Win32Platform>(config);
     
 #elif defined( PLATFORM_OSX )
-    singleton = new OSXPlatform( config );
+	singletonPtr = make_unique<OSXPlatform>(config);
     
 #elif defined( PLATFORM_IOS )
-    singleton = new IOSPlatform( config );
+	singletonPtr = make_unique<IOSPlatform>(config);
     
 #elif defined( PLATFORM_LINUX )
-    singleton = new LinuxPlatform( config );
+	singletonPtr = make_unique<LinuxPlatform>(config);
     
 #elif defined( PLATFORM_ANDROID )
     android_main(NULL); //HACK
-    singleton = new AndroidPlatform( config );
+	singletonPtr = make_unique<AndroidPlatform>(config);
 	
 #endif
-	return singleton;
+	return *singletonPtr;
 }
 
 void Platform::shutdownPlatform()
 {
-	singleton->shutdown();
+	singleton().shutdown();
 
-	SAFE_DELETE( singleton );
+	singletonPtr.reset();
 }
 
 Platform::Platform( const Table& configTable ) :
@@ -301,12 +301,12 @@ String Platform::_getTablePath( const String& absPathOrName )
 		return getAppDataPath() + '/' + absPathOrName + ".ds";
 }
 
-void Platform::load(Table& dest, const String& absPathOrName)
+Table Platform::load(const String& absPathOrName)
 {		
 	String buf;
 	String path = _getTablePath(absPathOrName);
 	
-	dest = Table::loadFromFile( path );
+	return Table::loadFromFile( path );
 }
 
 void Platform::save(const Table& src, const String& absPathOrName)

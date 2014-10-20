@@ -12,7 +12,7 @@ using namespace Dojo;
 InputSystem::InputSystem( bool enable ) :
 enabled(enable)
 {
-	Platform::getSingleton()->addApplicationListener( this );
+	Platform::singleton().addApplicationListener( this );
 }
 
 InputSystem::~InputSystem() {

@@ -16,7 +16,7 @@ ParticlePool::~ParticlePool()
 	for( int i = 0; i < pool.size(); ++i )
 	{
 		
-		Platform::getSingleton()->getRender()->removeRenderable( pool.at(i) );
+		Platform::singleton().getRender()->removeRenderable( pool.at(i) );
 		
 		SAFE_DELETE( pool.at(i) );
 	}
@@ -32,7 +32,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 
 		pool.add( p );
 		
-		Platform::getSingleton()->getRender()->addRenderable( p, destLayer );
+		Platform::singleton().getRender()->addRenderable( p, destLayer );
 	}
 	else
 	{				

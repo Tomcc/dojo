@@ -48,7 +48,7 @@ void SoundSource::setVolume( float v )
 		alSourcef(
 			source, 
 			AL_GAIN, 
-			baseVolume * Platform::getSingleton()->getSoundManager()->getMasterVolume());
+			baseVolume * Platform::singleton().getSoundManager()->getMasterVolume());
 	}
 }
 
@@ -60,7 +60,7 @@ float SoundSource::getVolume()
 void SoundSource::play( float volume )
 {
 	//can the sound play?
-	if( !isValid() && buffer && buffer->isLoaded() && Platform::getSingleton()->getSoundManager()->getMasterVolume() > 0 )
+	if( !isValid() && buffer && buffer->isLoaded() && Platform::singleton().getSoundManager()->getMasterVolume() > 0 )
 		return;
 
 	if(state == SS_INITIALISING)

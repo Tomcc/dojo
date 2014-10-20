@@ -22,7 +22,6 @@ namespace Dojo {
 	class Texture;
 	class Viewport;
 	class Mesh;
-	class Platform;
 	class Game;
 	class Light;
 	
@@ -135,9 +134,7 @@ namespace Dojo {
 		//renders all the layers and their contained Renderables in the given order
 		void render();
 				
-	protected:	
-
-		Platform* platform;
+	protected:
 		
 		bool valid;
 						

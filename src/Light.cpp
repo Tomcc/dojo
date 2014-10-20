@@ -76,7 +76,7 @@ void Light::bind( int i, const Matrix& view )
 		//setup all the lighting parameters
 		glEnable( light );
 		
-		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::getSingleton()->getRender()->getDefaultAmbient();
+		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::singleton().getRender()->getDefaultAmbient();
 
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );
 		glLightfv( light, GL_SPECULAR, (float*) &specular );

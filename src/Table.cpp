@@ -10,7 +10,7 @@ Table Table::loadFromFile( const String& path )
 {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
-    auto file = Platform::getSingleton()->getFile( path );
+    auto file = Platform::singleton().getFile( path );
 	
 	Table dest;
 	if( file->open() )
@@ -28,7 +28,7 @@ Table Table::loadFromFile( const String& path )
 	return dest;
 }
 
-Table Table::EMPTY_TABLE = Table( "EMPTY_TABLE" );
+const Table Table::EMPTY_TABLE;
 
 const Table::Data Table::EMPTY_DATA = Data(0,0);
 
@@ -41,7 +41,7 @@ bool Table::onLoad()
 	if( !isReloadable() )
 		return false;
 
-	Platform::getSingleton()->load( *this, filePath );
+	*this = Platform::singleton().load( filePath );
 
 	return (loaded = !isEmpty());
 }
@@ -312,7 +312,7 @@ void Table::deserialize( StringReader& buf )
 	}
 }
 
-Table::Table(const String& tablename /*= String::EMPTY */) :
+Table::Table() :
 unnamedMembers(0) {
 
 }
@@ -382,9 +382,9 @@ Table& Table::createTable(const String& key /*= String::EMPTY */) {
 	else
 		name = key;
 
-	set(key, Table(name)); //always retain created tables
+	set(name, Table());
 
-	return getTable(name); //TODO don't do another search
+	return get(name)->getAsTable(); //TODO don't do another search
 }
 
 void Table::clear() {
@@ -490,10 +490,10 @@ const Color Table::getColor(const String& key, float alpha /*= 1.f*/, const Colo
 		return defaultValue;
 }
 
-Table& Table::getTable(const String& key) const {
+const Table& Table::getTable(const String& key) const {
 	Entry* e = get(key);
 	if (e && e->type == FT_TABLE)
-		return *e->getAsTable();
+		return e->getAsTable();
 	else
 		return EMPTY_TABLE;
 }
@@ -508,7 +508,7 @@ const Table::Data& Table::getData(const String& key) const {
 
 String Table::autoMemberName(int idx) const {
 	DEBUG_ASSERT(idx >= 0, "autoMemberName: idx is negative");
-	DEBUG_ASSERT_INFO(idx < getAutoMembers(), "autoMemberName: idx is OOB", String("idx = ") + idx);
+	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", String("idx = ") + idx);
 
 	return '_' + String(idx);
 }

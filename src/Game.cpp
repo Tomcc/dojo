@@ -24,16 +24,16 @@ mMaxFrameLength( maximumdt )
 	DEBUG_ASSERT( mNativeFrameLength > 0, "the Native Frame Lenght must be greater than 0 seconds" );
 	DEBUG_ASSERT( mMaxFrameLength >= mNativeFrameLength, "the native frame lenght must be less or equal than the max frame length" );
 
-	Platform* p = Platform::getSingleton();
+	auto& p = Platform::singleton();
 
 	if( w == 0 )
-		nativeWidth = p->getScreenWidth();
+		nativeWidth = p.getScreenWidth();
 	if( h == 0 )
-		nativeHeight = p->getScreenHeight();
+		nativeHeight = p.getScreenHeight();
 
 	Math::seedRandom();
 	
-	p->addApplicationListener( this ); //always listen to the app
+	p.addApplicationListener( this ); //always listen to the app
 }
 	
 Game::~Game()

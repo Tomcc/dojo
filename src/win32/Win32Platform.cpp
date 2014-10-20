@@ -62,7 +62,7 @@ Touch::Type win32messageToMouseButton(UINT message) {
 
 LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
 {
-	Win32Platform* app = (Win32Platform*)Platform::getSingleton();
+	auto& app = (Win32Platform&)Platform::singleton();
 
 	switch( message )
 	{
@@ -88,32 +88,32 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	case WM_ACTIVATE:
 	case WM_SHOWWINDOW:	
 		if( wparam == false ) //minimized or defocused
-			app->_fireFocusLost();
+			app._fireFocusLost();
 
 		else 
-			app->_fireFocusGained();
+			app._fireFocusGained();
 
 		return 0;
 
     case WM_MOUSEWHEEL: //mouse wheel moved
-		app->mouseWheelMoved( (int)( (float)GET_WHEEL_DELTA_WPARAM(wparam) / (float)WHEEL_DELTA ) );
+		app.mouseWheelMoved( (int)( (float)GET_WHEEL_DELTA_WPARAM(wparam) / (float)WHEEL_DELTA ) );
         return 0;
 
     case WM_LBUTTONDOWN:  //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-		app->mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
         return 0;
 
     case WM_LBUTTONUP:   //left up
     case WM_RBUTTONUP:
     case WM_MBUTTONUP:
 
-		app->mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
         return 0;
 
     case WM_MOUSEMOVE:
-		app->mouseMoved( LOWORD( lparam ), HIWORD( lparam ) );
+		app.mouseMoved( LOWORD( lparam ), HIWORD( lparam ) );
         return 0;
 
 
@@ -137,7 +137,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 #endif
 		default:
 
-			app->keyPressed( wparam );
+			app.keyPressed( wparam );
 			break;
 		}
         return 0;
@@ -145,7 +145,7 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	case WM_SYSKEYUP: //needed to catch ALT separately
     case WM_KEYUP:
 
-		app->keyReleased( wparam );
+		app.keyReleased( wparam );
         return 0;
 
     case WM_CHAR:
@@ -228,10 +228,7 @@ mContextRequestsQueue(new ContextRequestsQueue )
 
 Win32Platform::~Win32Platform()
 {
-	_setFullscreen( false ); //get out of fullscreen
 
-	for( int i = 0; i < 4; ++i )
-		delete mXInputJoystick[ i ];
 }
 
 void Win32Platform::_adjustWindow()
@@ -504,7 +501,7 @@ void Win32Platform::initialize( Game* g )
 	//create xinput persistent joysticks
 	for( int i = 0; i < 4; ++i ) 
 	{
-		mXInputJoystick[ i ] = new XInputController( i );
+		mXInputJoystick[ i ] = make_unique<XInputController>( i );
 		mXInputJoystick[i]->poll( 1 ); //force detection of already connected pads
 	}
 
@@ -542,6 +539,9 @@ void Win32Platform::prepareThreadContext()
 
 void Win32Platform::shutdown()
 {
+	//get out of fullscreen
+	_setFullscreen(false);
+
 	if( game )
 	{
 		game->end();
@@ -578,7 +578,7 @@ void Win32Platform::_pollDevices( float dt )
 {
 	input->poll( dt );
 
-	for( auto j : mXInputJoystick ) //poll disconnected pads for connection
+	for( auto& j : mXInputJoystick ) //poll disconnected pads for connection
 	{
 		if( !j->isConnected() )
 			j->poll( dt );

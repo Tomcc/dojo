@@ -48,7 +48,7 @@ void Object::addChild( Renderable* o, int layer )
 {
 	addChild( o );
 
-	Platform::getSingleton()->getRender()->addRenderable( o, layer );
+	Platform::singleton().getRender()->addRenderable( o, layer );
 }
 
 void Object::_unregisterChild( Object* child )
@@ -58,7 +58,7 @@ void Object::_unregisterChild( Object* child )
 	child->_notifyParent( NULL );
 	
     if( child->isRenderable() )
-        Platform::getSingleton()->getRender()->removeRenderable( (Renderable*)child ); //if existing	
+        Platform::singleton().getRender()->removeRenderable( (Renderable*)child ); //if existing	
 }
 
 void Object::removeChild( int i )

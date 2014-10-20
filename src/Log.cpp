@@ -21,7 +21,7 @@ void Log::_append( const String& message, LogEntry::Level level )
 void Log::append( const String& message, LogEntry::Level level )
 {
 	//execute the appending & notifying on the main thread!
-	auto q = Platform::getSingleton()->getBackgroundQueue();
+	auto q = Platform::singleton().getBackgroundQueue();
 	
 	//this hack is needed before we need Log to exist ASAP, even before a BackgroundQueue is created
 	//and anyway, when there's no BQ there should be no sync problems

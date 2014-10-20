@@ -60,7 +60,7 @@ namespace Dojo
 		FT_Face _createFaceForFile( const String& fileName )
 		{
 			char* buf;
-			FT_Long size = Platform::getSingleton()->loadFileContent( buf, fileName );
+			FT_Long size = Platform::singleton().loadFileContent( buf, fileName );
 			
 			//create new face from memory - loading from memory is needed for zip loading
 			FT_Face face;

@@ -142,7 +142,7 @@ void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */, con
 	DEBUG_ASSERT( next, "null music source passed" );
 
 	//override music activation if the system sound is in use
-	if( Platform::getSingleton()->isSystemSoundInUse() )
+	if( Platform::singleton().isSystemSoundInUse() )
 		return;
 
 	nextMusicTrack = getSoundSource( next );
@@ -245,7 +245,7 @@ void SoundManager::update( float dt )
 void SoundManager::resumeMusic()
 {
 	//resume music, but only if the user didn't enable itunes meanwhile!
-	if( musicTrack && !Platform::getSingleton()->isSystemSoundInUse() )
+	if( musicTrack && !Platform::singleton().isSystemSoundInUse() )
 		musicTrack->play();
 }
 

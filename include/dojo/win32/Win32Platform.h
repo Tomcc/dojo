@@ -119,7 +119,7 @@ namespace Dojo
 		Keyboard mKeyboard;
 		int clientAreaYOffset;
 
-		XInputController* mXInputJoystick[ 4 ];
+		std::unique_ptr<XInputController> mXInputJoystick[ 4 ];
 
 		Timer mStepTimer;
 

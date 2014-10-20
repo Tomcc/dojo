@@ -59,7 +59,7 @@ pParent(parent)
 
 	thread = std::thread([&]()
 	{
-		Platform::getSingleton()->prepareThreadContext();
+		Platform::singleton().prepareThreadContext();
 
 		while( 1 )
 		{

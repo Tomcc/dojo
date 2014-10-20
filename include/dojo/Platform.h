@@ -28,17 +28,17 @@ namespace Dojo
 		/**
 		\param config pass a non-empty Table to override the loading from the Platform User Configuration table, found in APPDATA/GAME_NAME/config.ds
 		*/
-		static Platform* create( const Table& config = Table::EMPTY_TABLE );
+		static Platform& create( const Table& config = Table::EMPTY_TABLE );
 
 		///shuts down the platform and the game
 		static void shutdownPlatform();
 
-		static  Platform* getSingleton()
+		static Platform& singleton()
 		{
-			DEBUG_ASSERT( singleton, "The Platform singleton was not created, use Platform::create() to create it" );
+			DEBUG_ASSERT( singletonPtr, "The Platform singleton was not created, use Platform::create() to create it" );
 
-			return singleton;
-		}	
+			return *singletonPtr;
+		}
 		
 		virtual ~Platform();
 		
@@ -183,9 +183,9 @@ namespace Dojo
 		\param out vector where the results are appended*/
 		void getFilePathsForType( const String& type, const String& path, std::vector<String>& out );
 
-		///loads the table found at absPath into dest
+		///loads the table found at absPath
 		/**if absPath is empty, the table file is loaded from $(Appdata)/$(GameName)/$(TableName).ds */
-		void load( Table& dest, const String& absPathOrName );
+		Table load( const String& absPathOrName );
 		
 		///saves the table found at absPath into dest
 		/**if absPath is empty, the table file is saved to $(Appdata)/$(GameName)/$(TableName).ds */
@@ -220,7 +220,7 @@ namespace Dojo
 		typedef std::unordered_map< String, PathList > ZipFoldersMap;
 		typedef std::unordered_map< String, ZipFoldersMap > ZipFileMapping;
 
-		static Platform* singleton;
+		static std::unique_ptr<Platform> singletonPtr;
 		
 		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
