@@ -4,7 +4,7 @@
 #include "win32/WGL_ARB_multisample.h"
 #include "win32/XInputController.h"
 
-#include "Render.h"
+#include "Renderer.h"
 #include "Game.h"
 #include "Utils.h"
 #include "Table.h"
@@ -484,7 +484,7 @@ void Win32Platform::initialize( Game* g )
 
 	setVSync( config.getBool( "disable_vsync" ) ? 0 : 1 );		
 	
-	render = new Render( width, height, DO_LANDSCAPE_LEFT );
+	render = new Renderer( width, height, DO_LANDSCAPE_LEFT );
 
 	sound = new SoundManager();
 

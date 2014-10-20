@@ -12,7 +12,7 @@
 
 #include "Array.h"
 
-#include "Render.h"
+#include "Renderer.h"
 #include "StateInterface.h"
 #include "ApplicationListener.h"
 

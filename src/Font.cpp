@@ -378,7 +378,7 @@ bool Font::onLoad()
 	mCellWidth = fontWidth + glowRadius * 2;
 	mCellHeight = fontHeight + glowRadius * 2;
 
-	face = Platform::singleton().getFontSystem()->getFace( fontFile );
+	face = Platform::singleton().getFontSystem().getFace( fontFile );
 
 	auto& preload = t.getTable( "preloadedPages" );
 	for( int i = 0; i < preload.getArrayLength(); ++i )

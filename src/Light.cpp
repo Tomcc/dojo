@@ -3,7 +3,7 @@
 #include "Light.h"
 #include "GameState.h"
 #include "Platform.h"
-#include "Render.h"
+#include "Renderer.h"
 
 using namespace Dojo;
 
@@ -76,7 +76,7 @@ void Light::bind( int i, const Matrix& view )
 		//setup all the lighting parameters
 		glEnable( light );
 		
-		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::singleton().getRender()->getDefaultAmbient();
+		float* ambientp = hasAmbient() ? (float*) &ambient : (float*)&Platform::singleton().getRenderer().getDefaultAmbient();
 
 		glLightfv( light, GL_DIFFUSE, (float*) &diffuse );
 		glLightfv( light, GL_SPECULAR, (float*) &specular );

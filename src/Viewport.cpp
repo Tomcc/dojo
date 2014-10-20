@@ -2,7 +2,7 @@
 
 #include "Viewport.h"
 
-#include "Render.h"
+#include "Renderer.h"
 #include "Platform.h"
 #include "Game.h"
 #include "AnimatedQuad.h"
@@ -253,6 +253,6 @@ void Viewport::onAction(float dt)
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)
-		Platform::singleton().getSoundManager()->setListenerTransform( getWorldTransform() );
+		Platform::singleton().getSoundManager().setListenerTransform( getWorldTransform() );
 }
 

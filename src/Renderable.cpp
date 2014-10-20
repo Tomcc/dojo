@@ -125,7 +125,7 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-void Renderable::_notifyRenderInfo(Render* r, int layerID, int renderIdx) {
+void Renderable::_notifyRenderInfo(Renderer* r, int layerID, int renderIdx) {
 	render = r;
 	layer = layerID;
 	renderingOrder = renderIdx;

@@ -9,7 +9,6 @@
 namespace Dojo
 {
 	class Renderable;
-	class Render;
 	class ShaderProgram;
 	class Table;
 
@@ -163,8 +162,6 @@ namespace Dojo
 
 		ShaderProgram* pProgram[ (byte)ShaderProgramType::_Count ];
 		bool mOwnsProgram[ (byte)ShaderProgramType::_Count ];
-
-		Render* pRender;
 
 		void _assignProgram(const Table& desc, ShaderProgramType type);
         

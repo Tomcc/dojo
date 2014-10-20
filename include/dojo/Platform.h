@@ -7,7 +7,7 @@
 namespace Dojo 
 {
 	class SoundManager;
-	class Render;
+	class Renderer;
 	class InputSystem;
 	class FontSystem;
 	class Game;
@@ -42,9 +42,9 @@ namespace Dojo
 		
 		virtual ~Platform();
 		
-		Game* getGame()
+		Game& getGame()
 		{
-			return game;
+			return *game;
 		}
 
 		///add a format that will be recognized as a zip package by the file loader
@@ -55,15 +55,15 @@ namespace Dojo
 		}
 
 		///returns the SoundManager instance
-		SoundManager* getSoundManager()	{	return sound;	}
+		SoundManager& getSoundManager()	{	return *sound;	}
 		///returns the Render instance
-		Render* getRender()				{	return render;	}
+		Renderer& getRenderer()				{	return *render;	}
 		///returns the InputSystem instance
-		InputSystem* getInput()			{	return input;	}
+		InputSystem& getInput()			{	return *input;	}
 		///returns the FontSystem instance
-		FontSystem* getFontSystem()		{	return fonts;	}
+		FontSystem& getFontSystem()		{	return *fonts;	}
 		///returns the system Log
-		Log* getLog()						{	return mLog;	}
+		Log& getLog()						{	return *mLog;	}
 
 		///returns the default BackgroundQueue
 		BackgroundQueue* getBackgroundQueue()	{	return mBackgroundQueue;	}
@@ -234,7 +234,7 @@ namespace Dojo
 		Game* game;
 
 		SoundManager* sound;
-		Render* render;
+		Renderer* render;
 		InputSystem* input;
 		FontSystem* fonts;
 		

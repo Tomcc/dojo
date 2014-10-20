@@ -25,7 +25,7 @@ namespace Dojo {
 	class Game;
 	class Light;
 	
-	class Render 
+	class Renderer 
 	{	
 	public:		
 
@@ -63,9 +63,9 @@ namespace Dojo {
 		typedef Array< Light* > LightList;
 		typedef Array< Viewport* > ViewportList;
 		
-		Render( int width, int height, Orientation renderOrientation );		
+		Renderer( int width, int height, Orientation renderOrientation );		
 		
-		~Render();		
+		~Renderer();		
 						
 		void addRenderable( Renderable* s, int layer );
 				

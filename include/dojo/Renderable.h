@@ -17,7 +17,7 @@
 
 namespace Dojo 
 {
-	class Render;
+	class Renderer;
 	
 	class Renderable : public RenderState, public Object
 	{				
@@ -67,7 +67,7 @@ namespace Dojo
 		
 		virtual void onAction( float dt );		
 		
-		void _notifyRenderInfo( Render* r, int layerID, int renderIdx );
+		void _notifyRenderInfo( Renderer* r, int layerID, int renderIdx );
 		
 		void _notifyCulled( bool culled );
 		
@@ -75,7 +75,7 @@ namespace Dojo
 		
 		bool visible;
 		
-		Render* render;
+		Renderer* render;
 		int layer;
 		int renderingOrder;
 		

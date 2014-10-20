@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "Render.h"
+#include "Renderer.h"
 
 #include "Renderable.h"
 #include "TextArea.h"
@@ -16,7 +16,7 @@
 
 using namespace Dojo;
 
-Render::Render( int w, int h, Orientation deviceOr ) :
+Renderer::Renderer( int w, int h, Orientation deviceOr ) :
 frameStarted( false ),
 valid( true ),
 width( w ),
@@ -75,14 +75,14 @@ backLayer( NULL )
 	backLayer = new Layer();
 	backLayer->add( NULL ); //add a dummy element
 
-	setInterfaceOrientation( Platform::singleton().getGame()->getNativeOrientation() );
+	setInterfaceOrientation( Platform::singleton().getGame().getNativeOrientation() );
 	
 	setDefaultAmbient( Color::BLACK );
 
 	CHECK_GL_ERROR;
 }
 
-Render::~Render()
+Renderer::~Renderer()
 {
 	SAFE_DELETE( firstRenderState );
 	SAFE_DELETE( backLayer );
@@ -90,7 +90,7 @@ Render::~Render()
 	clearLayers();
 }
 
-Render::Layer* Render::getLayer( int layerID )
+Renderer::Layer* Renderer::getLayer( int layerID )
 {	
 	LayerList* layerList = &positiveLayers;
 	if( layerID < 0 )
@@ -110,7 +110,7 @@ Render::Layer* Render::getLayer( int layerID )
 	return layerList->at( layerID );
 }
 
-bool Render::hasLayer( int layerID )
+bool Renderer::hasLayer( int layerID )
 {
 	LayerList* layerList = &positiveLayers;
 	if( layerID < 0 )
@@ -122,7 +122,7 @@ bool Render::hasLayer( int layerID )
 	return layerList->size() > abs( layerID );
 }
 
-void Render::addRenderable( Renderable* s, int layerID )
+void Renderer::addRenderable( Renderable* s, int layerID )
 {				
 	//get the needed layer	
 	Layer* layer = getLayer( layerID );
@@ -160,7 +160,7 @@ void Render::addRenderable( Renderable* s, int layerID )
 #endif 
 }
 
-void Render::removeRenderable( Renderable* s )
+void Renderer::removeRenderable( Renderable* s )
 {	
 	if( hasLayer( s->getLayer() ) )
 	{
@@ -175,7 +175,7 @@ void Render::removeRenderable( Renderable* s )
 	}
 }
 
-void Dojo::Render::removeAllRenderables() {
+void Dojo::Renderer::removeAllRenderables() {
 	for (int i = 0; i < negativeLayers.size(); ++i)
 		negativeLayers.at(i)->clear();
 
@@ -183,22 +183,22 @@ void Dojo::Render::removeAllRenderables() {
 		positiveLayers.at(i)->clear();
 }
 
-void Dojo::Render::removeViewport(Viewport* v) {
+void Dojo::Renderer::removeViewport(Viewport* v) {
 	mViewportList.remove(v);
 }
 
-void Dojo::Render::removeAllViewports() {
+void Dojo::Renderer::removeAllViewports() {
 	mViewportList.clear();
 }
 
-void Dojo::Render::addLight(Light* l) {
+void Dojo::Renderer::addLight(Light* l) {
 	DEBUG_ASSERT(l, "addLight: null light passed");
 	DEBUG_ASSERT(lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)");
 
 	lights.add(l);
 }
 
-void Dojo::Render::removeLight(Light* l) {
+void Dojo::Renderer::removeLight(Light* l) {
 	DEBUG_ASSERT(l, "removeLight: null light passed");
 
 	lights.remove(l);
@@ -207,7 +207,7 @@ void Dojo::Render::removeLight(Light* l) {
 	glDisable(GL_LIGHT0 + lights.size());
 }
 
-void Dojo::Render::clearLayers() {
+void Dojo::Renderer::clearLayers() {
 	for (int i = 0; i < negativeLayers.size(); ++i)
 		SAFE_DELETE(negativeLayers[i]);
 
@@ -219,19 +219,19 @@ void Dojo::Render::clearLayers() {
 	positiveLayers.clear();
 }
 
-void Render::setDefaultAmbient(const Color& a) {
+void Renderer::setDefaultAmbient(const Color& a) {
 	defaultAmbient = a;
 	defaultAmbient.a = 1;
 }
 
-void Render::addViewport( Viewport* v )
+void Renderer::addViewport( Viewport* v )
 {
 	DEBUG_ASSERT( v, "cannot add a null vieport" );
 
 	mViewportList.add( v );
 }
 
-void Render::setInterfaceOrientation( Orientation o )		
+void Renderer::setInterfaceOrientation( Orientation o )		
 {	
 	renderOrientation = o;
 	
@@ -243,7 +243,7 @@ void Render::setInterfaceOrientation( Orientation o )
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
-void Render::renderElement( Viewport* viewport, Renderable* s )
+void Renderer::renderElement( Viewport* viewport, Renderable* s )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(viewport, "Rendering requires a Viewport to be set");
@@ -319,7 +319,7 @@ void Render::renderElement( Viewport* viewport, Renderable* s )
 #endif
 }
 
-void Render::renderLayer( Viewport* viewport, Layer* list )
+void Renderer::renderLayer( Viewport* viewport, Layer* list )
 {
 	if( !list->size() || !list->visible )
 		return;
@@ -395,7 +395,7 @@ void Render::renderLayer( Viewport* viewport, Layer* list )
 	}
 }
 
-void Render::renderViewport( Viewport* viewport )
+void Renderer::renderViewport( Viewport* viewport )
 {
 	DEBUG_ASSERT( viewport, "Cannot render with a null viewport" );
 
@@ -447,7 +447,7 @@ void Render::renderViewport( Viewport* viewport )
 	}
 }
 
-void Render::render()
+void Renderer::render()
 {
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
 

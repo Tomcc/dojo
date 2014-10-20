@@ -20,7 +20,7 @@
 
 namespace Dojo 
 {	
-	class Render;
+	class Renderer;
 	class GameState;
 	class AnimatedQuad;
 	class Renderable;

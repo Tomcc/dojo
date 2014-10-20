@@ -6,7 +6,7 @@
 #include "Renderable.h"
 #include "GameState.h"
 #include "Viewport.h"
-#include "Render.h"
+#include "Renderer.h"
 #include "Texture.h"
 
 using namespace Dojo;
@@ -77,8 +77,6 @@ Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
 	Resource( creator, filePath )
 {
 	memset( pProgram, 0, sizeof( pProgram ) ); //init to null
-
-	pRender = Platform::singleton().getRender();
 }
 
 void Shader::_assignProgram( const Table& desc, ShaderProgramType type )
@@ -125,6 +123,8 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 
 const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
 {
+	auto& r = Platform::singleton().getRenderer();
+
 	static GLint tempInt[2];
     auto builtin = uniform.builtInUniform;
     switch ( builtin )
@@ -132,24 +132,24 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
 		case BU_NONE:
 			return uniform.userUniformCallback( user ); //call the user callback and be happy
 		case BU_WORLD:
-			return &pRender->currentState.world;
+			return &r.currentState.world;
 		case BU_VIEW:
-			return &pRender->currentState.view;
+			return &r.currentState.view;
 		case BU_PROJECTION:
-			return &pRender->currentState.projection;
+			return &r.currentState.projection;
         case BU_WORLDVIEW:
-            return &(pRender->currentState.worldView);
+            return &(r.currentState.worldView);
 		case BU_WORLDVIEWPROJ:
-			return &pRender->currentState.worldViewProjection;
+			return &r.currentState.worldViewProjection;
 		case BU_OBJECT_COLOR:
 			return &user->color;
 		case BU_VIEW_DIRECTION:
-			return &pRender->currentState.viewDirection;
+			return &r.currentState.viewDirection;
 		case BU_TIME:
 			DEBUG_TODO;
 			return nullptr;
 		case BU_TARGET_DIMENSION:
-            return &pRender->currentState.targetDimension;
+            return &r.currentState.targetDimension;
 		default: //texture stuff
         {
             if( builtin >= BU_TEXTURE_0 && builtin <= BU_TEXTURE_N )

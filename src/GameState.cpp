@@ -43,7 +43,7 @@ void GameState::setViewport( Viewport* v )
 	
 	camera = v;
 	
-	Platform::singleton().getRender()->addViewport( v );
+	Platform::singleton().getRenderer().addViewport( v );
 }
 
 void GameState::touchAreaAtPoint( Touch* touch )
@@ -81,7 +81,7 @@ void GameState::updateClickableState()
 	for( auto ta : mTouchAreas )
 		ta->_clearTouches();
 	
-	const InputSystem::TouchList& touchList = Platform::singleton().getInput()->getTouchList();
+	const InputSystem::TouchList& touchList = Platform::singleton().getInput().getTouchList();
 		
 	//"touch" all the touchareas active in this frame
 	for( auto touch : touchList )

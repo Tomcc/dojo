@@ -4,7 +4,7 @@
 
 #include "Viewport.h"
 #include "Platform.h"
-#include "Render.h"
+#include "Renderer.h"
 #include "GameState.h"
 #include "FrameSet.h"
 #include "Texture.h"
@@ -16,7 +16,7 @@ ParticlePool::~ParticlePool()
 	for( int i = 0; i < pool.size(); ++i )
 	{
 		
-		Platform::singleton().getRender()->removeRenderable( pool.at(i) );
+		Platform::singleton().getRenderer().removeRenderable( pool.at(i) );
 		
 		SAFE_DELETE( pool.at(i) );
 	}
@@ -32,7 +32,7 @@ Particle* ParticlePool::getParticle( const Vector& pos, float timeToLive, FrameS
 
 		pool.add( p );
 		
-		Platform::singleton().getRender()->addRenderable( p, destLayer );
+		Platform::singleton().getRenderer().addRenderable( p, destLayer );
 	}
 	else
 	{				

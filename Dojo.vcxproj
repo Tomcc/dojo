@@ -58,7 +58,7 @@
     <ClInclude Include="include\dojo\Plane.h" />
     <ClInclude Include="include\dojo\Platform.h" />
     <ClInclude Include="include\dojo\Random.h" />
-    <ClInclude Include="include\dojo\Render.h" />
+    <ClInclude Include="include\dojo\Renderer.h" />
     <ClInclude Include="include\dojo\Renderable.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
     <ClInclude Include="include\dojo\ResourceGroup.h" />
@@ -121,7 +121,7 @@
     <ClCompile Include="src\ParticlePool.cpp" />
     <ClCompile Include="src\Platform.cpp" />
     <ClCompile Include="src\PolyTextArea.cpp" />
-    <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
     <ClCompile Include="src\ResourceGroup.cpp" />
