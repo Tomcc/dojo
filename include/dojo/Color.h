@@ -34,7 +34,7 @@ namespace Dojo
 			
 		}
 		
-		Color( float r, float g, float b, float a )
+		Color( float r, float g, float b, float a = 1.f)
 		{
 			this->r = r;
 			this->g = g;
@@ -42,7 +42,7 @@ namespace Dojo
 			this->a = a;
 		}
 
-		Color( const Vector& v, float a ) 
+		explicit Color( const Vector& v, float a = 1.f ) 
 		{
 			this->r = v.x;
 			this->g = v.y;

@@ -301,7 +301,7 @@ namespace Dojo
 		
 		const Vector& getVector( const String& key, const Vector& defaultValue = Vector::ZERO ) const;
 		
-		const Color getColor( const String& key, float alpha = 1.f, const Color& defaultValue = Color::BLACK ) const;
+		const Color getColor( const String& key, const Color& defaultValue = Color::BLACK ) const;
 		
 		const Table& getTable( const String& key ) const;
 		

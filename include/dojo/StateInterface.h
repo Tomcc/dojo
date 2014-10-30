@@ -102,8 +102,8 @@ namespace Dojo
 		int getCurrentState()					{	return currentState;	}
 		StateInterface* getChildState()			{	return currentStatePtr;	}
 		
-		bool isCurrentState( int state )			{	return currentState == state;	}
-		bool isCurrentState( StateInterface* s )	{	return currentStatePtr == s;	}
+		bool isCurrentState( int state ) const			{	return currentState == state;	}
+		bool isCurrentState( StateInterface* s ) const 	{	return currentStatePtr == s;	}
 
 		bool hasChildState()						{	return currentStatePtr != NULL;	}
 		

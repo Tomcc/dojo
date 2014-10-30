@@ -52,3 +52,9 @@ Vector Math::randomVector2D( const Vector& min, const Vector& max, float z )
 		rangeRandom( min.y,max.y ), 
 		z );
 }
+
+Vector Math::randomUnit2D() {
+	auto a = Math::rangeRandom(0, Math::TAU);
+
+	return Vector(cosf(a), sinf(a));
+}

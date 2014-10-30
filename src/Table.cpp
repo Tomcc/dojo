@@ -482,10 +482,10 @@ const Vector& Table::getVector(const String& key, const Vector& defaultValue /*=
 		return defaultValue;
 }
 
-const Color Table::getColor(const String& key, float alpha /*= 1.f*/, const Color& defaultValue /*= Color::BLACK */) const {
+const Color Table::getColor(const String& key, const Color& defaultValue /*= Color::BLACK */) const {
 	Entry* e = get(key);
 	if (e && e->type == FT_VECTOR)
-		return Color(e->getAsVector(), alpha);
+		return Color(e->getAsVector(), defaultValue.a);
 	else
 		return defaultValue;
 }

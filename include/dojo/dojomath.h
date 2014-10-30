@@ -48,6 +48,9 @@ namespace Dojo
 		///returns a random point in the given space rectangle (2D)
 		static Vector randomVector2D( const Vector& min, const Vector& max, float z = 0 );
 
+		///returns a random unit vector in 2D
+		static Vector randomUnit2D();
+
 		static float toRadian( float euler )
 		{
 			return euler * EULER_TO_RADIANS;
