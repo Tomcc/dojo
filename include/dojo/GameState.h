@@ -71,7 +71,7 @@ namespace Dojo
 		
 		///"touches" all the touchAreas with the given touch
 		/**touched TouchAreas will fire onTouchAreaPressed() on their listeners as soon as updateClickableState() is called*/
-		void touchAreaAtPoint( Touch* touch );        
+		void touchAreaAtPoint( const Touch& touch );        
 
 		///triggers all the TouchAreas to send their events if they were touched before the last updateClickableState call
         void updateClickableState();

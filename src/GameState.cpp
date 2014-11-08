@@ -46,9 +46,9 @@ void GameState::setViewport( Viewport* v )
 	Platform::singleton().getRenderer().addViewport( v );
 }
 
-void GameState::touchAreaAtPoint( Touch* touch )
+void Dojo::GameState::touchAreaAtPoint( const Touch& touch )
 {
-	Vector pointer = getViewport()->makeWorldCoordinates( touch->point );
+	Vector pointer = getViewport()->makeWorldCoordinates( touch.point );
 
 	Dojo::Array< TouchArea* > layer;
 	int topMostLayer = INT32_MIN;
@@ -69,7 +69,7 @@ void GameState::touchAreaAtPoint( Touch* touch )
 
 	//trigger all the areas overlapping in the topmost layer 
 	for( int i = 0; i < layer.size(); ++i )
-		layer[i]->_incrementTouches( *touch );	
+		layer[i]->_incrementTouches( touch );	
 }
 
 void GameState::updateClickableState()
@@ -85,7 +85,7 @@ void GameState::updateClickableState()
 		
 	//"touch" all the touchareas active in this frame
 	for( auto touch : touchList )
-		touchAreaAtPoint( touch );
+		touchAreaAtPoint( *touch );
 	
 	///launch events
 	for( auto ta : mTouchAreas )

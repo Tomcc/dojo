@@ -100,7 +100,7 @@ namespace Dojo
 		ListenerList listeners;
 		
 		TouchList mTouchList;        
-		int mAssignedTouches;
+		size_t mAssignedTouches = 0;
 
 		DeviceList mDeviceList;
 				
