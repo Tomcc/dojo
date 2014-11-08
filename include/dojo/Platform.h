@@ -28,7 +28,7 @@ namespace Dojo
 		/**
 		\param config pass a non-empty Table to override the loading from the Platform User Configuration table, found in APPDATA/GAME_NAME/config.ds
 		*/
-		static Platform& create( const Table& config = Table::EMPTY_TABLE );
+		static Platform& create( const Table& config = Table::EMPTY );
 
 		///shuts down the platform and the game
 		static void shutdownPlatform();

@@ -6,6 +6,9 @@
 
 using namespace Dojo;
 
+const Table Table::EMPTY;
+const Table::Data Table::Data::EMPTY = Data(0, 0);
+
 Table Table::loadFromFile( const String& path )
 {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
@@ -27,11 +30,6 @@ Table Table::loadFromFile( const String& path )
 
 	return dest;
 }
-
-const Table Table::EMPTY_TABLE;
-
-const Table::Data Table::EMPTY_DATA = Data(0,0);
-
 
 bool Table::onLoad()
 {
@@ -495,7 +493,7 @@ const Table& Table::getTable(const String& key) const {
 	if (e && e->type == FT_TABLE)
 		return e->getAsTable();
 	else
-		return EMPTY_TABLE;
+		return EMPTY;
 }
 
 const Table::Data& Table::getData(const String& key) const {
@@ -503,7 +501,7 @@ const Table::Data& Table::getData(const String& key) const {
 	if (e && e->type == FT_DATA)
 		return e->getAsData();
 	else
-		return EMPTY_DATA;
+		return Data::EMPTY;
 }
 
 String Table::autoMemberName(int idx) const {

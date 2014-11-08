@@ -42,6 +42,8 @@ namespace Dojo
 		class Data
 		{
 		public:
+			static const Data EMPTY;
+
 			void* ptr;
 			int size;
 			
@@ -150,8 +152,7 @@ namespace Dojo
 
 		typedef std::unordered_map< String, std::unique_ptr<Entry> > EntryMap;
 
-		static const Table EMPTY_TABLE;
-		static const Data EMPTY_DATA;
+		static const Table EMPTY;
 		
 		static String index( int i )
 		{
