@@ -193,22 +193,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">lib\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">lib\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">lib\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">lib\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">lib\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">lib\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>dojo_d</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>dojo</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">
-    <TargetName>dojo</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -230,7 +230,7 @@
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlibd.lib;zziplibd.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImaged.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)dojo_d.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
@@ -265,7 +265,7 @@
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundation.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)dojo.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
@@ -300,7 +300,7 @@
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundation.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)dojo.lib</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
