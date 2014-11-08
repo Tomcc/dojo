@@ -201,7 +201,7 @@ Vector Object::getLocalDirection(const Vector& worldDir) {
 }
 
 float Object::getRoll() const {
-	return glm::roll(rotation);
+	return glm::roll(rotation) * Math::EULER_TO_RADIANS;
 }
 
 Object* Object::getChild(int i) {

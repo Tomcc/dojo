@@ -16,7 +16,7 @@
 #include "VertexField.h"
 #include "TriangleMode.h"
 
-namespace Dojo 
+namespace Dojo
 {
 	class Color;
 	class ResourceGroup;
@@ -34,22 +34,22 @@ namespace Dojo
 
 	Calling end() is required before the mesh can be used, so that its data is loaded to the GPU.
 	*/
-	class Mesh : public Resource 
+	class Mesh : public Resource
 	{
 	public:
 		typedef unsigned int IndexType;
-		
+
 		static const int VERTEX_PAGE_SIZE = 256;
 		static const int INDEX_PAGE_SIZE = 256;
-		
+
 		static const int VERTEX_FIELD_SIZES[];
-		
+
 		///Creates a new empty Mesh
 		Mesh( ResourceGroup* creator = NULL );
 
 		///Creates a new Mesh bound to the file at filePath
 		Mesh( ResourceGroup* creator, const String& filePath );
-		
+
 		virtual ~Mesh();
 
 		///frees all CPU-side memory (done automatically on static meshes)
@@ -59,20 +59,20 @@ namespace Dojo
 		/**
 			MUST be called only before the first begin ever!
 		*/
-		void setIndexByteSize( byte bytenumber );		
-		
+		void setIndexByteSize( byte bytenumber );
+
 		///enables a new VertexField
 		void setVertexFieldEnabled( VertexField f );
 
 		///enables a list of VertexFields
 		void setVertexFields(const std::initializer_list<VertexField>& fs);
-		
+
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
-		void setDynamic( bool d);		
-		
+		void setDynamic( bool d);
+
 		///Sets the primitive for the rendering of this mesh
 		void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
-		
+
 		TriangleMode getTriangleMode()	{	return triangleMode;	}
 
 		const Vector& getMax()
@@ -94,7 +94,7 @@ namespace Dojo
 		{
 			return center;
 		}
-		
+
 		///tells if begin() has been called not followed by an end()
 		bool isEditing()
 		{
@@ -115,23 +115,23 @@ namespace Dojo
 
 		///adds a vertex at the given position
 		void vertex( float x, float y );
-		
+
 		///adds a vertex at the given position
 		void vertex( float x, float y, float z );
 
 		void vertex(const Vector& v);
-				
-		///sets the uv of the given UV set				
+
+		///sets the uv of the given UV set
 		void uv( float u, float v, byte set = 0 );
 
-		///sets the color of the current vertex		
+		///sets the color of the current vertex
 		void color( float r, float g, float b, float a  );
 
 		void color( const Color& c );
-		
+
 		///adds a vertex at the given position
 		void normal( float x, float y, float z );
-		
+
 		void normal( const Vector& n );
 
 		///appends a raw blob of vertices to the vertex array
@@ -139,7 +139,7 @@ namespace Dojo
 
 		///adds one index
 		void index(IndexType idx);
-		
+
 		///adds 3 clockwise indices to make a triangle
 		void triangle(unsigned int i1, unsigned int i2, unsigned int i3)
 		{
@@ -164,15 +164,15 @@ namespace Dojo
 
 		//Removes the given vertices from the mesh
 		void cutSection(IndexType i1, IndexType i2);
-		
+
 		///loads the whole file passed in the constructor
 		virtual bool onLoad();
-		
+
 		virtual void onUnload( bool soft = false );
-				
+
 		///binds the mesh buffers with the vertex format from the specified shader
 		virtual void bind( Shader* shader );
-				
+
 		bool isIndexed() const
 		{
 			return !indices.empty() || indexHandle;
@@ -182,17 +182,17 @@ namespace Dojo
 		{
 			return indexGLType;
 		}
-		
+
 		bool isVertexFieldEnabled( VertexField f )
 		{
 			return vertexFieldOffset[(unsigned char)f] != 0xff;
 		}
-		
+
 		IndexType getVertexCount() const
 		{
 			return vertexCount;
 		}
-		
+
 		int getIndexCount() const
 		{
 			return indexCount;
@@ -214,14 +214,14 @@ namespace Dojo
 
 		///creates a new mesh from a slice of this one
 		std::unique_ptr<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
-				
+
 	protected:
 		Vector max, min, center, dimensions;
-				
+
 		int vertexSize = 0;
 		byte* currentVertex = nullptr;
 		std::vector<byte> vertices;
-		
+
 		byte indexSize = 0;
 		IndexType indexMaxValue = 0;
 		GLenum indexGLType = 0;
@@ -231,14 +231,14 @@ namespace Dojo
 		GLuint vertexHandle = 0, indexHandle = 0;
 
 		int vertexCount = 0, indexCount = 0;
-		
+
 		byte vertexFieldOffset[ (int)VertexField::_Count ];
-		
+
 		TriangleMode triangleMode = TriangleMode::TriangleStrip;
-		
+
 		bool dynamic = false;
 		bool editing = false;
-				
+
 		void _prepareVertex(const Vector& v);
 
 		///returns low level binding informations about a vertex field

@@ -85,7 +85,7 @@ namespace Dojo {
 			rotation = glm::rotate( rotation, r, axis );
 		}
 		
-		///sets the full orientation using a vector made of euler angles around x,y,z
+		///sets the full orientation using a vector made of radians around x,y,z
 		void setRotation( const Vector& eulerAngles )
 		{
 			setRotation( Quaternion( eulerAngles ) );
