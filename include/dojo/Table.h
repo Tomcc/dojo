@@ -278,9 +278,13 @@ namespace Dojo
 			return unnamedMembers;
 		}
 
-		bool isEmpty()
+		bool isEmpty() const
 		{
 			return map.empty();
+		}
+		
+		operator bool() const {
+			return !map.empty();
 		}
 
 		///returns true if this Table contains key
@@ -371,11 +375,6 @@ namespace Dojo
 		///removes the unnamed member index idx
 		void remove( int idx );
 
-		bool isEmpty() const
-		{
-			return map.empty();
-		}
-		
 		///write the table in string form over buf
 		void serialize( String& buf, String indent = String::EMPTY ) const;
 
