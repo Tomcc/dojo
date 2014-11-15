@@ -72,6 +72,20 @@ void Dojo::GameState::touchAreaAtPoint( const Touch& touch )
 		layer[i]->_incrementTouches( touch );	
 }
 
+void Dojo::GameState::addTouchArea(TouchArea* t) {
+	DEBUG_ASSERT(t != nullptr, "addTouchArea: area passed was null");
+
+	mTouchAreas.push_back(t);
+}
+
+void Dojo::GameState::removeTouchArea(TouchArea* t) {
+	DEBUG_ASSERT(t != nullptr, "removeTouchArea: area passed was null");
+
+	auto elem = std::find(mTouchAreas.begin(), mTouchAreas.end(), t);
+	if (elem != mTouchAreas.end())
+		mTouchAreas.erase(elem);
+}
+
 void GameState::updateClickableState()
 {
 	if( !childs )

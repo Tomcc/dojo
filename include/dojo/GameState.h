@@ -42,20 +42,10 @@ namespace Dojo
 		virtual ~GameState();
         
 		///Registers an existing TouchArea in this GameState
-        void addTouchArea( TouchArea* t )
-        {
-            DEBUG_ASSERT( t != nullptr, "addTouchArea: area passed was null" );
-            
-            mTouchAreas.add( t );
-        }
+        void addTouchArea( TouchArea* t );
 
         ///Unregisters an existing TouchArea in this GameState
-        void removeTouchArea( TouchArea* t )
-        {
-            DEBUG_ASSERT( t != nullptr, "removeTouchArea: area passed was null" );
-            
-            mTouchAreas.remove( t );
-        }
+        void removeTouchArea( TouchArea* t );
 				
 		///Clears this GameState to a pre-initialization state
 		virtual void clear();
@@ -89,7 +79,7 @@ namespace Dojo
 		
 	protected:
         
-        typedef Array< TouchArea* > TouchAreaList;
+        typedef std::vector< TouchArea* > TouchAreaList;
         
         TouchAreaList mTouchAreas;
 		

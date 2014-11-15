@@ -85,7 +85,7 @@ namespace Dojo
 		void _incrementTouches( const Touch& touch );
         
     protected:        
-        bool mPressed, top;
+        bool mPressed, top = false;
         int mLayer;
 
 		TouchList mTouches;
