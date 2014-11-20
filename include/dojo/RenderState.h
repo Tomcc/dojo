@@ -153,7 +153,7 @@ namespace Dojo
 		TextureUnit* getTextureUnit( int ID );
 
 		///returns the Mesh currently used by this state
-		Mesh* getMesh()								{	return mesh;			}
+		Mesh* getMesh()	const							{	return mesh;			}
 
 		///returns the Shader currently bound to this state
 		Shader* getShader()
