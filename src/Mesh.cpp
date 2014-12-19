@@ -177,7 +177,7 @@ void Mesh::_prepareVertex(const Vector& v)
 	++vertexCount;
 }
 
-void Mesh::vertex( float x, float y )
+int Mesh::vertex( float x, float y )
 {				
 	_prepareVertex(Vector(x,y));
 
@@ -185,9 +185,11 @@ void Mesh::vertex( float x, float y )
 
 	ptr[0] = x;
 	ptr[1] = y;
+
+	return getVertexCount() - 1;
 }
 
-void Mesh::vertex(const Vector& v) 
+int Mesh::vertex(const Vector& v) 
 {
 	_prepareVertex(v);
 
@@ -199,6 +201,13 @@ void Mesh::vertex(const Vector& v)
 		ptr[0] = v.x;
 		ptr[1] = v.y;
 	}
+
+	return getVertexCount() - 1;
+}
+
+int Mesh::vertex(float x, float y, float z)
+{
+	return vertex(Vector(x, y, z));
 }
 
 byte& Mesh::_offset(VertexField f) {
@@ -237,11 +246,6 @@ int Mesh::getPrimitiveCount() const {
 		DEBUG_FAIL("Invalid triangle mode");
 		return 0;
 	}
-}
-
-void Mesh::vertex( float x, float y, float z )
-{		
-	vertex(Vector(x, y, z));
 }
 
 void Mesh::uv(float u, float v, byte set /*= 0 */) {

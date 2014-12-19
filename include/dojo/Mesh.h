@@ -114,12 +114,12 @@ namespace Dojo
 		void beginAppend();
 
 		///adds a vertex at the given position
-		void vertex( float x, float y );
+		int vertex( float x, float y );
 
 		///adds a vertex at the given position
-		void vertex( float x, float y, float z );
+		int vertex( float x, float y, float z );
 
-		void vertex(const Vector& v);
+		int vertex(const Vector& v);
 
 		///sets the uv of the given UV set
 		void uv( float u, float v, byte set = 0 );
