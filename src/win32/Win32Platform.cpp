@@ -201,6 +201,11 @@ LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
 	return DefWindowProc( hwnd, message, wparam, lparam );
 }
 
+//convince NVidia video cards to activate, on notebooks
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+
 Win32Platform::Win32Platform( const Table& configTable ) :
 Platform( configTable ),
 dragging( false ),
