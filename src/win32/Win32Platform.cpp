@@ -219,6 +219,8 @@ mContextRequestsQueue(new ContextRequestsQueue )
 	//TODO detect locale code
 	locale = "en";
 
+	SetProcessDPIAware();
+
 	//detect monitor size
 	screenWidth = GetSystemMetrics( SM_CXSCREEN );
 	screenHeight = GetSystemMetrics( SM_CYSCREEN );
