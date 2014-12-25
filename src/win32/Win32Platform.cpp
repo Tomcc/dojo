@@ -150,27 +150,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	case WM_LBUTTONDOWN:  //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-		if (!mouseEventIsGesture) {
-			DEBUG_MESSAGE("MOUSE DOWN");
+		if (!mouseEventIsGesture)
 			app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
-		}
+		
 		return 0;
 
 	case WM_LBUTTONUP:   //left up
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
-		if (!mouseEventIsGesture) {
-			DEBUG_MESSAGE("MOUSE UP");
+		if (!mouseEventIsGesture)
 			app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
-		}
+		
 		mouseEventIsGesture = false;
         return 0;
 
     case WM_MOUSEMOVE:
-		if (!mouseEventIsGesture) {
-			DEBUG_MESSAGE("MOUSE MOVED");
+		if (!mouseEventIsGesture)
 			app.mouseMoved(LOWORD(lparam), HIWORD(lparam));
-		}
+		
         return 0;
 
 	case WM_TOUCH:
@@ -395,9 +392,7 @@ bool Win32Platform::_initializeWindow(const String& windowCaption, int w, int h)
 		// test for touch
 		auto value = GetSystemMetrics(SM_DIGITIZER);
 		if (value  & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH)
-		{
 			RegisterTouchWindow(hwnd, TWF_WANTPALM | TWF_FINETOUCH);
-		}
 	}
 
 	hdc = GetDC( hwnd );
