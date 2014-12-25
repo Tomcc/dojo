@@ -60,62 +60,123 @@ Touch::Type win32messageToMouseButton(UINT message) {
 	}
 }
 
-LRESULT CALLBACK WndProc(   HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) 
+LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam){
+	BOOL bHandled = FALSE;
+	UINT cInputs = LOWORD(wParam);
+	PTOUCHINPUT pInputs = new TOUCHINPUT[cInputs];
+	if (pInputs){
+		auto& app = (Win32Platform&)Platform::singleton();
+
+		if (GetTouchInputInfo((HTOUCHINPUT)lParam, cInputs, pInputs, sizeof(TOUCHINPUT))){
+			for (UINT i = 0; i < cInputs; i++){
+				TOUCHINPUT ti = pInputs[i];
+				POINT ptInput = {
+					TOUCH_COORD_TO_PIXEL(ti.x),
+					TOUCH_COORD_TO_PIXEL(ti.y)
+				};
+
+				ScreenToClient(hWnd, &ptInput);
+
+				//do something with each touch input entry
+				if (ti.dwFlags & TOUCHEVENTF_DOWN)
+					app.mousePressed(ptInput.x, ptInput.y, Touch::Type::TT_TAP);
+				else if (ti.dwFlags & TOUCHEVENTF_UP)
+					app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::TT_TAP);
+				else if (ti.dwFlags & TOUCHEVENTF_MOVE)
+					app.mouseMoved(ptInput.x, ptInput.y);
+			}
+			bHandled = TRUE;
+		}
+		else{
+			/* handle the error here */
+		}
+		delete[] pInputs;
+	}
+	else{
+		/* handle the error here, probably out of memory */
+	}
+	if (bHandled){
+		// if you handled the message, close the touch input handle and return
+		CloseTouchInputHandle((HTOUCHINPUT)lParam);
+		return 0;
+	}
+	else{
+		// if you didn't handle the message, let DefWindowProc handle it
+		return DefWindowProc(hWnd, WM_TOUCH, wParam, lParam);
+	}
+}
+
+bool mouseEventIsGesture = false;
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	auto& app = (Win32Platform&)Platform::singleton();
 
-	switch( message )
+	switch (message)
 	{
 	case WM_CREATE:
 		return 0;
 		break;
 
 	case WM_PAINT:
-		{
-			PAINTSTRUCT ps;
-			BeginPaint( hwnd, &ps );
-			EndPaint( hwnd, &ps );
-		}
-		return 0;
-		break;
+	{
+		PAINTSTRUCT ps;
+		BeginPaint(hwnd, &ps);
+		EndPaint(hwnd, &ps);
+	}
+	return 0;
+	break;
 
 	case WM_DESTROY:
-		PostQuitMessage( 0 ) ;
+		PostQuitMessage(0);
 		return 0;
 
-	//enter / exit unfocused state
+		//enter / exit unfocused state
 	case WM_ACTIVATEAPP:
 	case WM_ACTIVATE:
-	case WM_SHOWWINDOW:	
-		if( wparam == false ) //minimized or defocused
+	case WM_SHOWWINDOW:
+		if (wparam == false) //minimized or defocused
 			app._fireFocusLost();
 
-		else 
+		else
 			app._fireFocusGained();
 
 		return 0;
 
-    case WM_MOUSEWHEEL: //mouse wheel moved
-		app.mouseWheelMoved( (int)( (float)GET_WHEEL_DELTA_WPARAM(wparam) / (float)WHEEL_DELTA ) );
-        return 0;
+	case WM_MOUSEWHEEL: //mouse wheel moved
+		app.mouseWheelMoved((int)((float)GET_WHEEL_DELTA_WPARAM(wparam) / (float)WHEEL_DELTA));
+		return 0;
 
-    case WM_LBUTTONDOWN:  //left down
+	case WM_LBUTTONDOWN:  //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-		app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
-        return 0;
+		if (!mouseEventIsGesture) {
+			DEBUG_MESSAGE("MOUSE DOWN");
+			app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		}
+		return 0;
 
-    case WM_LBUTTONUP:   //left up
-    case WM_RBUTTONUP:
-    case WM_MBUTTONUP:
-
-		app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+	case WM_LBUTTONUP:   //left up
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+		if (!mouseEventIsGesture) {
+			DEBUG_MESSAGE("MOUSE UP");
+			app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		}
+		mouseEventIsGesture = false;
         return 0;
 
     case WM_MOUSEMOVE:
-		app.mouseMoved( LOWORD( lparam ), HIWORD( lparam ) );
+		if (!mouseEventIsGesture) {
+			DEBUG_MESSAGE("MOUSE MOVED");
+			app.mouseMoved(LOWORD(lparam), HIWORD(lparam));
+		}
         return 0;
 
+	case WM_TOUCH:
+		mouseEventIsGesture = true; //ignore the next mouse event
+		OnTouch(hwnd, wparam, lparam);
+		break;
 
 	case WM_SYSKEYDOWN:
 		if( wparam == VK_F4 ) //listen for Alt+F4
@@ -275,21 +336,21 @@ void Win32Platform::_adjustWindow()
 
 }
 
-bool Win32Platform::_initializeWindow( const String& windowCaption, int w, int h )
+bool Win32Platform::_initializeWindow(const String& windowCaption, int w, int h)
 {
-	DEBUG_MESSAGE( "Creating " + String(w) + "x" + String(h) + " window" );
+	DEBUG_MESSAGE("Creating " + String(w) + "x" + String(h) + " window");
 
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
 	WNDCLASS wc;
-	wc.cbClsExtra = 0; 
-	wc.cbWndExtra = 0; 
-	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
-	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-	wc.hInstance = hInstance;         
-	wc.lpfnWndProc = WndProc;         
-	wc.lpszClassName = TEXT( "DojoOpenGLWindow" );
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hInstance = hInstance;
+	wc.lpfnWndProc = WndProc;
+	wc.lpszClassName = TEXT("DojoOpenGLWindow");
 	wc.lpszMenuName = 0;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
@@ -305,8 +366,8 @@ bool Win32Platform::_initializeWindow( const String& windowCaption, int w, int h
 	height = h;
 
 	DWORD dwstyle = WINDOWMODE_PROPERTIES;
-	
-	AdjustWindowRect( &rect, dwstyle, true);
+
+	AdjustWindowRect(&rect, dwstyle, true);
 
 	// AdjustWindowRect() expands the RECT
 	// so that the CLIENT AREA (drawable region)
@@ -326,8 +387,18 @@ bool Win32Platform::_initializeWindow( const String& windowCaption, int w, int h
 		NULL, NULL,
 		hInstance, NULL);
 
-	if( hwnd == NULL )
+	if (hwnd == NULL)
 		return false;
+
+	//configure it to receive touches instead of "mouse gestures" where available
+	{
+		// test for touch
+		auto value = GetSystemMetrics(SM_DIGITIZER);
+		if (value  & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH)
+		{
+			RegisterTouchWindow(hwnd, TWF_WANTPALM | TWF_FINETOUCH);
+		}
+	}
 
 	hdc = GetDC( hwnd );
 	// CREATE PFD:
