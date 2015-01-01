@@ -256,6 +256,10 @@ void Mesh::uv(float u, float v, byte set /*= 0 */) {
 	ptr[1] = v;
 }
 
+void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
+	this->uv(uv.x, uv.y, set);
+}
+
 void Mesh::color(const Color& c) {
 
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");

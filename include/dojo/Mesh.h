@@ -122,7 +122,10 @@ namespace Dojo
 		int vertex(const Vector& v);
 
 		///sets the uv of the given UV set
-		void uv( float u, float v, byte set = 0 );
+		void uv(float u, float v, byte set = 0);
+
+		///sets the uv of the given UV set
+		void uv(const Vector& uv, byte set = 0);
 
 		///sets the color of the current vertex
 		void color( float r, float g, float b, float a  );
