@@ -48,6 +48,9 @@ Texture::~Texture()
 {
 	if( OBB )
 		SAFE_DELETE( OBB );
+
+	if (loaded)
+		onUnload();
 }
 
 void Texture::bind( GLuint index )

@@ -62,9 +62,12 @@ namespace Dojo
 
 		///sets the texture to be used as rendering target, null means "render to screen"
 		void setRenderTarget( Texture* target );
-        
+
 		///sets which subset of Render Layers this Viewport is able to "see"
-		void setVisibleLayers( const LayerList& layers );
+		void setVisibleLayers(const LayerList& layers);
+
+		///sets which subset of Render Layers this Viewport is able to "see"
+		void setVisibleLayers(int min, int max);
 
 		///returns the subset of visible layers that has been set by setVisibleLayers
 		/**

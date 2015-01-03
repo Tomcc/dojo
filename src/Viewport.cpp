@@ -241,6 +241,13 @@ void Viewport::setVisibleLayers( const LayerList& layers )
 	mLayerList = layers;
 }
 
+void Dojo::Viewport::setVisibleLayers(int min, int max) {
+	mLayerList.clear();
+
+	for (int i = min; i < max; ++i)
+		mLayerList.push_back(i);
+}
+
 void Viewport::onAction(float dt)
 {
 	Object::onAction(dt);
