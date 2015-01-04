@@ -35,7 +35,8 @@ void Shader::_populateUniformNameMap()
 	sBuiltiInUniformsNameMap[ "VIEW_DIRECTION" ] = BU_VIEW_DIRECTION;
 	sBuiltiInUniformsNameMap[ "OBJECT_COLOR" ] = BU_OBJECT_COLOR;
 	sBuiltiInUniformsNameMap[ "TIME" ] = BU_TIME;
-	sBuiltiInUniformsNameMap[ "TARGET_DIMENSION" ] = BU_TARGET_DIMENSION;
+	sBuiltiInUniformsNameMap["TARGET_DIMENSION"] = BU_TARGET_DIMENSION;
+	sBuiltiInUniformsNameMap["TARGET_PIXEL"] = BU_TARGET_PIXEL;
 }
 
 void Shader::_populateAttributeNameMap()
@@ -126,6 +127,7 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
 	auto& r = Platform::singleton().getRenderer();
 
 	static GLint tempInt[2];
+	static Vector tmpVec;
     auto builtin = uniform.builtInUniform;
     switch ( builtin )
     {
@@ -150,6 +152,12 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
 			return nullptr;
 		case BU_TARGET_DIMENSION:
             return &r.currentState.targetDimension;
+		case BU_TARGET_PIXEL:
+			tmpVec = {
+				1.f / r.currentState.targetDimension.x,
+				1.f / r.currentState.targetDimension.y 
+			};
+			return &tmpVec;
 		default: //texture stuff
         {
             if( builtin >= BU_TEXTURE_0 && builtin <= BU_TEXTURE_N )

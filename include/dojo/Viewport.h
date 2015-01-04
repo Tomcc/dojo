@@ -98,6 +98,14 @@ namespace Dojo
 		const Vector& getTargetSize()			{   return targetSize;  }
 		const Matrix& getViewTransform()			{	return mViewTransform;	}
 
+		void setClearEnabled(bool enabled) {
+			enableClear = enabled;
+		}
+
+		bool getClearEnabled() const {
+			return enableClear;
+		}
+
 		///returns the Texture this Viewport draws to
 		Texture* getRenderTarget()
 		{
@@ -166,6 +174,7 @@ namespace Dojo
 		Vector targetSize;
 
 		bool cullingEnabled;
+		bool enableClear = true;
 		
 		Renderable* fadeObject;
 				

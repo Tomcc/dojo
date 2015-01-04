@@ -53,11 +53,11 @@ void FrameSet::setAtlas( const Table& atlasTable, ResourceGroup& atlasTexturePro
 		sx = tile.getInt( 2 );
 		sy = tile.getInt( 3 );
 
-		Texture* tiletex = new Texture();
+		auto tiletex = make_unique<Texture>();
 
 		tiletex->loadFromAtlas( atlas, x,y, sx,sy );
 
-		addTexture( tiletex, true );
+		addTexture( std::move(tiletex) );
 	}
 }
 
@@ -94,14 +94,17 @@ void FrameSet::onUnload(bool soft)
 	loaded = false;
 }
 
-void FrameSet::addTexture(Texture* t, bool owner /*= false */) {
+void FrameSet::addTexture(Texture& t) {
+	frames.add(&t);
+}
+
+void FrameSet::addTexture(std::unique_ptr<Texture> t) {
 	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture");
-	DEBUG_ASSERT(!owner || (owner && t->getOwnerFrameSet() == NULL), "This Texture already has an owner FrameSet");
+	DEBUG_ASSERT(t->getOwnerFrameSet() == NULL, "This Texture already has an owner FrameSet");
+	
+	t->_notifyOwnerFrameSet(this);
 
-	if (owner)
-		t->_notifyOwnerFrameSet(this);
-
-	frames.add(t);
+	addTexture(*t.release());
 }
 
 Texture* Dojo::FrameSet::getRandomFrame() {

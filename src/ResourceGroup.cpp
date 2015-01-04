@@ -102,8 +102,7 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 		}
 		
 		//create a new buffer
-		Texture* t = new Texture( this, paths[i] );
-		currentSet->addTexture( t, true );
+		currentSet->addTexture(make_unique<Texture>(this, paths[i]));
 		
 		lastName = name;
 	}

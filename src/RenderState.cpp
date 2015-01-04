@@ -53,7 +53,7 @@ cullMode(CM_BACK),
 blendingEnabled(true),
 srcBlend(GL_SRC_ALPHA),
 destBlend(GL_ONE_MINUS_SRC_ALPHA),
-blendEquation(GL_FUNC_ADD),
+blendFunction(GL_FUNC_ADD),
 mesh(nullptr),
 pShader(nullptr) {
 	memset(textures, 0, sizeof(textures)); //zero all the textures
@@ -80,14 +80,22 @@ void RenderState::setTexture(Texture* tex, int ID /*= 0 */) {
 }
 
 void RenderState::setBlending(BlendingMode mode) {
-	static const GLenum modeToGLTable[] = {
-		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, //alphablend
-		GL_DST_COLOR, GL_ZERO, //multiply
-		GL_ONE, GL_ONE, //add
-		GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR //invert
+	struct GLBlend {
+		GLenum src, dest, func;
 	};
 
-	setBlending(modeToGLTable[mode * 2], modeToGLTable[mode * 2 + 1]);
+	static const GLBlend modeToGLTable[] = {
+		{ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD }, //alphablend
+		{ GL_DST_COLOR, GL_ZERO, GL_FUNC_ADD },  //multiply
+		{ GL_ONE, GL_ONE, GL_FUNC_ADD },  //add
+		{ GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_FUNC_ADD },  //invert
+		{ GL_ONE, GL_ONE, GL_FUNC_SUBTRACT } //subtract
+	};
+
+	auto& blend = modeToGLTable[(int)mode];
+
+	setBlending(blend.src, blend.dest);
+	blendFunction = blend.func;
 }
 
 void RenderState::setShader(Shader* shader) {
@@ -134,13 +142,13 @@ int RenderState::getDistance(RenderState* s) {
 void RenderState::useAlphaBlend() {
 	srcBlend = GL_SRC_ALPHA;
 	destBlend = GL_ONE_MINUS_SRC_ALPHA;
-	blendEquation = GL_FUNC_ADD;
+	blendFunction = GL_FUNC_ADD;
 }
 
 void RenderState::useAdditiveBlend() {
 	destBlend = GL_ONE;
 	srcBlend = GL_SRC_ALPHA;
-	blendEquation = GL_FUNC_ADD;
+	blendFunction = GL_FUNC_ADD;
 }
 
 
@@ -183,7 +191,7 @@ void RenderState::applyState()
 	else                    glDisable( GL_BLEND );
 	
 	glBlendFunc( srcBlend, destBlend );
-	glBlendEquation( blendEquation );
+	glBlendEquation( blendFunction );
 	
 	switch( cullMode )
 	{
@@ -271,8 +279,8 @@ void RenderState::commitChanges( RenderState* pastState )
 		glBlendFunc( srcBlend, destBlend );
 
 	//change blending equation
-	if( blendEquation != pastState->blendEquation )
-		glBlendEquation( blendEquation );
+	if( blendFunction != pastState->blendFunction )
+		glBlendEquation( blendFunction );
 
 	if( cullMode != pastState->cullMode )
 	{

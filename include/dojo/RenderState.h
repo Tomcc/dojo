@@ -15,27 +15,18 @@
 #include "Vector.h"
 #include "Array.h"
 #include "dojomath.h"
+#include "BlendingMode.h"
 
 namespace Dojo
 {
 	class Texture;
 	class Mesh;
 	class Shader;
-	
+
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
 	class RenderState 
 	{
 	public:
-
-		///an enum describing high-level photoshop-like blending modes
-		enum BlendingMode
-		{
-			BM_ALPHA,
-			BM_MULTIPLY,
-			BM_ADD,
-			BM_INVERT
-		};
-
 		class TextureUnit
 		{
 		public:
@@ -108,7 +99,7 @@ namespace Dojo
 				
 		Color color;
 
-		GLenum srcBlend, destBlend, blendEquation;
+		GLenum srcBlend, destBlend, blendFunction;
 
 		CullMode cullMode;
 

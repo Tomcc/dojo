@@ -19,6 +19,7 @@
     <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
+    <ClInclude Include="include\dojo\BlendingMode.h" />
     <ClInclude Include="include\dojo\Console.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />

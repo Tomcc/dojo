@@ -414,13 +414,15 @@ void Renderer::renderViewport( Viewport* viewport )
 	glViewport(0, 0, (GLsizei) currentState.targetDimension.x, (GLsizei)currentState.targetDimension.y);
 
 	//clear the viewport
-	glClearColor( 
-		viewport->getClearColor().r, 
-		viewport->getClearColor().g, 
-		viewport->getClearColor().b, 
-		viewport->getClearColor().a );
+	if (viewport->getClearEnabled()) {
+		glClearColor(
+			viewport->getClearColor().r,
+			viewport->getClearColor().g,
+			viewport->getClearColor().b,
+			viewport->getClearColor().a);
 
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
 	currentState.view = viewport->getViewTransform();
 	currentState.viewDirection = viewport->getWorldDirection();
