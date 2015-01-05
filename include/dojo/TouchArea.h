@@ -29,7 +29,7 @@ namespace Dojo
     {
     public:
 
-		typedef Array< Touch > TouchList;
+		typedef std::vector< Touch > TouchList;
         
         class Listener
         {

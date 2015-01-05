@@ -84,12 +84,9 @@ namespace Dojo
 		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
 		*/
 		void setTargetSize( const Vector& size )		{ targetSize = size; }
-
-		///enables or disables 3D culling of hidden objects
-		void setCullingEnabled( bool state )		{	cullingEnabled = state;	}
 		
 		const Color& getClearColor()				{	return clearColor;	}
-		Renderable* getFader()					{	return fadeObject;	}
+		Renderable* getFader()					{	return faderObject;	}
 		float getVFOV()							{	return VFOV;		}
 		float getZFar()							{	return zFar;		}
 		float getZNear()							{	return zNear;		}
@@ -129,14 +126,9 @@ namespace Dojo
 
 		bool isContainedInFrustum( Renderable* r );
 
-		bool isSeeing( Renderable* s );
+		bool isVisible( Renderable& s );
 
-		bool touches( Renderable* r )
-		{
-			DEBUG_ASSERT( r != nullptr, "touches: null renderable passed" );
-
-			return Math::AABBsCollide( r->getWorldMax(), r->getWorldMin(), getWorldMax(), getWorldMin() );
-		}
+		bool isInViewRect( const Renderable& r ) const;
 		
 		///returns the world position of the given screenPoint
 		Vector makeWorldCoordinates( const Vector& screenPoint )
@@ -173,10 +165,9 @@ namespace Dojo
 		
 		Vector targetSize;
 
-		bool cullingEnabled;
 		bool enableClear = true;
 		
-		Renderable* fadeObject;
+		Renderable* faderObject = nullptr;
 				
 		Color clearColor;
         

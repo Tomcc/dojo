@@ -20,13 +20,11 @@
 #include <dojo/InputDevice.h>
 #include <dojo/InputDeviceListener.h>
 #include <dojo/Keyboard.h>
-#include <dojo/Light.h>
 #include <dojo/Log.h>
 #include <dojo/Mesh.h>
 #include <dojo/Noise.h>
 #include <dojo/Object.h>
 #include <dojo/Particle.h>
-#include <dojo/ParticlePool.h>
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
 #include <dojo/PolyTextArea.h>

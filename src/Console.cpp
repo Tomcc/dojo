@@ -34,21 +34,22 @@ Console::Console( Object* parent, const Vector& topLeft, const Vector& bottomRig
 
 void Console::onAction( float dt )
 {
-	if( mText->getParent() != this && hasLayer() ) //attach the text in front of this object when the parent has been attached
-		addChild( mText, getLayer()+1 );
-
-	if( mDirty )
-	{
-		mDirty = false;
-		String text;
-		for( auto& string : mOutput )
-			text += string + '\n';
-
-		mText->clearText();
-		mText->addText( text );
-	}
-
-	mText->setVisible( isVisible() );
+	DEBUG_TODO; //this hack isn't supported anymore
+// 	if( mText->getParent() != this && hasLayer() ) //attach the text in front of this object when the parent has been attached
+// 		addChild( *mText, getLayer()+1 );
+// 
+// 	if( mDirty )
+// 	{
+// 		mDirty = false;
+// 		String text;
+// 		for( auto& string : mOutput )
+// 			text += string + '\n';
+// 
+// 		mText->clearText();
+// 		mText->addText( text );
+// 	}
+// 
+// 	mText->setVisible( isVisible() );
 
 	Renderable::onAction( dt );
 }

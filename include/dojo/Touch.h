@@ -11,12 +11,12 @@ namespace Dojo
 	{
 	public:
 
-		enum Type {
-			TT_HOVER,
-			TT_TAP,
-			TT_LEFT_CLICK,
-			TT_RIGHT_CLICK,
-			TT_MIDDLE_CLICK
+		enum class Type {
+			Hover,
+			Tap,
+			LeftClick,
+			RightClick,
+			MiddleClick
 		};
 
 		int ID;
@@ -25,6 +25,9 @@ namespace Dojo
 
 		///first frame is only set in the first frame where the touch has appeared
 		int firstFrame;
+
+		Touch() : ID(-1), type(Type::Tap) {
+		}
 
 		Touch( int _ID, const Vector& _point, Type type ) :
 			ID( _ID ),

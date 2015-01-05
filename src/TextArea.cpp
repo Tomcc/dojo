@@ -33,10 +33,6 @@ visibleCharsNumber( 0xfffffff )
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
 	
-	//allocate buffers			
-	mesh = _createMesh();
-	freeLayers.add( this ); //add itself to the free layers
-
 	//not visible until prepared!
 	scale = 0;
 
@@ -94,7 +90,7 @@ void TextArea::addText( const String& text )
 		c = text[i];
 
 		currentChar = font->getCharacter( c );
-		characters.add( currentChar );
+		characters.emplace( currentChar );
 
 		currentLineLength += currentChar->pixelWidth;
 
@@ -147,28 +143,28 @@ void TextArea::addText( int n, char paddingChar, int digits )
 	addText( number );
 }
 
-Renderable* TextArea::_enableLayer( Texture* tex )
+Renderable* Dojo::TextArea::_enableLayer( Texture& tex )
 {
-	if( freeLayers.size() == 0 )
-		_createLayer( tex );
+	if( freeLayers.empty() )
+		_pushLayer();
 	
-	Renderable* r = freeLayers.top();
-	freeLayers.pop();
+	Renderable* r = *freeLayers.begin();
+	freeLayers.erase(freeLayers.begin());
 	
 	r->setVisible( true );
 	r->setActive( true );
-	r->setTexture( tex );
+	r->setTexture( &tex );
 	
 	r->getMesh()->begin( getLenght() * 2 );
 	
-	busyLayers.add( r );
+	busyLayers.emplace( r );
 	
 	return r;
 }
 
 void TextArea::_endLayers()
 {
-	for( int i = 0; i < busyLayers.size(); ++i )
+	for( size_t i = 0; i < busyLayers.size(); ++i )
 		busyLayers[i]->getMesh()->end();
 	
 	//also end this
@@ -179,34 +175,30 @@ void TextArea::_endLayers()
 ///Free any created layer			
 void TextArea::_hideLayers()
 {
-	for( int i = 0; i < busyLayers.size(); ++i )
+	for( size_t i = 0; i < busyLayers.size(); ++i )
 	{
 		Renderable* l = busyLayers[i];
 		
 		l->setVisible( false );
 		l->setActive( false );
 		
-		freeLayers.add( l );
+		freeLayers.emplace( l );
 	}
 	
 	actualCharacters = 0;
 	busyLayers.clear();
 }
 
-void TextArea::_destroyLayer( Renderable* r )
+void Dojo::TextArea::_destroyLayer( Renderable& r )
 {
-	DEBUG_ASSERT( r, "null layer" );
-	
-	if( r == this )  //do not delete the TA itself, even if it is a layer
+	if( &r == this )  //do not delete the TA itself, even if it is a layer
 		return;
 	
-	delete r->getMesh();
+	delete r.getMesh();
 	
-	removeChild( r );
-	busyLayers.remove( r );
-	freeLayers.remove( r );
-	
-	SAFE_DELETE( r );
+	busyLayers.erase(&r);
+	freeLayers.erase(&r);
+	removeChild(r);
 }
 
 
@@ -240,7 +232,7 @@ void Dojo::TextArea::_prepare() {
 	_hideLayers();
 
 	//either reach the last valid character or the last existing character
-	for( int i = 0; i < visibleCharsNumber && i < characters.size(); ++i )
+	for( size_t i = 0; i < visibleCharsNumber && i < characters.size(); ++i )
 	{
 		rep = characters[i];
 
@@ -270,7 +262,7 @@ void Dojo::TextArea::_prepare() {
 		}
 		else	//real character
 		{
-			Mesh* layer = _getLayer( rep->getTexture() )->getMesh();
+			Mesh* layer = _getLayer( *rep->getTexture() )->getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;
@@ -318,7 +310,7 @@ void Dojo::TextArea::_prepare() {
 	mLayersLowerBound = mesh->getMin();
 	mLayersUpperBound = mesh->getMax();
 	
-	for( int i = 0; i < busyLayers.size(); ++i )
+	for( size_t i = 0; i < busyLayers.size(); ++i )
 	{
 		mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
 		mLayersLowerBound = Math::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
@@ -327,6 +319,14 @@ void Dojo::TextArea::_prepare() {
 	setSize( mLayersUpperBound - mLayersLowerBound );
    
 	changed = false;
+}
+
+void Dojo::TextArea::_destroyLayers() {
+	for (auto&& l : busyLayers)
+		_destroyLayer(*l);
+
+	for (auto&& l : freeLayers)
+		_destroyLayer(*l);
 }
 
 void TextArea::_centerLastLine( int startingAt, float size )
@@ -351,21 +351,29 @@ Mesh* TextArea::_createMesh()
 	return mesh;
 }
 
-Renderable* TextArea::_createLayer( Texture* t )
+void Dojo::TextArea::_pushLayer() 
 {
-	DEBUG_ASSERT( t, "null texture" );
-
-	Renderable* r = new Renderable( gameState, Vector::ZERO );
+	auto r = make_unique<Renderable>( gameState, Vector::ZERO );
 	r->scale = scale;
 	r->setMesh( _createMesh() );
-	r->setTexture( t );
 	r->setVisible( false );
 	r->setActive( false );
 
-	addChild( r, getLayer() );
-	freeLayers.add( r );
+	freeLayers.emplace(r.get());
+	addChild( std::move(r), getLayer() );
+}
 
-	return r;
+Renderable* Dojo::TextArea::_getLayer(Texture& tex) 
+{
+	//find this layer in the already assigned, or get new
+	for (size_t i = 0; i < busyLayers.size(); ++i)
+	{
+		if (busyLayers[i]->getTexture() == &tex)
+			return busyLayers[i];
+	}
+
+	//does not exist, hit a free one
+	return _enableLayer(tex);
 }
 
 void TextArea::onAction(float dt)

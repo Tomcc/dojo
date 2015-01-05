@@ -75,7 +75,7 @@ void TouchArea::_clearTouches() {
 }
 
 void TouchArea::_incrementTouches(const Touch& touch) {
-	mTouches.add(touch);
+	mTouches.push_back(touch);
 }
 
 void TouchArea::setListener(Listener* l) {

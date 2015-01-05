@@ -125,8 +125,8 @@ namespace Dojo
 		
 	protected:
 		
-		typedef Array< Renderable* > LayerList;
-		typedef Array< Font::Character* > CharacterList;
+		typedef SmallSet< Renderable* > LayerList;
+		typedef SmallSet< Font::Character* > CharacterList;
 
 		String content;
 		
@@ -143,7 +143,7 @@ namespace Dojo
 		bool changed;
 		
 		float *vertexBuffer, *uvBuffer;		
-		int visibleCharsNumber;
+		size_t visibleCharsNumber;
 		
 		Vector cursorPosition, screenSize, lastScale;
 		Vector mLayersLowerBound, mLayersUpperBound;
@@ -159,26 +159,13 @@ namespace Dojo
 		Mesh* _createMesh();
 
 		///create a Layer that uses the given Page
-		Renderable* _createLayer( Texture* t );
+		void _pushLayer();
 
 		///get a layer for this page
-		Renderable* _enableLayer( Texture* tex );
+		Renderable* _enableLayer( Texture& tex );
 
 		///get the layer assigned to this texture
-		Renderable* _getLayer( Texture* tex )
-		{
-			DEBUG_ASSERT( tex, "Cannot get a layer for a null texture" );
-
-			//find this layer in the already assigned, or get new
-			for( int i = 0; i < busyLayers.size(); ++i )
-			{
-				if( busyLayers[i]->getTexture() == tex )
-					return busyLayers[i];
-			}
-
-			//does not exist, hit a free one
-			return _enableLayer( tex );
-		}
+		Renderable* _getLayer( Texture& tex );
 
 		///finishes editing the layers
 		void _endLayers();
@@ -186,16 +173,9 @@ namespace Dojo
 		///Free any created layer			
 		void _hideLayers();
 
-		void _destroyLayer( Renderable* r );
+		void _destroyLayer( Renderable& r );
 
-		void _destroyLayers()
-		{
-			for( int i = 0; i < busyLayers.size(); ++i )
-				_destroyLayer( busyLayers[i] );
-
-			for( int i = 0; i < freeLayers.size(); ++i )
-				_destroyLayer( freeLayers[i] );
-		}
+		void _destroyLayers();
 	};
 }
 

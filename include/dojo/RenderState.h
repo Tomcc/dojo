@@ -72,9 +72,9 @@ namespace Dojo
 				return rotation;
 			}
 
-			const Matrix& getTransform();
+			const Matrix& getTransform() const;
 
-			bool isTransformRequired()
+			bool isTransformRequired() const
 			{
 				return optTransform != nullptr;
 			}
@@ -139,9 +139,9 @@ namespace Dojo
 		*/
 		void setShader( Shader* shader );
 				
-		Texture* getTexture( int ID = 0 );
+		Texture* getTexture( int ID = 0 ) const;
 
-		TextureUnit* getTextureUnit( int ID );
+		const TextureUnit& getTextureUnit( int ID ) const;
 
 		///returns the Mesh currently used by this state
 		Mesh* getMesh()	const							{	return mesh;			}
@@ -165,14 +165,8 @@ namespace Dojo
 		
 		void applyState();
 		
-		void commitChanges( RenderState* nextState );
+		void commitChanges();
 
-		///sets up destBlend and srcBlend to use normal alpha blending
-		void useAlphaBlend();
-
-		///sets up destBlend and srcBlend to use alpha+additive blending
-		void useAdditiveBlend();
-				
 	protected:
 			
 		bool blendingEnabled;

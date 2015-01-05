@@ -45,7 +45,7 @@ namespace Dojo
 		void stopFade();
 		
 		///returns the ID of the Render::Layer this object is assigned to
-		int getLayer()				{	return layer;			}
+		int getLayer()	const			{	return layer;			}
 		int getRenderingOrder()		{	return renderingOrder;	}
 
 		///true if this object has been assigned to a Render::Layer
@@ -58,7 +58,7 @@ namespace Dojo
         
         virtual bool isRenderable()         {   return true;            }
 					
-		bool isInView()
+		bool isInView() const
 		{
 			return !mCulled;
 		}

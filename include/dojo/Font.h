@@ -65,7 +65,7 @@ namespace Dojo
 
 		protected:
 
-			std::unique_ptr< Tessellation > mTesselation;
+			Unique< Tessellation > mTesselation;
 		};
 		
 		///A Page is a single texture which contains FONT_PAGE_SIDE^2 Characters in Unicode

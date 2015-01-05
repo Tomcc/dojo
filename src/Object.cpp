@@ -16,7 +16,6 @@ gameState( parentObject->getGameState() ),
 speed(0,0,0),
 active( true ),
 scale( 1,1,1 ),
-childs( NULL ),
 parent( nullptr ),
 dispose( false ),
 mNeedsAABB( true ),
@@ -27,114 +26,72 @@ inheritScale( true )
 
 Object::~Object()
 {
-	destroyAllChilds();
+	destroyAllChildren();
 }
 
-void Object::addChild( Object* o )
+Object& Object::_addChild( Unique<Object> o )
 {    
-	DEBUG_ASSERT( o, "Child to add is null" );
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 
+	o->_notifyParent(this);
 
-	if( !childs )
-		childs = new ChildList(10,10);
+	auto ptr = o.get();
 
-	childs->add( o );
+	childs.emplace( std::move(o) );
 
-	o->_notifyParent( this );
+	return *ptr;
 }
 
-void Object::addChild( Renderable* o, int layer )
+Renderable& Object::_addChild( Unique<Renderable> o, int layer )
 {
-	addChild( o );
+	Platform::singleton().getRenderer().addRenderable(*o, layer);
 
-	Platform::singleton().getRenderer().addRenderable( o, layer );
+	return addChild( std::move(o) );
 }
 
-void Object::_unregisterChild( Object* child )
+void Object::_unregisterChild( Object& child )
 {
-	DEBUG_ASSERT( child, "Child to remove is null" );
+	child._notifyParent( NULL );
 	
-	child->_notifyParent( NULL );
-	
-    if( child->isRenderable() )
-        Platform::singleton().getRenderer().removeRenderable( (Renderable*)child ); //if existing	
+    if( child.isRenderable() )
+        Platform::singleton().getRenderer().removeRenderable( (Renderable&)child ); //if existing	
 }
 
-void Object::removeChild( int i )
-{	
-	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
-	DEBUG_ASSERT( childs->size() > i && i >= 0, "Child index is OOB" );
-	
-	Object* child = childs->at( i );
-	
-	_unregisterChild( child );
-	
-	childs->remove( i );
-
-	//if that was the last child, remove the list itself
-	if( childs->size() == 0 )
-		SAFE_DELETE( childs );
-}
-
-void Object::removeChild( Object* o )
-{
-	DEBUG_ASSERT( o, "Child to remove is null" );
-	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
-	
-	int i = childs->getElementIndex( o );
-	
-	if( i >= 0 )
-		removeChild( i );
-}
-
-void Object::destroyChild( int i )
+Unique<Object> Object::removeChild( Object& o )
 {
 	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
-	DEBUG_ASSERT( childs->size() > i && i >= 0, "Child index is OOB" );
-
-	Object* child = childs->at( i );
-
-	child->onDestruction();
 	
-	removeChild( i );
-	
-	SAFE_DELETE( child );
+	auto elem = ChildList::find(childs, o);
+	if (elem != childs.end()) {
+		auto child = std::move(*elem);
+		childs.erase(elem);
+		_unregisterChild(*child);
+		return child;
+	}
+	else {
+		DEBUG_FAIL("This object is not a child");
+		return nullptr;
+	}
 }
-
-void Object::destroyChild( Object* o )
-{
-	DEBUG_ASSERT( o, "Child to destroy is null" );
-	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
-	
-	int i = childs->getElementIndex( o );
-	
-	if( i >= 0 )
-		destroyChild( i );
-}
-
 
 void Object::collectChilds()
 {
-	if( childs )
-	{
-		for( int i = 0; childs && i < childs->size(); ++i )
-		{
-			if( childs->at( i )->dispose )
-				destroyChild( i-- );
-		}
+	auto itr = childs.begin();
+	for (; itr != childs.end();) {
+		if ((*itr)->dispose)
+			itr = childs.erase(itr);
+		else
+			++itr;
 	}
 }
 
 
-void Object::destroyAllChilds()
+void Object::destroyAllChildren()
 {
-	//just set all to dispose and then collect them
-	if( childs )
-		for( auto child : *childs )
-			child->dispose = true;
+	for (auto& c : childs)
+		_unregisterChild(*c);
 
-	collectChilds();
+	childs.clear();
 }
 
 void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
@@ -204,13 +161,6 @@ float Object::getRoll() const {
 	return glm::roll(rotation) * Math::EULER_TO_RADIANS;
 }
 
-Object* Object::getChild(int i) {
-	DEBUG_ASSERT(hasChilds(), "Tried to retrieve a child from an object with no childs");
-	DEBUG_ASSERT(childs->size() > i || i < 0, "Tried to retrieve an out-of-bounds child");
-
-	return childs->at(i);
-}
-
 bool Object::contains(const Vector& p) {
 	DEBUG_ASSERT(mNeedsAABB, "contains: this Object has no AABB");
 
@@ -272,16 +222,14 @@ void Object::updateWorldTransform()
 }
 
 void Object::updateChilds( float dt )
-{	
-	if( childs )
-	{
-		collectChilds();
-		
-		for( int i = 0; childs && i < childs->size(); ++i )
-		{
-			if( childs->at(i )->isActive() )
-				childs->at(i)->onAction(dt);
+{
+	if (childs.size() > 0) {
+
+		for (auto& child : childs) {
+			if (child->isActive())
+				child->onAction(dt);
 		}
+
 	}
 }
 

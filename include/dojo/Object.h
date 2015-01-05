@@ -12,7 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Array.h"
+#include "SmallSet.h"
 
 #include "dojomath.h"
 
@@ -35,7 +35,7 @@ namespace Dojo {
 	{
 	public:
 		
-		typedef Dojo::Array< Object* > ChildList;
+		typedef SmallSet< Unique<Object> > ChildList;
 		
 		bool dispose,
 			inheritScale;
@@ -131,18 +131,16 @@ namespace Dojo {
 						
 		bool isActive()				{	return active;	}
 		
-		bool hasChilds()
+		bool hasChilds() const
 		{
-			return childs != NULL && childs->size() > 0;
+			return childs.size() > 0;
 		}
 
 		const Matrix& getWorldTransform() const
 		{  
 			return mWorldTransform; 
 		}
-
-		Object* getChild( int i );
-		
+				
 		const Vector& getWorldMax() const
 		{
 			DEBUG_ASSERT( mNeedsAABB, "getWorldMax: this Object has no AABB" );
@@ -162,31 +160,33 @@ namespace Dojo {
 			return parent;
 		}
 		
-		int getChildNumber()
+		size_t getChildCount() const
 		{
-			return (childs) ? childs->size() : 0;
+			return childs.size();
 		}
 
 		Matrix getFullTransformRelativeTo(const Matrix & parent) const;
 		
 		///adds a non-renderable child
-		void addChild( Object* o );
+		template<class T>
+		T& addChild(Unique<T> o) {
+			return (T&)_addChild(std::move(o));
+		}
+		
 		///adds a renderable child, and attaches it to the given Render layer
-		void addChild( Renderable* o, int layer );
+		template<class T>
+		T& addChild(Unique<T> o, int layer) {
+			return (T&)_addChild(std::move(o), layer);
+		}
 
-		///removes a child if existing
-		void removeChild( int idx );
-		///removes a child if existing
-		void removeChild( Object* o );
+		///removes a child if existing and gives it back to the caller
+		Unique<Object> removeChild(Object& o);
 		
 		///destroys all the children that have been marked by dispose
 		void collectChilds();
-		
-		void destroyChild( int idx );
-		void destroyChild( Object* o );
-		
+				
 		///completely destroys all the children of this object
-		void destroyAllChilds();
+		void destroyAllChildren();
 		
 		void updateChilds( float dt );
 		
@@ -199,11 +199,6 @@ namespace Dojo {
 		bool collidesWith( Object * t );
 		
 		virtual void onAction( float dt );
-
-		virtual void onDestruction()
-		{
-
-		}
 
 		void _notifyParent( Object* p )
 		{
@@ -225,11 +220,15 @@ namespace Dojo {
 		bool active, mNeedsAABB;
 
 		Object* parent;
-		ChildList* childs;
+		ChildList childs;
 		
 		void _updateWorldAABB( const Vector& min, const Vector& max );
-		
-		void _unregisterChild( Object* child );
+
+		Object& _addChild(Unique<Object> o);
+		Renderable& _addChild(Unique<Renderable> o, int layer);
+
+		void _unregisterChild( Object& child );
+
 	};
 }
 

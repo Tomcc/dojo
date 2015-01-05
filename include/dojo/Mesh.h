@@ -213,10 +213,10 @@ namespace Dojo
 		void setIndex(int idxidx, IndexType idx);
 
 		///Creates a new empty mesh with the same format of this one
-		std::unique_ptr<Mesh> cloneWithSameFormat() const;
+		Unique<Mesh> cloneWithSameFormat() const;
 
 		///creates a new mesh from a slice of this one
-		std::unique_ptr<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
+		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
 
 	protected:
 		Vector max, min, center, dimensions;

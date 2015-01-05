@@ -37,7 +37,7 @@
 
 using namespace Dojo;
 
-std::unique_ptr<Platform> Platform::singletonPtr;
+Unique<Platform> Platform::singletonPtr;
 
 Platform& Dojo::Platform::create( const Table& config /*= Table::EMPTY_TABLE */ )
 { 
@@ -277,7 +277,7 @@ Platform::FilePtr Platform::getFile( const String& path )
 
 int Platform::loadFileContent( char*& bufptr, const String& path )
 {
-	auto file = std::unique_ptr<FileStream>( getFile( path ) );
+	auto file = Unique<FileStream>( getFile( path ) );
 	int size = 0;
 	if( file->open() )
 	{

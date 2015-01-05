@@ -47,16 +47,16 @@ Touch::Type win32messageToMouseButton(UINT message) {
 	{
 	case WM_LBUTTONDOWN:  //left down
 	case WM_LBUTTONUP:
-		return Touch::TT_LEFT_CLICK;
+		return Touch::Type::LeftClick;
 	case WM_RBUTTONDOWN: //right up
 	case WM_RBUTTONUP:
-		return Touch::TT_RIGHT_CLICK;
+		return Touch::Type::RightClick;
 	case WM_MBUTTONDOWN:
 	case WM_MBUTTONUP:
-		return Touch::TT_MIDDLE_CLICK;
+		return Touch::Type::LeftClick;
 	default:
 		DEBUG_FAIL("unknown mouse message");
-		return Touch::TT_TAP;
+		return Touch::Type::Tap;
 	}
 }
 
@@ -79,9 +79,9 @@ LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam){
 
 				//do something with each touch input entry
 				if (ti.dwFlags & TOUCHEVENTF_DOWN)
-					app.mousePressed(ptInput.x, ptInput.y, Touch::Type::TT_TAP);
+					app.mousePressed(ptInput.x, ptInput.y, Touch::Type::Tap);
 				else if (ti.dwFlags & TOUCHEVENTF_UP)
-					app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::TT_TAP);
+					app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::Tap);
 				else if (ti.dwFlags & TOUCHEVENTF_MOVE)
 					app.mouseMoved(ptInput.x, ptInput.y);
 			}
@@ -755,7 +755,7 @@ void Win32Platform::mousePressed(int cx, int cy, Touch::Type type)
 	input->_fireTouchBeginEvent( cursorPos, type );
 
 	//small good-will hack- map the mouse keys on the keyboard!
-	mKeyboard._notifyButtonState(touchTypeToKeyMap[type], true);
+	mKeyboard._notifyButtonState(touchTypeToKeyMap[(int)type], true);
 }
 
 void Win32Platform::mouseWheelMoved( int wheelZ )
@@ -770,7 +770,7 @@ void Win32Platform::mouseMoved(int cx, int cy )
 
 	if (realMouseEvent)
 	{
-		if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::TT_LEFT_CLICK ); //TODO this doesn't really work but Win doesn't tell
+		if( dragging )	input->_fireTouchMoveEvent( cursorPos, prevCursorPos, Touch::Type::LeftClick ); //TODO this doesn't really work but Win doesn't tell
 		else			input->_fireMouseMoveEvent( cursorPos, prevCursorPos );
 	}
 
@@ -805,7 +805,7 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type)
 	input->_fireTouchEndEvent( cursorPos, type );
 
 	//small good-will hack- map the mouse keys on the keyboard!
-	mKeyboard._notifyButtonState(touchTypeToKeyMap[type], false);
+	mKeyboard._notifyButtonState(touchTypeToKeyMap[(int)type], false);
 }
 
 void Win32Platform::setMouseLocked(bool locked)

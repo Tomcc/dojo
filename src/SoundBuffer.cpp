@@ -149,7 +149,7 @@ bool SoundBuffer::Chunk::onLoad()
 	CHECK_AL_ERROR;
     
     //copy the source to avoid side-effects
-    std::unique_ptr< Stream > source( pParent->mSource->copy() );
+    Unique< Stream > source( pParent->mSource->copy() );
     
     source->open();
 

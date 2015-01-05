@@ -122,7 +122,7 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 
 #ifdef DOJO_SHADERS_AVAILABLE
 
-const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
+const void* Dojo::Shader::_getUniformData( const Uniform& uniform, const Renderable& user )
 {
 	auto& r = Platform::singleton().getRenderer();
 
@@ -132,6 +132,7 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
     switch ( builtin )
     {
 		case BU_NONE:
+			//TODO make global uniforms and remove this stuff
 			return uniform.userUniformCallback( user ); //call the user callback and be happy
 		case BU_WORLD:
 			return &r.currentState.world;
@@ -144,7 +145,7 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
 		case BU_WORLDVIEWPROJ:
 			return &r.currentState.worldViewProjection;
 		case BU_OBJECT_COLOR:
-			return &user->color;
+			return &user.color;
 		case BU_VIEW_DIRECTION:
 			return &r.currentState.viewDirection;
 		case BU_TIME:
@@ -167,14 +168,14 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
             }
             else if( builtin >= BU_TEXTURE_0_DIMENSION && builtin <= BU_TEXTURE_N_DIMENSION )
             {
-                Texture* t = user->getTexture( builtin - BU_TEXTURE_0_DIMENSION );
+                Texture* t = user.getTexture( builtin - BU_TEXTURE_0_DIMENSION );
                 tempInt[0] = t->getWidth();
                 tempInt[1] = t->getHeight();
                 return &tempInt;
             }
             else if( builtin >= BU_TEXTURE_0_TRANSFORM && builtin <= BU_TEXTURE_N_TRANSFORM )
             {
-                return &user->getTextureUnit( builtin - BU_TEXTURE_0_TRANSFORM )->getTransform();
+                return &user.getTextureUnit( builtin - BU_TEXTURE_0_TRANSFORM ).getTransform();
             }
 			else
 			{
@@ -185,7 +186,7 @@ const void* Shader::_getUniformData( const Uniform& uniform, Renderable* user )
     }
 }
 
-void Shader::use( Renderable* user )
+void Dojo::Shader::use( const Renderable& user )
 {
 	DEBUG_ASSERT( isLoaded(), "tried to use a Shader that wasn't loaded" );
 

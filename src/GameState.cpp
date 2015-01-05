@@ -31,17 +31,15 @@ GameState::~GameState()
 
 void GameState::clear()
 {		
-	destroyAllChilds();
+	destroyAllChildren();
 
 	//flush resources
 	unloadResources( false );
 }
 
-void GameState::setViewport( Viewport* v )
+void Dojo::GameState::setViewport( Viewport& v )
 {
-	DEBUG_ASSERT( v, "can't set a null viewport" );
-	
-	camera = v;
+	camera = &v;
 	
 	Platform::singleton().getRenderer().addViewport( v );
 }
@@ -88,9 +86,6 @@ void Dojo::GameState::removeTouchArea(TouchArea* t) {
 
 void GameState::updateClickableState()
 {
-	if( !childs )
-		return;
-
 	//clear all the touchareas
 	for( auto ta : mTouchAreas )
 		ta->_clearTouches();

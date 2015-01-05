@@ -99,7 +99,7 @@ namespace Dojo
 		};
 
 		typedef Pipe< ContextShareRequest* > ContextRequestsQueue;
-		std::unique_ptr<ContextRequestsQueue> mContextRequestsQueue;
+		Unique<ContextRequestsQueue> mContextRequestsQueue;
 
 		bool _initializeWindow( const String& caption, int w, int h );
 		
@@ -119,7 +119,7 @@ namespace Dojo
 		Keyboard mKeyboard;
 		int clientAreaYOffset;
 
-		std::unique_ptr<XInputController> mXInputJoystick[ 4 ];
+		Unique<XInputController> mXInputJoystick[ 4 ];
 
 		Timer mStepTimer;
 

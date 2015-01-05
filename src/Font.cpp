@@ -175,7 +175,7 @@ void Font::Character::init( Page* p, unichar c, int x, int y, int sx, int sy, FT
 		Timer timer;
 
 		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
-		mTesselation = std::unique_ptr< Tessellation >( new Tessellation() );
+		mTesselation = Unique< Tessellation >( new Tessellation() );
 
 		//find the normalizing scale and call the tesselation functions
 		gCurrentScale = (float)FONT_PPI / (float)fw;

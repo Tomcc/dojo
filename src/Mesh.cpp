@@ -615,7 +615,7 @@ void Mesh::cutSection(IndexType i1, IndexType i2) {
 	//TODO recompute max and min
 }
 
-std::unique_ptr<Mesh> Mesh::cloneWithSameFormat() const {
+Unique<Mesh> Mesh::cloneWithSameFormat() const {
 	auto c = make_unique<Mesh>();
 
 	c->setIndexByteSize(indexSize);
@@ -626,7 +626,7 @@ std::unique_ptr<Mesh> Mesh::cloneWithSameFormat() const {
 	return c;
 }
 
-std::unique_ptr<Mesh> Dojo::Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
+Unique<Mesh> Dojo::Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
 	DEBUG_ASSERT(!vertices.empty(), "This mesh is empty");
 	DEBUG_ASSERT(vertexStart < getVertexCount() && vertexEnd <= getVertexCount() && vertexStart <= vertexEnd, "Indices out of bounds");
 

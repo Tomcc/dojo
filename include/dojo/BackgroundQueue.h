@@ -82,12 +82,12 @@ namespace Dojo
 		typedef std::pair< Task, Callback > TaskCallbackPair;
 		typedef Pipe< TaskCallbackPair > TaskQueue;
 		typedef Pipe< Task > CompletedTaskQueue;
-		typedef std::vector< std::unique_ptr< Worker > > WorkerList;
+		typedef std::vector< Unique< Worker > > WorkerList;
 
 		std::atomic<bool> mRunning;
 
-		std::unique_ptr<TaskQueue> mQueue;
-		std::unique_ptr<CompletedTaskQueue> mCompletedQueue;
+		Unique<TaskQueue> mQueue;
+		Unique<CompletedTaskQueue> mCompletedQueue;
 
 		WorkerList mWorkers;
 

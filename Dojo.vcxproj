@@ -50,12 +50,10 @@
     <ClInclude Include="include\dojo\Game.h" />
     <ClInclude Include="include\dojo\GameState.h" />
     <ClInclude Include="include\dojo\InputSystem.h" />
-    <ClInclude Include="include\dojo\Light.h" />
     <ClInclude Include="include\dojo\Mesh.h" />
     <ClInclude Include="include\dojo\Noise.h" />
     <ClInclude Include="include\dojo\Object.h" />
     <ClInclude Include="include\dojo\Particle.h" />
-    <ClInclude Include="include\dojo\ParticlePool.h" />
     <ClInclude Include="include\dojo\Plane.h" />
     <ClInclude Include="include\dojo\Platform.h" />
     <ClInclude Include="include\dojo\Random.h" />
@@ -66,6 +64,7 @@
     <ClInclude Include="include\dojo\Shader.h" />
     <ClInclude Include="include\dojo\ShaderProgram.h" />
     <ClInclude Include="include\dojo\ShaderProgramType.h" />
+    <ClInclude Include="include\dojo\SmallSet.h" />
     <ClInclude Include="include\dojo\SoundBuffer.h" />
     <ClInclude Include="include\dojo\SoundManager.h" />
     <ClInclude Include="include\dojo\SoundSet.h" />
@@ -113,13 +112,11 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\InputDevice.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
-    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Noise.cpp" />
     <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\ParticlePool.cpp" />
     <ClCompile Include="src\Platform.cpp" />
     <ClCompile Include="src\PolyTextArea.cpp" />
     <ClCompile Include="src\Renderer.cpp" />

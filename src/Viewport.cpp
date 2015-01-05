@@ -22,8 +22,6 @@ Viewport::Viewport(
 		 float _zNear,
 		 float _zFar ) :
 Object( parent, pos, size ),
-cullingEnabled( true ),
-fadeObject( NULL ),
 clearColor( clear ),
 frustumCullingEnabled( false ),
 VFOV( 0 ),
@@ -54,26 +52,24 @@ Vector Viewport::makeWorldCoordinates(int x, int y)
 		getWorldMax().y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
-bool Viewport::isSeeing(Renderable* s) {
-	DEBUG_ASSERT(s, "isSeeing: null renderable passed");
-
-	return cullingEnabled && s->isVisible() && touches(s);
+bool Dojo::Viewport::isVisible(Renderable& s) {
+	return s.isVisible() && isInViewRect(s);
 }
 
 void Viewport::addFader( int layer )
 {
-	DEBUG_ASSERT( !fadeObject, "A fade overlay object already exists" );
+	DEBUG_ASSERT( !faderObject, "A fade overlay object already exists" );
 
 	//create the fader object			
-	fadeObject = new Renderable( getGameState(), Vector( 0,0, -1), "texturedQuad" );
-	fadeObject->color = Color::NIL;
+	auto r = make_unique<Renderable>( getGameState(), Vector( 0,0, -1), "texturedQuad" );
+	r->color = Color::NIL;
 
-	fadeObject->scale.x = size.x;
-	fadeObject->scale.y = size.y;
+	r->scale.x = size.x;
+	r->scale.y = size.y;
 
-	fadeObject->setVisible( false );
+	r->setVisible( false );
 
-	addChild( fadeObject, layer );
+	faderObject = &addChild( std::move(r), layer );
 }
 
 void Viewport::setRenderTarget(Texture *target)
@@ -246,6 +242,10 @@ void Dojo::Viewport::setVisibleLayers(int min, int max) {
 
 	for (int i = min; i < max; ++i)
 		mLayerList.push_back(i);
+}
+
+bool Dojo::Viewport::isInViewRect(const Renderable& r) const {
+	return Math::AABBsCollide(r.getWorldMax(), r.getWorldMin(), getWorldMax(), getWorldMin());
 }
 
 void Viewport::onAction(float dt)

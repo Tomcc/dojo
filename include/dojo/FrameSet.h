@@ -78,7 +78,7 @@ namespace Dojo
 		/*
 		\param t the texture
 		*/
-		void addTexture(std::unique_ptr<Texture> t);
+		void addTexture(Unique<Texture> t);
 		
 		///returns the (looped!) frame at index i
 		/** 

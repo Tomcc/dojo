@@ -57,7 +57,7 @@ namespace Dojo
 		Viewport* getViewport()		{	return camera;			}
 		
 		///sets the primary Viewport (ie. camera) on this GameState, needed for pixel-perfect behaviour! (Sprites and TextAreas)
-		void setViewport( Viewport* v );
+		void setViewport( Viewport& v );
 		
 		///"touches" all the touchAreas with the given touch
 		/**touched TouchAreas will fire onTouchAreaPressed() on their listeners as soon as updateClickableState() is called*/

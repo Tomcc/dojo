@@ -96,3 +96,22 @@
 
 //keycode.h is a plain enum
 #include "KeyCode.h"
+
+//some STL glue
+template< typename T >
+using Unique = std::unique_ptr < T >;
+
+template<typename T>
+using Shared = std::shared_ptr < T >;
+
+//C++14 where not available
+#ifndef WIN32
+template<typename T, typename ...Args>
+Unique<T> make_unique(Args&& ...args) {
+	return Unique<T>(new T(std::forward<Args>(args)...));
+}
+#else
+using std::make_unique;
+#endif
+using std::make_shared;
+

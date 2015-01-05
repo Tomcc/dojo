@@ -158,7 +158,7 @@ namespace Dojo
 				DEBUG_MESSAGE("+" + name + "\t\t sound");
 		}
 		
-		void addTable( const String& name, std::unique_ptr<Table> t );
+		void addTable( const String& name, Unique<Table> t );
 
 		///adds an existing Shader to this group
 		void addShader( Shader* s, const String& name )

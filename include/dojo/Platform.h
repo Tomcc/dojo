@@ -22,7 +22,7 @@ namespace Dojo
 	{
 	public:
 
-		typedef std::unique_ptr< FileStream > FilePtr;
+		typedef Unique< FileStream > FilePtr;
 
 		///creates the Platform
 		/**
@@ -220,7 +220,7 @@ namespace Dojo
 		typedef std::unordered_map< String, PathList > ZipFoldersMap;
 		typedef std::unordered_map< String, ZipFoldersMap > ZipFileMapping;
 
-		static std::unique_ptr<Platform> singletonPtr;
+		static Unique<Platform> singletonPtr;
 		
 		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;

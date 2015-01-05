@@ -6,7 +6,6 @@
 #include "TextArea.h"
 #include "Platform.h"
 #include "Viewport.h"
-#include "Light.h"
 #include "Mesh.h"
 #include "AnimatedQuad.h"
 #include "Shader.h"
@@ -15,6 +14,10 @@
 #include "Texture.h"
 
 using namespace Dojo;
+
+void Dojo::Renderer::Layer::remove(const Renderable& s) {
+
+}
 
 Renderer::Renderer( int w, int h, Orientation deviceOr ) :
 frameStarted( false ),
@@ -26,8 +29,7 @@ deviceOrientation( deviceOr ),
 currentLayer( NULL ),
 frameVertexCount(0),
 frameTriCount(0),
-frameBatchCount(0),
-backLayer( NULL )
+frameBatchCount(0)
 {
 	DEBUG_MESSAGE( "Creating OpenGL context...");
 	DEBUG_MESSAGE ("querying GL info... ");
@@ -69,12 +71,6 @@ backLayer( NULL )
 	//always active!
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	currentRenderState = firstRenderState = new RenderState();
-
-	///create the back layer
-	backLayer = new Layer();
-	backLayer->add( NULL ); //add a dummy element
-
 	setInterfaceOrientation( Platform::singleton().getGame().getNativeOrientation() );
 	
 	setDefaultAmbient( Color::BLACK );
@@ -84,15 +80,12 @@ backLayer( NULL )
 
 Renderer::~Renderer()
 {
-	SAFE_DELETE( firstRenderState );
-	SAFE_DELETE( backLayer );
-
 	clearLayers();
 }
 
-Renderer::Layer* Renderer::getLayer( int layerID )
+Renderer::Layer& Dojo::Renderer::getLayer( Layer::ID layerID )
 {	
-	LayerList* layerList = &positiveLayers;
+	auto layerList = &positiveLayers;
 	if( layerID < 0 )
 	{
 		layerID = -layerID - 1; //flip and shift by 1
@@ -100,122 +93,63 @@ Renderer::Layer* Renderer::getLayer( int layerID )
 	}
 	
 	//allocate the needed layers if layerID > layer size
-	while( layerList->size() <= layerID )
-		layerList->add( new Layer() );	
+	while( (Layer::ID)layerList->size() <= layerID )
+		layerList->emplace_back();	
 
 	if( !currentLayer ) //first layer!
-		currentLayer = layerList->at( layerID );
+		currentLayer = &(*layerList)[ layerID ];
 
 	//get the needed layer	
-	return layerList->at( layerID );
+	return (*layerList)[layerID];
 }
 
-bool Renderer::hasLayer( int layerID )
+bool Dojo::Renderer::hasLayer( Layer::ID layerID )
 {
-	LayerList* layerList = &positiveLayers;
+	auto layerList = &positiveLayers;
 	if( layerID < 0 )
 	{
 		layerID = -layerID - 1; //flip and shift by 1
 		layerList = &negativeLayers;
 	}
 	
-	return layerList->size() > abs( layerID );
+	return (Layer::ID)layerList->size() > abs( layerID );
 }
 
-void Renderer::addRenderable( Renderable* s, int layerID )
+void Dojo::Renderer::addRenderable( Renderable& s, Layer::ID layerID )
 {				
 	//get the needed layer	
-	Layer* layer = getLayer( layerID );
+	Layer& layer = getLayer( layerID );
 	
-#ifndef DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
-	
-	//insert this object in the place where the distances from its neighbours are a minimum.	
-	uint bestIndex = 0;
-	uint bestDistanceSum = 0xffffffff;
-	
-	uint distance;
-	uint lastDistance = firstRenderState->getDistance( s );
-	for( int i = 0; i < layer->size(); ++i )
-	{
-		distance = layer->at(i)->getDistance( s );
-		if( distance + lastDistance < bestDistanceSum )
-		{
-			bestDistanceSum = distance + lastDistance;
-			bestIndex = i;
-		}
-		
-		lastDistance = distance;
-	}
-		
-	s->_notifyRenderInfo( this, layerID, bestIndex );
-
-	layer->add( s, bestIndex );
-#else
-	
-	s->_notifyRenderInfo( this, layerID, layer->size() );
+	s._notifyRenderInfo( this, layerID, layer.elements.size() );
 	
 	//append at the end
-	layer->add( s );    
-	
-#endif 
+	layer.elements.push_back( &s );
 }
 
-void Renderer::removeRenderable( Renderable* s )
+void Dojo::Renderer::removeRenderable( Renderable& s )
 {	
-	if( hasLayer( s->getLayer() ) )
-	{
-		getLayer( s->getLayer() )->remove( s );
-		s->_notifyRenderInfo( NULL, 0, 0 );
-	}
-
-	if( s == currentRenderState )
-	{
-		//firstRenderState->commitChanges( currentRenderState );
-		currentRenderState = firstRenderState;
-	}
+	getLayer(s.getLayer()).remove(s);
+	s._notifyRenderInfo( NULL, 0, 0 );
 }
 
 void Dojo::Renderer::removeAllRenderables() {
-	for (int i = 0; i < negativeLayers.size(); ++i)
-		negativeLayers.at(i)->clear();
+	for (auto& l : negativeLayers)
+		l.elements.clear();
 
-	for (int i = 0; i < positiveLayers.size(); ++i)
-		positiveLayers.at(i)->clear();
+	for (auto& l : positiveLayers)
+		l.elements.clear();
 }
 
-void Dojo::Renderer::removeViewport(Viewport* v) {
-	mViewportList.remove(v);
+void Dojo::Renderer::removeViewport(const Viewport& v) {
+
 }
 
 void Dojo::Renderer::removeAllViewports() {
-	mViewportList.clear();
-}
-
-void Dojo::Renderer::addLight(Light* l) {
-	DEBUG_ASSERT(l, "addLight: null light passed");
-	DEBUG_ASSERT(lights.size() < RENDER_MAX_LIGHTS, "addLight: Cannot add this light as it is past the supported light number (RENDER_MAX_LIGHTS)");
-
-	lights.add(l);
-}
-
-void Dojo::Renderer::removeLight(Light* l) {
-	DEBUG_ASSERT(l, "removeLight: null light passed");
-
-	lights.remove(l);
-
-	//remove removes always the last element in the list - just disable the last index now
-	glDisable(GL_LIGHT0 + lights.size());
+	viewportList.clear();
 }
 
 void Dojo::Renderer::clearLayers() {
-	for (int i = 0; i < negativeLayers.size(); ++i)
-		SAFE_DELETE(negativeLayers[i]);
-
 	negativeLayers.clear();
-
-	for (int i = 0; i < positiveLayers.size(); ++i)
-		SAFE_DELETE(positiveLayers[i]);
-
 	positiveLayers.clear();
 }
 
@@ -224,11 +158,9 @@ void Renderer::setDefaultAmbient(const Color& a) {
 	defaultAmbient.a = 1;
 }
 
-void Renderer::addViewport( Viewport* v )
+void Dojo::Renderer::addViewport( Viewport& v )
 {
-	DEBUG_ASSERT( v, "cannot add a null vieport" );
-
-	mViewportList.add( v );
+	viewportList.push_back( &v );
 }
 
 void Renderer::setInterfaceOrientation( Orientation o )		
@@ -243,35 +175,31 @@ void Renderer::setInterfaceOrientation( Orientation o )
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
-void Renderer::renderElement( Viewport* viewport, Renderable* s )
+void Dojo::Renderer::renderElement( Viewport& viewport, Renderable& elem )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
-	DEBUG_ASSERT(viewport, "Rendering requires a Viewport to be set");
-	DEBUG_ASSERT(s->getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
-	DEBUG_ASSERT(s->getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
+	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
+	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
 
 #ifndef PUBLISH
-	frameVertexCount += s->getMesh()->getVertexCount();
-	frameTriCount += s->getMesh()->getPrimitiveCount();
+	frameVertexCount += elem.getMesh()->getVertexCount();
+	frameTriCount += elem.getMesh()->getPrimitiveCount();
 
 	//each renderable is a single batch
 	++frameBatchCount;
 #endif // !PUBLISH
 	
-	//change the renderstate
-	currentRenderState = s;
-	
-	currentState.world = s->getWorldTransform();
+	currentState.world = elem.getWorldTransform();
 	currentState.worldView = currentState.view * currentState.world;
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf( glm::value_ptr( currentState.worldView ) );
 	
 #ifdef DOJO_SHADERS_AVAILABLE
-	if( s->getShader() )
+	if( elem.getShader() )
 	{
 		currentState.worldViewProjection = currentState.projection * currentState.worldView;
-		s->getShader()->use( s );
+		elem.getShader()->use( elem );
 	}
 	else
 		glUseProgram( 0 );
@@ -281,11 +209,11 @@ void Renderer::renderElement( Viewport* viewport, Renderable* s )
 #ifndef USING_OPENGLES
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT );
 #endif
-	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&s->color) );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&elem.color) );
 	
 	glEnable( GL_COLOR_MATERIAL );
 
-	s->commitChanges( currentRenderState );
+	elem.commitChanges();
 
 	static const GLenum glModeMap[] = {
 		GL_TRIANGLE_STRIP, //TriangleStrip,
@@ -295,7 +223,7 @@ void Renderer::renderElement( Viewport* viewport, Renderable* s )
 		GL_POINTS
 	};
 
-	Mesh* m = currentRenderState->getMesh();
+	Mesh* m = elem.getMesh();
 	GLenum mode = glModeMap[(byte)m->getTriangleMode()];
 
 	if( !m->isIndexed() )
@@ -311,95 +239,51 @@ void Renderer::renderElement( Viewport* viewport, Renderable* s )
 
 #ifdef DOJO_SHADERS_AVAILABLE
 	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
-	if( s->getShader() )
+	if( elem.getShader() )
 	{
-		for( auto& attr : s->getShader()->getAttributes() )
+		for( auto& attr : elem.getShader()->getAttributes() )
 			glDisableVertexAttribArray( attr.second.location );
 	}
 #endif
 }
 
-void Renderer::renderLayer( Viewport* viewport, Layer* list )
+void Dojo::Renderer::renderLayer( Viewport& viewport, const Layer& layer )
 {
-	if( !list->size() || !list->visible )
+	if( !layer.elements.size() || !layer.visible )
 		return;
 	
 #ifdef DOJO_WIREFRAME_AVAILABLE
-	glPolygonMode(GL_FRONT_AND_BACK, list->wireframe ? GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, layer.wireframe ? GL_LINE : GL_FILL);
 #endif
 
 	//make state changes
-	if( list->depthCheck )	glEnable( GL_DEPTH_TEST );
+	if( layer.depthCheck )	glEnable( GL_DEPTH_TEST );
 	else					glDisable( GL_DEPTH_TEST );
 
 	//set projection state
-	currentState.projection = mRenderRotation * (list->projectionOff ? viewport->getOrthoProjectionTransform() : viewport->getPerspectiveProjectionTransform());
+	currentState.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
 	
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( glm::value_ptr( currentState.projection ) );
 	
 	//we don't want different layers to be depth-checked together?
-	if( list->depthClear )
+	if( layer.depthClear )
 		glClear( GL_DEPTH_BUFFER_BIT );
 
-	currentLayer = list;
-	
-	if( list->lightingOn )
-	{		
-		glEnable( GL_LIGHTING );
-		//enable or disable lights - TODO no need to do this each time, use an assigned slot system.
-		int i = 0;
-		for( ; i < lights.size(); ++i )
-		{
-			lights[i]->bind( i, currentState.view );
-			
-			if( !lights[i]->hasAmbient() )
-				glLightfv( GL_LIGHT0 + i, GL_AMBIENT, (float*)&defaultAmbient );
-		}
-	}
-	else
+	currentLayer = &layer;
+
+	//TODO cull all elements
+
+	for (auto& s : layer.elements)
 	{
-		glDisable( GL_LIGHTING );
-
-		for( int i = 0; i < lights.size(); ++i )
-			glDisable( GL_LIGHT0 + i );
-	}
-	
-	Renderable* s;
-
-	//2D layer
-	if( list->projectionOff )
-	{
-		for( int i = 0; i < list->size(); ++i )
-		{
-			s = list->at(i);
-			
-			//HACK use some 2D culling
-			if( s->canBeRendered() )
-				renderElement( viewport, s );
-		}
-	}
-
-	//3D layer
-	else
-	{
-		for( int i = 0; i < list->size(); ++i )
-		{
-			s = list->at(i);
-
-			s->_notifyCulled( !viewport->isContainedInFrustum( s ) );
-			
-			if (s->canBeRendered() && s->isInView())
-				renderElement( viewport, s );
-		}
+		if( s->canBeRendered() && s->isInView())
+			renderElement( viewport, *s );
 	}
 }
 
-void Renderer::renderViewport( Viewport* viewport )
+void Dojo::Renderer::renderViewport( Viewport& viewport )
 {
-	DEBUG_ASSERT( viewport, "Cannot render with a null viewport" );
-
-	Texture* rt = viewport->getRenderTarget();
+	Texture* rt = viewport.getRenderTarget();
 
 	if( rt )
 		rt->bindAsRenderTarget( true ); //TODO guess if this viewport doesn't render 3D layers to save memory?
@@ -414,37 +298,34 @@ void Renderer::renderViewport( Viewport* viewport )
 	glViewport(0, 0, (GLsizei) currentState.targetDimension.x, (GLsizei)currentState.targetDimension.y);
 
 	//clear the viewport
-	if (viewport->getClearEnabled()) {
+	if (viewport.getClearEnabled()) {
 		glClearColor(
-			viewport->getClearColor().r,
-			viewport->getClearColor().g,
-			viewport->getClearColor().b,
-			viewport->getClearColor().a);
+			viewport.getClearColor().r,
+			viewport.getClearColor().g,
+			viewport.getClearColor().b,
+			viewport.getClearColor().a);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	currentState.view = viewport->getViewTransform();
-	currentState.viewDirection = viewport->getWorldDirection();
+	currentState.view = viewport.getViewTransform();
+	currentState.viewDirection = viewport.getWorldDirection();
 
 	frameStarted = true;
 
-	if( viewport->getVisibleLayers().empty() ) //use the custom layer ordering/visibility
+	if( viewport.getVisibleLayers().empty() ) //using the default layer ordering/visibility
 	{
 		//first render from the most negative to -1
-		if( negativeLayers.size() > 0 )
-		{	
-			for( int i = negativeLayers.size()-1; i >= 0; --i )
-				renderLayer( viewport, negativeLayers[i] );
-		}
+		for( int i = (int)negativeLayers.size()-1; i >= 0; --i )
+			renderLayer( viewport, negativeLayers[i] );
 
 		//then from 0 to the most positive
-		for( int i = 0; i < positiveLayers.size(); ++i )
-			renderLayer( viewport, positiveLayers[i] );
+		for (auto& l : positiveLayers)
+			renderLayer( viewport, l );
 	}
-	else  //using the default layer ordering/visibility
+	else   //use the custom layer ordering/visibility
 	{
-		for( auto& layer : viewport->getVisibleLayers() )
+		for( auto& layer : viewport.getVisibleLayers() )
 			renderLayer(viewport, getLayer(layer));
 	}
 }
@@ -458,8 +339,9 @@ void Renderer::render()
 	frameStarted = true;
 
 	//render all the viewports
-	for( auto viewport : mViewportList )
-		renderViewport( viewport );
+	for( auto& viewport : viewportList )
+		renderViewport( *viewport );
 
 	frameStarted = false;
 }
+
