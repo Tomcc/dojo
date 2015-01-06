@@ -18,7 +18,6 @@ active( true ),
 scale( 1,1,1 ),
 parent( nullptr ),
 dispose( false ),
-mNeedsAABB( true ),
 inheritScale( true )
 {
 	setSize( bbSize );
@@ -162,8 +161,6 @@ float Object::getRoll() const {
 }
 
 bool Object::contains(const Vector& p) {
-	DEBUG_ASSERT(mNeedsAABB, "contains: this Object has no AABB");
-
 	return
 		p.x <= worldUpperBound.x &&
 		p.x >= worldLowerBound.x &&
@@ -174,8 +171,6 @@ bool Object::contains(const Vector& p) {
 }
 
 bool Object::contains2D(const Vector& p) {
-	DEBUG_ASSERT(mNeedsAABB, "contains: this Object has no AABB");
-
 	return
 		p.x <= worldUpperBound.x &&
 		p.x >= worldLowerBound.x &&
@@ -184,15 +179,11 @@ bool Object::contains2D(const Vector& p) {
 }
 
 bool Object::collidesWith(const Vector& MAX, const Vector& MIN) {
-	DEBUG_ASSERT(mNeedsAABB, "collides: this Object has no AABB");
-
 	return Math::AABBsCollide(getWorldMax(), getWorldMin(), MAX, MIN);
 }
 
 bool Object::collidesWith(Object * t) {
 	DEBUG_ASSERT(t, "collidesWith: colliding Object is NULL");
-	DEBUG_ASSERT(mNeedsAABB, "collidesWith: this Object has no AABB");
-
 	return collidesWith(t->getWorldMax(), t->getWorldMin());
 }
 
@@ -204,6 +195,8 @@ Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
 
 void Object::updateWorldTransform()
 {	
+	auto oldTransform = mWorldTransform;
+
 	//compute local matrix from position and orientation
 	if (!parent)
 		mWorldTransform = Matrix(1);
@@ -216,8 +209,7 @@ void Object::updateWorldTransform()
 
 	mWorldTransform = getFullTransformRelativeTo(mWorldTransform);
 
-	//update AABB if needed
-	if( mNeedsAABB )
+	if (oldTransform != mWorldTransform)
 		_updateWorldAABB( -halfSize, halfSize );
 }
 

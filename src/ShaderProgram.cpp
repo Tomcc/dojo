@@ -20,7 +20,7 @@ ShaderProgram::ShaderProgram( ResourceGroup* creator, const String& filePath ) :
 		DEBUG_FAIL( "Unsupported shader type" );
 }
 
-Dojo::ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
+ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
 Resource(nullptr),
 mContentString(contents),
 mType(type) {
@@ -119,7 +119,7 @@ bool ShaderProgram::onLoad()
 	return loaded;
 }
 
-ShaderProgram* Dojo::ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
+ShaderProgram* ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
 
 	return new ShaderProgram(mType, preprocessorHeader + mContentString);

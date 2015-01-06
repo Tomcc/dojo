@@ -88,7 +88,7 @@ Stream* File::copy() {
 	return new File(mPath, mWrite);
 }
 
-void Dojo::File::_updateSize() {
+void File::_updateSize() {
 	DEBUG_ASSERT(isReadable(), "The file must be readable to get its size");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 

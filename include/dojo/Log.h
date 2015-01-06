@@ -61,7 +61,7 @@ namespace Dojo
 
 	protected:
 
-		Dojo::Array< LogListener* > pListeners;
+		Array< LogListener* > pListeners;
 		LogQueue mOutput;
 		int mMaxLines;
 

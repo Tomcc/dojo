@@ -59,7 +59,7 @@ void ResourceGroup::addLocalizedFolder( const String& basefolder, int version )
 		addFolderSimple( lid + fallbackLocale, version );
 }
 
-void Dojo::ResourceGroup::addTable( const String& name, Unique<Table> t )
+void ResourceGroup::addTable( const String& name, Unique<Table> t )
 {
 	DEBUG_ASSERT( !name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );

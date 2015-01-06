@@ -46,7 +46,7 @@ namespace Dojo
 
 	public:
 
-		///class Dojo::Random initialized with time()
+		///class Random initialized with time()
 		Random();  
 
 		///Creates a new Random generator using a seed

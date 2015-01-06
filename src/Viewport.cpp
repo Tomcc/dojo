@@ -10,6 +10,7 @@
 #include "GameState.h"
 #include "SoundManager.h"
 #include "Texture.h"
+#include "RenderLayer.h"
 
 using namespace Dojo;
 
@@ -23,14 +24,11 @@ Viewport::Viewport(
 		 float _zFar ) :
 Object( parent, pos, size ),
 clearColor( clear ),
-frustumCullingEnabled( false ),
 VFOV( 0 ),
 zNear( 0 ),
 zFar( 1000 ),
 mRT( nullptr )
 {
-    mNeedsAABB = true;
-
 	//default size is window size
 	targetSize.x = (float)Platform::singleton().getWindowWidth();
 	targetSize.y = (float)Platform::singleton().getWindowHeight();
@@ -52,7 +50,7 @@ Vector Viewport::makeWorldCoordinates(int x, int y)
 		getWorldMax().y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
-bool Dojo::Viewport::isVisible(Renderable& s) {
+bool Viewport::isVisible(Renderable& s) {
 	return s.isVisible() && isInViewRect(s);
 }
 
@@ -97,8 +95,6 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 	zNear = _zNear;
 	zFar = _zFar;
 
-	frustumCullingEnabled = true;
-
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right, z is negative because OpenGL is right-handed
 	farPlaneSide.z = -zFar;
@@ -109,86 +105,68 @@ void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
 	localFrustumVertices[1] = Vector( -farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
 	localFrustumVertices[2] = Vector( -farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
 	localFrustumVertices[3] = Vector( farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
+
+	frustumDirty = true;
 }
 
 void Viewport::_updateFrustum()
 {
-	for( int i = 0; i < 4; ++i )
-		worldFrustumVertices[i] = getWorldPosition( localFrustumVertices[i] );
-    
-    Vector worldPosition = getWorldPosition();
+	if (frustumDirty) {
+		//compute frustum projection
+		mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
+			VFOV, targetSize.x / targetSize.y,
+			zNear,
+			zFar);
 
-	for( int i = 0; i < 4; ++i )
-	{
-		int i2 = (i+1)%4;
+		if (getRenderTarget()) //flip the projections to flip the image
+		{
+			mOrthoTransform[1][1] *= -1;
+			mFrustumTransform[1][1] *= -1;
+		}
 
-		worldFrustumPlanes[i].setup( worldPosition, worldFrustumVertices[i2], worldFrustumVertices[i] );
+		for (int i = 0; i < 4; ++i)
+			worldFrustumVertices[i] = getWorldPosition(localFrustumVertices[i]);
+
+		Vector worldPosition = getWorldPosition();
+
+		for (int i = 0; i < 4; ++i)
+		{
+			int i2 = (i + 1) % 4;
+
+			worldFrustumPlanes[i].setup(worldPosition, worldFrustumVertices[i2], worldFrustumVertices[i]);
+		}
+		//far plane
+		worldFrustumPlanes[4].setup(worldFrustumVertices[2], worldFrustumVertices[1], worldFrustumVertices[0]);
+
+		frustumDirty = false;
 	}
-	//far plane
-	worldFrustumPlanes[4].setup( worldFrustumVertices[2], worldFrustumVertices[1], worldFrustumVertices[0] );
 }
 
 void Viewport::_updateTransforms()
 {
-    //compute view, that is the inverse of our world matrix        
-    /*Vector worldPos = getWorldPosition();
-    
-    glm::vec3 t( -worldPos.x, -worldPos.y, -worldPos.z );
-
-	mViewTransform = glm::translate( Matrix(1), t );
-	mViewTransform = glm::scale( mViewTransform, Vector( 1.f/scale.x, 1.f/scale.y, 1.f/scale.z ) );
-	mViewTransform *= glm::mat4_cast( glm::inverse( rotation ) );*/
-
 	updateWorldTransform();
 
-	//TODO use something faster than glm::inverse
-	mViewTransform = glm::inverse( mWorldTransform );
+	if (lastWorldTransform != mWorldTransform) {
+		mViewTransform = glm::inverse(mWorldTransform);
 
-	//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
-	
-	//TODO only compute projections if the params change
-    //compute ortho projection
-    mOrthoTransform = glm::ortho(-getHalfSize().x, 
-                              getHalfSize().x,
-                              -getHalfSize().y,
-                              getHalfSize().y,
-                              0.f,  //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
-                              zFar );
-       
-    //compute frustum projection
-    mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
-                                         VFOV, targetSize.x / targetSize.y, 
-                                         zNear, 
-                                         zFar );
+		//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
 
-	if( getRenderTarget() ) //flip the projections to flip the image
-	{
-		mOrthoTransform[1][1] *= -1;
-		mFrustumTransform[1][1] *= -1;
-	}
-}
-
-bool Viewport::isContainedInFrustum( Renderable* r )
-{
-	//HACK
-	return true;
-
-	DEBUG_ASSERT( r, "The passed renderable was null" );
-
-	Vector halfSize = (r->getWorldMax() - r->getWorldMin()) * 0.5f;
-	Vector worldPos = r->getWorldPosition();
-
-	//for each plane, check where the AABB is placed
-	for( int i = 0; i < 4; ++i )
-	{
-		if( worldFrustumPlanes[i].getSide( worldPos, halfSize ) < 0 )
+		//TODO only compute projections if the params change
+		//compute ortho projection
 		{
-			//DEBUG_MESSAGE( "CULED!!!!    " << i );
-			return false;
+			mOrthoTransform = glm::ortho(-getHalfSize().x,
+				getHalfSize().x,
+				-getHalfSize().y,
+				getHalfSize().y,
+				0.f,  //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
+				zFar);
 		}
+
+		frustumDirty = true;
+
+		lastWorldTransform = mWorldTransform;
 	}
 
-	return true;
 }
 
 Vector Viewport::getScreenPosition( const Vector& pos )
@@ -237,15 +215,45 @@ void Viewport::setVisibleLayers( const LayerList& layers )
 	mLayerList = layers;
 }
 
-void Dojo::Viewport::setVisibleLayers(int min, int max) {
+void Viewport::setVisibleLayers(int min, int max) {
 	mLayerList.clear();
 
 	for (int i = min; i < max; ++i)
 		mLayerList.push_back(i);
 }
 
-bool Dojo::Viewport::isInViewRect(const Renderable& r) const {
-	return Math::AABBsCollide(r.getWorldMax(), r.getWorldMin(), getWorldMax(), getWorldMin());
+bool Viewport::isContainedInFrustum(const Renderable& r)
+{
+	Vector halfSize = (r.getWorldMax() - r.getWorldMin()) * 0.5f;
+	Vector worldPos = r.getWorldPosition();
+
+	//for each plane, check where the AABB is placed
+	for (int i = 0; i < 4; ++i)
+	{
+		if (worldFrustumPlanes[i].getSide(worldPos, halfSize) < 0)
+		{
+			//DEBUG_MESSAGE( "CULED!!!!    " << i );
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Viewport::isInViewRect(const Renderable& r) const {
+	return Math::AABBsCollide2D(r.getWorldMax(), r.getWorldMin(), getWorldMax(), getWorldMin());
+}
+
+void Viewport::cullLayer(const RenderLayer& layer) {
+	if (layer.orthographic) {
+		for (auto&& r : layer.elements)
+			r->_notifyCulled(!isInViewRect(*r));
+	}
+	else {
+		_updateFrustum();
+		for (auto&& r : layer.elements)
+			r->_notifyCulled(!isContainedInFrustum(*r));
+	}
 }
 
 void Viewport::onAction(float dt)
@@ -253,10 +261,6 @@ void Viewport::onAction(float dt)
 	Object::onAction(dt);
 
 	_updateTransforms();
-
-	//do not call if not explicitly required
-	if (frustumCullingEnabled)
-		_updateFrustum();
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)

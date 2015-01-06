@@ -143,7 +143,7 @@ void TextArea::addText( int n, char paddingChar, int digits )
 	addText( number );
 }
 
-Renderable* Dojo::TextArea::_enableLayer( Texture& tex )
+Renderable* TextArea::_enableLayer( Texture& tex )
 {
 	if( freeLayers.empty() )
 		_pushLayer();
@@ -189,7 +189,7 @@ void TextArea::_hideLayers()
 	busyLayers.clear();
 }
 
-void Dojo::TextArea::_destroyLayer( Renderable& r )
+void TextArea::_destroyLayer( Renderable& r )
 {
 	if( &r == this )  //do not delete the TA itself, even if it is a layer
 		return;
@@ -202,7 +202,7 @@ void Dojo::TextArea::_destroyLayer( Renderable& r )
 }
 
 
-void Dojo::TextArea::_prepare() {
+void TextArea::_prepare() {
 	//not changed
 	if( !changed )
 		return;
@@ -321,7 +321,7 @@ void Dojo::TextArea::_prepare() {
 	changed = false;
 }
 
-void Dojo::TextArea::_destroyLayers() {
+void TextArea::_destroyLayers() {
 	for (auto&& l : busyLayers)
 		_destroyLayer(*l);
 
@@ -351,7 +351,7 @@ Mesh* TextArea::_createMesh()
 	return mesh;
 }
 
-void Dojo::TextArea::_pushLayer() 
+void TextArea::_pushLayer() 
 {
 	auto r = make_unique<Renderable>( gameState, Vector::ZERO );
 	r->scale = scale;
@@ -363,7 +363,7 @@ void Dojo::TextArea::_pushLayer()
 	addChild( std::move(r), getLayer() );
 }
 
-Renderable* Dojo::TextArea::_getLayer(Texture& tex) 
+Renderable* TextArea::_getLayer(Texture& tex) 
 {
 	//find this layer in the already assigned, or get new
 	for (size_t i = 0; i < busyLayers.size(); ++i)
@@ -378,13 +378,13 @@ Renderable* Dojo::TextArea::_getLayer(Texture& tex)
 
 void TextArea::onAction(float dt)
 {
-	bool previousAABBSetting = mNeedsAABB;
-	mNeedsAABB = false; //do not trigger the update
-    
-    _prepare();
+	_prepare();
+
+	{
+		Object::onAction(dt);
+
+		advanceFade(dt);
+	}
 	
-	Renderable::onAction(dt);
-	
-	if( (mNeedsAABB = previousAABBSetting) )
-		_updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
+	_updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
 }

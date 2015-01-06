@@ -80,7 +80,7 @@ namespace Dojo
 		typedef std::unordered_map< std::string, VertexAttribute > NameAttributeMap;
 
 		///Creates a new Shader from a file path
-		Shader( Dojo::ResourceGroup* creator, const String& filePath );
+		Shader( ResourceGroup* creator, const String& filePath );
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**

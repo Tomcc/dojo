@@ -12,8 +12,7 @@
 #include "Array.h"
 #include "Color.h"
 #include "Vector.h"
-
-#define RENDER_MAX_LIGHTS 8
+#include "RenderLayer.h"
 
 namespace Dojo {
 	
@@ -27,23 +26,6 @@ namespace Dojo {
 	class Renderer 
 	{	
 	public:		
-
-		class Layer
-		{
-		public:
-			typedef int ID;
-
-			bool visible = true,
-				depthCheck = false,
-				orthographic = true,
-				depthClear = true,
-				wireframe = false;
-
-			std::vector<Renderable*> elements;
-
-			void remove(const Renderable& s);
-		};
-
 		///a struct that exposes current rendering parameters such as transforms
 		struct CurrentState
 		{
@@ -52,14 +34,14 @@ namespace Dojo {
 
 		} currentState;
 						
-		typedef std::vector< Layer > LayerList;
+		typedef std::vector< RenderLayer > LayerList;
 		typedef std::vector< Viewport* > ViewportList;
 		
 		Renderer( int width, int height, Orientation renderOrientation );		
 		
 		~Renderer();		
 						
-		void addRenderable( Renderable& s, Layer::ID layerID );
+		void addRenderable( Renderable& s, RenderLayer::ID layerID );
 				
 		void removeRenderable( Renderable& s );
 		
@@ -83,21 +65,21 @@ namespace Dojo {
 			return renderOrientation;
 		}
 		
-		Layer& getLayer( Layer::ID layerID );
+		RenderLayer& getLayer( RenderLayer::ID layerID );
 		
-		bool hasLayer( Layer::ID layerID );
+		bool hasLayer( RenderLayer::ID layerID );
 
 		int getLayerNumber()
 		{
 			return positiveLayers.size() + negativeLayers.size();
 		}
 		
-		Layer::ID getBottomLayerID() const
+		RenderLayer::ID getBottomLayerID() const
 		{
-			return -(Layer::ID)negativeLayers.size();	
+			return -(RenderLayer::ID)negativeLayers.size();	
 		}
 		
-		Layer::ID getFrontLayerID() const
+		RenderLayer::ID getFrontLayerID() const
 		{
 			return positiveLayers.size();
 		}
@@ -114,7 +96,7 @@ namespace Dojo {
 		void renderElement( Viewport& viewport, Renderable& elem );
 		
 		///renders a whole layer on the given viewport
-		void renderLayer( Viewport& viewport, const Layer& layer );
+		void renderLayer( Viewport& viewport, const RenderLayer& layer );
 
 		///renders a viewport and all its visible layers
 		void renderViewport( Viewport& viewport );
@@ -134,7 +116,7 @@ namespace Dojo {
 
 		ViewportList viewportList;
 		
-		const Layer* currentLayer;
+		const RenderLayer* currentLayer;
 
 		int frameVertexCount, frameTriCount, frameBatchCount;
 				

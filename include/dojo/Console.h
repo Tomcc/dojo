@@ -18,7 +18,7 @@ namespace Dojo
 	public:
 
 		///Creates a new Console object with an AABB, a given font and a Log to be displayed
-		Console( Object* parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source = Dojo::gp_log );
+		Console( Object* parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source = gp_log );
 
 		///adds a log to the listened logs - if getOldMessages is true, all of the messages in the log are added to the console
 		void addLog( Log* l, bool getOldMessages = true );

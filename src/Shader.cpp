@@ -74,7 +74,7 @@ VertexField Shader::_getAttributeForName( const std::string& name )
 	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
 }
 
-Shader::Shader( Dojo::ResourceGroup* creator, const String& filePath ) :
+Shader::Shader( ResourceGroup* creator, const String& filePath ) :
 	Resource( creator, filePath )
 {
 	memset( pProgram, 0, sizeof( pProgram ) ); //init to null
@@ -122,7 +122,7 @@ void Shader::setUniformCallback( const String& nameUTF, const UniformCallback& d
 
 #ifdef DOJO_SHADERS_AVAILABLE
 
-const void* Dojo::Shader::_getUniformData( const Uniform& uniform, const Renderable& user )
+const void* Shader::_getUniformData( const Uniform& uniform, const Renderable& user )
 {
 	auto& r = Platform::singleton().getRenderer();
 
@@ -186,7 +186,7 @@ const void* Dojo::Shader::_getUniformData( const Uniform& uniform, const Rendera
     }
 }
 
-void Dojo::Shader::use( const Renderable& user )
+void Shader::use( const Renderable& user )
 {
 	DEBUG_ASSERT( isLoaded(), "tried to use a Shader that wasn't loaded" );
 

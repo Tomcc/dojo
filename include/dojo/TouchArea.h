@@ -39,13 +39,13 @@ namespace Dojo
 			/**
 			differs with Pressed as it won't be sent, for example, when the user drags a finger inside the area
 			*/
-			virtual void onTouchAreaTapped(Dojo::TouchArea& area) {}
+			virtual void onTouchAreaTapped(TouchArea& area) {}
 
 			///Pressed is sent when a previously untouched area is tapped
-			virtual void onTouchAreaPressed(Dojo::TouchArea& area)     {}
+			virtual void onTouchAreaPressed(TouchArea& area)     {}
 
 			///Released is sent when a previously touched (one or more touches) is released inside this area
-			virtual void onTouchAreaReleased(Dojo::TouchArea& area)	{}
+			virtual void onTouchAreaReleased(TouchArea& area)	{}
             
         protected:
         };

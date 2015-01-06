@@ -107,6 +107,6 @@ void FrameSet::addTexture(Unique<Texture> t) {
 	addTexture(*t.release());
 }
 
-Texture* Dojo::FrameSet::getRandomFrame() {
+Texture* FrameSet::getRandomFrame() {
 	return frames.at((int)Math::rangeRandom(0, (float)frames.size()));
 }

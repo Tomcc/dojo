@@ -27,7 +27,7 @@ void Keyboard::poll(float dt) {
 		_notifyAxis((Axis)x, accum[x]);
 }
 
-bool Dojo::Keyboard::hasAxis(Axis x) const  {
+bool Keyboard::hasAxis(Axis x) const  {
 	for (auto& a : mFakeAxes) {
 		if (a.axis == x)
 			return true;

@@ -191,19 +191,27 @@ namespace Dojo
 		{
 			return AABBContains( maxA, minA, maxB ) && AABBContains( maxA, minA, minB );
 		}
+
+		static bool segmentsOverlap(float maxA, float minA, float maxB, float minB) {
+			float c = maxA - minB;
+			return !(c > (maxA - minA) + (maxB - minB) || c < 0);
+		}
 		
 		static bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )
 		{
-			float cx = maxA.x - minB.x;
-			float cy = maxA.y - minB.y;
-			float cz = maxA.z - minB.z;
-
-			return 
-				!(cx > (maxA.x - minA.x) + (maxB.x - minB.x) || cx < 0) &&
-				!(cy > (maxA.y - minA.y) + (maxB.y - minB.y) || cy < 0) &&	
-				!(cz > (maxA.z - minA.z) + (maxB.z - minB.z) || cz < 0);
+			return
+				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) &&
+				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y) &&
+				segmentsOverlap(maxA.z, minA.z, maxB.z, minB.z);
 		}
-				
+
+		static bool AABBsCollide2D(const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB)
+		{
+			return
+				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) &&
+				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y);
+		}
+		
 		///does a bitwise shift-with-rotation left on the byte n
 		static unsigned char rotateLeft(unsigned char n, unsigned char i)
 		{  

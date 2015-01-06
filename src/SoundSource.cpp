@@ -210,21 +210,21 @@ void SoundSource::_update(float dt)
 	}
 }
 
-void Dojo::SoundSource::setPitch(float p)
+void SoundSource::setPitch(float p)
 {
 	pitch = p;
 	if (isActive())
 		alSourcef(source, AL_PITCH, pitch);
 }
 
-void Dojo::SoundSource::setLooping(bool l)
+void SoundSource::setLooping(bool l)
 {
 	looping = l;
 	if (isActive()) //do not use this looping flag on streaming sounds, we handle it in the update 
 		alSourcei(source, AL_LOOPING, isStreaming() ? false : looping);
 }
 
-void Dojo::SoundSource::stop() {
+void SoundSource::stop() {
 
 	if (isActive()) {
 		alSourceStop(source);
@@ -237,7 +237,7 @@ void Dojo::SoundSource::stop() {
 	}
 }
 
-float Dojo::SoundSource::getElapsedTime() {
+float SoundSource::getElapsedTime() {
 	float elapsed = 0;
 	alGetSourcef(source, AL_SEC_OFFSET, &elapsed);
 

@@ -15,10 +15,6 @@
 
 using namespace Dojo;
 
-void Dojo::Renderer::Layer::remove(const Renderable& s) {
-
-}
-
 Renderer::Renderer( int w, int h, Orientation deviceOr ) :
 frameStarted( false ),
 valid( true ),
@@ -83,7 +79,7 @@ Renderer::~Renderer()
 	clearLayers();
 }
 
-Renderer::Layer& Dojo::Renderer::getLayer( Layer::ID layerID )
+RenderLayer& Renderer::getLayer( RenderLayer::ID layerID )
 {	
 	auto layerList = &positiveLayers;
 	if( layerID < 0 )
@@ -93,7 +89,7 @@ Renderer::Layer& Dojo::Renderer::getLayer( Layer::ID layerID )
 	}
 	
 	//allocate the needed layers if layerID > layer size
-	while( (Layer::ID)layerList->size() <= layerID )
+	while( (RenderLayer::ID)layerList->size() <= layerID )
 		layerList->emplace_back();	
 
 	if( !currentLayer ) //first layer!
@@ -103,7 +99,7 @@ Renderer::Layer& Dojo::Renderer::getLayer( Layer::ID layerID )
 	return (*layerList)[layerID];
 }
 
-bool Dojo::Renderer::hasLayer( Layer::ID layerID )
+bool Renderer::hasLayer( RenderLayer::ID layerID )
 {
 	auto layerList = &positiveLayers;
 	if( layerID < 0 )
@@ -112,27 +108,27 @@ bool Dojo::Renderer::hasLayer( Layer::ID layerID )
 		layerList = &negativeLayers;
 	}
 	
-	return (Layer::ID)layerList->size() > abs( layerID );
+	return (RenderLayer::ID)layerList->size() > abs( layerID );
 }
 
-void Dojo::Renderer::addRenderable( Renderable& s, Layer::ID layerID )
+void Renderer::addRenderable( Renderable& s, RenderLayer::ID layerID )
 {				
 	//get the needed layer	
-	Layer& layer = getLayer( layerID );
+	RenderLayer& layer = getLayer( layerID );
 	
 	s._notifyRenderInfo( this, layerID, layer.elements.size() );
 	
 	//append at the end
-	layer.elements.push_back( &s );
+	layer.elements.emplace( &s );
 }
 
-void Dojo::Renderer::removeRenderable( Renderable& s )
+void Renderer::removeRenderable( Renderable& s )
 {	
-	getLayer(s.getLayer()).remove(s);
+	getLayer(s.getLayer()).elements.erase(&s);
 	s._notifyRenderInfo( NULL, 0, 0 );
 }
 
-void Dojo::Renderer::removeAllRenderables() {
+void Renderer::removeAllRenderables() {
 	for (auto& l : negativeLayers)
 		l.elements.clear();
 
@@ -140,15 +136,15 @@ void Dojo::Renderer::removeAllRenderables() {
 		l.elements.clear();
 }
 
-void Dojo::Renderer::removeViewport(const Viewport& v) {
+void Renderer::removeViewport(const Viewport& v) {
 
 }
 
-void Dojo::Renderer::removeAllViewports() {
+void Renderer::removeAllViewports() {
 	viewportList.clear();
 }
 
-void Dojo::Renderer::clearLayers() {
+void Renderer::clearLayers() {
 	negativeLayers.clear();
 	positiveLayers.clear();
 }
@@ -158,7 +154,7 @@ void Renderer::setDefaultAmbient(const Color& a) {
 	defaultAmbient.a = 1;
 }
 
-void Dojo::Renderer::addViewport( Viewport& v )
+void Renderer::addViewport( Viewport& v )
 {
 	viewportList.push_back( &v );
 }
@@ -175,7 +171,7 @@ void Renderer::setInterfaceOrientation( Orientation o )
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
 }
 
-void Dojo::Renderer::renderElement( Viewport& viewport, Renderable& elem )
+void Renderer::renderElement( Viewport& viewport, Renderable& elem )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
@@ -247,7 +243,7 @@ void Dojo::Renderer::renderElement( Viewport& viewport, Renderable& elem )
 #endif
 }
 
-void Dojo::Renderer::renderLayer( Viewport& viewport, const Layer& layer )
+void Renderer::renderLayer( Viewport& viewport, const RenderLayer& layer )
 {
 	if( !layer.elements.size() || !layer.visible )
 		return;
@@ -272,7 +268,7 @@ void Dojo::Renderer::renderLayer( Viewport& viewport, const Layer& layer )
 
 	currentLayer = &layer;
 
-	//TODO cull all elements
+	viewport.cullLayer(layer);
 
 	for (auto& s : layer.elements)
 	{
@@ -281,7 +277,7 @@ void Dojo::Renderer::renderLayer( Viewport& viewport, const Layer& layer )
 	}
 }
 
-void Dojo::Renderer::renderViewport( Viewport& viewport )
+void Renderer::renderViewport( Viewport& viewport )
 {
 	Texture* rt = viewport.getRenderTarget();
 

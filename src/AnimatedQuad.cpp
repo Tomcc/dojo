@@ -214,6 +214,6 @@ void AnimatedQuad::Animation::advance(float dt) {
 	setAnimationTime(animationTime + dt);
 }
 
-int Dojo::AnimatedQuad::Animation::getCurrentFrameNumber() {
+int AnimatedQuad::Animation::getCurrentFrameNumber() {
 	return frames->getFrameIndex(currentFrame);
 }

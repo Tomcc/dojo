@@ -10,7 +10,7 @@
 
 using namespace Dojo;
 
-Dojo::RenderState::TextureUnit::TextureUnit() :
+RenderState::TextureUnit::TextureUnit() :
 scale(1, 1),
 rotation(0),
 offset(0, 0),
@@ -19,7 +19,7 @@ optTransform(nullptr) {
 
 }
 
-Dojo::RenderState::TextureUnit::~TextureUnit() {
+RenderState::TextureUnit::~TextureUnit() {
 	if (optTransform)
 		SAFE_DELETE(optTransform);
 }
@@ -35,14 +35,14 @@ void RenderState::TextureUnit::_updateTransform() {
 	*optTransform = glm::rotate(*optTransform, Math::toEuler(rotation), Vector::UNIT_Z);
 }
 
-void Dojo::RenderState::TextureUnit::applyTransform() {
+void RenderState::TextureUnit::applyTransform() {
 	DEBUG_ASSERT(optTransform, "Tried to apply a non-existing texture transform");
 
 	glMatrixMode(GL_TEXTURE);
 	glLoadMatrixf(glm::value_ptr(*optTransform));
 }
 
-const Matrix& Dojo::RenderState::TextureUnit::getTransform() const {
+const Matrix& RenderState::TextureUnit::getTransform() const {
 	static const Matrix identityMatrix;
 	return isTransformRequired() ? *optTransform : identityMatrix;
 }
@@ -200,7 +200,7 @@ void RenderState::applyState()
 	mesh->bind( pShader );
 }
 
-void Dojo::RenderState::commitChanges() {
+void RenderState::commitChanges() {
 	DEBUG_ASSERT( mesh, "A mesh is required to setup a new renderstate" );
 
 	//always bind color as it is just not expensive

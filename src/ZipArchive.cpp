@@ -57,7 +57,7 @@ size_t ZipFile::write ( const void * ptr, size_t size, size_t count){
 //ZipArchive imp
 ZipArchive::ZipArchive():zip_file(NULL){}
 //
-ZipArchive::ZipArchive(const Dojo::String& path)
+ZipArchive::ZipArchive(const String& path)
 {
 	open(path);
 }
@@ -67,7 +67,7 @@ ZipArchive::~ZipArchive()
 	close();
 }
 //open zip file
-bool ZipArchive::open(const Dojo::String& path){
+bool ZipArchive::open(const String& path){
 	zip_file=zzip_opendir_ext_io(path.UTF8().c_str(),ZZIP_CASELESS|ZZIP_ONLYZIP, 0, 0);
 	return zip_file!=NULL;
 }		
@@ -78,7 +78,7 @@ void ZipArchive::close(){
 	zip_file=NULL;
 }
 //open file
-ZipFile* ZipArchive::openFile(const Dojo::String& path,const Dojo::String& mode){
+ZipFile* ZipArchive::openFile(const String& path,const String& mode){
 	if(zip_file!=NULL){
 		zzip_rewinddir(zip_file);
 		int mode_flags=ZZIP_CASELESS;
@@ -100,7 +100,7 @@ ZipFile* ZipArchive::openFile(const Dojo::String& path,const Dojo::String& mode)
 	return NULL;
 }
 //open paths info
-void ZipArchive::getList(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getList(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -126,7 +126,7 @@ void ZipArchive::getList(Dojo::String path,std::vector<Dojo::String>& out){
 		zzip_rewinddir(zip_file);
 	}
 }
-void ZipArchive::getListAll(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getListAll(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -141,7 +141,7 @@ void ZipArchive::getListAll(Dojo::String path,std::vector<Dojo::String>& out){
 		zzip_rewinddir(zip_file);
 	}
 }
-void ZipArchive::getListFiles(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getListFiles(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -170,7 +170,7 @@ void ZipArchive::getListFiles(Dojo::String path,std::vector<Dojo::String>& out){
 	}
 }
 
-void ZipArchive::getListAllFiles(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getListAllFiles(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -188,7 +188,7 @@ void ZipArchive::getListAllFiles(Dojo::String path,std::vector<Dojo::String>& ou
 		zzip_rewinddir(zip_file);
 	}
 }
-void ZipArchive::getListSubDirectories(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getListSubDirectories(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -216,7 +216,7 @@ void ZipArchive::getListSubDirectories(Dojo::String path,std::vector<Dojo::Strin
 		zzip_rewinddir(zip_file);
 	}
 }
-void ZipArchive::getListAllSubDirectories(Dojo::String path,std::vector<Dojo::String>& out){
+void ZipArchive::getListAllSubDirectories(String path,std::vector<String>& out){
 	if(zip_file!=NULL){	
 		madeValidPath(path);
 		ZZIP_DIRENT *dirp;
@@ -233,7 +233,7 @@ void ZipArchive::getListAllSubDirectories(Dojo::String path,std::vector<Dojo::St
 		zzip_rewinddir(zip_file);
 	}
 }
-void ZipArchive::madeValidPath(Dojo::String& path){		
+void ZipArchive::madeValidPath(String& path){		
 		/* 1 delete \  */
 		for(auto& c : path){ if(c=='\\') c='/';}
 		/* 2 delete void string:  "path/    " */

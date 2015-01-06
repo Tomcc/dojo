@@ -21,15 +21,15 @@ namespace Dojo {
 		virtual void onTouchBegan(const Touch& touch) {}
 		virtual void onTouchMove(const Touch& touch)  {}
 		virtual void onTouchEnd(const Touch& touch)   {}
-		virtual void onMouseMove(const Dojo::Vector& curPos, const Dojo::Vector& oldPos)	{}
+		virtual void onMouseMove(const Vector& curPos, const Vector& oldPos)	{}
 		virtual void onScrollWheel(float scroll)	{}
 
 		virtual void onShake()	{}
 
-		virtual void onAcceleration(const Dojo::Vector& accel, float roll)	{}
+		virtual void onAcceleration(const Vector& accel, float roll)	{}
 
-		virtual void onDeviceConnected(Dojo::InputDevice* j) {}
-		virtual void onDeviceDisconnected(Dojo::InputDevice* j) {}
+		virtual void onDeviceConnected(InputDevice* j) {}
+		virtual void onDeviceDisconnected(InputDevice* j) {}
 
 		void _notifySource(InputSystem* src)	{ source = src; }
 

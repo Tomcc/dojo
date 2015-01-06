@@ -38,6 +38,7 @@
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
+    <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\dojomath.h" />

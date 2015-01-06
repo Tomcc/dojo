@@ -12,7 +12,7 @@
 
 using namespace Dojo;
 
-Dojo::XInputController::XInputController(int n) :
+XInputController::XInputController(int n) :
 InputDevice(InputDevice::Type::Xbox, n, 16, 8),
 mConnectionCheckTimer(0),
 mConnected(false) {
@@ -23,15 +23,15 @@ mConnected(false) {
 		mDeadZone[AI_RY] = 0.15f;
 }
 
-bool Dojo::XInputController::isConnected() {
+bool XInputController::isConnected() {
 	return mConnected;
 }
 
-bool Dojo::XInputController::hasAxis(Axis a) const  {
+bool XInputController::hasAxis(Axis a) const  {
 	return a < Axis::_AI_COUNT; //TODO change if we add axes
 }
 
-void Dojo::XInputController::poll(float dt) {
+void XInputController::poll(float dt) {
 	XINPUT_STATE state;
 
 	if (!mConnected)

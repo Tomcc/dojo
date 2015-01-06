@@ -126,7 +126,7 @@ namespace Dojo
 		}
 
 		///linearly interpolates the two vectors; s = 0 returns this, s = 1 returns v
-		Vector lerpTo( float s, const Dojo::Vector& v ) const
+		Vector lerpTo( float s, const Vector& v ) const
 		{			
 			float invs = 1.f - s;			
 			return Vector( v.x*s + invs*x, v.y*s + invs*y, v.z*s + invs*z);

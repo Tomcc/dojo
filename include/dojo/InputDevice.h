@@ -94,11 +94,11 @@ namespace Dojo
 
 	protected:
 
-		typedef Dojo::Array< InputDeviceListener* > ListenerList;
+		typedef Array< InputDeviceListener* > ListenerList;
 		typedef std::unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
 		typedef std::unordered_multimap< int, KeyCode > ActionKeyMap;
 		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
-		typedef Dojo::Array< float > FloatList;
+		typedef Array< float > FloatList;
 
 		int mAxisNumber, mButtonNumber;
 

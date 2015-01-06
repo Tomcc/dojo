@@ -6,6 +6,6 @@
 using namespace Dojo;
 
 
-void Dojo::StdoutLog::onLogUpdated(Log* l, const LogEntry& message) {
+void StdoutLog::onLogUpdated(Log* l, const LogEntry& message) {
 	std::cout << message.text.ASCII() << std::endl;
 }

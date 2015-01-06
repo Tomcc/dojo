@@ -39,7 +39,7 @@ using namespace Dojo;
 
 Unique<Platform> Platform::singletonPtr;
 
-Platform& Dojo::Platform::create( const Table& config /*= Table::EMPTY_TABLE */ )
+Platform& Platform::create( const Table& config /*= Table::EMPTY_TABLE */ )
 { 
 #if defined (PLATFORM_WIN32)
 	singletonPtr = make_unique<Win32Platform>(config);

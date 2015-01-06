@@ -6,7 +6,7 @@
 
 namespace Dojo
 {
-	///StringReader wraps a Dojo::String to help parsing
+	///StringReader wraps a String to help parsing
 	class StringReader
 	{
 	public:

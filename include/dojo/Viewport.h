@@ -24,6 +24,7 @@ namespace Dojo
 	class GameState;
 	class AnimatedQuad;
 	class Renderable;
+	class RenderLayer;
 	class Texture;
 		
 	///A Viewport is a View in a Dojo GameState, working both in 2D and 3D
@@ -73,7 +74,7 @@ namespace Dojo
 		/**
 		by default, the set is empty, which means "all layers"
 		*/
-		const LayerList& getVisibleLayers()
+		const LayerList& getVisibleLayers() const
 		{
 			return mLayerList;
 		}
@@ -124,7 +125,7 @@ namespace Dojo
             return mFrustumTransform;
         }
 
-		bool isContainedInFrustum( Renderable* r );
+		bool isContainedInFrustum( const Renderable& r );
 
 		bool isVisible( Renderable& s );
 
@@ -149,7 +150,7 @@ namespace Dojo
 		///converts the texture pixel sizes in a screen space size
 		void makeScreenSize( Vector& dest, Texture* tex );
 		
-		float getPixelSide()
+		float getPixelSide() const
 		{
 			return size.x / targetSize.x;
 		}
@@ -159,23 +160,24 @@ namespace Dojo
             mPerspectiveEyeTransform = t;
         }
 
+		void cullLayer(const RenderLayer& layer);
+
 		virtual void onAction( float dt );
 				
 	protected:
 		
 		Vector targetSize;
 
-		bool enableClear = true;
+		bool enableClear = true, frustumDirty = true;
+
+		Matrix lastWorldTransform;
 		
 		Renderable* faderObject = nullptr;
 				
 		Color clearColor;
         
         Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
-
-		//frustum data
-		bool frustumCullingEnabled;
-
+		
 		Vector localFrustumVertices[4];
 		Vector worldFrustumVertices[4];
 

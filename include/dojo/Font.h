@@ -27,7 +27,7 @@ namespace Dojo
 	class ResourceGroup;
 	class Tessellation;
 
-	class Font : public Dojo::Resource
+	class Font : public Resource
 	{
 	public:
 

@@ -143,15 +143,11 @@ namespace Dojo {
 				
 		const Vector& getWorldMax() const
 		{
-			DEBUG_ASSERT( mNeedsAABB, "getWorldMax: this Object has no AABB" );
-			
 			return worldUpperBound;
 		}
 		
 		const Vector& getWorldMin() const
 		{
-			DEBUG_ASSERT( mNeedsAABB, "getWorldMin: this Object has no AABB" );
-			
 			return worldLowerBound;
 		}
 		
@@ -217,7 +213,7 @@ namespace Dojo {
 				
 		Vector worldUpperBound, worldLowerBound;
 				
-		bool active, mNeedsAABB;
+		bool active;
 
 		Object* parent;
 		ChildList childs;

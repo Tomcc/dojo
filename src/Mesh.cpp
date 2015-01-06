@@ -49,7 +49,7 @@ Resource(creator, filePath)
 	setIndexByteSize(sizeof(GLushort));
 }
 
-Dojo::Mesh::~Mesh() {
+Mesh::~Mesh() {
 #ifndef DOJO_DISABLE_VAOS
 	if (vertexArrayDesc)
 		glDeleteVertexArrays(1, &vertexArrayDesc);
@@ -545,7 +545,7 @@ Vector& Mesh::getVertex(int idx) {
 	return *(Vector*)ptr;
 }
 
-void Dojo::Mesh::setIndex(int idxidx, IndexType idx) {
+void Mesh::setIndex(int idxidx, IndexType idx) {
 	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
 
 	switch (indexSize)
@@ -626,7 +626,7 @@ Unique<Mesh> Mesh::cloneWithSameFormat() const {
 	return c;
 }
 
-Unique<Mesh> Dojo::Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
+Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
 	DEBUG_ASSERT(!vertices.empty(), "This mesh is empty");
 	DEBUG_ASSERT(vertexStart < getVertexCount() && vertexEnd <= getVertexCount() && vertexStart <= vertexEnd, "Indices out of bounds");
 

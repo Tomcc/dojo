@@ -82,13 +82,10 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 }
 
 void Renderable::onAction( float dt )
-{    
-	bool previousAABBSetting = mNeedsAABB;
-	mNeedsAABB = false; //override the setting
-		
+{
 	Object::onAction( dt );
-	
-	if( mesh && (mNeedsAABB = previousAABBSetting) )
+
+	if( mesh )
 		_updateWorldAABB( mesh->getMin(), mesh->getMax() );
 	
 	advanceFade(dt);

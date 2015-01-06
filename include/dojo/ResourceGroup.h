@@ -72,7 +72,7 @@ namespace Dojo
 		/**
 		A locale is a subfolder with the given name, selectively loaded when a locale is provided
 		*/
-		void setLocale( const Dojo::String& locID, const Dojo::String& fallbackLocaleID )
+		void setLocale( const String& locID, const String& fallbackLocaleID )
 		{
 			DEBUG_ASSERT( locID.size(), "setLocale: the locale was an empty string" );
 			DEBUG_ASSERT( fallbackLocaleID.size(), "setLocale: the fallback locale was an empty string" );

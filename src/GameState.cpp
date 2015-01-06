@@ -19,8 +19,6 @@ game( parentGame ),
 timeElapsed(0),
 camera(nullptr)
 {
-	mNeedsAABB = true;
-
 	gameState = this; //useful to pass a GameState around as an Object
 }
 
@@ -37,18 +35,18 @@ void GameState::clear()
 	unloadResources( false );
 }
 
-void Dojo::GameState::setViewport( Viewport& v )
+void GameState::setViewport( Viewport& v )
 {
 	camera = &v;
 	
 	Platform::singleton().getRenderer().addViewport( v );
 }
 
-void Dojo::GameState::touchAreaAtPoint( const Touch& touch )
+void GameState::touchAreaAtPoint( const Touch& touch )
 {
 	Vector pointer = getViewport()->makeWorldCoordinates( touch.point );
 
-	Dojo::Array< TouchArea* > layer;
+	Array< TouchArea* > layer;
 	int topMostLayer = INT32_MIN;
 	
 	for( auto t : mTouchAreas )
@@ -70,13 +68,13 @@ void Dojo::GameState::touchAreaAtPoint( const Touch& touch )
 		layer[i]->_incrementTouches( touch );	
 }
 
-void Dojo::GameState::addTouchArea(TouchArea* t) {
+void GameState::addTouchArea(TouchArea* t) {
 	DEBUG_ASSERT(t != nullptr, "addTouchArea: area passed was null");
 
 	mTouchAreas.push_back(t);
 }
 
-void Dojo::GameState::removeTouchArea(TouchArea* t) {
+void GameState::removeTouchArea(TouchArea* t) {
 	DEBUG_ASSERT(t != nullptr, "removeTouchArea: area passed was null");
 
 	auto elem = std::find(mTouchAreas.begin(), mTouchAreas.end(), t);

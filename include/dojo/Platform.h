@@ -243,7 +243,7 @@ namespace Dojo
 		Log* mLog;
 		BackgroundQueue* mBackgroundQueue;
 
-		Dojo::Array< ApplicationListener* > focusListeners;
+		Array< ApplicationListener* > focusListeners;
 
 		///this "caches" the zip headers for faster access - each zip that has been opened has its paths cached here!
 		ZipFileMapping mZipFileMaps;
