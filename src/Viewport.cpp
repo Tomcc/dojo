@@ -119,11 +119,8 @@ void Viewport::_updateFrustum()
 			zFar);
 
 		if (getRenderTarget()) //flip the projections to flip the image
-		{
 			mOrthoTransform[1][1] *= -1;
-			mFrustumTransform[1][1] *= -1;
-		}
-
+		
 		for (int i = 0; i < 4; ++i)
 			worldFrustumVertices[i] = getWorldPosition(localFrustumVertices[i]);
 
@@ -160,6 +157,9 @@ void Viewport::_updateTransforms()
 				getHalfSize().y,
 				0.f,  //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
 				zFar);
+
+			if (getRenderTarget()) //flip the projections to flip the image
+				mOrthoTransform[1][1] *= -1;
 		}
 
 		frustumDirty = true;
