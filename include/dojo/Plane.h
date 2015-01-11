@@ -57,13 +57,13 @@ namespace Dojo
 		}
 
 		///Returns the distance of a point from the given plane
-		float getDistance( const Vector& point )
+		float getDistance( const Vector& point ) const
 		{
 			return point * n + d;
 		}
 				
 		///tells which side of this plane the AABB lies in. -1 is negative, 0 is on the line, 1 is positive
-		int getSide( const Vector& center, const Vector& halfsize )
+		int getSide( const Vector& center, const Vector& halfsize ) const
 		{
 			float dist = getDistance( center );
 			

@@ -125,7 +125,7 @@ namespace Dojo
             return mFrustumTransform;
         }
 
-		bool isContainedInFrustum( const Renderable& r );
+		bool isContainedInFrustum( const Renderable& r ) const;
 
 		bool isVisible( Renderable& s );
 
@@ -159,8 +159,6 @@ namespace Dojo
         {
             mPerspectiveEyeTransform = t;
         }
-
-		void cullLayer(const RenderLayer& layer);
 
 		virtual void onAction( float dt );
 				

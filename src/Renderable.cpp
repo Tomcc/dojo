@@ -14,8 +14,7 @@ Renderable::Renderable( Object* parent, const Vector& pos, Mesh* m ) :
 	visible( true ),
 	layer( INT_MIN ),
 	renderingOrder(0),
-	currentFadeTime(0),
-	mCulled( false )
+	currentFadeTime(0)
 {
 	reset();
 
@@ -27,8 +26,7 @@ Renderable::Renderable( Object* parent, const Vector& pos, const String& meshNam
 	visible( true ),
 	layer(0),
 	renderingOrder(0),
-	currentFadeTime(0),
-	mCulled( false )
+	currentFadeTime(0)
 {
 	reset();
 
@@ -126,8 +124,4 @@ void Renderable::_notifyRenderInfo(Renderer* r, int layerID, int renderIdx) {
 	render = r;
 	layer = layerID;
 	renderingOrder = renderIdx;
-}
-
-void Renderable::_notifyCulled(bool culled) {
-	mCulled = culled;
 }

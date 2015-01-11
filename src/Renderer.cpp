@@ -243,6 +243,10 @@ void Renderer::renderElement( Viewport& viewport, Renderable& elem )
 #endif
 }
 
+bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable& r) {
+	return layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
+}
+
 void Renderer::renderLayer( Viewport& viewport, const RenderLayer& layer )
 {
 	if( !layer.elements.size() || !layer.visible )
@@ -268,12 +272,10 @@ void Renderer::renderLayer( Viewport& viewport, const RenderLayer& layer )
 
 	currentLayer = &layer;
 
-	viewport.cullLayer(layer);
-
-	for (auto& s : layer.elements)
+	for (auto& r : layer.elements)
 	{
-		if( s->canBeRendered() && s->isInView())
-			renderElement( viewport, *s );
+		if( r->canBeRendered() && _cull(layer, viewport, *r))
+			renderElement( viewport, *r );
 	}
 }
 

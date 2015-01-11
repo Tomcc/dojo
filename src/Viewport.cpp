@@ -222,7 +222,7 @@ void Viewport::setVisibleLayers(int min, int max) {
 		mLayerList.push_back(i);
 }
 
-bool Viewport::isContainedInFrustum(const Renderable& r)
+bool Viewport::isContainedInFrustum(const Renderable& r) const
 {
 	Vector halfSize = (r.getWorldMax() - r.getWorldMin()) * 0.5f;
 	Vector worldPos = r.getWorldPosition();
@@ -242,18 +242,6 @@ bool Viewport::isContainedInFrustum(const Renderable& r)
 
 bool Viewport::isInViewRect(const Renderable& r) const {
 	return Math::AABBsCollide2D(r.getWorldMax(), r.getWorldMin(), getWorldMax(), getWorldMin());
-}
-
-void Viewport::cullLayer(const RenderLayer& layer) {
-	if (layer.orthographic) {
-		for (auto&& r : layer.elements)
-			r->_notifyCulled(!isInViewRect(*r));
-	}
-	else {
-		_updateFrustum();
-		for (auto&& r : layer.elements)
-			r->_notifyCulled(!isContainedInFrustum(*r));
-	}
 }
 
 void Viewport::onAction(float dt)

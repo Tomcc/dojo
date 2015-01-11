@@ -57,20 +57,12 @@ namespace Dojo
 		bool isFading()	const			{	return fading;			}
         
         virtual bool isRenderable()         {   return true;            }
-					
-		bool isInView() const
-		{
-			return !mCulled;
-		}
-
+		
 		void advanceFade( float dt );
 		
 		virtual void onAction( float dt );		
 		
 		void _notifyRenderInfo( Renderer* r, int layerID, int renderIdx );
-		
-		void _notifyCulled( bool culled );
-		
 	protected:
 		
 		bool visible;
@@ -84,9 +76,5 @@ namespace Dojo
 		float fadeEndTime;
 		Color fadeStartColor;
 		Color fadeEndColor;	
-		
-	private:
-		
-		bool mCulled;
 	};
 }
