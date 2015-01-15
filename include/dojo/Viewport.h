@@ -187,6 +187,8 @@ namespace Dojo
 		LayerList mLayerList;
 		Texture* mRT;
 
+		AABB worldBB;
+
 		void _updateFrustum();
         void _updateTransforms();
 	};

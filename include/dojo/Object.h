@@ -114,7 +114,7 @@ namespace Dojo {
 		}
 
 		///returns the position in local coordinates of the given world position
-		Vector getLocalPosition( const Vector& worldPos );
+		Vector getLocalPosition( const Vector& worldPos ) const;
 		
 		///returns a local direction in world space
 		Vector getWorldDirection( const Vector& dir3 = Vector::UNIT_Z );
@@ -141,15 +141,15 @@ namespace Dojo {
 			return mWorldTransform; 
 		}
 				
-		const Vector& getWorldMax() const
-		{
-			return worldUpperBound;
-		}
-		
-		const Vector& getWorldMin() const
-		{
-			return worldLowerBound;
-		}
+// 		const Vector& getWorldMax() const
+// 		{
+// 			return worldUpperBound;
+// 		}
+// 		
+// 		const Vector& getWorldMin() const
+// 		{
+// 			return worldLowerBound;
+// 		}
 		
 		Object* getParent()
 		{
@@ -186,15 +186,12 @@ namespace Dojo {
 		
 		void updateChilds( float dt );
 		
-		bool contains( const Vector& p );
-
-		bool contains2D( const Vector& p );
-		
-		bool collidesWith( const Vector& MAX, const Vector& MIN );
-		
-		bool collidesWith( Object * t );
-		
 		virtual void onAction( float dt );
+
+		struct AABB {
+			Vector min, max;
+		};
+		AABB transformAABB(const Vector& min, const Vector& max) const;
 
 		void _notifyParent( Object* p )
 		{
@@ -211,14 +208,11 @@ namespace Dojo {
 		
 		Matrix mWorldTransform;
 				
-		Vector worldUpperBound, worldLowerBound;
-				
 		bool active;
 
 		Object* parent;
 		ChildList childs;
 		
-		void _updateWorldAABB( const Vector& min, const Vector& max );
 
 		Object& _addChild(Unique<Object> o);
 		Renderable& _addChild(Unique<Renderable> o, int layer);

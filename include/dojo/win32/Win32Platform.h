@@ -39,7 +39,7 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop();
 
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
+		virtual PixelFormat loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
 		
 		virtual const String& getAppDataPath();
 		virtual const String& getResourcesPath();

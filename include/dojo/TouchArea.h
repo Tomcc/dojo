@@ -69,12 +69,16 @@ namespace Dojo
 		void setTop(bool enable) {
 			top = enable;
 		}
+		
+		bool contains2D(const Vector& p) const;
 
 		///returns a list of the touches that entered this toucharea in the last frame
 		const TouchList& getTouchList() const;
 
 		///tells if this area currently contains at least one touch
 		bool isPressed() const;
+
+		virtual void onAction(float dt);
                 
         void _fireOnTouchUsingCurrentTouches();
         
@@ -83,7 +87,7 @@ namespace Dojo
 		void _clearTouches();
 
 		void _incrementTouches( const Touch& touch );
-        
+	
     protected:        
         bool mPressed, top = false;
         int mLayer;
@@ -92,7 +96,7 @@ namespace Dojo
         
         Listener* listener;
 
-		
+		AABB worldBB;
     };
 }
 

@@ -47,6 +47,7 @@ namespace Dojo
 		///returns the ID of the Render::Layer this object is assigned to
 		int getLayer()	const			{	return layer;			}
 		int getRenderingOrder()		{	return renderingOrder;	}
+		const AABB& getGraphicsAABB() const	{	return worldBB;	}
 
 		///true if this object has been assigned to a Render::Layer
 		bool hasLayer()						{	return layer != INT_MIN;	}
@@ -76,5 +77,7 @@ namespace Dojo
 		float fadeEndTime;
 		Color fadeStartColor;
 		Color fadeEndColor;	
+
+		AABB worldBB;
 	};
 }

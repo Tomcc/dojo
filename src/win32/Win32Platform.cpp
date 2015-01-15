@@ -874,7 +874,7 @@ void Win32Platform::keyReleased( int kc )
 	mKeyboard._notifyButtonState( mKeyMap[ kc ], false );
 }
 
-GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
+PixelFormat Win32Platform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
 {
 	//pointer to the image, once loaded
 	FIBITMAP *dib = NULL;
@@ -889,12 +889,12 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 		if( Utils::getFileExtension( ansipath ) == String( "img" ) )
 			fif = FIF_PNG;
 		else
-			return 0;
+			return PixelFormat::Unknown;
 	}
 
 	//check that the plugin has reading capabilities and load the file
 	if( !FreeImage_FIFSupportsReading(fif))
-		return 0;
+		return PixelFormat::Unknown;
 
 	char* buf;
 	int fileSize = loadFileContent( buf, path );
@@ -907,7 +907,7 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 
 	//if the image failed to load, return failure
 	if(!dib)
-		return 0;
+		return PixelFormat::Unknown;
 
 	//retrieve the image data
 	byte* data = (byte*)FreeImage_GetBits(dib);
@@ -955,8 +955,8 @@ GLenum Win32Platform::loadImageFile( void*& bufptr, const String& path, int& wid
 	FreeImage_Unload( dib );
 	FreeImage_CloseMemory(hmem);
 
-	static const GLenum formatsForSize[] = { GL_NONE, GL_UNSIGNED_BYTE, GL_RG, GL_RGB, GL_RGBA };
-	return formatsForSize[ pixelSize ];
+	//TODO support more?
+	return pixelSize == 4 ? PixelFormat::R8G8B8A8 : PixelFormat::R8G8B8;
 }
 
 const String& Win32Platform::getAppDataPath()

@@ -46,8 +46,8 @@ Viewport::~Viewport()
 Vector Viewport::makeWorldCoordinates(int x, int y)
 {
 	return Vector(
-		getWorldMin().x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
-		getWorldMax().y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+		worldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
+		worldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
 bool Viewport::isVisible(Renderable& s) {
@@ -224,8 +224,12 @@ void Viewport::setVisibleLayers(int min, int max) {
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const
 {
-	Vector halfSize = (r.getWorldMax() - r.getWorldMin()) * 0.5f;
+	AABB bb = r.transformAABB(r.getMesh()->getMin(), r.getMesh()->getMax());
+
+	Vector halfSize = (bb.max - bb.min) * 0.5f;
 	Vector worldPos = r.getWorldPosition();
+
+	//TODO not do as a sphere
 
 	//for each plane, check where the AABB is placed
 	for (int i = 0; i < 4; ++i)
@@ -241,7 +245,9 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const
 }
 
 bool Viewport::isInViewRect(const Renderable& r) const {
-	return Math::AABBsCollide2D(r.getWorldMax(), r.getWorldMin(), getWorldMax(), getWorldMin());
+	auto& bb = r.getGraphicsAABB();
+
+	return Math::AABBsCollide2D(worldBB.max, worldBB.min, bb.max, bb.min);
 }
 
 void Viewport::onAction(float dt)
@@ -249,6 +255,8 @@ void Viewport::onAction(float dt)
 	Object::onAction(dt);
 
 	_updateTransforms();
+
+	worldBB = transformAABB(-getHalfSize(), getHalfSize());
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)

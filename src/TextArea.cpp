@@ -380,11 +380,12 @@ void TextArea::onAction(float dt)
 {
 	_prepare();
 
+	//WARNING: keep this in sync with Renderable::onAction!
 	{
 		Object::onAction(dt);
 
+		worldBB = transformAABB(mLayersLowerBound, mLayersUpperBound);
+
 		advanceFade(dt);
 	}
-	
-	_updateWorldAABB( mLayersLowerBound, mLayersUpperBound );
 }

@@ -13,6 +13,7 @@
 
 #include "Resource.h"
 #include "Vector.h"
+#include "PixelFormat.h"
 
 namespace Dojo 
 {
@@ -22,8 +23,7 @@ namespace Dojo
 	///A Texture is the image container in Dojo; all the images to be displayed need to be loaded in GPU memory using one
 	class Texture : public Resource
 	{
-	public:
-		 
+	public:		 
 		///Create a empty new texture
 		Texture( ResourceGroup* creator = NULL );
 
@@ -33,10 +33,10 @@ namespace Dojo
 		virtual ~Texture();
 
 		///loads an empty texture with the given properties
-		bool loadEmpty( int width, int height, GLenum destFormat );
+		bool loadEmpty( int width, int height, PixelFormat destFormat );
 
 		///loads the texture from a memory area with RGBA8 format
-		bool loadFromMemory( byte* buf, int width, int height, GLenum sourceFormat, GLenum destFormat  );
+		bool loadFromMemory( const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat  );
 
 		///loads the texture from the image pointed by the filename
 		bool loadFromFile( const String& path );

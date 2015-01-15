@@ -321,7 +321,8 @@ bool Font::Page::onLoad()
 	}
 
 	//drop the buffer in the texture
-	loaded = texture->loadFromMemory( buf, sxp2, syp2, GL_RGBA, GL_RGBA );
+	//TODO can probably easily use 565 or less
+	loaded = texture->loadFromMemory( buf, sxp2, syp2, PixelFormat::R8G8B8A8, PixelFormat::R8G8B8A8 );
 	texture->disableBilinearFiltering();
 	texture->disableMipmaps();
 	texture->disableTiling();

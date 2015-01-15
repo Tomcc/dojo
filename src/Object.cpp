@@ -93,11 +93,13 @@ void Object::destroyAllChildren()
 	childs.clear();
 }
 
-void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
+Object::AABB Object::transformAABB( const Vector& localMin, const Vector& localMax ) const
 {
+	AABB bb;
+
 	//get the eight world-position corners and transform them
-	worldUpperBound = Vector::MIN;
-	worldLowerBound = Vector::MAX;
+	bb.max = Vector::MIN;
+	bb.min = Vector::MAX;
 	
 	Vector vertex;    
 	
@@ -108,9 +110,11 @@ void Object::_updateWorldAABB( const Vector& localMin, const Vector& localMax )
 		
 		vertex = getWorldPosition( vertex );
 		
-		worldUpperBound = Math::max( worldUpperBound, vertex );
-		worldLowerBound = Math::min( worldLowerBound, vertex );
+		bb.max = Math::max(bb.max, vertex);
+		bb.min = Math::min(bb.min, vertex);
 	}
+
+	return bb;
 }
 
 Vector Object::getWorldPosition(const Vector& localPos) const {
@@ -135,7 +139,7 @@ void Object::setRoll(float r) {
 }
 
 
-Vector Object::getLocalPosition(const Vector& worldPos) {
+Dojo::Vector Dojo::Object::getLocalPosition(const Vector& worldPos) const {
 	Matrix inv = glm::inverse(getWorldTransform()); //TODO make faster for gods' sake
 	glm::vec4 p(worldPos.x, worldPos.y, worldPos.z, 1);
 	p = inv * p;
@@ -160,33 +164,6 @@ float Object::getRoll() const {
 	return glm::roll(rotation) * Math::EULER_TO_RADIANS;
 }
 
-bool Object::contains(const Vector& p) {
-	return
-		p.x <= worldUpperBound.x &&
-		p.x >= worldLowerBound.x &&
-		p.y <= worldUpperBound.y &&
-		p.y >= worldLowerBound.y &&
-		p.z <= worldUpperBound.z &&
-		p.z >= worldLowerBound.z;
-}
-
-bool Object::contains2D(const Vector& p) {
-	return
-		p.x <= worldUpperBound.x &&
-		p.x >= worldLowerBound.x &&
-		p.y <= worldUpperBound.y &&
-		p.y >= worldLowerBound.y;
-}
-
-bool Object::collidesWith(const Vector& MAX, const Vector& MIN) {
-	return Math::AABBsCollide(getWorldMax(), getWorldMin(), MAX, MIN);
-}
-
-bool Object::collidesWith(Object * t) {
-	DEBUG_ASSERT(t, "collidesWith: colliding Object is NULL");
-	return collidesWith(t->getWorldMax(), t->getWorldMin());
-}
-
 Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
 {
 	Matrix m = glm::translate(parent, position) * mat4_cast(rotation);
@@ -194,9 +171,7 @@ Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
 }
 
 void Object::updateWorldTransform()
-{	
-	auto oldTransform = mWorldTransform;
-
+{
 	//compute local matrix from position and orientation
 	if (!parent)
 		mWorldTransform = Matrix(1);
@@ -208,9 +183,6 @@ void Object::updateWorldTransform()
 	}
 
 	mWorldTransform = getFullTransformRelativeTo(mWorldTransform);
-
-	if (oldTransform != mWorldTransform)
-		_updateWorldAABB( -halfSize, halfSize );
 }
 
 void Object::updateChilds( float dt )

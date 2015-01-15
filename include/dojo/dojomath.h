@@ -192,9 +192,8 @@ namespace Dojo
 			return AABBContains( maxA, minA, maxB ) && AABBContains( maxA, minA, minB );
 		}
 
-		static bool segmentsOverlap(float maxA, float minA, float maxB, float minB) {
-			float c = maxA - minB;
-			return !(c > (maxA - minA) + (maxB - minB) || c < 0);
+		static bool segmentsOverlap(float x2, float x1, float y2, float y1) {
+			return x2 >= y1 && y2 >= x1;
 		}
 		
 		static bool AABBsCollide( const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB )

@@ -93,3 +93,18 @@ const TouchArea::TouchList& TouchArea::getTouchList() const {
 bool TouchArea::isPressed() const {
 	return mPressed;
 }
+
+bool TouchArea::contains2D(const Vector& p) const {
+	return
+		p.x <= worldBB.max.x &&
+		p.x >= worldBB.min.x &&
+		p.y <= worldBB.max.y &&
+		p.y >= worldBB.min.y;
+}
+
+void TouchArea::onAction(float dt)
+{
+	Object::onAction(dt);
+
+	worldBB = transformAABB(-getHalfSize(), getHalfSize());
+}

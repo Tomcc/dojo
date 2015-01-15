@@ -171,14 +171,33 @@ void Texture::disableMipmaps()
 	}
 }
 
-bool Texture::loadEmpty( int w, int h, GLenum destFormat )
+struct FormatInfo {
+	size_t bytes;
+	GLenum glFormat, elementType;
+
+	bool isGPUFormat() const {
+		return bytes == 2 || bytes == 4;
+	}
+};
+
+const FormatInfo GLFormat[] = {
+	{ 4, GL_RGBA, GL_UNSIGNED_BYTE },
+	{ 3, GL_RGB, GL_UNSIGNED_BYTE },
+	{ 2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5 },
+	{ 0, 0, 0 },
+};
+
+bool Texture::loadEmpty( int w, int h, PixelFormat format_ )
 {
 	width = w;
 	height = h;
 
 	DEBUG_ASSERT( width > 0, "Width must be more than 0" );
-	DEBUG_ASSERT( height > 0, "Height must be more than 0" ); 
-	DEBUG_ASSERT( destFormat > 0, "the desired internal image format is undefined" );
+	DEBUG_ASSERT( height > 0, "Height must be more than 0" );
+
+	auto& format = GLFormat[(int)format_];
+
+	DEBUG_ASSERT(format.isGPUFormat(), "This format can't be loaded on the GPU!");
 
 	bind(0);
 
@@ -187,8 +206,6 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 	else
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//Assume formats are either GL_RGB or GL_RGBA
-	int destPixelSize = (destFormat == GL_RGBA) ? 4 : 3;
 
 	int POTwidth = Math::nextPowerOfTwo( width );
 	int POTheight = Math::nextPowerOfTwo( height );
@@ -210,12 +227,12 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 	}
 
 	//check if the texture has to be recreated (changed dimensions)
-	if( destWidth != internalWidth || destHeight != internalHeight || internalFormat != destFormat )
+	if( destWidth != internalWidth || destHeight != internalHeight || internalFormat != format.glFormat )
 	{
 		internalWidth = destWidth;
 		internalHeight = destHeight;
-		internalFormat = destFormat;
-		size = internalWidth * internalHeight * destPixelSize;
+		internalFormat = format.glFormat;
+		size = internalWidth * internalHeight * format.bytes;
 
         std::string dummyData(size, 0 ); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
         
@@ -228,7 +245,7 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 			internalHeight,
 			0, 
 			internalFormat,
-			GL_UNSIGNED_BYTE, 
+			format.elementType, 
 			dummyData.c_str() );
 	}
 
@@ -242,13 +259,15 @@ bool Texture::loadEmpty( int w, int h, GLenum destFormat )
 	return loaded;
 }
 
-bool Texture::loadFromMemory( byte* imageData, int width, int height, GLenum sourceFormat, GLenum destFormat )
+bool Dojo::Texture::loadFromMemory( const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat )
 {
 	DEBUG_ASSERT( imageData, "null image data" );
 
 	loadEmpty( width, height, destFormat );
 
-	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, sourceFormat, GL_UNSIGNED_BYTE, imageData );
+	auto& format = GLFormat[(int)sourceFormat];
+
+	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData );
 
 	loaded = (glGetError() == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );	
@@ -261,11 +280,10 @@ bool Texture::loadFromFile( const String& path )
 	
 	void* imageData = NULL;
 
-	GLenum sourceFormat = 0, destFormat;
 	int pixelSize;
-	sourceFormat = Platform::singleton().loadImageFile( imageData, path, width, height, pixelSize );
+	auto format = Platform::singleton().loadImageFile( imageData, path, width, height, pixelSize );
 	
-	DEBUG_ASSERT_INFO( sourceFormat, "Cannot load an image file", "path = " + path );
+	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
 	
 	if( creator && creator->disableBilinear )	
 		disableBilinearFiltering();
@@ -291,15 +309,13 @@ bool Texture::loadFromFile( const String& path )
 		glGetFloatv( GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso );
 		enableAnisotropicFiltering( aniso/2 );
 	}
-	
-	destFormat = sourceFormat;
-	
+		
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
-	if( sourceFormat == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
-	else if( sourceFormat == GL_RGB )	destFormat = GL_SRGB8;
+	if( format == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
+	else if( format == GL_RGB )	destFormat = GL_SRGB8;
 #endif
 		
-	loadFromMemory( (byte*)imageData, width, height, sourceFormat, destFormat );
+	loadFromMemory( (byte*)imageData, width, height, format, PixelFormat::R8G8B8A8 );
 
 	free(imageData);
 

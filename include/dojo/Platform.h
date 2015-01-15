@@ -3,6 +3,7 @@
 #include "dojo_common_header.h"
 #include "Table.h"
 #include "Log.h"
+#include "PixelFormat.h"
 
 namespace Dojo 
 {
@@ -129,7 +130,7 @@ namespace Dojo
 			shutdownPlatform();
 		}
 
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
+		virtual PixelFormat loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
 		void addApplicationListener( ApplicationListener* f )
 		{
