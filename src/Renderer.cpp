@@ -124,8 +124,11 @@ void Renderer::addRenderable( Renderable& s, RenderLayer::ID layerID )
 
 void Renderer::removeRenderable( Renderable& s )
 {	
-	getLayer(s.getLayer()).elements.erase(&s);
-	s._notifyRenderInfo( NULL, 0, 0 );
+	if (hasLayer(s.getLayer()))
+	{
+		getLayer(s.getLayer()).elements.erase(&s);
+		s._notifyRenderInfo(NULL, 0, 0);
+	}
 }
 
 void Renderer::removeAllRenderables() {
