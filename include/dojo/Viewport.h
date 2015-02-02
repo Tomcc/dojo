@@ -95,6 +95,7 @@ namespace Dojo
 		const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
 		const Vector& getTargetSize()			{   return targetSize;  }
 		const Matrix& getViewTransform()			{	return mViewTransform;	}
+		const AABB& getGraphicsAABB() const	{ return worldBB; }
 
 		void setClearEnabled(bool enabled) {
 			enableClear = enabled;

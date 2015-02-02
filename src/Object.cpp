@@ -63,8 +63,8 @@ Unique<Object> Object::removeChild( Object& o )
 	auto elem = ChildList::find(childs, o);
 	if (elem != childs.end()) {
 		auto child = std::move(*elem);
-		childs.erase(elem);
 		_unregisterChild(*child);
+		childs.erase(elem);
 		return child;
 	}
 	else {
@@ -77,8 +77,10 @@ void Object::collectChilds()
 {
 	auto itr = childs.begin();
 	for (; itr != childs.end();) {
-		if ((*itr)->dispose)
+		if ((*itr)->dispose) {
+			_unregisterChild(**itr);
 			itr = childs.erase(itr);
+		}
 		else
 			++itr;
 	}
@@ -189,11 +191,12 @@ void Object::updateChilds( float dt )
 {
 	if (childs.size() > 0) {
 
-		for (auto& child : childs) {
-			if (child->isActive())
-				child->onAction(dt);
+		for (size_t i = 0; i < childs.size(); ++i) {
+			if (childs[i]->isActive())
+				childs[i]->onAction(dt);
 		}
 
+		collectChilds();
 	}
 }
 
