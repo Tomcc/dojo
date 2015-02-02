@@ -103,6 +103,10 @@ namespace Dojo
 			return Color( r + s, g + s, b + s, a + s );
 		}
 
+		Color operator + (const Color& c) const {
+			return{ c.r + r, c.g + g, c.b + b, c.a + a };
+		}
+
 		///linearly interpolates two colors
 		Color lerp( float s, const Color& c ) const
 		{

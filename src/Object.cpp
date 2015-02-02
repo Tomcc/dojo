@@ -75,14 +75,13 @@ Unique<Object> Object::removeChild( Object& o )
 
 void Object::collectChilds()
 {
-	auto itr = childs.begin();
-	for (; itr != childs.end();) {
-		if ((*itr)->dispose) {
-			_unregisterChild(**itr);
-			itr = childs.erase(itr);
+	for (size_t i = 0; i < childs.size(); ++i) {
+		if (childs[i]->dispose) {
+			_unregisterChild(*childs[i]);
+			childs.erase(childs[i]);
+
+			--i;
 		}
-		else
-			++itr;
 	}
 }
 
