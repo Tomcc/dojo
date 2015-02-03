@@ -70,47 +70,26 @@ namespace Dojo
 			else
 				return 0;
 		}
-
-		static float min( float a, float b )
-		{
-			return (a < b) ? a : b;
-		}
-
-		static float max( float a, float b )
-		{
-			return (a > b) ? a : b;
-		}
-
-		static int min( int a, int b )
-		{
-			return (a < b) ? a : b;
-		}
-
-		static int max( int a, int b )
-		{
-			return (a > b) ? a : b;
-		}
 		
 		///returns a vector which components are the component-wise max of a and b
 		static Vector max( const Vector& a, const Vector& b ) 
 		{
-			return Vector( max( a.x,b.x ), max( a.y,b.y ), max( a.z, b.z ) );
+			return{ std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z) };
 		}
 		
 		///returns a vector which components are the component-wise min of a and b
 		static Vector min( const Vector& a, const Vector& b )
 		{
-			return Vector( min( a.x,b.x ), min( a.y,b.y ), min( a.z, b.z ) );
+			return{ std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z) };
 		}
 
 		///clamps n between max and min
-		static float clamp( float n, float max, float min )
+		template<typename T>
+		static T clamp( T n, T max, T min )
 		{
 			DEBUG_ASSERT( max >= min, "clamp: max must be >= than min" );
 			
-			if( n > max )	return max;
-			if( n < min )	return min;
-			return n;
+			return std::min(max, std::max(min, n));
 		}
 		
 		static Vector clamp(const Vector& val, const Vector& max, const Vector& min)
@@ -144,7 +123,7 @@ namespace Dojo
 		///clamps in [0..1[
 		static float saturate( float n )
 		{
-			return clamp( n, 1, 0 );
+			return clamp( n, 1.f, 0.f );
 		}
 
 		///returns the smallest power of two greater than val

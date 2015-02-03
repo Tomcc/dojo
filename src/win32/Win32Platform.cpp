@@ -541,8 +541,8 @@ void Win32Platform::initialize( Game* g )
 
 	config.inherit( &userConfig ); //use the table that was loaded from file but override any config-passed members
 
-	int w = Math::min( screenWidth, game->getNativeWidth() );
-	int h = Math::min( screenHeight, game->getNativeHeight() );
+	int w = std::min( screenWidth, game->getNativeWidth() );
+	int h = std::min(screenHeight, game->getNativeHeight());
 
 	Vector windowSize = config.getVector("windowSize", Vector( (float)w, (float)h ) );
 	windowWidth = (int)windowSize.x;
