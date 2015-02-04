@@ -190,6 +190,13 @@ namespace Dojo {
 
 		struct AABB {
 			Vector min, max;
+
+			AABB grow(float s) const {
+				return{
+					min - s,
+					max + s
+				};
+			}
 		};
 		AABB transformAABB(const Vector& min, const Vector& max) const;
 

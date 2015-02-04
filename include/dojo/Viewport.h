@@ -130,7 +130,9 @@ namespace Dojo
 
 		bool isVisible( Renderable& s );
 
-		bool isInViewRect( const Renderable& r ) const;
+		bool isInViewRect(const Renderable& r) const;
+		bool isInViewRect(const AABB& pos) const;
+		bool isInViewRect(const Vector& pos) const;
 		
 		///returns the world position of the given screenPoint
 		Vector makeWorldCoordinates( const Vector& screenPoint )

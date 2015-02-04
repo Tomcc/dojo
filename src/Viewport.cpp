@@ -245,9 +245,15 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const
 }
 
 bool Viewport::isInViewRect(const Renderable& r) const {
-	auto& bb = r.getGraphicsAABB();
+	return isInViewRect(r.getGraphicsAABB());
+}
 
+bool Viewport::isInViewRect(const AABB& bb) const {
 	return Math::AABBsCollide2D(worldBB.max, worldBB.min, bb.max, bb.min);
+}
+
+bool Viewport::isInViewRect(const Vector& pos) const {
+	return Math::AABBContains2D(worldBB.max, worldBB.min, pos);
 }
 
 void Viewport::onAction(float dt)
