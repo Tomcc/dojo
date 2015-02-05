@@ -30,6 +30,7 @@
     <ClInclude Include="include\dojo\InputDevice.h" />
     <ClInclude Include="include\dojo\InputDeviceListener.h" />
     <ClInclude Include="include\dojo\InputSystemListener.h" />
+    <ClInclude Include="include\dojo\IteratedNoise.h" />
     <ClInclude Include="include\dojo\Keyboard.h" />
     <ClInclude Include="include\dojo\KeyCode.h" />
     <ClInclude Include="include\dojo\Log.h" />
@@ -97,6 +98,7 @@
     <ClCompile Include="include\dojo\File.cpp" />
     <ClCompile Include="include\dojo\FileStream.cpp" />
     <ClCompile Include="include\dojo\InputSystemListener.cpp" />
+    <ClCompile Include="include\dojo\IteratedNoise.cpp" />
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
