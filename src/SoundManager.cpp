@@ -40,7 +40,8 @@ currentFadeTime(0)
 	// Initialization
 	device = alcOpenDevice(NULL); // select the "preferred device"
 	
-	DEBUG_ASSERT( device, "Cannot open an OpenAL device" );
+	if (!device)
+		return; //running without audio :(
 
 	context = alcCreateContext(device,NULL);
 		
@@ -104,7 +105,8 @@ SoundManager::~SoundManager()
 
 	SAFE_DELETE( fakeSource );
 
-	alcCloseDevice( device );
+	if (device)
+		alcCloseDevice( device );
 }
 
 SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )

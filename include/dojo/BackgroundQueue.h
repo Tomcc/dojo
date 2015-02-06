@@ -97,7 +97,7 @@ namespace Dojo
 		bool _waitForTaskOrClose( TaskCallbackPair& out )
 		{
 			if( mRunning ) //fetch a new task from the queue
-				return mQueue->tryPop(out);
+				return mQueue->try_enqueue(out);
 
 			else return false;
 		}

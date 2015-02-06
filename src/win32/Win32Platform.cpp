@@ -593,7 +593,7 @@ void Win32Platform::prepareThreadContext()
 
 	ContextShareRequest req;
 
-	mContextRequestsQueue->queue( &req );
+	mContextRequestsQueue->enqueue( &req );
 			
 	//wait for the request
 	while (!req.done)
@@ -666,7 +666,7 @@ void Win32Platform::step( float dt )
 
 	//check if some other thread requested a new context
 	ContextShareRequest* req;
-	while (mContextRequestsQueue->tryPop(req))
+	while (mContextRequestsQueue->try_dequeue(req))
 	{
 		req->contextHandle = wglCreateContext(hdc); 
 		
