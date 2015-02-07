@@ -32,7 +32,7 @@ void BackgroundQueue::queueTask( const Task& task, const Callback& callback )
         callback();
     }
     else
-		mQueue->enqueue(TaskCallbackPair(task, callback));
+		mQueue->enqueue(task, callback);
 }
 
 void BackgroundQueue::queueOnMainThread( const Callback& c )
@@ -40,7 +40,7 @@ void BackgroundQueue::queueOnMainThread( const Callback& c )
 	if( std::this_thread::get_id() == mMainThreadID ) //is this already the main thread? just execute
 		c();
 	else
-		mCompletedQueue->enqueue(c);
+		mCompletedQueue->enqueue(c);	
 }
 
 void BackgroundQueue::fireCompletedCallbacks()

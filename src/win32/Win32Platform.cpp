@@ -590,7 +590,6 @@ void Win32Platform::initialize( Game* g )
 
 void Win32Platform::prepareThreadContext()
 {
-
 	ContextShareRequest req;
 
 	mContextRequestsQueue->enqueue( &req );

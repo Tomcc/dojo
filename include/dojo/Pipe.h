@@ -156,16 +156,16 @@ namespace Dojo {
 		// Enqueues a moved copy of element if there is room in the queue.
 		// Returns true if the element was enqueued, false otherwise.
 		// Does not allocate memory.
-		AE_FORCEINLINE bool try_enqueue(T&& element)
+		template <class... Args>
+		AE_FORCEINLINE bool try_enqueue(Args&&... args)
 		{
-			return inner_enqueue<CannotAlloc>(std::forward<T>(element));
+			return inner_enqueue<CannotAlloc>(std::forward<Args>(args)...);
 		}
-
 
 		// Enqueues a copy of element on the queue.
 		// Allocates an additional block of memory if needed.
 		// Only fails (returns false) if memory allocation fails.
-		AE_FORCEINLINE bool enqueue(T const& element)
+		AE_FORCEINLINE bool enqueue_copy(T const& element)
 		{
 			return inner_enqueue<CanAlloc>(element);
 		}
@@ -173,9 +173,11 @@ namespace Dojo {
 		// Enqueues a moved copy of element on the queue.
 		// Allocates an additional block of memory if needed.
 		// Only fails (returns false) if memory allocation fails.
-		AE_FORCEINLINE bool enqueue(T&& element)
+
+		template <class... Args>
+		AE_FORCEINLINE bool enqueue(Args&&... args)
 		{
-			return inner_enqueue<CanAlloc>(std::forward<T>(element));
+			return inner_enqueue<CanAlloc>(std::forward<Args>(args)...);
 		}
 
 
@@ -410,8 +412,8 @@ namespace Dojo {
 	private:
 		enum AllocationMode { CanAlloc, CannotAlloc };
 
-		template<AllocationMode canAlloc, typename U>
-		bool inner_enqueue(U&& element)
+		template<AllocationMode canAlloc, class... Args>
+		bool inner_enqueue(Args&&... args)
 		{
 #ifndef NDEBUG
 			ReentrantGuard guard(this->enqueuing);
@@ -433,7 +435,7 @@ namespace Dojo {
 				fence(memory_order_acquire);
 				// This block has room for at least one more element
 				char* location = tailBlock_->data + blockTail * sizeof(T);
-				new (location)T(std::forward<U>(element));
+				new (location)T(std::forward<Args>(args)...);
 
 				fence(memory_order_release);
 				tailBlock_->tail = nextBlockTail;
@@ -460,7 +462,7 @@ namespace Dojo {
 					tailBlockNext->localFront = nextBlockFront;
 
 					char* location = tailBlockNext->data + nextBlockTail * sizeof(T);
-					new (location)T(std::forward<U>(element));
+					new (location)T(std::forward<Args>(args)...);
 
 					tailBlockNext->tail = (nextBlockTail + 1) & tailBlockNext->sizeMask;
 
@@ -477,7 +479,7 @@ namespace Dojo {
 					}
 					largestBlockSize = newBlockSize;
 
-					new (newBlock->data) T(std::forward<U>(element));
+					new (newBlock->data) T(std::forward<Args>(args)...);
 
 					assert(newBlock->front == 0);
 					newBlock->tail = newBlock->localTail = 1;
