@@ -37,8 +37,7 @@ namespace Dojo {
 		
 		typedef SmallSet< Unique<Object> > ChildList;
 		
-		bool dispose,
-			inheritScale;
+		bool inheritScale;
 		
 		Vector position, speed, scale;
 		
@@ -188,6 +187,10 @@ namespace Dojo {
 		
 		virtual void onAction( float dt );
 
+		virtual void dispose() {
+			disposed = true;
+		}
+
 		struct AABB {
 			Vector min, max;
 
@@ -200,11 +203,6 @@ namespace Dojo {
 		};
 		AABB transformAABB(const Vector& min, const Vector& max) const;
 
-		void _notifyParent( Object* p )
-		{
-			parent = p;
-		}
-				
 	protected:		
 		
 		GameState* gameState;
@@ -216,6 +214,7 @@ namespace Dojo {
 		Matrix mWorldTransform;
 				
 		bool active;
+		bool disposed;
 
 		Object* parent;
 		ChildList childs;

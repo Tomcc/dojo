@@ -17,7 +17,7 @@ speed(0,0,0),
 active( true ),
 scale( 1,1,1 ),
 parent( nullptr ),
-dispose( false ),
+disposed( false ),
 inheritScale( true )
 {
 	setSize( bbSize );
@@ -31,8 +31,9 @@ Object::~Object()
 Object& Object::_addChild( Unique<Object> o )
 {    
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
+	DEBUG_ASSERT(!childs.contains(o), "Element already in the vector!");
 
-	o->_notifyParent(this);
+	o->parent = this;
 
 	auto ptr = o.get();
 
@@ -50,7 +51,7 @@ Renderable& Object::_addChild( Unique<Renderable> o, int layer )
 
 void Object::_unregisterChild( Object& child )
 {
-	child._notifyParent( NULL );
+	child.parent = nullptr;
 	
     if( child.isRenderable() )
         Platform::singleton().getRenderer().removeRenderable( (Renderable&)child ); //if existing	
@@ -76,11 +77,11 @@ Unique<Object> Object::removeChild( Object& o )
 void Object::collectChilds()
 {
 	for (size_t i = 0; i < childs.size(); ++i) {
-		if (childs[i]->dispose) {
+		if (childs[i]->disposed) {
 			_unregisterChild(*childs[i]);
 			childs.erase(childs[i]);
 
-			--i;
+			i = 0; //a destructor might dispose of other children...
 		}
 	}
 }
@@ -190,7 +191,10 @@ void Object::updateChilds( float dt )
 {
 	if (childs.size() > 0) {
 
-		for (size_t i = 0; i < childs.size(); ++i) {
+		//WARNING: do not use a ranged for loop in this one!
+		//a child might remove any other child from the array 
+		//so we need to always check with the updated size
+		for (size_t i = 0; i < childs.size(); ++i) { 
 			if (childs[i]->isActive())
 				childs[i]->onAction(dt);
 		}

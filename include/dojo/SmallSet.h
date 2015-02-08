@@ -7,11 +7,29 @@ namespace Dojo {
 	template< class T >
 	class SmallSet
 	{
+
 	public:
 
 		typedef std::vector<T> Container;
 		typedef typename Container::iterator iterator;
 		typedef typename Container::const_iterator const_iterator;
+
+		template< class E >
+		static typename std::vector<E>::const_iterator find(const SmallSet<E>& c, const E& elem) {
+			auto itr = c.begin();
+			for (; itr != c.end(); ++itr) {
+				if (*itr == elem)
+					return itr;
+			}
+			return c.end();
+		}
+
+		template< class E >
+		static typename std::vector< std::unique_ptr<E> >::const_iterator find(const SmallSet< std::unique_ptr<E> >& c, const E& elem) {
+			auto itr = c.begin();
+			for (; itr != c.end() && itr->get() != &elem; ++itr);
+			return itr;
+		}
 
 		template< class E >
 		static typename std::vector<E>::iterator find(SmallSet<E>& c, const E& elem) {
@@ -35,12 +53,16 @@ namespace Dojo {
 
 		}
 
+		const_iterator find(const T& elem) const {
+			return std::find(c.begin(), c.end(), elem);
+		}
+
 		iterator find(const T& elem) {
-			return find<T>(*this, elem);
+			return std::find(c.begin(), c.end(), elem);
 		}
 
 		bool contains(const T& elem) const {
-			return find(elem) == c.end();
+			return find(elem) != c.end();
 		}
 
 		template <class... Args>
@@ -48,19 +70,15 @@ namespace Dojo {
 			c.emplace_back(std::forward<Args>(args)...);
 		}
 
-		iterator erase(const iterator& where) {
-			*where = std::move(c.back());
+		void erase(const const_iterator& where) {
+			((T&)*where) = std::move(c.back());
 			c.pop_back();
-
-			return where; //continue exactly where we were
 		}
 
-		iterator erase(const T& elem) {
+		void erase(const T& elem) {
 			auto itr = find(elem);
-			if (itr != end())
-				return erase(itr);
-			else
-				return end();
+			if (itr != c.end())
+				erase(itr);
 		}
 
 		T& operator[](int idx) {
