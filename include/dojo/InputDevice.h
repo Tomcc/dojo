@@ -42,6 +42,7 @@ namespace Dojo
 
 		///Creates a new InputDevice of the given type, bound to the ID slot, supporting "buttonNumber" buttons and "axisNumber" axes
 		InputDevice( Type type, int ID, int buttonNumber, int axisNumber );
+		virtual ~InputDevice() {}
 
 		///returns if the given action is pressed
 		virtual bool isKeyDown( KeyCode key );

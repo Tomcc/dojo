@@ -11,6 +11,7 @@ namespace Dojo
 	public:
 
 		XInputController( int n );
+		virtual ~XInputController() {}
 
 		bool isConnected();
 

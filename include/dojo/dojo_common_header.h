@@ -115,3 +115,13 @@ using std::make_unique;
 #endif
 using std::make_shared;
 
+#ifdef _MSC_VER
+//enable additional pragmas on MSVC
+#pragma warning(3:4062) //incomplete switch
+#pragma warning(3:4265) //'class': class has virtual functions, but destructor is not virtual
+#pragma warning(3:4296) //expression is always false
+#pragma warning(3:4701) //use of uninitialized variable
+#pragma warning(3:4702) //unreachable code
+#endif
+
+

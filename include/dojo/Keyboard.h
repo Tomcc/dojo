@@ -30,6 +30,7 @@ namespace Dojo
 
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
 		Keyboard();
+		virtual ~Keyboard() {}
 
 		void addFakeAxis( Axis axis, KeyCode min, KeyCode max );
 

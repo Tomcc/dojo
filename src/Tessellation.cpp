@@ -3,15 +3,7 @@
 #include "Tessellation.h"
 #include "dojomath.h"
 #include "Timer.h"
-
-#undef REAL
-
-//the triangle library is included here
-extern "C"
-{
-	//credits and documentation from http://www.cs.cmu.edu/~quake/triangle.html
-	#include "triangle.c"
-};
+#include "triangle.h"
 
 using namespace Dojo;
 
