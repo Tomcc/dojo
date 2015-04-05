@@ -12,6 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
+#include "Radian.h"
 
 namespace Dojo 
 {
@@ -19,11 +20,9 @@ namespace Dojo
 	{	
 	public:
 		
-		static const float PI; ///well, pi
-		static const float TAU; ///2*pi
-		static const float EULER_TO_RADIANS;  ///magic number which multiplied to an euler value converts it to radians
-		static const float RADIANS_TO_EULER;  ///magic number which multiplied to a radian value converts it to euler
-		
+		static const Radian PI; ///well, pi
+		static const Radian TAU; ///2*pi
+
 		///returns if this machine is little endian
 		static bool isLittleEndian()
 		{
@@ -50,16 +49,6 @@ namespace Dojo
 
 		///returns a random unit vector in 2D
 		static Vector randomUnit2D();
-
-		static float toRadian( float euler )
-		{
-			return euler * EULER_TO_RADIANS;
-		}
-		
-		static float toEuler( float radian )
-		{
-			return radian * RADIANS_TO_EULER;
-		}
 		
 		static float sign( float f )
 		{
@@ -207,6 +196,9 @@ namespace Dojo
 			return (n >> i) | (n << (8 - i));
 		}
 
+		static Radian atan2(float y, float x) {
+			return Radian(::atan2f(y, x));
+		}
 	};
 }
 

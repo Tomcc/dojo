@@ -17,6 +17,7 @@
 #include "Color.h"
 #include "Renderable.h"
 #include "Platform.h"
+#include "Radian.h"
 
 namespace Dojo 
 {	
@@ -44,14 +45,14 @@ namespace Dojo
 			const Vector& pos,
 			const Vector& size, 
 			const Color& clear, 
-			float _VFOV = 0, 
-			float _zNear = 0,
-			float _zFar = 100 );
+			EulerAngle VFOV = (EulerAngle)0, 
+			float zNear = 0,
+			float zFar = 100 );
 		
 		virtual ~Viewport();
 
 		///enable this viewport for frustum culling, setting the frustum values
-		void enableFrustum( float VFOV, float zNear, float zFar );
+		void enableFrustum( EulerAngle VFOV, float zNear, float zFar );
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
 		void addFader( int layer );
@@ -59,7 +60,7 @@ namespace Dojo
 		///orients the camera to look at a given 3D point
 		void lookAt( const Vector& worldPos );
 				
-		void setClearColor( const Color& color)	{	clearColor = color;	}
+		void setClearColor( const Color& color)	{	mClearColor = color;	}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
 		void setRenderTarget( Texture* target );
@@ -84,25 +85,25 @@ namespace Dojo
 		all the rendering is then scaled to have the virtual rendering area fit inside the real rendering area.
 		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
 		*/
-		void setTargetSize( const Vector& size )		{ targetSize = size; }
+		void setTargetSize( const Vector& size )		{ mTargetSize = size; }
 		
-		const Color& getClearColor()				{	return clearColor;	}
-		Renderable* getFader()					{	return faderObject;	}
-		float getVFOV()							{	return VFOV;		}
-		float getZFar()							{	return zFar;		}
-		float getZNear()							{	return zNear;		}
-		const Vector* getWorldFrustumVertices()	{	return worldFrustumVertices;	}
-		const Vector* getLocalFrustumVertices()	{	return localFrustumVertices;	}
-		const Vector& getTargetSize()			{   return targetSize;  }
+		const Color& getClearColor()				{	return mClearColor;	}
+		Renderable* getFader()					{	return mFaderObject;	}
+		EulerAngle getVFOV() const							{	return mVFOV;		}
+		float getZFar()							{	return mZFar;		}
+		float getZNear()							{	return mZNear;		}
+		const Vector* getWorldFrustumVertices()	{	return mWorldFrustumVertices;	}
+		const Vector* getLocalFrustumVertices()	{	return mLocalFrustumVertices;	}
+		const Vector& getTargetSize()			{   return mTargetSize;  }
 		const Matrix& getViewTransform()			{	return mViewTransform;	}
-		const AABB& getGraphicsAABB() const	{ return worldBB; }
+		const AABB& getGraphicsAABB() const	{ return mWorldBB; }
 
 		void setClearEnabled(bool enabled) {
-			enableClear = enabled;
+			mEnableClear = enabled;
 		}
 
 		bool getClearEnabled() const {
-			return enableClear;
+			return mEnableClear;
 		}
 
 		///returns the Texture this Viewport draws to
@@ -146,8 +147,8 @@ namespace Dojo
 		///converts the w and h pixel sizes in a screen space size
 		void makeScreenSize( Vector& dest, int w, int h )
 		{	
-			dest.x = ((float)w/targetSize.x) * size.x;// * nativeToScreenRatio;
-			dest.y = ((float)h/targetSize.y) * size.y;// * nativeToScreenRatio;
+			dest.x = ((float)w/mTargetSize.x) * size.x;// * nativeToScreenRatio;
+			dest.y = ((float)h/mTargetSize.y) * size.y;// * nativeToScreenRatio;
 		}
 		
 		///converts the texture pixel sizes in a screen space size
@@ -155,7 +156,7 @@ namespace Dojo
 		
 		float getPixelSide() const
 		{
-			return size.x / targetSize.x;
+			return size.x / mTargetSize.x;
 		}
         
         void setEyeTransform( const Matrix& t )
@@ -167,30 +168,31 @@ namespace Dojo
 				
 	protected:
 		
-		Vector targetSize;
+		Vector mTargetSize;
 
-		bool enableClear = true, frustumDirty = true;
+		bool mEnableClear = true, mFrustumDirty = true;
 
-		Matrix lastWorldTransform;
+		Matrix mLastWorldTransform;
 		
-		Renderable* faderObject = nullptr;
+		Renderable* mFaderObject = nullptr;
 				
-		Color clearColor;
+		Color mClearColor;
         
         Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
 		
-		Vector localFrustumVertices[4];
-		Vector worldFrustumVertices[4];
+		Vector mLocalFrustumVertices[4];
+		Vector mWorldFrustumVertices[4];
 
-		Plane worldFrustumPlanes[5];
+		Plane mWorldFrustumPlanes[5];
 
-		float VFOV, zNear, zFar;
-		Vector farPlaneSide;
+		EulerAngle mVFOV;
+		float mZNear, mZFar;
+		Vector mFarPlaneSide;
 
 		LayerList mLayerList;
 		Texture* mRT;
 
-		AABB worldBB;
+		AABB mWorldBB;
 
 		void _updateFrustum();
         void _updateTransforms();

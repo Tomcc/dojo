@@ -75,19 +75,21 @@ namespace Dojo {
 			rotation = quat;
 		}
 
-		///sets the rotation around the Z axis (2D rotation) for this object
-		void setRoll(float r);
+		///sets the full orientation using a vector made of radians around x,y,z
+		void setRotation(EulerAngle yaw, EulerAngle pitch, EulerAngle roll)
+		{
+			setRotation(Quaternion(Vector( yaw, pitch, roll )));
+		}
 
-		///rotates (in euler angles) the object starting from the current orientation around the given axis
-		void rotate( float r, const Vector& axis = Vector::UNIT_Z )
+		///sets the rotation around the Z axis (2D rotation) for this object
+		void setRoll(EulerAngle r) {
+			setRotation(EulerAngle(0.f), EulerAngle(0.f), r);
+		}
+
+		///rotates the object starting from the current orientation around the given axis
+		void rotate( EulerAngle r, const Vector& axis = Vector::UNIT_Z )
 		{
 			rotation = glm::rotate( rotation, r, axis );
-		}
-		
-		///sets the full orientation using a vector made of radians around x,y,z
-		void setRotation( const Vector& eulerAngles )
-		{
-			setRotation( Quaternion( eulerAngles ) );
 		}
 				
 		void setActive( bool a )		{	active = a;	}
@@ -126,7 +128,7 @@ namespace Dojo {
 		}
 
 		///returns the euclidean "roll" angle, or rotation around Z
-		float getRoll() const;
+		Radian getRoll() const;
 						
 		bool isActive()				{	return active;	}
 		

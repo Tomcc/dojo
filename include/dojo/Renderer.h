@@ -111,7 +111,7 @@ namespace Dojo {
 		// The pixel dimensions of the target system view
 		int width, height;
 		
-		float renderRotation;
+		Radian renderRotation = Radian(0.f);
 		Orientation renderOrientation, deviceOrientation;
 
 		ViewportList viewportList;

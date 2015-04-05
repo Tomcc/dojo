@@ -19,22 +19,22 @@ Viewport::Viewport(
 		 const Vector& pos,
 		 const Vector& size, 
 		 const Color& clear, 
-		 float _VFOV, 
-		 float _zNear,
-		 float _zFar ) :
+		 EulerAngle VFOV, 
+		 float zNear,
+		 float zFar ) :
 Object( parent, pos, size ),
-clearColor( clear ),
-VFOV( 0 ),
-zNear( 0 ),
-zFar( 1000 ),
+mClearColor( clear ),
+mVFOV( 0 ),
+mZNear( 0 ),
+mZFar( 1000 ),
 mRT( nullptr )
 {
 	//default size is window size
-	targetSize.x = (float)Platform::singleton().getWindowWidth();
-	targetSize.y = (float)Platform::singleton().getWindowHeight();
+	mTargetSize.x = (float)Platform::singleton().getWindowWidth();
+	mTargetSize.y = (float)Platform::singleton().getWindowHeight();
 	
-	if( _VFOV > 0 )
-		enableFrustum( _VFOV, _zNear, _zFar );
+	if( VFOV > 0.f )
+		enableFrustum( VFOV, zNear, zFar );
 }
 
 
@@ -46,8 +46,8 @@ Viewport::~Viewport()
 Vector Viewport::makeWorldCoordinates(int x, int y)
 {
 	return Vector(
-		worldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
-		worldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
+		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
 bool Viewport::isVisible(Renderable& s) {
@@ -56,7 +56,7 @@ bool Viewport::isVisible(Renderable& s) {
 
 void Viewport::addFader( int layer )
 {
-	DEBUG_ASSERT( !faderObject, "A fade overlay object already exists" );
+	DEBUG_ASSERT( !mFaderObject, "A fade overlay object already exists" );
 
 	//create the fader object			
 	auto r = make_unique<Renderable>( getGameState(), Vector( 0,0, -1), "texturedQuad" );
@@ -67,7 +67,7 @@ void Viewport::addFader( int layer )
 
 	r->setVisible( false );
 
-	faderObject = &addChild( std::move(r), layer );
+	mFaderObject = &addChild( std::move(r), layer );
 }
 
 void Viewport::setRenderTarget(Texture *target)
@@ -84,45 +84,46 @@ void Viewport::lookAt(  const Vector& worldPos )
 	setRotation( glm::quat_cast( glm::lookAt( getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y ) ) ); //HACK why negative does work? Up is +Y
 }
 
-void Viewport::enableFrustum( float _VFOV, float _zNear, float _zFar )
+void Viewport::enableFrustum( EulerAngle VFOV, float zNear, float zFar )
 {
 	//assert some reasonable values
-	DEBUG_ASSERT( _zNear > 0, "Z near value cannot be negative or 0" );
-	DEBUG_ASSERT( _zNear < _zFar, "Z far cannot be less than Z near" );
-	DEBUG_ASSERT( _VFOV > 0 && _VFOV < 180, "Vertical FOV has to be in the range ]0..180[" );
+	DEBUG_ASSERT( zNear > 0, "Z near value cannot be negative or 0" );
+	DEBUG_ASSERT( zNear < zFar, "Z far cannot be less than Z near" );
+	DEBUG_ASSERT( VFOV > 0 && VFOV < 180, "Vertical FOV has to be in the range ]0..180[" );
 
-	VFOV = _VFOV;
-	zNear = _zNear;
-	zFar = _zFar;
+	mVFOV = VFOV;
+	mZNear = zNear;
+	mZFar = zFar;
 
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right, z is negative because OpenGL is right-handed
-	farPlaneSide.z = -zFar;
-	farPlaneSide.y = zFar * tan( Math::toRadian( VFOV*0.5f ) );
-	farPlaneSide.x = ((float)targetSize.x/(float)targetSize.y) * farPlaneSide.y;
+	mFarPlaneSide.z = -zFar;
+	mFarPlaneSide.y = zFar * tanf( (Radian)VFOV*0.5f );
+	mFarPlaneSide.x = ((float)mTargetSize.x/(float)mTargetSize.y) * mFarPlaneSide.y;
 
-	localFrustumVertices[0] = Vector( farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
-	localFrustumVertices[1] = Vector( -farPlaneSide.x, farPlaneSide.y, farPlaneSide.z );
-	localFrustumVertices[2] = Vector( -farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
-	localFrustumVertices[3] = Vector( farPlaneSide.x, -farPlaneSide.y, farPlaneSide.z );
+	mLocalFrustumVertices[0] = Vector( mFarPlaneSide.x, mFarPlaneSide.y, mFarPlaneSide.z );
+	mLocalFrustumVertices[1] = Vector( -mFarPlaneSide.x, mFarPlaneSide.y, mFarPlaneSide.z );
+	mLocalFrustumVertices[2] = Vector( -mFarPlaneSide.x, -mFarPlaneSide.y, mFarPlaneSide.z );
+	mLocalFrustumVertices[3] = Vector( mFarPlaneSide.x, -mFarPlaneSide.y, mFarPlaneSide.z );
 
-	frustumDirty = true;
+	mFrustumDirty = true;
 }
 
 void Viewport::_updateFrustum()
 {
-	if (frustumDirty) {
+	if (mFrustumDirty) {
 		//compute frustum projection
 		mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
-			VFOV, targetSize.x / targetSize.y,
-			zNear,
-			zFar);
+			(float)mVFOV, 
+			mTargetSize.x / mTargetSize.y,
+			mZNear,
+			mZFar);
 
 		if (getRenderTarget()) //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
 		
 		for (int i = 0; i < 4; ++i)
-			worldFrustumVertices[i] = getWorldPosition(localFrustumVertices[i]);
+			mWorldFrustumVertices[i] = getWorldPosition(mLocalFrustumVertices[i]);
 
 		Vector worldPosition = getWorldPosition();
 
@@ -130,12 +131,12 @@ void Viewport::_updateFrustum()
 		{
 			int i2 = (i + 1) % 4;
 
-			worldFrustumPlanes[i].setup(worldPosition, worldFrustumVertices[i2], worldFrustumVertices[i]);
+			mWorldFrustumPlanes[i].setup(worldPosition, mWorldFrustumVertices[i2], mWorldFrustumVertices[i]);
 		}
 		//far plane
-		worldFrustumPlanes[4].setup(worldFrustumVertices[2], worldFrustumVertices[1], worldFrustumVertices[0]);
+		mWorldFrustumPlanes[4].setup(mWorldFrustumVertices[2], mWorldFrustumVertices[1], mWorldFrustumVertices[0]);
 
-		frustumDirty = false;
+		mFrustumDirty = false;
 	}
 }
 
@@ -143,7 +144,7 @@ void Viewport::_updateTransforms()
 {
 	updateWorldTransform();
 
-	if (lastWorldTransform != mWorldTransform) {
+	if (mLastWorldTransform != mWorldTransform) {
 		mViewTransform = glm::inverse(mWorldTransform);
 
 		//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
@@ -156,15 +157,15 @@ void Viewport::_updateTransforms()
 				-getHalfSize().y,
 				getHalfSize().y,
 				0.f,  //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
-				zFar);
+				mZFar);
 
 			if (getRenderTarget()) //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;
 		}
 
-		frustumDirty = true;
+		mFrustumDirty = true;
 
-		lastWorldTransform = mWorldTransform;
+		mLastWorldTransform = mWorldTransform;
 	}
 
 }
@@ -175,13 +176,13 @@ Vector Viewport::getScreenPosition( const Vector& pos )
 	Vector local = getLocalPosition( pos );
 
 	//project local on the local far plane
-	float f = (zFar/local.z);
+	float f = (mZFar/local.z);
 	local.x *= f;
 	local.y *= f;
 
 	//bring in screen space
-	local.x = -(local.x / farPlaneSide.x) * halfSize.x;
-	local.y = (local.y / farPlaneSide.y) * halfSize.y;
+	local.x = -(local.x / mFarPlaneSide.x) * halfSize.x;
+	local.y = (local.y / mFarPlaneSide.y) * halfSize.y;
 
 	return local;
 }
@@ -196,8 +197,8 @@ Vector Viewport::getRayDirection( const Vector& screenSpacePos )
 	float yf = screenSpacePos.y / (float) Platform::singleton().getScreenHeight();
 	
 	//find points on each side of the frustum
-	Vector a = worldFrustumVertices[0].lerpTo( xf, worldFrustumVertices[1] );
-	Vector b = worldFrustumVertices[3].lerpTo( xf, worldFrustumVertices[2] );
+	Vector a = mWorldFrustumVertices[0].lerpTo( xf, mWorldFrustumVertices[1] );
+	Vector b = mWorldFrustumVertices[3].lerpTo( xf, mWorldFrustumVertices[2] );
 		
 	//now we can find the final far plane projection and the ray direction
 	a = a.lerpTo( yf, b );
@@ -234,7 +235,7 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const
 	//for each plane, check where the AABB is placed
 	for (int i = 0; i < 4; ++i)
 	{
-		if (worldFrustumPlanes[i].getSide(worldPos, halfSize) < 0)
+		if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0)
 		{
 			//DEBUG_MESSAGE( "CULED!!!!    " << i );
 			return false;
@@ -249,11 +250,11 @@ bool Viewport::isInViewRect(const Renderable& r) const {
 }
 
 bool Viewport::isInViewRect(const AABB& bb) const {
-	return Math::AABBsCollide2D(worldBB.max, worldBB.min, bb.max, bb.min);
+	return Math::AABBsCollide2D(mWorldBB.max, mWorldBB.min, bb.max, bb.min);
 }
 
 bool Viewport::isInViewRect(const Vector& pos) const {
-	return Math::AABBContains2D(worldBB.max, worldBB.min, pos);
+	return Math::AABBContains2D(mWorldBB.max, mWorldBB.min, pos);
 }
 
 void Viewport::onAction(float dt)
@@ -262,7 +263,7 @@ void Viewport::onAction(float dt)
 
 	_updateTransforms();
 
-	worldBB = transformAABB(-getHalfSize(), getHalfSize());
+	mWorldBB = transformAABB(-getHalfSize(), getHalfSize());
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)

@@ -136,12 +136,7 @@ void Object::reset() {
 	updateWorldTransform();
 }
 
-void Object::setRoll(float r) {
-	setRotation(Vector(0, 0, r));
-}
-
-
-Dojo::Vector Dojo::Object::getLocalPosition(const Vector& worldPos) const {
+Vector Object::getLocalPosition(const Vector& worldPos) const {
 	Matrix inv = glm::inverse(getWorldTransform()); //TODO make faster for gods' sake
 	glm::vec4 p(worldPos.x, worldPos.y, worldPos.z, 1);
 	p = inv * p;
@@ -162,8 +157,8 @@ Vector Object::getLocalDirection(const Vector& worldDir) {
 	return Vector::ZERO;
 }
 
-float Object::getRoll() const {
-	return glm::roll(rotation) * Math::EULER_TO_RADIANS;
+Radian Object::getRoll() const {
+	return (Radian)EulerAngle(glm::roll(rotation));
 }
 
 Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const

@@ -40,6 +40,7 @@
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
+    <ClInclude Include="include\dojo\Radian.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
     <ClInclude Include="include\dojo\win32\XInputController.h" />
+    <ClInclude Include="src\triangle.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -102,6 +104,7 @@
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
+    <ClCompile Include="include\dojo\Radian.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />

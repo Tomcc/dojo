@@ -166,12 +166,17 @@ void Renderer::setInterfaceOrientation( Orientation o )
 {	
 	renderOrientation = o;
 	
-	static float orientations[] = 	{ 0, 180, 90, -90 };
+	static const EulerAngle orientations[] = 	{ 
+		(EulerAngle)0, 
+		(EulerAngle)180,
+		(EulerAngle)90, 
+		(EulerAngle)-90 
+	};
 	
 	renderRotation = orientations[ (int)renderOrientation ] + orientations[ (int)deviceOrientation ];
 	
 	//compute matrix
-	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, Math::toRadian( renderRotation )  ) ) );
+	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, renderRotation ) ) );
 }
 
 void Renderer::renderElement( Viewport& viewport, Renderable& elem )

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "dojo_common_header.h"
+#include "Radian.h"
 
 using namespace std;
 
@@ -168,6 +169,11 @@ namespace Dojo
 			return distanceSquared( v ) < threshold*threshold;
 		}
 
+		///returns true if no element is NaN or inf
+		bool isValid() const {
+			return !std::isnan(x) && !std::isnan(y) && !std::isnan(z) && !std::isinf(x) && !std::isinf(y) && !std::isinf(z);
+		}
+
 		///returns true when all the components of the vector are 0
 		bool isZero() const
 		{
@@ -198,6 +204,11 @@ namespace Dojo
 
 		float* const data() const {
 			return (float* const)this;
+		}
+
+		///return a vector rotated around the Z axis
+		Vector roll(Radian axis) {
+
 		}
 
 		///refracts this vector on the plane with the given normal, where eta is the refraction indices ratio
