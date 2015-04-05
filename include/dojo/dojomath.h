@@ -50,28 +50,6 @@ namespace Dojo
 		///returns a random unit vector in 2D
 		static Vector randomUnit2D();
 		
-		static float sign( float f )
-		{
-			if( f > 0 )
-				return 1;
-			else if( f < 0 )
-				return -1;
-			else
-				return 0;
-		}
-		
-		///returns a vector which components are the component-wise max of a and b
-		static Vector max( const Vector& a, const Vector& b ) 
-		{
-			return{ std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z) };
-		}
-		
-		///returns a vector which components are the component-wise min of a and b
-		static Vector min( const Vector& a, const Vector& b )
-		{
-			return{ std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z) };
-		}
-
 		///clamps n between max and min
 		template<typename T>
 		static T clamp( T n, T max, T min )
@@ -81,15 +59,6 @@ namespace Dojo
 			return std::min(max, std::max(min, n));
 		}
 		
-		static Vector clamp(const Vector& val, const Vector& max, const Vector& min)
-		{
-			return Vector(
-				clamp(val.x, max.x, min.x),
-				clamp(val.y, max.y, min.y),
-				clamp(val.z, max.z, min.z));
-		}
-
-
 		///gets the nth bit in the mask i
 		static bool getBit( int i, byte n )
 		{
@@ -113,6 +82,16 @@ namespace Dojo
 		static float saturate( float n )
 		{
 			return clamp( n, 1.f, 0.f );
+		}
+
+		///returns the sign of val
+		static float sign(float val) {
+			if (val < 0)
+				return -1.f;
+			else if (val > 0)
+				return 1.f;
+			else
+				return 0;
 		}
 
 		///returns the smallest power of two greater than val

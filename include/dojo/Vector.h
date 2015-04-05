@@ -34,7 +34,24 @@ namespace Dojo
 		static const Vector NEGATIVE_UNIT_Z;
 		static const Vector ONE;
 		static const Vector MAX, MIN;
-		
+
+		///returns a vector which components are the component-wise max of a and b
+		static Vector max(const Vector& a, const Vector& b)
+		{
+			return{ std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z) };
+		}
+
+		///returns a vector which components are the component-wise min of a and b
+		static Vector min(const Vector& a, const Vector& b)
+		{
+			return{ std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z) };
+		}
+
+		static Vector clamp(const Vector& val, const Vector& max, const Vector& min)
+		{
+			return Vector::max(min, Vector::min(max, val));
+		}
+
 		///xyz are set to the same value, or 0
 		Vector( float f = 0 ) : glm::vec3(f)
 		{
@@ -206,11 +223,6 @@ namespace Dojo
 			return (float* const)this;
 		}
 
-		///return a vector rotated around the Z axis
-		Vector roll(Radians axis) {
-
-		}
-
 		///refracts this vector on the plane with the given normal, where eta is the refraction indices ratio
 		Vector refract( const Vector& n, float eta ) const
 		{
@@ -222,6 +234,13 @@ namespace Dojo
 				return 0;
 			else
 				return eta * i - (eta * N_dot_I + sqrtf(k)) * n;
+		}
+
+		///rolls the given vector around the Z axis
+		Vector roll(Radians a) const {
+			auto c = cosf(a);
+			auto s = sinf(a);
+			return{ x*c - y*s, x*s + y*c, z };
 		}
 
 	protected:

@@ -312,8 +312,8 @@ void TextArea::_prepare() {
 	
 	for( size_t i = 0; i < busyLayers.size(); ++i )
 	{
-		mLayersUpperBound = Math::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
-		mLayersLowerBound = Math::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
+		mLayersUpperBound = Vector::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
+		mLayersLowerBound = Vector::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
 	}
 
 	setSize( mLayersUpperBound - mLayersLowerBound );

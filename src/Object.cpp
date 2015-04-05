@@ -112,8 +112,8 @@ Object::AABB Object::transformAABB( const Vector& localMin, const Vector& localM
 		
 		vertex = getWorldPosition( vertex );
 		
-		bb.max = Math::max(bb.max, vertex);
-		bb.min = Math::min(bb.min, vertex);
+		bb.max = Vector::max(bb.max, vertex);
+		bb.min = Vector::min(bb.min, vertex);
 	}
 
 	return bb;

@@ -171,8 +171,8 @@ void Mesh::_prepareVertex(const Vector& v)
 
 	currentVertex = (byte*)vertices.data() + curSize;
 
-	min = Math::min(v, min);
-	max = Math::max(v, max);
+	min = Vector::min(v, min);
+	max = Vector::max(v, max);
 
 	++vertexCount;
 }
@@ -649,8 +649,8 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 			auto& v = c->getVertex(i);
 			v += translation;
 
-			c->max = Math::max(c->max, v);
-			c->min = Math::min(c->min, v);
+			c->max = Vector::max(c->max, v);
+			c->min = Vector::min(c->min, v);
 		}
 	}
 

@@ -12,8 +12,17 @@ namespace Dojo {
 			return T(mValue + rhs.mValue);
 		}
 
+		T& operator+=(const T& rhs) {
+			mValue += rhs.mValue;
+			return (T&)*this;
+		}
+
 		operator BASE() const {
 			return mValue;
+		}
+
+		T operator -() const {
+			return T(-mValue);
 		}
 
 	protected:
