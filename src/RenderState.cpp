@@ -32,7 +32,7 @@ void RenderState::TextureUnit::_updateTransform() {
 	//build the transform
 	*optTransform = glm::scale(Matrix(1), scale);
 	*optTransform = glm::translate(*optTransform, offset);
-	*optTransform = glm::rotate(*optTransform, (float)(EulerAngle)rotation, Vector::UNIT_Z);
+	*optTransform = glm::rotate(*optTransform, (float)(Degrees)rotation, Vector::UNIT_Z);
 }
 
 void RenderState::TextureUnit::applyTransform() {

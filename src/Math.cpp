@@ -5,8 +5,8 @@
 
 using namespace Dojo;
 
-const Radian Math::PI(3.14159265f);
-const Radian Math::TAU(6.2831853071796f);
+const Radians Math::PI(3.14159265f);
+const Radians Math::TAU(6.2831853071796f);
 
 static Random randomImpl;
 

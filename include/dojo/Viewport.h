@@ -17,7 +17,7 @@
 #include "Color.h"
 #include "Renderable.h"
 #include "Platform.h"
-#include "Radian.h"
+#include "Radians.h"
 
 namespace Dojo 
 {	
@@ -45,14 +45,14 @@ namespace Dojo
 			const Vector& pos,
 			const Vector& size, 
 			const Color& clear, 
-			EulerAngle VFOV = (EulerAngle)0, 
+			Degrees VFOV = (Degrees)0, 
 			float zNear = 0,
 			float zFar = 100 );
 		
 		virtual ~Viewport();
 
 		///enable this viewport for frustum culling, setting the frustum values
-		void enableFrustum( EulerAngle VFOV, float zNear, float zFar );
+		void enableFrustum( Degrees VFOV, float zNear, float zFar );
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
 		void addFader( int layer );
@@ -89,7 +89,7 @@ namespace Dojo
 		
 		const Color& getClearColor()				{	return mClearColor;	}
 		Renderable* getFader()					{	return mFaderObject;	}
-		EulerAngle getVFOV() const							{	return mVFOV;		}
+		Degrees getVFOV() const							{	return mVFOV;		}
 		float getZFar()							{	return mZFar;		}
 		float getZNear()							{	return mZNear;		}
 		const Vector* getWorldFrustumVertices()	{	return mWorldFrustumVertices;	}
@@ -185,7 +185,7 @@ namespace Dojo
 
 		Plane mWorldFrustumPlanes[5];
 
-		EulerAngle mVFOV;
+		Degrees mVFOV;
 		float mZNear, mZFar;
 		Vector mFarPlaneSide;
 

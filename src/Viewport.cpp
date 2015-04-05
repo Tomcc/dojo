@@ -19,7 +19,7 @@ Viewport::Viewport(
 		 const Vector& pos,
 		 const Vector& size, 
 		 const Color& clear, 
-		 EulerAngle VFOV, 
+		 Degrees VFOV, 
 		 float zNear,
 		 float zFar ) :
 Object( parent, pos, size ),
@@ -84,7 +84,7 @@ void Viewport::lookAt(  const Vector& worldPos )
 	setRotation( glm::quat_cast( glm::lookAt( getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y ) ) ); //HACK why negative does work? Up is +Y
 }
 
-void Viewport::enableFrustum( EulerAngle VFOV, float zNear, float zFar )
+void Viewport::enableFrustum( Degrees VFOV, float zNear, float zFar )
 {
 	//assert some reasonable values
 	DEBUG_ASSERT( zNear > 0, "Z near value cannot be negative or 0" );
@@ -98,7 +98,7 @@ void Viewport::enableFrustum( EulerAngle VFOV, float zNear, float zFar )
 	//compute local frustum vertices
 	//order is - top left, bottom left, bottom right, top right, z is negative because OpenGL is right-handed
 	mFarPlaneSide.z = -zFar;
-	mFarPlaneSide.y = zFar * tanf( (Radian)VFOV*0.5f );
+	mFarPlaneSide.y = zFar * tanf( ((Radians)VFOV)*0.5f );
 	mFarPlaneSide.x = ((float)mTargetSize.x/(float)mTargetSize.y) * mFarPlaneSide.y;
 
 	mLocalFrustumVertices[0] = Vector( mFarPlaneSide.x, mFarPlaneSide.y, mFarPlaneSide.z );

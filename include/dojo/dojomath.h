@@ -12,7 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Radian.h"
+#include "Radians.h"
 
 namespace Dojo 
 {
@@ -20,8 +20,8 @@ namespace Dojo
 	{	
 	public:
 		
-		static const Radian PI; ///well, pi
-		static const Radian TAU; ///2*pi
+		static const Radians PI; ///well, pi
+		static const Radians TAU; ///2*pi
 
 		///returns if this machine is little endian
 		static bool isLittleEndian()
@@ -196,8 +196,8 @@ namespace Dojo
 			return (n >> i) | (n << (8 - i));
 		}
 
-		static Radian atan2(float y, float x) {
-			return Radian(::atan2f(y, x));
+		static Radians atan2(float y, float x) {
+			return Radians(::atan2f(y, x));
 		}
 	};
 }

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "dojo_common_header.h"
-#include "Radian.h"
+#include "Radians.h"
 
 using namespace std;
 
@@ -207,7 +207,7 @@ namespace Dojo
 		}
 
 		///return a vector rotated around the Z axis
-		Vector roll(Radian axis) {
+		Vector roll(Radians axis) {
 
 		}
 

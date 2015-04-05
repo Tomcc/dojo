@@ -40,7 +40,7 @@
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
-    <ClInclude Include="include\dojo\Radian.h" />
+    <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
@@ -104,7 +104,6 @@
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
-    <ClCompile Include="include\dojo\Radian.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
@@ -126,6 +125,7 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Platform.cpp" />
     <ClCompile Include="src\PolyTextArea.cpp" />
+    <ClCompile Include="src\Radians.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderState.cpp" />

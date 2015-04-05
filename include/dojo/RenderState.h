@@ -16,7 +16,7 @@
 #include "Array.h"
 #include "dojomath.h"
 #include "BlendingMode.h"
-#include "Radian.h"
+#include "Radians.h"
 
 namespace Dojo
 {
@@ -52,7 +52,7 @@ namespace Dojo
 				_updateTransform();
 			}
 
-			void setRotation( const Radian r )
+			void setRotation( const Radians r )
 			{
 				rotation = r;
 				_updateTransform();
@@ -68,7 +68,7 @@ namespace Dojo
 				return scale;
 			}
 
-			Radian getRotation() const
+			Radians getRotation() const
 			{
 				return rotation;
 			}
@@ -83,7 +83,7 @@ namespace Dojo
 		protected:
 
 			Vector offset, scale;
-			Radian rotation;
+			Radians rotation;
 
 			Matrix* optTransform;
 

@@ -166,11 +166,11 @@ void Renderer::setInterfaceOrientation( Orientation o )
 {	
 	renderOrientation = o;
 	
-	static const EulerAngle orientations[] = 	{ 
-		(EulerAngle)0, 
-		(EulerAngle)180,
-		(EulerAngle)90, 
-		(EulerAngle)-90 
+	static const Degrees orientations[] = 	{ 
+		(Degrees)0, 
+		(Degrees)180,
+		(Degrees)90, 
+		(Degrees)-90 
 	};
 	
 	renderRotation = orientations[ (int)renderOrientation ] + orientations[ (int)deviceOrientation ];

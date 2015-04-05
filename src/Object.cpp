@@ -157,8 +157,8 @@ Vector Object::getLocalDirection(const Vector& worldDir) {
 	return Vector::ZERO;
 }
 
-Radian Object::getRoll() const {
-	return (Radian)EulerAngle(glm::roll(rotation));
+Radians Object::getRoll() const {
+	return (Radians)Degrees(glm::roll(rotation));
 }
 
 Matrix Object::getFullTransformRelativeTo(const Matrix & parent) const
