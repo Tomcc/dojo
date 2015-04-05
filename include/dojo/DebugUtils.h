@@ -1,8 +1,15 @@
 #pragma once
 
+#ifndef WIN32
+	#define UNREACHABLE_BRANCH __builtin_unreachable()
+#else
+	#define UNREACHABLE_BRANCH __assume(0)
+#endif
+
+
 #ifndef PUBLISH
 	
-	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
+	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); UNREACHABLE_BRANCH; }}
 	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).ASCII().c_str() )
 	#define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, NULL )
 	#define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
@@ -21,12 +28,12 @@
 		#define __std_andr_cout debug_stream_android.str(std::string()); debug_stream_android
 		#define __std_andr_flush __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, "%s", debug_stream_android.str().c_str() );
 		#define DEBUG_OUT( T ) __std_andr_cout<< T << ' '; __std_andr_flush
-		#define DEBUG_MESSAGE( T ) __std_andr_cout << T << '\n'; __std_andr_flush
+		#define DEBUG_MESSAGE( T ) __std_andr_cout << (T) << '\n'; __std_andr_flush
 		
 		#else
 		
-		#define DEBUG_OUT( T ) std::cout << T << ' '
-		#define DEBUG_MESSAGE( T ) Dojo::gp_log->append( (T) )
+		#define DEBUG_OUT( T ) std::cout << (T) << ' '
+		#define DEBUG_MESSAGE( T ) Dojo::gp_log->append( ((T)) )
 
 	#endif
 	
@@ -41,8 +48,8 @@
 	#define DEBUG_ASSERT_INFO( T, MSG, INFO ) {}
 	#define DEBUG_ASSERT( T, MSG ) {}
 	#define DEBUG_ASSERT_N( T ) {}
-	#define DEBUG_TODO {}
-	#define DEBUG_FAIL {}
+	#define DEBUG_TODO UNREACHABLE_BRANCH
+	#define DEBUG_FAIL UNREACHABLE_BRANCH
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}
 	#define CHECK_GL_ERROR {}
