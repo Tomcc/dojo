@@ -166,10 +166,6 @@ void TextArea::_endLayers()
 {
 	for( size_t i = 0; i < busyLayers.size(); ++i )
 		busyLayers[i]->getMesh()->end();
-	
-	//also end this
-	if( mesh->isEditing() )
-		mesh->end();
 }
 
 ///Free any created layer			
@@ -242,8 +238,9 @@ void TextArea::_prepare() {
 			//if centered move every character of this line along x of 1/2 size
 			if( centered ) 
 			{
-				_centerLastLine( lastLineVertexID, cursorPosition.x );
-				lastLineVertexID = mesh->getVertexCount();
+				DEBUG_TODO; //it kind of never worked with unicode
+// 				_centerLastLine( lastLineVertexID, cursorPosition.x );
+// 				lastLineVertexID = mesh->getVertexCount();
 			}
 
 			cursorPosition.y -= 1.f + interline;
@@ -301,15 +298,16 @@ void TextArea::_prepare() {
 	}
 
 	//if centered move every character of this line along x of 1/2 size
-	if( centered )
-		_centerLastLine( lastLineVertexID, cursorPosition.x );
+	if (centered) {
+		DEBUG_TODO; //it kind of never worked with unicode
+		_centerLastLine(lastLineVertexID, cursorPosition.x);
+	}
 	//push any active layer on the GPU
 	_endLayers();
    
 	//find real mesh bounds
-	mLayersLowerBound = mesh->getMin();
-	mLayersUpperBound = mesh->getMax();
-	
+	mLayersLowerBound = Vector::MAX;
+	mLayersUpperBound = Vector::MIN;
 	for( size_t i = 0; i < busyLayers.size(); ++i )
 	{
 		mLayersUpperBound = Vector::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );

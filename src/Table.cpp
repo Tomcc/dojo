@@ -367,8 +367,6 @@ Table* Table::getParentTable(const String& key, String& realKey) const {
 	String childName = key.substr(0, dotIdx);
 	auto& child = getTable(childName);
 
-	DEBUG_ASSERT_INFO(child.size() > 0, "A part of a dot-formatted key referred to a non-existing table", "childName = " + childName);
-
 	return child.getParentTable(partialKey, realKey);
 }
 

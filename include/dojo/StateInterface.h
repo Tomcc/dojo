@@ -18,22 +18,9 @@ namespace Dojo
 	{
 	public:
 		
-		StateInterface( bool autoDelete = true ) :
-		currentState(-1),
-		currentStatePtr( NULL ),
-		mTransitionCompleted( true ),
-		mCanSetNextState( true ),
-		mAutoDeleteState( false )
-		{
-			nextState = -1;
-			nextStatePtr = NULL;
-		}
+		StateInterface();
 		
-		virtual ~StateInterface()
-		{			
-			if( currentStatePtr && mAutoDeleteState )
-				SAFE_DELETE( currentStatePtr );
-		}
+		virtual ~StateInterface();
 		
 		///sets a new substate either immediately or at the next loop.
 		/**
@@ -45,16 +32,7 @@ namespace Dojo
 			-during a state change (onStateBegin, onTransition, onStateEnd)
 			is an error and a failed ASSERT.
 		*/
-		void setState( int newState )		
-		{			
-			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
-			
-			nextState = newState;
-			
-			//start immediately if we have no current state
-			if( !hasCurrentState() )
-				_applyNextState();
-		}
+		void setState(int newState);
 		
 		///sets a new substate immediately
 		/**
@@ -65,15 +43,8 @@ namespace Dojo
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		void setStateImmediate( int newState )		
-		{			
-			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
-			
-			nextState = newState;
-			
-			_applyNextState();
-		}
-		
+		void setStateImmediate(int newState);
+
 		///sets a new substate either immediately or at the next loop.
 		/**
 		 -Immediately when there's no current state, eg. at begin
@@ -86,68 +57,40 @@ namespace Dojo
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		void setState( StateInterface* child, bool autoDelete = true )
-		{
-			DEBUG_ASSERT( mCanSetNextState, "This State Machine is in an active transition and can't change its destination state" );
- 			DEBUG_ASSERT( !hasNextState(), "this State Machine already has a pending state to be set, cannot set another" );
-			
-			nextStatePtr = child;
-			mAutoDeleteState = autoDelete;
-						
-			//start immediately if we have no current state
-			if( !hasCurrentState() )
-				_applyNextState();
-		}
-		
+		void setState(std::unique_ptr<StateInterface> child);
+
 		int getCurrentState()					{	return currentState;	}
-		StateInterface* getChildState()			{	return currentStatePtr;	}
+		StateInterface* getChildState()			{	return currentStatePtr.get();	}
 		
 		bool isCurrentState( int state ) const			{	return currentState == state;	}
-		bool isCurrentState( StateInterface* s ) const 	{	return currentStatePtr == s;	}
+		bool isCurrentState( StateInterface* s ) const 	{	return currentStatePtr.get() == s;	}
 
-		bool hasChildState()						{	return currentStatePtr != NULL;	}
+		bool hasChildState()						{	return currentStatePtr != nullptr;	}
 		
-		bool hasCurrentState()					{	return currentStatePtr != NULL || currentState != -1; }
-		bool hasNextState()						{	return nextStatePtr != NULL || nextState != -1; }
+		bool hasCurrentState()					{	return currentStatePtr != nullptr || currentState != -1; }
+		bool hasNextState()						{	return nextStatePtr != nullptr || nextState != -1; }
 		
 		bool hasPendingTransition()				{	return !mTransitionCompleted;	}
 		
 		///begin the execution of this state
-		void begin()
-		{
-			onBegin();
-		}
+		void begin();
 		
 		///loop the execution of this state (and its childs)
-		void loop( float dt )
-		{			
-			if( mTransitionCompleted )  //do not call a loop if the current state is not "active" (ie-transition in progress)
-				_subStateLoop( dt );
-
-			if( hasNextState() )
-				_applyNextState();
-
-			onLoop( dt );
-		}
+		void loop(float dt);
 		
 		///end the execution of this state (and its childs)
-		void end()
-		{
-			_subStateEnd();
-			
-			onEnd();	
-		}
-						
+		void end();
+
 	protected:
-		int currentState;		
-		StateInterface* currentStatePtr;
+		int currentState = -1;		
+		std::unique_ptr<StateInterface> currentStatePtr;
 		
-		int nextState;
-		StateInterface* nextStatePtr;
+		int nextState = -1;
+		std::unique_ptr<StateInterface> nextStatePtr;
 		
 	private:
 		
-		bool mTransitionCompleted, mCanSetNextState, mAutoDeleteState;
+		bool mTransitionCompleted = true, mCanSetNextState = true;
 				
 		//------ state events
 
@@ -155,22 +98,13 @@ namespace Dojo
 		/**
 		For example, Game's onBegin() is called only when the application starts.
 		*/
-		virtual void onBegin()
-		{
-			
-		}
+		virtual void onBegin() {}
 
 		///onLoop contains all of the game's "non-event-response code", as it is called once per frame on each object that listens to it
-		virtual void onLoop( float dt )
-		{
-			
-		}
+		virtual void onLoop( float dt )	{}
 
 		///onEnd is called when this State is replaced by another State in the parent, or if the parent itself is destroyed
-		virtual void onEnd()
-		{
-			
-		}
+		virtual void onEnd() {}
 		
 		//----- immediate substate events
 
@@ -178,28 +112,19 @@ namespace Dojo
 		/**
 		You can check which State has begun using isCurrentState()
 		*/
-		virtual void onStateBegin()
-		{
-			
-		}
+		virtual void onStateBegin()	{}
 		
 		///onStateLoop is called each frame on the current (implicit) state.
 		/**
 		You can check which State is current using isCurrentState()
 		*/
-		virtual void onStateLoop( float dt )
-		{
-			
-		}
+		virtual void onStateLoop( float dt ) {}
 		
 		///onStateBegin is called each time an implicit substate of this State has been replaced, or the parent has been destroyed.
 		/**
 		You can check which State has ended using isCurrentState()
 		*/
-		virtual void onStateEnd()
-		{
-			
-		}
+		virtual void onStateEnd() {}
 		
 		///this is called each time a transition will happen. 
 		/**
@@ -210,103 +135,13 @@ namespace Dojo
 			return true;
 		}
 				
-		void _subStateBegin()
-		{
-			if( currentStatePtr )
-				currentStatePtr->begin();
-			else
-				onStateBegin();
-		}
-		
-		void _subStateLoop( float dt )
-		{
-			if( currentStatePtr )
-				currentStatePtr->loop( dt );
-			else
-				onStateLoop( dt );
-		}
-		
-		void _subStateEnd()
-		{
-			if( currentStatePtr )
-				currentStatePtr->end();
-			else
-				onStateEnd();
-		}
+		void _subStateBegin();
+		void _subStateLoop(float dt);
+		void _subStateEnd();
 				
-		void _nextState( int newState )		
-		{
-			//first try, call substate end
-			if( mTransitionCompleted )
-			{
-				_subStateEnd();
-			
-				if( currentStatePtr && mAutoDeleteState )
-					SAFE_DELETE( currentStatePtr );
-			}
-			
-			//now try the transition
-			mTransitionCompleted = onTransition();
-		
-			if( mTransitionCompleted )
-			{
-				currentState = newState;
-				currentStatePtr = NULL;
-			
-				_subStateBegin();
-			}
-		}
-		
-		void _nextState( StateInterface* child )
-		{
-			DEBUG_ASSERT( child != nullptr, "null substate passed" );
-			
-			//first try, call substate end
-			if( mTransitionCompleted )
-			{
-				_subStateEnd();
-			
-				if( currentStatePtr && mAutoDeleteState )
-					SAFE_DELETE( currentStatePtr );
-			}
-			
-			//now try the transition
-			mTransitionCompleted = onTransition();
-			
-			if( mTransitionCompleted )
-			{				
-				currentState = -1;
-				currentStatePtr = child;
-				
-				_subStateBegin();	
-			}			
-		}
-		
-		void _applyNextState()
-		{
-			DEBUG_ASSERT( hasNextState(), "_applyNextState was called but not next state was defined" );
-						
-			//they have to be cancelled before, because the state that is beginning
-			//could need to set them again
-			int temp = nextState;
-			StateInterface* tempPtr = nextStatePtr;
-			
-			mCanSetNextState = false; //disable state setting - it can't be done while changing a state!
-				
-			//change state
-			if( tempPtr )
-				_nextState( tempPtr );
-			else if( temp != -1 )
-				_nextState( temp );
-
-			if( mTransitionCompleted )
-			{
-				nextState = -1;
-				nextStatePtr = NULL;
-				
-				mCanSetNextState = true;
-			}
-		}		
+		void _nextState(int newState);
+		void _nextState(std::unique_ptr<StateInterface>& child);
+		void _applyNextState();
 	};
 }
 

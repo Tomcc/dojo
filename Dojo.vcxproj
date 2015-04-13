@@ -137,6 +137,7 @@
     <ClCompile Include="src\SoundSet.cpp" />
     <ClCompile Include="src\SoundSource.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\StateInterface.cpp" />
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="src\Table.cpp" />
     <ClCompile Include="src\Tessellation.cpp" />
