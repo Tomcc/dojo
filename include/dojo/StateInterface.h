@@ -57,7 +57,7 @@ namespace Dojo
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
 		 is an error and a failed ASSERT.
 		 */
-		void setState(std::unique_ptr<StateInterface> child);
+		void setState(std::shared_ptr<StateInterface> child);
 
 		int getCurrentState()					{	return currentState;	}
 		StateInterface* getChildState()			{	return currentStatePtr.get();	}
@@ -81,16 +81,20 @@ namespace Dojo
 		///end the execution of this state (and its childs)
 		void end();
 
+		bool isActiveState() const {
+			return activeState;
+		}
+
 	protected:
 		int currentState = -1;		
-		std::unique_ptr<StateInterface> currentStatePtr;
+		std::shared_ptr<StateInterface> currentStatePtr;
 		
 		int nextState = -1;
-		std::unique_ptr<StateInterface> nextStatePtr;
+		std::shared_ptr<StateInterface> nextStatePtr;
 		
 	private:
 		
-		bool mTransitionCompleted = true, mCanSetNextState = true;
+		bool mTransitionCompleted = true, mCanSetNextState = true, activeState = false;
 				
 		//------ state events
 
@@ -139,8 +143,8 @@ namespace Dojo
 		void _subStateLoop(float dt);
 		void _subStateEnd();
 				
-		void _nextState(int newState);
-		void _nextState(std::unique_ptr<StateInterface>& child);
+		void _nextState(int& newState);
+		void _nextState(std::shared_ptr<StateInterface>& child);
 		void _applyNextState();
 	};
 }

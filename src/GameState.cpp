@@ -88,7 +88,7 @@ void GameState::updateClickableState()
 	for( auto ta : mTouchAreas )
 		ta->_clearTouches();
 	
-	const InputSystem::TouchList& touchList = Platform::singleton().getInput().getTouchList();
+	auto& touchList = Platform::singleton().getInput().getTouchList();
 		
 	//"touch" all the touchareas active in this frame
 	for( auto touch : touchList )
@@ -97,4 +97,13 @@ void GameState::updateClickableState()
 	///launch events
 	for( auto ta : mTouchAreas )
 		ta->_fireOnTouchUsingCurrentTouches();
+}
+
+void GameState::onLoop(float dt)
+{	
+	active = isActiveState(); //be active only if this is the frontmost state of the parent
+
+	updateClickableState();
+
+	updateChilds(dt);
 }

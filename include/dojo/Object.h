@@ -130,7 +130,7 @@ namespace Dojo {
 		///returns the euclidean "roll" angle, or rotation around Z
 		Radians getRoll() const;
 						
-		bool isActive()				{	return active;	}
+		bool isActive()	const;
 		
 		bool hasChilds() const
 		{

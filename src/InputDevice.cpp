@@ -75,11 +75,13 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 
 		int action = getActionForKey(key);
 
-		if (pressed) for (InputDeviceListener* l : pListeners)
-			l->onButtonPressed(this, action);
+		if (pressed) 
+			for (InputDeviceListener* l : pListeners)
+				l->onButtonPressed(this, action);
 
-		else for (InputDeviceListener* l : pListeners)
-			l->onButtonReleased(this, action);
+		else 
+			for (InputDeviceListener* l : pListeners)
+				l->onButtonReleased(this, action);
 	}
 }
 

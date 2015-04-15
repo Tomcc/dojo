@@ -32,11 +32,11 @@ void StateInterface::setStateImmediate(int newState)
 	_applyNextState();
 }
 
-void StateInterface::setState(std::unique_ptr<StateInterface> child) {
+void StateInterface::setState(std::shared_ptr<StateInterface> child) {
 	DEBUG_ASSERT(mCanSetNextState, "This State Machine is in an active transition and can't change its destination state");
 	DEBUG_ASSERT(!hasNextState(), "this State Machine already has a pending state to be set, cannot set another");
 
-	nextStatePtr = std::move(child);
+	nextStatePtr = child;
 
 	//start immediately if we have no current state
 	if (!hasCurrentState())
@@ -45,6 +45,7 @@ void StateInterface::setState(std::unique_ptr<StateInterface> child) {
 
 void StateInterface::begin()
 {
+	activeState = true;
 	onBegin();
 }
 
@@ -64,6 +65,7 @@ void StateInterface::end()
 	_subStateEnd();
 
 	onEnd();
+	activeState = false;
 }
 
 void StateInterface::_subStateBegin()
@@ -91,11 +93,12 @@ void StateInterface::_subStateEnd()
 }
 
 
-void StateInterface::_nextState(int newState)
+void StateInterface::_nextState(int& newState)
 {
 	//first try, call substate end
 	if (mTransitionCompleted) {
 		_subStateEnd();
+		currentStatePtr.reset(); //delete the current state before the transition
 	}
 
 	//now try the transition
@@ -104,16 +107,17 @@ void StateInterface::_nextState(int newState)
 	if (mTransitionCompleted)
 	{
 		currentState = newState;
+
+		newState = -1;
 		currentStatePtr = nullptr;
-		nextState = -1;
 
 		_subStateBegin();
 	}
 }
 
-void StateInterface::_nextState(std::unique_ptr<StateInterface>& child)
+void StateInterface::_nextState(std::shared_ptr<StateInterface>& newState)
 {
-	DEBUG_ASSERT(child, "nullptr substate passed");
+	DEBUG_ASSERT(newState, "nullptr substate passed");
 
 	//first try, call substate end
 	if (mTransitionCompleted)
@@ -127,8 +131,10 @@ void StateInterface::_nextState(std::unique_ptr<StateInterface>& child)
 
 	if (mTransitionCompleted)
 	{
+		currentStatePtr = std::move(newState);
+
 		currentState = -1;
-		currentStatePtr = std::move(child);
+		newState = nullptr;
 
 		_subStateBegin();
 	}
@@ -138,17 +144,13 @@ void StateInterface::_applyNextState()
 {
 	DEBUG_ASSERT(hasNextState(), "_applyNextState was called but not next state was defined");
 
-	//they have to be cancelled before, because the state that is beginning
-	//could need to set them again
-	int temp = nextState;
-
 	mCanSetNextState = false; //disable state setting - it can't be done while changing a state!
 
 	//change state
 	if (nextStatePtr)
 		_nextState(nextStatePtr);
-	else if (temp != -1)
-		_nextState(temp);
+	else if (nextState != -1)
+		_nextState(nextState);
 
 	if (mTransitionCompleted)
 		mCanSetNextState = true;

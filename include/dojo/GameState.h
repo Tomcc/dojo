@@ -37,7 +37,7 @@ namespace Dojo
 	public:
 		
 		///Creates a new GameState with a parent Game
-		GameState( Game* parentGame );
+		explicit GameState( Game* parentGame );
 		
 		virtual ~GameState();
         
@@ -48,7 +48,7 @@ namespace Dojo
         void removeTouchArea( TouchArea* t );
 				
 		///Clears this GameState to a pre-initialization state
-		virtual void clear();
+		void clear();
 		
 		///returns the parent Game
 		Game* getGame()				{	return game;			}
@@ -70,13 +70,8 @@ namespace Dojo
 		/**
 		\remark remember to call GameState::onLoop() if you override this method!
 		*/
-        virtual void onLoop( float dt )
-        {
-            updateClickableState();
-            
-            updateChilds( dt );
-        }
-		
+		virtual void onLoop(float dt) override;
+
 	protected:
         
         typedef std::vector< TouchArea* > TouchAreaList;

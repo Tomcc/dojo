@@ -129,6 +129,10 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 		return localPos;
 }
 
+bool Object::isActive()	const {
+	return active && (!parent || parent->isActive());
+}
+
 void Object::reset() {
 	active = true;
 	speed.x = speed.y = 0;
