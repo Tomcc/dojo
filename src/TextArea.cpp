@@ -74,7 +74,7 @@ void TextArea::clearText()
 void TextArea::setMaxLineLength( int l )
 {		
 	//HACK PAZZESCOH
-	maxLineLenght = (int)(l * ((float)gameState->getGame()->getNativeWidth() / (float)640 ));
+	maxLineLenght = (int)(l * ((float)gameState->getGame().getNativeWidth() / (float)640 ));
 }
 
 void TextArea::addText( const String& text )

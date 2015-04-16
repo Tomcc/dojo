@@ -37,7 +37,7 @@ namespace Dojo
 	public:
 		
 		///Creates a new GameState with a parent Game
-		explicit GameState( Game* parentGame );
+		explicit GameState( Game& parentGame );
 		
 		virtual ~GameState();
         
@@ -51,7 +51,7 @@ namespace Dojo
 		void clear();
 		
 		///returns the parent Game
-		Game* getGame()				{	return game;			}
+		Game& getGame()				{	return game;			}
 				
 		///returns the Viewport that is primary on this GameState
 		Viewport* getViewport()		{	return camera;			}
@@ -78,7 +78,7 @@ namespace Dojo
         
         TouchAreaList mTouchAreas;
 		
-		Game* game;
+		Game& game;
 		
 		Viewport* camera;
 		

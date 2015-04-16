@@ -12,7 +12,7 @@
 
 using namespace Dojo;
 
-GameState::GameState( Game* parentGame ) :
+GameState::GameState( Game& parentGame ) :
 Object( this, Vector::ZERO, Vector::ONE ),
 ResourceGroup(),
 game( parentGame ),

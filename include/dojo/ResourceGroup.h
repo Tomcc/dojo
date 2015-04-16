@@ -185,19 +185,15 @@ namespace Dojo
 		}
 		
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
-		void addSubgroup( ResourceGroup* g )
+		void addSubgroup( ResourceGroup& g )
 		{
-			DEBUG_ASSERT( g != nullptr, "Adding a null subgroup" );
-			
-			subs.add( g );
+			subs.add( &g );
 		}
 		
 		///removes a subgroup
-		void removeSubgroup( ResourceGroup* g )
+		void removeSubgroup( ResourceGroup& g )
 		{
-			DEBUG_ASSERT( g != nullptr, "Removing a null subgroup" );
-			
-			subs.remove( g );
+			subs.remove( &g );
 		}
 
 		///removes all of the registered subgrops from this ResourceGroup
