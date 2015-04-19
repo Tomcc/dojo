@@ -91,9 +91,17 @@ void GameState::updateClickableState() {
 }
 
 void GameState::onLoop(float dt) {
-	active = isActiveState(); //be active only if this is the frontmost state of the parent
-
 	updateClickableState();
 
 	updateChilds(dt);
+}
+
+void GameState::begin() {
+	active = true;
+	StateInterface::begin();
+}
+
+void GameState::end() {
+	active = false;
+	StateInterface::end();
 }

@@ -90,17 +90,13 @@ namespace Dojo {
 		}
 
 		///begin the execution of this state
-		void begin();
+		virtual void begin();
 
 		///loop the execution of this state (and its childs)
-		void loop(float dt);
+		virtual void loop(float dt);
 
 		///end the execution of this state (and its childs)
-		void end();
-
-		bool isActiveState() const {
-			return activeState;
-		}
+		virtual void end();
 
 	protected:
 		int currentState = -1;
@@ -111,7 +107,7 @@ namespace Dojo {
 
 	private:
 
-		bool mTransitionCompleted = true, mCanSetNextState = true, activeState = false;
+		bool mTransitionCompleted = true, mCanSetNextState = true;
 
 		//------ state events
 

@@ -190,7 +190,6 @@ namespace Dojo {
 		}
 
 		AABB transformAABB(const AABB& local) const;
-
 	protected:
 
 		GameState* gameState;

@@ -74,6 +74,10 @@ namespace Dojo {
 		*/
 		virtual void onLoop(float dt) override;
 
+		virtual void begin() override;
+
+		virtual void end() override;
+
 	protected:
 
 		typedef std::vector<TouchArea*> TouchAreaList;

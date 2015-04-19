@@ -40,7 +40,6 @@ void StateInterface::setState(std::shared_ptr<StateInterface> child) {
 }
 
 void StateInterface::begin() {
-	activeState = true;
 	onBegin();
 }
 
@@ -58,7 +57,6 @@ void StateInterface::end() {
 	_subStateEnd();
 
 	onEnd();
-	activeState = false;
 }
 
 void StateInterface::_subStateBegin() {
