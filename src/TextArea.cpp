@@ -49,6 +49,14 @@ TextArea::~TextArea() {
 	_destroyLayers();
 }
 
+void TextArea::setVisibleCharacters(int n) {
+	if (n != visibleCharsNumber) {
+		visibleCharsNumber = n;
+
+		changed = true;
+	}
+}
+
 void TextArea::clearText() {
 	characters.clear();
 
@@ -60,7 +68,7 @@ void TextArea::clearText() {
 
 	changed = true;
 
-	visibleCharsNumber = 0xfffffff;
+	visibleCharsNumber = INT_MAX;
 	currentLineLength = 0;
 	lastSpace = 0;
 }
@@ -172,10 +180,10 @@ void TextArea::_destroyLayer(Renderable& r) {
 		return;
 
 	delete r.getMesh();
+	removeChild(r);
 
 	busyLayers.erase(&r);
 	freeLayers.erase(&r);
-	removeChild(r);
 }
 
 
@@ -294,11 +302,11 @@ void TextArea::_prepare() {
 }
 
 void TextArea::_destroyLayers() {
-	for (auto&& l : busyLayers)
-		_destroyLayer(*l);
+	while (busyLayers.size() > 0)
+		_destroyLayer(**busyLayers.begin());
 
-	for (auto&& l : freeLayers)
-		_destroyLayer(*l);
+	while (freeLayers.size() > 0)
+		_destroyLayer(**freeLayers.begin());
 }
 
 void TextArea::_centerLastLine(int startingAt, float size) {

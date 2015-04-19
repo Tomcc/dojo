@@ -44,13 +44,7 @@ namespace Dojo {
 		/**
 		n can be higher than the current character count; all the characters will be shown
 		*/
-		void setVisibleCharacters(int n) {
-			if (n != visibleCharsNumber) {
-				visibleCharsNumber = n;
-
-				changed = true;
-			}
-		}
+		void setVisibleCharacters(int n);
 
 		///increments by 1 the number of visibile characters
 		void showNextChar() {

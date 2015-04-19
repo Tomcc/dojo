@@ -125,7 +125,7 @@ namespace Dojo {
 		}
 
 		void appendUTF8(const std::string& utf8) {
-			//TODO do it better
+			//HACK!!!!! make a real parser!!!
 			appendASCII(utf8.c_str());
 		}
 

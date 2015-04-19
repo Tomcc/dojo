@@ -15,11 +15,11 @@ InputDevice::InputDevice(Type type, int ID, int buttonNumber, int axisNumber) :
 }
 
 void InputDevice::addListener(InputDeviceListener& l) {
-	pListeners.emplace(&l);
+	pListeners.emplace(&l);	
 }
 
 void InputDevice::removeListener(InputDeviceListener& l) {
-	DEBUG_ASSERT(pListeners.find(&l) == pListeners.end(), "The listened to be removed is not registered");
+	DEBUG_ASSERT(pListeners.find(&l) != pListeners.end(), "The listened to be removed is not registered");
 
 	pListeners.erase(&l);
 }

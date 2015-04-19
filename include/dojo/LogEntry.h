@@ -21,7 +21,7 @@ namespace Dojo {
 		LogEntry(const String& msg, Level lvl) :
 			text(msg),
 			level(lvl) {
-			timestamp = time(NULL);
+			timestamp = time(nullptr);
 		}
 	};
 

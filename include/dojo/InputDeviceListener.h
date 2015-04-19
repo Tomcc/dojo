@@ -8,6 +8,9 @@ namespace Dojo {
 	///A Device Listener receives events about buttons and axis changes on the device it listens to
 	class InputDeviceListener {
 	public:
+		virtual ~InputDeviceListener() {
+		}
+
 		///ButtonPressed events are sent when the button bound to "action" is pressed on the device j
 		virtual void onButtonPressed(InputDevice& j, int action) {
 		}
