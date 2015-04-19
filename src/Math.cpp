@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "dojomath.h"
 #include "Random.h"
 

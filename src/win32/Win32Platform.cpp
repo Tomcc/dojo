@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "win32/Win32Platform.h"
 #include "win32/WGL_ARB_multisample.h"
 #include "win32/XInputController.h"

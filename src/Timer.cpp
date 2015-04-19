@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Timer.h"
 
 using namespace Dojo;

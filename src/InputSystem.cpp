@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "InputSystem.h"
 
 #include "GameState.h"
@@ -179,7 +177,7 @@ void InputSystem::_fireDeviceConnected( InputDevice& j )
 {
 	//notify listeners
 	for( auto&& l : listeners )
-		l->onDeviceConnected(&j);
+		l->onDeviceConnected(j);
 
 	DEBUG_MESSAGE("Connected a new input device!");
 }
@@ -190,6 +188,6 @@ void InputSystem::_fireDeviceDisconnected( InputDevice& j )
 
 	//first notify this to all the listeners
 	for( auto l : listeners )
-		l->onDeviceDisconnected( &j );
+		l->onDeviceDisconnected(j);
 }
 

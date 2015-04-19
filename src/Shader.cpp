@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Shader.h"
 
 #include "ResourceGroup.h"

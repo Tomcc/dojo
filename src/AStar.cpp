@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "AStar.h"
 
 using namespace Dojo;

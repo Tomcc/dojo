@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Sprite.h"
 
 #include "Viewport.h"

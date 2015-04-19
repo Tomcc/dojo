@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "ResourceGroup.h"
 
 #include "Platform.h"

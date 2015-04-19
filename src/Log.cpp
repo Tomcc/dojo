@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Log.h"
 #include "Platform.h"
 #include "BackgroundQueue.h"

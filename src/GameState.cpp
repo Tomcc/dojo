@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "GameState.h"
 
 #include "Game.h"
@@ -17,8 +15,8 @@ GameState::GameState( Game& parentGame ) :
 Object( this, Vector::ZERO, Vector::ONE ),
 ResourceGroup(),
 game( parentGame ),
-timeElapsed(0),
-camera(nullptr)
+camera(nullptr),
+timeElapsed(0)
 {
 	gameState = this; //useful to pass a GameState around as an Object
 }

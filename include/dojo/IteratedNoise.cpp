@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "IteratedNoise.h"
 
 using namespace Dojo;

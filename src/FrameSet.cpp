@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "FrameSet.h"
 
 #include "ResourceGroup.h"

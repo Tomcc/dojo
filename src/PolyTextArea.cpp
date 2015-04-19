@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "PolyTextArea.h"
 
 #include "Mesh.h"

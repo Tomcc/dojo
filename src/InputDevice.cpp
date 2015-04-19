@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "InputDevice.h"
 #include "InputDeviceListener.h"
 
@@ -73,11 +71,11 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 
 		if (pressed) 
 			for (InputDeviceListener* l : pListeners)
-				l->onButtonPressed(this, action);
+				l->onButtonPressed(*this, action);
 
 		else 
 			for (InputDeviceListener* l : pListeners)
-				l->onButtonReleased(this, action);
+				l->onButtonReleased(*this, action);
 	}
 }
 
@@ -92,11 +90,11 @@ void InputDevice::_notifyAxis(Axis a, float state) {
 		mAxis[a] = state;
 
 		for (InputDeviceListener* l : pListeners)
-			l->onAxisMoved(this, a, state, change);
+			l->onAxisMoved(*this, a, state, change);
 	}
 }
 
 void InputDevice::_fireDisconnected() {
 	for (InputDeviceListener* l : pListeners)
-		l->onDisconnected(this);
+		l->onDisconnected(*this);
 }

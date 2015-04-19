@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "FileStream.h"
 
 using namespace Dojo;

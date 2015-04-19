@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "ShaderProgram.h"
 
 #include "Platform.h"

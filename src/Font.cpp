@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Font.h"
 #include "Platform.h"
 #include "Table.h"

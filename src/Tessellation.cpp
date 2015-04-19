@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Tessellation.h"
 #include "dojomath.h"
 #include "Timer.h"

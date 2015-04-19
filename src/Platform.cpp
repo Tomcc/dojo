@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Platform.h"
 //private:
 #include "ZipArchive.h"

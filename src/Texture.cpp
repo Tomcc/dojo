@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Texture.h"
 #include "dojomath.h"
 #include "Platform.h"

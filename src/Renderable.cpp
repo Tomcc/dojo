@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Renderable.h"
 
 #include "Game.h"

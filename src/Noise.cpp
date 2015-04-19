@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Noise.h"
 #include "Random.h"
 

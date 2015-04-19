@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "TouchArea.h"
 
 #include "GameState.h"

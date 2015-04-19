@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "TextArea.h"
 #include "Game.h"
 #include "GameState.h"

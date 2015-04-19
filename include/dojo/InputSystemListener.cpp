@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "InputSystemListener.h"
 #include "InputSystem.h"
 

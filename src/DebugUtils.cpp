@@ -1,6 +1,4 @@
 
-#include "stdafx.h"
-
 #include "dojo_common_header.h"
 #include "DebugUtils.h"
 #include "Log.h"

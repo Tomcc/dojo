@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Keyboard.h"
 
 using namespace Dojo;

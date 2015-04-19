@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "linux/LinuxPlatform.h"
 
 #ifdef PLATFORM_LINUX

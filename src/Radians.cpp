@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Radians.h"
 
 using namespace Dojo;

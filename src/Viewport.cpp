@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Viewport.h"
 
 #include "Renderer.h"

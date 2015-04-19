@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "SoundSet.h"
 #include "SoundBuffer.h"
 

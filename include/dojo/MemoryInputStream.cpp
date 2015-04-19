@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "MemoryInputStream.h"
 
 using namespace Dojo;

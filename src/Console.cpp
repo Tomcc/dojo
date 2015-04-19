@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "Console.h"
 #include "GameState.h"
 #include "Viewport.h"

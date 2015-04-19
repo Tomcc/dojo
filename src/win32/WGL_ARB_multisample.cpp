@@ -390,22 +390,6 @@ const char *GetAntiAliasingPixelFormatString()
     return g_szAAPixelFormat;
 }
 
-// GL_ARB_multisample
-
-void glSampleCoverageARB(GLclampf value, GLboolean invert)
-{
-    typedef void (APIENTRY * PFNGLSAMPLECOVERAGEARBPROC)(GLclampf value, GLboolean invert);   
-    static PFNGLSAMPLECOVERAGEARBPROC pfnSampleCoverageARB = 0;
-
-    if (!pfnSampleCoverageARB)
-    {
-        pfnSampleCoverageARB = reinterpret_cast<PFNGLSAMPLECOVERAGEARBPROC>(wglGetProcAddress("glSampleCoverageARB"));
-        assert(pfnSampleCoverageARB != 0);
-    }
-
-    pfnSampleCoverageARB(value, invert);
-}
-
 // WGL_ARB_pixel_format
 
 BOOL wglGetPixelFormatAttribivARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int *piAttributes, int *piValues)

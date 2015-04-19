@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "LogListener.h"
 #include "LogEntry.h"
 

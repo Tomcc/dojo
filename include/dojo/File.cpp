@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "File.h"
 
 using namespace Dojo;

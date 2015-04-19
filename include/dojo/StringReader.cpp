@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "StringReader.h"
 
 using namespace Dojo;
