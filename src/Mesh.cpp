@@ -18,18 +18,17 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
 
-const int Mesh::VERTEX_FIELD_SIZES[] = { 
-	2 * sizeof( GLfloat ), //position 2D
-	3 * sizeof( GLfloat ),  //position 3D
-	4 * sizeof( GLubyte ),  //color
-	3 * sizeof( GLfloat ),  //normal
-	2 * sizeof( GLfloat ),  //uv0
-	2 * sizeof( GLfloat )
+const int Mesh::VERTEX_FIELD_SIZES[] = {
+	2 * sizeof( GLfloat), //position 2D
+	3 * sizeof( GLfloat), //position 3D
+	4 * sizeof( GLubyte), //color
+	3 * sizeof( GLfloat), //normal
+	2 * sizeof( GLfloat), //uv0
+	2 * sizeof( GLfloat)
 };
 
 Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
-Resource(creator)
-{
+	Resource(creator) {
 	//set all fields to zero
 	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
 
@@ -38,8 +37,7 @@ Resource(creator)
 }
 
 Mesh::Mesh(ResourceGroup* creator, const String& filePath) :
-Resource(creator, filePath) 
-{
+	Resource(creator, filePath) {
 	//set all fields to zero
 	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
 
@@ -69,7 +67,7 @@ void Mesh::begin(int extimatedVerts /*= 1 */) {
 
 	vertices.clear();
 	indices.clear();
-	vertices.reserve(extimatedVerts*vertexSize);
+	vertices.reserve(extimatedVerts * vertexSize);
 
 	vertexCount = indexCount = 0;
 	currentVertex = nullptr;
@@ -97,18 +95,15 @@ void Mesh::setIndexByteSize(byte bytenumber) {
 
 	indexSize = bytenumber;
 
-	if (indexSize == 1)
-	{
+	if (indexSize == 1) {
 		indexGLType = GL_UNSIGNED_BYTE;
 		indexMaxValue = 0xff;
 	}
-	else if (indexSize == 2)
-	{
+	else if (indexSize == 2) {
 		indexGLType = GL_UNSIGNED_SHORT;
 		indexMaxValue = 0xffff;
 	}
-	else if (indexSize == 4)
-	{
+	else if (indexSize == 4) {
 #ifdef DOJO_32BIT_INDICES_AVAILABLE
 		indexGLType = GL_UNSIGNED_INT;
 		indexMaxValue = 0xffffffff;
@@ -142,8 +137,7 @@ void Mesh::index(IndexType idx) {
 	auto curSize = indices.size();
 	indices.resize(curSize + indexSize);
 
-	switch (indexSize)
-	{
+	switch (indexSize) {
 	case 1:
 		indices.back() = idx;
 		break;
@@ -159,8 +153,7 @@ void Mesh::index(IndexType idx) {
 }
 
 
-void Mesh::_prepareVertex(const Vector& v)
-{
+void Mesh::_prepareVertex(const Vector& v) {
 	DEBUG_ASSERT( isEditing(), "_prepareVertex: this Mesh is not in Edit mode" );
 
 	//grow the buffer to the needed size
@@ -175,9 +168,8 @@ void Mesh::_prepareVertex(const Vector& v)
 	++vertexCount;
 }
 
-int Mesh::vertex( float x, float y )
-{				
-	_prepareVertex(Vector(x,y));
+int Mesh::vertex(float x, float y) {
+	_prepareVertex(Vector(x, y));
 
 	float* ptr = (float*)currentVertex;
 
@@ -187,8 +179,7 @@ int Mesh::vertex( float x, float y )
 	return getVertexCount() - 1;
 }
 
-int Mesh::vertex(const Vector& v) 
-{
+int Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
 	if (isVertexFieldEnabled(VertexField::Position3D))
@@ -203,8 +194,7 @@ int Mesh::vertex(const Vector& v)
 	return getVertexCount() - 1;
 }
 
-int Mesh::vertex(float x, float y, float z)
-{
+int Mesh::vertex(float x, float y, float z) {
 	return vertex(Vector(x, y, z));
 }
 
@@ -235,11 +225,11 @@ void Mesh::appendRawVertexData(void* data, IndexType count) {
 int Mesh::getPrimitiveCount() const {
 	auto elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	switch (triangleMode) {
-	case TriangleMode::TriangleList:		return elemCount / 3;
-	case TriangleMode::TriangleStrip:		return elemCount - 2;
-	case TriangleMode::LineStrip:			return elemCount - 1;
-	case TriangleMode::LineList:            return elemCount / 2;
-	case TriangleMode::PointList:			return elemCount;
+	case TriangleMode::TriangleList: return elemCount / 3;
+	case TriangleMode::TriangleStrip: return elemCount - 2;
+	case TriangleMode::LineStrip: return elemCount - 1;
+	case TriangleMode::LineList: return elemCount / 2;
+	case TriangleMode::PointList: return elemCount;
 	default:
 		DEBUG_FAIL("Invalid triangle mode");
 		return 0;
@@ -276,18 +266,29 @@ void Mesh::normal(const Vector& n) {
 void Mesh::normal(float x, float y, float z) {
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
-	normal(Vector(x,y,z));
+	normal(Vector(x, y, z));
 }
 
 void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset) {
 	outOffset = (void*)_offset(field);
 
-	switch (field)
-	{
-	case VertexField::Position2D: outComponentsType = GL_FLOAT; outComponents = 2; outNormalized = false; break;
-	case VertexField::Position3D: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
-	case VertexField::Color: outComponentsType = GL_UNSIGNED_BYTE; outComponents = 4; outNormalized = true; break;
-	case VertexField::Normal: outComponentsType = GL_FLOAT; outComponents = 3; outNormalized = false; break;
+	switch (field) {
+	case VertexField::Position2D: outComponentsType = GL_FLOAT;
+		outComponents = 2;
+		outNormalized = false;
+		break;
+	case VertexField::Position3D: outComponentsType = GL_FLOAT;
+		outComponents = 3;
+		outNormalized = false;
+		break;
+	case VertexField::Color: outComponentsType = GL_UNSIGNED_BYTE;
+		outComponents = 4;
+		outNormalized = true;
+		break;
+	case VertexField::Normal: outComponentsType = GL_FLOAT;
+		outComponents = 3;
+		outNormalized = false;
+		break;
 
 	default: //textures
 		outComponentsType = GL_FLOAT;
@@ -297,33 +298,31 @@ void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& ou
 	}
 }
 
-void Mesh::_bindAttribArrays( Shader* shader )
-{
-	glBindBuffer( GL_ARRAY_BUFFER, vertexHandle );
+void Mesh::_bindAttribArrays(Shader* shader) {
+	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
 #ifdef DOJO_SHADERS_AVAILABLE
-	if( shader ) //use custom attributes only
+	if (shader) //use custom attributes only
 	{
 		GLint components;
 		GLenum componentsType;
 		bool normalized;
 		void* offset;
 
-		for( auto& attr : shader->getAttributes() )
-		{
-			if( attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled( attr.second.builtInAttribute ) )		//skip non-provided attributes
+		for (auto& attr : shader->getAttributes()) {
+			if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) //skip non-provided attributes
 				continue;
 
-			_getVertexFieldData( attr.second.builtInAttribute, components, componentsType, normalized, offset );
+			_getVertexFieldData(attr.second.builtInAttribute, components, componentsType, normalized, offset);
 
-			glEnableVertexAttribArray( attr.second.location );
+			glEnableVertexAttribArray(attr.second.location);
 			glVertexAttribPointer(
 				attr.second.location,
 				components,
 				componentsType,
 				normalized,
 				vertexSize,
-				offset );
+				offset);
 
 			CHECK_GL_ERROR;
 		}
@@ -332,47 +331,48 @@ void Mesh::_bindAttribArrays( Shader* shader )
 #endif
 	{
 		//construct attributes
-		for( int i = 0; i < (int)VertexField::_Count; ++i )
-		{
+		for (int i = 0; i < (int)VertexField::_Count; ++i) {
 			GLenum state = glFeatureStateMap[i];
 			VertexField ft = (VertexField)i;
 
 			if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //a texture
-				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0)); //bind the correct texture (this has to be called *before* EnableClientState
+			glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0)); //bind the correct texture (this has to be called *before* EnableClientState
 
-			if( isVertexFieldEnabled( ft ) )	//bind data and client states
+			if (isVertexFieldEnabled(ft)) //bind data and client states
 			{
-				glEnableClientState( state );
+				glEnableClientState(state);
 				CHECK_GL_ERROR;
 
 				void* fieldOffset = (void*)_offset(ft);
 
-				switch( ft )
-				{
-				case VertexField::Position3D:			glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);	break;
-				case VertexField::Position2D:			glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset); break;
-				case VertexField::Normal:				glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);	break;
-				case VertexField::Color:				glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);	break;
-				default: 
+				switch (ft) {
+				case VertexField::Position3D: glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);
+					break;
+				case VertexField::Position2D: glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset);
+					break;
+				case VertexField::Normal: glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);
+					break;
+				case VertexField::Color: glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);
+					break;
+				default:
 					if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //texture binding						
-						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset );	
+						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset);
 					break;
 				};
 
 				CHECK_GL_ERROR;
 			}
-			else if( state != GL_VERTEX_ARRAY ) //do not disable the position
-				glDisableClientState( state );
+			else if (state != GL_VERTEX_ARRAY) //do not disable the position
+				glDisableClientState(state);
 		}
 	}
 
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0 ); //only bind the index buffer if existing (duh)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 
 	CHECK_GL_ERROR;
 }
 
-bool Mesh::end()
-{
+bool Mesh::end() {
 	DEBUG_ASSERT(editing, "Can't call end() before begin()!");
 	editing = false;
 
@@ -383,8 +383,8 @@ bool Mesh::end()
 		return false;
 
 	//create the VBO
-	if( !vertexHandle )
-		glGenBuffers(1, &vertexHandle );
+	if (!vertexHandle)
+	glGenBuffers(1, &vertexHandle);
 
 	GLenum usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
@@ -393,18 +393,19 @@ bool Mesh::end()
 	CHECK_GL_ERROR;
 
 	//create the IBO
-	if( isIndexed() ) //we support unindexed meshes
-	{				
-		if( !indexHandle )
-			glGenBuffers(1, &indexHandle );
+	if (isIndexed()) //we support unindexed meshes
+	{
+		if (!indexHandle)
+		glGenBuffers(1, &indexHandle);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle );
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), usage);
 
-		CHECK_GL_ERROR;						
+		CHECK_GL_ERROR;
 	}
 
 #ifndef DOJO_DISABLE_VAOS //if we're using VAOs
+
 	//create the VAO
 	if( !vertexArrayDesc )
 		glGenVertexArrays( 1, &vertexArrayDesc );
@@ -417,96 +418,92 @@ bool Mesh::end()
 
 	glBindVertexArray( 0 );
 #endif
-	
+
 	loaded = glGetError() == GL_NO_ERROR;
-	
+
 	currentVertex = nullptr;
-	
+
 	//geometric hints
-	center = (max + min)*0.5f;
-	
+	center = (max + min) * 0.5f;
+
 	dimensions = max - min;
 
-	if( !dynamic ) //won't be updated ever again
+	if (!dynamic) //won't be updated ever again
 		destroyBuffers();
-	
+
 	return loaded;
 }
 
-void Mesh::bind( Shader* shader )
-{		
+void Mesh::bind(Shader* shader) {
 #ifndef DOJO_DISABLE_VAOS
 
 	DEBUG_ASSERT( vertexArrayDesc );
 	glBindVertexArray( vertexArrayDesc );
 #else
-	_bindAttribArrays( shader ); //bind attribs each frame! (costly)
+	_bindAttribArrays(shader); //bind attribs each frame! (costly)
 #endif
 
-	CHECK_GL_ERROR; 
+	CHECK_GL_ERROR;
 }
 
-bool Mesh::onLoad()
-{
+bool Mesh::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "onLoad: Mesh is already loaded" );
 
-	if( !isReloadable() )
+	if (!isReloadable())
 		return false;
 
 	//load binary mesh
 	char* data;
-	Platform::singleton().loadFileContent( data, filePath );
-		
+	Platform::singleton().loadFileContent(data, filePath);
+
 	DEBUG_ASSERT_INFO( data, "onLoad: cannot find or read file", "path = " + filePath );
-	
+
 	char* ptr = data;
-	
+
 	//index size
-	setIndexByteSize( *ptr++ );
-	
+	setIndexByteSize(*ptr++);
+
 	//triangle mode
-	setTriangleMode( (TriangleMode)*ptr++ );
-	
+	setTriangleMode((TriangleMode)*ptr++);
+
 	//fields
-	for (int i = 0; i < (int)VertexField::_Count; ++i)
-	{
-		if( *ptr++ )
-			setVertexFieldEnabled( (VertexField)i );
+	for (int i = 0; i < (int)VertexField::_Count; ++i) {
+		if (*ptr++)
+			setVertexFieldEnabled((VertexField)i);
 	}
-	
+
 	//max and min
 	Vector loadedMax;
-	memcpy( &loadedMax, ptr, sizeof( Vector ) );
-	ptr += sizeof( Vector );
-	
+	memcpy(&loadedMax, ptr, sizeof( Vector));
+	ptr += sizeof( Vector);
+
 	Vector loadedMin;
-	memcpy( &loadedMin, ptr, sizeof( Vector ) );
-	ptr += sizeof( Vector );
-	
+	memcpy(&loadedMin, ptr, sizeof( Vector));
+	ptr += sizeof( Vector);
+
 	//vertex count
 	IndexType vc = *((int*) ptr);
-	ptr += sizeof( int );
-	
+	ptr += sizeof( int);
+
 	//index count
 	int ic = *((int*)ptr);
-	ptr += sizeof( int );
-		
-	setDynamic( false );
-	
-	begin( vc );
-	
+	ptr += sizeof( int);
+
+	setDynamic(false);
+
+	begin(vc);
+
 	//grab vertex data
-	vertices.resize(vc*vertexSize);
-	memcpy( (char*)vertices.data(), ptr, vc * vertexSize );
+	vertices.resize(vc * vertexSize);
+	memcpy((char*)vertices.data(), ptr, vc * vertexSize);
 	ptr += vc * vertexSize;
-	
+
 	//grab index data
-	if( ic )
-	{
-		indices.resize(ic*indexSize);
-		memcpy( (char*)indices.data(), ptr, ic * indexSize );
+	if (ic) {
+		indices.resize(ic * indexSize);
+		memcpy((char*)indices.data(), ptr, ic * indexSize);
 	}
-	
+
 	max = loadedMax;
 	min = loadedMin;
 
@@ -521,8 +518,7 @@ void Mesh::onUnload(bool soft /*= false */) {
 	DEBUG_ASSERT(isLoaded(), "onUnload: Mesh is not loaded");
 
 	//when soft unloading, only unload file-based meshes
-	if (!soft || isReloadable())
-	{
+	if (!soft || isReloadable()) {
 		glDeleteBuffers(1, &vertexHandle);
 		glDeleteBuffers(1, &indexHandle);
 
@@ -546,8 +542,7 @@ Vector& Mesh::getVertex(int idx) {
 void Mesh::setIndex(int idxidx, IndexType idx) {
 	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
 
-	switch (indexSize)
-	{
+	switch (indexSize) {
 	case 1:
 		indices[idxidx] = idx;
 		return;
@@ -564,8 +559,7 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 Mesh::IndexType Mesh::getIndex(int idxidx) const {
 	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
 
-	switch (indexSize)
-	{
+	switch (indexSize) {
 	case 1:
 		return indices[idxidx];
 	case 2:

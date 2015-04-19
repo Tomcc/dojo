@@ -11,8 +11,8 @@
 using namespace Dojo;
 
 AnimatedQuad::Animation::Animation(FrameSet* set, float timePerFrame) :
-currentFrame(NULL),
-mElapsedLoops(0) {
+	currentFrame(NULL),
+	mElapsedLoops(0) {
 	setup(set, timePerFrame);
 }
 
@@ -23,8 +23,7 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 	timePerFrame = tpf;
 	frames = set;
 
-	if (frames)
-	{
+	if (frames) {
 		totalTime = timePerFrame * frames->getFrameNumber();
 
 		if (frames->getFrameNumber() > 0)
@@ -34,53 +33,50 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 		totalTime = 1;
 }
 
-AnimatedQuad::AnimatedQuad( Object* parent, const Vector& pos, const String& immediateAnim, float tpf ) :
-Renderable( parent, pos ),
-animation( NULL ),
-animationTime( 0 ),
-pixelScale( 1,1 ),
-animationSpeedMultiplier( 1 ),
-pixelPerfect( true )
-{
+AnimatedQuad::AnimatedQuad(Object* parent, const Vector& pos, const String& immediateAnim, float tpf) :
+	Renderable(parent, pos),
+	animation(NULL),
+	animationTime(0),
+	pixelScale(1, 1),
+	animationSpeedMultiplier(1),
+	pixelPerfect(true) {
 	cullMode = CM_DISABLED;
 	inheritScale = false;
-	
+
 	//use the default quad
-	mesh = getGameState()->getMesh( "texturedQuad" );
-	
+	mesh = getGameState()->getMesh("texturedQuad");
+
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 
-	animation = new Animation( NULL, 0 );
+	animation = new Animation(NULL, 0);
 
 	reset();
 
-	if( immediateAnim.size() )
-		immediateAnimation( immediateAnim, tpf );
+	if (immediateAnim.size())
+		immediateAnimation(immediateAnim, tpf);
 }
 
-void AnimatedQuad::reset()
-{
+void AnimatedQuad::reset() {
 	Renderable::reset();
-	
+
 	pixelScale.x = pixelScale.y = 1;
 	screenSize.x = screenSize.y = 1;
-	
-	if( animation )
+
+	if (animation)
 		animation->setup(NULL, 0);
-	
-	setTexture( NULL );
-	mesh = gameState->getMesh( "texturedQuad" );
+
+	setTexture(NULL);
+	mesh = gameState->getMesh("texturedQuad");
 
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 }
 
-void AnimatedQuad::immediateAnimation( const String& name, float timePerFrame )
-{
-	FrameSet* set = gameState->getFrameSet( name );
-	
+void AnimatedQuad::immediateAnimation(const String& name, float timePerFrame) {
+	FrameSet* set = gameState->getFrameSet(name);
+
 	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );
-	
-	immediateAnimation( set, timePerFrame );
+
+	immediateAnimation(set, timePerFrame);
 }
 
 void AnimatedQuad::immediateAnimation(FrameSet* s, float timePerFrame) {
@@ -109,8 +105,7 @@ void AnimatedQuad::advanceAnim(float dt) {
 	DEBUG_ASSERT(animation != nullptr, "advanceAnim: no animation set");
 
 	//active animation?
-	if (animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0)
-	{
+	if (animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0) {
 		DEBUG_ASSERT(animation->frames->getFrameNumber() > 0, "advanceAnim: the current Animation has no frames");
 
 		//update the renderState using the animation
@@ -144,33 +139,28 @@ void AnimatedQuad::_setTexture(Texture* t) {
 	_updateScreenSize();
 }
 
-void AnimatedQuad::onAction( float dt )
-{		
-    advanceAnim(dt);
+void AnimatedQuad::onAction(float dt) {
+	advanceAnim(dt);
 
 	_updateScreenSize();
 
-	if( pixelPerfect )
-	{
+	if (pixelPerfect) {
 		scale = screenSize;
 		scale.z = 1; //be sure to keep scale = 1 or the transform will be denormalized (no inverse!)
 	}
 
-	Renderable::onAction( dt );
+	Renderable::onAction(dt);
 }
 
-void AnimatedQuad::_updateScreenSize()
-{
-	if( pixelPerfect )
-	{
+void AnimatedQuad::_updateScreenSize() {
+	if (pixelPerfect) {
 		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		gameState->getViewport()->makeScreenSize( screenSize, getTexture() );
+		gameState->getViewport()->makeScreenSize(screenSize, getTexture());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}
-	else
-	{
+	else {
 		screenSize.x = mesh->getDimensions().x * scale.x;
 		screenSize.y = mesh->getDimensions().y * scale.y;
 	}
@@ -196,8 +186,7 @@ void AnimatedQuad::Animation::setAnimationTime(float t) {
 	animationTime = t;
 
 	//clamp in the time interval
-	while (animationTime >= totalTime)
-	{
+	while (animationTime >= totalTime) {
 		++mElapsedLoops;
 		animationTime -= totalTime;
 	}

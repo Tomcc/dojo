@@ -2,11 +2,11 @@
 
 using namespace Dojo;
 
-File::File(const String & path, bool write /*= false */) :
-FileStream(path, write),
-mAccess(SA_BAD_FILE),
-mFile(nullptr),
-mSize(0) {
+File::File(const String& path, bool write /*= false */) :
+	FileStream(path, write),
+	mAccess(SA_BAD_FILE),
+	mFile(nullptr),
+	mSize(0) {
 
 }
 
@@ -34,8 +34,7 @@ File::Access File::open() {
 	const char* openmode = mWrite ? "wb" : "rb";
 	mFile = fopen(mPath.UTF8().c_str(), openmode);
 
-	if (mFile)
-	{
+	if (mFile) {
 		mAccess = mWrite ? SA_WRITEONLY : SA_READONLY;
 		_updateSize();
 	}

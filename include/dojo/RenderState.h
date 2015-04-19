@@ -16,18 +16,15 @@
 #include "BlendingMode.h"
 #include "Radians.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class Texture;
 	class Mesh;
 	class Shader;
 
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
-	class RenderState 
-	{
+	class RenderState {
 	public:
-		class TextureUnit
-		{
+		class TextureUnit {
 		public:
 
 			Texture* texture;
@@ -38,43 +35,36 @@ namespace Dojo
 
 			void applyTransform();
 
-			void setOffset( const Vector& v )
-			{
+			void setOffset(const Vector& v) {
 				offset = v;
 				_updateTransform();
 			}
 
-			void setScale( const Vector& v )
-			{
+			void setScale(const Vector& v) {
 				scale = v;
 				_updateTransform();
 			}
 
-			void setRotation( const Radians r )
-			{
+			void setRotation(const Radians r) {
 				rotation = r;
 				_updateTransform();
 			}
 
-			const Vector& getOffset()
-			{
+			const Vector& getOffset() {
 				return offset;
 			}
 
-			const Vector& getScale()
-			{
+			const Vector& getScale() {
 				return scale;
 			}
 
-			Radians getRotation() const
-			{
+			Radians getRotation() const {
 				return rotation;
 			}
 
 			const Matrix& getTransform() const;
 
-			bool isTransformRequired() const
-			{
+			bool isTransformRequired() const {
 				return optTransform != nullptr;
 			}
 
@@ -89,13 +79,12 @@ namespace Dojo
 
 		};
 
-		enum CullMode
-		{
+		enum CullMode {
 			CM_FRONT,
 			CM_BACK,
 			CM_DISABLED
 		};
-				
+
 		Color color;
 
 		GLenum srcBlend, destBlend, blendFunction;
@@ -103,11 +92,10 @@ namespace Dojo
 		CullMode cullMode;
 
 		RenderState();
-		
+
 		virtual ~RenderState();
-		
-		void setMesh( Mesh* m )
-		{			
+
+		void setMesh(Mesh* m) {
 			DEBUG_ASSERT( m, "setMesh requires a non-null mesh" );
 
 			mesh = m;
@@ -117,59 +105,60 @@ namespace Dojo
 		/**
 		It can be NULL, which means that the slot is disabled.
 		*/
-		void setTexture( Texture* tex, int ID = 0 );
+		void setTexture(Texture* tex, int ID = 0);
 
 		///enables or disables blending of this RS
-		void setBlendingEnabled( bool enabled )	{	blendingEnabled = enabled;	}
+		void setBlendingEnabled(bool enabled) {
+			blendingEnabled = enabled;
+		}
 
 		///sets the blending mode with a single call
-		void setBlending( GLenum src, GLenum dest )
-		{
+		void setBlending(GLenum src, GLenum dest) {
 			srcBlend = src;
 			destBlend = dest;
 		}
 
 		///sets an abstract photoshop-like blending mode
-		void setBlending( BlendingMode mode );
+		void setBlending(BlendingMode mode);
 
 		///sets the Shader material to be used for this RenderState
 		/**
 		\remark the shader may be null to remove shader use
 		*/
-		void setShader( Shader* shader );
-				
-		Texture* getTexture( int ID = 0 ) const;
+		void setShader(Shader* shader);
 
-		const TextureUnit& getTextureUnit( int ID ) const;
+		Texture* getTexture(int ID = 0) const;
+
+		const TextureUnit& getTextureUnit(int ID) const;
 
 		///returns the Mesh currently used by this state
-		Mesh* getMesh()	const							{	return mesh;			}
+		Mesh* getMesh() const {
+			return mesh;
+		}
 
 		///returns the Shader currently bound to this state
-		Shader* getShader()
-		{
+		Shader* getShader() {
 			return pShader;
 		}
-		
+
 		///returns the number of used texture units
-		int getTextureNumber()
-		{
+		int getTextureNumber() {
 			return mTextureNumber;
 		}
 
 		bool isAlphaRequired();
-		
+
 		///returns the "weight" of the changes needed to pass from "this" to "s"
-		int getDistance( RenderState* s );
-		
+		int getDistance(RenderState* s);
+
 		void applyState();
-		
+
 		void commitChanges();
 
 	protected:
-			
+
 		bool blendingEnabled;
-		
+
 		TextureUnit* textures[ DOJO_MAX_TEXTURES ];
 		int mTextureNumber;
 
@@ -177,7 +166,6 @@ namespace Dojo
 
 		Shader* pShader;
 
-		void _bindTextureSlot( int i );
+		void _bindTextureSlot(int i);
 	};
 }
-

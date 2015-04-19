@@ -4,17 +4,15 @@
 
 #include "FileStream.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	///File is a real filesystem file
-	class File : public FileStream
-	{
+	class File : public FileStream {
 	public:
 
-		File( const String & path, bool write = false );
+		File(const String& path, bool write = false);
 
-        virtual ~File();
-        
+		virtual ~File();
+
 		virtual Access open();
 
 		virtual long getSize();
@@ -23,16 +21,16 @@ namespace Dojo
 
 		virtual long getCurrentPosition();
 
-		virtual int seek( long offset, int fromWhere = SEEK_SET );
+		virtual int seek(long offset, int fromWhere = SEEK_SET);
 
-		virtual int read(  byte* buf, int number );
+		virtual int read(byte* buf, int number);
 
-		virtual void write( byte* buf, int size );
+		virtual void write(byte* buf, int size);
 
 		virtual void close();
-        
-        ///creates a new File* to read the underlying file. Does not copy reading status
-        virtual Stream* copy();
+
+		///creates a new File* to read the underlying file. Does not copy reading status
+		virtual Stream* copy();
 
 	protected:
 
@@ -45,4 +43,3 @@ namespace Dojo
 	private:
 	};
 }
-

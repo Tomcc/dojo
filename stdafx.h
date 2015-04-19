@@ -4,6 +4,7 @@
 //
 #if defined(_MSC_VER) || defined( __linux ) //if using VC++ or gcc
 
+
 #ifndef dojo_stdafx_h__
 #define dojo_stdafx_h__
 

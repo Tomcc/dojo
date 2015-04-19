@@ -10,8 +10,7 @@ StateInterface::~StateInterface() {
 
 }
 
-void StateInterface::setState(int newState)
-{
+void StateInterface::setState(int newState) {
 	DEBUG_ASSERT(mCanSetNextState, "This State Machine is in an active transition and can't change its destination state");
 
 	nextState = newState;
@@ -21,8 +20,7 @@ void StateInterface::setState(int newState)
 		_applyNextState();
 }
 
-void StateInterface::setStateImmediate(int newState)
-{
+void StateInterface::setStateImmediate(int newState) {
 	DEBUG_ASSERT(mCanSetNextState, "This State Machine is in an active transition and can't change its destination state");
 
 	nextState = newState;
@@ -41,15 +39,13 @@ void StateInterface::setState(std::shared_ptr<StateInterface> child) {
 		_applyNextState();
 }
 
-void StateInterface::begin()
-{
+void StateInterface::begin() {
 	activeState = true;
 	onBegin();
 }
 
-void StateInterface::loop(float dt)
-{
-	if (mTransitionCompleted)  //do not call a loop if the current state is not "active" (ie-transition in progress)
+void StateInterface::loop(float dt) {
+	if (mTransitionCompleted) //do not call a loop if the current state is not "active" (ie-transition in progress)
 		_subStateLoop(dt);
 
 	if (hasNextState())
@@ -58,32 +54,28 @@ void StateInterface::loop(float dt)
 	onLoop(dt);
 }
 
-void StateInterface::end()
-{
+void StateInterface::end() {
 	_subStateEnd();
 
 	onEnd();
 	activeState = false;
 }
 
-void StateInterface::_subStateBegin()
-{
+void StateInterface::_subStateBegin() {
 	if (currentStatePtr)
 		currentStatePtr->begin();
 	else
 		onStateBegin();
 }
 
-void StateInterface::_subStateLoop(float dt)
-{
+void StateInterface::_subStateLoop(float dt) {
 	if (currentStatePtr)
 		currentStatePtr->loop(dt);
 	else
 		onStateLoop(dt);
 }
 
-void StateInterface::_subStateEnd()
-{
+void StateInterface::_subStateEnd() {
 	if (currentStatePtr)
 		currentStatePtr->end();
 	else
@@ -91,8 +83,7 @@ void StateInterface::_subStateEnd()
 }
 
 
-void StateInterface::_nextState(int& newState)
-{
+void StateInterface::_nextState(int& newState) {
 	//first try, call substate end
 	if (mTransitionCompleted) {
 		_subStateEnd();
@@ -102,8 +93,7 @@ void StateInterface::_nextState(int& newState)
 	//now try the transition
 	mTransitionCompleted = onTransition();
 
-	if (mTransitionCompleted)
-	{
+	if (mTransitionCompleted) {
 		currentState = newState;
 
 		newState = -1;
@@ -113,13 +103,11 @@ void StateInterface::_nextState(int& newState)
 	}
 }
 
-void StateInterface::_nextState(std::shared_ptr<StateInterface>& newState)
-{
+void StateInterface::_nextState(std::shared_ptr<StateInterface>& newState) {
 	DEBUG_ASSERT(newState, "nullptr substate passed");
 
 	//first try, call substate end
-	if (mTransitionCompleted)
-	{
+	if (mTransitionCompleted) {
 		_subStateEnd();
 		currentStatePtr.reset(); //delete the current state before the transition
 	}
@@ -127,8 +115,7 @@ void StateInterface::_nextState(std::shared_ptr<StateInterface>& newState)
 	//now try the transition
 	mTransitionCompleted = onTransition();
 
-	if (mTransitionCompleted)
-	{
+	if (mTransitionCompleted) {
 		currentStatePtr = std::move(newState);
 
 		currentState = -1;
@@ -138,8 +125,7 @@ void StateInterface::_nextState(std::shared_ptr<StateInterface>& newState)
 	}
 }
 
-void StateInterface::_applyNextState()
-{
+void StateInterface::_applyNextState() {
 	DEBUG_ASSERT(hasNextState(), "_applyNextState was called but not next state was defined");
 
 	mCanSetNextState = false; //disable state setting - it can't be done while changing a state!

@@ -6,78 +6,72 @@
 
 using namespace Dojo;
 
-Texture::Texture( ResourceGroup* creator ) :
-	Resource( creator ),
+Texture::Texture(ResourceGroup* creator) :
+	Resource(creator),
 	width(0),
 	height(0),
 	internalWidth(0),
 	internalHeight(0),
-	glhandle( 0 ),
-	npot( false ),
-	parentAtlas( NULL ),
-	OBB( NULL ),
-	ownerFrameSet( NULL ),
-	mMipmapsEnabled( true ),
-	internalFormat( GL_NONE ),
-	mFBO( GL_NONE )
-{			
+	glhandle(0),
+	npot(false),
+	parentAtlas(NULL),
+	OBB(NULL),
+	ownerFrameSet(NULL),
+	mMipmapsEnabled(true),
+	internalFormat(GL_NONE),
+	mFBO(GL_NONE) {
 
 }
 
-Texture::Texture( ResourceGroup* creator, const String& path ) :
-	Resource( creator, path ),
+Texture::Texture(ResourceGroup* creator, const String& path) :
+	Resource(creator, path),
 	width(0),
 	height(0),
 	internalWidth(0),
 	internalHeight(0),
-	glhandle( 0 ),
-	npot( false ),
-	parentAtlas( NULL ),
-	OBB( NULL ),
-	ownerFrameSet( NULL ),
-	mMipmapsEnabled( true ),
-	internalFormat( GL_NONE ),
-	mFBO( GL_NONE )
-{			
+	glhandle(0),
+	npot(false),
+	parentAtlas(NULL),
+	OBB(NULL),
+	ownerFrameSet(NULL),
+	mMipmapsEnabled(true),
+	internalFormat(GL_NONE),
+	mFBO(GL_NONE) {
 
 }
 
-Texture::~Texture()
-{
-	if( OBB )
-		SAFE_DELETE( OBB );
+Texture::~Texture() {
+	if (OBB)
+	SAFE_DELETE( OBB );
 
 	if (loaded)
 		onUnload();
 }
 
-void Texture::bind( GLuint index )
-{	
+void Texture::bind(GLuint index) {
 	//create the gl texture if still not created!
-	if( !glhandle )
-	{
-		glGenTextures( 1, &glhandle );
+	if (!glhandle) {
+		glGenTextures(1, &glhandle);
 
 		CHECK_GL_ERROR;
 
 		DEBUG_ASSERT( glhandle, "OpenGL Error, no texture handle was generated" );
 	}
 
-	glActiveTexture( GL_TEXTURE0 + index );
-	glEnable( GL_TEXTURE_2D );
+	glActiveTexture(GL_TEXTURE0 + index);
+	glEnable(GL_TEXTURE_2D);
 
-	glBindTexture( GL_TEXTURE_2D, glhandle );
+	glBindTexture(GL_TEXTURE_2D, glhandle);
 }
 
-void Texture::bindAsRenderTarget( bool depthBuffer )
-{
+void Texture::bindAsRenderTarget(bool depthBuffer) {
 	DEBUG_ASSERT(!mMipmapsEnabled, "Can't use a texture with mipmaps as a rendertarget");
 
-	if( !mFBO ) //create a new RT on the fly at the first request
+	if (!mFBO) //create a new RT on the fly at the first request
 	{
 		bind(0);
 
-		glGenFramebuffers(1, &mFBO); 
+		glGenFramebuffers(1, &mFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
 		CHECK_GL_ERROR;
@@ -87,8 +81,7 @@ void Texture::bindAsRenderTarget( bool depthBuffer )
 		CHECK_GL_ERROR;
 
 		//create the depth attachment if needed
-		if( depthBuffer )
-		{
+		if (depthBuffer) {
 			glGenRenderbuffersEXT(1, &mDepthBuffer);
 			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
 			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
@@ -101,71 +94,61 @@ void Texture::bindAsRenderTarget( bool depthBuffer )
 		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete" );
 	}
 	else
-		glBindFramebuffer( GL_FRAMEBUFFER, mFBO );	
+	glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 }
 
-void Texture::enableAnisotropicFiltering( float level )
-{
+void Texture::enableAnisotropicFiltering(float level) {
 	bind(0);
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, level );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, level);
 }
 
-void Texture::disableAnisotropicFiltering()
-{
+void Texture::disableAnisotropicFiltering() {
 	bind(0);
-	glTexParameterf( GL_TEXTURE_2D, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 0 );
+	glTexParameterf(GL_TEXTURE_2D, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 0);
 }
 
-void Texture::enableBilinearFiltering()
-{					
+void Texture::enableBilinearFiltering() {
 	bind(0);
-	
+
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
 }
 
-void Texture::disableBilinearFiltering()
-{						
+void Texture::disableBilinearFiltering() {
 	bind(0);
-	
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST );		
+
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 }
 
-void Texture::enableTiling()
-{
+void Texture::enableTiling() {
 	bind(0);
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-void Texture::disableTiling()
-{
+void Texture::disableTiling() {
 	bind(0);
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void Texture::enableMipmaps() 
-{
+void Texture::enableMipmaps() {
 	mMipmapsEnabled = true;
-	
-	if( glhandle )
-	{
-		bind(0);		
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );	
+
+	if (glhandle) {
+		bind(0);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	}
 }
 
-void Texture::disableMipmaps() 
-{
+void Texture::disableMipmaps() {
 	mMipmapsEnabled = false;
 
-	if (glhandle)
-	{
+	if (glhandle) {
 		bind(0);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
 }
 
@@ -179,14 +162,13 @@ struct FormatInfo {
 };
 
 const FormatInfo GLFormat[] = {
-	{ 4, GL_RGBA, GL_UNSIGNED_BYTE },
-	{ 3, GL_RGB, GL_UNSIGNED_BYTE },
-	{ 2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5 },
-	{ 0, 0, 0 },
+	{4, GL_RGBA, GL_UNSIGNED_BYTE},
+	{3, GL_RGB, GL_UNSIGNED_BYTE},
+	{2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},
+	{0, 0, 0},
 };
 
-bool Texture::loadEmpty( int w, int h, PixelFormat format_ )
-{
+bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 	width = w;
 	height = h;
 
@@ -200,55 +182,52 @@ bool Texture::loadEmpty( int w, int h, PixelFormat format_ )
 	bind(0);
 
 	if (mMipmapsEnabled)
-		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, true );
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, true);
 	else
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 
-	int POTwidth = Math::nextPowerOfTwo( width );
-	int POTheight = Math::nextPowerOfTwo( height );
+	int POTwidth = Math::nextPowerOfTwo(width);
+	int POTheight = Math::nextPowerOfTwo(height);
 
 	npot = width != POTwidth && height != POTheight;
 
 	int destWidth, destHeight;
 
 	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
-	if( !npot || Platform::singleton().isNPOTEnabled() )
-	{
+	if (!npot || Platform::singleton().isNPOTEnabled()) {
 		destWidth = width;
 		destHeight = height;
 	}
-	else
-	{
+	else {
 		destWidth = POTwidth;
 		destHeight = POTheight;
 	}
 
 	//check if the texture has to be recreated (changed dimensions)
-	if( destWidth != internalWidth || destHeight != internalHeight || internalFormat != format.glFormat )
-	{
+	if (destWidth != internalWidth || destHeight != internalHeight || internalFormat != format.glFormat) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
 		internalFormat = format.glFormat;
 		size = internalWidth * internalHeight * format.bytes;
 
-        std::string dummyData(size, 0 ); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
-        
-        //create an empty GPU mem space
+		std::string dummyData(size, 0); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
+
+		//create an empty GPU mem space
 		glTexImage2D(
-			GL_TEXTURE_2D, 
-			0, 
-			internalFormat,
-			internalWidth, 
-			internalHeight,
-			0, 
-			internalFormat,
-			format.elementType, 
-			dummyData.c_str() );
+			GL_TEXTURE_2D,
+						0,
+						internalFormat,
+						internalWidth,
+						internalHeight,
+						0,
+						internalFormat,
+						format.elementType,
+						dummyData.c_str());
 	}
 
-	UVSize.x = (float)width/(float)internalWidth;
-	UVSize.y = (float)height/(float)internalHeight;
+	UVSize.x = (float)width / (float)internalWidth;
+	UVSize.y = (float)height / (float)internalHeight;
 
 	GLenum err = glGetError();
 	loaded = (err == GL_NO_ERROR);
@@ -257,74 +236,71 @@ bool Texture::loadEmpty( int w, int h, PixelFormat format_ )
 	return loaded;
 }
 
-bool Dojo::Texture::loadFromMemory( const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat )
-{
+bool Dojo::Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat) {
 	DEBUG_ASSERT( imageData, "null image data" );
 
-	loadEmpty( width, height, destFormat );
+	loadEmpty(width, height, destFormat);
 
 	auto& format = GLFormat[(int)sourceFormat];
 
-	glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData );
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData);
 
 	loaded = (glGetError() == GL_NO_ERROR);
-	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );	
+	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );
 	return loaded;
 }
 
-bool Texture::loadFromFile( const String& path )
-{
+bool Texture::loadFromFile(const String& path) {
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
-	
+
 	void* imageData = NULL;
 
 	int pixelSize;
-	auto format = Platform::singleton().loadImageFile( imageData, path, width, height, pixelSize );
-	
+	auto format = Platform::singleton().loadImageFile(imageData, path, width, height, pixelSize);
+
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
-	
-	if( creator && creator->disableBilinear )	
+
+	if (creator && creator->disableBilinear)
 		disableBilinearFiltering();
 	else
 		enableBilinearFiltering();
-	
-	bool isSurface = width == Math::nextPowerOfTwo( width ) && height == Math::nextPowerOfTwo( height );
-	
+
+	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
+
 	//guess if this is a texture or a sprite
-	if( !isSurface || (creator && creator->disableMipmaps ) )
+	if (!isSurface || (creator && creator->disableMipmaps))
 		disableMipmaps();
 	else
 		enableMipmaps();
-	
-	if( !isSurface || (creator && creator->disableTiling ) )
+
+	if (!isSurface || (creator && creator->disableTiling))
 		disableTiling();
 	else
 		enableTiling();
 
-	if( isSurface ) //TODO query anisotropic level
+	if (isSurface) //TODO query anisotropic level
 	{
 		GLfloat aniso;
-		glGetFloatv( GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso );
-		enableAnisotropicFiltering( aniso/2 );
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+		enableAnisotropicFiltering(aniso / 2);
 	}
-		
+
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	if( format == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
 	else if( format == GL_RGB )	destFormat = GL_SRGB8;
 #endif
-		
-	loadFromMemory( (byte*)imageData, width, height, format, PixelFormat::R8G8B8A8 );
+
+	loadFromMemory((byte*)imageData, width, height, format, PixelFormat::R8G8B8A8);
 
 	free(imageData);
 
 	return loaded;
 }
 
-bool Texture::_setupAtlas()
-{
+bool Texture::_setupAtlas() {
 	DEBUG_ASSERT( parentAtlas, "Tried to load a Texture as an atlas tile but the parent atlas is null" );
 
-	if( !parentAtlas->isLoaded() )
+	if (!parentAtlas->isLoaded())
 		return (loaded = false);
 
 	internalWidth = parentAtlas->getInternalWidth();
@@ -336,20 +312,19 @@ bool Texture::_setupAtlas()
 	glhandle = parentAtlas->glhandle;
 
 	//find uv coordinates
-	UVOffset.x = (float)mAtlasOriginX/(float)internalWidth;
-	UVOffset.y = (float)mAtlasOriginY/(float)internalHeight;
+	UVOffset.x = (float)mAtlasOriginX / (float)internalWidth;
+	UVOffset.y = (float)mAtlasOriginY / (float)internalHeight;
 
 	//find uv size
-	UVSize.x = (float)width/(float)internalWidth;
-	UVSize.y = (float)height/(float)internalHeight;
+	UVSize.x = (float)width / (float)internalWidth;
+	UVSize.y = (float)height / (float)internalHeight;
 
 	return (loaded = true);
 }
 
-bool Texture::loadFromAtlas( Texture* tex, int x, int y, int sx, int sy )
-{
+bool Texture::loadFromAtlas(Texture* tex, int x, int y, int sx, int sy) {
 	DEBUG_ASSERT( tex, "null atlas texture" );
-	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );	
+	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 
 	parentAtlas = tex;
 
@@ -360,48 +335,44 @@ bool Texture::loadFromAtlas( Texture* tex, int x, int y, int sx, int sy )
 	mAtlasOriginY = y;
 
 	//actual lazy loading is in _setupAtlas
-	
+
 	return false;
 }
 
-bool Texture::onLoad()
-{	
+bool Texture::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "The texture is already loaded" );
 
-	if( OBB )  //rebuild and reload the OBB if it was purged
+	if (OBB) //rebuild and reload the OBB if it was purged
 		_buildOptimalBillboard();
-	
-	if( isReloadable() )
-		return loadFromFile( filePath );
-	else if( parentAtlas )
+
+	if (isReloadable())
+		return loadFromFile(filePath);
+	else if (parentAtlas)
 		return _setupAtlas();
 	else
 		return false;
 }
 
-void Texture::onUnload( bool soft )
-{		
+void Texture::onUnload(bool soft) {
 	DEBUG_ASSERT( isLoaded(), "The Texture is not loaded" );
-	
-	if( !soft || isReloadable() )
-	{
-		if( OBB )
-		{
+
+	if (!soft || isReloadable()) {
+		if (OBB) {
 			OBB->onUnload();
 		}
 
-		if( !parentAtlas ) //don't unload parent texture!
+		if (!parentAtlas) //don't unload parent texture!
 		{
 			DEBUG_ASSERT( glhandle, "Tried to unload a texture but the texture handle was invalid" );
-			glDeleteTextures(1, &glhandle );
+			glDeleteTextures(1, &glhandle);
 
 			internalWidth = internalHeight = 0;
 			internalFormat = GL_NONE;
 			glhandle = 0;
 
-			if( mFBO ) //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
+			if (mFBO) //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
 			{
-				glDeleteFramebuffers( 1, &mFBO );
+				glDeleteFramebuffers(1, &mFBO);
 				mFBO = GL_NONE;
 			}
 		}
@@ -411,33 +382,31 @@ void Texture::onUnload( bool soft )
 }
 
 
-void Texture::_buildOptimalBillboard()
-{
-	if( !OBB )
-	{
+void Texture::_buildOptimalBillboard() {
+	if (!OBB) {
 		OBB = new Mesh();
-	
+
 		//build or rebuild the OBB
-		OBB->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
+		OBB->setVertexFields({VertexField::Position2D, VertexField::UV0});
 	}
-	
-	OBB->begin( 4 );
-	
-	OBB->vertex( -0.5, -0.5 );		
-	OBB->uv( UVOffset.x, 
-			 UVOffset.y + UVSize.y );
-	
-	OBB->vertex( 0.5, -0.5 );		
-	OBB->uv( UVOffset.x + UVSize.x, 
-			 UVOffset.y + UVSize.y );
-	
-	OBB->vertex( -0.5, 0.5 );		
-	OBB->uv( UVOffset.x, 
-			 UVOffset.y );
-	
-	OBB->vertex( 0.5, 0.5 );
-	OBB->uv( UVOffset.x + UVSize.x, 
-			 UVOffset.y );
-	
-	OBB->end();			
+
+	OBB->begin(4);
+
+	OBB->vertex(-0.5, -0.5);
+	OBB->uv(UVOffset.x,
+			UVOffset.y + UVSize.y);
+
+	OBB->vertex(0.5, -0.5);
+	OBB->uv(UVOffset.x + UVSize.x,
+			UVOffset.y + UVSize.y);
+
+	OBB->vertex(-0.5, 0.5);
+	OBB->uv(UVOffset.x,
+			UVOffset.y);
+
+	OBB->vertex(0.5, 0.5);
+	OBB->uv(UVOffset.x + UVSize.x,
+			UVOffset.y);
+
+	OBB->end();
 }

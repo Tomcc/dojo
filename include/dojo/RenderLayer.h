@@ -7,8 +7,7 @@
 namespace Dojo {
 	class Renderable;
 
-	class RenderLayer
-	{
+	class RenderLayer {
 	public:
 		typedef int ID;
 
@@ -21,6 +20,3 @@ namespace Dojo {
 		SmallSet<Renderable*> elements;
 	};
 }
-
-
-

@@ -16,8 +16,7 @@
 #include "VertexField.h"
 #include "TriangleMode.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class Color;
 	class ResourceGroup;
 	class Shader;
@@ -34,8 +33,7 @@ namespace Dojo
 
 	Calling end() is required before the mesh can be used, so that its data is loaded to the GPU.
 	*/
-	class Mesh : public Resource
-	{
+	class Mesh : public Resource {
 	public:
 		typedef unsigned int IndexType;
 
@@ -45,10 +43,10 @@ namespace Dojo
 		static const int VERTEX_FIELD_SIZES[];
 
 		///Creates a new empty Mesh
-		Mesh( ResourceGroup* creator = NULL );
+		Mesh(ResourceGroup* creator = NULL);
 
 		///Creates a new Mesh bound to the file at filePath
-		Mesh( ResourceGroup* creator, const String& filePath );
+		Mesh(ResourceGroup* creator, const String& filePath);
 
 		virtual ~Mesh();
 
@@ -59,45 +57,44 @@ namespace Dojo
 		/**
 			MUST be called only before the first begin ever!
 		*/
-		void setIndexByteSize( byte bytenumber );
+		void setIndexByteSize(byte bytenumber);
 
 		///enables a new VertexField
-		void setVertexFieldEnabled( VertexField f );
+		void setVertexFieldEnabled(VertexField f);
 
 		///enables a list of VertexFields
 		void setVertexFields(const std::initializer_list<VertexField>& fs);
 
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
-		void setDynamic( bool d);
+		void setDynamic(bool d);
 
 		///Sets the primitive for the rendering of this mesh
-		void setTriangleMode( TriangleMode m )	{	triangleMode = m;	}
+		void setTriangleMode(TriangleMode m) {
+			triangleMode = m;
+		}
 
-		TriangleMode getTriangleMode()	{	return triangleMode;	}
+		TriangleMode getTriangleMode() {
+			return triangleMode;
+		}
 
-		const Vector& getMax()
-		{
+		const Vector& getMax() {
 			return max;
 		}
 
-		const Vector& getMin()
-		{
+		const Vector& getMin() {
 			return min;
 		}
 
-		const Vector& getDimensions()
-		{
+		const Vector& getDimensions() {
 			return dimensions;
 		}
 
-		const Vector& getCenter()
-		{
+		const Vector& getCenter() {
 			return center;
 		}
 
 		///tells if begin() has been called not followed by an end()
-		bool isEditing()
-		{
+		bool isEditing() {
 			return editing;
 		}
 
@@ -105,7 +102,7 @@ namespace Dojo
 		/**
 		\param extimatedVertes number of vertices that have to be reserved
 		*/
-		void begin( int extimatedVerts = 1 );
+		void begin(int extimatedVerts = 1);
 
 		///starts editing a dynamic mesh that was already begin'd and end'ed
 		/**
@@ -114,10 +111,10 @@ namespace Dojo
 		void beginAppend();
 
 		///adds a vertex at the given position
-		int vertex( float x, float y );
+		int vertex(float x, float y);
 
 		///adds a vertex at the given position
-		int vertex( float x, float y, float z );
+		int vertex(float x, float y, float z);
 
 		int vertex(const Vector& v);
 
@@ -128,14 +125,14 @@ namespace Dojo
 		void uv(const Vector& uv, byte set = 0);
 
 		///sets the color of the current vertex
-		void color( float r, float g, float b, float a  );
+		void color(float r, float g, float b, float a);
 
-		void color( const Color& c );
+		void color(const Color& c);
 
 		///adds a vertex at the given position
-		void normal( float x, float y, float z );
+		void normal(float x, float y, float z);
 
-		void normal( const Vector& n );
+		void normal(const Vector& n);
 
 		///appends a raw blob of vertices to the vertex array
 		void appendRawVertexData(void* data, IndexType vertexCount);
@@ -144,18 +141,16 @@ namespace Dojo
 		void index(IndexType idx);
 
 		///adds 3 clockwise indices to make a triangle
-		void triangle(unsigned int i1, unsigned int i2, unsigned int i3)
-		{
+		void triangle(unsigned int i1, unsigned int i2, unsigned int i3) {
 			index(i1);
 			index(i2);
 			index(i3);
 		}
 
 		///adds 2 clockwise triangles (6 indices) to make a quad
-		void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22)
-		{
-			triangle(i11,i21,i12);
-			triangle(i21,i22,i12);
+		void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22) {
+			triangle(i11, i21, i12);
+			triangle(i21, i22, i12);
 		}
 
 		///loads the data on the device
@@ -171,33 +166,28 @@ namespace Dojo
 		///loads the whole file passed in the constructor
 		virtual bool onLoad();
 
-		virtual void onUnload( bool soft = false );
+		virtual void onUnload(bool soft = false);
 
 		///binds the mesh buffers with the vertex format from the specified shader
-		virtual void bind( Shader* shader );
+		virtual void bind(Shader* shader);
 
-		bool isIndexed() const
-		{
+		bool isIndexed() const {
 			return !indices.empty() || indexHandle;
 		}
 
-		GLenum getIndexGLType()
-		{
+		GLenum getIndexGLType() {
 			return indexGLType;
 		}
 
-		bool isVertexFieldEnabled( VertexField f )
-		{
+		bool isVertexFieldEnabled(VertexField f) {
 			return vertexFieldOffset[(unsigned char)f] != 0xff;
 		}
 
-		IndexType getVertexCount() const
-		{
+		IndexType getVertexCount() const {
 			return vertexCount;
 		}
 
-		int getIndexCount() const
-		{
+		int getIndexCount() const {
 			return indexCount;
 		}
 
@@ -245,13 +235,12 @@ namespace Dojo
 		void _prepareVertex(const Vector& v);
 
 		///returns low level binding informations about a vertex field
-		void _getVertexFieldData( VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset );
+		void _getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset);
 
 		///binds the attribute arrays and the Buffer Objects required to render the mesh
-		void _bindAttribArrays( Shader* shader );
+		void _bindAttribArrays(Shader* shader);
 
 		byte& _offset(VertexField f);
 		byte& _offset(VertexField f, int subID);
 	};
 }
-

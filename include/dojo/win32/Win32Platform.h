@@ -9,70 +9,66 @@
 #include "Keyboard.h"
 #include "Pipe.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class XInputController;
 	class Keyboard;
 
-	class Win32Platform : public Platform
-	{
+	class Win32Platform : public Platform {
 	public:
 
-		Win32Platform( const Table& config );
+		Win32Platform(const Table& config);
 		virtual ~Win32Platform();
 
-		virtual void initialize( Game* g );
+		virtual void initialize(Game* g);
 		virtual void shutdown();
 
 		void prepareThreadContext();
 
-		virtual void setFullscreen( bool fullscreen );
+		virtual void setFullscreen(bool fullscreen);
 
-		virtual bool isNPOTEnabled()
-		{
+		virtual bool isNPOTEnabled() {
 			return true; //it always is on windows
 		}
 
 		virtual void acquireContext();
 		virtual void present();
 
-		virtual void step( float dt );
+		virtual void step(float dt);
 		virtual void loop();
 
-		virtual PixelFormat loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
-		
+		virtual PixelFormat loadImageFile(void*& bufptr, const String& path, int& width, int& height, int& pixelSize);
+
 		virtual const String& getAppDataPath();
 		virtual const String& getResourcesPath();
 		virtual const String& getRootPath();
-		
-		virtual void openWebPage( const String& site );
+
+		virtual void openWebPage(const String& site);
 
 		virtual void setMouseLocked(bool locked) override;
 
-		void mouseWheelMoved( int wheelZ );
+		void mouseWheelMoved(int wheelZ);
 
 		void mousePressed(int cursorX, int cursorY, Touch::Type type);
-		void mouseMoved(int cursorX, int cursorY );
+		void mouseMoved(int cursorX, int cursorY);
 		void mouseReleased(int cursorX, int cursorY, Touch::Type type);
 
-		void keyPressed( int kc );
-		void keyReleased( int kc );	
+		void keyPressed(int kc);
+		void keyReleased(int kc);
 
-		void _callbackThread( float frameLength );
+		void _callbackThread(float frameLength);
 
-		float getFrameInterval()
-		{
+		float getFrameInterval() {
 			return frameInterval;
 		}
 
-		void setVSync(int interval=1);
+		void setVSync(int interval = 1);
 
 	protected:
 
-		HINSTANCE hInstance;    // window app instance
-		HWND hwnd;      // handle for the window
-		HDC   hdc;      // handle to device context
-		HGLRC hglrc;    // handle to OpenGL rendering context
+		HINSTANCE hInstance; // window app instance
+		HWND hwnd; // handle for the window
+		HDC hdc; // handle to device context
+		HGLRC hglrc; // handle to OpenGL rendering context
 
 		MSG msg;
 
@@ -86,23 +82,22 @@ namespace Dojo
 		bool mMousePressed;
 
 		//context sharing stuff needed for multithread creation
-		struct ContextShareRequest
-		{
+		struct ContextShareRequest {
 			std::atomic<bool> done;
+
 			ContextShareRequest() :
-				done(false)
-			{
+				done(false) {
 
 			}
 
 			HGLRC contextHandle;
 		};
 
-		typedef Pipe< ContextShareRequest* > ContextRequestsQueue;
+		typedef Pipe<ContextShareRequest*> ContextRequestsQueue;
 		Unique<ContextRequestsQueue> mContextRequestsQueue;
 
-		bool _initializeWindow( const String& caption, int w, int h );
-		
+		bool _initializeWindow(const String& caption, int w, int h);
+
 	private:
 
 		int lastPressedText;
@@ -129,8 +124,8 @@ namespace Dojo
 
 		void _adjustWindow();
 
-		void _setFullscreen( bool f );
+		void _setFullscreen(bool f);
 
-		void _pollDevices( float dt );
+		void _pollDevices(float dt);
 	};
 }

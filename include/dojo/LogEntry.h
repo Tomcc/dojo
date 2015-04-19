@@ -5,11 +5,9 @@
 namespace Dojo {
 
 	///An individual entry of the log, complete with timestamp and importance
-	class LogEntry
-	{
+	class LogEntry {
 	public:
-		enum Level
-		{
+		enum Level {
 			EL_INFO,
 			EL_WARNING,
 			EL_ERROR,
@@ -22,13 +20,9 @@ namespace Dojo {
 
 		LogEntry(const String& msg, Level lvl) :
 			text(msg),
-			level(lvl)
-		{
+			level(lvl) {
 			timestamp = time(NULL);
 		}
 	};
 
 }
-
-
-

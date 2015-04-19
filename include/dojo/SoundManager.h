@@ -12,116 +12,121 @@
 
 namespace Dojo {
 
-		class SoundListener;
-		class SoundSource;
+	class SoundListener;
+	class SoundSource;
 
-		///Dojo's audio system, based on OpenAL
-		class SoundManager 
-		{
-		public:
-			typedef std::vector< std::unique_ptr<SoundSource> > SoundList;
-            
-            typedef std::function< float(float) > Easing;
-            
-            static const Easing LinearEasing;
-			static const float m;
+	///Dojo's audio system, based on OpenAL
+	class SoundManager {
+	public:
+		typedef std::vector<std::unique_ptr<SoundSource>> SoundList;
 
-			static void vectorToALfloat(const Vector& vector, ALfloat* ALpos );
+		typedef std::function<float(float)> Easing;
 
-			SoundManager();
+		static const Easing LinearEasing;
+		static const float m;
 
-			~SoundManager();
-			
-			///clear() destroys the sound pool - use wisely!
-			void clear();
+		static void vectorToALfloat(const Vector& vector, ALfloat* ALpos);
 
-			///Returns a sound source ready to play a new sound
-			SoundSource& getSoundSource( SoundSet* set, int i = -1 );
+		SoundManager();
 
-			///Returns a sound source ready to play a new sound, with the position already set
-			SoundSource& getSoundSource( const Vector& pos, SoundSet* set );
+		~SoundManager();
 
-			///Plays the given set without spatial positioning
-			SoundSource& playSound(SoundSet* set, float volume = 1.0f);
+		///clear() destroys the sound pool - use wisely!
+		void clear();
 
-			///Plays the given set at pos
-			SoundSource& playSound( const Vector& pos, SoundSet* set, float volume = 1.0f );
-						
-			///Starts a new sound using it as background music
-			/**
+		///Returns a sound source ready to play a new sound
+		SoundSource& getSoundSource(SoundSet* set, int i = -1);
+
+		///Returns a sound source ready to play a new sound, with the position already set
+		SoundSource& getSoundSource(const Vector& pos, SoundSet* set);
+
+		///Plays the given set without spatial positioning
+		SoundSource& playSound(SoundSet* set, float volume = 1.0f);
+
+		///Plays the given set at pos
+		SoundSource& playSound(const Vector& pos, SoundSet* set, float volume = 1.0f);
+
+		///Starts a new sound using it as background music
+		/**
 			\param trackFadeTime the duration of the intro fade-in
 			*/
-			void playMusic( SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing );
-			
-			void pauseMusic();
-			
-			void resumeMusic();
+		void playMusic(SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing);
 
-			///stops the music, with an optional fade-out
-			void stopMusic( float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing );
+		void pauseMusic();
 
-			void setMusicVolume( float volume );
-			
-			void setMasterVolume( float volume );
-			
-			float getMasterVolume()				{	return masterVolume;		}
-			float getMusicVolume()				{	return musicVolume;			}
-			
-			SoundSource* getMusicTrack()
-			{
-				return musicTrack;
-			}
-			
-			///pauses all the active SoundSources (excluding the background music!)
-			void pauseAll();
-			///resumes all the active SoundSources (excluding the background music!)
-			void resumeAll();
-			
-			///stops all the active SoundSources (excluding the background music!)
-			void stopAllSounds();
+		void resumeMusic();
 
-			const SoundList& getActiveSounds() const 
-			{
-				return busySoundPool;
-			}
-			
-			///true if the music is fading
-			bool isMusicFading()		{	return fadeState != FS_NONE;	}
-            ///is the music already playing?
-            bool isMusicPlaying()    {   return musicTrack != nullptr;      }
-			
-			///sets the openAL Listener's world transform
-			void setListenerTransform( const Matrix& worldTransform );
+		///stops the music, with an optional fade-out
+		void stopMusic(float stopFadeTime = 0, const Easing& fadeEasing = LinearEasing);
 
-			void update( float dt );
+		void setMusicVolume(float volume);
 
-		protected:
+		void setMasterVolume(float volume);
 
-			enum FadeState
-			{
-				FS_NONE,
-				FS_FADE_IN,
-				FS_FADE_OUT
-			};
+		float getMasterVolume() {
+			return masterVolume;
+		}
 
-			ALCcontext *context;
-			ALCdevice *device;
+		float getMusicVolume() {
+			return musicVolume;
+		}
 
-			glm::vec4 lastListenerPos;
+		SoundSource* getMusicTrack() {
+			return musicTrack;
+		}
 
-			//pool di suoni
-			SoundList idleSoundPool;
-			SoundList busySoundPool;
+		///pauses all the active SoundSources (excluding the background music!)
+		void pauseAll();
+		///resumes all the active SoundSources (excluding the background music!)
+		void resumeAll();
 
-			std::unique_ptr<SoundSource> fakeSource;
+		///stops all the active SoundSources (excluding the background music!)
+		void stopAllSounds();
 
-			SoundSource *musicTrack, *nextMusicTrack;
-			float halfFadeTime;
-			float currentFadeTime;
-			FadeState fadeState;
+		const SoundList& getActiveSounds() const {
+			return busySoundPool;
+		}
 
-			float musicVolume;
-			float masterVolume;
+		///true if the music is fading
+		bool isMusicFading() {
+			return fadeState != FS_NONE;
+		}
+
+		///is the music already playing?
+		bool isMusicPlaying() {
+			return musicTrack != nullptr;
+		}
+
+		///sets the openAL Listener's world transform
+		void setListenerTransform(const Matrix& worldTransform);
+
+		void update(float dt);
+
+	protected:
+
+		enum FadeState {
+			FS_NONE,
+			FS_FADE_IN,
+			FS_FADE_OUT
 		};
-}
 
+		ALCcontext* context;
+		ALCdevice* device;
+
+		glm::vec4 lastListenerPos;
+
+		//pool di suoni
+		SoundList idleSoundPool;
+		SoundList busySoundPool;
+
+		std::unique_ptr<SoundSource> fakeSource;
+
+		SoundSource *musicTrack, *nextMusicTrack;
+		float halfFadeTime;
+		float currentFadeTime;
+		FadeState fadeState;
+
+		float musicVolume;
+		float masterVolume;
+	};
+}

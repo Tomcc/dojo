@@ -4,24 +4,21 @@
 
 #include "Renderable.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class Font;
 	class Tessellation;
 
-	class PolyTextArea : public Renderable
-	{
+	class PolyTextArea : public Renderable {
 	public:
 
-		enum RenderingType
-		{
+		enum RenderingType {
 			RT_OUTLINE,
 			RT_SURFACE,
 			RT_EXTRUDED
 		};
 
 		///creates a new PolyTextArea object at position, using "font", centered or not around the center, using rendering options RT
-		PolyTextArea( Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt );
+		PolyTextArea(Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt);
 
 		virtual ~PolyTextArea();
 
@@ -31,8 +28,7 @@ namespace Dojo
 		\param bevelDepth the depth of the bevel as a fraction of the font height
 		\param inflateRadius the radius of the bevel's inflation as a fraction of the font height
 		*/
-		void setExtrusionParameters( float depth, float bevelDepth=0, float inflateRadius=0 )
-		{
+		void setExtrusionParameters(float depth, float bevelDepth = 0, float inflateRadius = 0) {
 			DEBUG_ASSERT( depth > 0, "extrusion depth must be a positive number" );
 			DEBUG_ASSERT( bevelDepth >= 0 && bevelDepth < depth*0.5, "the depth of the bevel must not exceed half of the total depth" );
 
@@ -42,40 +38,34 @@ namespace Dojo
 		}
 
 		///sets additional interline height
-		void setInterline( float interline )
-		{
+		void setInterline(float interline) {
 			mInterline = interline;
 		}
 
 		///adds some text to this poly area
-		void addText( const String& str )
-		{
+		void addText(const String& str) {
 			mContent += str;
 			mDirty = true;
 		}
 
 		///replaces the poly area content with this text
-		void setText( const String& str )
-		{
+		void setText(const String& str) {
 			mContent = str;
 			mDirty = true;
 		}
 
-		void clear()
-		{
+		void clear() {
 			mContent = String::EMPTY;
 			mDirty = true;
 		}
 
 		///gets the current interline
-		float getInterline()
-		{
+		float getInterline() {
 			return mInterline;
 		}
 
-		virtual void onAction( float dt )
-		{
-			if( mDirty )
+		virtual void onAction(float dt) {
+			if (mDirty)
 				_prepare();
 
 			Renderable::onAction(dt);
@@ -97,15 +87,13 @@ namespace Dojo
 
 		int mPrevLayerIdx;
 
-		void _centerLine( int rowStartIdx, float rowWidth );
+		void _centerLine(int rowStartIdx, float rowWidth);
 
 		void _prepare();
 
-		void _tesselateExtrusionStrip( Tessellation* t, int layerAbaseIdx, int layerBbaseIdx );
-		void _addExtrusionLayer( Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal = NULL );
+		void _tesselateExtrusionStrip(Tessellation* t, int layerAbaseIdx, int layerBbaseIdx);
+		void _addExtrusionLayer(Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal = NULL);
 
 	private:
 	};
 }
-
-

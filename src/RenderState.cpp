@@ -9,17 +9,17 @@
 using namespace Dojo;
 
 RenderState::TextureUnit::TextureUnit() :
-scale(1, 1),
-rotation(0),
-offset(0, 0),
-texture(nullptr),
-optTransform(nullptr) {
+	scale(1, 1),
+	rotation(0),
+	offset(0, 0),
+	texture(nullptr),
+	optTransform(nullptr) {
 
 }
 
 RenderState::TextureUnit::~TextureUnit() {
 	if (optTransform)
-		SAFE_DELETE(optTransform);
+	SAFE_DELETE(optTransform);
 }
 
 
@@ -46,14 +46,14 @@ const Matrix& RenderState::TextureUnit::getTransform() const {
 }
 
 RenderState::RenderState() :
-mTextureNumber(0),
-cullMode(CM_BACK),
-blendingEnabled(true),
-srcBlend(GL_SRC_ALPHA),
-destBlend(GL_ONE_MINUS_SRC_ALPHA),
-blendFunction(GL_FUNC_ADD),
-mesh(nullptr),
-pShader(nullptr) {
+	mTextureNumber(0),
+	cullMode(CM_BACK),
+	blendingEnabled(true),
+	srcBlend(GL_SRC_ALPHA),
+	destBlend(GL_ONE_MINUS_SRC_ALPHA),
+	blendFunction(GL_FUNC_ADD),
+	mesh(nullptr),
+	pShader(nullptr) {
 	memset(textures, 0, sizeof(textures)); //zero all the textures
 }
 
@@ -72,7 +72,7 @@ void RenderState::setTexture(Texture* tex, int ID /*= 0 */) {
 		textures[ID] = new TextureUnit();
 	}
 	else if (tex == NULL)
-		SAFE_DELETE(textures[ID]);
+	SAFE_DELETE(textures[ID]);
 
 	textures[ID]->texture = tex;
 }
@@ -83,11 +83,11 @@ void RenderState::setBlending(BlendingMode mode) {
 	};
 
 	static const GLBlend modeToGLTable[] = {
-		{ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD }, //alphablend
-		{ GL_DST_COLOR, GL_ZERO, GL_FUNC_ADD },  //multiply
-		{ GL_ONE, GL_ONE, GL_FUNC_ADD },  //add
-		{ GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_FUNC_ADD },  //invert
-		{ GL_ONE, GL_ONE, GL_FUNC_SUBTRACT } //subtract
+		{GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD}, //alphablend
+		{GL_DST_COLOR, GL_ZERO, GL_FUNC_ADD}, //multiply
+		{GL_ONE, GL_ONE, GL_FUNC_ADD}, //add
+		{GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_FUNC_ADD}, //invert
+		{GL_ONE, GL_ONE, GL_FUNC_SUBTRACT} //subtract
 	};
 
 	auto& blend = modeToGLTable[(int)mode];
@@ -125,8 +125,7 @@ int RenderState::getDistance(RenderState* s) {
 	if (s->mesh != mesh)
 		dist += 3;
 
-	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i)
-	{
+	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		if (textures[i] != s->textures[i])
 			dist += 2;
 	}
@@ -137,73 +136,68 @@ int RenderState::getDistance(RenderState* s) {
 	return dist;
 }
 
-bool RenderState::isAlphaRequired()
-{
+bool RenderState::isAlphaRequired() {
 	return blendingEnabled || getTextureNumber() == 0;
 }
 
-void RenderState::applyState()
-{
-	for( int i = 0; i < DOJO_MAX_TEXTURES; ++i )
-	{
+void RenderState::applyState() {
+	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		//select current slot
-		glActiveTexture( GL_TEXTURE0 + i );
-		
-		if( textures[i] )
-		{
+		glActiveTexture(GL_TEXTURE0 + i);
+
+		if (textures[i]) {
 			textures[i]->texture->bind(i);
-			
-			if( textures[i]->isTransformRequired() )
+
+			if (textures[i]->isTransformRequired())
 				textures[i]->applyTransform();
-			else
-			{
-				glMatrixMode( GL_TEXTURE );
+			else {
+				glMatrixMode(GL_TEXTURE);
 				glLoadIdentity();
 			}
 		}
-		else
-		{
+		else {
 			//override the previous bound texture with nothing
-			glBindTexture( GL_TEXTURE_2D, 0 );
-			glDisable( GL_TEXTURE_2D );
-			
-			glMatrixMode( GL_TEXTURE );
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+
+			glMatrixMode(GL_TEXTURE);
 			glLoadIdentity();
 		}
 	}
-	
-	if( blendingEnabled )	glEnable( GL_BLEND );
-	else                    glDisable( GL_BLEND );
-	
-	glBlendFunc( srcBlend, destBlend );
-	glBlendEquation( blendFunction );
-	
-	switch( cullMode )
-	{
-		case CM_DISABLED:
-			glDisable( GL_CULL_FACE );
-			break;
-			
-		case CM_BACK:
-			glEnable( GL_CULL_FACE );
-			glCullFace( GL_BACK );
-			break;
-			
-		case CM_FRONT:
-			glEnable( GL_CULL_FACE );
-			glCullFace( GL_FRONT );
-			break;
+
+	if (blendingEnabled)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+
+	glBlendFunc(srcBlend, destBlend);
+	glBlendEquation(blendFunction);
+
+	switch (cullMode) {
+	case CM_DISABLED:
+		glDisable(GL_CULL_FACE);
+		break;
+
+	case CM_BACK:
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		break;
+
+	case CM_FRONT:
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		break;
 	}
 
-	mesh->bind( pShader );
+	mesh->bind(pShader);
 }
 
 void RenderState::commitChanges() {
 	DEBUG_ASSERT( mesh, "A mesh is required to setup a new renderstate" );
 
 	//always bind color as it is just not expensive
-	glColor4f( color.r, color.g, color.b, color.a );
-	
+	glColor4f(color.r, color.g, color.b, color.a);
+
 	//TODO incremental state switches please!
 	applyState();
 }

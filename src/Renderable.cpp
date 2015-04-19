@@ -7,38 +7,34 @@
 
 using namespace Dojo;
 
-Renderable::Renderable( Object* parent, const Vector& pos, Mesh* m ) :
-	Object( parent, pos, Vector::ONE ),
-	visible( true ),
-	layer( INT_MIN ),
+Renderable::Renderable(Object* parent, const Vector& pos, Mesh* m) :
+	Object(parent, pos, Vector::ONE),
+	visible(true),
+	layer(INT_MIN),
 	renderingOrder(0),
-	currentFadeTime(0)
-{
+	currentFadeTime(0) {
 	reset();
 
 	mesh = m;
 }
 
-Renderable::Renderable( Object* parent, const Vector& pos, const String& meshName ) :
-	Object( parent, pos, Vector::ONE ),
-	visible( true ),
+Renderable::Renderable(Object* parent, const Vector& pos, const String& meshName) :
+	Object(parent, pos, Vector::ONE),
+	visible(true),
 	layer(0),
 	renderingOrder(0),
-	currentFadeTime(0)
-{
+	currentFadeTime(0) {
 	reset();
 
-	if( meshName.size() )
-	{
-		setMesh( getGameState()->getMesh( meshName ) );
-		
+	if (meshName.size()) {
+		setMesh(getGameState()->getMesh(meshName));
+
 		DEBUG_ASSERT_INFO( getMesh(), "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
 	}
 }
 
-Renderable::~Renderable()
-{
-	
+Renderable::~Renderable() {
+
 }
 
 void Renderable::reset() {
@@ -77,9 +73,8 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 	startFade(color, end, duration);
 }
 
-void Renderable::onAction( float dt )
-{
-	Object::onAction( dt );
+void Renderable::onAction(float dt) {
+	Object::onAction(dt);
 
 	if (mesh)
 		worldBB = transformAABB(mesh->getMin(), mesh->getMax());
@@ -101,13 +96,12 @@ void Renderable::advanceFade(float dt) {
 		float fade = currentFadeTime / fadeEndTime;
 		float invf = 1.f - fade;
 
-		color.r = fadeEndColor.r*fade + invf*fadeStartColor.r;
-		color.g = fadeEndColor.g*fade + invf*fadeStartColor.g;
-		color.b = fadeEndColor.b*fade + invf*fadeStartColor.b;
-		color.a = fadeEndColor.a*fade + invf*fadeStartColor.a;
+		color.r = fadeEndColor.r * fade + invf * fadeStartColor.r;
+		color.g = fadeEndColor.g * fade + invf * fadeStartColor.g;
+		color.b = fadeEndColor.b * fade + invf * fadeStartColor.b;
+		color.a = fadeEndColor.a * fade + invf * fadeStartColor.a;
 
-		if (currentFadeTime > fadeEndTime)
-		{
+		if (currentFadeTime > fadeEndTime) {
 			fading = false;
 
 			if (fadeEndColor.a == 0)

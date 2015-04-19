@@ -1,4 +1,4 @@
-// ©2013-2015 Cameron Desrochers.
+﻿// ©2013-2015 Cameron Desrochers.
 // Distributed under the simplified BSD license (see the license file that
 // should have come with this header).
 
@@ -10,7 +10,8 @@
 #include <cassert>
 #include <stdexcept>
 #include <cstdint>
-#include <cstdlib>		// For malloc/free & size_t
+#include <cstdlib> // For malloc/free & size_t
+
 
 
 // A lock-free queue for a single-consumer, single-producer architecture.
@@ -30,16 +31,18 @@
 
 #ifdef AE_VCPP
 #pragma warning(push)
-#pragma warning(disable: 4324)	// structure was padded due to __declspec(align())
-#pragma warning(disable: 4820)	// padding was added
-#pragma warning(disable: 4127)	// conditional expression is constant
+#pragma warning(disable: 4324) // structure was padded due to __declspec(align())
+
+#pragma warning(disable: 4820) // padding was added
+
+#pragma warning(disable: 4127) // conditional expression is constant
+
 #endif
 
 namespace Dojo {
 
-	template<typename T, size_t MAX_BLOCK_SIZE = 512>
-	class Pipe
-	{
+	template <typename T, size_t MAX_BLOCK_SIZE = 512>
+	class Pipe {
 		// Design: Based on a queue-of-queues. The low-level queues are just
 		// circular buffers with front and tail indices indicating where the
 		// next element to dequeue is and where the next element can be enqueued,
@@ -77,7 +80,7 @@ namespace Dojo {
 
 			Block* firstBlock = nullptr;
 
-			largestBlockSize = ceilToPow2(maxSize + 1);		// We need a spare slot to fit maxSize elements in the block
+			largestBlockSize = ceilToPow2(maxSize + 1); // We need a spare slot to fit maxSize elements in the block
 			if (largestBlockSize > MAX_BLOCK_SIZE * 2) {
 				// We need a spare block in case the producer is writing to a different block the consumer is reading from, and
 				// wants to enqueue the maximum number of elements. We also need a spare element in each block to avoid the ambiguity
@@ -118,8 +121,7 @@ namespace Dojo {
 
 		// Note: The queue should not be accessed concurrently while it's
 		// being deleted. It's up to the user to synchronize this.
-		~Pipe()
-		{
+		~Pipe() {
 			// Make sure we get the latest version of all variables from other CPUs:
 			fence(memory_order_sync);
 
@@ -141,15 +143,15 @@ namespace Dojo {
 				block->~Block();
 				std::free(rawBlock);
 				block = nextBlock;
-			} while (block != frontBlock_);
+			}
+			while (block != frontBlock_);
 		}
 
 
 		// Enqueues a copy of element if there is room in the queue.
 		// Returns true if the element was enqueued, false otherwise.
 		// Does not allocate memory.
-		AE_FORCEINLINE bool try_enqueue(T const& element)
-		{
+		AE_FORCEINLINE bool try_enqueue(T const& element) {
 			return inner_enqueue<CannotAlloc>(element);
 		}
 
@@ -157,16 +159,14 @@ namespace Dojo {
 		// Returns true if the element was enqueued, false otherwise.
 		// Does not allocate memory.
 		template <class... Args>
-		AE_FORCEINLINE bool try_enqueue(Args&&... args)
-		{
+		AE_FORCEINLINE bool try_enqueue(Args&&... args) {
 			return inner_enqueue<CannotAlloc>(std::forward<Args>(args)...);
 		}
 
 		// Enqueues a copy of element on the queue.
 		// Allocates an additional block of memory if needed.
 		// Only fails (returns false) if memory allocation fails.
-		AE_FORCEINLINE bool enqueue_copy(T const& element)
-		{
+		AE_FORCEINLINE bool enqueue_copy(T const& element) {
 			return inner_enqueue<CanAlloc>(element);
 		}
 
@@ -175,8 +175,7 @@ namespace Dojo {
 		// Only fails (returns false) if memory allocation fails.
 
 		template <class... Args>
-		AE_FORCEINLINE bool enqueue(Args&&... args)
-		{
+		AE_FORCEINLINE bool enqueue(Args&&... args) {
 			return inner_enqueue<CanAlloc>(std::forward<Args>(args)...);
 		}
 
@@ -184,9 +183,8 @@ namespace Dojo {
 		// Attempts to dequeue an element; if the queue is empty,
 		// returns false instead. If the queue has at least one element,
 		// moves front to result using operator=, then returns true.
-		template<typename U>
-		bool try_dequeue(U& result)
-		{
+		template <typename U>
+		bool try_dequeue(U& result) {
 #ifndef NDEBUG
 			ReentrantGuard guard(this->dequeuing);
 #endif
@@ -255,10 +253,10 @@ namespace Dojo {
 				AE_UNUSED(nextBlockTail);
 
 				// We're done with this block, let the producer use it if it needs
-				fence(memory_order_release);		// Expose possibly pending changes to frontBlock->front from last dequeue
+				fence(memory_order_release); // Expose possibly pending changes to frontBlock->front from last dequeue
 				frontBlock = frontBlock_ = nextBlock;
 
-				compiler_fence(memory_order_release);	// Not strictly needed
+				compiler_fence(memory_order_release); // Not strictly needed
 
 				auto element = reinterpret_cast<T*>(frontBlock_->data + nextBlockFront * sizeof(T));
 
@@ -284,8 +282,7 @@ namespace Dojo {
 		// queue appears empty at the time the method is called, nullptr is
 		// returned instead.
 		// Must be called only from the consumer thread.
-		T* peek()
-		{
+		T* peek() {
 #ifndef NDEBUG
 			ReentrantGuard guard(this->dequeuing);
 #endif
@@ -326,8 +323,7 @@ namespace Dojo {
 		// Removes the front element from the queue, if any, without returning it.
 		// Returns true on success, or false if the queue appeared empty at the time
 		// `pop` was called.
-		bool pop()
-		{
+		bool pop() {
 #ifndef NDEBUG
 			ReentrantGuard guard(this->dequeuing);
 #endif
@@ -393,8 +389,7 @@ namespace Dojo {
 
 		// Returns the approximate number of items currently in the queue.
 		// Safe to call from both the producer and consumer threads.
-		inline size_t size_approx() const
-		{
+		inline size_t size_approx() const {
 			size_t result = 0;
 			Block* frontBlock_ = frontBlock.load();
 			Block* block = frontBlock_;
@@ -404,7 +399,8 @@ namespace Dojo {
 				size_t blockTail = block->tail.load();
 				result += (blockTail - blockFront) & block->sizeMask;
 				block = block->next.load();
-			} while (block != frontBlock_);
+			}
+			while (block != frontBlock_);
 			return result;
 		}
 
@@ -412,9 +408,8 @@ namespace Dojo {
 	private:
 		enum AllocationMode { CanAlloc, CannotAlloc };
 
-		template<AllocationMode canAlloc, class... Args>
-		bool inner_enqueue(Args&&... args)
-		{
+		template <AllocationMode canAlloc, class... Args>
+		bool inner_enqueue(Args&&... args) {
 #ifndef NDEBUG
 			ReentrantGuard guard(this->enqueuing);
 #endif
@@ -435,7 +430,7 @@ namespace Dojo {
 				fence(memory_order_acquire);
 				// This block has room for at least one more element
 				char* location = tailBlock_->data + blockTail * sizeof(T);
-				new (location)T(std::forward<Args>(args)...);
+				new(location)T(std::forward<Args>(args)...);
 
 				fence(memory_order_release);
 				tailBlock_->tail = nextBlockTail;
@@ -448,7 +443,7 @@ namespace Dojo {
 					// instead of advancing to the next full block (whose values were enqueued first and so should be
 					// consumed first).
 
-					fence(memory_order_acquire);		// Ensure we get latest writes if we got the latest frontBlock
+					fence(memory_order_acquire); // Ensure we get latest writes if we got the latest frontBlock
 
 					// tailBlock is full, but there's a free block ahead, use it
 					Block* tailBlockNext = tailBlock_->next.load();
@@ -462,7 +457,7 @@ namespace Dojo {
 					tailBlockNext->localFront = nextBlockFront;
 
 					char* location = tailBlockNext->data + nextBlockTail * sizeof(T);
-					new (location)T(std::forward<Args>(args)...);
+					new(location)T(std::forward<Args>(args)...);
 
 					tailBlockNext->tail = (nextBlockTail + 1) & tailBlockNext->sizeMask;
 
@@ -479,7 +474,7 @@ namespace Dojo {
 					}
 					largestBlockSize = newBlockSize;
 
-					new (newBlock->data) T(std::forward<Args>(args)...);
+					new(newBlock->data) T(std::forward<Args>(args)...);
 
 					assert(newBlock->front == 0);
 					newBlock->tail = newBlock->localTail = 1;
@@ -516,8 +511,7 @@ namespace Dojo {
 		// Disable assignment
 		Pipe& operator=(Pipe const&) = delete;
 
-		AE_FORCEINLINE static size_t ceilToPow2(size_t x)
-		{
+		AE_FORCEINLINE static size_t ceilToPow2(size_t x) {
 			// From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 			--x;
 			x |= x >> 1;
@@ -530,12 +524,12 @@ namespace Dojo {
 			return x;
 		}
 
-		template<typename U>
-		static AE_FORCEINLINE char* align_for(char* ptr)
-		{
+		template <typename U>
+		static AE_FORCEINLINE char* align_for(char* ptr) {
 			const std::size_t alignment = std::alignment_of<U>::value;
 			return ptr + (alignment - (reinterpret_cast<std::uintptr_t>(ptr) % alignment)) % alignment;
 		}
+
 	private:
 #ifndef NDEBUG
 		struct ReentrantGuard
@@ -561,28 +555,26 @@ namespace Dojo {
 		};
 #endif
 
-		struct Block
-		{
+		struct Block {
 			// Avoid false-sharing by putting highly contended variables on their own cache lines
-			weak_atomic<size_t> front;	// (Atomic) Elements are read from here
-			size_t localTail;			// An uncontended shadow copy of tail, owned by the consumer
+			weak_atomic<size_t> front; // (Atomic) Elements are read from here
+			size_t localTail; // An uncontended shadow copy of tail, owned by the consumer
 
 			char cachelineFiller0[CACHE_LINE_SIZE - sizeof(weak_atomic<size_t>) - sizeof(size_t)];
-			weak_atomic<size_t> tail;	// (Atomic) Elements are enqueued here
+			weak_atomic<size_t> tail; // (Atomic) Elements are enqueued here
 			size_t localFront;
 
-			char cachelineFiller1[CACHE_LINE_SIZE - sizeof(weak_atomic<size_t>) - sizeof(size_t)];	// next isn't very contended, but we don't want it on the same cache line as tail (which is)
-			weak_atomic<Block*> next;	// (Atomic)
+			char cachelineFiller1[CACHE_LINE_SIZE - sizeof(weak_atomic<size_t>) - sizeof(size_t)]; // next isn't very contended, but we don't want it on the same cache line as tail (which is)
+			weak_atomic<Block*> next; // (Atomic)
 
-			char* data;		// Contents (on heap) are aligned to T's alignment
+			char* data; // Contents (on heap) are aligned to T's alignment
 
 			const size_t sizeMask;
 
 
 			// size must be a power of two (and greater than 0)
 			Block(size_t const& _size, char* _rawThis, char* _data)
-				: front(0), localTail(0), tail(0), localFront(0), next(nullptr), data(_data), sizeMask(_size - 1), rawThis(_rawThis)
-			{
+				: front(0), localTail(0), tail(0), localFront(0), next(nullptr), data(_data), sizeMask(_size - 1), rawThis(_rawThis) {
 			}
 
 		private:
@@ -594,8 +586,7 @@ namespace Dojo {
 		};
 
 
-		static Block* make_block(size_t capacity)
-		{
+		static Block* make_block(size_t capacity) {
 			// Allocate enough memory for the block itself, as well as all the elements it will contain
 			auto size = sizeof(Block) + std::alignment_of<Block>::value - 1;
 			size += sizeof(T) * capacity + std::alignment_of<T>::value - 1;
@@ -606,14 +597,14 @@ namespace Dojo {
 
 			auto newBlockAligned = align_for<Block>(newBlockRaw);
 			auto newBlockData = align_for<T>(newBlockAligned + sizeof(Block));
-			return new (newBlockAligned)Block(capacity, newBlockRaw, newBlockData);
+			return new(newBlockAligned)Block(capacity, newBlockRaw, newBlockData);
 		}
 
 	private:
-		weak_atomic<Block*> frontBlock;		// (Atomic) Elements are enqueued to this block
+		weak_atomic<Block*> frontBlock; // (Atomic) Elements are enqueued to this block
 
 		char cachelineFiller[CACHE_LINE_SIZE - sizeof(weak_atomic<Block*>)];
-		weak_atomic<Block*> tailBlock;		// (Atomic) Elements are dequeued from this block
+		weak_atomic<Block*> tailBlock; // (Atomic) Elements are dequeued from this block
 
 		size_t largestBlockSize;
 
@@ -623,7 +614,7 @@ namespace Dojo {
 #endif
 	};
 
-}    // end namespace Dojo
+} // end namespace Dojo
 
 #ifdef AE_VCPP
 #pragma warning(pop)

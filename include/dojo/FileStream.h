@@ -4,14 +4,12 @@
 
 #include "Stream.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	///FileStream is an interface to read and write from files
 	/**
 	FileStream will try to open the file as read+write, falling back to readonly if the file cannot be read- remember to check the access type!
 	*/
-	class FileStream : public Stream
-	{
+	class FileStream : public Stream {
 	public:
 
 		///create a new FileStream associated to this filesystem path
@@ -20,9 +18,9 @@ namespace Dojo
 		\param write open the file for writing, create if necessary
 		this WILL NOT open the file for i/o, remember to use open()
 		*/
-		FileStream( const String& path, bool write = false );
-        
-        virtual ~FileStream();
+		FileStream(const String& path, bool write = false);
+
+		virtual ~FileStream();
 
 		///opens the file
 		/**
@@ -43,4 +41,3 @@ namespace Dojo
 	private:
 	};
 }
-

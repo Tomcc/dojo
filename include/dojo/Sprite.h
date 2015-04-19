@@ -13,16 +13,14 @@
 
 #include "AnimatedQuad.h"
 
-namespace Dojo
-{	
+namespace Dojo {
 	///A Sprite is a wrapper around AnimatedQuad providing management for multiple registered Animations
-	class Sprite : public AnimatedQuad
-	{	
-		
+	class Sprite : public AnimatedQuad {
+
 	public:
-				
+
 		typedef std::vector<std::unique_ptr<Animation>> AnimationList;
-								
+
 		///Creates a new Sprite in a GameState, at position Pos, with the given default Animation (which must exist!)
 		/**
 			\param parent the parent object or level
@@ -30,9 +28,9 @@ namespace Dojo
 			\param defaultAnimName the name of animation 0
 			\param timePerFrame the frame time of the animation
 			\param pixelPerfect if pixelPerfect, an objects' scale is bound to the pixel size of the current frame and to the pixel size of the current Viewport. A pixelPerfect object can still be scaled using pixelScale.*/
-		Sprite( Object* parent, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = -1, bool pixelPerfect = true );
-				
-		virtual ~Sprite();		
+		Sprite(Object* parent, const Vector& pos, const String& defaultAnimName = String::EMPTY, float timePerFrame = -1, bool pixelPerfect = true);
+
+		virtual ~Sprite();
 
 		virtual void reset() override;
 
@@ -40,24 +38,22 @@ namespace Dojo
 		/**
 		If timePerFrame is not specified, the animation tries to use the frameset's preferred
 		*/
-		int registerAnimation( FrameSet* set, float timePerFrame = -1 );
-		
+		int registerAnimation(FrameSet* set, float timePerFrame = -1);
+
 		///registers an animation using the FrameSet named base
-		int registerAnimation( const String& base, float timePerFrame = -1 );
-				
+		int registerAnimation(const String& base, float timePerFrame = -1);
+
 		///sets the animation at the given index
-		void setAnimation( int i );
+		void setAnimation(int i);
 
 		///returns the current animation Index
-		int getAnimationIndex()
-		{
+		int getAnimationIndex() {
 			return mAnimationIdx;
 		}
-		
-	protected:		
+
+	protected:
 		AnimationList animations;
 
 		int mAnimationIdx;
 	};
 }
-

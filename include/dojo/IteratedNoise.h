@@ -5,15 +5,14 @@
 #include "Noise.h"
 
 namespace Dojo {
-	class IteratedNoise
-	{
+	class IteratedNoise {
 	public:
 		struct Iteration {
 			typedef std::vector<Iteration> List;
 
 			float width, height;
 		};
-		
+
 		Noise& base;
 
 		IteratedNoise(Noise& noise, const Iteration::List& levels);
@@ -26,4 +25,3 @@ namespace Dojo {
 	private:
 	};
 }
-

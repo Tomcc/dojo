@@ -4,8 +4,8 @@
 using namespace Dojo;
 
 SoundSet::SoundSet(ResourceGroup* creator, const String& setName) :
-Resource(creator),
-name(setName) {
+	Resource(creator),
+	name(setName) {
 
 }
 
@@ -13,8 +13,7 @@ SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 	DEBUG_ASSERT(buffers.size(), "This SoundSet is empty");
 	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + String(i));
 
-	if (i < 0)
-	{
+	if (i < 0) {
 		if (buffers.size() > 1)
 			i = (int)Math::rangeRandom(0, (float)buffers.size());
 		else
@@ -28,11 +27,9 @@ void SoundSet::addBuffer(std::unique_ptr<SoundBuffer> b) {
 	buffers.emplace_back(std::move(b));
 }
 
-bool SoundSet::onLoad()
-{
-	for(auto&& b : buffers)
-	{
-		if( !b->isLoaded() )
+bool SoundSet::onLoad() {
+	for (auto&& b : buffers) {
+		if (!b->isLoaded())
 			b->onLoad();
 	}
 
@@ -41,12 +38,10 @@ bool SoundSet::onLoad()
 	return true;
 }
 
-void SoundSet::onUnload( bool soft )
-{
-	for(auto&& b : buffers)
-	{
-		if( b->isLoaded() )
-			b->onUnload( soft );
+void SoundSet::onUnload(bool soft) {
+	for (auto&& b : buffers) {
+		if (b->isLoaded())
+			b->onUnload(soft);
 	}
 
 	loaded = false;

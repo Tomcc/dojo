@@ -3,8 +3,7 @@
 #include "dojo_common_header.h"
 
 namespace Dojo {
-	enum class VertexField
-	{
+	enum class VertexField {
 		Position2D,
 		Position3D,
 		Color,
@@ -18,6 +17,3 @@ namespace Dojo {
 	};
 
 }
-
-
-

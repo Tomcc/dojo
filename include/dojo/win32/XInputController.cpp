@@ -11,9 +11,9 @@
 using namespace Dojo;
 
 XInputController::XInputController(int n) :
-InputDevice(InputDevice::Type::Xbox, n, 16, 8),
-mConnectionCheckTimer(0),
-mConnected(false) {
+	InputDevice(InputDevice::Type::Xbox, n, 16, 8),
+	mConnectionCheckTimer(0),
+	mConnected(false) {
 	//set default dead zones
 	mDeadZone[AI_LX] =
 		mDeadZone[AI_LY] =
@@ -25,18 +25,17 @@ bool XInputController::isConnected() {
 	return mConnected;
 }
 
-bool XInputController::hasAxis(Axis a) const  {
+bool XInputController::hasAxis(Axis a) const {
 	return a < Axis::_AI_COUNT; //TODO change if we add axes
 }
 
 void XInputController::poll(float dt) {
 	XINPUT_STATE state;
 
-	if (!mConnected)
-	{
+	if (!mConnected) {
 		mConnectionCheckTimer -= dt;
 
-		if (mConnectionCheckTimer > 0)  //do not spam connection checks - check every 3 s
+		if (mConnectionCheckTimer > 0) //do not spam connection checks - check every 3 s
 			return;
 		else
 			mConnectionCheckTimer = XINPUTCONTROLLER_CONNECTION_CHECK_TIMEOUT;
@@ -45,8 +44,7 @@ void XInputController::poll(float dt) {
 	HRESULT dwResult = XInputGetState(mID, &state);
 	bool connected = (dwResult == ERROR_SUCCESS);
 
-	if (connected)
-	{
+	if (connected) {
 		if (!mConnected) //yeeeee we're connected!
 			Platform::singleton().getInput().addDevice(*this);
 
@@ -72,8 +70,7 @@ void XInputController::poll(float dt) {
 		_notifyButtonState(KC_XBOX_LT, leftTrigger > 0.9f);
 		_notifyButtonState(KC_XBOX_RT, rightTrigger > 0.9f);
 	}
-	else if (mConnected)
-	{
+	else if (mConnected) {
 		//notify disconnection to listeners and to the input system
 		_fireDisconnected();
 		Platform::singleton().getInput().removeDevice(*this);

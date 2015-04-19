@@ -11,52 +11,45 @@
 
 using namespace Dojo;
 
-GameState::GameState( Game& parentGame ) :
-Object( this, Vector::ZERO, Vector::ONE ),
-ResourceGroup(),
-game( parentGame ),
-camera(nullptr),
-timeElapsed(0)
-{
+GameState::GameState(Game& parentGame) :
+	Object(this, Vector::ZERO, Vector::ONE),
+	ResourceGroup(),
+	game(parentGame),
+	camera(nullptr),
+	timeElapsed(0) {
 	gameState = this; //useful to pass a GameState around as an Object
 }
 
-GameState::~GameState()
-{
-    clear();
+GameState::~GameState() {
+	clear();
 }
 
-void GameState::clear()
-{		
+void GameState::clear() {
 	destroyAllChildren();
 
 	//flush resources
-	unloadResources( false );
+	unloadResources(false);
 }
 
-void GameState::setViewport( Viewport& v )
-{
+void GameState::setViewport(Viewport& v) {
 	camera = &v;
-	
-	Platform::singleton().getRenderer().addViewport( v );
+
+	Platform::singleton().getRenderer().addViewport(v);
 }
 
-void GameState::touchAreaAtPoint( const Touch& touch )
-{
-	Vector pointer = getViewport()->makeWorldCoordinates( touch.point );
+void GameState::touchAreaAtPoint(const Touch& touch) {
+	Vector pointer = getViewport()->makeWorldCoordinates(touch.point);
 
-	std::vector< TouchArea* > layer;
+	std::vector<TouchArea*> layer;
 	int topMostLayer = INT32_MIN;
-	
-	for( auto t : mTouchAreas )
-	{		
-		if( t->isActive() && t->getLayer() >= topMostLayer && t->contains2D( pointer ) )
-		{
+
+	for (auto t : mTouchAreas) {
+		if (t->isActive() && t->getLayer() >= topMostLayer && t->contains2D(pointer)) {
 			//new highest layer - discard lowest layers found
-			if( t->getLayer() > topMostLayer )
+			if (t->getLayer() > topMostLayer)
 				layer.clear();
 
-			layer.push_back( t );
+			layer.push_back(t);
 
 			topMostLayer = t->getLayer();
 		}
@@ -64,7 +57,7 @@ void GameState::touchAreaAtPoint( const Touch& touch )
 
 	//trigger all the areas overlapping in the topmost layer 
 	for (auto&& l : layer)
-		l->_incrementTouches( touch );	
+		l->_incrementTouches(touch);
 }
 
 void GameState::addTouchArea(TouchArea* t) {
@@ -81,25 +74,23 @@ void GameState::removeTouchArea(TouchArea* t) {
 		mTouchAreas.erase(elem);
 }
 
-void GameState::updateClickableState()
-{
+void GameState::updateClickableState() {
 	//clear all the touchareas
-	for( auto ta : mTouchAreas )
+	for (auto ta : mTouchAreas)
 		ta->_clearTouches();
-	
+
 	auto& touchList = Platform::singleton().getInput().getTouchList();
-		
+
 	//"touch" all the touchareas active in this frame
-	for( auto&& touch : touchList )
-		touchAreaAtPoint( *touch );
-	
+	for (auto&& touch : touchList)
+		touchAreaAtPoint(*touch);
+
 	///launch events
-	for( auto ta : mTouchAreas )
+	for (auto ta : mTouchAreas)
 		ta->_fireOnTouchUsingCurrentTouches();
 }
 
-void GameState::onLoop(float dt)
-{	
+void GameState::onLoop(float dt) {
 	active = isActiveState(); //be active only if this is the frontmost state of the parent
 
 	updateClickableState();

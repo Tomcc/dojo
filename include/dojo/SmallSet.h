@@ -4,9 +4,8 @@
 #include <memory>
 
 namespace Dojo {
-	template< class T >
-	class SmallSet
-	{
+	template <class T>
+	class SmallSet {
 
 	public:
 
@@ -14,7 +13,7 @@ namespace Dojo {
 		typedef typename Container::iterator iterator;
 		typedef typename Container::const_iterator const_iterator;
 
-		template< class E >
+		template <class E>
 		static typename std::vector<E>::const_iterator find(const SmallSet<E>& c, const E& elem) {
 			auto itr = c.begin();
 			for (; itr != c.end(); ++itr) {
@@ -24,14 +23,14 @@ namespace Dojo {
 			return c.end();
 		}
 
-		template< class E >
-		static typename std::vector< std::unique_ptr<E> >::const_iterator find(const SmallSet< std::unique_ptr<E> >& c, const E& elem) {
+		template <class E>
+		static typename std::vector<std::unique_ptr<E>>::const_iterator find(const SmallSet<std::unique_ptr<E>>& c, const E& elem) {
 			auto itr = c.begin();
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
 			return itr;
 		}
 
-		template< class E >
+		template <class E>
 		static typename std::vector<E>::iterator find(SmallSet<E>& c, const E& elem) {
 			auto itr = c.begin();
 			for (; itr != c.end(); ++itr) {
@@ -41,8 +40,8 @@ namespace Dojo {
 			return c.end();
 		}
 
-		template< class E >
-		static typename std::vector< std::unique_ptr<E> >::iterator find(SmallSet< std::unique_ptr<E> >& c, const E& elem) {
+		template <class E>
+		static typename std::vector<std::unique_ptr<E>>::iterator find(SmallSet<std::unique_ptr<E>>& c, const E& elem) {
 			auto itr = c.begin();
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
 			return itr;
@@ -85,11 +84,21 @@ namespace Dojo {
 			return c[idx];
 		}
 
-		iterator begin() { return c.begin(); }
-		const_iterator begin() const { return c.begin(); }
+		iterator begin() {
+			return c.begin();
+		}
 
-		iterator end() { return c.end(); }
-		const_iterator end() const { return c.end(); }
+		const_iterator begin() const {
+			return c.begin();
+		}
+
+		iterator end() {
+			return c.end();
+		}
+
+		const_iterator end() const {
+			return c.end();
+		}
 
 		size_t size() const {
 			return c.size();

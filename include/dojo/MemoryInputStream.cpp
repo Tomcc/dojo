@@ -3,9 +3,9 @@
 using namespace Dojo;
 
 MemoryInputStream::MemoryInputStream(byte* mem, int size) :
-pMem(mem),
-mSize(size),
-mPosition(0) {
+	pMem(mem),
+	mSize(size),
+	mPosition(0) {
 	DEBUG_ASSERT(mem != nullptr, "the memory must not be null");
 	DEBUG_ASSERT(size > 0, "the size must be a valid");
 }
@@ -41,7 +41,7 @@ int MemoryInputStream::seek(long offset, int fromWhere /*= SEEK_SET */) {
 	else if (fromWhere == SEEK_END)
 		mPosition = mSize - offset;
 	else
-		DEBUG_FAIL("invalid seek origin");
+	DEBUG_FAIL("invalid seek origin");
 
 	return 0;
 }

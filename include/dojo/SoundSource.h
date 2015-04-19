@@ -5,139 +5,136 @@
 #include "Vector.h"
 #include "SoundBuffer.h"
 
-namespace Dojo
-{
-		class SoundManager;
-		
-		///SoundSource is an actual sound being played
-		/**
+namespace Dojo {
+	class SoundManager;
+
+	///SoundSource is an actual sound being played
+	/**
 		SoundSources are created (actually, they are drawn from a pool) using SoundManager::play(), and automatically
 		collected when their playback ended - obviously except when the Source is a looping Source
 		*/
-		class SoundSource 
-		{				
-		public:
+	class SoundSource {
+	public:
 
-			static const int QUEUE_SIZE = 3;
+		static const int QUEUE_SIZE = 3;
 
-			enum SoundState 			
-			{
-				SS_INITIALISING, 
-				SS_PLAYING,  
-				SS_PAUSED,   
-				SS_FINISHED  
-			};
-		
-			///Internal constructor
-			explicit SoundSource( ALuint source );
+		enum SoundState {
+			SS_INITIALISING,
+			SS_PLAYING,
+			SS_PAUSED,
+			SS_FINISHED
+		};
 
-			virtual ~SoundSource();
+		///Internal constructor
+		explicit SoundSource(ALuint source);
 
-			///sets the Source's position	
-			void setPosition(const Vector& newPos)			
-			{	
-				position = newPos;			
-				positionChanged = true;
-			}
+		virtual ~SoundSource();
 
-			///sets sound volume, from 0 to 1
-			/**
+		///sets the Source's position	
+		void setPosition(const Vector& newPos) {
+			position = newPos;
+			positionChanged = true;
+		}
+
+		///sets sound volume, from 0 to 1
+		/**
 			with v > 1, hearing range still increases but the actual maximum volume does not
 			*/
-			void setVolume(float v);
-			
-			///sets the sound as looping. Looping sounds are never garbage collected.
-			void setLooping(bool l);
+		void setVolume(float v);
 
-			void setPitch( float p);
-			
-			///if autoremove is disabled, SoundManager won't garbage collect this Source
-			void setAutoRemove(bool a)				{	autoRemove = a;		}	
+		///sets the sound as looping. Looping sounds are never garbage collected.
+		void setLooping(bool l);
 
-			///Plays the sound with a given volume
-			void play( float volume = 1.0f );
-			
-			void pause();
+		void setPitch(float p);
 
-			///Stops the sound; it will be garbage collected from now on
-			void stop();
-			///Sets the playback to the beginning of the sound, and pauses it
-			void rewind();
+		///if autoremove is disabled, SoundManager won't garbage collect this Source
+		void setAutoRemove(bool a) {
+			autoRemove = a;
+		}
 
-			///returns the Source's playing state
-			SoundState getState()		{	return state;	}
-			bool isPlaying()				{	return state == SS_PLAYING;	}
+		///Plays the sound with a given volume
+		void play(float volume = 1.0f);
 
-			///tells if this source is bound to a streaming SoundBuffer
-			bool isStreaming()
-			{
-				return buffer && buffer->isStreaming();
-			}
+		void pause();
 
-			ALuint getSource()			{	return source;	}
+		///Stops the sound; it will be garbage collected from now on
+		void stop();
+		///Sets the playback to the beginning of the sound, and pauses it
+		void rewind();
 
-			float getVolume();	
+		///returns the Source's playing state
+		SoundState getState() {
+			return state;
+		}
 
-			///returns the SoundBuffer that is currently being played
-			SoundBuffer* getSoundBuffer()
-			{
-				return buffer;
-			}
+		bool isPlaying() {
+			return state == SS_PLAYING;
+		}
 
-			///returns the elapsed time since source play 
-			float getElapsedTime();
-			
-			///is this a dummy sound?
-			bool isValid()
-			{
-				return source != 0;
-			}
+		///tells if this source is bound to a streaming SoundBuffer
+		bool isStreaming() {
+			return buffer && buffer->isStreaming();
+		}
 
-			bool _isWaitingForDelete()
-			{
-				return (state == SS_FINISHED);
-			}
+		ALuint getSource() {
+			return source;
+		}
 
-			bool _isPaused()
-			{
-				return (state == SS_PAUSED);
-			}
+		float getVolume();
 
-			void _update(float dt);
+		///returns the SoundBuffer that is currently being played
+		SoundBuffer* getSoundBuffer() {
+			return buffer;
+		}
 
-			void _setup( SoundBuffer& b )
-			{				
-				buffer = &b;
-			}
+		///returns the elapsed time since source play 
+		float getElapsedTime();
 
-			bool isActive() const 
-			{
-				return state == SS_INITIALISING || state == SS_PAUSED || state == SS_PLAYING;
-			}
+		///is this a dummy sound?
+		bool isValid() {
+			return source != 0;
+		}
 
-			void _reset();
+		bool _isWaitingForDelete() {
+			return (state == SS_FINISHED);
+		}
 
-		protected:
+		bool _isPaused() {
+			return (state == SS_PAUSED);
+		}
 
-			typedef std::queue< SoundBuffer::Chunk* > ChunkQueue;
-			
-			Vector position, lastPosition;
-			bool positionChanged;
-			float timeSincePositionChange = 0;
+		void _update(float dt);
 
-			//members			
-			SoundBuffer* buffer;
-			ALuint source;
-			ALint playState;
+		void _setup(SoundBuffer& b) {
+			buffer = &b;
+		}
 
-			int mCurrentChunkID, mQueuedChunks;
-			SoundBuffer::Chunk* mFrontChunk, *mBackChunk;
+		bool isActive() const {
+			return state == SS_INITIALISING || state == SS_PAUSED || state == SS_PLAYING;
+		}
 
-			SoundState state;
+		void _reset();
 
-			//params
-			bool looping, autoRemove;	
-			float baseVolume, pitch;
-		};
+	protected:
+
+		typedef std::queue<SoundBuffer::Chunk*> ChunkQueue;
+
+		Vector position, lastPosition;
+		bool positionChanged;
+		float timeSincePositionChange = 0;
+
+		//members			
+		SoundBuffer* buffer;
+		ALuint source;
+		ALint playState;
+
+		int mCurrentChunkID, mQueuedChunks;
+		SoundBuffer::Chunk *mFrontChunk, *mBackChunk;
+
+		SoundState state;
+
+		//params
+		bool looping, autoRemove;
+		float baseVolume, pitch;
+	};
 }
-

@@ -1,8 +1,7 @@
 #pragma once
 
 namespace Dojo {
-	enum TriangleMode
-	{
+	enum TriangleMode {
 		TriangleStrip,
 		TriangleList,
 		LineStrip,
@@ -11,6 +10,3 @@ namespace Dojo {
 	};
 
 }
-
-
-

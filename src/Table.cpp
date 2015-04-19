@@ -7,104 +7,97 @@ using namespace Dojo;
 const Table Table::EMPTY;
 const Table::Data Table::Data::EMPTY = Data(0, 0);
 
-Table Table::loadFromFile( const String& path )
-{
+Table Table::loadFromFile(const String& path) {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
-    auto file = Platform::singleton().getFile( path );
-	
+	auto file = Platform::singleton().getFile(path);
+
 	Table dest;
-	if( file->open() )
-	{
+	if (file->open()) {
 		//read the contents directly in a string
 		std::string buf;
-		buf.resize( file->getSize() );
+		buf.resize(file->getSize());
 
-		file->read( (byte*)buf.c_str(), buf.size() );
+		file->read((byte*)buf.c_str(), buf.size());
 
-		StringReader reader( buf );
-		dest.deserialize( reader );
+		StringReader reader(buf);
+		dest.deserialize(reader);
 	}
 
 	return dest;
 }
 
-bool Table::onLoad()
-{
+bool Table::onLoad() {
 	//loads itself from file
 	DEBUG_ASSERT( !isLoaded(), "The Table is already loaded" );
 
-	if( !isReloadable() )
+	if (!isReloadable())
 		return false;
 
-	*this = Platform::singleton().load( filePath );
+	*this = Platform::singleton().load(filePath);
 
 	return (loaded = !isEmpty());
 }
 
-void Table::serialize( String& buf, String indent ) const
-{	
-	using namespace std;	
+void Table::serialize(String& buf, String indent) const {
+	using namespace std;
 
 	Data* data;
 	Vector* v;
 
 	//serialize to the Table Format	
 	EntryMap::const_iterator itr = map.begin();
-	
-	for( ; itr != map.end(); ++itr ) 
-	{
+
+	for (; itr != map.end(); ++itr) {
 		auto& e = *itr->second;
 
-		if( indent.size() )
+		if (indent.size())
 			buf += indent;
 
 		//write name and equal only if not anonymous and if not managed later
-		if( itr->first[0] != '_' )
+		if (itr->first[0] != '_')
 			buf += itr->first + " = ";
 
-		switch( e.type )
-		{
+		switch (e.type) {
 		case FT_NUMBER:
-			buf.appendFloat( *((float*)e.getRawValue() ) );
+			buf.appendFloat(*((float*)e.getRawValue()));
 			break;
 		case FT_STRING:
-			buf += '\"' + *((String*)e.getRawValue() ) + '\"';
+			buf += '\"' + *((String*)e.getRawValue()) + '\"';
 			break;
 		case FT_VECTOR:
 			v = (Vector*)e.getRawValue();
 			buf += '(';
-			buf.appendFloat( v->x );
+			buf.appendFloat(v->x);
 			buf += ' ';
-			buf.appendFloat( v->y );
+			buf.appendFloat(v->y);
 			buf += ' ';
-			buf.appendFloat( v->z );
+			buf.appendFloat(v->z);
 			buf += ')';
 
 			break;
 		case FT_DATA:
 			data = (Data*)e.getRawValue();
-			buf += '#' + String( data->size ) + ' ';
+			buf += '#' + String(data->size) + ' ';
 
-			buf.appendRaw( data->ptr, data->size );
+			buf.appendRaw(data->ptr, data->size);
 
 			break;
 		case FT_TABLE:
-			buf += String( "{\n" );
-			((Table*)e.getRawValue())->serialize( buf, indent + '\t' );
+			buf += String("{\n");
+			((Table*)e.getRawValue())->serialize(buf, indent + '\t');
 
 			buf += indent + '}';
 
 			break;
-            default: break;
+		default: break;
 		}
 
 		buf += '\n';
 	}
 }
 
-enum ParseState
-{
+enum ParseState {
 	PS_TABLE,
 	PS_NAME,
 	PS_NAME_ENDED,
@@ -114,8 +107,7 @@ enum ParseState
 	PS_ERROR
 };
 
-enum ParseTarget
-{
+enum ParseTarget {
 	PT_UNDEFINED,
 	PT_NUMBER,
 	PT_STRING,
@@ -125,36 +117,30 @@ enum ParseTarget
 	PT_IMPLICITTRUE
 };
 
-bool isNameStarter( unichar c )
-{
+bool isNameStarter(unichar c) {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-bool isNumber( unichar c )
-{
-	return (c >= '0' && c <= '9') || c == '-';  //- is part of a number!!!
+bool isNumber(unichar c) {
+	return (c >= '0' && c <= '9') || c == '-'; //- is part of a number!!!
 }
 
-bool isName( unichar c )
-{
+bool isName(unichar c) {
 	return isNameStarter(c) || isNumber(c) || c == '_';
 }
 
-bool isValidFloat( unichar c )
-{
-	return isNumber( c ) || c == '.';
+bool isValidFloat(unichar c) {
+	return isNumber(c) || c == '.';
 }
 
-bool isWhiteSpace( unichar c )
-{
+bool isWhiteSpace(unichar c) {
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
-void Table::deserialize( StringReader& buf )
-{
+void Table::deserialize(StringReader& buf) {
 	ParseState state = PS_TABLE;
 	ParseTarget target = PT_UNDEFINED;
-	
+
 	String curName, str;
 	float number;
 	Vector vec;
@@ -166,108 +152,117 @@ void Table::deserialize( StringReader& buf )
 
 	//feed one char at a time and do things
 	unichar c = 1, c2;
-	while( state != PS_END && state != PS_ERROR )
-	{
+	while (state != PS_END && state != PS_ERROR) {
 		c = buf.get();
-		
-		switch( state )
-		{
+
+		switch (state) {
 		case PS_TABLE: //wait for either a name, or an anon value	
-				 if( c == '}' || c == 0 )				state = PS_END;
-			else if( isNameStarter( c ) )	state = PS_NAME;
-			
+			if (c == '}' || c == 0)
+				state = PS_END;
+			else if (isNameStarter(c))
+				state = PS_NAME;
 
-			else if( c == '"' )		target = PT_STRING;
-			else if( c == '(' )		target = PT_VECTOR;			
-			else if( c == '#' )		target = PT_DATA;
-			else if( c == '{' )		target = PT_CHILD;
-			else if( isNumber( c ) )target = PT_NUMBER;
 
-			if( state == PS_NAME )
-			{
+			else if (c == '"')
+				target = PT_STRING;
+			else if (c == '(')
+				target = PT_VECTOR;
+			else if (c == '#')
+				target = PT_DATA;
+			else if (c == '{')
+				target = PT_CHILD;
+			else if (isNumber(c))
+				target = PT_NUMBER;
+
+			if (state == PS_NAME) {
 				curName.clear();
 				curName += c;
 			}
 
 			break;
-		case PS_NAME:			
-			if( isName( c ) )
+		case PS_NAME:
+			if (isName(c))
 				curName += c;
-			else if( c == '=' )
+			else if (c == '=')
 				state = PS_EQUAL;
 			else
 				state = PS_NAME_ENDED;
 
 			break;
 
-		case PS_NAME_ENDED:  //wait for an equal; drop whitespace and fall back if other is found
-			if( c == '=' )
+		case PS_NAME_ENDED: //wait for an equal; drop whitespace and fall back if other is found
+			if (c == '=')
 				state = PS_EQUAL;
-			else if( !isWhiteSpace(c) ) //it is something else - store this as an implicit bool and reset the parser
+			else if (!isWhiteSpace(c)) //it is something else - store this as an implicit bool and reset the parser
 				target = PT_IMPLICITTRUE;
 
 			break;
 
 		case PS_EQUAL: //wait for value start
-				 if( c == '"' )		target = PT_STRING;
-			else if( c == '(' )		target = PT_VECTOR;			
-			else if( c == '#' )		target = PT_DATA;
-			else if( c == '{' )		target = PT_CHILD;
-			else if( isNumber( c ) )target = PT_NUMBER;
+			if (c == '"')
+				target = PT_STRING;
+			else if (c == '(')
+				target = PT_VECTOR;
+			else if (c == '#')
+				target = PT_DATA;
+			else if (c == '{')
+				target = PT_CHILD;
+			else if (isNumber(c))
+				target = PT_NUMBER;
 
 			break;
-        default: ;
+		default: ;
 		}
 
-		switch( target )
-		{
+		switch (target) {
 		case PT_IMPLICITTRUE:
 			buf.back();
-			set( curName, (int)1 );
+			set(curName, (int)1);
 			break;
 
 		case PT_NUMBER:
-			  
+
 			//check if next char is x, that is, really we have an hex color!
 			c2 = buf.get();
-				
-			if( c == '0' && c2 == 'x' )
-			{
+
+			if (c == '0' && c2 == 'x') {
 				buf.back();
 				buf.back();
-				
+
 				//create a color using the hex
-				col.set( buf.readHex() );
-				
-				set( curName, col );
+				col.set(buf.readHex());
+
+				set(curName, col);
 			}
-			else if( c == '-' && c2 == '-' ) //or, well, a comment! (LIKE A HACK)
+			else if (c == '-' && c2 == '-') //or, well, a comment! (LIKE A HACK)
 			{
 				//just skip until newline
-				do { c = buf.get(); } while( c != 0 && c != '\n' );
+				do {
+					c = buf.get();
+				}
+				while (c != 0 && c != '\n');
 			}
-			else
-			{
+			else {
 				buf.back();
 				buf.back();
-					
+
 				number = buf.readFloat();
-					
-				set( curName, number );
+
+				set(curName, number);
 			}
-				
+
 			break;
 		case PT_STRING:
 
 			str.clear();
-			while( 1 )
-			{
+			while (1) {
 				c = buf.get();
-				if( c == '"' )	break;
+				if (c == '"')
+					break;
 				str += c;
 			}
 
-			set( curName, str );
+			set(curName, str);
 			break;
 
 		case PT_VECTOR:
@@ -275,7 +270,7 @@ void Table::deserialize( StringReader& buf )
 			vec.y = buf.readFloat();
 			vec.z = buf.readFloat();
 
-			set( curName, vec );
+			set(curName, vec);
 			break;
 
 		case PT_DATA:
@@ -294,12 +289,12 @@ void Table::deserialize( StringReader& buf )
 
 			createTable(curName).deserialize(buf);
 		}
-		break;
-        
+			break;
+
 		default: ;
 		}
 
-		if( target ) //read something
+		if (target) //read something
 		{
 			state = PS_TABLE;
 			target = PT_UNDEFINED;
@@ -309,26 +304,26 @@ void Table::deserialize( StringReader& buf )
 }
 
 Table::Table() :
-unnamedMembers(0) {
+	unnamedMembers(0) {
 
 }
 
 Table::Table(Table&& t) :
-unnamedMembers(t.unnamedMembers),
-map(std::move(t.map)) {
+	unnamedMembers(t.unnamedMembers),
+	map(std::move(t.map)) {
 	t.unnamedMembers = 0;
 }
 
 Table::Table(const Table& t) :
-unnamedMembers(t.unnamedMembers) {
+	unnamedMembers(t.unnamedMembers) {
 	//deep copy
 	for (auto& pair : t.map)
 		map[pair.first] = pair.second->clone();
 }
 
 Table::Table(ResourceGroup* creator, const String& path) :
-Resource(creator, path),
-unnamedMembers(0) {
+	Resource(creator, path),
+	unnamedMembers(0) {
 
 }
 
@@ -343,8 +338,7 @@ Table::~Table() {
 }
 
 void Table::onUnload(bool soft /*= false */) {
-	if (!soft || isReloadable())
-	{
+	if (!soft || isReloadable()) {
 		clear();
 
 		loaded = false;
@@ -355,8 +349,7 @@ Table* Table::getParentTable(const String& key, String& realKey) const {
 	size_t dotIdx = 0;
 	for (; dotIdx < key.size() && key[dotIdx] != '.'; ++dotIdx);
 
-	if (dotIdx == key.size())
-	{
+	if (dotIdx == key.size()) {
 		realKey = key;
 		return (Table*)this;
 	}
@@ -394,13 +387,11 @@ void Table::inherit(Table* t) {
 	EntryMap::iterator itr = t->map.begin(),
 		end = t->map.end(),
 		existing;
-	for (; itr != end; ++itr)
-	{
+	for (; itr != end; ++itr) {
 		existing = map.find(itr->first); //look for a local element with the same name
 
 		//element exists - do nothing except if it's a table
-		if (existing != map.end())
-		{
+		if (existing != map.end()) {
 			//if it's a table in both tables, inherit
 			if (itr->second->type == FT_TABLE && existing->second->type == FT_TABLE)
 				((Table*)existing->second->getRawValue())->inherit((Table*)itr->second->getRawValue());
@@ -421,7 +412,7 @@ bool Table::existsAs(const String& key, FieldType t) const {
 
 	if (itr != map.end())
 		return itr->second->type == t;
-	
+
 	return false;
 }
 
@@ -523,7 +514,7 @@ String Table::toString() const {
 }
 
 void Table::debugPrint() const {
-#ifdef _DEBUG			
+#ifdef _DEBUG 
 	DEBUG_MESSAGE(toString());
 #endif
 }

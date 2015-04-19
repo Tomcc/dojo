@@ -8,36 +8,50 @@ namespace Dojo {
 	class InputDevice;
 	class Vector;
 
-	class InputSystemListener
-	{
+	class InputSystemListener {
 	public:
 
 		InputSystemListener();
 
 		virtual ~InputSystemListener();
 
-		InputSystem* getSource()	{ return source; }
+		InputSystem* getSource() {
+			return source;
+		}
 
-		virtual void onTouchBegan(const Touch& touch) {}
-		virtual void onTouchMove(const Touch& touch)  {}
-		virtual void onTouchEnd(const Touch& touch)   {}
-		virtual void onMouseMove(const Vector& curPos, const Vector& oldPos)	{}
-		virtual void onScrollWheel(float scroll)	{}
+		virtual void onTouchBegan(const Touch& touch) {
+		}
 
-		virtual void onShake()	{}
+		virtual void onTouchMove(const Touch& touch) {
+		}
 
-		virtual void onAcceleration(const Vector& accel, float roll)	{}
+		virtual void onTouchEnd(const Touch& touch) {
+		}
 
-		virtual void onDeviceConnected(InputDevice& j) {}
-		virtual void onDeviceDisconnected(InputDevice& j) {}
+		virtual void onMouseMove(const Vector& curPos, const Vector& oldPos) {
+		}
 
-		void _notifySource(InputSystem* src)	{ source = src; }
+		virtual void onScrollWheel(float scroll) {
+		}
+
+		virtual void onShake() {
+		}
+
+		virtual void onAcceleration(const Vector& accel, float roll) {
+		}
+
+		virtual void onDeviceConnected(InputDevice& j) {
+		}
+
+		virtual void onDeviceDisconnected(InputDevice& j) {
+		}
+
+		void _notifySource(InputSystem* src) {
+			source = src;
+		}
 
 	protected:
 
 		InputSystem* source;
 	};
 }
-
-
-

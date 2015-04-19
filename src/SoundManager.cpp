@@ -9,9 +9,8 @@ using namespace Dojo;
 
 const float SoundManager::m = 100;
 
-const SoundManager::Easing SoundManager::LinearEasing = []( float t )
-{
-    return t;
+const SoundManager::Easing SoundManager::LinearEasing = []( float t ) {
+	return t;
 };
 
 void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
@@ -25,25 +24,24 @@ void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
-musicTrack( nullptr ),
-nextMusicTrack( nullptr ),
-fadeState( FS_NONE ),
-musicVolume( 1 ),
-masterVolume( 1 ),
-currentFadeTime(0)
-{		
+	musicTrack(nullptr),
+	nextMusicTrack(nullptr),
+	fadeState(FS_NONE),
+	musicVolume(1),
+	masterVolume(1),
+	currentFadeTime(0) {
 	alGetError();
 
 	// Initialization
 	device = alcOpenDevice(nullptr); // select the "preferred device"
-	
+
 	if (!device)
 		return; //running without audio :(
 
-	context = alcCreateContext(device,nullptr);
-		
+	context = alcCreateContext(device, nullptr);
+
 	DEBUG_ASSERT( context, "Cannot create an OpenAL context" );
-		
+
 	alcMakeContextCurrent(context);
 
 	CHECK_AL_ERROR;
@@ -52,24 +50,23 @@ currentFadeTime(0)
 	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN, "Min source number cannot be > Max source number" );
 
 	//create at least MIN sources, the rest will be lazy-loaded
-	for( int i = 0; i < NUM_SOURCES_MIN; ++i )
-	{
+	for (int i = 0; i < NUM_SOURCES_MIN; ++i) {
 		ALuint src;
-		alGenSources(1, &src );
+		alGenSources(1, &src);
 
-		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.emplace_back( make_unique<SoundSource>( src ) );
+		if (alGetError() == AL_NO_ERROR)
+			idleSoundPool.emplace_back(make_unique<SoundSource>(src));
 		else
 			break;
 	}
 
 	//ensure at least MIN sources have been built
-	DEBUG_ASSERT_INFO( 
-		idleSoundPool.size() >= NUM_SOURCES_MIN, 
-		"OpenAL could not preload the minimum sources number", String("NUM_SOURCES_MIN = ") + NUM_SOURCES_MIN ); 
+	DEBUG_ASSERT_INFO(
+		idleSoundPool.size() >= NUM_SOURCES_MIN,
+		"OpenAL could not preload the minimum sources number", String("NUM_SOURCES_MIN = ") + NUM_SOURCES_MIN );
 
 	//dummy source to manage source shortage
-	fakeSource = make_unique<SoundSource>( 0 );
+	fakeSource = make_unique<SoundSource>(0);
 
 	setListenerTransform(Matrix(1));
 
@@ -89,28 +86,24 @@ void SoundManager::clear() {
 }
 
 
-SoundManager::~SoundManager()
-{
+SoundManager::~SoundManager() {
 	if (device)
-		alcCloseDevice( device );
+		alcCloseDevice(device);
 }
 
-SoundSource& SoundManager::getSoundSource( SoundSet* set, int i )
-{
+SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
 	DEBUG_ASSERT( set, "Cannot get a source for a nullptr SoundSet" );
 
 	//try to lazy-create a new source, if allowed
-	if( idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX )
-	{
+	if (idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX) {
 		ALuint src;
-		alGenSources( 1, & src );
-		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.emplace_back( make_unique<SoundSource>( src ) );
+		alGenSources(1, & src);
+		if (alGetError() == AL_NO_ERROR)
+			idleSoundPool.emplace_back(make_unique<SoundSource>(src));
 	}
 
 	//is there a source now?
-	if( !idleSoundPool.empty() )
-	{
+	if (!idleSoundPool.empty()) {
 		busySoundPool.emplace_back(std::move(idleSoundPool.back()));
 		idleSoundPool.pop_back();
 
@@ -121,26 +114,24 @@ SoundSource& SoundManager::getSoundSource( SoundSet* set, int i )
 	return *fakeSource;
 }
 
-void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */, const Easing& easing )
-{
-    //TODO use easing
-    
+void SoundManager::playMusic(SoundSet* next, float trackFadeTime /* = 0 */, const Easing& easing) {
+	//TODO use easing
+
 	DEBUG_ASSERT( next, "nullptr music source passed" );
 
 	//override music activation if the system sound is in use
-	if( Platform::singleton().isSystemSoundInUse() )
+	if (Platform::singleton().isSystemSoundInUse())
 		return;
 
-	nextMusicTrack = &getSoundSource( next );
+	nextMusicTrack = &getSoundSource(next);
 
-	halfFadeTime = trackFadeTime*0.5f;
+	halfFadeTime = trackFadeTime * 0.5f;
 	currentFadeTime = 0;
-		
+
 	fadeState = FS_FADE_OUT;
 }
 
-void SoundManager::setMasterVolume( float volume )
-{	
+void SoundManager::setMasterVolume(float volume) {
 	DEBUG_ASSERT( volume >= 0, "Volumes cannot be negative" );
 
 	if (std::abs(masterVolume - volume) > 0.01f || volume == 0) //avoid doing this too often
@@ -157,44 +148,40 @@ void SoundManager::setMasterVolume( float volume )
 	}
 }
 
-void SoundManager::update( float dt )
-{
-	for (size_t i = 0; i < busySoundPool.size(); ++i)
-	{
+void SoundManager::update(float dt) {
+	for (size_t i = 0; i < busySoundPool.size(); ++i) {
 		auto& current = busySoundPool[i];
 		current->_update(dt);
-		if( current->_isWaitingForDelete() )
-		{
+		if (current->_isWaitingForDelete()) {
 			current->_reset();
 
 			idleSoundPool.emplace_back(std::move(current));
-			busySoundPool.erase( busySoundPool.begin() + i );
+			busySoundPool.erase(busySoundPool.begin() + i);
 
 			--i;
 		}
 	}
-	
+
 	//fai il fade
-	if( fadeState == FS_FADE_OUT ) //abbassa il volume della track corrente
+	if (fadeState == FS_FADE_OUT) //abbassa il volume della track corrente
 	{
-		if( musicTrack && currentFadeTime < halfFadeTime )
-			musicTrack->setVolume( musicVolume * ( 1.f - currentFadeTime/halfFadeTime) );
+		if (musicTrack && currentFadeTime < halfFadeTime)
+			musicTrack->setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
 		else //scambia le tracks e fai partire la prossima
 		{
-			if( musicTrack )
+			if (musicTrack)
 				musicTrack->stop();
 
 			musicTrack = nextMusicTrack;
 
 			//parte il fade in
-			if( musicTrack )
-			{
+			if (musicTrack) {
 				nextMusicTrack = nullptr;
 
 				musicTrack->play(0);
-				musicTrack->setAutoRemove( false );
+				musicTrack->setAutoRemove(false);
 
-				musicTrack->setLooping( true );
+				musicTrack->setLooping(true);
 
 				fadeState = FS_FADE_IN;
 				currentFadeTime = 0;
@@ -202,46 +189,44 @@ void SoundManager::update( float dt )
 			else
 				fadeState = FS_NONE;
 		}
-		
+
 		currentFadeTime += dt;
 	}
-	else if( fadeState == FS_FADE_IN )  //alza il volume della track successiva
+	else if (fadeState == FS_FADE_IN) //alza il volume della track successiva
 	{
-		if( currentFadeTime < halfFadeTime )
-			musicTrack->setVolume( musicVolume * (currentFadeTime/halfFadeTime) );
+		if (currentFadeTime < halfFadeTime)
+			musicTrack->setVolume(musicVolume * (currentFadeTime / halfFadeTime));
 
-		else  //finisci
+		else //finisci
 		{
 			currentFadeTime = 0;
-			
+
 			//force volume at max
-			musicTrack->setVolume( musicVolume );
-			
+			musicTrack->setVolume(musicVolume);
+
 			fadeState = FS_NONE;
 		}
-		
+
 		currentFadeTime += dt;
 	}
 }
 
-void SoundManager::resumeMusic()
-{
+void SoundManager::resumeMusic() {
 	//resume music, but only if the user didn't enable itunes meanwhile!
-	if( musicTrack && !Platform::singleton().isSystemSoundInUse() )
+	if (musicTrack && !Platform::singleton().isSystemSoundInUse())
 		musicTrack->play();
 }
 
-void SoundManager::setListenerTransform(const Matrix& worldTransform)
-{
-	glm::vec4 pos(0.f, 0.f, 0.f, 1.f), up(0.f,1.f,0.f,0.f), forward(0.f,0.f,-1.f, 0.f);
+void SoundManager::setListenerTransform(const Matrix& worldTransform) {
+	glm::vec4 pos(0.f, 0.f, 0.f, 1.f), up(0.f, 1.f, 0.f, 0.f), forward(0.f, 0.f, -1.f, 0.f);
 
 	pos = worldTransform * pos;
 	forward = worldTransform * forward;
 	up = worldTransform * up;
 
-	ALfloat orientation[6] = { 
+	ALfloat orientation[6] = {
 		forward.x, forward.y, forward.z,
-		up.x, up.y,	up.z
+		up.x, up.y, up.z
 	};
 
 	alListenerfv(AL_POSITION, glm::value_ptr(pos));
@@ -303,24 +288,21 @@ void SoundManager::setMusicVolume(float volume) {
 }
 
 void SoundManager::pauseAll() {
-	for (auto&& s : busySoundPool)
-	{
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack)
 			s->pause();
 	}
 }
 
 void SoundManager::resumeAll() {
-	for (auto&& s : busySoundPool)
-	{
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack)
 			s->play();
 	}
 }
 
 void SoundManager::stopAllSounds() {
-	for (auto&& s : busySoundPool)
-	{
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack)
 			s->stop();
 	}

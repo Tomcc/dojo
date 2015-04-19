@@ -5,7 +5,7 @@ using namespace Dojo;
 
 
 InputSystemListener::InputSystemListener() :
-source(nullptr) {
+	source(nullptr) {
 
 }
 

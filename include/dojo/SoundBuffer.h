@@ -4,8 +4,7 @@
 
 #include "Resource.h"
 
-namespace Dojo 
-{
+namespace Dojo {
 	class Stream;
 	class SoundManager;
 	class FileStream;
@@ -14,21 +13,19 @@ namespace Dojo
 	/**
 	Sounds are referenced using SoundSets, which contain one or more SoundBuffers, just like FrameSets and Textures.
 	*/
-	class SoundBuffer : public Resource
-	{
+	class SoundBuffer : public Resource {
 	public:
 
 		///A Chunk represents an actual OpenAL buffer. Chunks are used to preallocate streaming resources
-		class Chunk : public Resource
-		{
+		class Chunk : public Resource {
 		public:
 
 			///the max size in PCM of a chunk
 			static const int MAX_DURATION = 3;
-			static const int MAX_SIZE = 41000 * sizeof( short ) * MAX_DURATION;
-			
+			static const int MAX_SIZE = 41000 * sizeof( short) * MAX_DURATION;
+
 			///Creates a new chunk that will use the given source span to load
-			Chunk( SoundBuffer* parent, long streamStartPosition, long uncompressedSize );
+			Chunk(SoundBuffer* parent, long streamStartPosition, long uncompressedSize);
 
 			~Chunk();
 
@@ -45,8 +42,7 @@ namespace Dojo
 			ALuint getOpenALBuffer();
 
 			///returns the size of this chunk
-			int getSize()
-			{
+			int getSize() {
 				return size;
 			}
 
@@ -66,44 +62,44 @@ namespace Dojo
 
 			ALuint size;
 			ALuint alBuffer;
-            std::atomic<int> references;
+			std::atomic<int> references;
 		};
 
-		typedef std::vector< std::unique_ptr<Chunk> > ChunkList;
-		
+		typedef std::vector<std::unique_ptr<Chunk>> ChunkList;
+
 		///Creates a new file-loaded SoundBuffer in the given resourcegroup, for the given file path
-		SoundBuffer( ResourceGroup* creator, const String& path );
-		
+		SoundBuffer(ResourceGroup* creator, const String& path);
+
 		~SoundBuffer();
 
 		virtual bool onLoad() override;
 		virtual void onUnload(bool soft = false) override;
 
 		///tells the memory size of this SoundBuffer
-		int getSize()					{	return size;	}
+		int getSize() {
+			return size;
+		}
 
 		///returns the number of chunks that compose this sound
-		int getChunkNumber()
-		{
+		int getChunkNumber() {
 			return mChunks.size();
 		}
 
 		///tells the duration in seconds of this SoundBuffer
-		float getDuration()				{	return mDuration;}
+		float getDuration() {
+			return mDuration;
+		}
 
-		bool isLoaded() const			
-		{
+		bool isLoaded() const {
 			return !mChunks.empty();
 		}
 
-		virtual bool isReloadable() const
-		{
+		virtual bool isReloadable() const {
 			return mSource != nullptr;
 		}
 
 		///tells if this buffer has been loaded as a streaming (multi-part, lazy-loaded) buffer.
-		bool isStreaming()
-		{
+		bool isStreaming() {
 			return mChunks.size() > 1;
 		}
 
@@ -111,7 +107,7 @@ namespace Dojo
 		/**
 		if n is greater than the number of chunks, it will loop, just like animation frames
 		*/
-		Chunk& getChunk( int n, bool loadAsync = false );
+		Chunk& getChunk(int n, bool loadAsync = false);
 
 	protected:
 
@@ -120,10 +116,9 @@ namespace Dojo
 
 		ChunkList mChunks;
 		Stream* mSource;
-		Unique< FileStream > mFile; //this unique ptr keeps ownership of the file accessor when the src is a file
+		Unique<FileStream> mFile; //this unique ptr keeps ownership of the file accessor when the src is a file
 
-		bool _loadOgg( Stream* source );
+		bool _loadOgg(Stream* source);
 		bool _loadOggFromFile();
 	};
 }
-

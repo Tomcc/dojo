@@ -13,76 +13,69 @@
 
 #include "AnimatedQuad.h"
 
-namespace Dojo 
-{
+namespace Dojo {
 	class ParticlePool;
 	class GameState;
 
 
 	///class tightly coupled to ParticlePool needed to create fast appearing/disappearing effects
-	class Particle : public AnimatedQuad 
-	{
-	public:	
+	class Particle : public AnimatedQuad {
+	public:
 
 		friend class ParticlePool;
 
-		class EventListener
-		{
+		class EventListener {
 		public:
-			
-			virtual void onTimedEvent( Particle* p )=0;
+
+			virtual void onTimedEvent(Particle* p) =0;
 		};
-				
-		float lifeTime;		
+
+		float lifeTime;
 		float spriteSizeScaleSpeed;
 
 		Vector acceleration;
-		
-		Particle( ParticlePool* p, Object* level, int i ) :
-		AnimatedQuad( level, Vector::ZERO ),
-		pool( p ),
-		index( i ),
-		lifeTime( 1 )
-		{
+
+		Particle(ParticlePool* p, Object* level, int i) :
+			AnimatedQuad(level, Vector::ZERO),
+			pool(p),
+			index(i),
+			lifeTime(1) {
 			onReset();
-			
-			setVisible( false );
-		}		
-		
-		virtual void onReset()
-		{
+
+			setVisible(false);
+		}
+
+		virtual void onReset() {
 			AnimatedQuad::reset();
 
 			acceleration.x = 0;
 			acceleration.y = 0;
-			
+
 			spriteSizeScaleSpeed = 0;
 			listener = NULL;
 		}
-		
-		void setTimedEvent( EventListener* l, float lifeTime )
-		{			
+
+		void setTimedEvent(EventListener* l, float lifeTime) {
 			eventTime = lifeTime;
 			listener = l;
 		}
-		
-		void removeTimedEvent()
-		{
+
+		void removeTimedEvent() {
 			listener = NULL;
 			eventTime = 0;
 		}
-		
-		EventListener* getListener()		{	return listener;	}
-		
-		bool launchTimedEvent()		
-		{
+
+		EventListener* getListener() {
+			return listener;
+		}
+
+		bool launchTimedEvent() {
 			return listener && lifeTime < eventTime;
 		}
-		
-		void move( float dt )
-		{
-            DEBUG_TODO; //particles need to be updated to ogl2.0
-            
+
+		void move(float dt) {
+			DEBUG_TODO; //particles need to be updated to ogl2.0
+
 			/*advanceAnim( dt );
 			advanceFade( dt );
 
@@ -103,20 +96,24 @@ namespace Dojo
 				removeTimedEvent();
 			}*/
 		}
-		
-		void _setPoolIdx( int i )	{	index = i;			}
-		int _getPoolIdx()			{	return index;		}
-		
+
+		void _setPoolIdx(int i) {
+			index = i;
+		}
+
+		int _getPoolIdx() {
+			return index;
+		}
+
 	protected:
 
 		int index;
-		
+
 		ParticlePool* pool;
-		
+
 		EventListener* listener;
-		
+
 		float eventTime;
-		
+
 	};
 }
-

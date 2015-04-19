@@ -11,5 +11,5 @@ const Vector Vector::NEGATIVE_UNIT_Y = {0,-1,0};
 const Vector Vector::NEGATIVE_UNIT_Z = {0,0,-1};
 const Vector Vector::ONE = {1,1,1};
 
-const Vector Vector::MAX = { FLT_MAX, FLT_MAX, FLT_MAX };
-const Vector Vector::MIN = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+const Vector Vector::MAX = {FLT_MAX , FLT_MAX , FLT_MAX};
+const Vector Vector::MIN = {-FLT_MAX , -FLT_MAX , -FLT_MAX};

@@ -2,14 +2,13 @@
 
 using namespace Dojo;
 
-double Timer::currentTime()
-{
+double Timer::currentTime() {
 	double d;
 #ifdef PLATFORM_WIN32
 	__int64 freq, gTime;
-	QueryPerformanceCounter((LARGE_INTEGER *)&gTime);  // Get current count
+	QueryPerformanceCounter((LARGE_INTEGER *)&gTime); // Get current count
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq); // Get processor freq
-	d = (double)(gTime)/(double)freq;
+	d = (double)(gTime) / (double)freq;
 #else
 	struct timeval tv;
 	gettimeofday(&tv, NULL );

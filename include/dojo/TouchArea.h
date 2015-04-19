@@ -13,11 +13,10 @@
 #include "Object.h"
 #include "Touch.h"
 
-namespace Dojo
-{
-    class GameState;
-    class Renderable;
-    
+namespace Dojo {
+	class GameState;
+	class Renderable;
+
 	///A TouchArea is an Object used as the basic building block for UI buttons
 	/**
 	When added to a GameState, a TouchArea will send Pressed and Released events to its listeners,
@@ -25,42 +24,43 @@ namespace Dojo
 	
 	Touching again an already touched TouchArea *will not* spawn new Pressed and Released events.
 	*/
-    class TouchArea : public Object
-    {
-    public:
+	class TouchArea : public Object {
+	public:
 
-		typedef std::vector< Touch > TouchList;
-        
-        class Listener
-        {
-        public:
-            
+		typedef std::vector<Touch> TouchList;
+
+		class Listener {
+		public:
+
 			///Tapped is sent when the TA was previously "free", and then a touch starts inside the area
 			/**
 			differs with Pressed as it won't be sent, for example, when the user drags a finger inside the area
 			*/
-			virtual void onTouchAreaTapped(TouchArea& area) {}
+			virtual void onTouchAreaTapped(TouchArea& area) {
+			}
 
 			///Pressed is sent when a previously untouched area is tapped
-			virtual void onTouchAreaPressed(TouchArea& area)     {}
+			virtual void onTouchAreaPressed(TouchArea& area) {
+			}
 
 			///Released is sent when a previously touched (one or more touches) is released inside this area
-			virtual void onTouchAreaReleased(TouchArea& area)	{}
-            
-        protected:
-        };
-        
-        ///creates a new "free touch area" with the given parameters
-        TouchArea( Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer = 0 );
-        
-        ///creates a new touch area copying the renderable's parameters
-        TouchArea( Renderable* image, Listener* l );
-        
-        virtual ~TouchArea();
-                
-        void setListener( Listener* l );
-        
-        int getLayer() const;
+			virtual void onTouchAreaReleased(TouchArea& area) {
+			}
+
+		protected:
+		};
+
+		///creates a new "free touch area" with the given parameters
+		TouchArea(Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer = 0);
+
+		///creates a new touch area copying the renderable's parameters
+		TouchArea(Renderable* image, Listener* l);
+
+		virtual ~TouchArea();
+
+		void setListener(Listener* l);
+
+		int getLayer() const;
 
 		bool isTop() const {
 			return top;
@@ -69,7 +69,7 @@ namespace Dojo
 		void setTop(bool enable) {
 			top = enable;
 		}
-		
+
 		bool contains2D(const Vector& p) const;
 
 		///returns a list of the touches that entered this toucharea in the last frame
@@ -79,24 +79,23 @@ namespace Dojo
 		bool isPressed() const;
 
 		virtual void onAction(float dt);
-                
-        void _fireOnTouchUsingCurrentTouches();
-        
-        void _notifyLayer( int l );
+
+		void _fireOnTouchUsingCurrentTouches();
+
+		void _notifyLayer(int l);
 
 		void _clearTouches();
 
-		void _incrementTouches( const Touch& touch );
-	
-    protected:        
-        bool mPressed, top = false;
-        int mLayer;
+		void _incrementTouches(const Touch& touch);
+
+	protected:
+		bool mPressed, top = false;
+		int mLayer;
 
 		TouchList mTouches;
-        
-        Listener* listener;
+
+		Listener* listener;
 
 		AABB worldBB;
-    };
+	};
 }
-

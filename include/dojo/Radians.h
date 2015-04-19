@@ -1,12 +1,13 @@
 #pragma once
 
 namespace Dojo {
-	template<class T, typename BASE>
+	template <class T, typename BASE>
 	class RealNumber {
 	public:
 		typedef BASE BaseType;
 
-		explicit RealNumber(BASE v) : mValue(v) {}
+		explicit RealNumber(BASE v) : mValue(v) {
+		}
 
 		T operator+(const T& rhs) const {
 			return T(mValue + rhs.mValue);
@@ -43,7 +44,7 @@ namespace Dojo {
 		Radians& operator=(const Degrees& e);
 	};
 
-	class Degrees : public RealNumber < Degrees, float > {
+	class Degrees : public RealNumber<Degrees, float> {
 	public:
 		explicit Degrees(BaseType v) :
 			RealNumber(v) {
@@ -53,4 +54,3 @@ namespace Dojo {
 		Degrees(const Radians& r);
 	};
 }
-

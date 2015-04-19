@@ -87,7 +87,7 @@
 
 extern "C" {
 
-// GL_ARB_multisample
+	// GL_ARB_multisample
 
 #define GL_MULTISAMPLE_ARB                 0x809D
 #define GL_SAMPLE_ALPHA_TO_COVERAGE_ARB    0x809E
@@ -99,17 +99,17 @@ extern "C" {
 #define GL_SAMPLE_COVERAGE_INVERT_ARB      0x80AB
 #define GL_MULTISAMPLE_BIT_ARB             0x20000000
 
-// GL_NV_multisample_coverage
+	// GL_NV_multisample_coverage
 
 #define GL_COVERAGE_SAMPLES_NV             0x80A9
 #define GL_COLOR_SAMPLES_NV                0x8E20
 
-// WGL_ARB_multisample
+	// WGL_ARB_multisample
 
 #define WGL_SAMPLE_BUFFERS_ARB             0x2041
 #define WGL_SAMPLES_ARB                    0x2042
 
-// WGL_ARB_pixel_format
+	// WGL_ARB_pixel_format
 
 #define WGL_NUMBER_PIXEL_FORMATS_ARB       0x2000
 #define WGL_DRAW_TO_WINDOW_ARB             0x2001
@@ -161,30 +161,30 @@ extern "C" {
 #define WGL_TYPE_RGBA_ARB                  0x202B
 #define WGL_TYPE_COLORINDEX_ARB            0x202C
 
-extern BOOL wglGetPixelFormatAttribivARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int *piAttributes, int *piValues);
-extern BOOL wglGetPixelFormatAttribfvARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int *piAttributes, FLOAT *pfValues);
-extern BOOL wglChoosePixelFormatARB(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
+	extern BOOL wglGetPixelFormatAttribivARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, int* piValues);
+	extern BOOL wglGetPixelFormatAttribfvARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, FLOAT* pfValues);
+	extern BOOL wglChoosePixelFormatARB(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats, UINT* nNumFormats);
 
-// WGL_NV_multisample_coverage
+	// WGL_NV_multisample_coverage
 
 #define WGL_COVERAGE_SAMPLES_NV            0x2042
 #define WGL_COLOR_SAMPLES_NV               0x20B9
 
-// Returns the highest quality hardware accelerated anti-aliasing pixel format.
-// If a suitable MSAA or CSAA pixel format was found it will be returned in the
-// 'pf' integer reference argument. Otherwise '0' will be returned.
-extern void ChooseBestAntiAliasingPixelFormat(int &pf);
+	// Returns the highest quality hardware accelerated anti-aliasing pixel format.
+	// If a suitable MSAA or CSAA pixel format was found it will be returned in the
+	// 'pf' integer reference argument. Otherwise '0' will be returned.
+	extern void ChooseBestAntiAliasingPixelFormat(int& pf);
 
-// Returns a hardware accelerated anti-aliasing (MSAA or CSAA) pixel format
-// that supports the specified samples per pixel. If a matching MSAA or CSAA
-// pixel format was found it will be returned in the 'pf' integer reference
-// argument. Otherwise '0' will be returned.
-extern void ChooseAntiAliasingPixelFormat(int &pf, int samples);
+	// Returns a hardware accelerated anti-aliasing (MSAA or CSAA) pixel format
+	// that supports the specified samples per pixel. If a matching MSAA or CSAA
+	// pixel format was found it will be returned in the 'pf' integer reference
+	// argument. Otherwise '0' will be returned.
+	extern void ChooseAntiAliasingPixelFormat(int& pf, int samples);
 
-// Returns a string containing a description of the anti-aliasing pixel format
-// selected by the most recent call to ChooseBestAntiAliasingPixelFormat() or
-// ChooseAntiAliasingPixelFormat().
-extern const char *GetAntiAliasingPixelFormatString();
+	// Returns a string containing a description of the anti-aliasing pixel format
+	// selected by the most recent call to ChooseBestAntiAliasingPixelFormat() or
+	// ChooseAntiAliasingPixelFormat().
+	extern const char* GetAntiAliasingPixelFormatString();
 
 } // extern "C"
 #endif

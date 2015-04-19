@@ -13,8 +13,7 @@
 
 #include "Resource.h"
 
-namespace Dojo 
-{
+namespace Dojo {
 	class Texture;
 	class Table;
 
@@ -39,74 +38,72 @@ namespace Dojo
 	}
 
 	*/
-	class FrameSet : public Resource
-	{
+	class FrameSet : public Resource {
 	public:
 
 		typedef std::vector<std::unique_ptr<Texture>> OwnedTextureList;
 		typedef std::vector<Texture*> TextureList;
-		
+
 		///Creates a single FrameSet with the given "prefix name"
-		FrameSet( ResourceGroup* creator, const String& prefixName );
-		
+		FrameSet(ResourceGroup* creator, const String& prefixName);
+
 		virtual ~FrameSet();
 
 		///sets the "preferred animation time" of this FrameSet
 		/**
 		It is the frame time used if this FrameSet is used for an animation and an explicit frame time is not specified.
 		*/
-		void setPreferredAnimationTime( float t );
-		
+		void setPreferredAnimationTime(float t);
+
 		///Loads this FrameSet from an Atlas, or a Texture+Definition Table combo
 		/**
 		the required texture must have been already loaded inside atlasTextureProvider
 		*/
-		void setAtlas( const Table& atlasTable, ResourceGroup& atlasTextureProvider );
+		void setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProvider);
 
 		virtual bool onLoad() override;
-		
+
 		///unload all of the content;
 		virtual void onUnload(bool soft) override;
-				
+
 		///adds a non-owned texture to this frame set
 		/*
 		\param t the texture
 		*/
-		void addTexture( Texture& t );
+		void addTexture(Texture& t);
 
 		///adds a owned texture to this frame set
 		/*
 		\param t the texture
 		*/
 		void addTexture(Unique<Texture> t);
-		
+
 		///returns the (looped!) frame at index i
 		/** 
 		if i > number of frames, i is looped over n as in i % size() */
-		Texture* getFrame( int i )			
-		{	
-			return frames.at( i%frames.size() );	
+		Texture* getFrame(int i) {
+			return frames.at(i % frames.size());
 		}
-		
+
 		///returns a random frame
 		Texture* getRandomFrame();
 
-		float getPreferredAnimationTime()
-		{
+		float getPreferredAnimationTime() {
 			return mPreferredAnimationTime;
 		}
 
-		bool hasPreferredAnimationTime()
-		{
+		bool hasPreferredAnimationTime() {
 			return mPreferredAnimationTime >= 0;
 		}
-		
+
 		///returns how many Textures this FrameSet contains
-		int getFrameNumber()				{	return frames.size();	}
-		
+		int getFrameNumber() {
+			return frames.size();
+		}
+
 		///returns the Frame Index of this Texture if it belongs to the FS, or -1 if not
 		int getFrameIndex(Texture& frame) const;
-		
+
 	protected:
 		String name;
 
@@ -116,4 +113,3 @@ namespace Dojo
 		OwnedTextureList ownedFrames;
 	};
 }
-

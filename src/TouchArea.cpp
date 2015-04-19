@@ -5,33 +5,30 @@
 
 using namespace Dojo;
 
-TouchArea::TouchArea(  Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer ) :
-Object( parent, pos, size ),
-listener( l ),
-mPressed( false ),
-mTouches( 0 ),
-mLayer( layer )
-{
-    DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
-    
-    getGameState()->addTouchArea( this );
+TouchArea::TouchArea(Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer) :
+	Object(parent, pos, size),
+	listener(l),
+	mPressed(false),
+	mTouches(0),
+	mLayer(layer) {
+	DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
+
+	getGameState()->addTouchArea(this);
 }
 
-TouchArea::TouchArea( Renderable* r, Listener* l ) :
-Object( r->getGameState(), Vector::ZERO, r->getSize() ),
-listener( l ),
-mPressed( false ),
-mTouches( 0 ),
-mLayer( r->getLayer() )
-{
-    DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
-    
-    getGameState()->addTouchArea( this );
+TouchArea::TouchArea(Renderable* r, Listener* l) :
+	Object(r->getGameState(), Vector::ZERO, r->getSize()),
+	listener(l),
+	mPressed(false),
+	mTouches(0),
+	mLayer(r->getLayer()) {
+	DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
+
+	getGameState()->addTouchArea(this);
 }
 
-TouchArea::~TouchArea()
-{
-    getGameState()->removeTouchArea( this );
+TouchArea::~TouchArea() {
+	getGameState()->removeTouchArea(this);
 }
 
 void TouchArea::_fireOnTouchUsingCurrentTouches() {
@@ -43,22 +40,22 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 		mPressed = active;
 
 		//if all the touches just began in this area, the user tapped
-		if (mPressed)
-		{
+		if (mPressed) {
 			bool tapped = true;
-			for (auto& t : mTouches)
-			{
-				if (!t.firstFrame)
-				{
+			for (auto& t : mTouches) {
+				if (!t.firstFrame) {
 					tapped = false;
 					break;
 				}
 			}
-			if (tapped)		listener->onTouchAreaTapped(*this);
+			if (tapped)
+				listener->onTouchAreaTapped(*this);
 		}
 
-		if (mPressed)      listener->onTouchAreaPressed(*this);
-		else                listener->onTouchAreaReleased(*this);
+		if (mPressed)
+			listener->onTouchAreaPressed(*this);
+		else
+			listener->onTouchAreaReleased(*this);
 	}
 }
 
@@ -100,8 +97,7 @@ bool TouchArea::contains2D(const Vector& p) const {
 		p.y >= worldBB.min.y;
 }
 
-void TouchArea::onAction(float dt)
-{
+void TouchArea::onAction(float dt) {
 	Object::onAction(dt);
 
 	worldBB = transformAABB(-getHalfSize(), getHalfSize());

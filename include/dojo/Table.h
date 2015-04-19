@@ -8,8 +8,7 @@
 #include "dojostring.h"
 #include "Resource.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class Entry;
 
 	///Table is the internal representation of the Dojo Script data definition format
@@ -23,12 +22,10 @@ namespace Dojo
 	auto values can be queried using
 	get*( index, defaultValue )
 	*/
-	class Table : public Resource
-	{
+	class Table : public Resource {
 	public:
 
-		enum FieldType 
-		{
+		enum FieldType {
 			FT_UNDEFINED,
 			FT_NUMBER,
 			FT_STRING,
@@ -37,79 +34,67 @@ namespace Dojo
 			FT_TABLE
 		};
 
-		class Data
-		{
+		class Data {
 		public:
 			static const Data EMPTY;
 
 			void* ptr;
 			int size;
-			
+
 			Data() :
-			ptr( nullptr ),
-			size( 0 )
-			{
+				ptr(nullptr),
+				size(0) {
 
 			}
 
-			Data( void* p, int s) :
-			ptr( p ),
-			size( s )
-			{
+			Data(void* p, int s) :
+				ptr(p),
+				size(s) {
 
 			}
-			
-			~Data()
-			{
-				
-			}			
+
+			~Data() {
+
+			}
 		};
 
-		class Entry
-		{
+		class Entry {
 		public:
 			Table::FieldType type;
 
 			explicit Entry(Table::FieldType fieldType) :
-				type(fieldType)
-			{
+				type(fieldType) {
 
 			}
 
-			virtual ~Entry()
-			{
+			virtual ~Entry() {
 
 			}
 
 			///returns a raw unyped pointer to the underlying data
 			virtual void* getRawValue() = 0;
 
-			float getAsNumber()
-			{
+			float getAsNumber() {
 				DEBUG_ASSERT(type == Table::FT_NUMBER, "type mismatch while reading from a Table Entry");
 				return *(float*)getRawValue();
 			}
 
-			const String& getAsString()
-			{
+			const String& getAsString() {
 				DEBUG_ASSERT(type == Table::FT_STRING, "type mismatch while reading from a Table Entry");
 				return *(String*)getRawValue();
 			}
 
-			const Vector& getAsVector()
-			{
+			const Vector& getAsVector() {
 				DEBUG_ASSERT(type == Table::FT_VECTOR, "type mismatch while reading from a Table Entry");
 				return *(Vector*)getRawValue();
 			}
 
-			Table& getAsTable()
-			{
+			Table& getAsTable() {
 				DEBUG_ASSERT(type == Table::FT_TABLE, "type mismatch while reading from a Table Entry");
 				return *(Table*)getRawValue();
 			}
 
-			const Table::Data& getAsData()
-			{
+			const Table::Data& getAsData() {
 				DEBUG_ASSERT(type == Table::FT_DATA, "type mismatch while reading from a Table Entry");
 				return *(Table::Data*)getRawValue();
 			}
@@ -118,48 +103,42 @@ namespace Dojo
 		};
 
 		template <class T>
-		class TypedEntry : public Entry
-		{
+		class TypedEntry : public Entry {
 		public:
 
 			T value;
 
 			TypedEntry(FieldType fieldType, const T& v) :
 				Entry(fieldType),
-				value(v)
-			{
+				value(v) {
 
 			}
 
-			virtual ~TypedEntry()
-			{
+			virtual ~TypedEntry() {
 
 			}
 
 			///returns the raw value pointer
-			virtual void* getRawValue() override
-			{
+			virtual void* getRawValue() override {
 				return &value;
 			}
 
-			virtual Unique<Entry> clone() override
-			{
-				return make_unique< TypedEntry<T> >(type, value);
+			virtual Unique<Entry> clone() override {
+				return make_unique<TypedEntry<T>>(type, value);
 			}
 		};
 
-		typedef std::unordered_map< String, Unique<Entry> > EntryMap;
+		typedef std::unordered_map<String, Unique<Entry>> EntryMap;
 
 		static const Table EMPTY;
-		
-		static String index( int i )
-		{
+
+		static String index(int i) {
 			return '_' + String(i);
 		}
 
 		///loads the file at path
-		static Table loadFromFile( const String& path );
-		
+		static Table loadFromFile(const String& path);
+
 		///Creates a new table
 		Table();
 
@@ -172,235 +151,209 @@ namespace Dojo
 		Table& operator=(const Table&) = delete;
 
 		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
-		Table( ResourceGroup* creator, const String& path );
+		Table(ResourceGroup* creator, const String& path);
 
 		~Table();
 
 		virtual bool onLoad() override;
 
-		virtual void onUnload( bool soft = false ) override;
+		virtual void onUnload(bool soft = false) override;
 
 		///returns the table which contains the given "dot formatted" key
 		/** it returns "this" for a normal non-hierarchical key
 		returns "A" for a key such as "A.key"
 		returns "B" for a key such as "A.B.key" */
-		Table* getParentTable( const String& key, String& realKey ) const;
+		Table* getParentTable(const String& key, String& realKey) const;
 
-		template< class T >
-		void setImpl( const String& key, FieldType type, const T& value )
-		{
-			map[ key.empty() ? autoname() : key ] = make_unique< TypedEntry< T > >( type, value );
+		template <class T>
+		void setImpl(const String& key, FieldType type, const T& value) {
+			map[key.empty() ? autoname() : key] = make_unique<TypedEntry<T>>(type, value);
 		}
 
-		template< class T >
-		void set( const String& key, FieldType type, const T& value )
-		{			
+		template <class T>
+		void set(const String& key, FieldType type, const T& value) {
 			String actualKey;
-			Table* t = getParentTable( key, actualKey );
+			Table* t = getParentTable(key, actualKey);
 			DEBUG_ASSERT( t != nullptr, "Cannot add a key to a non-existing table" );
 
 			//actually set the key on the right table
-			t->setImpl( actualKey, type, value );
-		}
-		
-		void set( const String& key, float value )
-		{			
-			set(key, FT_NUMBER, value );
+			t->setImpl(actualKey, type, value);
 		}
 
-		void set( const String& key, int value )
-		{
-			set( key, (float)value );
+		void set(const String& key, float value) {
+			set(key, FT_NUMBER, value);
+		}
+
+		void set(const String& key, int value) {
+			set(key, (float)value);
 		}
 
 		///boolean has to be specified as C has the ugly habit of casting everything to it without complaining
-		void setBoolean( const String& key, bool value )
-		{
-			set( key, (float)value );
-		}
-		
-		void set( const String& key, const String& value )
-		{			
-			set(key, FT_STRING, value );
+		void setBoolean(const String& key, bool value) {
+			set(key, (float)value);
 		}
 
-		void set( const String& key, const Vector& value )
-		{
-			set( key, FT_VECTOR, value );
+		void set(const String& key, const String& value) {
+			set(key, FT_STRING, value);
 		}
-		
-		void set( const String& key, const Color& value )
-		{
-			set( key, FT_VECTOR, Vector( value.r, value.g, value.b ) );
+
+		void set(const String& key, const Vector& value) {
+			set(key, FT_VECTOR, value);
+		}
+
+		void set(const String& key, const Color& value) {
+			set(key, FT_VECTOR, Vector(value.r, value.g, value.b));
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		void set( const String& key, void* value, int size )
-		{
+		void set(const String& key, void* value, int size) {
 			DEBUG_ASSERT( value, "Setting a NULL Data value" );
 			DEBUG_ASSERT( size >= 0, "Setting a Data value size <= 0" );
 
-			set(key, FT_DATA, Data( value, size ) );
+			set(key, FT_DATA, Data(value, size));
 		}
-		
-		void set( const String& key, const Table& value )
-		{						
-			set( key, FT_TABLE, value );
-		}		
-		
+
+		void set(const String& key, const Table& value) {
+			set(key, FT_TABLE, value);
+		}
+
 		///creates a new nested table named key
 		/** 
 		nested Tables always have name == key */
-		Table& createTable( const String& key = String::EMPTY );
+		Table& createTable(const String& key = String::EMPTY);
 
 		///empties the map and deletes every value
-		void clear();		
-		
+		void clear();
+
 		///Inherits all the member in table t
 		/** 
 		After the call, this Table contains a copy of all the field defined in t but not here. 
 		Nested Tables are an exception as if they're defined in both, the local nested table will
 		recursively inherit the other nested table.
 		*/
-		void inherit( Table* t );
+		void inherit(Table* t);
 
 		///total number of entries
-		int size() const
-		{
+		int size() const {
 			return (int)map.size();
 		}
-		
+
 		///returns the total number of unnamed members
-		int getArrayLength() const
-		{
+		int getArrayLength() const {
 			return unnamedMembers;
 		}
 
-		bool isEmpty() const
-		{
+		bool isEmpty() const {
 			return map.empty();
 		}
-		
+
 		operator bool() const {
 			return !map.empty();
 		}
 
 		///returns true if this Table contains key
-		bool exists( const String& key ) const;
+		bool exists(const String& key) const;
 
 		///returns true if this Table contains key and the value is of type t
-		bool existsAs( const String& key, FieldType t ) const;
-		
+		bool existsAs(const String& key, FieldType t) const;
+
 		///generic get
-		Entry* get( const String& key ) const;
-		
-		float getNumber( const String& key, float defaultValue = 0 ) const;
-		
-		int getInt( const String& key, int defaultValue = 0 ) const;
-		
-		bool getBool( const String& key, bool defaultValue = false ) const;
-		
-		const String& getString( const String& key, const String& defaultValue = String::EMPTY ) const;
-		
-		const Vector& getVector( const String& key, const Vector& defaultValue = Vector::ZERO ) const;
-		
-		const Color getColor( const String& key, const Color& defaultValue = Color::BLACK ) const;
-		
-		const Table& getTable( const String& key ) const;
-		
-		const Data& getData( const String& key ) const;	
-		
-		String autoMemberName( int idx ) const;
-		
-		float getNumber( int idx ) const;
-		
-		int getInt( int idx ) const
-		{
-			return (int)getNumber( idx );
+		Entry* get(const String& key) const;
+
+		float getNumber(const String& key, float defaultValue = 0) const;
+
+		int getInt(const String& key, int defaultValue = 0) const;
+
+		bool getBool(const String& key, bool defaultValue = false) const;
+
+		const String& getString(const String& key, const String& defaultValue = String::EMPTY) const;
+
+		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::ZERO) const;
+
+		const Color getColor(const String& key, const Color& defaultValue = Color::BLACK) const;
+
+		const Table& getTable(const String& key) const;
+
+		const Data& getData(const String& key) const;
+
+		String autoMemberName(int idx) const;
+
+		float getNumber(int idx) const;
+
+		int getInt(int idx) const {
+			return (int)getNumber(idx);
 		}
-		
-		bool getBool( int idx ) const
-		{
+
+		bool getBool(int idx) const {
 			return getNumber(idx) > 0.f;
 		}
-		
-		const String& getString( int idx ) const
-		{
-			return getString( autoMemberName(idx) );
+
+		const String& getString(int idx) const {
+			return getString(autoMemberName(idx));
 		}
-		
-		const Vector& getVector( int idx ) const
-		{
-			return  getVector( autoMemberName(idx ) );
+
+		const Vector& getVector(int idx) const {
+			return getVector(autoMemberName(idx));
 		}
-		
-		const Color getColor( int idx, float alpha = 1.f ) const
-		{
-			return Color( getVector( idx ), alpha );
+
+		const Color getColor(int idx, float alpha = 1.f) const {
+			return Color(getVector(idx), alpha);
 		}
-		
-		const Table& getTable( int idx ) const
-		{			
-			return getTable( autoMemberName(idx) );
+
+		const Table& getTable(int idx) const {
+			return getTable(autoMemberName(idx));
 		}
-		
-		const Data& getData( int idx ) const
-		{
-			return getData( autoMemberName( idx ) );
-		}	
+
+		const Data& getData(int idx) const {
+			return getData(autoMemberName(idx));
+		}
 
 		///returns a new unique anoymous id for a new "array member"
 		String autoname();
 
-		template<typename T>
+		template <typename T>
 		void push(const T& t) {
 			set(autoname(), t);
 		}
-		
-		const EntryMap::const_iterator begin() const
-		{
+
+		const EntryMap::const_iterator begin() const {
 			return map.begin();
 		}
-		
-		const EntryMap::const_iterator end() const
-		{
+
+		const EntryMap::const_iterator end() const {
 			return map.end();
 		}
-		
+
 		///removes a member named key
-		void remove( const String& key );
-		
+		void remove(const String& key);
+
 		///removes the unnamed member index idx
-		void remove( int idx );
+		void remove(int idx);
 
 		///write the table in string form over buf
-		void serialize( String& buf, String indent = String::EMPTY ) const;
+		void serialize(String& buf, String indent = String::EMPTY) const;
 
-		void deserialize( StringReader& buf );
-		
+		void deserialize(StringReader& buf);
+
 		///diagnostic method that serializes the table in a string
 		String toString() const;
-		
+
 		void debugPrint() const;
 
 		///returns an iterator to the beginning of the internal dictionary
-		EntryMap::iterator begin()
-		{
+		EntryMap::iterator begin() {
 			return map.begin();
 		}
 
 		///returns an iterator to the end of the internal dictionary
-		EntryMap::iterator end()
-		{
+		EntryMap::iterator end() {
 			return map.end();
 		}
-				
+
 	protected:
-		
+
 		EntryMap map;
 
 		int unnamedMembers;
 	};
 }
-
-

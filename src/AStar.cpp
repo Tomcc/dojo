@@ -3,7 +3,7 @@
 using namespace Dojo;
 
 AStar::Node::Node(const Vector& pos) :
-position(pos) {
+	position(pos) {
 
 }
 
@@ -32,8 +32,7 @@ AStar::Node* AStar::Graph::getNode(const Vector& pos) const {
 AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 	iterator elem = find(pos);
 	Node* n;
-	if (elem == end())
-	{
+	if (elem == end()) {
 		n = new Node(pos);
 		(*this)[pos] = n;
 	}
@@ -52,11 +51,10 @@ void AStar::_retrace(Node* cur, Node* start) {
 }
 
 AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
-mTotalLength(0) {
+	mTotalLength(0) {
 	Node* start = set.getNode(startPos);
 
-	if (!start)
-	{
+	if (!start) {
 		push_back(startPos); //this is another point in the path
 		start = _nearest(set, startPos);
 		mTotalLength += start->position.distance(startPos);
@@ -64,8 +62,7 @@ mTotalLength(0) {
 
 	Node* end = set.getNode(endPos);
 	bool endIsAPathNode = (end != nullptr);
-	if (!endIsAPathNode)
-	{
+	if (!endIsAPathNode) {
 		end = _nearest(set, endPos);
 		mTotalLength += end->position.distance(endPos);
 	}
@@ -77,14 +74,13 @@ mTotalLength(0) {
 	PriorityQueue openSet;
 	openSet[start->_openValue = _distance(start, end)] = start; //insert start
 
-	while (!openSet.empty())
-	{
+	while (!openSet.empty()) {
 		Node* cur = openSet.begin()->second;
 
 		if (cur == end) //goal!
 		{
 			_retrace(cur, start);
-			if (!endIsAPathNode)  //remember to add the end position non-node
+			if (!endIsAPathNode) //remember to add the end position non-node
 				push_back(endPos);
 
 			return;
@@ -95,15 +91,13 @@ mTotalLength(0) {
 		cur->_openValue = 0;
 		openSet.erase(openSet.begin());
 
-		for (Node* neighbor : cur->edges)
-		{
+		for (Node* neighbor : cur->edges) {
 			if (neighbor->_closed)
 				continue;
 
 			float dist = _distance(cur, neighbor);
 			float g = cur->_gScore + dist; //check if the node needs to be updated
-			if (neighbor->_openValue == 0 || g < neighbor->_gScore)
-			{
+			if (neighbor->_openValue == 0 || g < neighbor->_gScore) {
 				neighbor->_cameFrom = cur;
 				neighbor->_cameFromDistance = dist;
 				neighbor->_gScore = g;
@@ -131,11 +125,9 @@ AStar::Node* AStar::_nearest(const Graph& set, const Vector& pos) {
 	float minDistance = FLT_MAX;
 	Node* nearest = nullptr;
 
-	for (auto entry : set)
-	{
+	for (auto entry : set) {
 		float d = pos.distanceSquared(entry.first);
-		if (d < minDistance)
-		{
+		if (d < minDistance) {
 			minDistance = d;
 			nearest = entry.second;
 		}

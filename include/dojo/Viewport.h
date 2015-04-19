@@ -19,51 +19,51 @@
 #include "Platform.h"
 #include "Radians.h"
 
-namespace Dojo 
-{	
+namespace Dojo {
 	class Renderer;
 	class GameState;
 	class AnimatedQuad;
 	class Renderable;
 	class RenderLayer;
 	class Texture;
-		
+
 	///A Viewport is a View in a Dojo GameState, working both in 2D and 3D
 	/**
 	when rendering a 2D layer, the Viewport uses an orthogonal transform and manages
 	the pixel-perfect rendering with its targetSize property;
 	when rendering a 3D layer, it culls the scene and renders the perspective using its Frustum
 	*/
-	class Viewport : public Object
-	{
+	class Viewport : public Object {
 	public:
 
-		typedef std::vector< int > LayerList;
-					
-		Viewport( 
-			Object* level, 
+		typedef std::vector<int> LayerList;
+
+		Viewport(
+			Object* level,
 			const Vector& pos,
-			const Vector& size, 
-			const Color& clear, 
-			Degrees VFOV = (Degrees)0, 
+			const Vector& size,
+			const Color& clear,
+			Degrees VFOV = (Degrees)0,
 			float zNear = 0,
-			float zFar = 100 );
-		
+			float zFar = 100);
+
 		virtual ~Viewport();
 
 		///enable this viewport for frustum culling, setting the frustum values
-		void enableFrustum( Degrees VFOV, float zNear, float zFar );
+		void enableFrustum(Degrees VFOV, float zNear, float zFar);
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
-		void addFader( int layer );
-		
+		void addFader(int layer);
+
 		///orients the camera to look at a given 3D point
-		void lookAt( const Vector& worldPos );
-				
-		void setClearColor( const Color& color)	{	mClearColor = color;	}
+		void lookAt(const Vector& worldPos);
+
+		void setClearColor(const Color& color) {
+			mClearColor = color;
+		}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
-		void setRenderTarget( Texture* target );
+		void setRenderTarget(Texture* target);
 
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers(const LayerList& layers);
@@ -75,8 +75,7 @@ namespace Dojo
 		/**
 		by default, the set is empty, which means "all layers"
 		*/
-		const LayerList& getVisibleLayers() const
-		{
+		const LayerList& getVisibleLayers() const {
 			return mLayerList;
 		}
 
@@ -85,18 +84,49 @@ namespace Dojo
 		all the rendering is then scaled to have the virtual rendering area fit inside the real rendering area.
 		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
 		*/
-		void setTargetSize( const Vector& size )		{ mTargetSize = size; }
-		
-		const Color& getClearColor()				{	return mClearColor;	}
-		Renderable* getFader()					{	return mFaderObject;	}
-		Degrees getVFOV() const							{	return mVFOV;		}
-		float getZFar()							{	return mZFar;		}
-		float getZNear()							{	return mZNear;		}
-		const Vector* getWorldFrustumVertices()	{	return mWorldFrustumVertices;	}
-		const Vector* getLocalFrustumVertices()	{	return mLocalFrustumVertices;	}
-		const Vector& getTargetSize()			{   return mTargetSize;  }
-		const Matrix& getViewTransform()			{	return mViewTransform;	}
-		const AABB& getGraphicsAABB() const	{ return mWorldBB; }
+		void setTargetSize(const Vector& size) {
+			mTargetSize = size;
+		}
+
+		const Color& getClearColor() {
+			return mClearColor;
+		}
+
+		Renderable* getFader() {
+			return mFaderObject;
+		}
+
+		Degrees getVFOV() const {
+			return mVFOV;
+		}
+
+		float getZFar() {
+			return mZFar;
+		}
+
+		float getZNear() {
+			return mZNear;
+		}
+
+		const Vector* getWorldFrustumVertices() {
+			return mWorldFrustumVertices;
+		}
+
+		const Vector* getLocalFrustumVertices() {
+			return mLocalFrustumVertices;
+		}
+
+		const Vector& getTargetSize() {
+			return mTargetSize;
+		}
+
+		const Matrix& getViewTransform() {
+			return mViewTransform;
+		}
+
+		const AABB& getGraphicsAABB() const {
+			return mWorldBB;
+		}
 
 		void setClearEnabled(bool enabled) {
 			mEnableClear = enabled;
@@ -107,79 +137,73 @@ namespace Dojo
 		}
 
 		///returns the Texture this Viewport draws to
-		Texture* getRenderTarget()
-		{
+		Texture* getRenderTarget() {
 			return mRT;
 		}
 
 		///returns the on-screen position of the given world-space vector
-		Vector getScreenPosition( const Vector& pos );
-		
+		Vector getScreenPosition(const Vector& pos);
+
 		///given a [0,1] normalized SS pos, returns the direction of the world space ray it originates
-		Vector getRayDirection( const Vector& screenSpacePos );
-        
-        const Matrix& getOrthoProjectionTransform()
-        {
-            return mOrthoTransform;
-        }
-        const Matrix& getPerspectiveProjectionTransform()
-        {
-            return mFrustumTransform;
-        }
+		Vector getRayDirection(const Vector& screenSpacePos);
 
-		bool isContainedInFrustum( const Renderable& r ) const;
+		const Matrix& getOrthoProjectionTransform() {
+			return mOrthoTransform;
+		}
 
-		bool isVisible( Renderable& s );
+		const Matrix& getPerspectiveProjectionTransform() {
+			return mFrustumTransform;
+		}
+
+		bool isContainedInFrustum(const Renderable& r) const;
+
+		bool isVisible(Renderable& s);
 
 		bool isInViewRect(const Renderable& r) const;
 		bool isInViewRect(const AABB& pos) const;
 		bool isInViewRect(const Vector& pos) const;
-		
+
 		///returns the world position of the given screenPoint
-		Vector makeWorldCoordinates( const Vector& screenPoint )
-		{
-			return makeWorldCoordinates( (int)screenPoint.x, (int)screenPoint.y );
+		Vector makeWorldCoordinates(const Vector& screenPoint) {
+			return makeWorldCoordinates((int)screenPoint.x, (int)screenPoint.y);
 		}
 
 		///returns the world position of the given screenPoint
-		Vector makeWorldCoordinates( int x, int y );
-			
+		Vector makeWorldCoordinates(int x, int y);
+
 		///converts the w and h pixel sizes in a screen space size
-		void makeScreenSize( Vector& dest, int w, int h )
-		{	
-			dest.x = ((float)w/mTargetSize.x) * size.x;// * nativeToScreenRatio;
-			dest.y = ((float)h/mTargetSize.y) * size.y;// * nativeToScreenRatio;
+		void makeScreenSize(Vector& dest, int w, int h) {
+			dest.x = ((float)w / mTargetSize.x) * size.x;// * nativeToScreenRatio;
+			dest.y = ((float)h / mTargetSize.y) * size.y;// * nativeToScreenRatio;
 		}
-		
+
 		///converts the texture pixel sizes in a screen space size
-		void makeScreenSize( Vector& dest, Texture* tex );
-		
-		float getPixelSide() const
-		{
+		void makeScreenSize(Vector& dest, Texture* tex);
+
+		float getPixelSide() const {
 			return size.x / mTargetSize.x;
 		}
-        
-        void setEyeTransform( const Matrix& t )
-        {
-            mPerspectiveEyeTransform = t;
-        }
 
-		virtual void onAction( float dt );
-				
+		void setEyeTransform(const Matrix& t) {
+			mPerspectiveEyeTransform = t;
+		}
+
+		virtual void onAction(float dt);
+
 	protected:
-		
+
 		Vector mTargetSize;
 
 		bool mEnableClear = true, mFrustumDirty = true;
 
 		Matrix mLastWorldTransform;
-		
+
 		Renderable* mFaderObject = nullptr;
-				
+
 		Color mClearColor;
-        
-        Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
-		
+
+		Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
+
 		Vector mLocalFrustumVertices[4];
 		Vector mWorldFrustumVertices[4];
 
@@ -195,7 +219,6 @@ namespace Dojo
 		AABB mWorldBB;
 
 		void _updateFrustum();
-        void _updateTransforms();
+		void _updateTransforms();
 	};
 }
-

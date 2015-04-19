@@ -11,17 +11,15 @@
 
 #include "dojo_common_header.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	///Objects inheriting from StateInterface are at the same time a State, and a State Machine themselves; most of the gameplay logic of a Dojo game should be implemented overriding onBegin, onLoop and onEnd protected events
-	class StateInterface
-	{
+	class StateInterface {
 	public:
-		
+
 		StateInterface();
-		
+
 		virtual ~StateInterface();
-		
+
 		///sets a new substate either immediately or at the next loop.
 		/**
 			-Immediately when there's no current state, eg. at begin
@@ -33,7 +31,7 @@ namespace Dojo
 			is an error and a failed ASSERT.
 		*/
 		void setState(int newState);
-		
+
 		///sets a new substate immediately
 		/**
 		 beware - this can cause MANY unexpected behaviours
@@ -59,25 +57,44 @@ namespace Dojo
 		 */
 		void setState(std::shared_ptr<StateInterface> child);
 
-		int getCurrentState()					{	return currentState;	}
-		StateInterface* getChildState()			{	return currentStatePtr.get();	}
-		
-		bool isCurrentState( int state ) const			{	return currentState == state;	}
-		bool isCurrentState( StateInterface* s ) const 	{	return currentStatePtr.get() == s;	}
+		int getCurrentState() {
+			return currentState;
+		}
 
-		bool hasChildState()						{	return currentStatePtr != nullptr;	}
-		
-		bool hasCurrentState()					{	return currentStatePtr != nullptr || currentState != -1; }
-		bool hasNextState()						{	return nextStatePtr != nullptr || nextState != -1; }
-		
-		bool hasPendingTransition()				{	return !mTransitionCompleted;	}
-		
+		StateInterface* getChildState() {
+			return currentStatePtr.get();
+		}
+
+		bool isCurrentState(int state) const {
+			return currentState == state;
+		}
+
+		bool isCurrentState(StateInterface* s) const {
+			return currentStatePtr.get() == s;
+		}
+
+		bool hasChildState() {
+			return currentStatePtr != nullptr;
+		}
+
+		bool hasCurrentState() {
+			return currentStatePtr != nullptr || currentState != -1;
+		}
+
+		bool hasNextState() {
+			return nextStatePtr != nullptr || nextState != -1;
+		}
+
+		bool hasPendingTransition() {
+			return !mTransitionCompleted;
+		}
+
 		///begin the execution of this state
 		void begin();
-		
+
 		///loop the execution of this state (and its childs)
 		void loop(float dt);
-		
+
 		///end the execution of this state (and its childs)
 		void end();
 
@@ -86,66 +103,70 @@ namespace Dojo
 		}
 
 	protected:
-		int currentState = -1;		
+		int currentState = -1;
 		std::shared_ptr<StateInterface> currentStatePtr;
-		
+
 		int nextState = -1;
 		std::shared_ptr<StateInterface> nextStatePtr;
-		
+
 	private:
-		
+
 		bool mTransitionCompleted = true, mCanSetNextState = true, activeState = false;
-				
+
 		//------ state events
 
 		///onBegin is called each time *this* State is made current on the parent state.
 		/**
 		For example, Game's onBegin() is called only when the application starts.
 		*/
-		virtual void onBegin() {}
+		virtual void onBegin() {
+		}
 
 		///onLoop contains all of the game's "non-event-response code", as it is called once per frame on each object that listens to it
-		virtual void onLoop( float dt )	{}
+		virtual void onLoop(float dt) {
+		}
 
 		///onEnd is called when this State is replaced by another State in the parent, or if the parent itself is destroyed
-		virtual void onEnd() {}
-		
+		virtual void onEnd() {
+		}
+
 		//----- immediate substate events
 
 		///onStateBegin is called each time an implicit substate of this State is made current
 		/**
 		You can check which State has begun using isCurrentState()
 		*/
-		virtual void onStateBegin()	{}
-		
+		virtual void onStateBegin() {
+		}
+
 		///onStateLoop is called each frame on the current (implicit) state.
 		/**
 		You can check which State is current using isCurrentState()
 		*/
-		virtual void onStateLoop( float dt ) {}
-		
+		virtual void onStateLoop(float dt) {
+		}
+
 		///onStateBegin is called each time an implicit substate of this State has been replaced, or the parent has been destroyed.
 		/**
 		You can check which State has ended using isCurrentState()
 		*/
-		virtual void onStateEnd() {}
-		
+		virtual void onStateEnd() {
+		}
+
 		///this is called each time a transition will happen. 
 		/**
 		 returning false delays the transition to the next frame (with a new onTransition call)
 		*/
-		virtual bool onTransition()
-		{
+		virtual bool onTransition() {
 			return true;
 		}
-				
+
 		void _subStateBegin();
 		void _subStateLoop(float dt);
 		void _subStateEnd();
-				
+
 		void _nextState(int& newState);
 		void _nextState(std::shared_ptr<StateInterface>& child);
 		void _applyNextState();
 	};
 }
-

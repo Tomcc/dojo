@@ -8,45 +8,39 @@ const Radians Math::TAU(6.2831853071796f);
 
 static Random randomImpl;
 
-void Math::seedRandom(unsigned int seed)
-{
-	if( !seed )
+void Math::seedRandom(unsigned int seed) {
+	if (!seed)
 		seed = (unsigned int) time(NULL);
 
 	randomImpl = Random(seed);
 }
 
-float Math::random()
-{
+float Math::random() {
 	return (float)randomImpl.rand();
 }
 
-bool Math::oneEvery(int n) 
-{
+bool Math::oneEvery(int n) {
 	return randomImpl.randInt(n) == 0;
 }
 
-float Math::rangeRandom( float min, float max )
-{
+float Math::rangeRandom(float min, float max) {
 	DEBUG_ASSERT( min <= max, "The min end of a random range must be less or equal than the max end" );
 
 	return (float)randomImpl.rand(min, max);
 }
 
-Vector Math::randomVector( const Vector& min, const Vector& max )
-{
+Vector Math::randomVector(const Vector& min, const Vector& max) {
 	return Vector(
-		rangeRandom( min.x,max.x ), 
-		rangeRandom( min.y,max.y ), 
-		rangeRandom( min.z,max.z ) );
+		rangeRandom(min.x, max.x),
+		rangeRandom(min.y, max.y),
+		rangeRandom(min.z, max.z));
 }
 
-Vector Math::randomVector2D( const Vector& min, const Vector& max, float z )
-{
+Vector Math::randomVector2D(const Vector& min, const Vector& max, float z) {
 	return Vector(
-		rangeRandom( min.x,max.x ), 
-		rangeRandom( min.y,max.y ), 
-		z );
+		rangeRandom(min.x, max.x),
+		rangeRandom(min.y, max.y),
+		z);
 }
 
 Vector Math::randomUnit2D() {

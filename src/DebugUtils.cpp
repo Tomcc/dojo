@@ -1,4 +1,3 @@
-
 #include "dojo_common_header.h"
 #include "DebugUtils.h"
 #include "Log.h"
@@ -13,25 +12,24 @@ std::stringstream  debug_stream_android;
 #endif
 
 //the default assert fail implementation
-void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char* info, int line, const char* file, const char* function )
-{
-	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) ); 
+void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char* info, int line, const char* file, const char* function) {
+	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) );
 	DEBUG_MESSAGE( "Condition is false: " + String( arg ) );
-	
-	if( info )
-		DEBUG_MESSAGE( "with " + String( info ) );
+
+	if (info)
+	DEBUG_MESSAGE( "with " + String( info ) );
 
 	DEBUG_MESSAGE( "Function: " + String(function) + " in " + String(file) + " @ " + String(line) );
 
 	//either catch this as a breakpoint in the debugger or abort (if not debugged)
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_OSX )
-    
+
 #   ifndef __arm__
         __asm__("int $3");
 #   else
         __asm__("trap");
 #   endif
-    
+
 #elif defined( PLATFORM_WIN32 )
 	DebugBreak();
 #elif defined( PLATFORM_LINUX )
@@ -45,60 +43,68 @@ void Dojo::DEFAULT_ASSERT_HANDLER( const char* desc, const char* arg, const char
 #endif
 }
 
-void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char *file_source, int line, const char* function )
-{
+void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
 	String err;
-	bool glerror=false;
-    for (GLint g = glGetError(); g != GL_NONE; g = glGetError()) {
-        glerror=true;
-		switch(g)
-		{
-			case GL_NO_ERROR:
-				return;
-			case GL_INVALID_ENUM:           err = "GL_INVALID_ENUM";        break;
-			case GL_INVALID_VALUE:          err = "GL_INVALID_VALUE";       break;
-			case GL_INVALID_OPERATION:		err = "GL_INVALID_OPERATION";   break;
-			case GL_STACK_OVERFLOW:         err = "GL_STACK_OVERFLOW";      break;
-			case GL_STACK_UNDERFLOW:		err = "GL_STACK_UNDERFLOW";     break;
-			case GL_OUT_OF_MEMORY:          err = "GL_OUT_OF_MEMORY";       break;
+	bool glerror = false;
+	for (GLint g = glGetError(); g != GL_NONE; g = glGetError()) {
+		glerror = true;
+		switch (g) {
+		case GL_NO_ERROR:
+			return;
+		case GL_INVALID_ENUM: err = "GL_INVALID_ENUM";
+			break;
+		case GL_INVALID_VALUE: err = "GL_INVALID_VALUE";
+			break;
+		case GL_INVALID_OPERATION: err = "GL_INVALID_OPERATION";
+			break;
+		case GL_STACK_OVERFLOW: err = "GL_STACK_OVERFLOW";
+			break;
+		case GL_STACK_UNDERFLOW: err = "GL_STACK_UNDERFLOW";
+			break;
+		case GL_OUT_OF_MEMORY: err = "GL_OUT_OF_MEMORY";
+			break;
 		};
 
 		//forward the assertion
-		if( glerror != GL_NO_ERROR)
-			Dojo::gp_assert_handler( 
-			("OpenGL encountered an error: " + String(err) ).ASCII().c_str(),
-			"error != GL_NO_ERROR",
-			NULL, 
-			line, 
-			file_source, 
-			function );
+		if (glerror != GL_NO_ERROR)
+			Dojo::gp_assert_handler(
+				("OpenGL encountered an error: " + String(err)).ASCII().c_str(),
+				"error != GL_NO_ERROR",
+				NULL,
+				line,
+				file_source,
+				function);
 	}
 }
 
-bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char *file_source, int line, const char* function )
-{
+bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
 	int error = alGetError();
 
 	const char* err = "";
-	switch ( error )
-	{
-	case AL_INVALID_OPERATION:		err = "AL_INVALID_OPERATION";		break;
-	case AL_INVALID_NAME:			err = "AL_INVALID_NAME";			break;
-	case AL_INVALID_ENUM:			err = "AL_INVALID_ENUM";			break;
-	case AL_INVALID_VALUE:			err = "AL_INVALID_VALUE";			break;
-	case AL_OUT_OF_MEMORY:			err = "AL_OUT_OF_MEMORY";			break;
-	default:						err = "Unknown error";				break;
+	switch (error) {
+	case AL_INVALID_OPERATION: err = "AL_INVALID_OPERATION";
+		break;
+	case AL_INVALID_NAME: err = "AL_INVALID_NAME";
+		break;
+	case AL_INVALID_ENUM: err = "AL_INVALID_ENUM";
+		break;
+	case AL_INVALID_VALUE: err = "AL_INVALID_VALUE";
+		break;
+	case AL_OUT_OF_MEMORY: err = "AL_OUT_OF_MEMORY";
+		break;
+	default: err = "Unknown error";
+		break;
 	}
 
 	//forward the assertion
-	if( error != AL_NO_ERROR)
-		Dojo::gp_assert_handler( 
-			("OpenAL encountered an error: " + String(err) ).ASCII().c_str(),
+	if (error != AL_NO_ERROR)
+		Dojo::gp_assert_handler(
+			("OpenAL encountered an error: " + String(err)).ASCII().c_str(),
 			"error != AL_NO_ERROR",
-			NULL, 
-			line, 
-			file_source, 
-			function );
+			NULL,
+			line,
+			file_source,
+			function);
 
 	return error == AL_NO_ERROR;
 }

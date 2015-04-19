@@ -4,16 +4,16 @@ using namespace Dojo;
 
 
 StringReader::StringReader(const String& string) :
-wcharStr(&string),
-utf8Str(NULL),
-idx(0) {
+	wcharStr(&string),
+	utf8Str(NULL),
+	idx(0) {
 
 }
 
 StringReader::StringReader(const std::string& string) :
-utf8Str(&string),
-wcharStr(NULL),
-idx(0) {
+	utf8Str(&string),
+	wcharStr(NULL),
+	idx(0) {
 
 }
 
@@ -21,17 +21,14 @@ unichar StringReader::get() {
 	DEBUG_ASSERT((wcharStr && !utf8Str) || (!wcharStr && utf8Str), "StringReader is uninitialized");
 
 	//HACK this doesn't care about utf8 multichars!
-	if ((wcharStr && idx >= wcharStr->size()) || (utf8Str && idx >= utf8Str->size()))
-	{
+	if ((wcharStr && idx >= wcharStr->size()) || (utf8Str && idx >= utf8Str->size())) {
 		++idx;
 		return 0;
 	}
-	else if (wcharStr)
-	{
+	else if (wcharStr) {
 		return (*wcharStr)[idx++];
 	}
-	else
-	{
+	else {
 		return (unichar)(*utf8Str)[idx++];
 	}
 }
@@ -81,8 +78,7 @@ byte StringReader::getHexValue(unichar c) {
 		return c - '0';
 	else if (isHex(c))
 		return 10 + c - 'a';
-	else
-	{
+	else {
 		DEBUG_FAIL("The value is not an hex number");
 		return 0;
 	}
@@ -107,8 +103,7 @@ unsigned int StringReader::readHex() {
 }
 
 float StringReader::readFloat() {
-	enum ParseState
-	{
+	enum ParseState {
 		PS_SIGN,
 		PS_INT,
 		PS_MANTISSA,
@@ -122,16 +117,13 @@ float StringReader::readFloat() {
 	float sign = 1;
 	float count = 0;
 	float res = 0;
-	while (state != PS_END)
-	{
+	while (state != PS_END) {
 		c = get();
 
-		if (state == PS_SIGN)
-		{
+		if (state == PS_SIGN) {
 			if (c == '-')
 				sign = -1;
-			else if (isNumber(c))
-			{
+			else if (isNumber(c)) {
 				back();
 
 				state = PS_INT;
@@ -139,21 +131,17 @@ float StringReader::readFloat() {
 			else if (!isWhiteSpace(c))
 				state = PS_ERROR;
 		}
-		else if (state == PS_INT)
-		{
-			if (c == '.')
-			{
+		else if (state == PS_INT) {
+			if (c == '.') {
 				state = PS_MANTISSA;
 				count = 9;
 			}
 
-			else if (isNumber(c))
-			{
+			else if (isNumber(c)) {
 				res *= 10;
 				res += c - '0';
 			}
-			else if (count > 0)
-			{
+			else if (count > 0) {
 				back();
 				state = PS_END;
 			}
@@ -162,10 +150,8 @@ float StringReader::readFloat() {
 
 			++count;
 		}
-		else if (state == PS_MANTISSA)
-		{
-			if (isNumber(c))
-			{
+		else if (state == PS_MANTISSA) {
+			if (isNumber(c)) {
 				res += (float)(c - '0') / count;
 				count *= 10.f;
 			}
@@ -175,8 +161,7 @@ float StringReader::readFloat() {
 				state = PS_END;
 			}
 		}
-		else if (state == PS_ERROR)
-		{
+		else if (state == PS_ERROR) {
 			//TODO do something for errors
 			res = 0; //return 0
 			state = PS_END;
@@ -192,7 +177,7 @@ void StringReader::readBytes(void* dest, int sizeBytes) {
 
 	//load format data
 	int elemSize = wcharStr ? sizeof(unichar) : 1;
-	byte * buf = wcharStr ? (byte*)wcharStr->data() : (byte*)utf8Str->data();
+	byte* buf = wcharStr ? (byte*)wcharStr->data() : (byte*)utf8Str->data();
 	int startingByte = idx * elemSize;
 	buf += startingByte; //go to current element
 	int size = (wcharStr ? wcharStr->size() : utf8Str->size()) * elemSize;

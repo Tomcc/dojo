@@ -4,19 +4,17 @@
 
 #include "Pipe.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool
 	/**
 	Dojo always spawns a default BackgroundQueue that can be retrieved with Platform::getBackgroundQueue(), but more can be created if needed.
 	The BackgroundQueue also fires the "then" callbacks for the tasks that have finished on the main thread.
 	*/
-	class BackgroundQueue
-	{
+	class BackgroundQueue {
 	public:
 
-		typedef std::function< void() > Task;
-		typedef std::function< void() > Callback;
+		typedef std::function<void()> Task;
+		typedef std::function<void()> Callback;
 
 		static const Callback NOP_CALLBACK;
 
@@ -24,11 +22,10 @@ namespace Dojo
 		/**
 		\param poolSize the number of threads in the pool size. If -1 is passed, the default size is the available cores number x 2.
 		*/
-		BackgroundQueue( int poolSize = -1 );
+		BackgroundQueue(int poolSize = -1);
 
-		virtual ~BackgroundQueue()
-		{
-			if( mRunning )
+		virtual ~BackgroundQueue() {
+			if (mRunning)
 				stop();
 		}
 
@@ -37,21 +34,20 @@ namespace Dojo
 		Tasks are void to void lambdas, ie []() { printf( "Hello World\n" ); }
 		Task execution parameters can be captured with the closure operator.
 		*/
-		void queueTask( const Task& task, const Callback& callback = NOP_CALLBACK );
+		void queueTask(const Task& task, const Callback& callback = NOP_CALLBACK);
 
 		///queues a function to be executed on the main thread
-		void queueOnMainThread( const Callback& c );
+		void queueOnMainThread(const Callback& c);
 
 		///Waits until this queue stops itself
 		/**
 		be sure that no tasks are stalling it!
 		*/
-		void stop()
-		{
+		void stop() {
 			if (mRunning) {
 				mRunning = false;
 
-				for( auto& w : mWorkers )
+				for (auto& w : mWorkers)
 					w->join();
 			}
 		}
@@ -64,8 +60,7 @@ namespace Dojo
 
 	protected:
 
-		class Worker
-		{
+		class Worker {
 		public:
 
 			Worker(BackgroundQueue* parent);
@@ -79,10 +74,10 @@ namespace Dojo
 			std::thread thread;
 		};
 
-		typedef std::pair< Task, Callback > TaskCallbackPair;
-		typedef Pipe< TaskCallbackPair > TaskQueue;
-		typedef Pipe< Task > CompletedTaskQueue;
-		typedef std::vector< Unique< Worker > > WorkerList;
+		typedef std::pair<Task, Callback> TaskCallbackPair;
+		typedef Pipe<TaskCallbackPair> TaskQueue;
+		typedef Pipe<Task> CompletedTaskQueue;
+		typedef std::vector<Unique<Worker>> WorkerList;
 
 		std::atomic<bool> mRunning;
 
@@ -94,12 +89,12 @@ namespace Dojo
 		std::thread::id mMainThreadID;
 
 		///waits for a task, returns false if the thread has to close
-		bool _waitForTaskOrClose( TaskCallbackPair& out )
-		{
-			if( mRunning ) //fetch a new task from the queue
+		bool _waitForTaskOrClose(TaskCallbackPair& out) {
+			if (mRunning) //fetch a new task from the queue
 				return mQueue->try_enqueue(out);
 
-			else return false;
+			else
+				return false;
 		}
 
 	private:

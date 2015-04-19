@@ -8,9 +8,9 @@
 using namespace Dojo;
 
 FrameSet::FrameSet(ResourceGroup* creator, const String& prefixName) :
-Resource(creator),
-name(prefixName),
-mPreferredAnimationTime(0) {
+	Resource(creator),
+	name(prefixName),
+	mPreferredAnimationTime(0) {
 
 }
 
@@ -23,63 +23,57 @@ void FrameSet::setPreferredAnimationTime(float t) {
 	mPreferredAnimationTime = t;
 }
 
-void FrameSet::setAtlas( const Table& atlasTable, ResourceGroup& atlasTextureProvider )
-{
+void FrameSet::setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProvider) {
 	DEBUG_ASSERT( !isLoaded(), "setAtlas: this FrameSet is already loaded and can't be reset as an atlas" );
 
-	String atlasName = atlasTable.getString( "texture" );
-	FrameSet* atlasSet = atlasTextureProvider.getFrameSet( atlasName );	
+	String atlasName = atlasTable.getString("texture");
+	FrameSet* atlasSet = atlasTextureProvider.getFrameSet(atlasName);
 
 	DEBUG_ASSERT_INFO( atlasSet, "The atlas Texture requested could not be found", "atlasName = " + atlasTable.getString( "texture" ) );
 
 	Texture* atlas = atlasSet->getFrame(0);
 
-	mPreferredAnimationTime = atlasTable.getNumber( "animationFrameTime" );
-	
-	auto& tiles = atlasTable.getTable( "tiles" );
+	mPreferredAnimationTime = atlasTable.getNumber("animationFrameTime");
+
+	auto& tiles = atlasTable.getTable("tiles");
 
 	int x, y, sx, sy;
-	for( int i = 0; i < tiles.getArrayLength(); ++i )
-	{
-		auto& tile = tiles.getTable( i );
+	for (int i = 0; i < tiles.getArrayLength(); ++i) {
+		auto& tile = tiles.getTable(i);
 
-		x = tile.getInt( 0 );
-		y = tile.getInt( 1 );
-		sx = tile.getInt( 2 );
-		sy = tile.getInt( 3 );
+		x = tile.getInt(0);
+		y = tile.getInt(1);
+		sx = tile.getInt(2);
+		sy = tile.getInt(3);
 
 		auto tiletex = make_unique<Texture>();
 
-		tiletex->loadFromAtlas( atlas, x,y, sx,sy );
+		tiletex->loadFromAtlas(atlas, x, y, sx, sy);
 
-		addTexture( std::move(tiletex) );
+		addTexture(std::move(tiletex));
 	}
 }
 
-bool FrameSet::onLoad()
-{			
+bool FrameSet::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "onLoad: this FrameSet is already loaded" );
-	
+
 	loaded = true;
-	for (auto&& t : ownedFrames)
-	{
-		if( !t->isLoaded() )
-		{
+	for (auto&& t : ownedFrames) {
+		if (!t->isLoaded()) {
 			t->onLoad();
 
 			loaded &= t->isLoaded();
 
 			// count bytesize
-			if( t->isLoaded() )
+			if (t->isLoaded())
 				size += t->getByteSize();
 		}
 	}
-		
-	return loaded;	
+
+	return loaded;
 }
 
-void FrameSet::onUnload(bool soft) 
-{
+void FrameSet::onUnload(bool soft) {
 	DEBUG_ASSERT(loaded, "onUnload: this FrameSet is not loaded");
 
 	for (auto&& f : ownedFrames)
@@ -93,7 +87,7 @@ void FrameSet::addTexture(Texture& t) {
 }
 
 void FrameSet::addTexture(Unique<Texture> t) {
-	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture"); 
+	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture");
 	DEBUG_ASSERT(t->getOwnerFrameSet() == nullptr, "This Texture already has an owner FrameSet");
 
 	t->_notifyOwnerFrameSet(this);
