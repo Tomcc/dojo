@@ -21,8 +21,6 @@ namespace Dojo {
 	class Platform {
 	public:
 
-		typedef Unique<FileStream> FilePtr;
-
 		///creates the Platform
 		/**
 		\param config pass a non-empty Table to override the loading from the Platform User Configuration table, found in APPDATA/GAME_NAME/config.ds
@@ -196,7 +194,7 @@ namespace Dojo {
 		}
 
 		///creates a new FileStream object for the given path, but does not open it
-		FilePtr getFile(const String& path);
+		std::unique_ptr<FileStream> getFile(const String& path);
 
 		///loads the whole file allocating a new buffer
 		int loadFileContent(char*& bufptr, const String& path);

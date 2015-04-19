@@ -77,7 +77,7 @@ void Renderable::onAction(float dt) {
 	Object::onAction(dt);
 
 	if (mesh)
-		worldBB = transformAABB(mesh->getMin(), mesh->getMax());
+		worldBB = transformAABB(mesh->getBounds());
 
 	advanceFade(dt);
 }

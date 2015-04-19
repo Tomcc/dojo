@@ -13,8 +13,7 @@
 
 #include "Vector.h"
 #include "SmallSet.h"
-
-#include "dojomath.h"
+#include "AABB.h"
 
 namespace Dojo {
 
@@ -190,18 +189,7 @@ namespace Dojo {
 			disposed = true;
 		}
 
-		struct AABB {
-			Vector min, max;
-
-			AABB grow(float s) const {
-				return{
-					min - s,
-					max + s
-				};
-			}
-		};
-
-		AABB transformAABB(const Vector& min, const Vector& max) const;
+		AABB transformAABB(const AABB& local) const;
 
 	protected:
 

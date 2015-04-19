@@ -15,6 +15,7 @@
 #include "Vector.h"
 #include "VertexField.h"
 #include "TriangleMode.h"
+#include "AABB.h"
 
 namespace Dojo {
 	class Color;
@@ -43,7 +44,7 @@ namespace Dojo {
 		static const int VERTEX_FIELD_SIZES[];
 
 		///Creates a new empty Mesh
-		Mesh(ResourceGroup* creator = NULL);
+		explicit Mesh(ResourceGroup* creator = nullptr);
 
 		///Creates a new Mesh bound to the file at filePath
 		Mesh(ResourceGroup* creator, const String& filePath);
@@ -77,12 +78,8 @@ namespace Dojo {
 			return triangleMode;
 		}
 
-		const Vector& getMax() {
-			return max;
-		}
-
-		const Vector& getMin() {
-			return min;
+		const AABB& getBounds() const {
+			return bounds;
 		}
 
 		const Vector& getDimensions() {
@@ -164,9 +161,9 @@ namespace Dojo {
 		void cutSection(IndexType i1, IndexType i2);
 
 		///loads the whole file passed in the constructor
-		virtual bool onLoad();
+		virtual bool onLoad() override;
 
-		virtual void onUnload(bool soft = false);
+		virtual void onUnload(bool soft = false) override;
 
 		///binds the mesh buffers with the vertex format from the specified shader
 		virtual void bind(Shader* shader);
@@ -209,7 +206,8 @@ namespace Dojo {
 		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
 
 	protected:
-		Vector max, min, center, dimensions;
+		Vector center, dimensions;
+		AABB bounds;
 
 		int vertexSize = 0;
 		byte* currentVertex = nullptr;

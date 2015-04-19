@@ -100,5 +100,5 @@ bool TouchArea::contains2D(const Vector& p) const {
 void TouchArea::onAction(float dt) {
 	Object::onAction(dt);
 
-	worldBB = transformAABB(-getHalfSize(), getHalfSize());
+	worldBB = transformAABB({ -getHalfSize(), getHalfSize() });
 }

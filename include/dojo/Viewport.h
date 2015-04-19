@@ -124,9 +124,7 @@ namespace Dojo {
 			return mViewTransform;
 		}
 
-		const AABB& getGraphicsAABB() const {
-			return mWorldBB;
-		}
+		const AABB& getGraphicsAABB() const;
 
 		void setClearEnabled(bool enabled) {
 			mEnableClear = enabled;
@@ -188,7 +186,7 @@ namespace Dojo {
 			mPerspectiveEyeTransform = t;
 		}
 
-		virtual void onAction(float dt);
+		virtual void onAction(float dt) override;
 
 	protected:
 

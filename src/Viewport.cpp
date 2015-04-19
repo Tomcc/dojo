@@ -154,8 +154,13 @@ void Viewport::_updateTransforms() {
 		mFrustumDirty = true;
 
 		mLastWorldTransform = mWorldTransform;
-	}
 
+		mWorldBB = transformAABB({ -getHalfSize(), getHalfSize() });
+	}
+}
+
+const AABB& Viewport::getGraphicsAABB() const {
+	return mWorldBB;
 }
 
 Vector Viewport::getScreenPosition(const Vector& pos) {
@@ -208,7 +213,7 @@ void Viewport::setVisibleLayers(int min, int max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	AABB bb = r.transformAABB(r.getMesh()->getMin(), r.getMesh()->getMax());
+	AABB bb = r.transformAABB(r.getMesh()->getBounds());
 
 	Vector halfSize = (bb.max - bb.min) * 0.5f;
 	Vector worldPos = r.getWorldPosition();
@@ -242,8 +247,6 @@ void Viewport::onAction(float dt) {
 	Object::onAction(dt);
 
 	_updateTransforms();
-
-	mWorldBB = transformAABB(-getHalfSize(), getHalfSize());
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
 	if (!mRT)

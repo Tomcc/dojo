@@ -214,13 +214,13 @@ void Platform::getFilePathsForType(const String& type, const String& wpath, std:
 	}
 }
 
-Platform::FilePtr Platform::getFile(const String& path) {
+std::unique_ptr<FileStream> Platform::getFile(const String& path) {
 	using namespace std;
 
 	int internalZipPathIdx = _findZipExtension(path);
 
 	if (internalZipPathIdx == String::npos) //normal file
-		return FilePtr(new File(path));
+		return make_unique<File>(path);
 
 	else //open a file from a zip
 	{
@@ -259,7 +259,7 @@ Platform::FilePtr Platform::getFile(const String& path) {
 }
 
 int Platform::loadFileContent(char*& bufptr, const String& path) {
-	auto file = Unique<FileStream>(getFile(path));
+	auto file = getFile(path);
 	int size = 0;
 	if (file->open()) {
 		size = file->getSize();

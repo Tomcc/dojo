@@ -72,8 +72,8 @@ void Mesh::begin(int extimatedVerts /*= 1 */) {
 	vertexCount = indexCount = 0;
 	currentVertex = nullptr;
 
-	max = Vector::MIN;
-	min = Vector::MAX;
+	bounds.max = Vector::MIN;
+	bounds.min = Vector::MAX;
 
 	editing = true;
 }
@@ -162,8 +162,7 @@ void Mesh::_prepareVertex(const Vector& v) {
 
 	currentVertex = (byte*)vertices.data() + curSize;
 
-	min = Vector::min(v, min);
-	max = Vector::max(v, max);
+	bounds = bounds.expandToFit(v);
 
 	++vertexCount;
 }
@@ -424,9 +423,8 @@ bool Mesh::end() {
 	currentVertex = nullptr;
 
 	//geometric hints
-	center = (max + min) * 0.5f;
-
-	dimensions = max - min;
+	center = bounds.getCenter();
+	dimensions = bounds.getSize();
 
 	if (!dynamic) //won't be updated ever again
 		destroyBuffers();
@@ -504,8 +502,8 @@ bool Mesh::onLoad() {
 		memcpy((char*)indices.data(), ptr, ic * indexSize);
 	}
 
-	max = loadedMax;
-	min = loadedMin;
+	bounds.max = loadedMax;
+	bounds.min = loadedMin;
 
 	vertexCount = vc;
 	indexCount = ic;
@@ -641,8 +639,8 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 			auto& v = c->getVertex(i);
 			v += translation;
 
-			c->max = Vector::max(c->max, v);
-			c->min = Vector::min(c->min, v);
+			c->bounds.max = Vector::max(c->bounds.max, v);
+			c->bounds.min = Vector::min(c->bounds.min, v);
 		}
 	}
 

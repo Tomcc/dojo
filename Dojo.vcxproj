@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\dojo\AABB.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\dojo\AABB.cpp" />
     <ClCompile Include="include\dojo\File.cpp" />
     <ClCompile Include="include\dojo\FileStream.cpp" />
     <ClCompile Include="include\dojo\InputSystemListener.cpp" />
@@ -231,6 +233,7 @@
       <BrowseInformation>true</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlibd.lib;zziplibd.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImaged.lib;freetype.lib;OpenAL32.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -303,6 +306,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;PocoFoundation.lib;%(AdditionalDependencies)</AdditionalDependencies>

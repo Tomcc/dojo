@@ -154,7 +154,7 @@ namespace Dojo {
 		size_t visibleCharsNumber;
 
 		Vector cursorPosition, screenSize, lastScale;
-		Vector mLayersLowerBound, mLayersUpperBound;
+		AABB mLayersBound;
 
 		LayerList busyLayers, freeLayers;
 		int actualCharacters = 0;

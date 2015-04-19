@@ -6,31 +6,30 @@
 
 using namespace Dojo;
 
-TextArea::TextArea( Object* l, 
-		 const String& fontSetName, 
-		 const Vector& pos, 
-		 bool center,
-		 const Vector& bounds) :
-Renderable( l, pos ),
-fontName( fontSetName ),
-interline( 0.2f ),
-maxLineLenght( 0xfffffff ),
-centered( center ),
-pixelScale( 1,1 ),
-currentLineLength( 0 ),
-lastSpace( 0 ),
-visibleCharsNumber( 0xfffffff )
-{		
-	setSize( bounds );
+TextArea::TextArea(Object* l,
+					const String& fontSetName,
+					const Vector& pos,
+					bool center,
+					const Vector& bounds) :
+	Renderable(l, pos),
+	fontName(fontSetName),
+	interline(0.2f),
+	maxLineLenght(0xfffffff),
+	centered(center),
+	pixelScale(1, 1),
+	currentLineLength(0),
+	lastSpace(0),
+	visibleCharsNumber(0xfffffff) {
+	setSize(bounds);
 	cullMode = CM_DISABLED;
 
-	font = gameState->getFont( fontName );
+	font = gameState->getFont(fontName);
 
 	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
 
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
-	
+
 	//not visible until prepared!
 	scale = Vector::ZERO;
 
@@ -38,158 +37,142 @@ visibleCharsNumber( 0xfffffff )
 	clearText();
 }
 
-TextArea::~TextArea()
-{			
+TextArea::~TextArea() {
 	clearText();
 
-	if( mesh )
-	{
-		if( mesh->isLoaded() )
-			mesh->onUnload();				
+	if (mesh) {
+		if (mesh->isLoaded())
+			mesh->onUnload();
 		SAFE_DELETE( mesh );
 	}
 
 	_destroyLayers();
 }
 
-void TextArea::clearText()
-{
+void TextArea::clearText() {
 	characters.clear();
 
 	content.clear();
 
 	cursorPosition = Vector::ZERO;
 
-	setSize(0,0);
+	setSize(0, 0);
 
 	changed = true;
-	
+
 	visibleCharsNumber = 0xfffffff;
 	currentLineLength = 0;
 	lastSpace = 0;
 }
 
-void TextArea::setMaxLineLength( int l )
-{		
+void TextArea::setMaxLineLength(int l) {
 	//HACK PAZZESCOH
-	maxLineLenght = (int)(l * ((float)gameState->getGame().getNativeWidth() / (float)640 ));
+	maxLineLenght = (int)(l * ((float)gameState->getGame().getNativeWidth() / (float)640));
 }
 
-void TextArea::addText( const String& text )
-{
+void TextArea::addText(const String& text) {
 	content += text;
 
 	Font::Character* currentChar;
 	unichar c;
 
 	//parse and setup characters
-	for( int i = 0; i < (int)text.size(); ++i )
-	{
+	for (int i = 0; i < (int)text.size(); ++i) {
 		c = text[i];
 
-		currentChar = font->getCharacter( c );
-		characters.emplace( currentChar );
+		currentChar = font->getCharacter(c);
+		characters.emplace(currentChar);
 
 		currentLineLength += currentChar->pixelWidth;
 
-		if( c == ' ' || c == '\t' )
-			lastSpace = characters.size()-1;
+		if (c == ' ' || c == '\t')
+			lastSpace = characters.size() - 1;
 
-		else if( c == '\n' )
-		{
+		else if (c == '\n') {
 			lastSpace = 0;
 			currentLineLength = 0;
 		}
 
 		//lenght eccess? find last whitespace and replace with \n.
-		if( currentLineLength > maxLineLenght && lastSpace )
-		{
+		if (currentLineLength > maxLineLenght && lastSpace) {
 			characters[lastSpace] = font->getCharacter('\n');
 			lastSpace = 0;
 			currentLineLength = 0;
 		}
 	}
 
-	changed = true;			
+	changed = true;
 }
 
-void TextArea::addText( int n, char paddingChar, int digits )
-{
+void TextArea::addText(int n, char paddingChar, int digits) {
 	//TODO String already does this! remove
 
-	String number( n );
+	String number(n);
 
 	//stay in the digit budget?
-	if( paddingChar != 0 )
-	{				
+	if (paddingChar != 0) {
 		//forget most significative digits
-		if( (int)number.size() > digits )
-			number = number.substr( number.size() - digits );
+		if ((int)number.size() > digits)
+			number = number.substr(number.size() - digits);
 
 		//pad to fill
-		else if ((int) number.size() < digits)
-		{
+		else if ((int) number.size() < digits) {
 			String padding;
 
-			for( size_t i = 0; i < digits - number.size(); ++i )
+			for (size_t i = 0; i < digits - number.size(); ++i)
 				padding += paddingChar;
 
 			number = padding + number;
 		}
 	}
 
-	addText( number );
+	addText(number);
 }
 
-Renderable* TextArea::_enableLayer( Texture& tex )
-{
-	if( freeLayers.empty() )
+Renderable* TextArea::_enableLayer(Texture& tex) {
+	if (freeLayers.empty())
 		_pushLayer();
-	
+
 	Renderable* r = *freeLayers.begin();
 	freeLayers.erase(freeLayers.begin());
-	
-	r->setVisible( true );
-	r->setActive( true );
-	r->setTexture( &tex );
-	
-	r->getMesh()->begin( getLenght() * 2 );
-	
-	busyLayers.emplace( r );
-	
+
+	r->setVisible(true);
+	r->setActive(true);
+	r->setTexture(&tex);
+
+	r->getMesh()->begin(getLenght() * 2);
+
+	busyLayers.emplace(r);
+
 	return r;
 }
 
-void TextArea::_endLayers()
-{
-	for( size_t i = 0; i < busyLayers.size(); ++i )
+void TextArea::_endLayers() {
+	for (size_t i = 0; i < busyLayers.size(); ++i)
 		busyLayers[i]->getMesh()->end();
 }
 
 ///Free any created layer			
-void TextArea::_hideLayers()
-{
-	for( size_t i = 0; i < busyLayers.size(); ++i )
-	{
+void TextArea::_hideLayers() {
+	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		Renderable* l = busyLayers[i];
-		
-		l->setVisible( false );
-		l->setActive( false );
-		
-		freeLayers.emplace( l );
+
+		l->setVisible(false);
+		l->setActive(false);
+
+		freeLayers.emplace(l);
 	}
-	
+
 	actualCharacters = 0;
 	busyLayers.clear();
 }
 
-void TextArea::_destroyLayer( Renderable& r )
-{
-	if( &r == this )  //do not delete the TA itself, even if it is a layer
+void TextArea::_destroyLayer(Renderable& r) {
+	if (&r == this) //do not delete the TA itself, even if it is a layer
 		return;
-	
+
 	delete r.getMesh();
-	
+
 	busyLayers.erase(&r);
 	freeLayers.erase(&r);
 	removeChild(r);
@@ -198,23 +181,23 @@ void TextArea::_destroyLayer( Renderable& r )
 
 void TextArea::_prepare() {
 	//not changed
-	if( !changed )
+	if (!changed)
 		return;
 
 	//no characters to show
-	if( !visibleCharsNumber || getLenght() == 0 )
+	if (!visibleCharsNumber || getLenght() == 0)
 		return;
-    
-    //setup the aspect ratio
-    gameState->getViewport()->makeScreenSize( screenSize, font->getFontWidth(), font->getFontHeight() );
-    
-    pixelScale.z = 1;
-    screenSize = screenSize.mulComponents( pixelScale );
-    scale = screenSize;
 
-    //render the font
-	Font::Character* rep, *lastRep = NULL;
-	Vector newSize(0,0);
+	//setup the aspect ratio
+	gameState->getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
+
+	pixelScale.z = 1;
+	screenSize = screenSize.mulComponents(pixelScale);
+	scale = screenSize;
+
+	//render the font
+	Font::Character *rep, *lastRep = nullptr;
+	Vector newSize(0, 0);
 	bool doKerning = font->isKerningEnabled();
 	int lastLineVertexID = 0;
 	int idx = 0;
@@ -226,72 +209,67 @@ void TextArea::_prepare() {
 	_hideLayers();
 
 	//either reach the last valid character or the last existing character
-	for( size_t i = 0; i < visibleCharsNumber && i < characters.size(); ++i )
-	{
+	for (size_t i = 0; i < visibleCharsNumber && i < characters.size(); ++i) {
 		rep = characters[i];
 
 		//avoid to rendering spaces
-		if( rep->character == '\n' )
-		{									
+		if (rep->character == '\n') {
 			//if centered move every character of this line along x of 1/2 size
-			if( centered ) 
-			{
+			if (centered) {
 				DEBUG_TODO; //it kind of never worked with unicode
-// 				_centerLastLine( lastLineVertexID, cursorPosition.x );
-// 				lastLineVertexID = mesh->getVertexCount();
+				// 				_centerLastLine( lastLineVertexID, cursorPosition.x );
+				// 				lastLineVertexID = mesh->getVertexCount();
 			}
 
 			cursorPosition.y -= 1.f + interline;
 			cursorPosition.x = 0;
-			lastRep = NULL;
+			lastRep = nullptr;
 		}
-		else if( rep->character == '\t' )
-		{
-			cursorPosition.x += spaceWidth*4; //TODO align to nearest tab
-			lastRep = NULL;
+		else if (rep->character == '\t') {
+			cursorPosition.x += spaceWidth * 4; //TODO align to nearest tab
+			lastRep = nullptr;
 		}
-		else if( rep->character == ' ' )
-		{
+		else if (rep->character == ' ') {
 			cursorPosition.x += spaceWidth;
-			lastRep = NULL;
+			lastRep = nullptr;
 		}
-		else	//real character
+		else //real character
 		{
-			Mesh* layer = _getLayer( *rep->getTexture() )->getMesh();
+			Mesh* layer = _getLayer(*rep->getTexture())->getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;
 
-			if( doKerning && lastRep )
-				x += font->getKerning( rep, lastRep ); 
+			if (doKerning && lastRep)
+				x += font->getKerning(rep, lastRep);
 
 			idx = layer->getVertexCount();
 
 			//assign vertex positions and uv coordinates
-			layer->vertex( x, y );
-			layer->uv( rep->uvPos.x, rep->uvPos.y + rep->uvHeight );
+			layer->vertex(x, y);
+			layer->uv(rep->uvPos.x, rep->uvPos.y + rep->uvHeight);
 
-			layer->vertex( x + rep->widthRatio, y );
-			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight );
- 
-			layer->vertex( x, y + rep->heightRatio );
-			layer->uv( rep->uvPos.x, rep->uvPos.y );
- 
-			layer->vertex( x + rep->widthRatio, y + rep->heightRatio );
-			layer->uv( rep->uvPos.x + rep->uvWidth, rep->uvPos.y );
+			layer->vertex(x + rep->widthRatio, y);
+			layer->uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight);
 
-			layer->triangle( idx, idx+1, idx+2 );
-			layer->triangle( idx+1, idx+3, idx+2 );
+			layer->vertex(x, y + rep->heightRatio);
+			layer->uv(rep->uvPos.x, rep->uvPos.y);
+
+			layer->vertex(x + rep->widthRatio, y + rep->heightRatio);
+			layer->uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y);
+
+			layer->triangle(idx, idx + 1, idx + 2);
+			layer->triangle(idx + 1, idx + 3, idx + 2);
 
 			//now move to the next character
 			cursorPosition.x += rep->advance + charSpacing;
 
 			lastRep = rep;
 			++actualCharacters;
-		}	
+		}
 
 		//update size to contain cursorPos to the longest line
-		if( cursorPosition.x > newSize.x )
+		if (cursorPosition.x > newSize.x)
 			newSize.x = cursorPosition.x;
 	}
 
@@ -302,18 +280,16 @@ void TextArea::_prepare() {
 	}
 	//push any active layer on the GPU
 	_endLayers();
-   
+
 	//find real mesh bounds
-	mLayersLowerBound = Vector::MAX;
-	mLayersUpperBound = Vector::MIN;
-	for( size_t i = 0; i < busyLayers.size(); ++i )
-	{
-		mLayersUpperBound = Vector::max( mLayersUpperBound, busyLayers[i]->getMesh()->getMax() );
-		mLayersLowerBound = Vector::min( mLayersLowerBound, busyLayers[i]->getMesh()->getMin() );
+	mLayersBound = AABB::INVALID;
+
+	for (auto&& layer : busyLayers) {
+		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());
 	}
 
-	setSize( mLayersUpperBound - mLayersLowerBound );
-   
+	setSize(mLayersBound.max - mLayersBound.min);
+
 	changed = false;
 }
 
@@ -325,45 +301,40 @@ void TextArea::_destroyLayers() {
 		_destroyLayer(*l);
 }
 
-void TextArea::_centerLastLine( int startingAt, float size )
-{
-	if( mesh->getVertexCount() == 0 )
+void TextArea::_centerLastLine(int startingAt, float size) {
+	if (mesh->getVertexCount() == 0)
 		return;
-	
+
 	float halfWidth = size * 0.5f;
-	
-	for( Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i )
-		mesh->getVertex( i ).x -= halfWidth;		
+
+	for (Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i)
+		mesh->getVertex(i).x -= halfWidth;
 }
 
 ///create a mesh to be used for text
-Mesh* TextArea::_createMesh()
-{
-	Mesh * mesh = new Mesh();
-	mesh->setDynamic( true );
-	mesh->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
-	mesh->setTriangleMode( TriangleMode::TriangleList );
-	
+Mesh* TextArea::_createMesh() {
+	Mesh* mesh = new Mesh();
+	mesh->setDynamic(true);
+	mesh->setVertexFields({VertexField::Position2D, VertexField::UV0});
+	mesh->setTriangleMode(TriangleMode::TriangleList);
+
 	return mesh;
 }
 
-void TextArea::_pushLayer() 
-{
-	auto r = make_unique<Renderable>( gameState, Vector::ZERO );
+void TextArea::_pushLayer() {
+	auto r = make_unique<Renderable>(gameState, Vector::ZERO);
 	r->scale = scale;
-	r->setMesh( _createMesh() );
-	r->setVisible( false );
-	r->setActive( false );
+	r->setMesh(_createMesh());
+	r->setVisible(false);
+	r->setActive(false);
 
 	freeLayers.emplace(r.get());
-	addChild( std::move(r), getLayer() );
+	addChild(std::move(r), getLayer());
 }
 
-Renderable* TextArea::_getLayer(Texture& tex) 
-{
+Renderable* TextArea::_getLayer(Texture& tex) {
 	//find this layer in the already assigned, or get new
-	for (size_t i = 0; i < busyLayers.size(); ++i)
-	{
+	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		if (busyLayers[i]->getTexture() == &tex)
 			return busyLayers[i];
 	}
@@ -372,15 +343,14 @@ Renderable* TextArea::_getLayer(Texture& tex)
 	return _enableLayer(tex);
 }
 
-void TextArea::onAction(float dt)
-{
+void TextArea::onAction(float dt) {
 	_prepare();
 
 	//WARNING: keep this in sync with Renderable::onAction!
 	{
 		Object::onAction(dt);
 
-		worldBB = transformAABB(mLayersLowerBound, mLayersUpperBound);
+		worldBB = transformAABB(mLayersBound);
 
 		advanceFade(dt);
 	}

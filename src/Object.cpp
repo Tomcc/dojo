@@ -86,7 +86,7 @@ void Object::destroyAllChildren() {
 	childs.clear();
 }
 
-Object::AABB Object::transformAABB(const Vector& localMin, const Vector& localMax) const {
+AABB Object::transformAABB(const AABB& local) const {
 	AABB bb;
 
 	//get the eight world-position corners and transform them
@@ -97,7 +97,7 @@ Object::AABB Object::transformAABB(const Vector& localMin, const Vector& localMa
 
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 3; ++j)
-			vertex[j] = Math::getBit(i, j) ? localMax[j] : localMin[j];
+			vertex[j] = Math::getBit(i, j) ? local.max[j] : local.min[j];
 
 		vertex = getWorldPosition(vertex);
 
