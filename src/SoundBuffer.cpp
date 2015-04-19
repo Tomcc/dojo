@@ -5,10 +5,8 @@
 #include <vorbis/vorbisfile.h>
 
 #include "SoundBuffer.h"
-
-#include "SoundManager.h"
-#include "MemoryInputStream.h"
 #include "FileStream.h"
+#include "MemoryInputStream.h"
 #include "Utils.h"
 #include "Platform.h"
 #include "BackgroundQueue.h"
@@ -130,7 +128,7 @@ void SoundBuffer::onUnload(bool soft)
 	DEBUG_ASSERT( isLoaded(), "SoundBuffer is not loaded" );
 
 	//just push the event to all its chunks
-	for( auto chunk : mChunks )
+	for( auto&& chunk : mChunks )
 	{
 		if( !isStreaming() ) //non-streaming buffers own all of their chunk (to avoid them being released each time)
 			chunk->release();
@@ -162,7 +160,7 @@ bool SoundBuffer::Chunk::onLoad()
 	ALenum format;
 	int totalRead = 0;
 
-	int error = ov_open_callbacks( source.get(), &file, NULL, 0, VORBIS_CALLBACKS );
+	int error = ov_open_callbacks( source.get(), &file, nullptr, 0, VORBIS_CALLBACKS );
 
 	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
 
@@ -267,7 +265,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	ALenum format;
 	ogg_int64_t uncompressedSize;
 	
-	int error = ov_open_callbacks( source, &file, NULL, 0, VORBIS_CALLBACKS );
+	int error = ov_open_callbacks( source, &file, nullptr, 0, VORBIS_CALLBACKS );
 	
 	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
 	
@@ -293,7 +291,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 	//load all the needed chunks
 	while(1)
 	{
-		pcmEnd = min( totalPCM, pcmStart + chunkPCM );
+		pcmEnd = std::min( totalPCM, pcmStart + chunkPCM );
 
 		ov_pcm_seek_page( &file, pcmEnd );
 		fileEnd = ov_raw_tell( &file );
@@ -305,7 +303,7 @@ bool SoundBuffer::_loadOgg( Stream* source )
 			pcmEnd = totalPCM; 
 
 		ogg_int64_t byteSize = (pcmEnd-pcmStart) * wordSize * info->channels;
-		mChunks.add( new Chunk( this, (long)fileStart, (long)byteSize ) );
+		mChunks.emplace_back( make_unique<Chunk>( this, (long)fileStart, (long)byteSize ) );
 
 		pcmStart = pcmEnd;
 		fileStart = fileEnd;
@@ -329,13 +327,13 @@ bool SoundBuffer::_loadOggFromFile()
 	return isLoaded();
 }
 
-SoundBuffer::Chunk* SoundBuffer::getChunk(int n, bool loadAsync /*= false */) {
-	DEBUG_ASSERT(n >= 0 && n < mChunks.size(), "The requested chunk is out of bounds");
+SoundBuffer::Chunk& SoundBuffer::getChunk(int n, bool loadAsync /*= false */) {
+	DEBUG_ASSERT(n >= 0 && n < (int)mChunks.size(), "The requested chunk is out of bounds");
 
 	if (loadAsync)
 		mChunks[n]->getAsync();
 	else
 		mChunks[n]->get();
 
-	return mChunks[n];
+	return *mChunks[n];
 }

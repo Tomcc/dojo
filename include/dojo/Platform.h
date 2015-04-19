@@ -132,19 +132,14 @@ namespace Dojo
 
 		virtual PixelFormat loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )=0;
 		
-		void addApplicationListener( ApplicationListener* f )
+		void addApplicationListener( ApplicationListener& f )
 		{
-			DEBUG_ASSERT( f, "addApplicationListener: null listener passed" );
-			DEBUG_ASSERT( !focusListeners.exists( f ), "addApplicationListener: this listener is already registered" );
-
-			focusListeners.add( f );
+			focusListeners.emplace( &f );
 		}
 
-		void removeApplicationListener( ApplicationListener* f )
+		void removeApplicationListener( ApplicationListener& f )
 		{
-			DEBUG_ASSERT( f, "removeApplicationListener: null listener passed" );
-
-			focusListeners.remove( f );
+			focusListeners.erase( &f );
 		}
 
 		///returns true if the device is able to manage non-power-of-2 textures
@@ -241,10 +236,12 @@ namespace Dojo
 		
 		float realFrameTime;
 
-		Log* mLog;
+		std::unique_ptr<Log> mLog;
+		std::unique_ptr<LogListener> mLogWriter;
+
 		BackgroundQueue* mBackgroundQueue;
 
-		Array< ApplicationListener* > focusListeners;
+		SmallSet< ApplicationListener* > focusListeners;
 
 		///this "caches" the zip headers for faster access - each zip that has been opened has its paths cached here!
 		ZipFileMapping mZipFileMaps;
@@ -260,6 +257,6 @@ namespace Dojo
 		int _findZipExtension( const String & path );
 
 		///protected singleton constructor
-		Platform( const Table& configTable );
+		explicit Platform( const Table& configTable );
 	};
 }

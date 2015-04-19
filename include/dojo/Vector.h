@@ -11,8 +11,6 @@
 #include "dojo_common_header.h"
 #include "Radians.h"
 
-using namespace std;
-
 namespace Dojo	
 {
 	class Plane;
@@ -53,7 +51,7 @@ namespace Dojo
 		}
 
 		///xyz are set to the same value, or 0
-		Vector( float f = 0 ) : glm::vec3(f)
+		explicit Vector( float f = 0 ) : glm::vec3(f)
 		{
 			
 		}
@@ -126,12 +124,12 @@ namespace Dojo
 			return glm::cross( *this, v );
 		}
 
-		const float lengthSquared() const {
+		float lengthSquared() const {
 			return *this * *this;
 		}
 
 		///returns the length of this Vector
-		const float length() const
+		float length() const
 		{
 			return sqrtf(lengthSquared());
 		}
@@ -231,7 +229,7 @@ namespace Dojo
 			float N_dot_I = n*i;
 			float k = 1.f - eta * eta * (1.f - N_dot_I * N_dot_I);
 			if (k < 0.f)
-				return 0;
+				return Vector::ZERO;
 			else
 				return eta * i - (eta * N_dot_I + sqrtf(k)) * n;
 		}

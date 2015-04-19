@@ -289,7 +289,7 @@ void Table::deserialize( StringReader& buf )
 
 			buf.readBytes(data.ptr, data.size);
 
-			set(curName, data.ptr, data.size, true); //always retain deserialized data
+			set(curName, data.ptr, data.size); //always retain deserialized data
 			break;
 
 		case PT_CHILD: {

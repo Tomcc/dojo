@@ -29,10 +29,7 @@ mAnimationIdx( -1 )
 }
 
 Sprite::~Sprite() {
-	for (int i = 0; i < animations.size(); ++i)
-		SAFE_DELETE(animations.at(i));
 
-	//frames have to be released manually from the group!
 }
 
 void Sprite::reset() {
@@ -50,9 +47,7 @@ int Sprite::registerAnimation(FrameSet* set, float timePerFrame /*= -1 */) {
 
 	DEBUG_ASSERT(timePerFrame >= 0, "the time per frame of an animation can't be negative");
 
-	Animation* a = new Animation(set, timePerFrame);
-
-	animations.add(a);
+	animations.emplace_back(make_unique<Animation>(set, timePerFrame));
 
 	//if no current animation, set this as default
 	if (mAnimationIdx == -1)
@@ -74,12 +69,12 @@ void Sprite::setAnimation(int i) {
 	mAnimationIdx = i;
 
 	DEBUG_ASSERT(mAnimationIdx >= 0, "negative animation index");
-	DEBUG_ASSERT(animations.size() > mAnimationIdx, "OOB animation index");
+	DEBUG_ASSERT((int)animations.size() > mAnimationIdx, "OOB animation index");
 
 	if (animation)
 		animation->_unset();
 
-	animation = animations.at(mAnimationIdx);
+	animation = animations[mAnimationIdx].get();
 
 	_setTexture(animation->getCurrentFrame());
 

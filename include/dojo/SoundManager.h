@@ -2,10 +2,8 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Vector.h"
 
-#include "SoundBuffer.h"
 #include "SoundSet.h"
 #include "SoundSource.h"
 
@@ -21,7 +19,7 @@ namespace Dojo {
 		class SoundManager 
 		{
 		public:
-			typedef Array< SoundSource* > SoundList;
+			typedef std::vector< std::unique_ptr<SoundSource> > SoundList;
             
             typedef std::function< float(float) > Easing;
             
@@ -38,16 +36,16 @@ namespace Dojo {
 			void clear();
 
 			///Returns a sound source ready to play a new sound
-			SoundSource* getSoundSource( SoundSet* set, int i = -1 );
+			SoundSource& getSoundSource( SoundSet* set, int i = -1 );
 
 			///Returns a sound source ready to play a new sound, with the position already set
-			SoundSource* getSoundSource( const Vector& pos, SoundSet* set );
+			SoundSource& getSoundSource( const Vector& pos, SoundSet* set );
 
 			///Plays the given set without spatial positioning
-			SoundSource* playSound(SoundSet* set, float volume = 1.0f);
+			SoundSource& playSound(SoundSet* set, float volume = 1.0f);
 
 			///Plays the given set at pos
-			SoundSource* playSound( const Vector& pos, SoundSet* set, float volume = 1.0f );
+			SoundSource& playSound( const Vector& pos, SoundSet* set, float volume = 1.0f );
 						
 			///Starts a new sound using it as background music
 			/**
@@ -90,7 +88,7 @@ namespace Dojo {
 			///true if the music is fading
 			bool isMusicFading()		{	return fadeState != FS_NONE;	}
             ///is the music already playing?
-            bool isMusicPlaying()    {   return musicTrack != NULL;      }
+            bool isMusicPlaying()    {   return musicTrack != nullptr;      }
 			
 			///sets the openAL Listener's world transform
 			void setListenerTransform( const Matrix& worldTransform );
@@ -115,7 +113,7 @@ namespace Dojo {
 			SoundList idleSoundPool;
 			SoundList busySoundPool;
 
-			SoundSource* fakeSource;
+			std::unique_ptr<SoundSource> fakeSource;
 
 			SoundSource *musicTrack, *nextMusicTrack;
 			float halfFadeTime;
@@ -124,9 +122,6 @@ namespace Dojo {
 
 			float musicVolume;
 			float masterVolume;
-
-			void _createMainBundleBuffers();		
-			
 		};
 }
 

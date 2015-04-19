@@ -3,7 +3,6 @@
 #include "dojo_common_header.h"
 
 #include "Resource.h"
-#include "Array.h"
 
 namespace Dojo 
 {
@@ -55,9 +54,9 @@ namespace Dojo
 			void loadAsync();
 
 			///loads the chunk asynchronously
-			virtual bool onLoad();
+			virtual bool onLoad() override;
 
-			virtual void onUnload( bool soft = false );
+			virtual void onUnload(bool soft = false) override;
 
 		protected:
 
@@ -70,15 +69,15 @@ namespace Dojo
             std::atomic<int> references;
 		};
 
-		typedef Array< Chunk* > ChunkList;
+		typedef std::vector< std::unique_ptr<Chunk> > ChunkList;
 		
 		///Creates a new file-loaded SoundBuffer in the given resourcegroup, for the given file path
 		SoundBuffer( ResourceGroup* creator, const String& path );
 		
 		~SoundBuffer();
 
-		virtual bool onLoad();
-		virtual void onUnload( bool soft = false );
+		virtual bool onLoad() override;
+		virtual void onUnload(bool soft = false) override;
 
 		///tells the memory size of this SoundBuffer
 		int getSize()					{	return size;	}
@@ -92,12 +91,12 @@ namespace Dojo
 		///tells the duration in seconds of this SoundBuffer
 		float getDuration()				{	return mDuration;}
 
-		bool isLoaded()					
+		bool isLoaded() const			
 		{
-			return !mChunks.isEmpty();
+			return !mChunks.empty();
 		}
 
-		virtual bool isReloadable()
+		virtual bool isReloadable() const
 		{
 			return mSource != nullptr;
 		}
@@ -112,7 +111,7 @@ namespace Dojo
 		/**
 		if n is greater than the number of chunks, it will loop, just like animation frames
 		*/
-		Chunk* getChunk( int n, bool loadAsync = false );
+		Chunk& getChunk( int n, bool loadAsync = false );
 
 	protected:
 

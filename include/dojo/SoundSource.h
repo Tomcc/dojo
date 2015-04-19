@@ -29,7 +29,7 @@ namespace Dojo
 			};
 		
 			///Internal constructor
-			SoundSource( ALuint source );
+			explicit SoundSource( ALuint source );
 
 			virtual ~SoundSource();
 
@@ -105,11 +105,9 @@ namespace Dojo
 
 			void _update(float dt);
 
-			void _setup( SoundBuffer* b )
-			{
-				DEBUG_ASSERT( b, "null SoundBuffer" );
-				
-				buffer = b;
+			void _setup( SoundBuffer& b )
+			{				
+				buffer = &b;
 			}
 
 			bool isActive() const 
@@ -118,8 +116,6 @@ namespace Dojo
 			}
 
 			void _reset();
-			
-			void _loadResources();
 
 		protected:
 

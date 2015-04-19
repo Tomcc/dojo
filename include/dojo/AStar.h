@@ -3,7 +3,6 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Array.h"
 
 namespace Dojo
 {
@@ -14,7 +13,7 @@ namespace Dojo
 		class Node
 		{
 		public:
-			typedef Array< Node* > EdgeList;
+			typedef std::vector< Node* > EdgeList;
 
 			Vector position;
 			EdgeList edges;
@@ -24,9 +23,9 @@ namespace Dojo
 			float _gScore, _openValue, _hScore, _cameFromDistance;
 			Node* _cameFrom;
 
-			Node( const Vector& pos );
+			explicit Node( const Vector& pos );
 
-			void addEdge( Node* b );
+			void addEdge( Node& b );
 
 			void _resetData( float h );
 		};
@@ -44,16 +43,16 @@ namespace Dojo
 			Node* getNode(  const Vector& pos  ) const;
 
 			///adds a new node at the given position
-			Node* addNode( const Vector& pos );
+			Node& addNode( const Vector& pos );
 
 			///creates an edge between the two nodes (and the nodes themselves if not found)
 			void addEdge( const Vector& pos1, const Vector& pos2 )
 			{
-				Node* A = addNode( pos1 );
-				Node* B = addNode( pos2 );
+				auto& A = addNode( pos1 );
+				auto& B = addNode( pos2 );
 
-				A->addEdge( B );
-				B->addEdge( A );
+				A.addEdge( B );
+				B.addEdge( A );
 			}
 		};
 

@@ -34,7 +34,7 @@ visibleCharsNumber( 0xfffffff )
 	spaceWidth = font->getCharacter(' ')->advance;
 	
 	//not visible until prepared!
-	scale = 0;
+	scale = Vector::ZERO;
 
 	//init
 	clearText();

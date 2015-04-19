@@ -12,23 +12,19 @@ mAxisNumber(axisNumber),
 type(type) {
 	for (int i = 0; i < mAxisNumber; ++i)
 	{
-		mAxis.add(0);
-		mDeadZone.add(0);
+		mAxis.push_back(0);
+		mDeadZone.push_back(0);
 	}
 }
 
-void InputDevice::addListener(InputDeviceListener* l) {
-	DEBUG_ASSERT(l, "Adding a null listener");
-	DEBUG_ASSERT(!pListeners.exists(l), "The listener is already registered");
-
-	pListeners.add(l);
+void InputDevice::addListener(InputDeviceListener& l) {
+	pListeners.emplace(&l);
 }
 
-void InputDevice::removeListener(InputDeviceListener* l) {
-	DEBUG_ASSERT(l, "The passed listener is NULL");
-	DEBUG_ASSERT(pListeners.exists(l), "The listened to be removed is not registered");
+void InputDevice::removeListener(InputDeviceListener& l) {
+	DEBUG_ASSERT(pListeners.find(&l) == pListeners.end(), "The listened to be removed is not registered");
 
-	pListeners.remove(l);
+	pListeners.erase(&l);
 }
 
 bool InputDevice::isKeyDown(KeyCode key) {

@@ -21,11 +21,11 @@ namespace Dojo
 		Console( Object* parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source = gp_log );
 
 		///adds a log to the listened logs - if getOldMessages is true, all of the messages in the log are added to the console
-		void addLog( Log* l, bool getOldMessages = true );
+		void addLog( Log& l, bool getOldMessages = true );
 
-		virtual void onLogUpdated( Log* l, const LogEntry& message );
+		virtual void onLogUpdated( Log& l, const LogEntry& message );
 
-		virtual void onAction( float dt );
+		virtual void onAction( float dt ) override;
 
 		virtual void onDestruction();
 
@@ -40,8 +40,6 @@ namespace Dojo
 		TextArea* mText;
 
 		std::vector< Log* > pLogs;
-
-		void _update();
 	};
 }
 

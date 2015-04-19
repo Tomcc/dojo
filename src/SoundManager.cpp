@@ -2,7 +2,6 @@
 
 #include "SoundManager.h"
 #include "SoundSource.h"
-#include "SoundBuffer.h"
 
 #include "Platform.h"
 
@@ -18,7 +17,7 @@ const SoundManager::Easing SoundManager::LinearEasing = []( float t )
 };
 
 void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
-	DEBUG_ASSERT(ALpos, "null AL position vector");
+	DEBUG_ASSERT(ALpos, "nullptr AL position vector");
 
 	ALpos[0] = vector.x / m;
 	ALpos[1] = vector.y / m;
@@ -28,8 +27,8 @@ void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
-musicTrack( NULL ),
-nextMusicTrack( NULL ),
+musicTrack( nullptr ),
+nextMusicTrack( nullptr ),
 fadeState( FS_NONE ),
 musicVolume( 1 ),
 masterVolume( 1 ),
@@ -38,12 +37,12 @@ currentFadeTime(0)
 	alGetError();
 
 	// Initialization
-	device = alcOpenDevice(NULL); // select the "preferred device"
+	device = alcOpenDevice(nullptr); // select the "preferred device"
 	
 	if (!device)
 		return; //running without audio :(
 
-	context = alcCreateContext(device,NULL);
+	context = alcCreateContext(device,nullptr);
 		
 	DEBUG_ASSERT( context, "Cannot create an OpenAL context" );
 		
@@ -61,7 +60,7 @@ currentFadeTime(0)
 		alGenSources(1, &src );
 
 		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.add( new SoundSource( src ) );
+			idleSoundPool.emplace_back( make_unique<SoundSource>( src ) );
 		else
 			break;
 	}
@@ -72,7 +71,7 @@ currentFadeTime(0)
 		"OpenAL could not preload the minimum sources number", String("NUM_SOURCES_MIN = ") + NUM_SOURCES_MIN ); 
 
 	//dummy source to manage source shortage
-	fakeSource = new SoundSource( 0 );
+	fakeSource = make_unique<SoundSource>( 0 );
 
 	setListenerTransform(Matrix(1));
 
@@ -81,73 +80,60 @@ currentFadeTime(0)
 
 
 void SoundManager::clear() {
-	for (int i = 0; i < busySoundPool.size(); ++i)
-	{
-		SoundSource* s = busySoundPool.top();
-		busySoundPool.pop();
-		s->stop();
-		SAFE_DELETE(s);
+	for (auto&& busy : busySoundPool) {
+		busy->stop();
+		idleSoundPool.emplace_back(std::move(busy));
 	}
+	busySoundPool.clear();
 
-	musicTrack = NULL;
+	musicTrack = nullptr;
 	fadeState = FS_NONE;
 }
 
 
 SoundManager::~SoundManager()
 {
-	//trash sounds
-	for( int i = 0; i < busySoundPool.size(); ++i )
-		SAFE_DELETE( busySoundPool.at(i) );
-	
-	for( int i = 0; i < idleSoundPool.size(); ++i )
-		SAFE_DELETE( idleSoundPool.at(i) );
-
-	SAFE_DELETE( fakeSource );
-
 	if (device)
 		alcCloseDevice( device );
 }
 
-SoundSource* SoundManager::getSoundSource( SoundSet* set, int i )
+SoundSource& SoundManager::getSoundSource( SoundSet* set, int i )
 {
-	DEBUG_ASSERT( set, "Cannot get a source for a null SoundSet" );
+	DEBUG_ASSERT( set, "Cannot get a source for a nullptr SoundSet" );
 
 	//try to lazy-create a new source, if allowed
-	if( idleSoundPool.isEmpty() && busySoundPool.size() < NUM_SOURCES_MAX )
+	if( idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX )
 	{
 		ALuint src;
 		alGenSources( 1, & src );
 		if( alGetError() == AL_NO_ERROR )
-			idleSoundPool.add( new SoundSource( src ) );
+			idleSoundPool.emplace_back( make_unique<SoundSource>( src ) );
 	}
 
 	//is there a source now?
-	if( !idleSoundPool.isEmpty() )
+	if( !idleSoundPool.empty() )
 	{
-		SoundSource* s = idleSoundPool.top();
-		idleSoundPool.pop();
-		busySoundPool.add(s);
+		busySoundPool.emplace_back(std::move(idleSoundPool.back()));
+		idleSoundPool.pop_back();
 
-		s->_setup( set->getBuffer( i ) );
-
-		return s;
+		busySoundPool.back()->_setup(set->getBuffer(i));
+		return *busySoundPool.back();
 	}
 	//failed, return mute source
-	return fakeSource;
+	return *fakeSource;
 }
 
 void SoundManager::playMusic( SoundSet* next, float trackFadeTime /* = 0 */, const Easing& easing )
 {
     //TODO use easing
     
-	DEBUG_ASSERT( next, "null music source passed" );
+	DEBUG_ASSERT( next, "nullptr music source passed" );
 
 	//override music activation if the system sound is in use
 	if( Platform::singleton().isSystemSoundInUse() )
 		return;
 
-	nextMusicTrack = getSoundSource( next );
+	nextMusicTrack = &getSoundSource( next );
 
 	halfFadeTime = trackFadeTime*0.5f;
 	currentFadeTime = 0;
@@ -168,27 +154,23 @@ void SoundManager::setMasterVolume( float volume )
 			musicTrack->setVolume(musicVolume);
 
 		//update all the existing sounds
-		for (SoundSource* s : busySoundPool)
+		for (auto&& s : busySoundPool)
 			s->setVolume(s->getVolume());
 	}
 }
 
 void SoundManager::update( float dt )
 {
-	SoundSource* current;
-	//sincronizza le sources con i nodes
-	for( int i = 0; i < busySoundPool.size(); ++i)
+	for (size_t i = 0; i < busySoundPool.size(); ++i)
 	{
-		current = busySoundPool[i];
+		auto& current = busySoundPool[i];
 		current->_update(dt);
-
-		//resetta i suoni finiti
 		if( current->_isWaitingForDelete() )
 		{
-			busySoundPool.remove( i );
-			idleSoundPool.add( current );
-
 			current->_reset();
+
+			idleSoundPool.emplace_back(std::move(current));
+			busySoundPool.erase( busySoundPool.begin() + i );
 
 			--i;
 		}
@@ -209,7 +191,7 @@ void SoundManager::update( float dt )
 			//parte il fade in
 			if( musicTrack )
 			{
-				nextMusicTrack = NULL;
+				nextMusicTrack = nullptr;
 
 				musicTrack->play(0);
 				musicTrack->setAutoRemove( false );
@@ -271,28 +253,28 @@ void SoundManager::setListenerTransform(const Matrix& worldTransform)
 	lastListenerPos = pos;
 }
 
-SoundSource* SoundManager::getSoundSource(const Vector& pos, SoundSet* set) {
-	DEBUG_ASSERT(set, "Getting a Source for a NULL sound");
+SoundSource& SoundManager::getSoundSource(const Vector& pos, SoundSet* set) {
+	DEBUG_ASSERT(set, "Getting a Source for a nullptr sound");
 
-	SoundSource* s = getSoundSource(set);
-	s->setPosition(pos);
+	auto& s = getSoundSource(set);
+	s.setPosition(pos);
 
 	return s;
 }
 
-SoundSource* SoundManager::playSound(SoundSet* set, float volume /*= 1.0f*/) {
-	DEBUG_ASSERT(set, "Playing a NULL sound");
+SoundSource& SoundManager::playSound(SoundSet* set, float volume /*= 1.0f*/) {
+	DEBUG_ASSERT(set, "Playing a nullptr sound");
 
-	SoundSource* s = getSoundSource(set);
-	s->play(volume);
+	auto& s = getSoundSource(set);
+	s.play(volume);
 	return s;
 }
 
-SoundSource* SoundManager::playSound(const Vector& pos, SoundSet* set, float volume /*= 1.0f */) {
-	DEBUG_ASSERT(set, "Playing a NULL sound");
+SoundSource& SoundManager::playSound(const Vector& pos, SoundSet* set, float volume /*= 1.0f */) {
+	DEBUG_ASSERT(set, "Playing a nullptr sound");
 
-	SoundSource* s = getSoundSource(pos, set);
-	s->play(volume);
+	auto& s = getSoundSource(pos, set);
+	s.play(volume);
 	return s;
 }
 
@@ -307,7 +289,7 @@ void SoundManager::stopMusic(float stopFadeTime /*= 0*/, const Easing& fadeEasin
 	DEBUG_MESSAGE("Music fading out in " + String(stopFadeTime) + " s");
 
 	fadeState = FS_FADE_OUT;
-	nextMusicTrack = NULL;
+	nextMusicTrack = nullptr;
 
 	halfFadeTime = stopFadeTime;
 	currentFadeTime = 0;
@@ -323,25 +305,25 @@ void SoundManager::setMusicVolume(float volume) {
 }
 
 void SoundManager::pauseAll() {
-	for (SoundSource* s : busySoundPool)
+	for (auto&& s : busySoundPool)
 	{
-		if (s != musicTrack)
+		if (s.get() != musicTrack)
 			s->pause();
 	}
 }
 
 void SoundManager::resumeAll() {
-	for (SoundSource* s : busySoundPool)
+	for (auto&& s : busySoundPool)
 	{
-		if (s != musicTrack)
+		if (s.get() != musicTrack)
 			s->play();
 	}
 }
 
 void SoundManager::stopAllSounds() {
-	for (SoundSource* s : busySoundPool)
+	for (auto&& s : busySoundPool)
 	{
-		if (s != musicTrack)
+		if (s.get() != musicTrack)
 			s->stop();
 	}
 }

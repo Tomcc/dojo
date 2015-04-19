@@ -22,7 +22,7 @@ width( w ),
 height( h ),
 renderOrientation( DO_LANDSCAPE_RIGHT ),
 deviceOrientation( deviceOr ),
-currentLayer( NULL ),
+currentLayer( nullptr ),
 frameVertexCount(0),
 frameTriCount(0),
 frameBatchCount(0)
@@ -127,7 +127,7 @@ void Renderer::removeRenderable( Renderable& s )
 	if (hasLayer(s.getLayer()))
 	{
 		getLayer(s.getLayer()).elements.erase(&s);
-		s._notifyRenderInfo(NULL, 0, 0);
+		s._notifyRenderInfo(nullptr, 0, 0);
 	}
 }
 
@@ -159,7 +159,7 @@ void Renderer::setDefaultAmbient(const Color& a) {
 
 void Renderer::addViewport( Viewport& v )
 {
-	viewportList.push_back( &v );
+	viewportList.insert( &v );
 }
 
 void Renderer::setInterfaceOrientation( Orientation o )		
@@ -179,7 +179,7 @@ void Renderer::setInterfaceOrientation( Orientation o )
 	mRenderRotation = glm::mat4_cast( Quaternion( Vector( 0,0, renderRotation ) ) );
 }
 
-void Renderer::renderElement( Viewport& viewport, Renderable& elem )
+void Renderer::renderElement(Renderable& elem )
 {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
@@ -234,7 +234,7 @@ void Renderer::renderElement( Viewport& viewport, Renderable& elem )
 		glDrawArrays( mode, 0, m->getVertexCount() );
 	else {
 		DEBUG_ASSERT(m->getIndexCount() > 0, "Rendering an indexed mesh with no indices");
-		glDrawElements(mode, m->getIndexCount(), m->getIndexGLType(), 0);  //on OpenGLES, we have max 65536 indices!!!
+		glDrawElements(mode, m->getIndexCount(), m->getIndexGLType(), nullptr);  //on OpenGLES, we have max 65536 indices!!!
 	}
 
 #ifndef DOJO_DISABLE_VAOS
@@ -283,7 +283,7 @@ void Renderer::renderLayer( Viewport& viewport, const RenderLayer& layer )
 	for (auto& r : layer.elements)
 	{
 		if( r->canBeRendered() && _cull(layer, viewport, *r))
-			renderElement( viewport, *r );
+			renderElement( *r );
 	}
 }
 

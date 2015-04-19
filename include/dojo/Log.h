@@ -2,7 +2,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "LogEntry.h"
 
 namespace Dojo
@@ -16,31 +15,26 @@ namespace Dojo
 
 		typedef std::vector< LogEntry > LogQueue;
 
-		Log( int maxLines = 1024 ) :
+		explicit Log( int maxLines = 1024 ) :
 			mMaxLines( maxLines )
 		{
 			DEBUG_ASSERT( mMaxLines > 0, "Cannot create a Log with 0 or less lines" );
 		}
 
-		~Log()
-		{
-
-		}
+		~Log() {}
 
 		///appends another message to the log, with an optional severity level
 		void append( const String& message, LogEntry::Level level = LogEntry::EL_WARNING );
 
 		///adds a listener that will receive events from this Log
-		void addListener( LogListener* l )
+		void addListener( LogListener& l )
 		{
-			DEBUG_ASSERT( l, "Cannot add a null listener" );
-
-			pListeners.add( l );
+			pListeners.emplace( &l );
 		}
 
-		void removeListener( LogListener* l )
+		void removeListener( LogListener& l )
 		{
-			pListeners.remove( l );
+			pListeners.erase( &l );
 		}
 
 		///returns the last appended entry
@@ -49,19 +43,19 @@ namespace Dojo
 			return mOutput.back();
 		}
 
-		const LogQueue::iterator begin()
+		LogQueue::iterator begin()
 		{
 			return mOutput.begin();
 		}
 
-		const LogQueue::iterator end()
+		LogQueue::iterator end()
 		{
 			return mOutput.end();
 		}
 
 	protected:
 
-		Array< LogListener* > pListeners;
+		SmallSet< LogListener* > pListeners;
 		LogQueue mOutput;
 		int mMaxLines;
 

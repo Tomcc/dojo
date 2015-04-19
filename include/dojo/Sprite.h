@@ -11,7 +11,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "AnimatedQuad.h"
 
 namespace Dojo
@@ -22,7 +21,7 @@ namespace Dojo
 		
 	public:
 				
-		typedef Array<Animation*> AnimationList;
+		typedef std::vector<std::unique_ptr<Animation>> AnimationList;
 								
 		///Creates a new Sprite in a GameState, at position Pos, with the given default Animation (which must exist!)
 		/**
@@ -35,7 +34,7 @@ namespace Dojo
 				
 		virtual ~Sprite();		
 
-		virtual void reset();
+		virtual void reset() override;
 
 		///registers the given animation and returns its handle
 		/**

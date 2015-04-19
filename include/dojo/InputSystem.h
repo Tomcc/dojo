@@ -11,7 +11,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Vector.h"
 #include "ApplicationListener.h"
 #include "Touch.h"
@@ -34,27 +33,27 @@ namespace Dojo
 	{
 	public:
 
-		typedef Array< Touch* > TouchList;
-		typedef Array< InputDevice* > DeviceList;
-		typedef Array<InputSystemListener*> ListenerList;
+		typedef std::vector< std::unique_ptr<Touch> > TouchList;
+		typedef SmallSet< InputDevice* > DeviceList;
+		typedef SmallSet<InputSystemListener*> ListenerList;
 		
-		InputSystem( bool enable = true );
+		explicit InputSystem( bool enable = true );
 		
 		virtual ~InputSystem();
 
 		///registers a new device to this InputSystem
 		/** 
 		and sends an event about its connection to the listeners */
-		void addDevice( InputDevice* device );
+		void addDevice( InputDevice& device );
 
 		///unregisters a new device to this InputSystem
 		/** 
 		and sends an event about its disconnection to the listeners */
-		void removeDevice( InputDevice* device );
+		void removeDevice( InputDevice& device );
 		
-		void addListener( InputSystemListener* l );
+		void addListener( InputSystemListener& l );
 		
-		void removeListener( InputSystemListener* l );
+		void removeListener( InputSystemListener& l );
         
         ///polls all the registered devices
         void poll( float dt );
@@ -77,7 +76,7 @@ namespace Dojo
 			return mDeviceList;
 		}
 
-		virtual void onApplicationFocusGained()
+		virtual void onApplicationFocusGained() override
 		{
 			//buffered states such as key presses etc could have changed while the app was out of focus!
 			//TODO
@@ -104,16 +103,16 @@ namespace Dojo
 
 		DeviceList mDeviceList;
 				
-		Touch* _registertouch( const Vector& point, Touch::Type type );
+		Touch& _registertouch( const Vector& point, Touch::Type type );
 		
 		int _getExistingTouchID(const Vector& point, Touch::Type type);
 		
-		Touch* _getExistingTouch(const Vector& point, Touch::Type type);
+		Touch& _getExistingTouch(const Vector& point, Touch::Type type);
 		
-		Touch* _popExistingTouch(const Vector& point, Touch::Type type);
+		std::unique_ptr<Touch> _popExistingTouch(const Vector& point, Touch::Type type);
 
-		void _fireDeviceConnected( InputDevice* j );
-		void _fireDeviceDisconnected( InputDevice* j );
+		void _fireDeviceConnected( InputDevice& j );
+		void _fireDeviceDisconnected( InputDevice& j );
 
 	};
 }

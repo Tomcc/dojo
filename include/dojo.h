@@ -2,7 +2,6 @@
 
 #include <dojo/AnimatedQuad.h>
 #include <dojo/ApplicationListener.h>
-#include <dojo/Array.h>
 #include <dojo/AStar.h>
 #include <dojo/Pipe.h>
 #include <dojo/BackgroundQueue.h>

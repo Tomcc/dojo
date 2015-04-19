@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Renderable.h"
 #include "GameState.h"
+#include "Renderer.h"
 #include "Platform.h"
 
 using namespace Dojo;

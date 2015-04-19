@@ -2,7 +2,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Resource.h"
 #include "dojomath.h"
 
@@ -24,23 +23,23 @@ namespace Dojo
 		///Creates a new set named setName
 		SoundSet( ResourceGroup* creator, const String& setName );
 
-		virtual bool onLoad();
-		virtual void onUnload( bool soft = true );
+		virtual bool onLoad() override;
+		virtual void onUnload(bool soft = true) override;
 
 		///returns a random buffer (-1) or the one at index i
-		SoundBuffer* getBuffer( int i = -1 );
+		SoundBuffer& getBuffer( int i = -1 );
 
 		int getResourceNb()	{	return buffers.size();	 }
 
 		const String& getName()	{	return name;	}
 
-		void addBuffer( SoundBuffer* b );
+		void addBuffer(std::unique_ptr<SoundBuffer> b);
 
 	protected:
 
 		String name;
 
-		Array<SoundBuffer*> buffers;
+		std::vector<std::unique_ptr<SoundBuffer>> buffers;
 	};
 }
 

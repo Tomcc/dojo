@@ -13,8 +13,6 @@
 
 #include "Color.h"
 #include "Vector.h"
-#include "Array.h"
-#include "dojomath.h"
 #include "BlendingMode.h"
 #include "Radians.h"
 

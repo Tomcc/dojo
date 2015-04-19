@@ -5,14 +5,12 @@
 using namespace Dojo;
 
 AStar::Node::Node(const Vector& pos) :
-edges(1, 1),
 position(pos) {
 
 }
 
-void AStar::Node::addEdge(Node* b) {
-	DEBUG_ASSERT(b, "addEdge: Node must not be NULL");
-	edges.add(b);
+void AStar::Node::addEdge(Node& b) {
+	edges.emplace_back(&b);
 }
 
 void AStar::Node::_resetData(float h) {
@@ -20,7 +18,7 @@ void AStar::Node::_resetData(float h) {
 	_gScore = 0;
 	_hScore = h;
 	_openValue = 0;
-	_cameFrom = NULL;
+	_cameFrom = nullptr;
 	_cameFromDistance = 0;
 }
 
@@ -33,7 +31,7 @@ AStar::Node* AStar::Graph::getNode(const Vector& pos) const {
 	return (elem != end()) ? elem->second : nullptr;
 }
 
-AStar::Node* AStar::Graph::addNode(const Vector& pos) {
+AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 	iterator elem = find(pos);
 	Node* n;
 	if (elem == end())
@@ -44,7 +42,7 @@ AStar::Node* AStar::Graph::addNode(const Vector& pos) {
 	else
 		n = elem->second;
 
-	return n;
+	return *n;
 }
 
 void AStar::_retrace(Node* cur, Node* start) {

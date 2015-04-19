@@ -2,8 +2,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
-
 namespace Dojo
 {
 	class InputDeviceListener;
@@ -64,9 +62,9 @@ namespace Dojo
 			return mID;
 		}
 
-		void addListener( InputDeviceListener* l );
+		void addListener( InputDeviceListener& l );
 
-		void removeListener( InputDeviceListener* l );
+		void removeListener( InputDeviceListener& l );
 
 		///Adds an "Action Binding" to this device
 		/**
@@ -95,11 +93,11 @@ namespace Dojo
 
 	protected:
 
-		typedef Array< InputDeviceListener* > ListenerList;
+		typedef SmallSet< InputDeviceListener* > ListenerList;
 		typedef std::unordered_map< KeyCode, int, std::hash<int> > KeyActionMap;
 		typedef std::unordered_multimap< int, KeyCode > ActionKeyMap;
 		typedef std::unordered_map< KeyCode, bool, std::hash<int> > KeyPressedMap;
-		typedef Array< float > FloatList;
+		typedef std::vector< float > FloatList;
 
 		int mAxisNumber, mButtonNumber;
 

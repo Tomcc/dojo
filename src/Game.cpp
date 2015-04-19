@@ -33,7 +33,7 @@ mMaxFrameLength( maximumdt )
 
 	Math::seedRandom();
 	
-	p.addApplicationListener( this ); //always listen to the app
+	p.addApplicationListener( *this ); //always listen to the app
 }
 	
 Game::~Game()

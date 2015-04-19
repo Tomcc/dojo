@@ -74,7 +74,7 @@ void SoundSource::play( float volume )
 
 			int chunkNumber = buffer->getChunkNumber();
 
-			mFrontChunk = buffer->getChunk( 0 );
+			mFrontChunk = &buffer->getChunk( 0 );
 			ALuint alBuffer = mFrontChunk->getOpenALBuffer();
 
 			if( chunkNumber == 1 )  //non-streaming
@@ -89,7 +89,7 @@ void SoundSource::play( float volume )
 				CHECK_AL_ERROR;
 
 				//start loading in the back buffer
-				mBackChunk = buffer->getChunk( ++mCurrentChunkID, true );
+				mBackChunk = &buffer->getChunk( ++mCurrentChunkID, true );
 			}
 		}
 		else
@@ -186,7 +186,7 @@ void SoundSource::_update(float dt)
 				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
 			
 			if( mCurrentChunkID < buffer->getChunkNumber() ) //not exhausted? start loading a new backbuffer
-				mBackChunk = buffer->getChunk( mCurrentChunkID, true );
+				mBackChunk = &buffer->getChunk( mCurrentChunkID, true );
 
 			else
 				mBackChunk = nullptr;			

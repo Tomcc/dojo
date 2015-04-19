@@ -11,7 +11,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Resource.h"
 
 namespace Dojo 
@@ -43,8 +42,9 @@ namespace Dojo
 	class FrameSet : public Resource
 	{
 	public:
-		
-		typedef Array<Texture*> TextureList;
+
+		typedef std::vector<std::unique_ptr<Texture>> OwnedTextureList;
+		typedef std::vector<Texture*> TextureList;
 		
 		///Creates a single FrameSet with the given "prefix name"
 		FrameSet( ResourceGroup* creator, const String& prefixName );
@@ -63,10 +63,10 @@ namespace Dojo
 		*/
 		void setAtlas( const Table& atlasTable, ResourceGroup& atlasTextureProvider );
 
-		virtual bool onLoad();
+		virtual bool onLoad() override;
 		
 		///unload all of the content;
-		virtual void onUnload(bool soft);
+		virtual void onUnload(bool soft) override;
 				
 		///adds a non-owned texture to this frame set
 		/*
@@ -105,11 +105,7 @@ namespace Dojo
 		int getFrameNumber()				{	return frames.size();	}
 		
 		///returns the Frame Index of this Texture if it belongs to the FS, or -1 if not
-		int getFrameIndex( Texture* frame )
-		{
-			return frames.getElementIndex( frame );
-		}
-		
+		int getFrameIndex(Texture& frame) const;
 		
 	protected:
 		String name;
@@ -117,6 +113,7 @@ namespace Dojo
 		float mPreferredAnimationTime;
 
 		TextureList frames;
+		OwnedTextureList ownedFrames;
 	};
 }
 

@@ -7,11 +7,11 @@ using namespace Dojo;
 
 
 InputSystemListener::InputSystemListener() :
-source(NULL) {
+source(nullptr) {
 
 }
 
 InputSystemListener::~InputSystemListener() {
 	if (source)
-		source->removeListener(this);
+		source->removeListener(*this);
 }

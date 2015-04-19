@@ -570,7 +570,7 @@ void Win32Platform::initialize( Game* g )
 	prevCursorPos.y = (float)mousePos.y;
 
 	//add the keyboard
-	input->addDevice( &mKeyboard );
+	input->addDevice( mKeyboard );
 	//create xinput persistent joysticks
 	for( int i = 0; i < 4; ++i ) 
 	{
@@ -721,7 +721,7 @@ void Win32Platform::loop()
 
 		if (running) {
 			//never send a dt lower than the minimum!
-			float dt = min(game->getMaximumFrameLength(), (float)timer.deltaTime());
+			float dt = std::min(game->getMaximumFrameLength(), (float)timer.deltaTime());
 
 			if (!mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0))
 			{

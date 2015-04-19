@@ -16,7 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
-    <ClInclude Include="include\dojo\Array.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />

@@ -215,5 +215,5 @@ void AnimatedQuad::Animation::advance(float dt) {
 }
 
 int AnimatedQuad::Animation::getCurrentFrameNumber() {
-	return frames->getFrameIndex(currentFrame);
+	return frames->getFrameIndex(*currentFrame);
 }

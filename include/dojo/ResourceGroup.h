@@ -61,7 +61,7 @@ namespace Dojo
 		typedef std::unordered_map<String, Table*> TableMap;
 		typedef std::unordered_map<String, Shader* > ShaderMap;
 		typedef std::unordered_map<String, ShaderProgram* > ProgramMap;
-		typedef Array< ResourceGroup* > SubgroupList;
+		typedef SmallSet< ResourceGroup* > SubgroupList;
 		
 		///Create a new empty ResourceGroup
 		ResourceGroup();
@@ -103,15 +103,15 @@ namespace Dojo
 			
 			//try in subgroups
 			R* f;
-			for( int i = 0; i < subs.size(); ++i )
+			for (auto&& sub : subs)
 			{
-				f = subs[i]->find< R >( name, r );
+				f = sub->find< R >( name, r );
 				
 				if( f )
 					return f;
 			}
 			
-			return NULL;
+			return nullptr;
 		}
 		
 		void addFrameSet( FrameSet* set, const String& name )
@@ -187,13 +187,13 @@ namespace Dojo
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		void addSubgroup( ResourceGroup& g )
 		{
-			subs.add( &g );
+			subs.emplace( &g );
 		}
 		
 		///removes a subgroup
 		void removeSubgroup( ResourceGroup& g )
 		{
-			subs.remove( &g );
+			subs.erase( &g );
 		}
 
 		///removes all of the registered subgrops from this ResourceGroup
@@ -327,20 +327,7 @@ namespace Dojo
 		///adds all the file inside a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addFolderSimple( const String& folder, int version = 0 )
-		{
-			if (logchanges)
-				DEBUG_MESSAGE( "[" + folder + "]" );
-			
-			addSets( folder, version );
-			addFonts( folder, version );
-			addMeshes( folder );
-			addSounds( folder );
-			addTables( folder );
-			addPrograms( folder );
-			addShaders( folder );
-		}
-		
+		void addFolderSimple(const String& folder, int version = 0);
 		///adds a localization folder located in baseFolder, choosing it using the current locale
 		/** 
 		for example, "base/en" if en; "base/it" if it, etc */
@@ -363,53 +350,13 @@ namespace Dojo
 		}
 
 		///loads all the resources that are in the group but aren't loaded
-		void loadResources( bool recursive = false )
-		{
-			_load< FrameSet >( frameSets );
-			_load< Font >( fonts );
-			_load< Mesh >( meshes );
-			_load< SoundSet >( sounds );
-			_load< Table >( tables );
-			_load< ShaderProgram >( programs );
-			_load< Shader >( shaders );
-
-			//load sets again to load missing atlases!
-			_load< FrameSet >( frameSets );
-
-			if( recursive)
-				for( int i = 0; i < subs.size(); ++i )	subs[i]->loadResources( recursive );
-		}
+		void loadResources(bool recursive = false);
 
 		///empties the group destroying all the resources
-		void unloadResources( bool recursive = false )
-		{
-			//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
-			_unload< Font >( fonts, false );
-			_unload< FrameSet >( frameSets, false );
-			_unload< Mesh >( meshes, false );
-			_unload< SoundSet >( sounds, false );
-			_unload< Table >( tables, false );
-			_unload< Shader >( shaders, false );
-			_unload< ShaderProgram >( programs, false );
-
-			if( recursive )
-				for( int i = 0; i < subs.size(); ++i )	subs[i]->unloadResources( recursive );
-		}
+		void unloadResources(bool recursive = false);
 
 		///unloads re-loadable resources without actually destroying resource objects
-		void softUnloadResources( bool recursive = false )
-		{
-			_unload< Font >( fonts, true );
-			_unload< FrameSet >( frameSets, true );
-			_unload< Mesh >( meshes, true );
-			_unload< SoundSet >( sounds, true );
-			_unload< Table >( tables, true );
-			_unload< ShaderProgram >( programs, true );
-			_unload< Shader >( shaders, true );
-
-			if( recursive )
-				for( int i = 0; i < subs.size(); ++i )	subs[i]->softUnloadResources( recursive );
-		}
+		void softUnloadResources(bool recursive = false);
 			
 		FrameSetMap::const_iterator getFrameSets() const
 		{

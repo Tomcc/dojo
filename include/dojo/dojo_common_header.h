@@ -17,6 +17,7 @@
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 #include <functional>
 #include <queue>
@@ -31,6 +32,8 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+
+#include "SmallSet.h"
 
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>

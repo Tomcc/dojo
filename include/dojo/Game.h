@@ -10,9 +10,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
-
-#include "Renderer.h"
 #include "StateInterface.h"
 #include "ApplicationListener.h"
 

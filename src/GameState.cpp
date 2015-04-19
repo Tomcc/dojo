@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Object.h"
 #include "Sprite.h"
+#include "Renderer.h"
 #include "Viewport.h"
 #include "Platform.h"
 #include "TouchArea.h"
@@ -46,7 +47,7 @@ void GameState::touchAreaAtPoint( const Touch& touch )
 {
 	Vector pointer = getViewport()->makeWorldCoordinates( touch.point );
 
-	Array< TouchArea* > layer;
+	std::vector< TouchArea* > layer;
 	int topMostLayer = INT32_MIN;
 	
 	for( auto t : mTouchAreas )
@@ -57,15 +58,15 @@ void GameState::touchAreaAtPoint( const Touch& touch )
 			if( t->getLayer() > topMostLayer )
 				layer.clear();
 
-			layer.add( t );
+			layer.push_back( t );
 
 			topMostLayer = t->getLayer();
 		}
 	}
 
 	//trigger all the areas overlapping in the topmost layer 
-	for( int i = 0; i < layer.size(); ++i )
-		layer[i]->_incrementTouches( touch );	
+	for (auto&& l : layer)
+		l->_incrementTouches( touch );	
 }
 
 void GameState::addTouchArea(TouchArea* t) {
@@ -91,7 +92,7 @@ void GameState::updateClickableState()
 	auto& touchList = Platform::singleton().getInput().getTouchList();
 		
 	//"touch" all the touchareas active in this frame
-	for( auto touch : touchList )
+	for( auto&& touch : touchList )
 		touchAreaAtPoint( *touch );
 	
 	///launch events

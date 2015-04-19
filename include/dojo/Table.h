@@ -3,12 +3,10 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Array.h"
 #include "Utils.h"
 #include "StringReader.h"
 #include "dojostring.h"
 #include "Resource.h"
-#include "Log.h"
 
 namespace Dojo
 {
@@ -48,7 +46,7 @@ namespace Dojo
 			int size;
 			
 			Data() :
-			ptr( NULL ),
+			ptr( nullptr ),
 			size( 0 )
 			{
 
@@ -72,7 +70,7 @@ namespace Dojo
 		public:
 			Table::FieldType type;
 
-			Entry(Table::FieldType fieldType) :
+			explicit Entry(Table::FieldType fieldType) :
 				type(fieldType)
 			{
 
@@ -139,12 +137,12 @@ namespace Dojo
 			}
 
 			///returns the raw value pointer
-			virtual void* getRawValue()
+			virtual void* getRawValue() override
 			{
 				return &value;
 			}
 
-			virtual Unique<Entry> clone()
+			virtual Unique<Entry> clone() override
 			{
 				return make_unique< TypedEntry<T> >(type, value);
 			}
@@ -178,9 +176,9 @@ namespace Dojo
 
 		~Table();
 
-		virtual bool onLoad();
+		virtual bool onLoad() override;
 
-		virtual void onUnload( bool soft = false );
+		virtual void onUnload( bool soft = false ) override;
 
 		///returns the table which contains the given "dot formatted" key
 		/** it returns "this" for a normal non-hierarchical key
@@ -237,7 +235,7 @@ namespace Dojo
 		}
 
 		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		void set( const String& key, void* value, int size, bool managed = false )
+		void set( const String& key, void* value, int size )
 		{
 			DEBUG_ASSERT( value, "Setting a NULL Data value" );
 			DEBUG_ASSERT( size >= 0, "Setting a Data value size <= 0" );

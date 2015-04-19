@@ -9,7 +9,6 @@
 
 #include "dojo_common_header.h"
 
-#include "Array.h"
 #include "Color.h"
 #include "Vector.h"
 #include "RenderLayer.h"
@@ -35,7 +34,7 @@ namespace Dojo {
 		} currentState;
 						
 		typedef std::vector< RenderLayer > LayerList;
-		typedef std::vector< Viewport* > ViewportList;
+		typedef std::unordered_set< Viewport* > ViewportSet;
 		
 		Renderer( int width, int height, Orientation renderOrientation );		
 		
@@ -93,7 +92,7 @@ namespace Dojo {
 		bool isValid()						{	return valid;		}
 		
 		///renders a single element using the given viewport
-		void renderElement( Viewport& viewport, Renderable& elem );
+		void renderElement( Renderable& elem );
 		
 		///renders a whole layer on the given viewport
 		void renderLayer( Viewport& viewport, const RenderLayer& layer );
@@ -114,7 +113,7 @@ namespace Dojo {
 		Radians renderRotation = Radians(0.f);
 		Orientation renderOrientation, deviceOrientation;
 
-		ViewportList viewportList;
+		ViewportSet viewportList;
 		
 		const RenderLayer* currentLayer;
 

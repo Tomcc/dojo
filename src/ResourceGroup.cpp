@@ -78,7 +78,7 @@ void ResourceGroup::addSets( const String& subdirectory, int version )
 	std::vector< String > paths;
 	String name, lastName;
 	
-	FrameSet* currentSet = NULL;
+	FrameSet* currentSet = nullptr;
 	
 	//find pngs and jpgs
 	Platform::singleton().getFilePathsForType( "png", subdirectory, paths );
@@ -194,7 +194,7 @@ void ResourceGroup::addSounds( const String& subdirectory )
 	std::vector< String > paths;
 	String name, lastName;
 
-	SoundSet* currentSet = NULL;
+	SoundSet* currentSet = nullptr;
 
 	Platform::singleton().getFilePathsForType( "ogg", subdirectory, paths );
 	
@@ -211,7 +211,7 @@ void ResourceGroup::addSounds( const String& subdirectory )
 		}
 			
 		//create a new buffer		
-		currentSet->addBuffer( new SoundBuffer( this, paths[i] ) );
+		currentSet->addBuffer( make_unique<SoundBuffer>( this, paths[i] ) );
 		
 		lastName = name; 
 	}
@@ -496,4 +496,66 @@ void ResourceGroup::addPrefabMeshes()
 	m->end();
 	
 	addMesh( m, "wireframeQuad" );
+}
+
+void ResourceGroup::loadResources(bool recursive) {
+	_load< FrameSet >(frameSets);
+	_load< Font >(fonts);
+	_load< Mesh >(meshes);
+	_load< SoundSet >(sounds);
+	_load< Table >(tables);
+	_load< ShaderProgram >(programs);
+	_load< Shader >(shaders);
+
+	//load sets again to load missing atlases!
+	_load< FrameSet >(frameSets);
+
+	if (recursive)
+		for (auto&& sub : subs)
+			sub->loadResources(recursive);
+}
+void ResourceGroup::unloadResources(bool recursive)
+{
+	//FONTS DEPEND ON SETS, DO NOT FREE BEFORE
+	_unload< Font >(fonts, false);
+	_unload< FrameSet >(frameSets, false);
+	_unload< Mesh >(meshes, false);
+	_unload< SoundSet >(sounds, false);
+	_unload< Table >(tables, false);
+	_unload< Shader >(shaders, false);
+	_unload< ShaderProgram >(programs, false);
+
+	if (recursive)
+		for (auto&& sub : subs)
+			sub->unloadResources(recursive);
+}
+
+///unloads re-loadable resources without actually destroying resource objects
+void ResourceGroup::softUnloadResources(bool recursive)
+{
+	_unload< Font >(fonts, true);
+	_unload< FrameSet >(frameSets, true);
+	_unload< Mesh >(meshes, true);
+	_unload< SoundSet >(sounds, true);
+	_unload< Table >(tables, true);
+	_unload< ShaderProgram >(programs, true);
+	_unload< Shader >(shaders, true);
+
+	if (recursive)
+		for (auto&& sub : subs)
+			sub->softUnloadResources(recursive);
+}	
+
+void ResourceGroup::addFolderSimple(const String& folder, int version)
+{
+	if (logchanges)
+		DEBUG_MESSAGE("[" + folder + "]");
+
+	addSets(folder, version);
+	addFonts(folder, version);
+	addMeshes(folder);
+	addSounds(folder);
+	addTables(folder);
+	addPrograms(folder);
+	addShaders(folder);
 }

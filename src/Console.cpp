@@ -29,7 +29,7 @@ Console::Console( Object* parent, const Vector& topLeft, const Vector& bottomRig
 		mText->getLineHeight() ); 
 	mMaxLines = (int)((scale.y-0.2f) / fontSize.y);
 	
-	addLog( source );
+	addLog( *source );
 }
 
 void Console::onAction( float dt )
@@ -54,20 +54,19 @@ void Console::onAction( float dt )
 	Renderable::onAction( dt );
 }
 
-void Console::addLog(Log* l, bool getOldMessages /*= true */) {
-	DEBUG_ASSERT(l, "Passed a NULL Log to a Console");
+void Console::addLog(Log& l, bool getOldMessages /*= true */) {
 
-	pLogs.push_back(l);
-	l->addListener(this);
+	pLogs.emplace_back(&l);
+	l.addListener(*this);
 
 	if (getOldMessages)
 	{
-		for (auto& entry : *l)
+		for (auto& entry : l)
 			onLogUpdated(l, entry);
 	}
 }
 
-void Console::onLogUpdated(Log* l, const LogEntry& message) {
+void Console::onLogUpdated(Log& l, const LogEntry& message) {
 	mDirty = true;
 
 	mOutput.push_back(message.text);
@@ -78,5 +77,5 @@ void Console::onLogUpdated(Log* l, const LogEntry& message) {
 
 void Console::onDestruction() {
 	for (auto log : pLogs)
-		log->removeListener(this);
+		log->removeListener(*this);
 }

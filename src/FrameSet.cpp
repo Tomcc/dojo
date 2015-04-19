@@ -17,9 +17,6 @@ mPreferredAnimationTime(0) {
 }
 
 FrameSet::~FrameSet() {
-	//destroy child textures
-	for (int i = 0; i < frames.size(); ++i)
-		SAFE_DELETE(frames[i]);
 }
 
 void FrameSet::setPreferredAnimationTime(float t) {
@@ -66,9 +63,8 @@ bool FrameSet::onLoad()
 	DEBUG_ASSERT( !isLoaded(), "onLoad: this FrameSet is already loaded" );
 	
 	loaded = true;
-	for( int i = 0; i < frames.size(); ++i )
+	for (auto&& t : ownedFrames)
 	{
-		Texture* t = frames[i];
 		if( !t->isLoaded() )
 		{
 			t->onLoad();
@@ -88,25 +84,34 @@ void FrameSet::onUnload(bool soft)
 {
 	DEBUG_ASSERT(loaded, "onUnload: this FrameSet is not loaded");
 
-	for (int i = 0; i < frames.size(); ++i)
-		frames.at(i)->onUnload(soft);
+	for (auto&& f : ownedFrames)
+		f->onUnload(soft);
 
 	loaded = false;
 }
 
 void FrameSet::addTexture(Texture& t) {
-	frames.add(&t);
+	frames.emplace_back(&t);
 }
 
 void FrameSet::addTexture(Unique<Texture> t) {
-	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture");
-	DEBUG_ASSERT(t->getOwnerFrameSet() == NULL, "This Texture already has an owner FrameSet");
-	
-	t->_notifyOwnerFrameSet(this);
+	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture"); 
+	DEBUG_ASSERT(t->getOwnerFrameSet() == nullptr, "This Texture already has an owner FrameSet");
 
-	addTexture(*t.release());
+	t->_notifyOwnerFrameSet(this);
+	addTexture(*t);
+
+	ownedFrames.emplace_back(std::move(t));
 }
 
 Texture* FrameSet::getRandomFrame() {
 	return frames.at((int)Math::rangeRandom(0, (float)frames.size()));
+}
+
+int FrameSet::getFrameIndex(Texture& frame) const {
+	for (size_t i = 0; i < frames.size(); ++i) {
+		if (frames[i] == &frame)
+			return i;
+	}
+	return -1;
 }

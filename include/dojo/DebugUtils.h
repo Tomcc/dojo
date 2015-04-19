@@ -11,7 +11,7 @@
 	
 	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); UNREACHABLE_BRANCH; }}
 	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).ASCII().c_str() )
-	#define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, NULL )
+	#define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, nullptr )
 	#define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
 	#define DEBUG_TODO DEBUG_ASSERT( false, "METHOD NOT IMPLEMENTED" )
@@ -58,7 +58,7 @@
 #endif
 
 //a delete to ensure the deleted object was valid
-#define SAFE_DELETE( T ) { DEBUG_ASSERT( T, "Deleting a NULL pointer" ); delete T; T = NULL; }
+#define SAFE_DELETE( T ) { DEBUG_ASSERT( T, "Deleting a NULL pointer" ); delete T; T = nullptr; }
 
 //synonyms
 #define DEBUG_DEPRECATED DEBUG_TODO

@@ -54,7 +54,7 @@ Platform& Platform::create( const Table& config /*= Table::EMPTY_TABLE */ )
 	singletonPtr = make_unique<LinuxPlatform>(config);
     
 #elif defined( PLATFORM_ANDROID )
-    android_main(NULL); //HACK
+    android_main(nullptr); //HACK
 	singletonPtr = make_unique<AndroidPlatform>(config);
 	
 #endif
@@ -71,10 +71,10 @@ void Platform::shutdownPlatform()
 Platform::Platform( const Table& configTable ) :
 	config( configTable ),
 	running( false ),
-	game( NULL ),
-	sound( NULL ),
-	render( NULL ),
-	input( NULL ),
+	game( nullptr ),
+	sound( nullptr ),
+	render( nullptr ),
+	input( nullptr ),
 	realFrameTime( 0 ),
 	mFullscreen( 0 ),
 	mFrameSteppingEnabled( false ),
@@ -83,13 +83,16 @@ Platform::Platform( const Table& configTable ) :
 	addZipFormat( ".zip" );
 	addZipFormat( ".dpk" );
 
-	gp_log = mLog = new Log();
-	mLog->addListener( new StdoutLog() );
+	mLog = make_unique<Log>();
+	gp_log = mLog.get();
+
+	mLogWriter = make_unique<StdoutLog>();
+	mLog->addListener( *mLogWriter );
 }	
 
 Platform::~Platform()
 {
-	SAFE_DELETE( mLog );
+
 }
 
 int Platform::_findZipExtension( const String & path )
@@ -253,7 +256,7 @@ Platform::FilePtr Platform::getFile( const String& path )
 		if(zip.open(zipPath)){
 			//OPEN FILE IN ZIP
 			auto pfile=zip.openFile(  zipInternalPath,"rb");
-			if(pfile!=NULL){
+			if(pfile!=nullptr){
 				//READ FILE
 				size = pfile->size();
 				bufptr = (char*)malloc( size+1 );
@@ -320,7 +323,7 @@ void Platform::save(const Table& src, const String& absPathOrName)
 	DEBUG_MESSAGE( path.ASCII() );
 	FILE* f = fopen( path.ASCII().c_str(), "w+" );
 	
-	if( f==NULL )
+	if( f==nullptr )
 	{
 		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
 		DEBUG_MESSAGE( path.ASCII() );
@@ -337,8 +340,23 @@ void Platform::save(const Table& src, const String& absPathOrName)
 	fclose( f );
 }
 
-void Platform::_fireFocusLost()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusLost();	}
-void Platform::_fireFocusGained()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFocusGained();	}
-void Platform::_fireFreeze()		{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationFreeze();	}
-void Platform::_fireDefreeze()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationDefreeze();	}
-void Platform::_fireTermination()	{	for( int i = 0; i < focusListeners.size(); ++i )	focusListeners.at(i)->onApplicationTermination();	}
+void Platform::_fireFocusLost() {
+	for(auto&& l : focusListeners)
+		l->onApplicationFocusLost();
+}
+void Platform::_fireFocusGained() {
+	for(auto&& l : focusListeners)
+		l->onApplicationFocusGained();
+}
+void Platform::_fireFreeze() {
+	for(auto&& l : focusListeners)	
+		l->onApplicationFreeze();
+}
+void Platform::_fireDefreeze() {
+	for(auto&& l : focusListeners)	
+		l->onApplicationDefreeze();
+}
+void Platform::_fireTermination() {
+	for(auto&& l : focusListeners)	
+		l->onApplicationTermination();
+}
