@@ -6,16 +6,13 @@
 
 using namespace Dojo;
 
-Sprite::Sprite(Object* parent, const Vector& pos, const String& defaultAnimName, float tpf, bool pp) :
+Dojo::Sprite::Sprite(Object& parent, const Vector& pos, const String& defaultAnimName /*= String::EMPTY*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
 	AnimatedQuad(parent, pos),
 	mAnimationIdx(-1) {
-	pixelPerfect = pp;
-
-	//get rid of default animation
-	SAFE_DELETE( animation );
+	this->pixelPerfect = pixelPerfect;
 
 	if (defaultAnimName.size()) {
-		setAnimation(registerAnimation(defaultAnimName, tpf));
+		setAnimation(registerAnimation(defaultAnimName, timePerFrame));
 
 		//set convenient size to fit the first frame			
 		_updateScreenSize();

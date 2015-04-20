@@ -23,9 +23,9 @@ namespace Dojo {
 
 		Vector uvOffset;
 
-		Renderable(Object* parent, const Vector& pos, Mesh* m = nullptr);
+		Renderable(Object& parent, const Vector& pos, Mesh* m = nullptr);
 
-		Renderable(Object* parent, const Vector& pos, const String& meshName);
+		Renderable(Object& parent, const Vector& pos, const String& meshName);
 
 		virtual ~Renderable();
 

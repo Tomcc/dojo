@@ -51,14 +51,14 @@ namespace Dojo {
 		};
 
 		///creates a new "free touch area" with the given parameters
-		TouchArea(Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer = 0);
+		TouchArea(Listener& l, Object& parent, const Vector& pos, const Vector& size, int layer = 0);
 
 		///creates a new touch area copying the renderable's parameters
-		TouchArea(Renderable* image, Listener* l);
+		TouchArea(Renderable& image, Listener& l);
 
 		virtual ~TouchArea();
 
-		void setListener(Listener* l);
+		void setListener(Listener& l);
 
 		int getLayer() const;
 

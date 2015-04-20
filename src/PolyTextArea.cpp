@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-PolyTextArea::PolyTextArea(Object* parent, const Vector& position, Font* font, bool centered, RenderingType rt) :
+Dojo::PolyTextArea::PolyTextArea(Object& parent, const Vector& position, Font* font, bool centered, RenderingType rt) :
 	Renderable(parent, position),
 	mCentered(centered),
 	mDirty(true), //be sure to init anyways even if the user doesn't write anything

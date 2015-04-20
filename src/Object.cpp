@@ -9,9 +9,9 @@
 using namespace Dojo;
 using namespace glm;
 
-Object::Object(Object* parentObject, const Vector& pos, const Vector& bbSize):
+Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 	position(pos),
-	gameState(parentObject->getGameState()),
+	gameState(parentObject.getGameState()),
 	speed(0, 0, 0),
 	active(true),
 	scale(1, 1, 1),

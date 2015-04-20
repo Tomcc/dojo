@@ -98,13 +98,9 @@ namespace Dojo {
 			\param pos its position
 			\param immediateAnim the name of the animation it will be set to
 			\param timePerFrame immediate animation's time per frame */
-		AnimatedQuad(Object* parent, const Vector& pos, const String& immediateAnim = String::EMPTY, float timePerFrame = 0.0f);
+		AnimatedQuad(Object& parent, const Vector& pos, const String& immediateAnim = String::EMPTY, float timePerFrame = 0.0f);
 
-		virtual ~AnimatedQuad() {
-			//HACK MEMLEAK
-			//if( animation ) 
-			//	delete animation;
-		}
+		virtual ~AnimatedQuad();
 
 		///resets the AnimatedQuad to a "post-constructor" state
 		virtual void reset();
@@ -142,8 +138,8 @@ namespace Dojo {
 			return animation->getElapsedLoops();
 		}
 
-		Animation* getAnimation() {
-			return animation;
+		Animation& getAnimation() {
+			return *animation;
 		}
 
 		///forces the animation to a given time

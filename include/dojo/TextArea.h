@@ -32,7 +32,7 @@ namespace Dojo {
 		\param center the position is at the center of the string
 		\param bounds TextArea's AABB
 		*/
-		TextArea(Object* l,
+		TextArea(Object& l,
 				const String& fontSetName,
 				const Vector& pos,
 				bool center = false,

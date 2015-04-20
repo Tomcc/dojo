@@ -7,7 +7,7 @@
 
 using namespace Dojo;
 
-Renderable::Renderable(Object* parent, const Vector& pos, Mesh* m) :
+Renderable::Renderable(Object& parent, const Vector& pos, Mesh* m) :
 	Object(parent, pos, Vector::ONE),
 	visible(true),
 	layer(INT_MIN),
@@ -18,7 +18,7 @@ Renderable::Renderable(Object* parent, const Vector& pos, Mesh* m) :
 	mesh = m;
 }
 
-Renderable::Renderable(Object* parent, const Vector& pos, const String& meshName) :
+Renderable::Renderable(Object& parent, const Vector& pos, const String& meshName) :
 	Object(parent, pos, Vector::ONE),
 	visible(true),
 	layer(0),

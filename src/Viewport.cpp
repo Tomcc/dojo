@@ -13,7 +13,7 @@
 using namespace Dojo;
 
 Viewport::Viewport(
-	Object* parent,
+	Object& parent,
 	const Vector& pos,
 	const Vector& size,
 	const Color& clear,
@@ -53,7 +53,7 @@ void Viewport::addFader(int layer) {
 	DEBUG_ASSERT( !mFaderObject, "A fade overlay object already exists" );
 
 	//create the fader object			
-	auto r = make_unique<Renderable>(getGameState(), Vector(0, 0, -1), "texturedQuad");
+	auto r = make_unique<Renderable>(*getGameState(), Vector(0, 0, -1), "texturedQuad");
 	r->color = Color::NIL;
 
 	r->scale.x = size.x;

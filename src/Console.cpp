@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Console::Console(Object* parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source) :
+Dojo::Console::Console(Object& parent, const Vector& topLeft, const Vector& bottomRight, const String& fontName, Log* source /*= gp_log*/) :
 	Renderable(parent, Vector::ZERO, "texturedQuad"),
 	mDirty(true) {
 	//set the console itself as backdrop
@@ -21,7 +21,7 @@ Console::Console(Object* parent, const Vector& topLeft, const Vector& bottomRigh
 
 	//find how many lines of this textArea can be contained in this console
 	Vector fontSize;
-	parent->getGameState()->getViewport()->makeScreenSize(fontSize,
+	parent.getGameState()->getViewport()->makeScreenSize(fontSize,
 														mText->getFont()->getFontWidth(),
 														mText->getLineHeight());
 	mMaxLines = (int)((scale.y - 0.2f) / fontSize.y);

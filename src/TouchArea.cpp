@@ -5,24 +5,22 @@
 
 using namespace Dojo;
 
-TouchArea::TouchArea(Listener* l, Object* parent, const Vector& pos, const Vector& size, int layer) :
+TouchArea::TouchArea(Listener& l, Object& parent, const Vector& pos, const Vector& size, int layer) :
 	Object(parent, pos, size),
-	listener(l),
+	listener(&l),
 	mPressed(false),
 	mTouches(0),
 	mLayer(layer) {
-	DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
 
 	getGameState()->addTouchArea(this);
 }
 
-TouchArea::TouchArea(Renderable* r, Listener* l) :
-	Object(r->getGameState(), Vector::ZERO, r->getSize()),
-	listener(l),
+TouchArea::TouchArea(Renderable& r, Listener& l) :
+	Object(*r.getGameState(), Vector::ZERO, r.getSize()),
+	listener(&l),
 	mPressed(false),
 	mTouches(0),
-	mLayer(r->getLayer()) {
-	DEBUG_ASSERT( listener, "TouchArea needs a non-null Listener" );
+	mLayer(r.getLayer()) {
 
 	getGameState()->addTouchArea(this);
 }
@@ -71,10 +69,8 @@ void TouchArea::_incrementTouches(const Touch& touch) {
 	mTouches.push_back(touch);
 }
 
-void TouchArea::setListener(Listener* l) {
-	DEBUG_ASSERT(l, "cannot set a null listener");
-
-	listener = l;
+void TouchArea::setListener(Listener& l) {
+	listener = &l;
 }
 
 int TouchArea::getLayer() const {

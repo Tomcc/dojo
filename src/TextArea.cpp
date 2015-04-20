@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-TextArea::TextArea(Object* l,
+TextArea::TextArea(Object& l,
 					const String& fontSetName,
 					const Vector& pos,
 					bool center,
@@ -330,7 +330,7 @@ Mesh* TextArea::_createMesh() {
 }
 
 void TextArea::_pushLayer() {
-	auto r = make_unique<Renderable>(gameState, Vector::ZERO);
+	auto r = make_unique<Renderable>(*getGameState(), Vector::ZERO);
 	r->scale = scale;
 	r->setMesh(_createMesh());
 	r->setVisible(false);

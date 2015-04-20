@@ -11,9 +11,13 @@
 using namespace Dojo;
 
 AnimatedQuad::Animation::Animation(FrameSet* set, float timePerFrame) :
-	currentFrame(NULL),
+	currentFrame(nullptr),
 	mElapsedLoops(0) {
 	setup(set, timePerFrame);
+}
+
+AnimatedQuad::~AnimatedQuad() {
+
 }
 
 void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
@@ -33,9 +37,8 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 		totalTime = 1;
 }
 
-AnimatedQuad::AnimatedQuad(Object* parent, const Vector& pos, const String& immediateAnim, float tpf) :
+AnimatedQuad::AnimatedQuad(Object& parent, const Vector& pos, const String& immediateAnim /*= String::EMPTY*/, float timePerFrame /*= 0.0f*/) :
 	Renderable(parent, pos),
-	animation(NULL),
 	animationTime(0),
 	pixelScale(1, 1),
 	animationSpeedMultiplier(1),
@@ -48,12 +51,14 @@ AnimatedQuad::AnimatedQuad(Object* parent, const Vector& pos, const String& imme
 
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 
-	animation = new Animation(NULL, 0);
+	//TODO not thread safe? nothing else is anyway
+	static Animation dummyAnimation(nullptr, 0);
+	animation = &dummyAnimation;
 
 	reset();
 
 	if (immediateAnim.size())
-		immediateAnimation(immediateAnim, tpf);
+		immediateAnimation(immediateAnim, timePerFrame);
 }
 
 void AnimatedQuad::reset() {
@@ -63,9 +68,9 @@ void AnimatedQuad::reset() {
 	screenSize.x = screenSize.y = 1;
 
 	if (animation)
-		animation->setup(NULL, 0);
+		animation->setup(nullptr, 0);
 
-	setTexture(NULL);
+	setTexture(nullptr);
 	mesh = gameState->getMesh("texturedQuad");
 
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
@@ -80,7 +85,7 @@ void AnimatedQuad::immediateAnimation(const String& name, float timePerFrame) {
 }
 
 void AnimatedQuad::immediateAnimation(FrameSet* s, float timePerFrame) {
-	DEBUG_ASSERT(s, "immediateAnimation: setting a NULL animation");
+	DEBUG_ASSERT(s, "immediateAnimation: setting a nullptr animation");
 
 	animation->setup(s, timePerFrame);
 
@@ -130,7 +135,7 @@ void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
 }
 
 void AnimatedQuad::_setTexture(Texture* t) {
-	DEBUG_ASSERT(t, "texture is null");
+	DEBUG_ASSERT(t, "texture is nullptr");
 
 	setTexture(t, 0);
 
