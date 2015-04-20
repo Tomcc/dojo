@@ -12,21 +12,21 @@ TouchArea::TouchArea(Listener& l, Object& parent, const Vector& pos, const Vecto
 	mTouches(0),
 	mLayer(layer) {
 
-	getGameState()->addTouchArea(this);
+	getGameState().addTouchArea(this);
 }
 
 TouchArea::TouchArea(Renderable& r, Listener& l) :
-	Object(*r.getGameState(), Vector::ZERO, r.getSize()),
+	Object(r.getGameState(), Vector::ZERO, r.getSize()),
 	listener(&l),
 	mPressed(false),
 	mTouches(0),
 	mLayer(r.getLayer()) {
 
-	getGameState()->addTouchArea(this);
+	getGameState().addTouchArea(this);
 }
 
 TouchArea::~TouchArea() {
-	getGameState()->removeTouchArea(this);
+	getGameState().removeTouchArea(this);
 }
 
 void TouchArea::_fireOnTouchUsingCurrentTouches() {

@@ -153,12 +153,14 @@ namespace Dojo {
 		LayerList busyLayers, freeLayers;
 		int actualCharacters = 0;
 
+		std::vector<Unique<Mesh>> meshPool;
+
 		void _prepare();
 
 		void _centerLastLine(int startingAt, float size);
 
 		///create a mesh to be used for text
-		Mesh* _createMesh();
+		Unique<Mesh> _createMesh();
 
 		///create a Layer that uses the given Page
 		void _pushLayer();

@@ -21,7 +21,7 @@ Dojo::Console::Console(Object& parent, const Vector& topLeft, const Vector& bott
 
 	//find how many lines of this textArea can be contained in this console
 	Vector fontSize;
-	parent.getGameState()->getViewport()->makeScreenSize(fontSize,
+	parent.getGameState().getViewport()->makeScreenSize(fontSize,
 														mText->getFont()->getFontWidth(),
 														mText->getLineHeight());
 	mMaxLines = (int)((scale.y - 0.2f) / fontSize.y);

@@ -103,8 +103,8 @@ namespace Dojo {
 			return halfSize;
 		}
 
-		GameState* getGameState() const {
-			return gameState;
+		GameState& getGameState() const {
+			return *gameState;
 		}
 
 		///returns the world position of a point in local space

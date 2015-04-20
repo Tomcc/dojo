@@ -307,6 +307,8 @@ void TextArea::_destroyLayers() {
 
 	while (freeLayers.size() > 0)
 		_destroyLayer(**freeLayers.begin());
+
+	meshPool.clear();
 }
 
 void TextArea::_centerLastLine(int startingAt, float size) {
@@ -320,8 +322,8 @@ void TextArea::_centerLastLine(int startingAt, float size) {
 }
 
 ///create a mesh to be used for text
-Mesh* TextArea::_createMesh() {
-	Mesh* mesh = new Mesh();
+Unique<Mesh> Dojo::TextArea::_createMesh() {
+	auto mesh = make_unique<Mesh>();
 	mesh->setDynamic(true);
 	mesh->setVertexFields({VertexField::Position2D, VertexField::UV0});
 	mesh->setTriangleMode(TriangleMode::TriangleList);
@@ -330,9 +332,12 @@ Mesh* TextArea::_createMesh() {
 }
 
 void TextArea::_pushLayer() {
-	auto r = make_unique<Renderable>(*getGameState(), Vector::ZERO);
+
+	meshPool.emplace_back(_createMesh());
+
+	auto r = make_unique<Renderable>(getGameState(), Vector::ZERO);
 	r->scale = scale;
-	r->setMesh(_createMesh());
+	r->setMesh(meshPool.back().get());
 	r->setVisible(false);
 	r->setActive(false);
 

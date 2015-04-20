@@ -47,7 +47,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, const Vector& pos, const String& imme
 	inheritScale = false;
 
 	//use the default quad
-	mesh = getGameState()->getMesh("texturedQuad");
+	mesh = getGameState().getMesh("texturedQuad");
 
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 
