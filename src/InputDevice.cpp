@@ -31,27 +31,19 @@ bool InputDevice::isKeyDown(KeyCode key) {
 
 bool InputDevice::isKeyDown(int action) {
 	//check all the keys bound to this one
-	auto range = mInverseBindings.equal_range(action);
-
-	for (; range.first != range.second; ++range.first) {
-		if (isKeyDown(range.first->second))
+	for (auto&& binding : mBindings) {
+		if (binding.action == action && isKeyDown(binding.key))
 			return true;
 	}
 	return false;
 }
 
 void InputDevice::addBinding(int action, KeyCode key) {
-	mBindings[key] = action;
-	mInverseBindings.emplace(action, key);
+	mBindings.emplace(action, key);
 }
 
 float InputDevice::getAxis(Axis axis) {
 	return mAxis[axis];
-}
-
-int InputDevice::getActionForKey(KeyCode key) {
-	KeyActionMap::iterator elem = mBindings.find(key);
-	return elem != mBindings.end() ? elem->second : key;
 }
 
 void InputDevice::poll(float dt) {
@@ -62,15 +54,18 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 	if (isKeyDown(key) != pressed) {
 		mButton[key] = pressed; //buffer state
 
-		int action = getActionForKey(key);
+		//notify once for every action connected to this key
+		for (auto&& binding : mBindings) {
+			if (binding.key == key) {
+				if (pressed)
+					for (InputDeviceListener* l : pListeners)
+						l->onButtonPressed(*this, binding.action);
 
-		if (pressed)
-			for (InputDeviceListener* l : pListeners)
-				l->onButtonPressed(*this, action);
-
-		else
-			for (InputDeviceListener* l : pListeners)
-				l->onButtonReleased(*this, action);
+				else
+					for (InputDeviceListener* l : pListeners)
+						l->onButtonReleased(*this, binding.action);
+			}
+		}
 	}
 }
 

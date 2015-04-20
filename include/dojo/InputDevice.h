@@ -72,11 +72,6 @@ namespace Dojo {
 		*/
 		void addBinding(int action, KeyCode key);
 
-		///returns the action bound to this KeyCode
-		/** 
-		/remark the default action for unassigned keys is the key number itself */
-		int getActionForKey(KeyCode key);
-
 		///each device can be polled each frame if needed
 		virtual void poll(float dt);
 
@@ -92,8 +87,6 @@ namespace Dojo {
 	protected:
 
 		typedef SmallSet<InputDeviceListener*> ListenerList;
-		typedef std::unordered_map<KeyCode, int, std::hash<int>> KeyActionMap;
-		typedef std::unordered_multimap<int, KeyCode> ActionKeyMap;
 		typedef std::unordered_map<KeyCode, bool, std::hash<int>> KeyPressedMap;
 		typedef std::vector<float> FloatList;
 
@@ -104,8 +97,18 @@ namespace Dojo {
 		KeyPressedMap mButton;
 		FloatList mAxis, mDeadZone;
 
-		KeyActionMap mBindings;
-		ActionKeyMap mInverseBindings;
+		struct Binding {
+			int action;
+			KeyCode key;
+			Binding() {}
+			Binding(int action, KeyCode key) :
+				action(action),
+				key(key) {
+				
+			}
+		};
+
+		SmallSet<Binding> mBindings;
 
 		int mID;
 	};
