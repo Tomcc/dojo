@@ -51,7 +51,7 @@ Touch::Type win32messageToMouseButton(UINT message) {
 	case WM_MBUTTONUP:
 		return Touch::Type::LeftClick;
 	default:
-		DEBUG_FAIL("unknown mouse message");
+		FAIL("unknown mouse message");
 		return Touch::Type::Tap;
 	}
 }

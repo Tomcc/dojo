@@ -108,7 +108,7 @@ void Mesh::setIndexByteSize(byte bytenumber) {
 		indexGLType = GL_UNSIGNED_INT;
 		indexMaxValue = 0xffffffff;
 #else
-		DEBUG_FAIL("32 bit indices are disabled (force enabled defining DOJO_32BIT_INDICES_AVAILABLE)");
+		FAIL("32 bit indices are disabled (force enabled defining DOJO_32BIT_INDICES_AVAILABLE)");
 #endif
 	}
 }
@@ -230,7 +230,7 @@ int Mesh::getPrimitiveCount() const {
 	case TriangleMode::LineList: return elemCount / 2;
 	case TriangleMode::PointList: return elemCount;
 	default:
-		DEBUG_FAIL("Invalid triangle mode");
+		FAIL("Invalid triangle mode");
 		return 0;
 	}
 }

@@ -261,10 +261,10 @@ bool Shader::onLoad() {
 	GLint linked;
 	glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
 	loaded = linked != 0;
-	if (!linked) {
-		DEBUG_FAIL( "Could not link a shader program" );
-	}
-	else {
+
+	DEBUG_ASSERT(linked, "Could not link a shader program");
+
+	if(linked) {
 		GLchar namebuf[1024];
 		GLint nameLength, size;
 		GLenum type;
@@ -316,12 +316,12 @@ bool Shader::onLoad() {
 
 void Shader::use( Renderable* user )
 {
-	DEBUG_FAIL( "Shaders not supported" );
+	FAIL( "Shaders not supported" );
 }
 
 bool Shader::onLoad()
 {
-	DEBUG_FAIL( "Shaders not supported" );
+	FAIL( "Shaders not supported" );
 	return false;
 }
 

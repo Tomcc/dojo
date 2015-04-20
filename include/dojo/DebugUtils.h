@@ -15,7 +15,7 @@
 #define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
 #define DEBUG_TODO DEBUG_ASSERT( false, "METHOD NOT IMPLEMENTED" )
-#define DEBUG_FAIL( MSG ) DEBUG_ASSERT( false, MSG )
+#define FAIL( MSG ) DEBUG_ASSERT( false, MSG )
 //fix...
 #if defined( __ANDROID__ ) 
 		#include <sstream>
@@ -49,7 +49,7 @@
 	#define DEBUG_ASSERT( T, MSG ) {}
 	#define DEBUG_ASSERT_N( T ) {}
 	#define DEBUG_TODO UNREACHABLE_BRANCH
-	#define DEBUG_FAIL UNREACHABLE_BRANCH
+	#define FAIL UNREACHABLE_BRANCH
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}
 	#define CHECK_GL_ERROR {}

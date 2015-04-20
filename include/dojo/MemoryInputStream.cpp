@@ -41,7 +41,7 @@ int MemoryInputStream::seek(long offset, int fromWhere /*= SEEK_SET */) {
 	else if (fromWhere == SEEK_END)
 		mPosition = mSize - offset;
 	else
-	DEBUG_FAIL("invalid seek origin");
+		FAIL("invalid seek origin");
 
 	return 0;
 }

@@ -55,16 +55,13 @@ Unique<Object> Object::removeChild(Object& o) {
 	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
 
 	auto elem = ChildList::find(childs, o);
-	if (elem != childs.end()) {
-		auto child = std::move(*elem);
-		_unregisterChild(*child);
-		childs.erase(elem);
-		return child;
-	}
-	else {
-		DEBUG_FAIL("This object is not a child");
-		return nullptr;
-	}
+
+	DEBUG_ASSERT(elem != childs.end(), "This object is not a child");
+
+	auto child = std::move(*elem);
+	_unregisterChild(*child);
+	childs.erase(elem);
+	return child;
 }
 
 void Object::collectChilds() {

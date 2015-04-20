@@ -16,7 +16,7 @@ ShaderProgram::ShaderProgram(ResourceGroup* creator, const String& filePath) :
 	else if (ext == String("ps"))
 		mType = ShaderProgramType::FragmentShader;
 	else
-	DEBUG_FAIL( "Unsupported shader type" );
+		FAIL( "Unsupported shader type" );
 }
 
 ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
@@ -59,7 +59,7 @@ bool ShaderProgram::_load() {
 			free(compiler_log);
 		}
 
-		DEBUG_FAIL("A shader program failed to compile!");
+		FAIL("A shader program failed to compile!");
 	}
 
 	return loaded;
@@ -78,13 +78,13 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 
 bool ShaderProgram::_load()
 {
-	DEBUG_FAIL( "Shaders not supported" );
+	FAIL( "Shaders not supported" );
 	return false;
 }
 
 void ShaderProgram::onUnload( bool soft /* = false */ )
 {
-	DEBUG_FAIL( "Shaders not supported" );
+	FAIL( "Shaders not supported" );
 }
 #endif
 

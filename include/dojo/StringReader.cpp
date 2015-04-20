@@ -79,7 +79,7 @@ byte StringReader::getHexValue(unichar c) {
 	else if (isHex(c))
 		return 10 + c - 'a';
 	else {
-		DEBUG_FAIL("The value is not an hex number");
+		FAIL("The value is not an hex number");
 		return 0;
 	}
 }
