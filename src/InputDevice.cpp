@@ -38,8 +38,17 @@ bool InputDevice::isKeyDown(int action) {
 	return false;
 }
 
+bool InputDevice::hasBinding(int action, KeyCode key) const {
+	for (auto&& b : mBindings) {
+		if (action == b.action && key == b.key)
+			return true;
+	}
+	return false;
+}
+
 void InputDevice::addBinding(int action, KeyCode key) {
-	mBindings.emplace(action, key);
+	if (!hasBinding(action,key))
+		mBindings.emplace(action, key);
 }
 
 float InputDevice::getAxis(Axis axis) {

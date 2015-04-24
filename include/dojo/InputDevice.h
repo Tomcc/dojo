@@ -44,6 +44,7 @@ namespace Dojo {
 		///returns if the given action is pressed
 		virtual bool isKeyDown(KeyCode key);
 
+		bool hasBinding(int action, KeyCode key) const;
 		bool isKeyDown(int action);
 
 		///returns the instant state of this axis
