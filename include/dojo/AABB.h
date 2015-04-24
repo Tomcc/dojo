@@ -45,6 +45,13 @@ namespace Dojo {
 			};
 		}
 
+		AABB clip(const AABB& bb) const {
+			return{
+				Vector::max(min, bb.min),
+				Vector::min(max, bb.max)
+			};
+		}
+
 		Vector getCenter() const {
 			return (max + min) * 0.5f;
 		}

@@ -52,7 +52,6 @@ RenderState::RenderState() :
 	srcBlend(GL_SRC_ALPHA),
 	destBlend(GL_ONE_MINUS_SRC_ALPHA),
 	blendFunction(GL_FUNC_ADD),
-	mesh(nullptr),
 	pShader(nullptr) {
 	memset(textures, 0, sizeof(textures)); //zero all the textures
 }

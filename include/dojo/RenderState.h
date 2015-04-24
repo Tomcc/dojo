@@ -162,7 +162,7 @@ namespace Dojo {
 		TextureUnit* textures[ DOJO_MAX_TEXTURES ];
 		int mTextureNumber;
 
-		Mesh* mesh;
+		Mesh* mesh = nullptr;
 
 		Shader* pShader;
 
