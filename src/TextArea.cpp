@@ -179,7 +179,6 @@ void TextArea::_destroyLayer(Renderable& r) {
 	if (&r == this) //do not delete the TA itself, even if it is a layer
 		return;
 
-	delete r.getMesh();
 	removeChild(r);
 
 	busyLayers.erase(&r);
