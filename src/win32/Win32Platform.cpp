@@ -470,7 +470,7 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 	mFullscreen = fullscreen;
 
 	//store the new setting into config.ds
-	config.setBoolean("fullscreen", mFullscreen);
+	config.set("fullscreen", mFullscreen);
 	save(config, "config");
 }
 

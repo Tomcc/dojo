@@ -233,7 +233,7 @@ bool Shader::onLoad() {
 	auto& defines = desc.getTable("defines");
 
 	for (auto& entry : defines)
-		mPreprocessorHeader += std::string("#define ") + entry.second->getAsString().ASCII() + "\n";
+		mPreprocessorHeader += std::string("#define ") + entry.second->getAs<String>().ASCII() + "\n";
 
 	//grab all types
 	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i)

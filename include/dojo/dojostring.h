@@ -191,7 +191,7 @@ namespace Dojo {
 		}
 
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
-		void appendRaw(void* data, int sz) {
+		void appendRaw(const void* data, int sz) {
 			DEBUG_ASSERT( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
 
 			append((unichar*)data, sz / sizeof( unichar));

@@ -59,13 +59,13 @@ void Table::serialize(String& buf, String indent) const {
 			buf += itr->first + " = ";
 
 		switch (e.type) {
-		case FT_NUMBER:
+		case FieldType::Float:
 			buf.appendFloat(*((float*)e.getRawValue()));
 			break;
-		case FT_STRING:
+		case FieldType::String:
 			buf += '\"' + *((String*)e.getRawValue()) + '\"';
 			break;
-		case FT_VECTOR:
+		case FieldType::Vector:
 			v = (Vector*)e.getRawValue();
 			buf += '(';
 			buf.appendFloat(v->x);
@@ -76,45 +76,48 @@ void Table::serialize(String& buf, String indent) const {
 			buf += ')';
 
 			break;
-		case FT_DATA:
+		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
 			buf += '#' + String(data->size) + ' ';
 
 			buf.appendRaw(data->ptr, data->size);
 
 			break;
-		case FT_TABLE:
+		case FieldType::ChildTable:
 			buf += String("{\n");
 			((Table*)e.getRawValue())->serialize(buf, indent + '\t');
 
 			buf += indent + '}';
 
 			break;
-		default: break;
+		default: 
+			FAIL("Unsupported type");
 		}
 
 		buf += '\n';
 	}
 }
 
-enum ParseState {
-	PS_TABLE,
-	PS_NAME,
-	PS_NAME_ENDED,
-	PS_EQUAL,
-	PS_COMMENT,
-	PS_END,
-	PS_ERROR
+enum class ParseState {
+	Table,
+	Name,
+	NameEnd,
+	Equal,
+	Comment,
+	End,
+	Error
 };
 
-enum ParseTarget {
-	PT_UNDEFINED,
-	PT_NUMBER,
-	PT_STRING,
-	PT_DATA,
-	PT_VECTOR,
-	PT_CHILD,
-	PT_IMPLICITTRUE
+//TODO shouldn't we reuse the type here?
+enum class ParseTarget {
+	Undefined,
+	Float,
+	String,
+	RawData,
+	Vector,
+	Table,
+	Int64,
+	ImplicitTrue
 };
 
 bool isNameStarter(unichar c) {
@@ -138,8 +141,8 @@ bool isWhiteSpace(unichar c) {
 }
 
 void Table::deserialize(StringReader& buf) {
-	ParseState state = PS_TABLE;
-	ParseTarget target = PT_UNDEFINED;
+	ParseState state = ParseState::Table;
+	ParseTarget target = ParseTarget::Undefined;
 
 	String curName, str;
 	float number;
@@ -152,75 +155,77 @@ void Table::deserialize(StringReader& buf) {
 
 	//feed one char at a time and do things
 	unichar c = 1, c2;
-	while (state != PS_END && state != PS_ERROR) {
+	while (state != ParseState::End && state != ParseState::Error) {
 		c = buf.get();
 
 		switch (state) {
-		case PS_TABLE: //wait for either a name, or an anon value	
+		case ParseState::Table: //wait for either a name, or an anon value	
 			if (c == '}' || c == 0)
-				state = PS_END;
+				state = ParseState::End;
 			else if (isNameStarter(c))
-				state = PS_NAME;
-
+				state = ParseState::Name;
 
 			else if (c == '"')
-				target = PT_STRING;
+				target = ParseTarget::String;
 			else if (c == '(')
-				target = PT_VECTOR;
+				target = ParseTarget::Vector;
 			else if (c == '#')
-				target = PT_DATA;
+				target = ParseTarget::RawData;
 			else if (c == '{')
-				target = PT_CHILD;
+				target = ParseTarget::Table;
 			else if (isNumber(c))
-				target = PT_NUMBER;
+				target = ParseTarget::Float;
 
-			if (state == PS_NAME) {
+			if (state == ParseState::Name) {
 				curName.clear();
 				curName += c;
 			}
 
 			break;
-		case PS_NAME:
+		case ParseState::Name:
 			if (isName(c))
 				curName += c;
 			else if (c == '=')
-				state = PS_EQUAL;
+				state = ParseState::Equal;
 			else
-				state = PS_NAME_ENDED;
+				state = ParseState::NameEnd;
 
 			break;
 
-		case PS_NAME_ENDED: //wait for an equal; drop whitespace and fall back if other is found
+		case ParseState::NameEnd: //wait for an equal; drop whitespace and fall back if other is found
 			if (c == '=')
-				state = PS_EQUAL;
+				state = ParseState::Equal;
 			else if (!isWhiteSpace(c)) //it is something else - store this as an implicit bool and reset the parser
-				target = PT_IMPLICITTRUE;
+				target = ParseTarget::ImplicitTrue;
 
 			break;
 
-		case PS_EQUAL: //wait for value start
+		case ParseState::Equal: //wait for value start
 			if (c == '"')
-				target = PT_STRING;
+				target = ParseTarget::String;
 			else if (c == '(')
-				target = PT_VECTOR;
+				target = ParseTarget::Vector;
 			else if (c == '#')
-				target = PT_DATA;
+				target = ParseTarget::RawData;
 			else if (c == '{')
-				target = PT_CHILD;
+				target = ParseTarget::Table;
 			else if (isNumber(c))
-				target = PT_NUMBER;
+				target = ParseTarget::Float;
 
 			break;
-		default: ;
+		default: 
+			FAIL("Invalid State");
 		}
 
 		switch (target) {
-		case PT_IMPLICITTRUE:
+		case ParseTarget::Undefined:
+			break; //skip, allowed
+		case ParseTarget::ImplicitTrue:
 			buf.back();
 			set(curName, (int)1);
 			break;
 
-		case PT_NUMBER:
+		case ParseTarget::Float:
 
 			//check if next char is x, that is, really we have an hex color!
 			c2 = buf.get();
@@ -252,7 +257,7 @@ void Table::deserialize(StringReader& buf) {
 			}
 
 			break;
-		case PT_STRING:
+		case ParseTarget::String:
 
 			str.clear();
 			while (1) {
@@ -265,7 +270,7 @@ void Table::deserialize(StringReader& buf) {
 			set(curName, str);
 			break;
 
-		case PT_VECTOR:
+		case ParseTarget::Vector:
 			vec.x = buf.readFloat();
 			vec.y = buf.readFloat();
 			vec.z = buf.readFloat();
@@ -273,7 +278,7 @@ void Table::deserialize(StringReader& buf) {
 			set(curName, vec);
 			break;
 
-		case PT_DATA:
+		case ParseTarget::RawData:
 			data.size = (int)buf.readFloat();
 			data.ptr = malloc(data.size);
 
@@ -282,22 +287,23 @@ void Table::deserialize(StringReader& buf) {
 
 			buf.readBytes(data.ptr, data.size);
 
-			set(curName, data.ptr, data.size); //always retain deserialized data
+			set(curName, data); //always retain deserialized data
 			break;
 
-		case PT_CHILD: {
+		case ParseTarget::Table: {
 
 			createTable(curName).deserialize(buf);
 		}
 			break;
 
-		default: ;
+		default: 
+			FAIL("Invalid case");
 		}
 
-		if (target) //read something
+		if (target != ParseTarget::Undefined) //read something
 		{
-			state = PS_TABLE;
-			target = PT_UNDEFINED;
+			state = ParseState::Table;
+			target = ParseTarget::Undefined;
 			curName.clear();
 		}
 	}
@@ -371,7 +377,7 @@ Table& Table::createTable(const String& key /*= String::EMPTY */) {
 
 	set(name, Table());
 
-	return get(name)->getAsTable(); //TODO don't do another search
+	return get(name)->getAs<Table>(); //TODO don't do another search
 }
 
 void Table::clear() {
@@ -393,7 +399,7 @@ void Table::inherit(Table* t) {
 		//element exists - do nothing except if it's a table
 		if (existing != map.end()) {
 			//if it's a table in both tables, inherit
-			if (itr->second->type == FT_TABLE && existing->second->type == FT_TABLE)
+			if (itr->second->type == FieldType::ChildTable && existing->second->type == FieldType::ChildTable)
 				((Table*)existing->second->getRawValue())->inherit((Table*)itr->second->getRawValue());
 		}
 		else //just clone
@@ -427,68 +433,8 @@ Table::Entry* Table::get(const String& key) const {
 	return elem != container->map.end() ? elem->second.get() : nullptr;
 }
 
-float Table::getNumber(const String& key, float defaultValue /*= 0 */) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_NUMBER)
-		return e->getAsNumber();
-	else
-		return defaultValue;
-}
-
 float Table::getNumber(int idx) const {
 	return getNumber(autoMemberName(idx));
-}
-
-int Table::getInt(const String& key, int defaultValue /*= 0 */) const {
-	return (int)getNumber(key, (float)defaultValue);
-}
-
-bool Table::getBool(const String& key, bool defaultValue /*= false */) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_NUMBER)
-		return e->getAsNumber() > 0;
-	else
-		return defaultValue;
-}
-
-const String& Table::getString(const String& key, const String& defaultValue /*= String::EMPTY */) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_STRING)
-		return e->getAsString();
-	else
-		return defaultValue;
-}
-
-const Vector& Table::getVector(const String& key, const Vector& defaultValue /*= Vector::ZERO */) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_VECTOR)
-		return e->getAsVector();
-	else
-		return defaultValue;
-}
-
-const Color Table::getColor(const String& key, const Color& defaultValue /*= Color::BLACK */) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_VECTOR)
-		return Color(e->getAsVector(), defaultValue.a);
-	else
-		return defaultValue;
-}
-
-const Table& Table::getTable(const String& key) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_TABLE)
-		return e->getAsTable();
-	else
-		return EMPTY;
-}
-
-const Table::Data& Table::getData(const String& key) const {
-	Entry* e = get(key);
-	if (e && e->type == FT_DATA)
-		return e->getAsData();
-	else
-		return Data::EMPTY;
 }
 
 String Table::autoMemberName(int idx) const {

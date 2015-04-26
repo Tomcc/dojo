@@ -25,15 +25,24 @@ namespace Dojo {
 	class Table : public Resource {
 	public:
 
-		enum FieldType {
-			FT_UNDEFINED,
-			FT_NUMBER,
-			FT_STRING,
-			FT_DATA,
-			FT_VECTOR,
-			FT_TABLE
+		enum class FieldType {
+			Undefined,
+			Float,
+			String,
+			RawData,
+			Vector,
+			ChildTable,
+			Int64
 		};
 
+		template<typename T>
+		struct field_type_for
+		{
+			operator FieldType() const {
+				FAIL("Invalid type requested");
+				return FieldType::Undefined;
+			}
+		};
 		class Data {
 		public:
 			static const Data EMPTY;
@@ -60,11 +69,10 @@ namespace Dojo {
 
 		class Entry {
 		public:
-			Table::FieldType type;
+			const Table::FieldType type;
 
 			explicit Entry(Table::FieldType fieldType) :
 				type(fieldType) {
-
 			}
 
 			virtual ~Entry() {
@@ -74,29 +82,10 @@ namespace Dojo {
 			///returns a raw unyped pointer to the underlying data
 			virtual void* getRawValue() = 0;
 
-			float getAsNumber() {
-				DEBUG_ASSERT(type == Table::FT_NUMBER, "type mismatch while reading from a Table Entry");
-				return *(float*)getRawValue();
-			}
-
-			const String& getAsString() {
-				DEBUG_ASSERT(type == Table::FT_STRING, "type mismatch while reading from a Table Entry");
-				return *(String*)getRawValue();
-			}
-
-			const Vector& getAsVector() {
-				DEBUG_ASSERT(type == Table::FT_VECTOR, "type mismatch while reading from a Table Entry");
-				return *(Vector*)getRawValue();
-			}
-
-			Table& getAsTable() {
-				DEBUG_ASSERT(type == Table::FT_TABLE, "type mismatch while reading from a Table Entry");
-				return *(Table*)getRawValue();
-			}
-
-			const Table::Data& getAsData() {
-				DEBUG_ASSERT(type == Table::FT_DATA, "type mismatch while reading from a Table Entry");
-				return *(Table::Data*)getRawValue();
+			template<typename T>
+			T& getAs() {
+				DEBUG_ASSERT(type == field_type_for<T>(), "type mismatch while reading from a Table Entry");
+				return *(T*)getRawValue();
 			}
 
 			virtual Unique<Entry> clone() = 0;
@@ -179,42 +168,23 @@ namespace Dojo {
 			//actually set the key on the right table
 			t->setImpl(actualKey, type, value);
 		}
-
-		void set(const String& key, float value) {
-			set(key, FT_NUMBER, value);
+		
+		template<typename T>
+		void set(const String& key, const T& value) {
+			set(key, field_type_for<T>(), value);
 		}
 
-		void set(const String& key, int value) {
+		template<>
+		void set<Color>(const String& key, const Color& value) {
+			set(key, Vector(value.r, value.g, value.b));
+		}
+		template<>
+		void set<int>(const String& key, const int& value) {
 			set(key, (float)value);
 		}
-
-		///boolean has to be specified as C has the ugly habit of casting everything to it without complaining
-		void setBoolean(const String& key, bool value) {
-			set(key, (float)value);
-		}
-
-		void set(const String& key, const String& value) {
-			set(key, FT_STRING, value);
-		}
-
-		void set(const String& key, const Vector& value) {
-			set(key, FT_VECTOR, value);
-		}
-
-		void set(const String& key, const Color& value) {
-			set(key, FT_VECTOR, Vector(value.r, value.g, value.b));
-		}
-
-		///WARNING - Data DOES NOT ACQUIRE OWNERSHIP OF THE DATA!!!
-		void set(const String& key, void* value, int size) {
-			DEBUG_ASSERT( value, "Setting a NULL Data value" );
-			DEBUG_ASSERT( size >= 0, "Setting a Data value size <= 0" );
-
-			set(key, FT_DATA, Data(value, size));
-		}
-
-		void set(const String& key, const Table& value) {
-			set(key, FT_TABLE, value);
+		template<>
+		void set<bool>(const String& key, const bool& value) {
+			set(key, value ? 1.f : 0.f);
 		}
 
 		///creates a new nested table named key
@@ -260,21 +230,50 @@ namespace Dojo {
 		///generic get
 		Entry* get(const String& key) const;
 
-		float getNumber(const String& key, float defaultValue = 0) const;
+		template<typename T> 
+		const T& get(const String& key, const T& defaultValue) const {
+			auto e = get(key);
+			return (e && e->type == field_type_for<T>()) ? e->getAs<T>() : defaultValue;
+		}
 
-		int getInt(const String& key, int defaultValue = 0) const;
+		//explicit implementations with defaulted default value
+		float getNumber(const String& key, float defaultValue = 0) const  {
+			return get(key, defaultValue);
+		}
 
-		bool getBool(const String& key, bool defaultValue = false) const;
+		const String& getString(const String& key, const String& defaultValue = String::EMPTY) const {
+			return get(key, defaultValue);
+		}
 
-		const String& getString(const String& key, const String& defaultValue = String::EMPTY) const;
+		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::ZERO) const  {
+			return get(key, defaultValue);
+		}
 
-		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::ZERO) const;
+		const Color getColor(const String& key, const Color& defaultValue = Color::BLACK) const  {
+			auto v = get(key, Vector(defaultValue.r, defaultValue.g, defaultValue.b));
+			return{ v.x, v.y, v.z, defaultValue.a };
+		}
 
-		const Color getColor(const String& key, const Color& defaultValue = Color::BLACK) const;
+		const int64_t& getInt64(const String& key, const int64_t& defaultValue = 0) const  {
+			return get(key, defaultValue);
+		}
 
-		const Table& getTable(const String& key) const;
+		const Table& getTable(const String& key, const Table& defaultValue = EMPTY) const  {
+			return get(key, defaultValue);
+		}
 
-		const Data& getData(const String& key) const;
+		const Data& getData(const String& key, const Data& defaultValue = Data::EMPTY) const {
+			return get(key, defaultValue);
+		}
+
+		//special implementations
+		int getInt(const String& key, int defaultValue = 0) const {
+			return (int)get(key, (float)defaultValue);
+		}
+
+		bool getBool(const String& key, bool defaultValue = false) const {
+			return get(key, (float)defaultValue) > 0.f;
+		}
 
 		String autoMemberName(int idx) const;
 
@@ -349,6 +348,55 @@ namespace Dojo {
 		EntryMap::iterator end() {
 			return map.end();
 		}
+
+		//specializations to get reflected types out of types
+
+		template<> struct field_type_for < float > {
+			operator FieldType() const {
+				return FieldType::Float;
+			}
+		};
+		template<> struct field_type_for < bool > {
+			operator FieldType() const {
+				return FieldType::Float;
+			}
+		};
+		template<> struct field_type_for < int > {
+			operator FieldType() const {
+				return FieldType::Float;
+			}
+		};
+		template<> struct field_type_for < unsigned int > {
+			operator FieldType() const {
+				return FieldType::Float;
+			}
+		};
+		template<> struct field_type_for < String > {
+			operator FieldType() const {
+				return FieldType::String;
+			}
+		};
+		template<> struct field_type_for < Data > {
+			operator FieldType() const {
+				return FieldType::RawData;
+			}
+		};
+		template<> struct field_type_for < Vector > {
+			operator FieldType() const {
+				return FieldType::Vector;
+			}
+		};
+		template<> struct field_type_for < Table > {
+			operator FieldType() const {
+				return FieldType::ChildTable;
+			}
+		};
+
+		template<> struct field_type_for < int64_t > {
+			operator FieldType() const {
+				return FieldType::Int64;
+			}
+		};
 
 	protected:
 
