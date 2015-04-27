@@ -167,7 +167,7 @@ namespace Dojo {
 		\param clearInputs auto-clears the input vectors
 		*/
 
-		static int CLEAR_INPUTS, PREPARE_EXTRUSION, GUESS_HOLES, DONT_MERGE_POINTS, GENERATE_HULL;
+		static int CLEAR_INPUTS, PREPARE_EXTRUSION, GUESS_HOLES, DONT_MERGE_POINTS, GENERATE_HULL, PRECISE_ARITHMETICS;
 
 		void tessellate(int flags, int maxIndices = 1000);
 

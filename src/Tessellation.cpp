@@ -9,7 +9,8 @@ int Tessellation::CLEAR_INPUTS = 0x1,
 	Tessellation::PREPARE_EXTRUSION = 0x1 << 1,
 	Tessellation::GUESS_HOLES = 0x1 << 2,
 	Tessellation::DONT_MERGE_POINTS = 0x1 << 3,
-	Tessellation::GENERATE_HULL = 0x1 << 4;
+	Tessellation::GENERATE_HULL = 0x1 << 4,
+	Tessellation::PRECISE_ARITHMETICS = 0x1 << 5;
 
 Tessellation::Tessellation() {
 
@@ -320,15 +321,21 @@ void Tessellation::tessellate(int flags, int maxIndices) {
 	outIndices.resize(maxIndices);
 	out.trianglelist = outIndices.data();
 
-	std::string commandLine = segments.empty() ? "zQNB" : "pzQNB";
+	std::string commandLine = "zQNB";
+
+	if ((flags & PRECISE_ARITHMETICS) == 0)
+		commandLine += 'X'; //no need for precise arithmetics
+
+	if (segments.size() > 0)
+		commandLine += 'p';
 
 	if (flags & GENERATE_HULL) {
 		outHullSegments.resize(1000);
 		out.segmentlist = (int*)outHullSegments.data();
-		commandLine += "c"; //generate enclosing hull
+		commandLine += 'c'; //generate enclosing hull
 	}
 	else
-		commandLine += "P"; //ignore enclosing hull
+		commandLine += 'P'; //ignore enclosing hull
 
 	//p - triangulates "in"
 	//z - indices numbered from 0
