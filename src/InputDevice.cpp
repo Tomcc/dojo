@@ -66,13 +66,15 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 		//notify once for every action connected to this key
 		for (auto&& binding : mBindings) {
 			if (binding.key == key) {
-				if (pressed)
-					for (InputDeviceListener* l : pListeners)
-						l->onButtonPressed(*this, binding.action);
+				if (pressed) {
+					for (size_t i = 0; i < pListeners.size(); ++i) //do not use ranges! listeners can be added and removed in the inner loop
+						pListeners[i]->onButtonPressed(*this, binding.action);
+				}
 
-				else
-					for (InputDeviceListener* l : pListeners)
-						l->onButtonReleased(*this, binding.action);
+				else {
+					for (size_t i = 0; i < pListeners.size(); ++i) //do not use ranges! listeners can be added and removed in the inner loop
+						pListeners[i]->onButtonReleased(*this, binding.action);
+				}
 			}
 		}
 	}

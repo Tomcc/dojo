@@ -206,7 +206,6 @@ namespace Dojo {
 		Object* parent;
 		ChildList childs;
 
-
 		Object& _addChild(Unique<Object> o);
 		Renderable& _addChild(Unique<Renderable> o, int layer);
 
