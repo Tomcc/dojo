@@ -14,6 +14,8 @@ namespace Dojo {
 			Axis axis;
 			KeyCode min, max;
 
+			FakeAxis() {}
+
 			FakeAxis(Axis axis, KeyCode min, KeyCode max) :
 				axis(axis),
 				min(min),
@@ -26,7 +28,7 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::vector<FakeAxis> FakeAxes;
+		typedef SmallSet<FakeAxis> FakeAxes;
 
 		//a keyboard has n buttons (KC_JOYPAD_1 comes right after the KB button defs, and 2 fake axes, LX and LY
 		Keyboard();
@@ -35,6 +37,8 @@ namespace Dojo {
 		}
 
 		void addFakeAxis(Axis axis, KeyCode min, KeyCode max);
+
+		virtual void clearBindings() override;
 
 		virtual void poll(float dt) override;
 

@@ -9,7 +9,7 @@ Keyboard::Keyboard() :
 
 void Keyboard::addFakeAxis(Axis axis, KeyCode min, KeyCode max) {
 	if (!hasAxis(axis))
-		mFakeAxes.emplace_back(axis, min, max);
+		mFakeAxes.emplace(axis, min, max);
 }
 
 void Keyboard::poll(float dt) {
@@ -31,4 +31,10 @@ bool Keyboard::hasAxis(Axis x) const {
 	}
 
 	return false;
+}
+
+void Keyboard::clearBindings() {
+	InputDevice::clearBindings();
+
+	mFakeAxes.clear();
 }

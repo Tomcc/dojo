@@ -73,6 +73,9 @@ namespace Dojo {
 		*/
 		void addBinding(int action, KeyCode key);
 
+		///removes all existing bindings
+		virtual void clearBindings();
+
 		///each device can be polled each frame if needed
 		virtual void poll(float dt);
 

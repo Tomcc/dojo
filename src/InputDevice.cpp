@@ -98,3 +98,7 @@ void InputDevice::_fireDisconnected() {
 	for (InputDeviceListener* l : pListeners)
 		l->onDisconnected(*this);
 }
+
+void InputDevice::clearBindings() {
+	mBindings.clear();
+}
