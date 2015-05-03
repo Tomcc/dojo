@@ -4,7 +4,7 @@
 #include "Platform.h"
 #include "Shader.h"
 #include "dojomath.h"
-#include "TriangleMode.h"
+#include "PrimitiveMode.h"
 
 using namespace Dojo;
 
@@ -224,11 +224,11 @@ void Mesh::appendRawVertexData(void* data, IndexType count) {
 int Mesh::getPrimitiveCount() const {
 	auto elemCount = isIndexed() ? getIndexCount() : getVertexCount();
 	switch (triangleMode) {
-	case TriangleMode::TriangleList: return elemCount / 3;
-	case TriangleMode::TriangleStrip: return elemCount - 2;
-	case TriangleMode::LineStrip: return elemCount - 1;
-	case TriangleMode::LineList: return elemCount / 2;
-	case TriangleMode::PointList: return elemCount;
+	case PrimitiveMode::TriangleList: return elemCount / 3;
+	case PrimitiveMode::TriangleStrip: return elemCount - 2;
+	case PrimitiveMode::LineStrip: return elemCount - 1;
+	case PrimitiveMode::LineList: return elemCount / 2;
+	case PrimitiveMode::PointList: return elemCount;
 	default:
 		FAIL("Invalid triangle mode");
 		return 0;
@@ -462,7 +462,7 @@ bool Mesh::onLoad() {
 	setIndexByteSize(*ptr++);
 
 	//triangle mode
-	setTriangleMode((TriangleMode)*ptr++);
+	setTriangleMode((PrimitiveMode)*ptr++);
 
 	//fields
 	for (int i = 0; i < (int)VertexField::_Count; ++i) {

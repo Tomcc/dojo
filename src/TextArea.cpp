@@ -325,7 +325,7 @@ Unique<Mesh> Dojo::TextArea::_createMesh() {
 	auto mesh = make_unique<Mesh>();
 	mesh->setDynamic(true);
 	mesh->setVertexFields({VertexField::Position2D, VertexField::UV0});
-	mesh->setTriangleMode(TriangleMode::TriangleList);
+	mesh->setTriangleMode(PrimitiveMode::TriangleList);
 
 	return mesh;
 }

@@ -133,7 +133,7 @@ namespace Dojo {
 		bool isActive() const;
 
 		bool hasChilds() const {
-			return childs.size() > 0;
+			return children.size() > 0;
 		}
 
 		const Matrix& getWorldTransform() const {
@@ -155,7 +155,7 @@ namespace Dojo {
 		}
 
 		size_t getChildCount() const {
-			return childs.size();
+			return children.size();
 		}
 
 		Matrix getFullTransformRelativeTo(const Matrix& parent) const;
@@ -185,9 +185,10 @@ namespace Dojo {
 
 		virtual void onAction(float dt);
 
-		virtual void dispose() {
-			disposed = true;
-		}
+		///sets all children visible or invisible. //HACK this needs to be removed in favor of an actual scene graph traversal
+		void setAllChildrenVisibleHACK(bool visible);
+
+		virtual void dispose();
 
 		AABB transformAABB(const AABB& local) const;
 	protected:
@@ -204,12 +205,11 @@ namespace Dojo {
 		bool disposed;
 
 		Object* parent;
-		ChildList childs;
+		ChildList children;
 
 		Object& _addChild(Unique<Object> o);
 		Renderable& _addChild(Unique<Renderable> o, int layer);
 
 		void _unregisterChild(Object& child);
-
 	};
 }

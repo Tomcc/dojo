@@ -27,13 +27,13 @@ Object::~Object() {
 
 Object& Object::_addChild(Unique<Object> o) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
-	DEBUG_ASSERT(!childs.contains(o), "Element already in the vector!");
+	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
 	o->parent = this;
 
 	auto ptr = o.get();
 
-	childs.emplace(std::move(o));
+	children.emplace(std::move(o));
 
 	return *ptr;
 }
@@ -54,21 +54,21 @@ void Object::_unregisterChild(Object& child) {
 Unique<Object> Object::removeChild(Object& o) {
 	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
 
-	auto elem = ChildList::find(childs, o);
+	auto elem = ChildList::find(children, o);
 
-	DEBUG_ASSERT(elem != childs.end(), "This object is not a child");
+	DEBUG_ASSERT(elem != children.end(), "This object is not a child");
 
 	auto child = std::move(*elem);
 	_unregisterChild(*child);
-	childs.erase(elem);
+	children.erase(elem);
 	return child;
 }
 
 void Object::collectChilds() {
-	for (size_t i = 0; i < childs.size(); ++i) {
-		if (childs[i]->disposed) {
-			_unregisterChild(*childs[i]);
-			childs.erase(childs[i]);
+	for (size_t i = 0; i < children.size(); ++i) {
+		if (children[i]->disposed) {
+			_unregisterChild(*children[i]);
+			children.erase(children[i]);
 
 			i = 0; //a destructor might dispose of other children...
 		}
@@ -77,10 +77,10 @@ void Object::collectChilds() {
 
 
 void Object::destroyAllChildren() {
-	for (auto& c : childs)
+	for (auto& c : children)
 		_unregisterChild(*c);
 
-	childs.clear();
+	children.clear();
 }
 
 AABB Object::transformAABB(const AABB& local) const {
@@ -169,14 +169,14 @@ void Object::updateWorldTransform() {
 }
 
 void Object::updateChilds(float dt) {
-	if (childs.size() > 0) {
+	if (children.size() > 0) {
 
 		//WARNING: do not use a ranged for loop in this one!
 		//a child might remove any other child from the array 
 		//so we need to always check with the updated size
-		for (size_t i = 0; i < childs.size(); ++i) {
-			if (childs[i]->isActive())
-				childs[i]->onAction(dt);
+		for (size_t i = 0; i < children.size(); ++i) {
+			if (children[i]->isActive())
+				children[i]->onAction(dt);
 		}
 
 		collectChilds();
@@ -189,4 +189,16 @@ void Object::onAction(float dt) {
 	updateWorldTransform();
 
 	updateChilds(dt);
+}
+
+void Object::setAllChildrenVisibleHACK(bool visible) {
+	for (auto&& c : children) {
+		if (c->isRenderable()) {
+			((Renderable&)*c).setVisible(visible);
+		}
+	}
+}
+
+void Object::dispose() {
+	disposed = true;
 }

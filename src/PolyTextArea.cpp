@@ -25,12 +25,12 @@ Dojo::PolyTextArea::PolyTextArea(Object& parent, const Vector& position, Font* f
 
 	if (mRendering == RT_OUTLINE) {
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
-		mMesh->setTriangleMode(TriangleMode::LineList);
+		mMesh->setTriangleMode(PrimitiveMode::LineList);
 		mMesh->setVertexFieldEnabled(VertexField::Position2D);
 	}
 	else {
 		DEBUG_ASSERT( pFont->hasPolySurface(), "Cannot create a surface PolyTextArea if the font has no surface " );
-		mMesh->setTriangleMode(TriangleMode::TriangleList);
+		mMesh->setTriangleMode(PrimitiveMode::TriangleList);
 
 		if (mRendering == RT_SURFACE) {
 			mMesh->setVertexFieldEnabled(VertexField::Position2D);

@@ -14,7 +14,7 @@
 #include "Resource.h"
 #include "Vector.h"
 #include "VertexField.h"
-#include "TriangleMode.h"
+#include "PrimitiveMode.h"
 #include "AABB.h"
 
 namespace Dojo {
@@ -70,11 +70,11 @@ namespace Dojo {
 		void setDynamic(bool d);
 
 		///Sets the primitive for the rendering of this mesh
-		void setTriangleMode(TriangleMode m) {
+		void setTriangleMode(PrimitiveMode m) {
 			triangleMode = m;
 		}
 
-		TriangleMode getTriangleMode() {
+		PrimitiveMode getTriangleMode() {
 			return triangleMode;
 		}
 
@@ -225,7 +225,7 @@ namespace Dojo {
 
 		byte vertexFieldOffset[ (int)VertexField::_Count ];
 
-		TriangleMode triangleMode = TriangleMode::TriangleStrip;
+		PrimitiveMode triangleMode = PrimitiveMode::TriangleStrip;
 
 		bool dynamic = false;
 		bool editing = false;

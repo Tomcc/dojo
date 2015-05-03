@@ -83,7 +83,7 @@
     <ClInclude Include="include\dojo\Timer.h" />
     <ClInclude Include="include\dojo\Touch.h" />
     <ClInclude Include="include\dojo\TouchArea.h" />
-    <ClInclude Include="include\dojo\TriangleMode.h" />
+    <ClInclude Include="include\dojo\PrimitiveMode.h" />
     <ClInclude Include="include\dojo\Utils.h" />
     <ClInclude Include="include\dojo\Vector.h" />
     <ClInclude Include="include\dojo\VertexField.h" />
