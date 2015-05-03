@@ -26,6 +26,10 @@ namespace Dojo {
 			return T(-mValue);
 		}
 
+		T operator*(BASE rhs) const {
+			return T(mValue * rhs);
+		}
+
 	protected:
 		BASE mValue;
 	};

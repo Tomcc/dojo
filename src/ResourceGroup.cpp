@@ -28,12 +28,10 @@ ResourceGroup::ResourceGroup() :
 	mapArray[RT_SHADER] = &shaders;
 	mapArray[RT_PROGRAM] = &programs;
 
-	empty = new FrameSet(this, "empty");
+	emptyFrameSet = make_unique<FrameSet>(this, "empty");
 }
 
 ResourceGroup::~ResourceGroup() {
-	SAFE_DELETE( empty );
-
 	unloadResources(false);
 }
 
@@ -58,10 +56,10 @@ void ResourceGroup::addTable(const String& name, Unique<Table> t) {
 	DEBUG_ASSERT( !name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
 
-	tables[name] = t.release();
+	tables[name] = std::move(t);
 
 	if (logchanges)
-	DEBUG_MESSAGE( "+" + name.ASCII() + "\t\t table" );
+		DEBUG_MESSAGE( "+" + name.ASCII() + "\t\t table" );
 }
 
 void ResourceGroup::addSets(const String& subdirectory, int version) {
@@ -88,9 +86,7 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 			String setPrefix = Utils::removeTags(name);
 
 			//create a new set
-			currentSet = new FrameSet(this, setPrefix);
-
-			addFrameSet(currentSet, setPrefix);
+			currentSet = &addFrameSet(make_unique<FrameSet>(this, setPrefix), setPrefix);
 		}
 
 		//create a new buffer
@@ -117,20 +113,20 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 
 		//standard flat atlasinfo
 		if (def.getArrayLength() == 0) {
-			currentSet = new FrameSet(this, name);
-			currentSet->setAtlas(def, *this);
+			auto set = make_unique<FrameSet>(this, name);
+			set->setAtlas(def, *this);
 
-			addFrameSet(currentSet, name);
+			currentSet = &addFrameSet(std::move(set), name);
 		}
 		else
 			for (int i = 0; i < def.getArrayLength(); ++i) {
 				auto& sub = def.getTable(i);
 				const String& name = sub.getString("name");
 
-				currentSet = new FrameSet(this, name);
-				currentSet->setAtlas(sub, *this);
+				auto set = make_unique<FrameSet>(this, name);
+				set->setAtlas(sub, *this);
 
-				addFrameSet(currentSet, name);
+				currentSet = &addFrameSet(std::move(set), name);
 			}
 
 		def.clear();
@@ -157,7 +153,7 @@ void ResourceGroup::addFonts(const String& subdirectory, int version) {
 
 		name = Utils::removeTags(name);
 
-		addFont(new Font(this, paths[i]), name);
+		addFont(make_unique<Font>(this, paths[i]), name);
 	}
 }
 
@@ -170,7 +166,7 @@ void ResourceGroup::addMeshes(const String& subdirectory) {
 	for (int i = 0; i < paths.size(); ++i) {
 		name = Utils::getFileName(paths[i]);
 
-		addMesh(new Mesh(this, paths[i]), name);
+		addMesh(make_unique<Mesh>(this, paths[i]), name);
 	}
 }
 
@@ -189,8 +185,7 @@ void ResourceGroup::addSounds(const String& subdirectory) {
 		if (!Utils::areStringsNearInSequence(lastName, name)) {
 			//create a new set		
 			String setPrefix = Utils::removeTags(name);
-			currentSet = new SoundSet(this, setPrefix);
-			addSound(currentSet, setPrefix);
+			currentSet = &addSoundSet(make_unique<SoundSet>(this, setPrefix), setPrefix);
 		}
 
 		//create a new buffer		
@@ -220,7 +215,7 @@ void ResourceGroup::addPrograms(const String& folder) {
 
 	for (auto& path : paths) {
 		String name = Utils::getFileName(path);
-		addProgram(new ShaderProgram(this, path), name);
+		addProgram(make_unique<ShaderProgram>(this, path), name);
 	}
 }
 
@@ -231,344 +226,8 @@ void ResourceGroup::addShaders(const String& folder) {
 
 	for (auto& path : paths) {
 		String name = Utils::getFileName(path);
-		addShader(new Shader(this, path), name);
+		addShader(make_unique<Shader>(this, path), name);
 	}
-}
-
-void ResourceGroup::addPrefabMeshes() {
-	//create an empty texturedQuad
-	Mesh* m = new Mesh(this);
-	m->setTriangleMode(PrimitiveMode::TriangleStrip);
-	m->setVertexFields({VertexField::Position2D, VertexField::UV0});
-
-	m->begin(4);
-
-	m->vertex(-0.5, -0.5);
-	m->uv(0, 1);
-
-	m->vertex(0.5, -0.5);
-	m->uv(1, 1);
-
-	m->vertex(-0.5, 0.5);
-	m->uv(0, 0);
-
-	m->vertex(0.5, 0.5);
-	m->uv(1, 0);
-
-	m->end();
-
-	addMesh(m, "texturedQuad");
-
-	//textured quad xz
-	m = new Mesh(this);
-	m->setTriangleMode(PrimitiveMode::TriangleStrip);
-	m->setVertexFields({VertexField::Position3D, VertexField::UV0});
-
-	m->begin(4);
-
-	m->vertex(-0.5, 0, -0.5);
-	m->uv(0, 0);
-
-	m->vertex(-0.5, 0, 0.5);
-	m->uv(0, 1);
-
-	m->vertex(0.5, 0, -0.5);
-	m->uv(1, 0);
-
-	m->vertex(0.5, 0, 0.5);
-	m->uv(1, 1);
-
-	m->end();
-
-	addMesh(m, "texturedQuadXZ");
-
-	//create a texturedCube
-#define l 0.501f
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(24);
-
-	m->vertex(l, l, l);
-	m->normal(0, 0, 1);
-	m->uv(1, 1);
-	m->vertex(l, -l, l);
-	m->normal(0, 0, 1);
-	m->uv(0, 1);
-	m->vertex(-l, l, l);
-	m->normal(0, 0, 1);
-	m->uv(1, 0);
-	m->vertex(-l, -l, l);
-	m->normal(0, 0, 1);
-	m->uv(0, 0);
-
-	m->quad(0, 1, 2, 3);
-
-	m->vertex(l, l, -l);
-	m->normal(0, 0, -1);
-	m->uv(1, 1);
-	m->vertex(-l, l, -l);
-	m->normal(0, 0, -1);
-	m->uv(0, 1);
-	m->vertex(l, -l, -l);
-	m->normal(0, 0, -1);
-	m->uv(1, 0);
-	m->vertex(-l, -l, -l);
-	m->normal(0, 0, -1);
-	m->uv(0, 0);
-
-	m->quad(4, 5, 6, 7);
-
-	m->vertex(l, l, l);
-	m->normal(1, 0, 0);
-	m->uv(1, 1);
-	m->vertex(l, l, -l);
-	m->normal(1, 0, 0);
-	m->uv(0, 1);
-	m->vertex(l, -l, l);
-	m->normal(1, 0, 0);
-	m->uv(1, 0);
-	m->vertex(l, -l, -l);
-	m->normal(1, 0, 0);
-	m->uv(0, 0);
-
-	m->quad(8, 9, 10, 11);
-
-	m->vertex(-l, l, l);
-	m->normal(-1, 0, 0);
-	m->uv(1, 1);
-	m->vertex(-l, -l, l);
-	m->normal(-1, 0, 0);
-	m->uv(0, 1);
-	m->vertex(-l, l, -l);
-	m->normal(-1, 0, 0);
-	m->uv(1, 0);
-	m->vertex(-l, -l, -l);
-	m->normal(-1, 0, 0);
-	m->uv(0, 0);
-
-	m->quad(12, 13, 14, 15);
-
-	m->vertex(l, l, l);
-	m->normal(0, 1, 0);
-	m->uv(1, 1);
-	m->vertex(-l, l, l);
-	m->normal(0, 1, 0);
-	m->uv(0, 1);
-	m->vertex(l, l, -l);
-	m->normal(0, 1, 0);
-	m->uv(1, 0);
-	m->vertex(-l, l, -l);
-	m->normal(0, 1, 0);
-	m->uv(0, 0);
-
-	m->quad(16, 17, 18, 19);
-
-	m->vertex(l, -l, l);
-	m->normal(0, -1, 0);
-	m->uv(1, 1);
-	m->vertex(l, -l, -l);
-	m->normal(0, -1, 0);
-	m->uv(0, 1);
-	m->vertex(-l, -l, l);
-	m->normal(0, -1, 0);
-	m->uv(1, 0);
-	m->vertex(-l, -l, -l);
-	m->normal(0, -1, 0);
-	m->uv(0, 0);
-
-	m->quad(20, 21, 22, 23);
-
-	m->end();
-
-	addMesh(m, "texturedCube");
-
-	//create a cube
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-	//-Z
-	m->vertex(l, l, -l);
-	m->normal(0, 0, 1);
-	m->uv(1, 0);
-	m->vertex(l, -l, -l);
-	m->normal(0, 0, 1);
-	m->uv(1, 1);
-	m->vertex(-l, l, -l);
-	m->normal(0, 0, 1);
-	m->uv(0, 0);
-	m->vertex(-l, -l, -l);
-	m->normal(0, 0, 1);
-	m->uv(0, 1);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-	addMesh(m, "prefabSkybox-Z");
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-	//+X
-	m->vertex(l, l, l);
-	m->normal(-1, 0, 0);
-	m->uv(1, 0);
-	m->vertex(l, -l, l);
-	m->normal(-1, 0, 0);
-	m->uv(1, 1);
-	m->vertex(l, l, -l);
-	m->normal(-1, 0, 0);
-	m->uv(0, 0);
-	m->vertex(l, -l, -l);
-	m->normal(-1, 0, 0);
-	m->uv(0, 1);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-	addMesh(m, "prefabSkybox-X");
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-	//+Z
-	m->vertex(l, l, l);
-	m->normal(0, 0, -1);
-	m->uv(0, 0);
-	m->vertex(-l, l, l);
-	m->normal(0, 0, -1);
-	m->uv(1, 0);
-	m->vertex(l, -l, l);
-	m->normal(0, 0, -1);
-	m->uv(0, 1);
-	m->vertex(-l, -l, l);
-	m->normal(0, 0, -1);
-	m->uv(1, 1);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-	addMesh(m, "prefabSkybox+Z");
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-	//-X
-	m->vertex(-l, l, l);
-	m->normal(1, 0, 0);
-	m->uv(0, 0);
-	m->vertex(-l, l, -l);
-	m->normal(1, 0, 0);
-	m->uv(1, 0);
-	m->vertex(-l, -l, l);
-	m->normal(1, 0, 0);
-	m->uv(0, 1);
-	m->vertex(-l, -l, -l);
-	m->normal(1, 0, 0);
-	m->uv(1, 1);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-	addMesh(m, "prefabSkybox+X");
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-
-	m->vertex(l, l, l);
-	m->normal(0, -1, 0);
-	m->uv(1, 1);
-	m->vertex(l, l, -l);
-	m->normal(0, -1, 0);
-	m->uv(0, 1);
-	m->vertex(-l, l, l);
-	m->normal(0, -1, 0);
-	m->uv(1, 0);
-	m->vertex(-l, l, -l);
-	m->normal(0, -1, 0);
-	m->uv(0, 0);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-	addMesh(m, "prefabSkybox+Y");
-
-	m = new Mesh(this);
-
-	m->setIndexByteSize(1); //byte indices
-	m->setTriangleMode(PrimitiveMode::TriangleList);
-	m->setVertexFields({VertexField::Position3D, VertexField::Normal, VertexField::UV0});
-
-	m->begin(4);
-
-	m->vertex(l, -l, l);
-	m->normal(0, 1, 0);
-	m->uv(1, 0);
-	m->vertex(-l, -l, l);
-	m->normal(0, 1, 0);
-	m->uv(1, 1);
-	m->vertex(l, -l, -l);
-	m->normal(0, 1, 0);
-	m->uv(0, 0);
-	m->vertex(-l, -l, -l);
-	m->normal(0, 1, 0);
-	m->uv(0, 1);
-
-	m->quad(0, 1, 2, 3);
-
-	m->end();
-
-	addMesh(m, "prefabSkybox-Y");
-
-
-	//add cube for wireframe use
-	m = new Mesh(this);
-	m->setTriangleMode(PrimitiveMode::LineStrip);
-	m->setVertexFieldEnabled(VertexField::Position2D);
-
-	m->begin(4);
-
-	m->vertex(0.5, 0.5);
-	m->vertex(-0.5, 0.5);
-	m->vertex(0.5, -0.5);
-	m->vertex(-0.5, -0.5);
-
-	m->index(0);
-	m->index(1);
-	m->index(3);
-	m->index(2);
-	m->index(0);
-	m->index(3);
-
-	m->end();
-
-	addMesh(m, "wireframeQuad");
 }
 
 void ResourceGroup::loadResources(bool recursive) {
@@ -578,7 +237,7 @@ void ResourceGroup::loadResources(bool recursive) {
 	_load<SoundSet>(sounds);
 	_load<Table>(tables);
 	_load<ShaderProgram>(programs);
-	_load<Shader>(shaders);
+ 	_load<Shader>(shaders);
 
 	//load sets again to load missing atlases!
 	_load<FrameSet>(frameSets);
@@ -598,12 +257,12 @@ void ResourceGroup::unloadResources(bool recursive) {
 	_unload<Shader>(shaders, false);
 	_unload<ShaderProgram>(programs, false);
 
-	if (recursive)
+	if (recursive) {
 		for (auto&& sub : subs)
 			sub->unloadResources(recursive);
+	}
 }
 
-///unloads re-loadable resources without actually destroying resource objects
 void ResourceGroup::softUnloadResources(bool recursive) {
 	_unload<Font>(fonts, true);
 	_unload<FrameSet>(frameSets, true);
@@ -620,7 +279,7 @@ void ResourceGroup::softUnloadResources(bool recursive) {
 
 void ResourceGroup::addFolderSimple(const String& folder, int version) {
 	if (logchanges)
-	DEBUG_MESSAGE("[" + folder + "]");
+		DEBUG_MESSAGE("[" + folder + "]");
 
 	addSets(folder, version);
 	addFonts(folder, version);
@@ -629,4 +288,510 @@ void ResourceGroup::addFolderSimple(const String& folder, int version) {
 	addTables(folder);
 	addPrograms(folder);
 	addShaders(folder);
+}
+
+FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getFrameSet(name), "A FrameSet with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t set");
+
+	return *(frameSets[name] = std::move(resource));
+}
+
+void ResourceGroup::addFont(Unique<Font> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getFont(name), "A Sound with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	fonts[name] = std::move(resource);
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t font");
+}
+
+void ResourceGroup::addMesh(Unique<Mesh> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getMesh(name), "A Mesh with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	meshes[name] = std::move(resource);
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t mesh");
+}
+
+SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getSound(name), "A Sound with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t sound");
+
+	return *(sounds[name] = std::move(resource));
+}
+
+void ResourceGroup::addShader(Unique<Shader> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getShader(name), "A Shader with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	shaders[name] = std::move(resource);
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t shader");
+}
+
+void ResourceGroup::addProgram(Unique<ShaderProgram> resource, const String& name) {
+	DEBUG_ASSERT_INFO(!getProgram(name), "A ShaderProgram with this name already exists", "name = " + name);
+	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(resource, "Invalid resource passed!");
+
+	programs[name] = std::move(resource);
+
+	if (logchanges)
+		DEBUG_MESSAGE("+" + name + "\t\t shader program");
+}
+
+void ResourceGroup::addSubgroup(ResourceGroup& g) {
+	subs.emplace(&g);
+}
+
+void ResourceGroup::removeSubgroup(ResourceGroup& g) {
+	subs.erase(&g);
+}
+
+void ResourceGroup::removeAllSubgroups() {
+	subs.clear();
+}
+
+void ResourceGroup::removeFrameSet(const String& name) {
+	frameSets.erase(name);
+}
+
+void ResourceGroup::removeFont(const String& name) {
+	fonts.erase(name);
+}
+
+void ResourceGroup::removeMesh(const String& name) {
+	meshes.erase(name);
+}
+
+void ResourceGroup::removeSound(const String& name) {
+	sounds.erase(name);
+}
+
+void ResourceGroup::removeTable(const String& name) {
+	tables.erase(name);
+}
+
+FrameSet& ResourceGroup::getEmptyFrameSet() const {
+	return *emptyFrameSet;
+}
+
+FrameSet* ResourceGroup::getFrameSet(const String& name) const {
+	DEBUG_ASSERT(name.size(), "getFrameSet: empty name provided");
+
+	return find<FrameSet>(name, RT_FRAMESET);
+}
+
+Texture* ResourceGroup::getTexture(const String& name) const {
+	FrameSet* s = getFrameSet(name);
+
+	return s ? s->getFrame(0) : NULL;
+}
+
+Font* ResourceGroup::getFont(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<Font>(name, RT_FONT);
+}
+
+Mesh* ResourceGroup::getMesh(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<Mesh>(name, RT_MESH);
+}
+
+SoundSet* ResourceGroup::getSound(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<SoundSet>(name, RT_SOUND);
+}
+
+Table* ResourceGroup::getTable(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<Table>(name, RT_TABLE);
+}
+
+Shader* ResourceGroup::getShader(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<Shader>(name, RT_SHADER);
+}
+
+ShaderProgram* ResourceGroup::getProgram(const String& name) const {
+	DEBUG_ASSERT(name.size(), "empty name provided");
+	return find<ShaderProgram>(name, RT_PROGRAM);
+}
+
+const String& ResourceGroup::getLocale() const {
+	return locale;
+}
+
+void ResourceGroup::addFolder(const String& folder, int version /*= 0*/) {
+	addFolderSimple(folder, version);
+
+	//localized loading
+	if (isLocalizationRequired())
+		addLocalizedFolder(folder, version);
+}
+
+void ResourceGroup::addPrefabMeshes() {
+	//create an empty texturedQuad
+	{
+		auto m = make_unique<Mesh>(this);
+		m->setTriangleMode(PrimitiveMode::TriangleStrip);
+		m->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
+
+		m->begin(4);
+
+		m->vertex(-0.5, -0.5);
+		m->uv(0, 1);
+
+		m->vertex(0.5, -0.5);
+		m->uv(1, 1);
+
+		m->vertex(-0.5, 0.5);
+		m->uv(0, 0);
+
+		m->vertex(0.5, 0.5);
+		m->uv(1, 0);
+
+		m->end();
+
+		addMesh(std::move(m), "texturedQuad");
+	}
+
+	//textured quad xz
+	{
+		auto m = make_unique<Mesh>(this);
+		m->setTriangleMode(PrimitiveMode::TriangleStrip);
+		m->setVertexFields({ VertexField::Position3D, VertexField::UV0 });
+
+		m->begin(4);
+
+		m->vertex(-0.5, 0, -0.5);
+		m->uv(0, 0);
+
+		m->vertex(-0.5, 0, 0.5);
+		m->uv(0, 1);
+
+		m->vertex(0.5, 0, -0.5);
+		m->uv(1, 0);
+
+		m->vertex(0.5, 0, 0.5);
+		m->uv(1, 1);
+
+		m->end();
+
+		addMesh(std::move(m), "texturedQuadXZ");
+	}
+
+	//create a texturedCube
+#define l 0.501f
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(24);
+
+		m->vertex(l, l, l);
+		m->normal(0, 0, 1);
+		m->uv(1, 1);
+		m->vertex(l, -l, l);
+		m->normal(0, 0, 1);
+		m->uv(0, 1);
+		m->vertex(-l, l, l);
+		m->normal(0, 0, 1);
+		m->uv(1, 0);
+		m->vertex(-l, -l, l);
+		m->normal(0, 0, 1);
+		m->uv(0, 0);
+
+		m->quad(0, 1, 2, 3);
+
+		m->vertex(l, l, -l);
+		m->normal(0, 0, -1);
+		m->uv(1, 1);
+		m->vertex(-l, l, -l);
+		m->normal(0, 0, -1);
+		m->uv(0, 1);
+		m->vertex(l, -l, -l);
+		m->normal(0, 0, -1);
+		m->uv(1, 0);
+		m->vertex(-l, -l, -l);
+		m->normal(0, 0, -1);
+		m->uv(0, 0);
+
+		m->quad(4, 5, 6, 7);
+
+		m->vertex(l, l, l);
+		m->normal(1, 0, 0);
+		m->uv(1, 1);
+		m->vertex(l, l, -l);
+		m->normal(1, 0, 0);
+		m->uv(0, 1);
+		m->vertex(l, -l, l);
+		m->normal(1, 0, 0);
+		m->uv(1, 0);
+		m->vertex(l, -l, -l);
+		m->normal(1, 0, 0);
+		m->uv(0, 0);
+
+		m->quad(8, 9, 10, 11);
+
+		m->vertex(-l, l, l);
+		m->normal(-1, 0, 0);
+		m->uv(1, 1);
+		m->vertex(-l, -l, l);
+		m->normal(-1, 0, 0);
+		m->uv(0, 1);
+		m->vertex(-l, l, -l);
+		m->normal(-1, 0, 0);
+		m->uv(1, 0);
+		m->vertex(-l, -l, -l);
+		m->normal(-1, 0, 0);
+		m->uv(0, 0);
+
+		m->quad(12, 13, 14, 15);
+
+		m->vertex(l, l, l);
+		m->normal(0, 1, 0);
+		m->uv(1, 1);
+		m->vertex(-l, l, l);
+		m->normal(0, 1, 0);
+		m->uv(0, 1);
+		m->vertex(l, l, -l);
+		m->normal(0, 1, 0);
+		m->uv(1, 0);
+		m->vertex(-l, l, -l);
+		m->normal(0, 1, 0);
+		m->uv(0, 0);
+
+		m->quad(16, 17, 18, 19);
+
+		m->vertex(l, -l, l);
+		m->normal(0, -1, 0);
+		m->uv(1, 1);
+		m->vertex(l, -l, -l);
+		m->normal(0, -1, 0);
+		m->uv(0, 1);
+		m->vertex(-l, -l, l);
+		m->normal(0, -1, 0);
+		m->uv(1, 0);
+		m->vertex(-l, -l, -l);
+		m->normal(0, -1, 0);
+		m->uv(0, 0);
+
+		m->quad(20, 21, 22, 23);
+
+		m->end();
+
+		addMesh(std::move(m), "texturedCube");
+	}
+
+	//create a cube
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+		//-Z
+		m->vertex(l, l, -l);
+		m->normal(0, 0, 1);
+		m->uv(1, 0);
+		m->vertex(l, -l, -l);
+		m->normal(0, 0, 1);
+		m->uv(1, 1);
+		m->vertex(-l, l, -l);
+		m->normal(0, 0, 1);
+		m->uv(0, 0);
+		m->vertex(-l, -l, -l);
+		m->normal(0, 0, 1);
+		m->uv(0, 1);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+		addMesh(std::move(m), "prefabSkybox-Z");
+	}
+
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+		//+X
+		m->vertex(l, l, l);
+		m->normal(-1, 0, 0);
+		m->uv(1, 0);
+		m->vertex(l, -l, l);
+		m->normal(-1, 0, 0);
+		m->uv(1, 1);
+		m->vertex(l, l, -l);
+		m->normal(-1, 0, 0);
+		m->uv(0, 0);
+		m->vertex(l, -l, -l);
+		m->normal(-1, 0, 0);
+		m->uv(0, 1);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+		addMesh(std::move(m), "prefabSkybox-X");
+	}
+
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+		//+Z
+		m->vertex(l, l, l);
+		m->normal(0, 0, -1);
+		m->uv(0, 0);
+		m->vertex(-l, l, l);
+		m->normal(0, 0, -1);
+		m->uv(1, 0);
+		m->vertex(l, -l, l);
+		m->normal(0, 0, -1);
+		m->uv(0, 1);
+		m->vertex(-l, -l, l);
+		m->normal(0, 0, -1);
+		m->uv(1, 1);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+		addMesh(std::move(m), "prefabSkybox+Z");
+	}
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+		//-X
+		m->vertex(-l, l, l);
+		m->normal(1, 0, 0);
+		m->uv(0, 0);
+		m->vertex(-l, l, -l);
+		m->normal(1, 0, 0);
+		m->uv(1, 0);
+		m->vertex(-l, -l, l);
+		m->normal(1, 0, 0);
+		m->uv(0, 1);
+		m->vertex(-l, -l, -l);
+		m->normal(1, 0, 0);
+		m->uv(1, 1);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+		addMesh(std::move(m), "prefabSkybox+X");
+	}
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+
+		m->vertex(l, l, l);
+		m->normal(0, -1, 0);
+		m->uv(1, 1);
+		m->vertex(l, l, -l);
+		m->normal(0, -1, 0);
+		m->uv(0, 1);
+		m->vertex(-l, l, l);
+		m->normal(0, -1, 0);
+		m->uv(1, 0);
+		m->vertex(-l, l, -l);
+		m->normal(0, -1, 0);
+		m->uv(0, 0);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+		addMesh(std::move(m), "prefabSkybox+Y");
+	}
+	{
+		auto m = make_unique<Mesh>(this);
+
+		m->setIndexByteSize(1); //byte indices
+		m->setTriangleMode(PrimitiveMode::TriangleList);
+		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
+
+		m->begin(4);
+
+		m->vertex(l, -l, l);
+		m->normal(0, 1, 0);
+		m->uv(1, 0);
+		m->vertex(-l, -l, l);
+		m->normal(0, 1, 0);
+		m->uv(1, 1);
+		m->vertex(l, -l, -l);
+		m->normal(0, 1, 0);
+		m->uv(0, 0);
+		m->vertex(-l, -l, -l);
+		m->normal(0, 1, 0);
+		m->uv(0, 1);
+
+		m->quad(0, 1, 2, 3);
+
+		m->end();
+
+		addMesh(std::move(m), "prefabSkybox-Y");
+	}
+
+	//add cube for wireframe use
+	{
+		auto m = make_unique<Mesh>(this);
+		m->setTriangleMode(PrimitiveMode::LineStrip);
+		m->setVertexFieldEnabled(VertexField::Position2D);
+
+		m->begin(4);
+
+		m->vertex(0.5, 0.5);
+		m->vertex(-0.5, 0.5);
+		m->vertex(0.5, -0.5);
+		m->vertex(-0.5, -0.5);
+
+		m->index(0);
+		m->index(1);
+		m->index(3);
+		m->index(2);
+		m->index(0);
+		m->index(3);
+
+		m->end();
+
+		addMesh(std::move(m), "wireframeQuad");
+	}
 }

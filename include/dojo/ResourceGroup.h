@@ -51,13 +51,13 @@ namespace Dojo {
 		//various resource properties TODO: refactor
 		bool disableBilinear, disableMipmaps, disableTiling, logchanges = true;
 
-		typedef std::unordered_map<String, FrameSet*> FrameSetMap;
-		typedef std::unordered_map<String, Font*> FontMap;
-		typedef std::unordered_map<String, Mesh*> MeshMap;
-		typedef std::unordered_map<String, SoundSet*> SoundMap;
-		typedef std::unordered_map<String, Table*> TableMap;
-		typedef std::unordered_map<String, Shader*> ShaderMap;
-		typedef std::unordered_map<String, ShaderProgram*> ProgramMap;
+		typedef std::unordered_map<String, Unique<FrameSet>> FrameSetMap;
+		typedef std::unordered_map<String, Unique<Font>> FontMap;
+		typedef std::unordered_map<String, Unique<Mesh>> MeshMap;
+		typedef std::unordered_map<String, Unique<SoundSet>> SoundMap;
+		typedef std::unordered_map<String, Unique<Table>> TableMap;
+		typedef std::unordered_map<String, Unique<Shader>> ShaderMap;
+		typedef std::unordered_map<String, Unique<ShaderProgram>> ProgramMap;
 		typedef SmallSet<ResourceGroup*> SubgroupList;
 
 		///Create a new empty ResourceGroup
@@ -107,156 +107,50 @@ namespace Dojo {
 			return nullptr;
 		}
 
-		void addFrameSet(FrameSet* set, const String& name) {
-			DEBUG_ASSERT_INFO( !getFrameSet( name ), "A FrameSet with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
+		FrameSet& addFrameSet(Unique<FrameSet> resource, const String& name);
 
-			frameSets[name] = set;
+		void addFont(Unique<Font> resource, const String& name);
 
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t set");
-		}
+		void addMesh(Unique<Mesh> resource, const String& name);
 
-		void addFont(Font* f, const String& name) {
-			DEBUG_ASSERT_INFO( !getFont( name ), "A Sound with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-			fonts[name] = f;
-
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t font");
-		}
-
-		void addMesh(Mesh* m, const String& name) {
-			DEBUG_ASSERT_INFO( !getMesh( name ), "A Mesh with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-			meshes[name] = m;
-
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t mesh");
-		}
-
-		void addSound(SoundSet* sb, const String& name) {
-			DEBUG_ASSERT_INFO( !getSound( name ), "A Sound with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-			sounds[name] = sb;
-
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t sound");
-		}
+		SoundSet& addSoundSet(Unique<SoundSet> resource, const String& name);
 
 		void addTable(const String& name, Unique<Table> t);
 
 		///adds an existing Shader to this group
-		void addShader(Shader* s, const String& name) {
-			DEBUG_ASSERT_INFO( !getShader( name ), "A Shader with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-			shaders[name] = s;
-
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t shader");
-		}
+		void addShader(Unique<Shader> resource, const String& name);
 
 		///adds an existing ShaderProgram to this group
-		void addProgram(ShaderProgram* sp, const String& name) {
-			DEBUG_ASSERT_INFO( !getProgram( name ), "A ShaderProgram with this name already exists", "name = " + name );
-			DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-			programs[name] = sp;
-
-			if (logchanges)
-			DEBUG_MESSAGE("+" + name + "\t\t shader program");
-		}
+		void addProgram(Unique<ShaderProgram> resource, const String& name);
 
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
-		void addSubgroup(ResourceGroup& g) {
-			subs.emplace(&g);
-		}
+		void addSubgroup(ResourceGroup& g);
 
 		///removes a subgroup
-		void removeSubgroup(ResourceGroup& g) {
-			subs.erase(&g);
-		}
+		void removeSubgroup(ResourceGroup& g);
 
 		///removes all of the registered subgrops from this ResourceGroup
-		void removeAllSubgroups() {
-			subs.clear();
-		}
+		void removeAllSubgroups();
 
-		void removeFrameSet(const String& name) {
-			frameSets.erase(name);
-		}
-
-		void removeFont(const String& name) {
-			fonts.erase(name);
-		}
-
-		void removeMesh(const String& name) {
-			meshes.erase(name);
-		}
-
-		void removeSound(const String& name) {
-			sounds.erase(name);
-		}
-
-		void removeTable(const String& name) {
-			tables.erase(name);
-		}
+		void removeFrameSet(const String& name);
+		void removeFont(const String& name);
+		void removeMesh(const String& name);
+		void removeSound(const String& name);
+		void removeTable(const String& name);
 
 		///returns a dummy empty FrameSet
-		FrameSet* getEmptyFrameSet() const {
-			return empty;
-		}
-
-		FrameSet* getFrameSet(const String& name) const {
-			DEBUG_ASSERT( name.size(), "getFrameSet: empty name provided" );
-
-			return find<FrameSet>(name, RT_FRAMESET);
-		}
-
-		Texture* getTexture(const String& name) const {
-			FrameSet* s = getFrameSet(name);
-
-			return s ? s->getFrame(0) : NULL;
-		}
-
-		Font* getFont(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<Font>(name, RT_FONT);
-		}
-
-		Mesh* getMesh(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<Mesh>(name, RT_MESH);
-		}
-
-		SoundSet* getSound(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<SoundSet>(name, RT_SOUND);
-		}
-
-		Table* getTable(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<Table>(name, RT_TABLE);
-		}
-
-		Shader* getShader(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<Shader>(name, RT_SHADER);
-		}
-
-		ShaderProgram* getProgram(const String& name) const {
-			DEBUG_ASSERT( name.size(), "empty name provided" );
-			return find<ShaderProgram>(name, RT_PROGRAM);
-		}
+		FrameSet& getEmptyFrameSet() const;
+		FrameSet* getFrameSet(const String& name) const;
+		Texture* getTexture(const String& name) const;
+		Font* getFont(const String& name) const;
+		Mesh* getMesh(const String& name) const;
+		SoundSet* getSound(const String& name) const;
+		Table* getTable(const String& name) const;
+		Shader* getShader(const String& name) const;
+		ShaderProgram* getProgram(const String& name) const;
 
 		///return the locale of this ResourceGroup, eg: en, it, de, se
-		const String& getLocale() const {
-			return locale;
-		}
+		const String& getLocale() const;
 
 		///returns if this group is finalized, meaning that its loading is finished
 		/**\remark useful for loading subgroups in the background! */
@@ -301,13 +195,7 @@ namespace Dojo {
 		void addLocalizedFolder(const String& basefolder, int version = 0);
 
 		///adds all the resources and the localized resources in a folder
-		void addFolder(const String& folder, int version = 0) {
-			addFolderSimple(folder, version);
-
-			//localized loading
-			if (isLocalizationRequired())
-				addLocalizedFolder(folder, version);
-		}
+		void addFolder(const String& folder, int version = 0);
 
 		///asserts that this group will not load more resources in the future, useful for task-based loading
 		void finalize() {
@@ -336,7 +224,7 @@ namespace Dojo {
 		String locale, fallbackLocale;
 		bool finalized;
 
-		FrameSet* empty;
+		Unique<FrameSet> emptyFrameSet;
 
 		FrameSetMap frameSets;
 		FontMap fonts;
@@ -352,8 +240,8 @@ namespace Dojo {
 
 		///load all unloaded registered resources
 		template <class T>
-		void _load(std::unordered_map<String, T*>& map) {
-			for (auto resourcePair : map) {
+		void _load(std::unordered_map<String, Unique<T>>& map) {
+			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (!resourcePair.second->isLoaded())
 					resourcePair.second->onLoad();
@@ -361,22 +249,23 @@ namespace Dojo {
 		}
 
 		template <class T>
-		void _unload(std::unordered_map<String, T*>& map, bool softUnload) {
+		void _unload(std::unordered_map<String, Unique<T>>& map, bool softUnload) {
 			//unload all the resources
-			for (auto resourcePair : map) {
+			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (resourcePair.second->isLoaded())
 					resourcePair.second->onUnload(softUnload);
 
 				//delete too?
 				if (!softUnload) {
-					if (logchanges)
-					DEBUG_MESSAGE("-" + resourcePair.first);
-					SAFE_DELETE( resourcePair.second );
+					if (logchanges) {
+						DEBUG_MESSAGE("-" + resourcePair.first);
+					}
 				}
-				else if (!resourcePair.second->isLoaded()) {
-					if (logchanges)
-					DEBUG_MESSAGE("~" + resourcePair.first);
+				else if (softUnload && !resourcePair.second->isLoaded()) {
+					if (logchanges) {
+						DEBUG_MESSAGE("~" + resourcePair.first);
+					}
 				}
 			}
 
