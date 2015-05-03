@@ -231,7 +231,6 @@ int Mesh::getPrimitiveCount() const {
 	case PrimitiveMode::PointList: return elemCount;
 	default:
 		FAIL("Invalid triangle mode");
-		return 0;
 	}
 }
 

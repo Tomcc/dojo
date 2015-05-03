@@ -196,6 +196,7 @@ void Object::setAllChildrenVisibleHACK(bool visible) {
 		if (c->isRenderable()) {
 			((Renderable&)*c).setVisible(visible);
 		}
+		c->setAllChildrenVisibleHACK(visible);
 	}
 }
 
