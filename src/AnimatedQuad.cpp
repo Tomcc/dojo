@@ -89,7 +89,7 @@ void AnimatedQuad::immediateAnimation(FrameSet* s, float timePerFrame) {
 
 	animation->setup(s, timePerFrame);
 
-	_setTexture(animation->getCurrentFrame());
+	_setTexture(*animation->getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationTime(float t) {
@@ -97,7 +97,7 @@ void AnimatedQuad::setAnimationTime(float t) {
 
 	animation->setAnimationTime(t);
 
-	_setTexture(animation->getCurrentFrame());
+	_setTexture(*animation->getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationPercent(float t) {
@@ -116,7 +116,7 @@ void AnimatedQuad::advanceAnim(float dt) {
 		//update the renderState using the animation
 		animation->advance(dt * animationSpeedMultiplier);
 
-		_setTexture(animation->getCurrentFrame());
+		_setTexture(*animation->getCurrentFrame());
 	}
 }
 
@@ -125,7 +125,7 @@ void AnimatedQuad::setFrame(int i) {
 
 	animation->setFrame(i);
 
-	_setTexture(animation->getCurrentFrame());
+	_setTexture(*animation->getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
@@ -134,12 +134,10 @@ void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
 	animationSpeedMultiplier = m;
 }
 
-void AnimatedQuad::_setTexture(Texture* t) {
-	DEBUG_ASSERT(t, "texture is nullptr");
+void Dojo::AnimatedQuad::_setTexture(Texture& t) {
+	setTexture(&t, 0);
 
-	setTexture(t, 0);
-
-	mesh = t->getOptimalBillboard();
+	setMesh(&t.getOptimalBillboard());
 
 	_updateScreenSize();
 }

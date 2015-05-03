@@ -9,27 +9,27 @@
 
 #ifndef PUBLISH
 
-#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); UNREACHABLE_BRANCH; }}
+#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
 #define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).ASCII().c_str() )
 #define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, nullptr )
 #define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
 #define DEBUG_TODO DEBUG_ASSERT( false, "METHOD NOT IMPLEMENTED" )
-#define FAIL( MSG ) DEBUG_ASSERT( false, MSG )
-//fix...
+#define FAIL( MSG ) { DEBUG_ASSERT( false, MSG ); UNREACHABLE_BRANCH; }
+//fix...7
 #if defined( __ANDROID__ ) 
 		#include <sstream>
 		#include <string>
 		#include <android/log.h>
 		#define LOG_TAG "DOJO"
 //buffer output
-		extern std::stringstream  debug_stream_android;		
+extern std::stringstream  debug_stream_android;		
 //
-		#define __std_andr_cout debug_stream_android.str(std::string()); debug_stream_android
-		#define __std_andr_flush __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, "%s", debug_stream_android.str().c_str() );
-		#define DEBUG_OUT( T ) __std_andr_cout<< T << ' '; __std_andr_flush
-		#define DEBUG_MESSAGE( T ) __std_andr_cout << (T) << '\n'; __std_andr_flush
-		
+#define __std_andr_cout debug_stream_android.str(std::string()); debug_stream_android
+#define __std_andr_flush __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, "%s", debug_stream_android.str().c_str() );
+#define DEBUG_OUT( T ) __std_andr_cout<< T << ' '; __std_andr_flush
+#define DEBUG_MESSAGE( T ) __std_andr_cout << (T) << '\n'; __std_andr_flush
+
 #else
 
 #define DEBUG_OUT( T ) std::cout << (T) << ' '
@@ -48,7 +48,7 @@
 	#define DEBUG_ASSERT_INFO( T, MSG, INFO ) {}
 	#define DEBUG_ASSERT( T, MSG ) {}
 	#define DEBUG_ASSERT_N( T ) {}
-	#define DEBUG_TODO UNREACHABLE_BRANCH
+	#define DEBUG_TODO {}
 	#define FAIL UNREACHABLE_BRANCH
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}

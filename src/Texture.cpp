@@ -15,7 +15,6 @@ Texture::Texture(ResourceGroup* creator) :
 	glhandle(0),
 	npot(false),
 	parentAtlas(NULL),
-	OBB(NULL),
 	ownerFrameSet(NULL),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
@@ -32,7 +31,6 @@ Texture::Texture(ResourceGroup* creator, const String& path) :
 	glhandle(0),
 	npot(false),
 	parentAtlas(NULL),
-	OBB(NULL),
 	ownerFrameSet(NULL),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
@@ -41,8 +39,7 @@ Texture::Texture(ResourceGroup* creator, const String& path) :
 }
 
 Texture::~Texture() {
-	if (OBB)
-	SAFE_DELETE( OBB );
+	OBB.reset();
 
 	if (loaded)
 		onUnload();
@@ -343,7 +340,7 @@ bool Texture::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "The texture is already loaded" );
 
 	if (OBB) //rebuild and reload the OBB if it was purged
-		_buildOptimalBillboard();
+		_rebuildOptimalBillboard();
 
 	if (isReloadable())
 		return loadFromFile(filePath);
@@ -382,9 +379,9 @@ void Texture::onUnload(bool soft) {
 }
 
 
-void Texture::_buildOptimalBillboard() {
+void Texture::_rebuildOptimalBillboard() {
 	if (!OBB) {
-		OBB = new Mesh();
+		OBB = make_unique<Mesh>();
 
 		//build or rebuild the OBB
 		OBB->setVertexFields({VertexField::Position2D, VertexField::UV0});

@@ -115,11 +115,11 @@ namespace Dojo {
 		}
 
 		///obtain the optimal billboard to use this texture as a sprite, when the device does not support Power of 2 Textures
-		Mesh* getOptimalBillboard() {
+		Mesh& getOptimalBillboard() {
 			if (!OBB)
-				_buildOptimalBillboard();
+				_rebuildOptimalBillboard();
 
-			return OBB;
+			return *OBB;
 		}
 
 		bool isNonPowerOfTwo() {
@@ -154,7 +154,7 @@ namespace Dojo {
 		FrameSet* ownerFrameSet;
 		int mAtlasOriginX, mAtlasOriginY;
 
-		Mesh* OBB;
+		Unique<Mesh> OBB;
 
 		GLuint glhandle, mDepthBuffer;
 
@@ -163,7 +163,7 @@ namespace Dojo {
 		GLuint mFBO;
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
-		void _buildOptimalBillboard();
+		void _rebuildOptimalBillboard();
 
 		bool _setupAtlas();
 	};

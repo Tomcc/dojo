@@ -68,7 +68,7 @@ void Sprite::setAnimation(int i) {
 
 	animation = animations[mAnimationIdx].get();
 
-	_setTexture(animation->getCurrentFrame());
+	_setTexture(*animation->getCurrentFrame());
 
 	_updateScreenSize();
 }

@@ -27,15 +27,10 @@ namespace Dojo {
 		}
 
 		///reads up to "number" bytes from the stream into buf, returns the number of bytes read
-		virtual int read(byte* buf, int number) {
-			FAIL( "This Stream is not read-enabled" );
-			return 0;
-		}
+		virtual int read(byte* buf, int number);
 
 		///writes the given buffer to the stream
-		virtual void write(byte* buf, int size) {
-			FAIL( "This stream is not write-enabled" );
-		}
+		virtual void write(byte* buf, int size);
 
 		///returns the total bytes in the stream, -1 if this stream has no end
 		virtual long getSize() =0;
@@ -47,10 +42,7 @@ namespace Dojo {
 		virtual long getCurrentPosition() =0;
 
 		///creates a new unopened Stream that points to the same underlying data, useful for concurrent reads in multithreading.
-		virtual Stream* copy() {
-			FAIL( "This Stream type does not implement copy" );
-			return nullptr;
-		}
+		virtual Stream* copy();
 
 		///goes to the given position
 		virtual int seek(long offset, int fromWhere = SEEK_SET) =0;

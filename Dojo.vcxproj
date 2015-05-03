@@ -104,6 +104,7 @@
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
+    <ClCompile Include="include\dojo\Stream.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />

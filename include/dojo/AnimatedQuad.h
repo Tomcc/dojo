@@ -174,6 +174,6 @@ namespace Dojo {
 		//assigned animation
 		Animation* animation;
 
-		void _setTexture(Texture* t);
+		void _setTexture(Texture& t);
 	};
 }

@@ -21,7 +21,7 @@ Dojo::PolyTextArea::PolyTextArea(Object& parent, const Vector& position, Font* f
 	mSpaceWidth = pFont->getCharacter(' ')->advance;
 
 	//create a new mesh with the required parameters
-	mMesh = new Mesh();
+	mMesh = make_unique<Mesh>();
 
 	if (mRendering == RT_OUTLINE) {
 		DEBUG_ASSERT( pFont->hasPolyOutline(), "Cannot create an outline PolyTextArea if the font has no outline" );
@@ -44,12 +44,11 @@ Dojo::PolyTextArea::PolyTextArea(Object& parent, const Vector& position, Font* f
 		}
 	}
 
-	setMesh(mMesh);
+	setMesh(mMesh.get());
 }
 
 PolyTextArea::~PolyTextArea() {
-	mMesh->onUnload(); //yes, creating and destroying polytextareas is heavy
-	SAFE_DELETE( mMesh );
+
 }
 
 void PolyTextArea::_centerLine(int rowStartIdx, float rowWidth) {

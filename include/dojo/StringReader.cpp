@@ -80,7 +80,6 @@ byte StringReader::getHexValue(unichar c) {
 		return 10 + c - 'a';
 	else {
 		FAIL("The value is not an hex number");
-		return 0;
 	}
 }
 

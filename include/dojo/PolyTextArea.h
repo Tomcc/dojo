@@ -76,7 +76,7 @@ namespace Dojo {
 		String mContent;
 
 		bool mCentered;
-		Mesh* mMesh;
+		Unique<Mesh> mMesh;
 		Font* pFont;
 
 		RenderingType mRendering;
