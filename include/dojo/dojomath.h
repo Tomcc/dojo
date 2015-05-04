@@ -28,7 +28,7 @@ namespace Dojo {
 		}
 
 		///seeds the random either using the given seed, or current time if omitted
-		static void seedRandom(unsigned int seed = 0);
+		static void seedRandom(RandomSeed seed = 0);
 
 		///quick and dirty random (see Random class for a more reliable implementation)
 		static float random();

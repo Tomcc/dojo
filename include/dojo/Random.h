@@ -32,8 +32,6 @@ namespace Dojo {
 	class Random {
 		// Data
 	public:
-		typedef uint64_t Seed;
-
 		enum { N = 624 }; // length of state vector
 		enum { SAVE = N + 1 }; // length of array for save()
 
@@ -52,7 +50,7 @@ namespace Dojo {
 		Random();
 
 		///Creates a new Random generator using a seed
-		Random(Seed oneSeed);
+		Random(RandomSeed oneSeed);
 
 		///Creates a new Random generator using a big seed in an array
 		Random(const BigSeed& seed);
@@ -66,34 +64,38 @@ namespace Dojo {
 		// Access to 32-bit random numbers
 
 		/// integer in [0,2^32-1]
-		uint32_t randInt();
+		uint32_t nextInt();
 		/// integer in [0,n] for n < 2^32
-		uint32_t randInt(const uint32_t n);
+		uint32_t nextInt(const uint32_t n);
 
-		int randInt(int min, int max) {
-			return (int)(rand() * (max - min)) + min;
+		int nextInt(int min, int max) {
+			return (int)(nextDouble() * (max - min)) + min;
 		}
 
 		/// real number in [0,1]
-		double rand();
+		double nextDouble();
 		/// real number in [0,n]
-		double rand(const double n);
+		double nextDouble(const double n);
 
 		///real number in [min, max]
-		double rand(double min, double max) {
-			return min + rand(max - min);
+		double nextDouble(double min, double max) {
+			return min + nextDouble(max - min);
 		}
 
 		/// real number in [0,1)
-		double randExc();
+		double nextDoubleExc();
 		/// real number in [0,n)
-		double randExc(const double n);
+		double nextDoubleExc(const double n);
 		/// real number in (0,1)
-		double randDblExc();
+		double nextDoubleFullExcl();
 		/// real number in (0,n)
-		double randDblExc(const double n);
+		double nextDoubleFullExcl(const double n);
 		/// same as rand()
 		double operator()();
+
+		bool oneEvery(int n) {
+			return nextInt(n) == 0;
+		}
 
 		/// Access to 53-bit random numbers (capacity of IEEE double precision)
 		double rand53();
@@ -102,7 +104,7 @@ namespace Dojo {
 		double randNorm(const double mean = 0.0, const double stddev = 1.0);
 
 		/// Re-seeding functions with same behavior as initializers
-		void seed(Seed s);
+		void seed(RandomSeed s);
 		void seed(const BigSeed& seed);
 		void seed();
 
@@ -114,7 +116,7 @@ namespace Dojo {
 		Random& operator=(const Random& o);
 
 	protected:
-		void initialize(Seed oneSeed);
+		void initialize(RandomSeed oneSeed);
 		void reload();
 
 		uint32_t hiBit(const uint32_t u) const {
@@ -168,7 +170,7 @@ namespace Dojo {
 		return (h1 + differ++) ^ h2;
 	}
 
-	inline void Random::initialize(Seed seed) {
+	inline void Random::initialize(RandomSeed seed) {
 		// Initialize generator state with seed
 		// See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
 		// In previous versions, most significant bits (MSBs) of the seed affect
@@ -198,8 +200,8 @@ namespace Dojo {
 		left = N , pNext = state;
 	}
 
-	inline void Random::seed(Seed s) {
-		// Seed the generator with a simple uint32_t
+	inline void Random::seed(RandomSeed s) {
+		// RandomSeed the generator with a simple uint32_t
 		initialize(s);
 		reload();
 	}
@@ -207,7 +209,7 @@ namespace Dojo {
 	inline void Random::seed(const BigSeed& seed) {
 		DEBUG_ASSERT(seed.size() > 0, "Invalid seed");
 
-		// Seed the generator with an array of uint32_t's
+		// RandomSeed the generator with an array of uint32_t's
 		// There are 2^19937-1 possible initial states.  This function allows
 		// all of those to be accessed by providing at least 19937 bits (with a
 		// default seed length of N = 624 uint32_t's).  Any bits above the lower 32
@@ -249,10 +251,10 @@ namespace Dojo {
 	inline Random::Random() {
 		//use an high-precision timer to grab microseconds
 		Timer t;
-		seed((uint32_t)(t.currentTime() * 1000000));
+		seed((RandomSeed)(t.currentTime() * 1000000));
 	}
 
-	inline Random::Random(Seed oneSeed) {
+	inline Random::Random(RandomSeed oneSeed) {
 		seed(oneSeed);
 	}
 
@@ -270,7 +272,7 @@ namespace Dojo {
 		pNext = &state[N - left];
 	}
 
-	inline uint32_t Random::randInt() {
+	inline uint32_t Random::nextInt() {
 		// Pull a 32-bit integer from the generator state
 		// Every other access function simply transforms the numbers extracted here
 
@@ -286,7 +288,7 @@ namespace Dojo {
 		return (s1 ^ (s1 >> 18));
 	}
 
-	inline uint32_t Random::randInt(const uint32_t n) {
+	inline uint32_t Random::nextInt(const uint32_t n) {
 		/*
 		// Find which bits are used in n
 		// Optimized by Magnus Jonsson (magnus@smartelectronix.com)
@@ -305,35 +307,35 @@ namespace Dojo {
 		return i;*/
 
 		//HACK-  much faster while property-changing
-		return (uint32_t)rand((double)n);
+		return (uint32_t)nextDouble((double)n);
 	}
 
-	inline double Random::rand() {
-		return double(randInt()) * (1.0 / 4294967295.0);
+	inline double Random::nextDouble() {
+		return double(nextInt()) * (1.0 / 4294967295.0);
 	}
 
-	inline double Random::rand(const double n) {
-		return rand() * n;
+	inline double Random::nextDouble(const double n) {
+		return nextDouble() * n;
 	}
 
-	inline double Random::randExc() {
-		return double(randInt()) * (1.0 / 4294967296.0);
+	inline double Random::nextDoubleExc() {
+		return double(nextInt()) * (1.0 / 4294967296.0);
 	}
 
-	inline double Random::randExc(const double n) {
-		return randExc() * n;
+	inline double Random::nextDoubleExc(const double n) {
+		return nextDoubleExc() * n;
 	}
 
-	inline double Random::randDblExc() {
-		return (double(randInt()) + 0.5) * (1.0 / 4294967296.0);
+	inline double Random::nextDoubleFullExcl() {
+		return (double(nextInt()) + 0.5) * (1.0 / 4294967296.0);
 	}
 
-	inline double Random::randDblExc(const double n) {
-		return randDblExc() * n;
+	inline double Random::nextDoubleFullExcl(const double n) {
+		return nextDoubleFullExcl() * n;
 	}
 
 	inline double Random::rand53() {
-		uint32_t a = randInt() >> 5, b = randInt() >> 6;
+		uint32_t a = nextInt() >> 5, b = nextInt() >> 6;
 		return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0); // by Isaku Wada
 	}
 
@@ -342,8 +344,8 @@ namespace Dojo {
 		// mean and standard deviation by polar form of Box-Muller transformation
 		double x, y, r;
 		do {
-			x = 2.0 * rand() - 1.0;
-			y = 2.0 * rand() - 1.0;
+			x = 2.0 * nextDouble() - 1.0;
+			y = 2.0 * nextDouble() - 1.0;
 			r = x * x + y * y;
 		}
 		while (r >= 1.0 || r == 0.0);
@@ -352,7 +354,7 @@ namespace Dojo {
 	}
 
 	inline double Random::operator()() {
-		return rand();
+		return nextDouble();
 	}
 
 	inline void Random::save(uint32_t* saveArray) const {

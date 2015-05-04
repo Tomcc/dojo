@@ -107,6 +107,10 @@ using Unique = std::unique_ptr < T >;
 template<typename T>
 using Shared = std::shared_ptr < T >;
 
+namespace Dojo {
+	typedef int64_t RandomSeed;
+}
+
 //C++14 where not available
 #ifndef WIN32
 template<typename T, typename ...Args>

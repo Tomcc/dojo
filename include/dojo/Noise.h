@@ -25,7 +25,7 @@ namespace Dojo {
 		Noise(Random& rand);
 
 		///Creates a Noise object drawing numbers from a new random number generator
-		Noise(size_t seedInt);
+		Noise(RandomSeed seedInt);
 
 		///creates a new noise object initialized with the default seeding method
 		Noise();

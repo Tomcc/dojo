@@ -7,7 +7,7 @@ Noise::Noise(Random& rand) {
 	seed(rand);
 }
 
-Noise::Noise(size_t seedInt) {
+Noise::Noise(RandomSeed seedInt) {
 	Random r(seedInt);
 	seed(r);
 }
@@ -23,7 +23,7 @@ void Noise::seed(Random& rand) {
 
 	//switch numbers around
 	for (int i = 0; i < 256; ++i) {
-		int d = rand.randInt(255);
+		int d = rand.nextInt(255);
 
 		int t = p[i];
 		p[i] = p[d];

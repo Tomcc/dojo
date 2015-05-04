@@ -8,25 +8,25 @@ const Radians Math::TAU(6.2831853071796f);
 
 static Random randomImpl;
 
-void Math::seedRandom(unsigned int seed) {
+void Math::seedRandom(RandomSeed seed /*= 0*/) {
 	if (!seed)
-		seed = (unsigned int) time(NULL);
+		seed = (RandomSeed)time(NULL);
 
-	randomImpl = Random(seed);
+	randomImpl.seed(seed);
 }
 
 float Math::random() {
-	return (float)randomImpl.rand();
+	return (float)randomImpl.nextDouble();
 }
 
 bool Math::oneEvery(int n) {
-	return randomImpl.randInt(n) == 0;
+	return randomImpl.nextInt(n) == 0;
 }
 
 float Math::rangeRandom(float min, float max) {
 	DEBUG_ASSERT( min <= max, "The min end of a random range must be less or equal than the max end" );
 
-	return (float)randomImpl.rand(min, max);
+	return (float)randomImpl.nextDouble(min, max);
 }
 
 Vector Math::randomVector(const Vector& min, const Vector& max) {
