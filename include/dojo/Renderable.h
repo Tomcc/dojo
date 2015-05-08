@@ -12,24 +12,35 @@
 #include "dojo_common_header.h"
 
 #include "RenderState.h"
-#include "Object.h"
 #include "Color.h"
+#include "AABB.h"
 
 namespace Dojo {
+	class Object;
 	class Renderer;
+	class GameState;
 
-	class Renderable : public RenderState, public Object {
+	class Renderable : public RenderState {
 	public:
 
 		Vector uvOffset;
+		Vector scale;
 
-		Renderable(Object& parent, const Vector& pos, Mesh* m = nullptr);
+		Renderable(Object& parent, Mesh* m = nullptr);
 
-		Renderable(Object& parent, const Vector& pos, const String& meshName);
+		Renderable(Object& parent, const String& meshName);
 
 		virtual ~Renderable();
 
-		virtual void reset();
+		Object& getObject() {
+			return parent;
+		}
+
+		const Object& getObject() const {
+			return parent;
+		}
+
+		GameState& getGameState();
 
 		void setVisible(bool v) {
 			visible = v;
@@ -73,20 +84,16 @@ namespace Dojo {
 			return fading;
 		}
 
-		virtual bool isRenderable() {
-			return true;
-		}
-
 		void advanceFade(float dt);
 
-		virtual void onAction(float dt);
+		virtual void update(float dt);
 
-		void _notifyRenderInfo(Renderer* r, int layerID, int renderIdx);
+		void _notifyRenderInfo(int layerID, int renderIdx);
 	protected:
 
+		Object& parent;
 		bool visible;
 
-		Renderer* render;
 		int layer;
 		int renderingOrder;
 

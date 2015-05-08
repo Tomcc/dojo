@@ -34,7 +34,6 @@ namespace Dojo {
 		*/
 		TextArea(Object& l,
 				const String& fontSetName,
-				const Vector& pos,
 				bool center = false,
 				const Vector& bounds = Vector::ONE);
 
@@ -123,7 +122,7 @@ namespace Dojo {
 			screenSize.y = ss.y;
 		}
 
-		virtual void onAction(float dt);
+		virtual void update(float dt) override;
 
 	protected:
 

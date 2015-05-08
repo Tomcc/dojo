@@ -107,7 +107,7 @@ void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
 	//get the needed layer	
 	RenderLayer& layer = getLayer(layerID);
 
-	s._notifyRenderInfo(this, layerID, layer.elements.size());
+	s._notifyRenderInfo(layerID, layer.elements.size());
 
 	//append at the end
 	layer.elements.emplace(&s);
@@ -116,7 +116,7 @@ void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
 void Renderer::removeRenderable(Renderable& s) {
 	if (hasLayer(s.getLayer())) {
 		getLayer(s.getLayer()).elements.erase(&s);
-		s._notifyRenderInfo(nullptr, 0, 0);
+		s._notifyRenderInfo(0, 0);
 	}
 }
 
@@ -180,7 +180,7 @@ void Renderer::renderElement(Renderable& elem) {
 #endif // !PUBLISH
 
 
-	currentState.world = elem.getWorldTransform();
+	currentState.world = glm::scale(elem.getObject().getWorldTransform(), elem.scale);
 	currentState.worldView = currentState.view * currentState.world;
 
 	glMatrixMode(GL_MODELVIEW);

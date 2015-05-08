@@ -98,7 +98,7 @@ namespace Dojo {
 			\param pos its position
 			\param immediateAnim the name of the animation it will be set to
 			\param timePerFrame immediate animation's time per frame */
-		AnimatedQuad(Object& parent, const Vector& pos, const String& immediateAnim = String::EMPTY, float timePerFrame = 0.0f);
+		AnimatedQuad(Object& parent, const String& immediateAnim = String::EMPTY, float timePerFrame = 0.0f);
 
 		virtual ~AnimatedQuad();
 
@@ -159,7 +159,7 @@ namespace Dojo {
 		///sets the speed multiplier that is used by advanceFrame. m = 1 means normal speed, m = 2 double speed, ...
 		void setAnimationSpeedMultiplier(float m);
 
-		virtual void onAction(float dt);
+		virtual void update(float dt) override;
 
 		void _updateScreenSize();
 

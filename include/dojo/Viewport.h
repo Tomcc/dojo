@@ -93,7 +93,7 @@ namespace Dojo {
 		}
 
 		Renderable* getFader() {
-			return mFaderObject;
+			return getRenderable();
 		}
 
 		Degrees getVFOV() const {
@@ -195,8 +195,6 @@ namespace Dojo {
 		bool mEnableClear = true, mFrustumDirty = true;
 
 		Matrix mLastWorldTransform;
-
-		Renderable* mFaderObject = nullptr;
 
 		Color mClearColor;
 

@@ -35,9 +35,7 @@ namespace Dojo {
 
 		typedef SmallSet<Unique<Object>> ChildList;
 
-		bool inheritScale;
-
-		Vector position, speed, scale;
+		Vector position, speed;
 
 		///Creates a new Object as a child of the given object at the given relative position, with bbSize size
 		/**
@@ -90,11 +88,6 @@ namespace Dojo {
 			active = a;
 		}
 
-		///tells if this object is a renderable
-		virtual bool isRenderable() {
-			return false;
-		}
-
 		const Vector& getSize() const {
 			return size;
 		}
@@ -140,18 +133,14 @@ namespace Dojo {
 			return mWorldTransform;
 		}
 
-		// 		const Vector& getWorldMax() const
-		// 		{
-		// 			return worldUpperBound;
-		// 		}
-		// 		
-		// 		const Vector& getWorldMin() const
-		// 		{
-		// 			return worldLowerBound;
-		// 		}
-
 		Object* getParent() {
 			return parent;
+		}
+
+		void setRenderable(Unique<Renderable> r);
+
+		Renderable* getRenderable() {
+			return renderable.get();
 		}
 
 		size_t getChildCount() const {
@@ -160,15 +149,9 @@ namespace Dojo {
 
 		Matrix getFullTransformRelativeTo(const Matrix& parent) const;
 
-		///adds a non-renderable child
+		///adds a child
 		template <class T>
-		T& addChild(Unique<T> o) {
-			return (T&)_addChild(std::move(o));
-		}
-
-		///adds a renderable child, and attaches it to the given Render layer
-		template <class T>
-		T& addChild(Unique<T> o, int layer) {
+		T& addChild(Unique<T> o, int layer = INT_MAX) {
 			return (T&)_addChild(std::move(o), layer);
 		}
 
@@ -195,6 +178,8 @@ namespace Dojo {
 
 		GameState* gameState;
 
+		Unique<Renderable> renderable;
+
 		Vector size, halfSize;
 
 		Quaternion rotation;
@@ -207,9 +192,10 @@ namespace Dojo {
 		Object* parent;
 		ChildList children;
 
-		Object& _addChild(Unique<Object> o);
-		Renderable& _addChild(Unique<Renderable> o, int layer);
+		Object& _addChild(Unique<Object> o, int layer);
 
 		void _unregisterChild(Object& child);
+	
+private:
 	};
 }

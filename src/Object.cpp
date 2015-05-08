@@ -12,12 +12,9 @@ using namespace glm;
 Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 	position(pos),
 	gameState(&parentObject.getGameState()),
-	speed(0, 0, 0),
 	active(true),
-	scale(1, 1, 1),
 	parent(nullptr),
-	disposed(false),
-	inheritScale(true) {
+	disposed(false) {
 	setSize(bbSize);
 }
 
@@ -25,9 +22,16 @@ Object::~Object() {
 	destroyAllChildren();
 }
 
-Object& Object::_addChild(Unique<Object> o) {
+Object& Object::_addChild(Unique<Object> o, int layer) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
+
+	if (layer < INT_MAX) {
+		DEBUG_ASSERT(o->getRenderable(), "Adding a object with no renderable");
+
+		//TODO make the layer a property of renderable
+		Platform::singleton().getRenderer().addRenderable(*o->getRenderable(), layer);
+	}
 
 	o->parent = this;
 
@@ -38,17 +42,11 @@ Object& Object::_addChild(Unique<Object> o) {
 	return *ptr;
 }
 
-Renderable& Object::_addChild(Unique<Renderable> o, int layer) {
-	Platform::singleton().getRenderer().addRenderable(*o, layer);
-
-	return addChild(std::move(o));
-}
-
 void Object::_unregisterChild(Object& child) {
 	child.parent = nullptr;
 
-	if (child.isRenderable())
-		Platform::singleton().getRenderer().removeRenderable((Renderable&)child); //if existing	
+	if (auto graphics = getRenderable())
+		Platform::singleton().getRenderer().removeRenderable(*graphics); //if existing	
 }
 
 Unique<Object> Object::removeChild(Object& o) {
@@ -151,21 +149,13 @@ Radians Object::getRoll() const {
 }
 
 Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
-	Matrix m = glm::translate(parent, position) * mat4_cast(rotation);
-	return (scale == Vector::ONE) ? m : glm::scale(m, scale);
+	return glm::translate(parent, position) * mat4_cast(rotation);
 }
 
 void Object::updateWorldTransform() {
 	//compute local matrix from position and orientation
-	if (!parent)
-		mWorldTransform = Matrix(1);
-	else {
-		mWorldTransform = parent->getWorldTransform();
-		if (!inheritScale)
-			mWorldTransform = glm::scale(mWorldTransform, 1.f / parent->scale);
-	}
-
-	mWorldTransform = getFullTransformRelativeTo(mWorldTransform);
+	mWorldTransform = getFullTransformRelativeTo(
+		parent ? parent->getWorldTransform() : Matrix(1));
 }
 
 void Object::updateChilds(float dt) {
@@ -188,13 +178,16 @@ void Object::onAction(float dt) {
 
 	updateWorldTransform();
 
+	if (renderable)
+		renderable->update(dt);
+
 	updateChilds(dt);
 }
 
 void Object::setAllChildrenVisibleHACK(bool visible) {
 	for (auto&& c : children) {
-		if (c->isRenderable()) {
-			((Renderable&)*c).setVisible(visible);
+		if (auto graphics = c->getRenderable()) {
+			graphics->setVisible(visible);
 		}
 		c->setAllChildrenVisibleHACK(visible);
 	}
@@ -202,4 +195,8 @@ void Object::setAllChildrenVisibleHACK(bool visible) {
 
 void Object::dispose() {
 	disposed = true;
+}
+
+void Object::setRenderable(Unique<Renderable> r) {
+	renderable = std::move(r);
 }

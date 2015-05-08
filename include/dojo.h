@@ -7,7 +7,6 @@
 #include <dojo/BackgroundQueue.h>
 #include <dojo/Resource.h>
 #include <dojo/Color.h>
-#include <dojo/Console.h>
 #include <dojo/DebugUtils.h>
 #include <dojo/Font.h>
 #include <dojo/FontSystem.h>

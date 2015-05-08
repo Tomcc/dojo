@@ -20,7 +20,6 @@
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
-    <ClInclude Include="include\dojo\Console.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_gl_header.h" />
@@ -111,7 +110,6 @@
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundQueue.cpp" />
     <ClCompile Include="src\Color.cpp" />
-    <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />

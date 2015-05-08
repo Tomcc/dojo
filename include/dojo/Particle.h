@@ -36,7 +36,7 @@ namespace Dojo {
 		Vector acceleration;
 
 		Particle(ParticlePool& p, Object& level, int i) :
-			AnimatedQuad(level, Vector::ZERO),
+			AnimatedQuad(level),
 			pool(&p),
 			index(i),
 			lifeTime(1) {

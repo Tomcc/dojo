@@ -4,30 +4,34 @@
 #include "Viewport.h"
 #include "Mesh.h"
 #include "GameState.h"
+#include "Object.h"
 
 using namespace Dojo;
 
-Renderable::Renderable(Object& parent, const Vector& pos, Mesh* m) :
-	Object(parent, pos, Vector::ONE),
-	visible(true),
-	layer(INT_MIN),
-	renderingOrder(0),
-	currentFadeTime(0) {
-	reset();
-
+Renderable::Renderable(Object& parent, Mesh* m) :
+parent(parent),
+visible(true),
+layer(INT_MIN),
+renderingOrder(0),
+currentFadeTime(0),
+fading(false),
+scale(Vector::ONE) {
+	color = Color::WHITE;
+	
 	mesh = m;
 }
 
-Renderable::Renderable(Object& parent, const Vector& pos, const String& meshName) :
-	Object(parent, pos, Vector::ONE),
-	visible(true),
-	layer(0),
-	renderingOrder(0),
-	currentFadeTime(0) {
-	reset();
-
+Renderable::Renderable(Object& parent, const String& meshName) :
+parent(parent),
+visible(true),
+layer(0),
+renderingOrder(0),
+currentFadeTime(0),
+scale(Vector::ONE)  {
+	color = Color::WHITE;
+	
 	if (meshName.size()) {
-		setMesh(getGameState().getMesh(meshName));
+		setMesh(parent.getGameState().getMesh(meshName));
 
 		DEBUG_ASSERT_INFO( getMesh(), "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
 	}
@@ -35,16 +39,6 @@ Renderable::Renderable(Object& parent, const Vector& pos, const String& meshName
 
 Renderable::~Renderable() {
 
-}
-
-void Renderable::reset() {
-	Object::reset();
-
-	visible = true;
-
-	color.r = color.g = color.b = color.a = 1.f;
-	fading = false;
-	scale.x = scale.y = 1;
 }
 
 void Renderable::startFade(const Color& start, const Color& end, float duration) {
@@ -73,11 +67,9 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 	startFade(color, end, duration);
 }
 
-void Renderable::onAction(float dt) {
-	Object::onAction(dt);
-
+void Renderable::update(float dt) {
 	if (mesh)
-		worldBB = transformAABB(mesh->getBounds());
+		worldBB = parent.transformAABB(mesh->getBounds());
 
 	advanceFade(dt);
 }
@@ -112,8 +104,11 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-void Renderable::_notifyRenderInfo(Renderer* r, int layerID, int renderIdx) {
-	render = r;
+void Renderable::_notifyRenderInfo(int layerID, int renderIdx) {
 	layer = layerID;
 	renderingOrder = renderIdx;
+}
+
+GameState& Dojo::Renderable::getGameState() {
+	return getObject().getGameState();
 }

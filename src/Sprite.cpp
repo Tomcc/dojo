@@ -6,8 +6,8 @@
 
 using namespace Dojo;
 
-Dojo::Sprite::Sprite(Object& parent, const Vector& pos, const String& defaultAnimName /*= String::EMPTY*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
-	AnimatedQuad(parent, pos),
+Sprite::Sprite(Object& parent, const String& defaultAnimName /*= String::EMPTY*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
+	AnimatedQuad(parent),
 	mAnimationIdx(-1) {
 	this->pixelPerfect = pixelPerfect;
 
@@ -17,7 +17,8 @@ Dojo::Sprite::Sprite(Object& parent, const Vector& pos, const String& defaultAni
 		//set convenient size to fit the first frame			
 		_updateScreenSize();
 
-		setSize(screenSize);
+		scale = screenSize;
+		parent.setSize(screenSize); //TODO hmm
 	}
 }
 
@@ -50,7 +51,7 @@ int Sprite::registerAnimation(FrameSet* set, float timePerFrame /*= -1 */) {
 }
 
 int Sprite::registerAnimation(const String& base, float timePerFrame) {
-	FrameSet* set = gameState->getFrameSet(base);
+	FrameSet* set = getGameState().getFrameSet(base);
 
 	DEBUG_ASSERT_INFO( set != nullptr, "The FrameSet to be registered could not be found", "name = " + base );
 

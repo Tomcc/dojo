@@ -8,10 +8,9 @@ using namespace Dojo;
 
 TextArea::TextArea(Object& l,
 					const String& fontSetName,
-					const Vector& pos,
 					bool center,
 					const Vector& bounds) :
-	Renderable(l, pos),
+	Renderable(l),
 	fontName(fontSetName),
 	interline(0.2f),
 	maxLineLenght(0xfffffff),
@@ -20,10 +19,10 @@ TextArea::TextArea(Object& l,
 	currentLineLength(0),
 	lastSpace(0),
 	visibleCharsNumber(0xfffffff) {
-	setSize(bounds);
-	cullMode = CM_DISABLED;
 
-	font = gameState->getFont(fontName);
+	l.setSize(bounds); //TODO HMM
+	
+	font = getGameState().getFont(fontName);
 
 	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
 
@@ -64,7 +63,7 @@ void TextArea::clearText() {
 
 	cursorPosition = Vector::ZERO;
 
-	setSize(0, 0);
+	parent.setSize(0, 0); //TODO hmm
 
 	changed = true;
 
@@ -75,7 +74,7 @@ void TextArea::clearText() {
 
 void TextArea::setMaxLineLength(int l) {
 	//HACK PAZZESCOH
-	maxLineLenght = (int)(l * ((float)gameState->getGame().getNativeWidth() / (float)640));
+	maxLineLenght = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
 }
 
 void TextArea::addText(const String& text) {
@@ -145,7 +144,6 @@ Renderable* TextArea::_enableLayer(Texture& tex) {
 	freeLayers.erase(freeLayers.begin());
 
 	r->setVisible(true);
-	r->setActive(true);
 	r->setTexture(&tex);
 
 	r->getMesh()->begin(getLenght() * 2);
@@ -166,7 +164,6 @@ void TextArea::_hideLayers() {
 		Renderable* l = busyLayers[i];
 
 		l->setVisible(false);
-		l->setActive(false);
 
 		freeLayers.emplace(l);
 	}
@@ -176,13 +173,14 @@ void TextArea::_hideLayers() {
 }
 
 void TextArea::_destroyLayer(Renderable& r) {
-	if (&r == this) //do not delete the TA itself, even if it is a layer
-		return;
-
-	removeChild(r);
-
-	busyLayers.erase(&r);
-	freeLayers.erase(&r);
+	DEBUG_TODO;
+// 	if (&r == this) //do not delete the TA itself, even if it is a layer
+// 		return;
+// 
+// 	removeChild(r);
+// 
+// 	busyLayers.erase(&r);
+// 	freeLayers.erase(&r);
 }
 
 
@@ -196,7 +194,7 @@ void TextArea::_prepare() {
 		return;
 
 	//setup the aspect ratio
-	gameState->getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
+	getGameState().getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
 
 	pixelScale.z = 1;
 	screenSize = screenSize.mulComponents(pixelScale);
@@ -282,7 +280,6 @@ void TextArea::_prepare() {
 
 	//if centered move every character of this line along x of 1/2 size
 	if (centered) {
-		DEBUG_TODO; //it kind of never worked with unicode
 		_centerLastLine(lastLineVertexID, cursorPosition.x);
 	}
 	//push any active layer on the GPU
@@ -295,7 +292,7 @@ void TextArea::_prepare() {
 		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());
 	}
 
-	setSize(mLayersBound.max - mLayersBound.min);
+	parent.setSize(mLayersBound.max - mLayersBound.min); //TODO hmm
 
 	changed = false;
 }
@@ -311,13 +308,15 @@ void TextArea::_destroyLayers() {
 }
 
 void TextArea::_centerLastLine(int startingAt, float size) {
-	if (mesh->getVertexCount() == 0)
-		return;
+	DEBUG_TODO; //it kind of never worked with unicode
 
-	float halfWidth = size * 0.5f;
-
-	for (Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i)
-		mesh->getVertex(i).x -= halfWidth;
+// 	if (mesh->getVertexCount() == 0)
+// 		return;
+// 
+// 	float halfWidth = size * 0.5f;
+// 
+// 	for (Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i)
+// 		mesh->getVertex(i).x -= halfWidth;
 }
 
 ///create a mesh to be used for text
@@ -331,17 +330,16 @@ Unique<Mesh> Dojo::TextArea::_createMesh() {
 }
 
 void TextArea::_pushLayer() {
-
-	meshPool.emplace_back(_createMesh());
-
-	auto r = make_unique<Renderable>(getGameState(), Vector::ZERO);
-	r->scale = scale;
-	r->setMesh(meshPool.back().get());
-	r->setVisible(false);
-	r->setActive(false);
-
-	freeLayers.emplace(r.get());
-	addChild(std::move(r), getLayer());
+	DEBUG_TODO;
+// 	meshPool.emplace_back(_createMesh());
+// 
+// 	auto r = make_unique<Renderable>(getGameState(), Vector::ZERO);
+// 	r->scale = scale;
+// 	r->setMesh(meshPool.back().get());
+// 	r->setVisible(false);
+// 
+// 	freeLayers.emplace(r.get());
+// 	addChild(std::move(r), getLayer());
 }
 
 Renderable* TextArea::_getLayer(Texture& tex) {
@@ -355,15 +353,12 @@ Renderable* TextArea::_getLayer(Texture& tex) {
 	return _enableLayer(tex);
 }
 
-void TextArea::onAction(float dt) {
+void TextArea::update(float dt) {
 	_prepare();
 
-	//WARNING: keep this in sync with Renderable::onAction!
-	{
-		Object::onAction(dt);
+	//WARNING remember to keep this in sync with Renderable::update!
 
-		worldBB = transformAABB(mLayersBound);
+	worldBB = parent.transformAABB(mLayersBound);
 
-		advanceFade(dt);
-	}
+	advanceFade(dt);
 }

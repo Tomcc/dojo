@@ -50,18 +50,14 @@ bool Viewport::isVisible(Renderable& s) {
 }
 
 void Viewport::addFader(int layer) {
-	DEBUG_ASSERT( !mFaderObject, "A fade overlay object already exists" );
-
 	//create the fader object			
-	auto r = make_unique<Renderable>(getGameState(), Vector(0, 0, -1), "texturedQuad");
-	r->color = Color::NIL;
+	renderable = make_unique<Renderable>(getGameState(), "texturedQuad");
+	renderable->color = Color::NIL;
 
-	r->scale.x = size.x;
-	r->scale.y = size.y;
+	renderable->scale.x = size.x;
+	renderable->scale.y = size.y;
 
-	r->setVisible(false);
-
-	mFaderObject = &addChild(std::move(r), layer);
+	renderable->setVisible(false);
 }
 
 void Viewport::setRenderTarget(Texture* target) {
@@ -213,10 +209,10 @@ void Viewport::setVisibleLayers(int min, int max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	AABB bb = r.transformAABB(r.getMesh()->getBounds());
+	AABB bb = r.getObject().transformAABB(r.getMesh()->getBounds());
 
 	Vector halfSize = (bb.max - bb.min) * 0.5f;
-	Vector worldPos = r.getWorldPosition();
+	Vector worldPos = r.getObject().getWorldPosition();
 
 	//TODO not do as a sphere
 

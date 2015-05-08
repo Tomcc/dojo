@@ -6,18 +6,16 @@
 
 using namespace Dojo;
 
-Dojo::PolyTextArea::PolyTextArea(Object& parent, const Vector& position, Font* font, bool centered, RenderingType rt) :
-	Renderable(parent, position),
+PolyTextArea::PolyTextArea(Object& parent, Font& font, bool centered, RenderingType rt) :
+	Renderable(parent),
 	mCentered(centered),
 	mDirty(true), //be sure to init anyways even if the user doesn't write anything
-	pFont(font),
+	pFont(&font),
 	mRendering(rt),
 	mInterline(0),
 	mInflateRadius(0.01f),
 	mDepth(0.15f),
 	mBevelDepth(0.015f) {
-	DEBUG_ASSERT( pFont, "Cannot create a PolyTextArea with a null font" );
-
 	mSpaceWidth = pFont->getCharacter(' ')->advance;
 
 	//create a new mesh with the required parameters
@@ -89,6 +87,38 @@ void PolyTextArea::_addExtrusionLayer(Tessellation* t, const Vector& origin, flo
 		_tesselateExtrusionStrip(t, mPrevLayerIdx, layerIdx);
 
 	mPrevLayerIdx = layerIdx;
+}
+
+void PolyTextArea::setExtrusionParameters(float depth, float bevelDepth /*= 0*/, float inflateRadius /*= 0*/) {
+	DEBUG_ASSERT(depth > 0, "extrusion depth must be a positive number");
+	DEBUG_ASSERT(bevelDepth >= 0 && bevelDepth < depth*0.5, "the depth of the bevel must not exceed half of the total depth");
+
+	mDepth = depth;
+	mBevelDepth = bevelDepth;
+	mInflateRadius = inflateRadius;
+}
+
+void PolyTextArea::setInterline(float interline) {
+	mInterline = interline;
+}
+
+void PolyTextArea::addText(const String& str) {
+	mContent += str;
+	mDirty = true;
+}
+
+void PolyTextArea::setText(const String& str) {
+	mContent = str;
+	mDirty = true;
+}
+
+void PolyTextArea::clear() {
+	mContent = String::EMPTY;
+	mDirty = true;
+}
+
+float PolyTextArea::getInterline() {
+	return mInterline;
 }
 
 void PolyTextArea::_prepare() {
@@ -187,4 +217,11 @@ void PolyTextArea::_prepare() {
 	mMesh->end();
 
 	mDirty = false;
+}
+
+void PolyTextArea::update(float dt) {
+	if (mDirty)
+		_prepare();
+
+	Renderable::update(dt);
 }

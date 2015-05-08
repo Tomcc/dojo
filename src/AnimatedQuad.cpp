@@ -37,17 +37,19 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 		totalTime = 1;
 }
 
-AnimatedQuad::AnimatedQuad(Object& parent, const Vector& pos, const String& immediateAnim /*= String::EMPTY*/, float timePerFrame /*= 0.0f*/) :
-	Renderable(parent, pos),
+AnimatedQuad::AnimatedQuad(Object& parent, const String& immediateAnim /*= String::EMPTY*/, float timePerFrame /*= 0.0f*/) :
+	Renderable(parent),
 	animationTime(0),
 	pixelScale(1, 1),
 	animationSpeedMultiplier(1),
 	pixelPerfect(true) {
+
 	cullMode = CM_DISABLED;
-	inheritScale = false;
+
+	//inheritScale = false;
 
 	//use the default quad
-	mesh = getGameState().getMesh("texturedQuad");
+	mesh = parent.getGameState().getMesh("texturedQuad");
 
 	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
 
@@ -55,29 +57,25 @@ AnimatedQuad::AnimatedQuad(Object& parent, const Vector& pos, const String& imme
 	static Animation dummyAnimation(nullptr, 0);
 	animation = &dummyAnimation;
 
-	reset();
+	{
+		pixelScale.x = pixelScale.y = 1;
+		screenSize.x = screenSize.y = 1;
+
+		if (animation)
+			animation->setup(nullptr, 0);
+
+		setTexture(nullptr);
+		mesh = parent.getGameState().getMesh("texturedQuad");
+
+		DEBUG_ASSERT(mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)");
+	}
 
 	if (immediateAnim.size())
 		immediateAnimation(immediateAnim, timePerFrame);
 }
 
-void AnimatedQuad::reset() {
-	Renderable::reset();
-
-	pixelScale.x = pixelScale.y = 1;
-	screenSize.x = screenSize.y = 1;
-
-	if (animation)
-		animation->setup(nullptr, 0);
-
-	setTexture(nullptr);
-	mesh = gameState->getMesh("texturedQuad");
-
-	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
-}
-
 void AnimatedQuad::immediateAnimation(const String& name, float timePerFrame) {
-	FrameSet* set = gameState->getFrameSet(name);
+	FrameSet* set = parent.getGameState().getFrameSet(name);
 
 	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );
 
@@ -142,7 +140,7 @@ void Dojo::AnimatedQuad::_setTexture(Texture& t) {
 	_updateScreenSize();
 }
 
-void AnimatedQuad::onAction(float dt) {
+void AnimatedQuad::update(float dt) {
 	advanceAnim(dt);
 
 	_updateScreenSize();
@@ -152,14 +150,14 @@ void AnimatedQuad::onAction(float dt) {
 		scale.z = 1; //be sure to keep scale = 1 or the transform will be denormalized (no inverse!)
 	}
 
-	Renderable::onAction(dt);
+	Renderable::update(dt);
 }
 
 void AnimatedQuad::_updateScreenSize() {
 	if (pixelPerfect) {
 		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		gameState->getViewport()->makeScreenSize(screenSize, getTexture());
+		parent.getGameState().getViewport()->makeScreenSize(screenSize, getTexture());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}
