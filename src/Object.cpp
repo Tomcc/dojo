@@ -132,7 +132,7 @@ Vector Object::getLocalPosition(const Vector& worldPos) const {
 	return Vector(p.x, p.y, p.z);
 }
 
-Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z */) {
+Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z*/) const {
 	glm::vec4 dir(dir3, 0);
 	dir = getWorldTransform() * dir;
 

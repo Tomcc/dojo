@@ -112,7 +112,7 @@ namespace Dojo {
 		Vector getLocalPosition(const Vector& worldPos) const;
 
 		///returns a local direction in world space
-		Vector getWorldDirection(const Vector& dir3 = Vector::UNIT_Z);
+		Vector getWorldDirection(const Vector& dir3 = Vector::UNIT_Z) const;
 
 		Vector getLocalDirection(const Vector& worldDir);
 
