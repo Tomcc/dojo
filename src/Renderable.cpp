@@ -59,12 +59,12 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 void Renderable::update(float dt) {
 	if (mesh) {
 		AABB bounds = mesh->getBounds();
-		bounds.max = Vector::mul(bounds.max, scale*0.5f);
-		bounds.min = Vector::mul(bounds.min, scale*0.5f);
+		bounds.max = Vector::mul(bounds.max, scale);
+		bounds.min = Vector::mul(bounds.min, scale);
 		worldBB = parent.transformAABB(bounds);
-	}
 
-	advanceFade(dt);
+		advanceFade(dt);
+	}
 }
 
 bool Renderable::canBeRendered() const {
