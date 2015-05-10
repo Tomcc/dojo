@@ -125,9 +125,9 @@ void Object::reset() {
 }
 
 Vector Object::getLocalPosition(const Vector& worldPos) const {
-	Matrix inv = glm::inverse(getWorldTransform()); //TODO make faster for gods' sake
-	glm::vec4 p(worldPos.x, worldPos.y, worldPos.z, 1);
-	p = inv * p;
+	//TODO make faster for gods' sake
+	glm::vec4 p(worldPos, 1);
+	p = glm::inverse(getWorldTransform()) * p;
 
 	return Vector(p.x, p.y, p.z);
 }
@@ -146,7 +146,7 @@ Vector Object::getLocalDirection(const Vector& worldDir) {
 }
 
 Radians Object::getRoll() const {
-	return (Radians)Degrees(glm::roll(rotation));
+	return Radians(glm::roll(rotation));
 }
 
 Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {

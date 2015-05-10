@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <map>
 
+#define GLM_FORCE_RADIANS //for sanity - why would it use degrees in places by default?
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/type_ptr.hpp"
