@@ -51,7 +51,7 @@ bool Viewport::isVisible(Renderable& s) {
 
 void Viewport::addFader(int layer) {
 	//create the fader object			
-	renderable = make_unique<Renderable>(getGameState(), "texturedQuad");
+	renderable = make_unique<Renderable>(*this, "texturedQuad");
 	renderable->color = Color::NIL;
 
 	renderable->scale.x = size.x;

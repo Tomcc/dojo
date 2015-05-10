@@ -24,7 +24,7 @@ namespace Dojo {
 	public:
 
 		Vector uvOffset;
-		Vector scale;
+		Vector scale = Vector::ONE;
 
 		Renderable(Object& parent, Mesh* m = nullptr);
 
@@ -59,11 +59,7 @@ namespace Dojo {
 		int getLayer() const {
 			return layer;
 		}
-
-		int getRenderingOrder() {
-			return renderingOrder;
-		}
-
+		
 		const AABB& getGraphicsAABB() const {
 			return worldBB;
 		}
@@ -88,17 +84,16 @@ namespace Dojo {
 
 		virtual void update(float dt);
 
-		void _notifyRenderInfo(int layerID, int renderIdx);
+		void _notifyRenderInfo(int layerID);
 	protected:
 
 		Object& parent;
-		bool visible;
+		bool visible = true;
 
-		int layer;
-		int renderingOrder;
-
-		bool fading;
-		float currentFadeTime;
+		int layer = INT_MIN;
+		
+		bool fading = false;
+		float currentFadeTime = 0;
 		float fadeEndTime;
 		Color fadeStartColor;
 		Color fadeEndColor;

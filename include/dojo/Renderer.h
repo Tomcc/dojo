@@ -107,7 +107,7 @@ namespace Dojo {
 		void renderViewport(Viewport& viewport);
 
 		//renders all the layers and their contained Renderables in the given order
-		void render();
+		void render(float dt);
 
 	protected:
 

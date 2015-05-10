@@ -107,7 +107,7 @@ void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
 	//get the needed layer	
 	RenderLayer& layer = getLayer(layerID);
 
-	s._notifyRenderInfo(layerID, layer.elements.size());
+	s._notifyRenderInfo(layerID);
 
 	//append at the end
 	layer.elements.emplace(&s);
@@ -116,7 +116,7 @@ void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
 void Renderer::removeRenderable(Renderable& s) {
 	if (hasLayer(s.getLayer())) {
 		getLayer(s.getLayer()).elements.erase(&s);
-		s._notifyRenderInfo(0, 0);
+		s._notifyRenderInfo(0);
 	}
 }
 
@@ -195,6 +195,7 @@ void Renderer::renderElement(Renderable& elem) {
 	glUseProgram(0);
 #endif
 
+	//TODO actually use shaders and materials
 	//I'm not sure this actually makes sense
 #ifndef USING_OPENGLES
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
@@ -320,12 +321,20 @@ void Renderer::renderViewport(Viewport& viewport) {
 	}
 }
 
-void Renderer::render() {
+void Renderer::render(float dt) {
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
-
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	frameStarted = true;
+
+	//update all the renderables
+	for (auto& layer : negativeLayers)
+		for (auto& r : layer.elements)
+			r->update(dt);
+
+	for (auto& layer : positiveLayers)
+		for (auto& r : layer.elements)
+			r->update(dt);
 
 	//render all the viewports
 	for (auto& viewport : viewportList)

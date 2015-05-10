@@ -45,7 +45,8 @@ Object& Object::_addChild(Unique<Object> o, int layer) {
 void Object::_unregisterChild(Object& child) {
 	child.parent = nullptr;
 
-	if (auto graphics = getRenderable())
+	//TODO it doesn't make much sense to keep this here
+	if (auto graphics = child.getRenderable())
 		Platform::singleton().getRenderer().removeRenderable(*graphics); //if existing	
 }
 
@@ -177,9 +178,6 @@ void Object::onAction(float dt) {
 	position += speed * dt;
 
 	updateWorldTransform();
-
-	if (renderable)
-		renderable->update(dt);
 
 	updateChilds(dt);
 }

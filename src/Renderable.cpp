@@ -9,25 +9,14 @@
 using namespace Dojo;
 
 Renderable::Renderable(Object& parent, Mesh* m) :
-parent(parent),
-visible(true),
-layer(INT_MIN),
-renderingOrder(0),
-currentFadeTime(0),
-fading(false),
-scale(Vector::ONE) {
+parent(parent) {
 	color = Color::WHITE;
 	
 	mesh = m;
 }
 
 Renderable::Renderable(Object& parent, const String& meshName) :
-parent(parent),
-visible(true),
-layer(0),
-renderingOrder(0),
-currentFadeTime(0),
-scale(Vector::ONE)  {
+parent(parent)  {
 	color = Color::WHITE;
 	
 	if (meshName.size()) {
@@ -104,9 +93,8 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-void Renderable::_notifyRenderInfo(int layerID, int renderIdx) {
+void Renderable::_notifyRenderInfo(int layerID) {
 	layer = layerID;
-	renderingOrder = renderIdx;
 }
 
 GameState& Dojo::Renderable::getGameState() {
