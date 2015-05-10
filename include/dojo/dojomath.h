@@ -27,26 +27,6 @@ namespace Dojo {
 			return *((byte*)&x) != 0;
 		}
 
-		///seeds the random either using the given seed, or current time if omitted
-		static void seedRandom(RandomSeed seed = 0);
-
-		///quick and dirty random (see Random class for a more reliable implementation)
-		static float random();
-
-		static bool oneEvery(int n); //returns true one time in n
-
-		///returns a random float in the range [min...max[
-		static float rangeRandom(float min, float max);
-
-		///returns a random point in the given space rectangle
-		static Vector randomVector(const Vector& min, const Vector& max);
-
-		///returns a random point in the given space rectangle (2D)
-		static Vector randomVector2D(const Vector& min, const Vector& max, float z = 0);
-
-		///returns a random unit vector in 2D
-		static Vector randomUnit2D();
-
 		///clamps n between max and min
 		template <typename T>
 		static T clamp(T n, T max, T min) {

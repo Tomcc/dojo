@@ -97,17 +97,8 @@ namespace Dojo {
 			return valid;
 		}
 
-		///renders a single element using the given viewport
-		void renderElement(Renderable& elem);
-
-		///renders a whole layer on the given viewport
-		void renderLayer(Viewport& viewport, const RenderLayer& layer);
-
-		///renders a viewport and all its visible layers
-		void renderViewport(Viewport& viewport);
-
 		//renders all the layers and their contained Renderables in the given order
-		void render(float dt);
+		void renderFrame(float dt);
 
 	protected:
 
@@ -132,5 +123,13 @@ namespace Dojo {
 		Color defaultAmbient;
 
 		Matrix mRenderRotation;
+
+		void _updateRenderables(const LayerList& layers, float dt);
+
+		///renders a single element using the given viewport
+		void _renderElement(Renderable& elem);
+		void _renderLayer(Viewport& viewport, const RenderLayer& layer);
+		void _renderViewport(Viewport& viewport);
+
 	};
 }

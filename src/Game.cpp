@@ -27,9 +27,7 @@ Game::Game(const String& gamename, int w, int h, Orientation r, float nativedt, 
 		nativeWidth = p.getScreenWidth();
 	if (h == 0)
 		nativeHeight = p.getScreenHeight();
-
-	Math::seedRandom();
-
+	
 	p.addApplicationListener(*this); //always listen to the app
 }
 

@@ -660,7 +660,7 @@ void Win32Platform::step(float dt) {
 
 	sound->update(dt);
 
-	render->render(dt);
+	render->renderFrame(dt);
 
 	//take the time before swapBuffers because on some implementations it is blocking
 	realFrameTime = (float) mStepTimer.getElapsedTime();

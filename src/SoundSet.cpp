@@ -1,5 +1,6 @@
 #include "SoundSet.h"
 #include "SoundBuffer.h"
+#include "Random.h"
 
 using namespace Dojo;
 
@@ -15,7 +16,7 @@ SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 
 	if (i < 0) {
 		if (buffers.size() > 1)
-			i = (int)Math::rangeRandom(0, (float)buffers.size());
+			i = Random::instance.getInt(buffers.size());
 		else
 			i = 0;
 	}

@@ -44,6 +44,20 @@ namespace Dojo {
 		static Vector clamp(const Vector& val, const Vector& max, const Vector& min) {
 			return Vector::max(min, Vector::min(max, val));
 		}
+		///returns a Vector of abs values
+		static Vector abs(const Vector& val) {
+			return{ std::abs(val.x), std::abs(val.y), std::abs(val.z) };
+		}
+
+		///component-wise multiply two vectors
+		static Vector mul(const Vector& A, const Vector& B) {
+			return{ A.x * B.x, A.y * B.y, A.z * B.z };
+		}
+
+		///component-wise divide two vectors
+		static Vector div(const Vector& A, const Vector& B) {
+			return{ A.x / B.x, A.y / B.y, A.z / B.z };
+		}
 
 		///xyz are set to the same value, or 0
 		explicit Vector(float f = 0) : glm::vec3(f) {
@@ -128,21 +142,6 @@ namespace Dojo {
 			return Vector(v.x * s + invs * x, v.y * s + invs * y, v.z * s + invs * z);
 		}
 
-		///returns a vector with abs componenents
-		Vector absComponents() const {
-			return Vector(abs(x), abs(y), abs(z));
-		}
-
-		///multiplies component by component
-		Vector mulComponents(const Vector& v) const {
-			return Vector(x * v.x, y * v.y, z * v.z);
-		}
-
-		///divides component by component
-		Vector divideComponents(const Vector& v) const {
-			return Vector(x / v.x, y / v.y, z / v.z);
-		}
-
 		///returns the distance from this to v
 		float distance(const Vector& v) const {
 			return sqrt(distanceSquared(v));
@@ -170,7 +169,7 @@ namespace Dojo {
 
 		///returns the dot product with this vector with only positive components
 		float absDot(const Vector& v) const {
-			return abs(x * v.x) + abs(y * v.y) + abs(z * v.z);
+			return std::abs(x * v.x) + std::abs(y * v.y) + std::abs(z * v.z);
 		}
 
 		String toString() const {

@@ -166,7 +166,7 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	mRenderRotation = glm::mat4_cast(Quaternion(Vector(0, 0, renderRotation)));
 }
 
-void Renderer::renderElement(Renderable& elem) {
+void Dojo::Renderer::_renderElement(Renderable& elem) {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
@@ -241,7 +241,7 @@ bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable&
 	return layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
 }
 
-void Renderer::renderLayer(Viewport& viewport, const RenderLayer& layer) {
+void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	if (!layer.elements.size() || !layer.visible)
 		return;
 
@@ -269,11 +269,11 @@ void Renderer::renderLayer(Viewport& viewport, const RenderLayer& layer) {
 
 	for (auto& r : layer.elements) {
 		if (r->canBeRendered() && _cull(layer, viewport, *r))
-			renderElement(*r);
+			_renderElement(*r);
 	}
 }
 
-void Renderer::renderViewport(Viewport& viewport) {
+void Renderer::_renderViewport(Viewport& viewport) {
 	Texture* rt = viewport.getRenderTarget();
 
 	if (rt)
@@ -308,37 +308,42 @@ void Renderer::renderViewport(Viewport& viewport) {
 	{
 		//first render from the most negative to -1
 		for (int i = (int)negativeLayers.size() - 1; i >= 0; --i)
-			renderLayer(viewport, negativeLayers[i]);
+			_renderLayer(viewport, negativeLayers[i]);
 
 		//then from 0 to the most positive
 		for (auto& l : positiveLayers)
-			renderLayer(viewport, l);
+			_renderLayer(viewport, l);
 	}
 	else //use the custom layer ordering/visibility
 	{
 		for (auto& layer : viewport.getVisibleLayers())
-			renderLayer(viewport, getLayer(layer));
+			_renderLayer(viewport, getLayer(layer));
 	}
 }
 
-void Renderer::render(float dt) {
+void Dojo::Renderer::_updateRenderables(const LayerList& layers, float dt) {
+	for (auto& layer : negativeLayers) {
+		for (auto& r : layer.elements) {
+			if (r->getObject().isActive() && r->isVisible()) {
+				r->update(dt);
+			}
+		}
+	}
+}
+
+void Dojo::Renderer::renderFrame(float dt) {
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	frameStarted = true;
 
 	//update all the renderables
-	for (auto& layer : negativeLayers)
-		for (auto& r : layer.elements)
-			r->update(dt);
-
-	for (auto& layer : positiveLayers)
-		for (auto& r : layer.elements)
-			r->update(dt);
+	_updateRenderables(negativeLayers, dt);
+	_updateRenderables(positiveLayers, dt);
 
 	//render all the viewports
 	for (auto& viewport : viewportList)
-		renderViewport(*viewport);
+		_renderViewport(*viewport);
 
 	frameStarted = false;
 }

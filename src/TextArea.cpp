@@ -197,7 +197,7 @@ void TextArea::_prepare() {
 	getGameState().getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
 
 	pixelScale.z = 1;
-	screenSize = screenSize.mulComponents(pixelScale);
+	screenSize = Vector::mul(screenSize, pixelScale);
 	scale = screenSize;
 
 	//render the font

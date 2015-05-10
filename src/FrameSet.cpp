@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include "Texture.h"
 #include "Table.h"
+#include "Random.h"
 
 using namespace Dojo;
 
@@ -97,7 +98,7 @@ void FrameSet::addTexture(Unique<Texture> t) {
 }
 
 Texture* FrameSet::getRandomFrame() {
-	return frames.at((int)Math::rangeRandom(0, (float)frames.size()));
+	return frames.at(Random::instance.getInt(frames.size()));
 }
 
 int FrameSet::getFrameIndex(Texture& frame) const {

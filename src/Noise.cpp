@@ -3,8 +3,8 @@
 
 using namespace Dojo;
 
-Noise::Noise(Random& rand) {
-	seed(rand);
+Noise::Noise(Random& r) {
+	seed(r);
 }
 
 Noise::Noise(RandomSeed seedInt) {
@@ -17,13 +17,13 @@ Noise::Noise() {
 	seed(gen);
 }
 
-void Noise::seed(Random& rand) {
+void Noise::seed(Random& r) {
 	for (int i = 0; i < 256; ++i)
 		p[i] = i;
 
 	//switch numbers around
 	for (int i = 0; i < 256; ++i) {
-		int d = rand.nextInt(255);
+		int d = r.getInt(255);
 
 		int t = p[i];
 		p[i] = p[d];
