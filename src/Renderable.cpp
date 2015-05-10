@@ -58,13 +58,10 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 
 void Renderable::update(float dt) {
 	if (mesh) {
-		//TODO this fixes some objects
-// 		AABB bounds = mesh->getBounds();
-// 		bounds.max = Vector::mul(bounds.max, scale*0.5f);
-// 		bounds.min = Vector::mul(bounds.min, scale*0.5f);
-// 		worldBB = parent.transformAABB(bounds);
-
-		worldBB = parent.transformAABB(mesh->getBounds());
+		AABB bounds = mesh->getBounds();
+		bounds.max = Vector::mul(bounds.max, scale*0.5f);
+		bounds.min = Vector::mul(bounds.min, scale*0.5f);
+		worldBB = parent.transformAABB(bounds);
 	}
 
 	advanceFade(dt);

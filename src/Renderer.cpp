@@ -322,7 +322,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 }
 
 void Dojo::Renderer::_updateRenderables(const LayerList& layers, float dt) {
-	for (auto& layer : negativeLayers) {
+	for (auto& layer : layers) {
 		for (auto& r : layer.elements) {
 			if (r->getObject().isActive() && r->isVisible()) {
 				r->update(dt);
