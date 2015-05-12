@@ -3,6 +3,8 @@
 #include "GameState.h"
 #include "Mesh.h"
 #include "Viewport.h"
+#include "Platform.h"
+#include "Renderer.h"
 
 using namespace Dojo;
 
@@ -136,21 +138,22 @@ void TextArea::addText(int n, char paddingChar, int digits) {
 	addText(number);
 }
 
-Renderable* TextArea::_enableLayer(Texture& tex) {
+Renderable& Dojo::TextArea::_enableLayer(Texture& tex) {
 	if (freeLayers.empty())
 		_pushLayer();
 
-	Renderable* r = *freeLayers.begin();
+	auto& layer = **freeLayers.begin();
+
+	layer.setVisible(true);
+	layer.setTexture(&tex);
+
+	layer.getMesh()->begin(getLenght() * 2);
+
+	//move it to the busy layer
+	busyLayers.emplace(std::move(*freeLayers.begin()));
 	freeLayers.erase(freeLayers.begin());
 
-	r->setVisible(true);
-	r->setTexture(&tex);
-
-	r->getMesh()->begin(getLenght() * 2);
-
-	busyLayers.emplace(r);
-
-	return r;
+	return layer;
 }
 
 void TextArea::_endLayers() {
@@ -161,11 +164,11 @@ void TextArea::_endLayers() {
 ///Free any created layer			
 void TextArea::_hideLayers() {
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
-		Renderable* l = busyLayers[i];
-
+		auto& l = busyLayers[i];
 		l->setVisible(false);
 
-		freeLayers.emplace(l);
+		//move it in the free elements
+		freeLayers.emplace(std::move(l));
 	}
 
 	actualCharacters = 0;
@@ -173,14 +176,11 @@ void TextArea::_hideLayers() {
 }
 
 void TextArea::_destroyLayer(Renderable& r) {
-	DEBUG_TODO;
-// 	if (&r == this) //do not delete the TA itself, even if it is a layer
-// 		return;
-// 
-// 	removeChild(r);
-// 
-// 	busyLayers.erase(&r);
-// 	freeLayers.erase(&r);
+
+	Platform::singleton().getRenderer().removeRenderable(r);
+
+	busyLayers.erase(LayerList::find(busyLayers, r));
+	freeLayers.erase(LayerList::find(freeLayers, r));
 }
 
 
@@ -240,7 +240,7 @@ void TextArea::_prepare() {
 		}
 		else //real character
 		{
-			Mesh* layer = _getLayer(*rep->getTexture())->getMesh();
+			auto& layer = *_getLayer(*rep->getTexture()).getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;
@@ -248,23 +248,23 @@ void TextArea::_prepare() {
 			if (doKerning && lastRep)
 				x += font->getKerning(rep, lastRep);
 
-			idx = layer->getVertexCount();
+			idx = layer.getVertexCount();
 
 			//assign vertex positions and uv coordinates
-			layer->vertex(x, y);
-			layer->uv(rep->uvPos.x, rep->uvPos.y + rep->uvHeight);
+			layer.vertex(x, y);
+			layer.uv(rep->uvPos.x, rep->uvPos.y + rep->uvHeight);
 
-			layer->vertex(x + rep->widthRatio, y);
-			layer->uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight);
+			layer.vertex(x + rep->widthRatio, y);
+			layer.uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight);
 
-			layer->vertex(x, y + rep->heightRatio);
-			layer->uv(rep->uvPos.x, rep->uvPos.y);
+			layer.vertex(x, y + rep->heightRatio);
+			layer.uv(rep->uvPos.x, rep->uvPos.y);
 
-			layer->vertex(x + rep->widthRatio, y + rep->heightRatio);
-			layer->uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y);
+			layer.vertex(x + rep->widthRatio, y + rep->heightRatio);
+			layer.uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y);
 
-			layer->triangle(idx, idx + 1, idx + 2);
-			layer->triangle(idx + 1, idx + 3, idx + 2);
+			layer.triangle(idx, idx + 1, idx + 2);
+			layer.triangle(idx + 1, idx + 3, idx + 2);
 
 			//now move to the next character
 			cursorPosition.x += rep->advance + charSpacing;
@@ -330,23 +330,22 @@ Unique<Mesh> Dojo::TextArea::_createMesh() {
 }
 
 void TextArea::_pushLayer() {
-	DEBUG_TODO;
-// 	meshPool.emplace_back(_createMesh());
-// 
-// 	auto r = make_unique<Renderable>(getGameState(), Vector::ZERO);
-// 	r->scale = scale;
-// 	r->setMesh(meshPool.back().get());
-// 	r->setVisible(false);
-// 
-// 	freeLayers.emplace(r.get());
-// 	addChild(std::move(r), getLayer());
+	meshPool.emplace_back(_createMesh());
+
+	auto r = make_unique<Renderable>(getGameState(), *meshPool.back());
+	r->scale = scale;
+	r->setVisible(false);
+
+	Platform::singleton().getRenderer().addRenderable(*r, getLayer());
+
+	freeLayers.emplace(std::move(r));
 }
 
-Renderable* TextArea::_getLayer(Texture& tex) {
+Renderable& Dojo::TextArea::_getLayer(Texture& tex) {
 	//find this layer in the already assigned, or get new
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		if (busyLayers[i]->getTexture() == &tex)
-			return busyLayers[i];
+			return *busyLayers[i];
 	}
 
 	//does not exist, hit a free one

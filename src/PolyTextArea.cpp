@@ -42,7 +42,7 @@ PolyTextArea::PolyTextArea(Object& parent, Font& font, bool centered, RenderingT
 		}
 	}
 
-	setMesh(mMesh.get());
+	setMesh(*mMesh);
 }
 
 PolyTextArea::~PolyTextArea() {

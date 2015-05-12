@@ -9,44 +9,41 @@
 using namespace Dojo;
 
 RenderState::TextureUnit::TextureUnit() :
-	scale(1, 1),
-	rotation(0),
-	offset(0, 0),
-	texture(nullptr),
-	optTransform(nullptr) {
+scale(1, 1),
+rotation(0),
+offset(0, 0) {
 
+}
+
+RenderState::TextureUnit::TextureUnit(Texture* t) :
+TextureUnit() {
+	texture = t;
 }
 
 RenderState::TextureUnit::~TextureUnit() {
-	if (optTransform)
-	SAFE_DELETE(optTransform);
+
 }
 
 
-void RenderState::TextureUnit::_updateTransform() {
-	if (!optTransform)
-		optTransform = new Matrix;
-
-	//build the transform
-	*optTransform = glm::scale(Matrix(1), scale);
-	*optTransform = glm::translate(*optTransform, offset);
-	*optTransform = glm::rotate(*optTransform, (float)(Degrees)rotation, Vector::UNIT_Z);
+Matrix RenderState::TextureUnit::getTransform() const {
+	if (hasTextureTransform) {
+		//build the transform
+		Matrix m = glm::scale(Matrix(1), scale);
+		m = glm::translate(m, offset);
+		m = glm::rotate(m, (float)(Degrees)rotation, Vector::UNIT_Z);
+		return m;
+	}
+	else {
+		return Matrix(1);
+	}
 }
 
 void RenderState::TextureUnit::applyTransform() {
-	DEBUG_ASSERT(optTransform, "Tried to apply a non-existing texture transform");
-
 	glMatrixMode(GL_TEXTURE);
-	glLoadMatrixf(glm::value_ptr(*optTransform));
-}
-
-const Matrix& RenderState::TextureUnit::getTransform() const {
-	static const Matrix identityMatrix;
-	return isTransformRequired() ? *optTransform : identityMatrix;
+	glLoadMatrixf(glm::value_ptr(getTransform()));
 }
 
 RenderState::RenderState() :
-	mTextureNumber(0),
 	cullMode(CM_BACK),
 	blendingEnabled(true),
 	srcBlend(GL_SRC_ALPHA),
@@ -57,23 +54,14 @@ RenderState::RenderState() :
 }
 
 RenderState::~RenderState() {
-	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i)
-		delete textures[i];
+
 }
 
 void RenderState::setTexture(Texture* tex, int ID /*= 0 */) {
 	DEBUG_ASSERT(ID >= 0, "Passed a negative texture ID to setTexture()");
 	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
-	if (textures[ID] == NULL) //adding a new one
-	{
-		++mTextureNumber;
-		textures[ID] = new TextureUnit();
-	}
-	else if (tex == NULL)
-	SAFE_DELETE(textures[ID]);
-
-	textures[ID]->texture = tex;
+	textures[ID] = TextureUnit(tex);
 }
 
 void RenderState::setBlending(BlendingMode mode) {
@@ -103,17 +91,14 @@ Texture* RenderState::getTexture(int ID /*= 0 */) const {
 	DEBUG_ASSERT(ID >= 0, "Can't retrieve a negative texture ID");
 	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
-	if (textures[ID])
-		return textures[ID]->texture;
-	else
-		return NULL;
+	return textures[ID].texture;
 }
 
 const RenderState::TextureUnit& RenderState::getTextureUnit(int ID) const {
 	DEBUG_ASSERT(ID >= 0, "Can't retrieve a negative textureUnit");
 	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
-	return *textures[ID];
+	return textures[ID];
 }
 
 int RenderState::getDistance(RenderState* s) {
@@ -121,22 +106,20 @@ int RenderState::getDistance(RenderState* s) {
 
 	int dist = 0;
 
-	if (s->mesh != mesh)
-		dist += 3;
-
-	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
-		if (textures[i] != s->textures[i])
-			dist += 2;
-	}
-
-	if (s->isAlphaRequired() != isAlphaRequired())
-		dist += 1;
+	DEBUG_TODO; //dunno
+// 
+// 	if (s->mesh != mesh)
+// 		dist += 3;
+// 
+// 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
+// 		if (textures[i] != s->textures[i])
+// 			dist += 2;
+// 	}
+// 
+// 	if (s->isAlphaRequired() != isAlphaRequired())
+// 		dist += 1;
 
 	return dist;
-}
-
-bool RenderState::isAlphaRequired() {
-	return blendingEnabled || getTextureNumber() == 0;
 }
 
 void RenderState::applyState() {
@@ -144,11 +127,11 @@ void RenderState::applyState() {
 		//select current slot
 		glActiveTexture(GL_TEXTURE0 + i);
 
-		if (textures[i]) {
-			textures[i]->texture->bind(i);
+		if (textures[i].texture) {
+			textures[i].texture->bind(i);
 
-			if (textures[i]->isTransformRequired())
-				textures[i]->applyTransform();
+			if (textures[i].isTransformRequired())
+				textures[i].applyTransform();
 			else {
 				glMatrixMode(GL_TEXTURE);
 				glLoadIdentity();

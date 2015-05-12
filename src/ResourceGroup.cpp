@@ -28,7 +28,7 @@ ResourceGroup::ResourceGroup() :
 	mapArray[RT_SHADER] = &shaders;
 	mapArray[RT_PROGRAM] = &programs;
 
-	emptyFrameSet = make_unique<FrameSet>(this, "empty");
+	emptyFrameSet = make_unique<FrameSet>(this);
 }
 
 ResourceGroup::~ResourceGroup() {
@@ -86,7 +86,7 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 			String setPrefix = Utils::removeTags(name);
 
 			//create a new set
-			currentSet = &addFrameSet(make_unique<FrameSet>(this, setPrefix), setPrefix);
+			currentSet = &addFrameSet(make_unique<FrameSet>(this), setPrefix);
 		}
 
 		//create a new buffer
@@ -113,7 +113,7 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 
 		//standard flat atlasinfo
 		if (def.getArrayLength() == 0) {
-			auto set = make_unique<FrameSet>(this, name);
+			auto set = make_unique<FrameSet>(this);
 			set->setAtlas(def, *this);
 
 			currentSet = &addFrameSet(std::move(set), name);
@@ -123,7 +123,7 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 				auto& sub = def.getTable(i);
 				const String& name = sub.getString("name");
 
-				auto set = make_unique<FrameSet>(this, name);
+				auto set = make_unique<FrameSet>(this);
 				set->setAtlas(sub, *this);
 
 				currentSet = &addFrameSet(std::move(set), name);

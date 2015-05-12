@@ -8,22 +8,22 @@
 
 using namespace Dojo;
 
-Renderable::Renderable(Object& parent, Mesh* m) :
+Renderable::Renderable(Object& parent) :
 parent(parent) {
 	color = Color::WHITE;
-	
-	mesh = m;
+}
+
+Renderable::Renderable(Object& parent, Mesh& m) :
+Renderable(parent) {
+	mesh = &m;
 }
 
 Renderable::Renderable(Object& parent, const String& meshName) :
-parent(parent)  {
-	color = Color::WHITE;
-	
-	if (meshName.size()) {
-		setMesh(parent.getGameState().getMesh(meshName));
+Renderable(parent) {	
+	DEBUG_ASSERT(meshName.size(), "Use another constructor if you don't want to supply a mesh");
 
-		DEBUG_ASSERT_INFO( getMesh(), "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
-	}
+	mesh = parent.getGameState().getMesh(meshName);
+	DEBUG_ASSERT_INFO( mesh, "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
 }
 
 Renderable::~Renderable() {

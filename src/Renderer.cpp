@@ -166,7 +166,7 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	mRenderRotation = glm::mat4_cast(Quaternion(Vector(0, 0, renderRotation)));
 }
 
-void Dojo::Renderer::_renderElement(Renderable& elem) {
+void Renderer::_renderElement(Renderable& elem) {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
@@ -321,7 +321,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	}
 }
 
-void Dojo::Renderer::_updateRenderables(const LayerList& layers, float dt) {
+void Renderer::_updateRenderables(const LayerList& layers, float dt) {
 	for (auto& layer : layers) {
 		for (auto& r : layer.elements) {
 			if (r->getObject().isActive() && r->isVisible()) {
@@ -331,7 +331,7 @@ void Dojo::Renderer::_updateRenderables(const LayerList& layers, float dt) {
 	}
 }
 
-void Dojo::Renderer::renderFrame(float dt) {
+void Renderer::renderFrame(float dt) {
 	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;

@@ -62,7 +62,7 @@
 #define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
 
 ///the cap for the textures bound to a single object
-#define DOJO_MAX_TEXTURES 8
+#define DOJO_MAX_TEXTURES 2
 
 ///the cap for the texture coords in a single vertex
 #define DOJO_MAX_TEXTURE_COORDS 2

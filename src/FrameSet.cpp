@@ -8,9 +8,8 @@
 
 using namespace Dojo;
 
-FrameSet::FrameSet(ResourceGroup* creator, const String& prefixName) :
+FrameSet::FrameSet(ResourceGroup* creator) :
 	Resource(creator),
-	name(prefixName),
 	mPreferredAnimationTime(0) {
 
 }

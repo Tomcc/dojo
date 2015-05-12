@@ -30,6 +30,7 @@ namespace Dojo {
 			Texture* texture;
 
 			TextureUnit();
+			TextureUnit(Texture* t);
 
 			~TextureUnit();
 
@@ -37,17 +38,17 @@ namespace Dojo {
 
 			void setOffset(const Vector& v) {
 				offset = v;
-				_updateTransform();
+				hasTextureTransform = true;
 			}
 
 			void setScale(const Vector& v) {
 				scale = v;
-				_updateTransform();
+				hasTextureTransform = true;
 			}
 
 			void setRotation(const Radians r) {
 				rotation = r;
-				_updateTransform();
+				hasTextureTransform = true;
 			}
 
 			const Vector& getOffset() {
@@ -62,21 +63,17 @@ namespace Dojo {
 				return rotation;
 			}
 
-			const Matrix& getTransform() const;
+			Matrix getTransform() const;
 
 			bool isTransformRequired() const {
-				return optTransform != nullptr;
+				return hasTextureTransform;
 			}
 
 		protected:
 
 			Vector offset, scale;
 			Radians rotation;
-
-			Matrix* optTransform;
-
-			void _updateTransform();
-
+			bool hasTextureTransform = false;
 		};
 
 		enum CullMode {
@@ -95,10 +92,8 @@ namespace Dojo {
 
 		virtual ~RenderState();
 
-		void setMesh(Mesh* m) {
-			DEBUG_ASSERT( m, "setMesh requires a non-null mesh" );
-
-			mesh = m;
+		void setMesh(Mesh& m) {
+			mesh = &m;
 		}
 
 		///Sets a texture in the required slot.
@@ -141,13 +136,6 @@ namespace Dojo {
 			return pShader;
 		}
 
-		///returns the number of used texture units
-		int getTextureNumber() {
-			return mTextureNumber;
-		}
-
-		bool isAlphaRequired();
-
 		///returns the "weight" of the changes needed to pass from "this" to "s"
 		int getDistance(RenderState* s);
 
@@ -159,8 +147,7 @@ namespace Dojo {
 
 		bool blendingEnabled;
 
-		TextureUnit* textures[ DOJO_MAX_TEXTURES ];
-		int mTextureNumber;
+		TextureUnit textures[ DOJO_MAX_TEXTURES ];
 
 		Mesh* mesh = nullptr;
 

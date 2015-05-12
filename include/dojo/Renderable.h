@@ -26,7 +26,9 @@ namespace Dojo {
 		Vector uvOffset;
 		Vector scale = Vector::ONE;
 
-		Renderable(Object& parent, Mesh* m = nullptr);
+		Renderable(Object& parent);
+
+		Renderable(Object& parent, Mesh& m);
 
 		Renderable(Object& parent, const String& meshName);
 

@@ -126,7 +126,7 @@ namespace Dojo {
 
 	protected:
 
-		typedef SmallSet<Renderable*> LayerList;
+		typedef SmallSet<Unique<Renderable>> LayerList;
 		typedef SmallSet<Font::Character*> CharacterList;
 
 		String content;
@@ -165,10 +165,10 @@ namespace Dojo {
 		void _pushLayer();
 
 		///get a layer for this page
-		Renderable* _enableLayer(Texture& tex);
+		Renderable& _enableLayer(Texture& tex);
 
 		///get the layer assigned to this texture
-		Renderable* _getLayer(Texture& tex);
+		Renderable& _getLayer(Texture& tex);
 
 		///finishes editing the layers
 		void _endLayers();

@@ -45,7 +45,7 @@ namespace Dojo {
 		typedef std::vector<Texture*> TextureList;
 
 		///Creates a single FrameSet with the given "prefix name"
-		FrameSet(ResourceGroup* creator, const String& prefixName);
+		FrameSet(ResourceGroup* creator = nullptr);
 
 		virtual ~FrameSet();
 
@@ -105,8 +105,6 @@ namespace Dojo {
 		int getFrameIndex(Texture& frame) const;
 
 	protected:
-		String name;
-
 		float mPreferredAnimationTime;
 
 		TextureList frames;

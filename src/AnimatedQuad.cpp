@@ -132,10 +132,10 @@ void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
 	animationSpeedMultiplier = m;
 }
 
-void Dojo::AnimatedQuad::_setTexture(Texture& t) {
+void AnimatedQuad::_setTexture(Texture& t) {
 	setTexture(&t, 0);
 
-	setMesh(&t.getOptimalBillboard());
+	setMesh(t.getOptimalBillboard());
 
 	_updateScreenSize();
 }
