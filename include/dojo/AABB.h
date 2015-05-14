@@ -71,5 +71,10 @@ namespace Dojo {
 		Vector getSize() const {
 			return max - min;
 		}
+
+		bool contains(const Vector& p) const {
+			return max.x >= p.x && max.y >= p.y && max.z >= p.z &&
+				min.x <= p.x && min.y <= p.y && min.z <= p.z;
+		}
 	};
 }
