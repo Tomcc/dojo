@@ -29,7 +29,7 @@ namespace Dojo {
 
 		///clamps n between max and min
 		template <typename T>
-		static T clamp(T n, T max, T min) {
+		static T clamp(T n, T min, T max) {
 			DEBUG_ASSERT( max >= min, "clamp: max must be >= than min" );
 
 			return std::min(max, std::max(min, n));
@@ -139,6 +139,32 @@ namespace Dojo {
 
 		static Radians atan2(float y, float x) {
 			return Radians(::atan2f(y, x));
+		}
+
+		///Simulate an harmonic oscillator
+		/**
+		x     - value             (input/output)
+		v     - velocity          (input/output)
+		xt    - target value      (input)
+		zeta  - damping ratio     (input)
+		omega - angular frequency (input)
+		h     - time step         (input)
+		*/
+		template<class T>
+		static void simulateSpring(
+			T &x, T &v, T xt,
+			float zeta, float omega, float dt
+			)
+		{
+			const auto f = 1.0f + 2.0f * dt * zeta * omega;
+			const auto oo = omega * omega;
+			const auto hoo = dt * oo;
+			const auto hhoo = dt * hoo;
+			const auto detInv = 1.0f / (f + hhoo);
+			const auto detX = f * x + dt * v + hhoo * xt;
+			const auto detV = v + hoo * (xt - x);
+			x = detX * detInv;
+			v = detV * detInv;
 		}
 	};
 }

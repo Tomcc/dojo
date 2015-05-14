@@ -381,8 +381,9 @@ bool Mesh::end() {
 		return false;
 
 	//create the VBO
-	if (!vertexHandle)
-	glGenBuffers(1, &vertexHandle);
+	if (!vertexHandle) {
+		glGenBuffers(1, &vertexHandle);
+	}
 
 	GLenum usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
@@ -393,8 +394,9 @@ bool Mesh::end() {
 	//create the IBO
 	if (isIndexed()) //we support unindexed meshes
 	{
-		if (!indexHandle)
-		glGenBuffers(1, &indexHandle);
+		if (!indexHandle) {
+			glGenBuffers(1, &indexHandle);
+		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), usage);

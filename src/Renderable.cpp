@@ -68,7 +68,7 @@ void Renderable::update(float dt) {
 }
 
 bool Renderable::canBeRendered() const {
-	return isVisible() && mesh && mesh->isLoaded() && mesh->getVertexCount() > 0;
+	return isVisible() && mesh && mesh->isLoaded() && mesh->getVertexCount() > 2;
 }
 
 void Renderable::stopFade() {

@@ -23,6 +23,7 @@
 #include <dojo/Mesh.h>
 #include <dojo/Noise.h>
 #include <dojo/Object.h>
+#include <dojo/Oscillator.h>
 #include <dojo/Particle.h>
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
