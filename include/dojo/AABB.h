@@ -8,6 +8,11 @@ namespace Dojo {
 	struct AABB {
 		static const AABB EMPTY, INVALID;
 
+		static AABB fromCenterAndSize(const Vector& center, const Vector& size) {
+			auto hs = size * 0.5f;
+			return{ center - hs, center + hs };
+		}
+
 		Vector min, max;
 
 		AABB() {}
@@ -49,6 +54,13 @@ namespace Dojo {
 			return{
 				Vector::max(min, bb.min),
 				Vector::min(max, bb.max)
+			};
+		}
+
+		AABB translate(const Vector& v) const {
+			return{
+				min + v,
+				max + v
 			};
 		}
 

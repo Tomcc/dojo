@@ -20,7 +20,7 @@ namespace Dojo {
 			DEBUG_ASSERT(frequency > 0, "Invalid value");
 		}
 
-		Oscillator<T>& step(const T& target, float dt) {
+		Oscillator<T>& moveTo(const T& target, float dt) {
 			Math::simulateSpring(
 				x,
 				speed,
