@@ -91,8 +91,8 @@ AABB Object::transformAABB(const AABB& local) const {
 
 	Vector vertex;
 
-	for (int i = 0; i < 8; ++i) {
-		for (int j = 0; j < 3; ++j)
+	for (byte i = 0; i < 8; ++i) {
+		for (byte j = 0; j < 3; ++j)
 			vertex[j] = Math::getBit(i, j) ? local.max[j] : local.min[j];
 
 		vertex = getWorldPosition(vertex);

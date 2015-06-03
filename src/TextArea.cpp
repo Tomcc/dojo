@@ -50,7 +50,7 @@ TextArea::~TextArea() {
 	_destroyLayers();
 }
 
-void TextArea::setVisibleCharacters(int n) {
+void Dojo::TextArea::setVisibleCharacters(uint32_t n) {
 	if (n != visibleCharsNumber) {
 		visibleCharsNumber = n;
 

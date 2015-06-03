@@ -119,14 +119,13 @@ void ResourceGroup::addSets(const String& subdirectory, int version) {
 			currentSet = &addFrameSet(std::move(set), name);
 		}
 		else
-			for (int i = 0; i < def.getArrayLength(); ++i) {
-				auto& sub = def.getTable(i);
-				const String& name = sub.getString("name");
+			for (int j = 0; j < def.getArrayLength(); ++j) {
+				auto& sub = def.getTable(j);
 
 				auto set = make_unique<FrameSet>(this);
 				set->setAtlas(sub, *this);
 
-				currentSet = &addFrameSet(std::move(set), name);
+				currentSet = &addFrameSet(std::move(set), sub.getString("name"));
 			}
 
 		def.clear();

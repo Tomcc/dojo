@@ -75,9 +75,9 @@ void StringReader::skipWhiteSpace() {
 
 byte StringReader::getHexValue(unichar c) {
 	if (isNumber(c))
-		return c - '0';
+		return (byte)(c - '0');
 	else if (isHex(c))
-		return 10 + c - 'a';
+		return 10 + (byte)(c - 'a');
 	else {
 		FAIL("The value is not an hex number");
 	}

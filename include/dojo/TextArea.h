@@ -43,7 +43,7 @@ namespace Dojo {
 		/**
 		n can be higher than the current character count; all the characters will be shown
 		*/
-		void setVisibleCharacters(int n);
+		void setVisibleCharacters(uint32_t n);
 
 		///increments by 1 the number of visibile characters
 		void showNextChar() {
@@ -144,7 +144,7 @@ namespace Dojo {
 		bool changed;
 
 		float *vertexBuffer, *uvBuffer;
-		size_t visibleCharsNumber;
+		uint32_t visibleCharsNumber;
 
 		Vector cursorPosition, screenSize, lastScale;
 		AABB mLayersBound;

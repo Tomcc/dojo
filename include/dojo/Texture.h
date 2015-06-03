@@ -146,7 +146,7 @@ namespace Dojo {
 	protected:
 
 		bool npot, mMipmapsEnabled;
-		int width, height, internalWidth, internalHeight;
+		uint32_t width, height, internalWidth, internalHeight;
 		GLenum internalFormat;
 		Vector UVSize, UVOffset;
 

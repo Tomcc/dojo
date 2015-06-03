@@ -184,12 +184,12 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 
-	int POTwidth = Math::nextPowerOfTwo(width);
-	int POTheight = Math::nextPowerOfTwo(height);
+	auto POTwidth = Math::nextPowerOfTwo(width);
+	auto POTheight = Math::nextPowerOfTwo(height);
 
 	npot = width != POTwidth && height != POTheight;
 
-	int destWidth, destHeight;
+	uint32_t destWidth, destHeight;
 
 	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
 	if (!npot || Platform::singleton().isNPOTEnabled()) {

@@ -47,7 +47,7 @@ SoundManager::SoundManager() :
 	CHECK_AL_ERROR;
 
 	//preload sounds
-	DEBUG_ASSERT( NUM_SOURCES_MAX >= NUM_SOURCES_MIN, "Min source number cannot be > Max source number" );
+	static_assert( NUM_SOURCES_MAX >= NUM_SOURCES_MIN, "Min source number cannot be > Max source number" );
 
 	//create at least MIN sources, the rest will be lazy-loaded
 	for (int i = 0; i < NUM_SOURCES_MIN; ++i) {

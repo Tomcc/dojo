@@ -36,7 +36,7 @@ namespace Dojo {
 		virtual void step(float dt);
 		virtual void loop();
 
-		virtual PixelFormat loadImageFile(void*& bufptr, const String& path, int& width, int& height, int& pixelSize);
+		virtual PixelFormat loadImageFile(void*& bufptr, const String& path, uint32_t& width, uint32_t& height, int& pixelSize);
 
 		virtual const String& getAppDataPath();
 		virtual const String& getResourcesPath();

@@ -14,8 +14,8 @@
 #define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, nullptr )
 #define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
-#define DEBUG_TODO DEBUG_ASSERT( false, "METHOD NOT IMPLEMENTED" )
-#define FAIL( MSG ) { DEBUG_ASSERT( false, MSG ); UNREACHABLE_BRANCH; }
+#define DEBUG_TODO {Dojo::gp_assert_handler( "error", "METHOD NOT IMPLEMENTED", nullptr, __LINE__, __FILE__, __FUNCTION__ );};
+#define FAIL( MSG ) {Dojo::gp_assert_handler( "error", MSG, nullptr, __LINE__, __FILE__, __FUNCTION__ ); UNREACHABLE_BRANCH; };
 //fix...7
 #if defined( __ANDROID__ ) 
 		#include <sstream>

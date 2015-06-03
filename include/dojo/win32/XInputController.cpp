@@ -51,7 +51,7 @@ void XInputController::poll(float dt) {
 		int buttonMask = state.Gamepad.wButtons; //wButtons is a mask where each bit represents a button state
 
 		int kc = (int)KC_JOYPAD_1;
-		for (int b = 0; b < mButtonNumber; ++b)
+		for (byte b = 0; b < mButtonNumber; ++b)
 			_notifyButtonState((KeyCode)(kc + b), Math::getBit(buttonMask, b));
 
 		_notifyAxis(AI_LX, (float)state.Gamepad.sThumbLX * (1.0f / (float)0x7fff));

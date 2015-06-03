@@ -260,7 +260,7 @@ void Table::deserialize(StringReader& buf) {
 		case ParseTarget::String:
 
 			str.clear();
-			while (1) {
+			for (;;) {
 				c = buf.get();
 				if (c == '"')
 					break;
@@ -439,7 +439,7 @@ float Table::getNumber(int idx) const {
 
 String Table::autoMemberName(int idx) const {
 	DEBUG_ASSERT(idx >= 0, "autoMemberName: idx is negative");
-	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", String("idx = ") + idx);
+	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", String("idx = ") + String(idx));
 
 	return '_' + String(idx);
 }

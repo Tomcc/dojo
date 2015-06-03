@@ -81,121 +81,29 @@ namespace Dojo {
 		}
 
 		///if found, replace the given substr with the given replacement - they can be of different lengths.
-		void replaceToken(const String& substring, const String& replacement) {
-			DEBUG_ASSERT( substring.size(), "The substring to replace is empty" );
-
-			size_t start = find(substring);
-
-			if (start != String::npos) {
-				String postfix = substr(start + substring.size());
-				resize(start);
-				append(replacement);
-				append(postfix);
-			}
-		}
+		void replaceToken(const String& substring, const String& replacement);
 
 		size_t byteSize() {
 			return size() * sizeof( unichar);
 		}
 
 		///converts this string into ASCII. WARNING: fails silently on unsupported chars!!!
-		std::string ASCII() const {
-			std::string res;
+		std::string ASCII() const;
 
-			unichar c;
-			for (size_t i = 0; i < size(); ++i) {
-				c = at(i);
-				if (c <= 0xff)
-					res += (char)c;
-			}
+		std::string UTF8() const;
 
-			return res;
-		}
+		void appendASCII(const char* s);
 
-		std::string UTF8() const {
-			//HACK!!!!! make a real parser!!!
-			return ASCII();
-		}
+		void appendUTF8(const std::string& utf8);
 
-		void appendASCII(const char* s) {
-			DEBUG_ASSERT( s, "Tried to append a NULL ASCII string" );
+		void appendInt(int i, unichar paddingChar = 0);
 
-			for (int i = 0; s[i] != 0; ++i)
-				append(1, (unichar)s[i]);
-		}
+		void appendFloat(float f, byte digits = 2);
 
-		void appendUTF8(const std::string& utf8) {
-			//HACK!!!!! make a real parser!!!
-			appendASCII(utf8.c_str());
-		}
-
-		void appendInt(int i, unichar paddingChar = 0) {
-			int div = 1000000000;
-			unichar c;
-
-			if (i < 0) {
-				*this += '-';
-				i = -i;
-			}
-
-			for (; div > 0; i %= div , div /= 10) {
-				c = '0' + (i / div);
-
-				if (c != '0')
-					break;
-				else if (paddingChar)
-					*this += paddingChar;
-			}
-
-			if (i == 0)
-				*this += '0';
-
-			for (; div > 0; i %= div , div /= 10)
-				*this += '0' + (i / div);
-
-		}
-
-		void appendFloat(float f, byte digits = 2) {
-			if (f < 0) {
-				*this += '-';
-				f = abs(f);
-			}
-
-			appendInt((int)f);
-
-			f -= floor(f);
-
-			*this += '.';
-
-			int n;
-			for (int i = 0; i < digits && f != 0; ++i) {
-				//append the remainder
-				f *= 10;
-				n = (int)f;
-				*this += (unichar)('0' + n);
-
-				f -= floor(f);
-			}
-		}
-
-		String toUpper() {
-
-			//WARNING THIS DOES NOT EVEN KNOW WHAT UNICODE IS
-			String res;
-			for (auto& c : *this) {
-				if (c >= 'a' && c <= 'z')
-					c -= 32;
-				res += c;
-			}
-			return res;
-		}
+		String toUpper();
 
 		///appends raw data to this string. It has to be wchar_t bytes aligned!
-		void appendRaw(const void* data, int sz) {
-			DEBUG_ASSERT( sz % sizeof( unichar ) == 0, "Data is not aligned to string elements" );
-
-			append((unichar*)data, sz / sizeof( unichar));
-		}
+		void appendRaw(const void* data, int sz);
 
 #ifdef __OBJC__
 		NSString* toNSString() const 

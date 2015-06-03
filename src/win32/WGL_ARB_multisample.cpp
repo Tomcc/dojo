@@ -35,7 +35,8 @@ namespace {
 	LRESULT CALLBACK DummyGLWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		switch (msg) {
 		case WM_CREATE:
-			if (!(g_hDC = GetDC(hWnd)))
+			g_hDC = GetDC(hWnd);
+			if (!g_hDC)
 				return -1;
 			break;
 
@@ -91,8 +92,8 @@ namespace {
 
 		if (!SetPixelFormat(g_hDC, pf, &pfd))
 			return false;
-
-		if (!(g_hRC = wglCreateContext(g_hDC)))
+		g_hRC = wglCreateContext(g_hDC);
+		if (!g_hRC)
 			return false;
 
 		if (!wglMakeCurrent(g_hDC, g_hRC))

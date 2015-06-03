@@ -32,10 +32,10 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 
 	int rowy, idx;
 	if (bitmap->pixel_mode != FT_PIXEL_MODE_MONO) {
-		for (int i = 0; i < bitmap->rows; ++i) {
+		for (uint32_t i = 0; i < bitmap->rows; ++i) {
 			rowy = (i + y) * destside;
 
-			for (int j = 0; j < bitmap->width; ++j) {
+			for (uint32_t j = 0; j < bitmap->width; ++j) {
 				idx = 4 * ((j + x) + rowy);
 
 				dest[idx + 3] = bitmap->buffer[j + i * bitmap->pitch]; //the font is really the alpha
@@ -44,10 +44,10 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 	}
 	else {
 		byte b;
-		for (int i = 0; i < bitmap->rows; ++i) {
+		for (uint32_t i = 0; i < bitmap->rows; ++i) {
 			rowy = (i + y) * destside;
 
-			for (int j = 0; j < bitmap->width; ++j) {
+			for (uint32_t j = 0; j < bitmap->width; ++j) {
 				idx = 4 * ((j + x) + rowy);
 
 				b = bitmap->buffer[j / 8 + i * bitmap->pitch];
@@ -66,10 +66,10 @@ void Font::_blitborder(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside
 	int rowy;
 	byte* ptr;
 
-	for (int i = 0; i < bitmap->rows; ++i) {
+	for (uint32_t i = 0; i < bitmap->rows; ++i) {
 		rowy = (i + y) * destside;
 
-		for (int j = 0; j < bitmap->width; ++j) {
+		for (uint32_t j = 0; j < bitmap->width; ++j) {
 			ptr = dest + 4 * ((j + x) + rowy);
 
 			float a = (float)bitmap->buffer[j + i * bitmap->pitch];
@@ -182,7 +182,7 @@ void Font::Character::init(Page* p, unichar c, int x, int y, int sx, int sy, FT_
 Font::Page::Page(Font* f, int idx) :
 	Resource(),
 	index(idx),
-	firstCharIdx(index * FONT_CHARS_PER_PAGE),
+	firstCharIdx(idx * FONT_CHARS_PER_PAGE),
 	font(f),
 	texture(NULL) {
 	DEBUG_ASSERT( font, "Page needs a non-null parent font" );
@@ -221,16 +221,16 @@ bool Font::Page::onLoad() {
 
 	font->_prepareFace();
 
-	unichar c = firstCharIdx;
+	auto code = (unichar)firstCharIdx;
 	Font::Character* character = chars;
 	int x, y;
 
 	Timer timer;
 
 	for (int i = 0; i < FONT_PAGE_SIDE; ++i) {
-		for (int j = 0; j < FONT_PAGE_SIDE; ++j , ++c , ++character) {
-			gliphidx = FT_Get_Char_Index(font->face, c);
-			int err = FT_Load_Glyph(font->face, gliphidx, FT_LOAD_DEFAULT);
+		for (int j = 0; j < FONT_PAGE_SIDE; ++j , ++code , ++character) {
+			gliphidx = FT_Get_Char_Index(font->face, code);
+			FT_Load_Glyph(font->face, gliphidx, FT_LOAD_DEFAULT);
 
 			x = j * font->mCellWidth;
 			y = i * font->mCellHeight;
@@ -238,7 +238,7 @@ bool Font::Page::onLoad() {
 			//load character data
 			character->init(
 				this,
-				c,
+				code,
 				x, y,
 				sxp2, syp2,
 				&(slot->metrics),
@@ -287,8 +287,8 @@ bool Font::Page::onLoad() {
 
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
 
-			for (int c = 0; c < 4; ++c)
-				orig[c] = (byte)(orig[c] * s + glow[c] * (1.f - s));
+			for (int channel = 0; channel < 4; ++channel)
+				orig[channel] = (byte)(orig[channel] * s + glow[channel] * (1.f - s));
 		}
 
 		free(glowBuf);

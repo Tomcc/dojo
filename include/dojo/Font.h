@@ -101,8 +101,7 @@ namespace Dojo {
 
 			Font* font;
 			Texture* texture;
-			int index;
-			unichar firstCharIdx;
+			int index, firstCharIdx;
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
 

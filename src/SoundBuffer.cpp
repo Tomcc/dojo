@@ -270,7 +270,7 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 	ogg_int64_t pcmStart = 0, pcmEnd = -1;
 
 	//load all the needed chunks
-	while (1) {
+	for (;;) {
 		pcmEnd = std::min(totalPCM, pcmStart + chunkPCM);
 
 		ov_pcm_seek_page(&file, pcmEnd);

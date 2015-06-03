@@ -33,7 +33,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 		function);
 }
 
-#ifdef _DEBUG
+#ifndef PUBLISH
 	#define CHECK_WIN32_ERROR(T, MSG ) { if( !(T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
 #else
 #define CHECK_WIN32_ERROR(T, MSG ) {}
@@ -833,7 +833,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-PixelFormat Win32Platform::loadImageFile(void*& bufptr, const String& path, int& width, int& height, int& pixelSize) {
+Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(void*& bufptr, const String& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = NULL;
 
@@ -878,12 +878,12 @@ PixelFormat Win32Platform::loadImageFile(void*& bufptr, const String& path, int&
 
 	DEBUG_ASSERT( pixelSize == 3 || pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
 
-	int size = pitch * height;
+	uint32_t size = pitch * height;
 	bufptr = malloc(size); {
 		byte *in, *out;
-		for (int ii, i = 0; i < height; ++i) {
+		for (uint32_t ii, i = 0; i < height; ++i) {
 			ii = height - i - 1;
-			for (int j = 0; j < width; ++j) {
+			for (uint32_t j = 0; j < width; ++j) {
 				out = (byte*)bufptr + j * pixelSize + i * pitch;
 				in = (byte*)data + j * pixelSize + ii * pitch;
 

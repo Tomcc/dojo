@@ -94,7 +94,7 @@ namespace Dojo {
 
 		//mid
 		ContourList contours;
-		std::vector<int> contourForSegment;
+		std::vector<uint32_t> contourForSegment;
 		std::vector<Position> holes;
 
 		std::vector<int> indexGrid;

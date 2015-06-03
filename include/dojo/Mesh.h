@@ -40,9 +40,7 @@ namespace Dojo {
 
 		static const int VERTEX_PAGE_SIZE = 256;
 		static const int INDEX_PAGE_SIZE = 256;
-
-		static const int VERTEX_FIELD_SIZES[];
-
+		
 		///Creates a new empty Mesh
 		explicit Mesh(ResourceGroup* creator = nullptr);
 
@@ -209,7 +207,7 @@ namespace Dojo {
 		Vector center, dimensions;
 		AABB bounds;
 
-		int vertexSize = 0;
+		byte vertexSize = 0;
 		byte* currentVertex = nullptr;
 		std::vector<byte> vertices;
 

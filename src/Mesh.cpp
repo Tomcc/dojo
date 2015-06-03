@@ -18,7 +18,7 @@ const GLuint glFeatureStateMap[] =
 	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
 };
 
-const int Mesh::VERTEX_FIELD_SIZES[] = {
+const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat), //position 2D
 	3 * sizeof( GLfloat), //position 3D
 	4 * sizeof( GLubyte), //color
@@ -139,13 +139,13 @@ void Mesh::index(IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		indices.back() = idx;
+		*((unsigned char*)(indices.data() + curSize)) = (unsigned char)idx;
 		break;
 	case 2:
-		*((unsigned short*)(indices.data() + curSize)) = idx;
+		*((unsigned short*)(indices.data() + curSize)) = (unsigned short)idx;
 		break;
 	case 4:
-		*((unsigned int*)(indices.data() + curSize)) = idx;
+		*((unsigned int*)(indices.data() + curSize)) = (unsigned int)idx;
 		break;
 	}
 
@@ -543,13 +543,13 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		indices[idxidx] = idx;
+		((unsigned char*)indices.data())[idxidx] = (unsigned char)idx;
 		return;
 	case 2:
-		((unsigned short*)indices.data())[idxidx] = idx;
+		((unsigned short*)indices.data())[idxidx] = (unsigned short)idx;
 		return;
 	default:
-		((unsigned int*)indices.data())[idxidx] = idx;
+		((unsigned int*)indices.data())[idxidx] = (unsigned int)idx;
 		return;
 	}
 }

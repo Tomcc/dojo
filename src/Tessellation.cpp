@@ -183,7 +183,7 @@ void Tessellation::generateExtrusionContour() {
 	SegmentList additionalSegments;
 
 	Vector n;
-	int originalSegments = extrusionContourIndices.size();
+	extrusionContourIndices.size();
 	for (auto& segment : extrusionContourIndices) {
 		auto& a = positions[segment.i1];
 		auto& b = positions[segment.i2];

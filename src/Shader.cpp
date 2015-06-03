@@ -116,6 +116,8 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 
 	static GLint tempInt[2];
 	static Vector tmpVec;
+	static Matrix tmpMat;
+
 	auto builtin = uniform.builtInUniform;
 	switch (builtin) {
 	case BU_NONE:
@@ -159,10 +161,11 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 			return &tempInt;
 		}
 		else if (builtin >= BU_TEXTURE_0_TRANSFORM && builtin <= BU_TEXTURE_N_TRANSFORM) {
-			return &user.getTextureUnit(builtin - BU_TEXTURE_0_TRANSFORM).getTransform();
+			tmpMat = user.getTextureUnit(builtin - BU_TEXTURE_0_TRANSFORM).getTransform();
+			return &tmpMat;
 		}
 		else {
-			DEBUG_ASSERT(false, "Shader built-in not recognized");
+			FAIL("Shader built-in not recognized");
 			return nullptr;
 		}
 	}

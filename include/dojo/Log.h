@@ -13,7 +13,7 @@ namespace Dojo {
 
 		typedef std::vector<LogEntry> LogQueue;
 
-		explicit Log(int maxLines = 1024) :
+		explicit Log(uint32_t maxLines = 1024) :
 			mMaxLines(maxLines) {
 			DEBUG_ASSERT( mMaxLines > 0, "Cannot create a Log with 0 or less lines" );
 		}
@@ -50,7 +50,7 @@ namespace Dojo {
 
 		SmallSet<LogListener*> pListeners;
 		LogQueue mOutput;
-		int mMaxLines;
+		uint32_t mMaxLines;
 
 		void _append(const String& message, LogEntry::Level level);
 

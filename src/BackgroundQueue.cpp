@@ -53,7 +53,7 @@ BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
 	thread = std::thread([&]() {
 		Platform::singleton().prepareThreadContext();
 
-		while (1) {
+		for (;;) {
 			TaskCallbackPair pair;
 
 			if (!pParent->_waitForTaskOrClose(pair)) //wait for a new task or close
