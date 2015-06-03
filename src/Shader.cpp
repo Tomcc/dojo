@@ -166,7 +166,6 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 		}
 		else {
 			FAIL("Shader built-in not recognized");
-			return nullptr;
 		}
 	}
 	}

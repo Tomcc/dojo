@@ -28,10 +28,12 @@
 #include <stdexcept>
 #include <map>
 
-#define GLM_FORCE_RADIANS //for sanity - why would it use degrees in places by default?
+//TODO move as many libraries as possible as inner dependencies, stop pushing them on users
+
 #ifdef _MSC_VER
 #pragma warning(disable:4201)
 #endif
+#define GLM_FORCE_RADIANS //for sanity - why would it use degrees in places by default?
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -94,7 +96,7 @@
 	
 #endif
 
-#include "dojo_gl_header.h" //TODO remove all the various GLEnum/GLUint from the code so we can remove GL from the interface
+#include "dojo_gl_header.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -119,15 +121,7 @@ namespace Dojo {
 	typedef int64_t RandomSeed;
 }
 
-//C++14 where not available
-#ifndef WIN32
-template<typename T, typename ...Args>
-Unique<T> make_unique(Args&& ...args) {
-	return Unique<T>(new T(std::forward<Args>(args)...));
-}
-#else
 using std::make_unique;
-#endif
 using std::make_shared;
 
 #ifdef _MSC_VER
