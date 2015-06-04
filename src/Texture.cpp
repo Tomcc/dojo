@@ -233,7 +233,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 	return loaded;
 }
 
-bool Dojo::Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat) {
+bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat) {
 	DEBUG_ASSERT( imageData, "null image data" );
 
 	loadEmpty(width, height, destFormat);
@@ -339,8 +339,8 @@ bool Texture::loadFromAtlas(Texture* tex, int x, int y, int sx, int sy) {
 bool Texture::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "The texture is already loaded" );
 
-	if (OBB) //rebuild and reload the OBB if it was purged
-		_rebuildOptimalBillboard();
+	//invalidate the OBB
+	OBB.reset();
 
 	if (isReloadable())
 		return loadFromFile(filePath);
