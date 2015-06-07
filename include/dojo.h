@@ -29,6 +29,7 @@
 #include <dojo/Platform.h>
 #include <dojo/PolyTextArea.h>
 #include <dojo/Random.h>
+#include <dojo/range.h>
 #include <dojo/Renderer.h>
 #include <dojo/RenderState.h>
 #include <dojo/Renderable.h>

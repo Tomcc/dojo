@@ -40,6 +40,7 @@
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\Radians.h" />
+    <ClInclude Include="include\dojo\range.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
