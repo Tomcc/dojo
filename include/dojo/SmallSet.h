@@ -65,8 +65,9 @@ namespace Dojo {
 		}
 
 		template <class... Args>
-		void emplace(Args&&... args) {
+		auto emplace(Args&&... args) {
 			c.emplace_back(std::forward<Args>(args)...);
+			return c.end()-1;
 		}
 
 		void erase(const const_iterator& where) {
