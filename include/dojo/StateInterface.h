@@ -69,6 +69,10 @@ namespace Dojo {
 			return currentState == state;
 		}
 
+		bool isNextState(int state) const {
+			return nextState == state;
+		}
+
 		bool isCurrentState(StateInterface* s) const {
 			return currentStatePtr.get() == s;
 		}
