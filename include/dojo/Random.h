@@ -108,6 +108,12 @@ namespace Dojo {
 			return getInt(n) == 0;
 		}
 
+		///pick one element from the vector
+		template<typename T>
+		const T& pickFrom(const std::vector<T>& c) {
+			return *(c.begin() + getInt(c.size()));
+		}
+
 		/// Access to 53-bit random numbers (capacity of IEEE float precision)
 		double rand53();
 
