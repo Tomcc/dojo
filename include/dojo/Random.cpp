@@ -180,6 +180,10 @@ float Random::getFloat() {
 	return float(getInt()) * INV_RANGE;
 }
 
+float Random::getSign() {
+	return (getInt() % 2 == 0) ? 1.f : -1.f;
+}
+
 double Random::getDouble() {
 	return double(getInt()) * INV_RANGE;
 }
@@ -276,4 +280,3 @@ Random& Random::operator=(const Random& o) {
 	pget = &state[N - left];
 	return (*this);
 }
-

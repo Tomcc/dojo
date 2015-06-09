@@ -78,6 +78,13 @@ namespace Dojo {
 		/// real number in [0,1]
 		double getDouble();
 
+		/// either 1 or -1 with equal probability
+		float getSign();
+
+		int getIntSign() {
+			return (getInt() % 2) ? 1 : -1;
+		}
+
 		/// real number in [0,n]
 		float getFloat(const float n);
 
@@ -108,10 +115,16 @@ namespace Dojo {
 			return getInt(n) == 0;
 		}
 
+		///pick one element index from the vector
+		template<class CTR>
+		typename CTR::const_iterator pickIteratorFrom(const CTR& c) {
+			return c.begin() + getInt(c.size()-1);
+		}
+
 		///pick one element from the vector
-		template<typename T>
-		const T& pickFrom(const std::vector<T>& c) {
-			return *(c.begin() + getInt(c.size()));
+		template<class CTR>
+		const auto& pickFrom(const CTR& c) {
+			return *pickIteratorFrom(c);
 		}
 
 		/// Access to 53-bit random numbers (capacity of IEEE float precision)
