@@ -33,6 +33,7 @@ namespace Dojo {
 	the pixel-perfect rendering with its targetSize property;
 	when rendering a 3D layer, it culls the scene and renders the perspective using its Frustum
 	*/
+	//TODO a Viewport should be a component!
 	class Viewport : public Object {
 	public:
 

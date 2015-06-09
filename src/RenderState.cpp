@@ -44,7 +44,7 @@ void RenderState::TextureUnit::applyTransform() {
 }
 
 RenderState::RenderState() :
-	cullMode(CM_BACK),
+	cullMode(CullMode::Back),
 	blendingEnabled(true),
 	srcBlend(GL_SRC_ALPHA),
 	destBlend(GL_ONE_MINUS_SRC_ALPHA),
@@ -156,16 +156,16 @@ void RenderState::applyState() {
 	glBlendEquation(blendFunction);
 
 	switch (cullMode) {
-	case CM_DISABLED:
+	case CullMode::None:
 		glDisable(GL_CULL_FACE);
 		break;
 
-	case CM_BACK:
+	case CullMode::Back:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		break;
 
-	case CM_FRONT:
+	case CullMode::Front:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		break;

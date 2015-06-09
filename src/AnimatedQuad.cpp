@@ -44,7 +44,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, const String& immediateAnim /*= Strin
 	animationSpeedMultiplier(1),
 	pixelPerfect(true) {
 
-	cullMode = CM_DISABLED;
+	cullMode = CullMode::None;
 
 	//inheritScale = false;
 

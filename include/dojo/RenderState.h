@@ -76,10 +76,10 @@ namespace Dojo {
 			bool hasTextureTransform = false;
 		};
 
-		enum CullMode {
-			CM_FRONT,
-			CM_BACK,
-			CM_DISABLED
+		enum class CullMode {
+			Front,
+			Back,
+			None
 		};
 
 		Color color;
