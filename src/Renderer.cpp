@@ -268,8 +268,9 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	currentLayer = &layer;
 
 	for (auto& r : layer.elements) {
-		if (r->canBeRendered() && _cull(layer, viewport, *r))
+		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
 			_renderElement(*r);
+		}
 	}
 }
 
@@ -324,7 +325,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 void Renderer::_updateRenderables(const LayerList& layers, float dt) {
 	for (auto& layer : layers) {
 		for (auto& r : layer.elements) {
-			if (r->getObject().isActive() && r->isVisible()) {
+			if ((r->getObject().isActive() && r->isVisible()) || r->getGraphicsAABB().isEmpty()) {
 				r->update(dt);
 			}
 		}

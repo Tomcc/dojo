@@ -37,6 +37,7 @@ Object& Object::_addChild(Unique<Object> o, int layer) {
 
 	auto ptr = o.get();
 
+	o->updateWorldTransform();
 	children.emplace(std::move(o));
 
 	return *ptr;
@@ -86,6 +87,7 @@ AABB Object::transformAABB(const AABB& local) const {
 	AABB bb;
 
 	//get the eight world-position corners and transform them
+	//TODO this is massively slow, pls optimize
 	bb.max = Vector::MIN;
 	bb.min = Vector::MAX;
 
