@@ -40,7 +40,6 @@ namespace Dojo {
 		{
 			operator FieldType() const {
 				FAIL("Invalid type requested");
-				return FieldType::Undefined;
 			}
 		};
 		class Data {
@@ -97,9 +96,9 @@ namespace Dojo {
 
 			T value;
 
-			TypedEntry(FieldType fieldType, const T& v) :
+			TypedEntry(FieldType fieldType, T v) :
 				Entry(fieldType),
-				value(v) {
+				value(std::move(v)) {
 
 			}
 
@@ -155,35 +154,35 @@ namespace Dojo {
 		Table* getParentTable(const String& key, String& realKey) const;
 
 		template <class T>
-		void setImpl(const String& key, FieldType type, const T& value) {
-			map[key.empty() ? autoname() : key] = make_unique<TypedEntry<T>>(type, value);
+		void setImpl(const String& key, FieldType type, T value) {
+			map[key.empty() ? autoname() : key] = make_unique<TypedEntry<T>>(type, std::move(value));
 		}
 
 		template <class T>
-		void set(const String& key, FieldType type, const T& value) {
+		void set(const String& key, FieldType type, T value) {
 			String actualKey;
 			Table* t = getParentTable(key, actualKey);
 			DEBUG_ASSERT( t != nullptr, "Cannot add a key to a non-existing table" );
 
 			//actually set the key on the right table
-			t->setImpl(actualKey, type, value);
+			t->setImpl(actualKey, type, std::move(value));
 		}
-		
+
 		template<typename T>
-		void set(const String& key, const T& value) {
-			set(key, field_type_for<T>(), value);
+		void set(const String& key, T value) {
+			set(key, field_type_for<T>(), std::move(value));
 		}
 
 		template<>
-		void set<Color>(const String& key, const Color& value) {
+		void set<Color>(const String& key, Color value) {
 			set(key, Vector(value.r, value.g, value.b));
 		}
 		template<>
-		void set<int>(const String& key, const int& value) {
+		void set<int>(const String& key, int value) {
 			set(key, (float)value);
 		}
 		template<>
-		void set<bool>(const String& key, const bool& value) {
+		void set<bool>(const String& key, bool value) {
 			set(key, value ? 1.f : 0.f);
 		}
 
