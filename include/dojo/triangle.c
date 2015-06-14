@@ -1426,7 +1426,7 @@ int status;
 #endif /* not ANSI_DECLARATORS */
 
 {
-  exit(status);
+	FAIL("Triangle has encountered an error!");
 }
 
 #ifdef ANSI_DECLARATORS
