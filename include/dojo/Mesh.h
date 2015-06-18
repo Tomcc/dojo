@@ -201,7 +201,7 @@ namespace Dojo {
 		Unique<Mesh> cloneWithSameFormat() const;
 
 		///creates a new mesh from a slice of this one
-		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::ZERO) const;
+		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::Zero) const;
 
 	protected:
 		Vector center, dimensions;

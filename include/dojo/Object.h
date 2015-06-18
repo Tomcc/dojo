@@ -41,7 +41,7 @@ namespace Dojo {
 		/**
 		\remark the object still has to be attached!
 		*/
-		Object(Object& parent, const Vector& pos, const Vector& bbSize = Vector::ONE);
+		Object(Object& parent, const Vector& pos, const Vector& bbSize = Vector::One);
 
 		virtual ~Object();
 
@@ -80,7 +80,7 @@ namespace Dojo {
 		}
 
 		///rotates the object starting from the current orientation around the given axis
-		void rotate(Degrees r, const Vector& axis = Vector::UNIT_Z) {
+		void rotate(Degrees r, const Vector& axis = Vector::UnitZ) {
 			rotation = glm::rotate(rotation, r, axis);
 		}
 
@@ -105,14 +105,14 @@ namespace Dojo {
 
 		///returns the world coordinates' position of this Object
 		Vector getWorldPosition() const {
-			return getWorldPosition(Vector::ZERO);
+			return getWorldPosition(Vector::Zero);
 		}
 
 		///returns the position in local coordinates of the given world position
 		Vector getLocalPosition(const Vector& worldPos) const;
 
 		///returns a local direction in world space
-		Vector getWorldDirection(const Vector& dir3 = Vector::UNIT_Z) const;
+		Vector getWorldDirection(const Vector& dir3 = Vector::UnitZ) const;
 
 		Vector getLocalDirection(const Vector& worldDir);
 

@@ -10,7 +10,7 @@ using namespace Dojo;
 
 Renderable::Renderable(Object& parent) :
 parent(parent) {
-	color = Color::WHITE;
+	color = Color::White;
 }
 
 Renderable::Renderable(Object& parent, Mesh& m) :

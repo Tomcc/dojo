@@ -15,7 +15,7 @@ SoundSource::SoundSource(ALuint src) :
 void SoundSource::_reset() {
 	state = SS_INITIALISING;
 
-	position = Vector::ZERO;
+	position = Vector::Zero;
 	positionChanged = true;
 	buffer = NULL;
 	mFrontChunk = mBackChunk = nullptr;
@@ -95,7 +95,7 @@ void SoundSource::play(float volume) {
 		alSourcePlay(source);
 
 		alSourcefv(source, AL_POSITION, position.data());
-		alSourcefv(source, AL_VELOCITY, Vector::ZERO.data());
+		alSourcefv(source, AL_VELOCITY, Vector::Zero.data());
 		lastPosition = position;
 		positionChanged = false;
 

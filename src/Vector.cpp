@@ -2,14 +2,14 @@
 
 using namespace Dojo;
 
-const Vector Vector::ZERO = {0,0,0};
-const Vector Vector::UNIT_X = {1,0,0};
-const Vector Vector::UNIT_Y = {0,1,0};
-const Vector Vector::UNIT_Z = {0,0,1};
-const Vector Vector::NEGATIVE_UNIT_X = {-1,0,0};
-const Vector Vector::NEGATIVE_UNIT_Y = {0,-1,0};
-const Vector Vector::NEGATIVE_UNIT_Z = {0,0,-1};
-const Vector Vector::ONE = {1,1,1};
+const Vector Vector::Zero = {0,0,0};
+const Vector Vector::UnitX = {1,0,0};
+const Vector Vector::UnitY = {0,1,0};
+const Vector Vector::UnitZ = {0,0,1};
+const Vector Vector::NegativeUnitX = {-1,0,0};
+const Vector Vector::NegativeUnitY = {0,-1,0};
+const Vector Vector::NegativeUnitZ = {0,0,-1};
+const Vector Vector::One = {1,1,1};
 
-const Vector Vector::MAX = {FLT_MAX , FLT_MAX , FLT_MAX};
-const Vector Vector::MIN = {-FLT_MAX , -FLT_MAX , -FLT_MAX};
+const Vector Vector::Max = {FLT_MAX , FLT_MAX , FLT_MAX};
+const Vector Vector::Min = {-FLT_MAX , -FLT_MAX , -FLT_MAX};

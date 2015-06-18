@@ -6,7 +6,7 @@
 
 namespace Dojo {
 	struct AABB {
-		static const AABB EMPTY, INVALID;
+		static const AABB Empty, Invalid;
 
 		static AABB fromCenterAndSize(const Vector& center, const Vector& size) {
 			auto hs = size * 0.5f;

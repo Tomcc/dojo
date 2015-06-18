@@ -32,7 +32,7 @@ TextArea::TextArea(Object& l,
 	spaceWidth = font->getCharacter(' ')->advance;
 
 	//not visible until prepared!
-	scale = Vector::ZERO;
+	scale = Vector::Zero;
 
 	//init
 	clearText();
@@ -63,7 +63,7 @@ void TextArea::clearText() {
 
 	content.clear();
 
-	cursorPosition = Vector::ZERO;
+	cursorPosition = Vector::Zero;
 
 	parent.setSize(0, 0); //TODO hmm
 
@@ -286,7 +286,7 @@ void TextArea::_prepare() {
 	_endLayers();
 
 	//find real mesh bounds
-	mLayersBound = AABB::INVALID;
+	mLayersBound = AABB::Invalid;
 
 	for (auto&& layer : busyLayers) {
 		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());

@@ -113,7 +113,7 @@ void PolyTextArea::setText(const String& str) {
 }
 
 void PolyTextArea::clear() {
-	mContent = String::EMPTY;
+	mContent = String::Empty;
 	mDirty = true;
 }
 
@@ -178,7 +178,7 @@ void PolyTextArea::_prepare() {
 				//extrude the character
 				mPrevLayerIdx = -1;
 
-				_addExtrusionLayer(t, charPosition, 0, &Vector::UNIT_Z);
+				_addExtrusionLayer(t, charPosition, 0, &Vector::UnitZ);
 
 				if (mInflateRadius && mBevelDepth > 0) //use a rounded extrusion only if the inflation and the bevel are valid
 				{
@@ -186,7 +186,7 @@ void PolyTextArea::_prepare() {
 					_addExtrusionLayer(t, charPosition - Vector(0, 0, mDepth - mBevelDepth), mInflateRadius, nullptr);
 				}
 
-				_addExtrusionLayer(t, charPosition - Vector(0, 0, mDepth), 0, &Vector::NEGATIVE_UNIT_Z);
+				_addExtrusionLayer(t, charPosition - Vector(0, 0, mDepth), 0, &Vector::NegativeUnitZ);
 
 				//add backface - flip index winding to flip the face
 				for (size_t i = 0; i < t->outIndices.size(); i += 3)

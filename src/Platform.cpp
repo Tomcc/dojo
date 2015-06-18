@@ -144,7 +144,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const String& path, Stri
 	if (idx < path.size())
 		remainder = path.substr(idx + 1);
 	else
-		remainder = String::EMPTY;
+		remainder = String::Empty;
 
 	DEBUG_ASSERT( remainder.find( String(".zip") ) == String::npos, "Error: nested zips are not supported!" );
 

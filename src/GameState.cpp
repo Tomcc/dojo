@@ -12,7 +12,7 @@
 using namespace Dojo;
 
 GameState::GameState(Game& parentGame) :
-	Object(*this, Vector::ZERO, Vector::ONE),
+	Object(*this, Vector::Zero, Vector::One),
 	ResourceGroup(),
 	game(parentGame),
 	camera(nullptr),

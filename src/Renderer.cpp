@@ -66,7 +66,7 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
 
-	setDefaultAmbient(Color::BLACK);
+	setDefaultAmbient(Color::Black);
 
 	CHECK_GL_ERROR;
 }

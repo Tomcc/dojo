@@ -21,15 +21,15 @@ namespace Dojo {
 	class Vector : public glm::vec3 {
 	public:
 
-		static const Vector ZERO;
-		static const Vector UNIT_X;
-		static const Vector NEGATIVE_UNIT_X;
-		static const Vector UNIT_Y;
-		static const Vector NEGATIVE_UNIT_Y;
-		static const Vector UNIT_Z;
-		static const Vector NEGATIVE_UNIT_Z;
-		static const Vector ONE;
-		static const Vector MAX, MIN;
+		static const Vector Zero;
+		static const Vector UnitX;
+		static const Vector NegativeUnitX;
+		static const Vector UnitY;
+		static const Vector NegativeUnitY;
+		static const Vector UnitZ;
+		static const Vector NegativeUnitZ;
+		static const Vector One;
+		static const Vector Max, Min;
 
 		///returns a vector which components are the component-wise max of a and b
 		static Vector max(const Vector& a, const Vector& b) {
@@ -196,7 +196,7 @@ namespace Dojo {
 			float N_dot_I = n * i;
 			float k = 1.f - eta * eta * (1.f - N_dot_I * N_dot_I);
 			if (k < 0.f)
-				return Vector::ZERO;
+				return Vector::Zero;
 			else
 				return eta * i - (eta * N_dot_I + sqrtf(k)) * n;
 		}

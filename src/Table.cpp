@@ -4,8 +4,8 @@
 
 using namespace Dojo;
 
-const Table Table::EMPTY;
-const Table::Data Table::Data::EMPTY = Data(0, 0);
+const Table Table::Empty;
+const Table::Data Table::Data::Empty = Data(0, 0);
 
 Table Table::loadFromFile(const String& path) {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );

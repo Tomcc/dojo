@@ -153,7 +153,7 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 	auto& vert = extrusionContourVertices[s[i]];
 	auto& dest = vert.normal;
 
-	if (dest == Vector::ZERO)
+	if (dest == Vector::Zero)
 		dest = n;
 	else {
 		float divergence = dest * n;

@@ -77,7 +77,7 @@ namespace Dojo {
 			int end = getLastOf(str, '/');
 
 			if (end == -1)
-				return String::EMPTY;
+				return String::Empty;
 
 			return str.substr(0, end);
 		}

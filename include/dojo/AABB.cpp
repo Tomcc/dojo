@@ -3,5 +3,5 @@
 using namespace Dojo;
 
 const AABB
-AABB::EMPTY,
-AABB::INVALID = { Vector(FLT_MAX), Vector(-FLT_MAX) };
+AABB::Empty,
+AABB::Invalid = { Vector(FLT_MAX), Vector(-FLT_MAX) };

@@ -24,7 +24,7 @@ namespace Dojo {
 	public:
 
 		Vector uvOffset;
-		Vector scale = Vector::ONE;
+		Vector scale = Vector::One;
 
 		Renderable(Object& parent);
 

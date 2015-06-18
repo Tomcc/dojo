@@ -30,7 +30,7 @@ namespace Dojo {
 		Touch(int _ID, const Vector& _point, Type type) :
 			ID(_ID),
 			point(_point),
-			speed(Vector::ZERO),
+			speed(Vector::Zero),
 			type(type),
 			firstFrame(2) //this is 2 because InputSystem::poll is called just after Touch creation - so it has to actually skip a frame
 		{

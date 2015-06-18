@@ -44,7 +44,7 @@ namespace Dojo {
 		};
 		class Data {
 		public:
-			static const Data EMPTY;
+			static const Data Empty;
 
 			void* ptr;
 			int size;
@@ -118,7 +118,7 @@ namespace Dojo {
 
 		typedef std::unordered_map<String, Unique<Entry>> EntryMap;
 
-		static const Table EMPTY;
+		static const Table Empty;
 
 		static String index(int i) {
 			return '_' + String(i);
@@ -189,7 +189,7 @@ namespace Dojo {
 		///creates a new nested table named key
 		/** 
 		nested Tables always have name == key */
-		Table& createTable(const String& key = String::EMPTY);
+		Table& createTable(const String& key = String::Empty);
 
 		///empties the map and deletes every value
 		void clear();
@@ -240,15 +240,15 @@ namespace Dojo {
 			return get(key, defaultValue);
 		}
 
-		const String& getString(const String& key, const String& defaultValue = String::EMPTY) const {
+		const String& getString(const String& key, const String& defaultValue = String::Empty) const {
 			return get(key, defaultValue);
 		}
 
-		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::ZERO) const  {
+		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::Zero) const  {
 			return get(key, defaultValue);
 		}
 
-		const Color getColor(const String& key, const Color& defaultValue = Color::BLACK) const  {
+		const Color getColor(const String& key, const Color& defaultValue = Color::Black) const  {
 			auto v = get(key, Vector(defaultValue.r, defaultValue.g, defaultValue.b));
 			return{ v.x, v.y, v.z, defaultValue.a };
 		}
@@ -257,11 +257,11 @@ namespace Dojo {
 			return get(key, defaultValue);
 		}
 
-		const Table& getTable(const String& key, const Table& defaultValue = EMPTY) const  {
+		const Table& getTable(const String& key, const Table& defaultValue = Empty) const  {
 			return get(key, defaultValue);
 		}
 
-		const Data& getData(const String& key, const Data& defaultValue = Data::EMPTY) const {
+		const Data& getData(const String& key, const Data& defaultValue = Data::Empty) const {
 			return get(key, defaultValue);
 		}
 
@@ -329,7 +329,7 @@ namespace Dojo {
 		void remove(int idx);
 
 		///write the table in string form over buf
-		void serialize(String& buf, String indent = String::EMPTY) const;
+		void serialize(String& buf, String indent = String::Empty) const;
 
 		void deserialize(StringReader& buf);
 

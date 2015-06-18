@@ -30,7 +30,7 @@ Matrix RenderState::TextureUnit::getTransform() const {
 		//build the transform
 		Matrix m = glm::scale(Matrix(1), scale);
 		m = glm::translate(m, offset);
-		m = glm::rotate(m, (float)(Degrees)rotation, Vector::UNIT_Z);
+		m = glm::rotate(m, (float)(Degrees)rotation, Vector::UnitZ);
 		return m;
 	}
 	else {

@@ -52,7 +52,7 @@ bool Viewport::isVisible(Renderable& s) {
 void Viewport::addFader(int layer) {
 	//create the fader object			
 	renderable = make_unique<Renderable>(*this, "texturedQuad");
-	renderable->color = Color::NIL;
+	renderable->color = Color::None;
 
 	renderable->scale.x = size.x;
 	renderable->scale.y = size.y;
@@ -69,7 +69,7 @@ void Viewport::setRenderTarget(Texture* target) {
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
-	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::NEGATIVE_UNIT_Y))); //HACK why negative does work? Up is +Y
+	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::NegativeUnitY))); //HACK why negative does work? Up is +Y
 }
 
 void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {

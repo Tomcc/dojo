@@ -2,4 +2,4 @@
 
 using namespace Dojo;
 
-const String String::EMPTY = String();
+const String String::Empty = String();

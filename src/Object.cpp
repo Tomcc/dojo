@@ -88,8 +88,8 @@ AABB Object::transformAABB(const AABB& local) const {
 
 	//get the eight world-position corners and transform them
 	//TODO this is massively slow, pls optimize
-	bb.max = Vector::MIN;
-	bb.min = Vector::MAX;
+	bb.max = Vector::Min;
+	bb.min = Vector::Max;
 
 	Vector vertex;
 
@@ -144,7 +144,7 @@ Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z*/) const 
 Vector Object::getLocalDirection(const Vector& worldDir) {
 	DEBUG_TODO;
 
-	return Vector::ZERO;
+	return Vector::Zero;
 }
 
 Radians Object::getRoll() const {

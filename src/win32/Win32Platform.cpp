@@ -260,7 +260,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	Platform(configTable),
 	dragging(false),
 	mMousePressed(false),
-	cursorPos(Vector::ZERO),
+	cursorPos(Vector::Zero),
 	frameInterval(0),
 	mFramesToAdvance(0),
 	clientAreaYOffset(0),

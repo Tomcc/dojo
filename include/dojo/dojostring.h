@@ -28,7 +28,7 @@ namespace Dojo {
 	class String : public _ustring {
 	public:
 
-		static const String EMPTY;
+		static const String Empty;
 
 		String() :
 			_ustring() {

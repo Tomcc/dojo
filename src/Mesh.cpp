@@ -72,8 +72,8 @@ void Mesh::begin(int extimatedVerts /*= 1 */) {
 	vertexCount = indexCount = 0;
 	currentVertex = nullptr;
 
-	bounds.max = Vector::MIN;
-	bounds.min = Vector::MAX;
+	bounds.max = Vector::Min;
+	bounds.min = Vector::Max;
 
 	editing = true;
 }

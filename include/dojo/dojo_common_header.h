@@ -131,6 +131,8 @@ using std::make_shared;
 #pragma warning(3:4296) //expression is always false
 #pragma warning(3:4701) //use of uninitialized variable
 #pragma warning(3:4702) //unreachable code
+#pragma warning(4:4242)
+#pragma warning(default: 4254)
 
 #pragma warning(disable:4100) //unreferenced formal parameters are ok
 #pragma warning(disable:4458) //there's way too much shadowing here //TODO remove shadowing?

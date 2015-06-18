@@ -16,7 +16,7 @@ TouchArea::TouchArea(Listener& l, Object& parent, const Vector& pos, const Vecto
 }
 
 TouchArea::TouchArea(Renderable& r, Listener& l) :
-	Object(r.getGameState(), Vector::ZERO, r.getObject().getSize()), //TODO this should use the renderable's screensize instead
+	Object(r.getGameState(), Vector::Zero, r.getObject().getSize()), //TODO this should use the renderable's screensize instead
 	listener(&l),
 	mPressed(false),
 	mTouches(0),

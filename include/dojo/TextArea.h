@@ -35,7 +35,7 @@ namespace Dojo {
 		TextArea(Object& l,
 				const String& fontSetName,
 				bool center = false,
-				const Vector& bounds = Vector::ONE);
+				const Vector& bounds = Vector::One);
 
 		virtual ~TextArea();
 
