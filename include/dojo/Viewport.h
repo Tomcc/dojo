@@ -44,7 +44,7 @@ namespace Dojo {
 			const Vector& pos,
 			const Vector& size,
 			const Color& clear,
-			Degrees VFOV = (Degrees)0,
+			Degrees VFOV = 0.0_deg,
 			float zNear = 0,
 			float zFar = 100);
 

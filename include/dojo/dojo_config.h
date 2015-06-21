@@ -72,6 +72,8 @@
 //needs testing, comment to enable
 #define DOJO_DISABLE_VAOS
 
+#define _HAS_AUTO_PTR_ETC 0
+
 //common enums
 namespace Dojo
 {

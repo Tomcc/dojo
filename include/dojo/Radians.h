@@ -6,7 +6,7 @@ namespace Dojo {
 	public:
 		typedef BASE BaseType;
 
-		explicit RealNumber(BASE v) : mValue(v) {
+		constexpr explicit RealNumber(BASE v) : mValue(v) {
 		}
 
 		T operator+(const T& rhs) const {
@@ -39,7 +39,7 @@ namespace Dojo {
 
 	class Radians : public RealNumber<Radians, float> {
 	public:
-		explicit Radians(BaseType v) :
+		constexpr explicit Radians(BaseType v) :
 			RealNumber(v) {
 
 		}
@@ -47,14 +47,22 @@ namespace Dojo {
 		Radians(const Degrees& e);
 		Radians& operator=(const Degrees& e);
 	};
-
+	
 	class Degrees : public RealNumber<Degrees, float> {
 	public:
-		explicit Degrees(BaseType v) :
+		constexpr explicit Degrees(BaseType v) :
 			RealNumber(v) {
 
 		}
 
 		Degrees(const Radians& r);
 	};
+
+	constexpr Radians operator "" _rad(long double v) {
+		return Radians{ static_cast<Radians::BaseType>(v) };
+	}
+
+	constexpr Degrees operator "" _deg(long double v) {
+		return Degrees{ static_cast<Degrees::BaseType>(v) };
+	}
 }

@@ -76,7 +76,7 @@ namespace Dojo {
 
 		///sets the rotation around the Z axis (2D rotation) for this object
 		void setRoll(Radians r) {
-			setRotation(Radians(0.f), Radians(0.f), r);
+			setRotation(0.0_rad, 0.0_rad, r);
 		}
 
 		///rotates the object starting from the current orientation around the given axis

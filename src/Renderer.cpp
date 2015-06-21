@@ -154,10 +154,10 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	renderOrientation = o;
 
 	static const Degrees orientations[] = {
-		(Degrees)0,
-		(Degrees)180,
-		(Degrees)90,
-		(Degrees)-90
+		0.0_deg,
+		180.0_deg,
+		90.0_deg,
+		-90.0_deg
 	};
 
 	renderRotation = orientations[(int)renderOrientation] + orientations[(int)deviceOrientation];
