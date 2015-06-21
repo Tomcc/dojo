@@ -18,7 +18,7 @@ namespace Dojo {
 			return (T&)*this;
 		}
 
-		operator BASE() const {
+		constexpr operator BASE() const {
 			return mValue;
 		}
 
