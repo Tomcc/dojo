@@ -20,7 +20,6 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	height(h),
 	renderOrientation(DO_LANDSCAPE_RIGHT),
 	deviceOrientation(deviceOr),
-	currentLayer(nullptr),
 	frameVertexCount(0),
 	frameTriCount(0),
 	frameBatchCount(0) {
@@ -76,31 +75,16 @@ Renderer::~Renderer() {
 }
 
 RenderLayer& Renderer::getLayer(RenderLayer::ID layerID) {
-	auto layerList = &positiveLayers;
-	if (layerID < 0) {
-		layerID = -layerID - 1; //flip and shift by 1
-		layerList = &negativeLayers;
+	//layers "always" exist
+	if (layerID >= layers.size()) {
+		layers.resize(layerID+1);
 	}
 
-	//allocate the needed layers if layerID > layer size
-	while ((RenderLayer::ID)layerList->size() <= layerID)
-		layerList->emplace_back();
-
-	if (!currentLayer) //first layer!
-		currentLayer = &(*layerList)[layerID];
-
-	//get the needed layer	
-	return (*layerList)[layerID];
+	return layers[layerID];
 }
 
 bool Renderer::hasLayer(RenderLayer::ID layerID) {
-	auto layerList = &positiveLayers;
-	if (layerID < 0) {
-		layerID = -layerID - 1; //flip and shift by 1
-		layerList = &negativeLayers;
-	}
-
-	return (RenderLayer::ID)layerList->size() > abs(layerID);
+	return layerID < layers.size();
 }
 
 void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
@@ -121,10 +105,7 @@ void Renderer::removeRenderable(Renderable& s) {
 }
 
 void Renderer::removeAllRenderables() {
-	for (auto& l : negativeLayers)
-		l.elements.clear();
-
-	for (auto& l : positiveLayers)
+	for (auto& l : layers)
 		l.elements.clear();
 }
 
@@ -137,8 +118,7 @@ void Renderer::removeAllViewports() {
 }
 
 void Renderer::clearLayers() {
-	negativeLayers.clear();
-	positiveLayers.clear();
+	layers.clear();
 }
 
 void Renderer::setDefaultAmbient(const Color& a) {
@@ -265,8 +245,6 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	if (layer.depthClear)
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-	currentLayer = &layer;
-
 	for (auto& r : layer.elements) {
 		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
 			_renderElement(*r);
@@ -307,13 +285,9 @@ void Renderer::_renderViewport(Viewport& viewport) {
 
 	if (viewport.getVisibleLayers().empty()) //using the default layer ordering/visibility
 	{
-		//first render from the most negative to -1
-		for (int i = (int)negativeLayers.size() - 1; i >= 0; --i)
-			_renderLayer(viewport, negativeLayers[i]);
-
-		//then from 0 to the most positive
-		for (auto& l : positiveLayers)
+		for (auto& l : layers) {
 			_renderLayer(viewport, l);
+		}
 	}
 	else //use the custom layer ordering/visibility
 	{
@@ -339,8 +313,7 @@ void Renderer::renderFrame(float dt) {
 	frameStarted = true;
 
 	//update all the renderables
-	_updateRenderables(negativeLayers, dt);
-	_updateRenderables(positiveLayers, dt);
+	_updateRenderables(layers, dt);
 
 	//render all the viewports
 	for (auto& viewport : viewportList)

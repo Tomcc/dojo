@@ -41,7 +41,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char*
 #else
 	#error unsupported platform
 #endif
-}
+	}
 
 void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
 	String err;

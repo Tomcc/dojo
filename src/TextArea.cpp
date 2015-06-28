@@ -5,6 +5,7 @@
 #include "Viewport.h"
 #include "Platform.h"
 #include "Renderer.h"
+#include "range.h"
 
 using namespace Dojo;
 
@@ -86,7 +87,7 @@ void TextArea::addText(const String& text) {
 	unichar c;
 
 	//parse and setup characters
-	for (int i = 0; i < (int)text.size(); ++i) {
+	for (auto i : range(text.size())) {
 		c = text[i];
 
 		currentChar = font->getCharacter(c);

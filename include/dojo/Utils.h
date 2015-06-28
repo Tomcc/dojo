@@ -12,6 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Color.h"
+#include "range.h"
 
 #ifdef __OBJ__
 #include <Foundation/NSString.h>
@@ -22,7 +23,7 @@ namespace Dojo {
 	public:
 
 		static int getLastOf(const String& str, unichar c) {
-			for (int i = (int)str.size() - 1; i >= 0; --i) {
+			for (auto i : reverse_range(str.size())) {
 				if (str.at(i) == c)
 					return i;
 			}

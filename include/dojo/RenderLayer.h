@@ -9,7 +9,9 @@ namespace Dojo {
 
 	class RenderLayer {
 	public:
-		typedef int ID;
+		typedef byte ID;
+
+		static const ID InvalidID = std::numeric_limits<ID>::max();
 
 		bool visible = true,
 			depthCheck = false,

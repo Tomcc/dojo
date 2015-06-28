@@ -14,6 +14,7 @@
 #include "RenderState.h"
 #include "Color.h"
 #include "AABB.h"
+#include "RenderLayer.h"
 
 namespace Dojo {
 	class Object;
@@ -58,7 +59,7 @@ namespace Dojo {
 		void stopFade();
 
 		///returns the ID of the Render::Layer this object is assigned to
-		int getLayer() const {
+		RenderLayer::ID getLayer() const {
 			return layer;
 		}
 		
@@ -86,13 +87,13 @@ namespace Dojo {
 
 		virtual void update(float dt);
 
-		void _notifyRenderInfo(int layerID);
+		void _notifyRenderInfo(RenderLayer::ID layerID);
 	protected:
 
 		Object& parent;
 		bool visible = true;
 
-		int layer = INT_MIN;
+		RenderLayer::ID layer = RenderLayer::InvalidID;
 		
 		bool fading = false;
 		float currentFadeTime = 0;

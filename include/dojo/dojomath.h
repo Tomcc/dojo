@@ -67,6 +67,11 @@ namespace Dojo {
 				return 0;
 		}
 
+		///converts float to int by flooring
+		static int floorInt(float f) {
+			return (int)std::floorf(f);
+		}
+
 		///returns the smallest power of two greater than val
 		static unsigned int nextPowerOfTwo(unsigned int val) {
 			--val;

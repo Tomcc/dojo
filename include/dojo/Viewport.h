@@ -37,7 +37,7 @@ namespace Dojo {
 	class Viewport : public Object {
 	public:
 
-		typedef std::vector<int> LayerList;
+		typedef std::vector<RenderLayer::ID> LayerList;
 
 		Viewport(
 			Object& level,
@@ -54,7 +54,7 @@ namespace Dojo {
 		void enableFrustum(Degrees VFOV, float zNear, float zFar);
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
-		void addFader(int layer);
+		void addFader();
 
 		///orients the camera to look at a given 3D point
 		void lookAt(const Vector& worldPos);
@@ -70,7 +70,7 @@ namespace Dojo {
 		void setVisibleLayers(const LayerList& layers);
 
 		///sets which subset of Render Layers this Viewport is able to "see"
-		void setVisibleLayers(int min, int max);
+		void setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max);
 
 		///returns the subset of visible layers that has been set by setVisibleLayers
 		/**
@@ -163,21 +163,19 @@ namespace Dojo {
 		bool isInViewRect(const Vector& pos) const;
 
 		///returns the world position of the given screenPoint
-		Vector makeWorldCoordinates(const Vector& screenPoint) {
-			return makeWorldCoordinates((int)screenPoint.x, (int)screenPoint.y);
-		}
+		Vector makeWorldCoordinates(const Vector& screenPoint) const;
 
 		///returns the world position of the given screenPoint
-		Vector makeWorldCoordinates(int x, int y);
+		Vector makeWorldCoordinates(int x, int y) const;
 
 		///converts the w and h pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, int w, int h) {
+		void makeScreenSize(Vector& dest, int w, int h) const {
 			dest.x = ((float)w / mTargetSize.x) * size.x;// * nativeToScreenRatio;
 			dest.y = ((float)h / mTargetSize.y) * size.y;// * nativeToScreenRatio;
 		}
 
 		///converts the texture pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, Texture* tex);
+		void makeScreenSize(Vector& dest, Texture* tex) const;
 
 		float getPixelSide() const {
 			return size.x / mTargetSize.x;

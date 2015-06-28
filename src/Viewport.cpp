@@ -9,6 +9,7 @@
 #include "SoundManager.h"
 #include "Texture.h"
 #include "RenderLayer.h"
+#include "range.h"
 
 using namespace Dojo;
 
@@ -39,17 +40,21 @@ Viewport::~Viewport() {
 
 }
 
-Vector Viewport::makeWorldCoordinates(int x, int y) {
+Vector Viewport::makeWorldCoordinates(int x, int y) const {
 	return Vector(
 		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
 		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+}
+
+Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
+	return makeWorldCoordinates(Math::floorInt(screenPoint.x), Math::floorInt(screenPoint.y));
 }
 
 bool Viewport::isVisible(Renderable& s) {
 	return s.isVisible() && isInViewRect(s);
 }
 
-void Viewport::addFader(int layer) {
+void Dojo::Viewport::addFader() {
 	//create the fader object			
 	renderable = make_unique<Renderable>(*this, "texturedQuad");
 	renderable->color = Color::None;
@@ -64,8 +69,8 @@ void Viewport::setRenderTarget(Texture* target) {
 	mRT = target;
 
 	setTargetSize(target ?
-					Vector((float)target->getWidth(), (float)target->getHeight()) :
-					Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
+		Vector((float)target->getWidth(), (float)target->getHeight()) :
+		Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
@@ -176,6 +181,8 @@ Vector Viewport::getScreenPosition(const Vector& pos) {
 }
 
 Vector Viewport::getRayDirection(const Vector& screenSpacePos) {
+	//TODO this should be remade transforming the view matrix really
+
 	//frustum[0]: top left
 	//frustum[1]: bottom left
 	//frustum[2]: bottom right
@@ -193,7 +200,7 @@ Vector Viewport::getRayDirection(const Vector& screenSpacePos) {
 	return (a - getWorldPosition()).normalized();
 }
 
-void Viewport::makeScreenSize(Vector& dest, Texture* tex) {
+void Viewport::makeScreenSize(Vector& dest, Texture* tex) const {
 	makeScreenSize(dest, tex->getWidth(), tex->getHeight());
 }
 
@@ -201,11 +208,14 @@ void Viewport::setVisibleLayers(const LayerList& layers) {
 	mLayerList = layers;
 }
 
-void Viewport::setVisibleLayers(int min, int max) {
+void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
+	DEBUG_ASSERT(min < max, "Invalid layer range");
+
 	mLayerList.clear();
 
-	for (int i = min; i < max; ++i)
+	for (auto i : range(min, max)) {
 		mLayerList.push_back(i);
+	}
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
@@ -214,12 +224,9 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const {
 	Vector halfSize = (bb.max - bb.min) * 0.5f;
 	Vector worldPos = r.getObject().getWorldPosition();
 
-	//TODO not do as a sphere
-
 	//for each plane, check where the AABB is placed
-	for (int i = 0; i < 4; ++i) {
+	for (auto i : range(4)) {
 		if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
-			//DEBUG_MESSAGE( "CULED!!!!    " << i );
 			return false;
 		}
 	}

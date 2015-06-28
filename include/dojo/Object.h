@@ -14,6 +14,7 @@
 #include "Vector.h"
 #include "SmallSet.h"
 #include "AABB.h"
+#include "RenderLayer.h"
 
 namespace Dojo {
 
@@ -151,7 +152,7 @@ namespace Dojo {
 
 		///adds a child
 		template <class T>
-		T& addChild(Unique<T> o, int layer = INT_MAX) {
+		T& addChild(Unique<T> o, RenderLayer::ID layer = RenderLayer::InvalidID) {
 			return (T&)_addChild(std::move(o), layer);
 		}
 
@@ -192,7 +193,7 @@ namespace Dojo {
 		Object* parent;
 		ChildList children;
 
-		Object& _addChild(Unique<Object> o, int layer);
+		Object& _addChild(Unique<Object> o, RenderLayer::ID layer);
 
 		void _unregisterChild(Object& child);
 	

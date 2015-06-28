@@ -97,7 +97,7 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-void Renderable::_notifyRenderInfo(int layerID) {
+void Renderable::_notifyRenderInfo(RenderLayer::ID layerID) {
 	layer = layerID;
 }
 

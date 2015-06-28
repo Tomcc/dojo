@@ -52,10 +52,10 @@ namespace Dojo {
 		Random();
 
 		///Creates a new Random generator using a seed
-		Random(RandomSeed oneSeed);
+		explicit Random(RandomSeed oneSeed);
 
 		///Creates a new Random generator using a big seed in an array
-		Random(const BigSeed& seed);
+		explicit Random(const BigSeed& seed);
 
 		Random(const Random& o);
 

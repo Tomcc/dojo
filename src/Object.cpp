@@ -22,14 +22,14 @@ Object::~Object() {
 	destroyAllChildren();
 }
 
-Object& Object::_addChild(Unique<Object> o, int layer) {
+Object& Dojo::Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
-	if (layer < INT_MAX) {
-		DEBUG_ASSERT(o->getRenderable(), "Adding a object with no renderable");
+	if (o->getRenderable()) {
+		//TODO make the layer a property of renderable, this is dumb
+		DEBUG_ASSERT(layer != RenderLayer::InvalidID, "Please specify a valid layer when making a object visible");
 
-		//TODO make the layer a property of renderable
 		Platform::singleton().getRenderer().addRenderable(*o->getRenderable(), layer);
 	}
 

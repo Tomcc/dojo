@@ -65,16 +65,12 @@ namespace Dojo {
 
 		bool hasLayer(RenderLayer::ID layerID);
 
-		int getLayerNumber() {
-			return positiveLayers.size() + negativeLayers.size();
-		}
-
-		RenderLayer::ID getBottomLayerID() const {
-			return -(RenderLayer::ID)negativeLayers.size();
+		int getLayerCount() const {
+			return layers.size();
 		}
 
 		RenderLayer::ID getFrontLayerID() const {
-			return positiveLayers.size();
+			return (RenderLayer::ID)layers.size();
 		}
 
 		int getLastFrameVertexCount() {
@@ -112,13 +108,11 @@ namespace Dojo {
 
 		ViewportSet viewportList;
 
-		const RenderLayer* currentLayer;
-
 		int frameVertexCount, frameTriCount, frameBatchCount;
 
 		bool frameStarted;
 
-		LayerList negativeLayers, positiveLayers;
+		LayerList layers;
 
 		Color defaultAmbient;
 
