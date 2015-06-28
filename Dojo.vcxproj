@@ -20,6 +20,8 @@
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
+    <ClInclude Include="include\dojo\CompileTimeID.h" />
+    <ClInclude Include="include\dojo\Component.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_gl_header.h" />
@@ -98,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\dojo\AABB.cpp" />
+    <ClCompile Include="include\dojo\Component.cpp" />
     <ClCompile Include="include\dojo\dojostring.cpp" />
     <ClCompile Include="include\dojo\File.cpp" />
     <ClCompile Include="include\dojo\FileStream.cpp" />

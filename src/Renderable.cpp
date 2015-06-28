@@ -9,7 +9,7 @@
 using namespace Dojo;
 
 Renderable::Renderable(Object& parent) :
-parent(parent) {
+Component(parent) {
 	color = Color::White;
 }
 
@@ -61,7 +61,7 @@ void Renderable::update(float dt) {
 		AABB bounds = mesh->getBounds();
 		bounds.max = Vector::mul(bounds.max, scale);
 		bounds.min = Vector::mul(bounds.min, scale);
-		worldBB = parent.transformAABB(bounds);
+		worldBB = self.transformAABB(bounds);
 
 		advanceFade(dt);
 	}
@@ -101,6 +101,6 @@ void Renderable::_notifyRenderInfo(RenderLayer::ID layerID) {
 	layer = layerID;
 }
 
-GameState& Dojo::Renderable::getGameState() {
+GameState& Dojo::Renderable::getGameState() const {
 	return getObject().getGameState();
 }

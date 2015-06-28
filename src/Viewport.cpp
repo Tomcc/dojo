@@ -54,15 +54,19 @@ bool Viewport::isVisible(Renderable& s) {
 	return s.isVisible() && isInViewRect(s);
 }
 
-void Dojo::Viewport::addFader() {
-	//create the fader object			
-	renderable = make_unique<Renderable>(*this, "texturedQuad");
-	renderable->color = Color::None;
+void Viewport::addFader() {
+	//create the fader object	
+	addComponent([&]() {
+		auto fader = make_unique<Renderable>(*this, "texturedQuad");
+		fader->color = Color::None;
 
-	renderable->scale.x = size.x;
-	renderable->scale.y = size.y;
+		fader->scale.x = size.x;
+		fader->scale.y = size.y;
 
-	renderable->setVisible(false);
+		fader->setVisible(false);
+
+		return fader;
+	}());
 }
 
 void Viewport::setRenderTarget(Texture* target) {

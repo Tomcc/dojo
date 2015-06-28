@@ -15,14 +15,18 @@
 #include "Color.h"
 #include "AABB.h"
 #include "RenderLayer.h"
+#include "Component.h"
 
 namespace Dojo {
 	class Object;
 	class Renderer;
 	class GameState;
 
-	class Renderable : public RenderState {
+	class Renderable : 
+		public Component,
+		public RenderState {
 	public:
+		static const int ID = 0;
 
 		Vector uvOffset;
 		Vector scale = Vector::One;
@@ -35,15 +39,7 @@ namespace Dojo {
 
 		virtual ~Renderable();
 
-		Object& getObject() {
-			return parent;
-		}
-
-		const Object& getObject() const {
-			return parent;
-		}
-
-		GameState& getGameState();
+		GameState& getGameState() const;
 
 		void setVisible(bool v) {
 			visible = v;
@@ -90,7 +86,6 @@ namespace Dojo {
 		void _notifyRenderInfo(RenderLayer::ID layerID);
 	protected:
 
-		Object& parent;
 		bool visible = true;
 
 		RenderLayer::ID layer = RenderLayer::InvalidID;

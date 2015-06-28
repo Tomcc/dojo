@@ -25,7 +25,7 @@ GameState::~GameState() {
 }
 
 void GameState::clear() {
-	destroyAllChildren();
+	removeAllChildren();
 
 	//flush resources
 	unloadResources(false);

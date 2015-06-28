@@ -19,10 +19,10 @@ Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 }
 
 Object::~Object() {
-	destroyAllChildren();
+	removeAllChildren();
 }
 
-Object& Dojo::Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
+Object& Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
@@ -64,23 +64,33 @@ Unique<Object> Object::removeChild(Object& o) {
 	return child;
 }
 
+bool Object::canDestroy() const {
+	for (auto& component : components) {
+		if (!component->canDestroy()) {
+			return false; //this one can't be destroyed, wait
+		}
+	}
+	return true;
+}
+
 void Object::collectChilds() {
-	for (size_t i = 0; i < children.size(); ++i) {
-		if (children[i]->disposed) {
-			_unregisterChild(*children[i]);
-			children.erase(children[i]);
+	for (auto i : range(children.size())) {
+		auto& child = children[i];
+		if (child->disposed && child->canDestroy()) {
+			_unregisterChild(*child);
+			children.erase(child);
 
 			i = 0; //a destructor might dispose of other children...
 		}
 	}
 }
 
-
-void Object::destroyAllChildren() {
-	for (auto& c : children)
+Object::ChildList Object::removeAllChildren() {
+	for (auto& c : children) {
 		_unregisterChild(*c);
+	}
 
-	children.clear();
+	return std::move(children);
 }
 
 AABB Object::transformAABB(const AABB& local) const {
@@ -194,9 +204,32 @@ void Object::setAllChildrenVisibleHACK(bool visible) {
 }
 
 void Object::dispose() {
+	DEBUG_ASSERT(!disposed, "Already disposed");
+
 	disposed = true;
+	for (auto& c : components) {
+		if (c) {
+			c->onDispose();
+		}
+	}
 }
 
-void Object::setRenderable(Unique<Renderable> r) {
-	renderable = std::move(r);
+void Object::setSize(const Vector& bbSize) {
+	DEBUG_ASSERT(bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0, "Malformed size (one component was less or equal to 0)");
+
+	size = bbSize;
+	halfSize = size * 0.5f;
+}
+
+Renderable* Object::getRenderable() {
+	static_assert(Renderable::ID == 0, "ops, this function is a hack :)");
+	return (Renderable*)(components.empty() ? nullptr : components[0].get());
+}
+
+Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
+	if (ID >= (int)components.size()) {
+		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage
+	}
+	components[ID] = std::move(c);
+	return *components[ID];
 }

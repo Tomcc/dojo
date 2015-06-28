@@ -75,7 +75,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, const String& immediateAnim /*= Strin
 }
 
 void AnimatedQuad::immediateAnimation(const String& name, float timePerFrame) {
-	FrameSet* set = parent.getGameState().getFrameSet(name);
+	FrameSet* set = self.getGameState().getFrameSet(name);
 
 	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );
 
@@ -157,7 +157,7 @@ void AnimatedQuad::_updateScreenSize() {
 	if (pixelPerfect) {
 		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		parent.getGameState().getViewport()->makeScreenSize(screenSize, getTexture());
+		self.getGameState().getViewport()->makeScreenSize(screenSize, getTexture());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}

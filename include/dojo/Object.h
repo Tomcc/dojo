@@ -15,11 +15,13 @@
 #include "SmallSet.h"
 #include "AABB.h"
 #include "RenderLayer.h"
+#include "CompileTimeID.h"
 
 namespace Dojo {
 
 	class GameState;
 	class Renderable;
+	class Component;
 
 	///Object is the base class of any object that can be placed and moved in a GameState
 	/** 
@@ -52,13 +54,7 @@ namespace Dojo {
 		void updateWorldTransform();
 
 		///sets a AABB size
-		void setSize(const Vector& bbSize) {
-			DEBUG_ASSERT( bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0, "Malformed size (one component was less or equal to 0)" );
-
-			size = bbSize;
-			halfSize = size * 0.5f;
-
-		}
+		void setSize(const Vector& bbSize);
 
 		///sets a 2D AABB size
 		void setSize(float x, float y) {
@@ -138,11 +134,7 @@ namespace Dojo {
 			return parent;
 		}
 
-		void setRenderable(Unique<Renderable> r);
-
-		Renderable* getRenderable() {
-			return renderable.get();
-		}
+		Renderable* getRenderable();
 
 		size_t getChildCount() const {
 			return children.size();
@@ -159,13 +151,26 @@ namespace Dojo {
 		///removes a child if existing and gives it back to the caller
 		Unique<Object> removeChild(Object& o);
 
+		template<class T>
+		T* get() const {
+			DEBUG_ASSERT(components.size() > T::ID || !components[T::ID], "Component not found");
+			return (T*)components[T::ID].get();
+		}
+
 		///destroys all the children that have been marked by dispose
 		void collectChilds();
 
-		///completely destroys all the children of this object
-		void destroyAllChildren();
+		///removes all the children of this object, returns ownership to the caller
+		ChildList removeAllChildren();
 
 		void updateChilds(float dt);
+
+		Component& _addComponent(Unique<Component> c, int ID);
+
+		template<class T>
+		T& addComponent(Unique<T> c) {
+			return (T&)_addComponent(std::move(c), T::ID);
+		}
 
 		virtual void onAction(float dt);
 
@@ -174,12 +179,15 @@ namespace Dojo {
 
 		virtual void dispose();
 
+		///"authorization" method called when disposing. Useful to override when waiting for threaded stuff to finish on destruction
+		virtual bool canDestroy() const;
+
 		AABB transformAABB(const AABB& local) const;
 	protected:
 
 		GameState* gameState;
 
-		Unique<Renderable> renderable;
+		std::vector<Unique<Component>> components; //TODO not a vector pls
 
 		Vector size, halfSize;
 
