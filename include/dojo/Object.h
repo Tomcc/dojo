@@ -15,7 +15,6 @@
 #include "SmallSet.h"
 #include "AABB.h"
 #include "RenderLayer.h"
-#include "CompileTimeID.h"
 
 namespace Dojo {
 
@@ -133,9 +132,7 @@ namespace Dojo {
 		Object* getParent() {
 			return parent;
 		}
-
-		Renderable* getRenderable();
-
+		
 		size_t getChildCount() const {
 			return children.size();
 		}
@@ -152,9 +149,17 @@ namespace Dojo {
 		Unique<Object> removeChild(Object& o);
 
 		template<class T>
-		T* get() const {
-			DEBUG_ASSERT(components.size() > T::ID || !components[T::ID], "Component not found");
-			return (T*)components[T::ID].get();
+		bool has() const {
+			return T::ID < components.size() && components[T::ID];
+		}
+
+		template<class T>
+		T& get() const {
+			//this returns a reference and asserts for presence rather than 
+			//going the full check route because we enforce that it's the
+			//calling code that needs to call get() only when a component can be found
+			DEBUG_ASSERT(has<T>(), "Component not found");
+			return (T&)*components[T::ID];
 		}
 
 		///destroys all the children that have been marked by dispose

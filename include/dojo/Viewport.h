@@ -94,7 +94,7 @@ namespace Dojo {
 		}
 
 		Renderable* getFader() {
-			return getRenderable();
+			return has<Renderable>() ? &get<Renderable>() : nullptr;
 		}
 
 		Degrees getVFOV() const {

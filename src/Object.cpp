@@ -26,11 +26,11 @@ Object& Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
-	if (o->getRenderable()) {
+	if (o->has<Renderable>()) {
 		//TODO make the layer a property of renderable, this is dumb
 		DEBUG_ASSERT(layer != RenderLayer::InvalidID, "Please specify a valid layer when making a object visible");
 
-		Platform::singleton().getRenderer().addRenderable(*o->getRenderable(), layer);
+		Platform::singleton().getRenderer().addRenderable(o->get<Renderable>(), layer);
 	}
 
 	o->parent = this;
@@ -47,8 +47,9 @@ void Object::_unregisterChild(Object& child) {
 	child.parent = nullptr;
 
 	//TODO it doesn't make much sense to keep this here
-	if (auto graphics = child.getRenderable())
-		Platform::singleton().getRenderer().removeRenderable(*graphics); //if existing	
+	if (child.has<Renderable>()) {
+		Platform::singleton().getRenderer().removeRenderable(child.get<Renderable>()); //if existing	
+	}
 }
 
 Unique<Object> Object::removeChild(Object& o) {
@@ -196,8 +197,8 @@ void Object::onAction(float dt) {
 
 void Object::setAllChildrenVisibleHACK(bool visible) {
 	for (auto&& c : children) {
-		if (auto graphics = c->getRenderable()) {
-			graphics->setVisible(visible);
+		if (c->has<Renderable>()) {
+			c->get<Renderable>().setVisible(visible);
 		}
 		c->setAllChildrenVisibleHACK(visible);
 	}
@@ -219,11 +220,6 @@ void Object::setSize(const Vector& bbSize) {
 
 	size = bbSize;
 	halfSize = size * 0.5f;
-}
-
-Renderable* Object::getRenderable() {
-	static_assert(Renderable::ID == 0, "ops, this function is a hack :)");
-	return (Renderable*)(components.empty() ? nullptr : components[0].get());
 }
 
 Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
