@@ -4,29 +4,16 @@
 
 #include "SmallSet.h"
 
-#include "enum_cast.h"
+#include "PseudoEnum.h"
 
 namespace Dojo {
 	class Renderable;
 
 	class RenderLayer {
 	public:
-		struct ID {
-			byte value;
-
+		struct ID : public PseudoEnumClass<byte> {
 			template<typename T>
-			ID(T raw) :
-			value(static_cast<decltype(value)>(enum_cast(raw))) {
-
-			};
-
-			bool operator != (const ID& rhs) const {
-				return value != rhs.value;
-			}
-
-			operator byte() {
-				return value;
-			}
+			ID(T raw) : PseudoEnumClass(raw) {}
 		};
 
 		static const ID InvalidID;

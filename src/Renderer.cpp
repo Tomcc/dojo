@@ -87,7 +87,7 @@ bool Renderer::hasLayer(RenderLayer::ID layerID) {
 	return layerID < layers.size();
 }
 
-void Dojo::Renderer::addRenderable(Renderable& s) {
+void Renderer::addRenderable(Renderable& s) {
 	//get the needed layer	
 	RenderLayer& layer = getLayer(s.getLayer());
 
@@ -147,7 +147,7 @@ void Renderer::_renderElement(Renderable& elem) {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
-
+	
 #ifndef PUBLISH
 	frameVertexCount += elem.getMesh()->getVertexCount();
 	frameTriCount += elem.getMesh()->getPrimitiveCount();
@@ -215,7 +215,7 @@ void Renderer::_renderElement(Renderable& elem) {
 }
 
 bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable& r) {
-	return layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
+	return true; //layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
 }
 
 void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {

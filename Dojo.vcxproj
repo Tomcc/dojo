@@ -42,6 +42,7 @@
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
+    <ClInclude Include="include\dojo\PseudoEnum.h" />
     <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\range.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />

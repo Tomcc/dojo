@@ -28,6 +28,7 @@
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
 #include <dojo/PolyTextArea.h>
+#include <dojo/PseudoEnum.h>
 #include <dojo/Random.h>
 #include <dojo/range.h>
 #include <dojo/Renderer.h>
