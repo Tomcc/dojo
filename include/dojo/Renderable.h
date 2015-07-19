@@ -31,11 +31,11 @@ namespace Dojo {
 		Vector uvOffset;
 		Vector scale = Vector::One;
 
-		Renderable(Object& parent);
+		Renderable(Object& parent, RenderLayer::ID layer);
 
-		Renderable(Object& parent, Mesh& m);
+		Renderable(Object& parent, RenderLayer::ID layer, Mesh& m);
 
-		Renderable(Object& parent, const String& meshName);
+		Renderable(Object& parent, RenderLayer::ID layer, const String& meshName);
 
 		virtual ~Renderable();
 
@@ -65,7 +65,7 @@ namespace Dojo {
 
 		///true if this object has been assigned to a Render::Layer
 		bool hasLayer() {
-			return layer != INT_MIN ;
+			return layer != RenderLayer::InvalidID;
 		}
 
 		///tells if the object is either visible or has a mesh
@@ -83,12 +83,13 @@ namespace Dojo {
 
 		virtual void update(float dt);
 
-		void _notifyRenderInfo(RenderLayer::ID layerID);
+		virtual void onAttach() override;
+		virtual void onDetach() override;
 	protected:
 
 		bool visible = true;
 
-		RenderLayer::ID layer = RenderLayer::InvalidID;
+		RenderLayer::ID layer;
 		
 		bool fading = false;
 		float currentFadeTime = 0;

@@ -87,11 +87,9 @@ bool Renderer::hasLayer(RenderLayer::ID layerID) {
 	return layerID < layers.size();
 }
 
-void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
+void Dojo::Renderer::addRenderable(Renderable& s) {
 	//get the needed layer	
-	RenderLayer& layer = getLayer(layerID);
-
-	s._notifyRenderInfo(layerID);
+	RenderLayer& layer = getLayer(s.getLayer());
 
 	//append at the end
 	layer.elements.emplace(&s);
@@ -100,7 +98,6 @@ void Renderer::addRenderable(Renderable& s, RenderLayer::ID layerID) {
 void Renderer::removeRenderable(Renderable& s) {
 	if (hasLayer(s.getLayer())) {
 		getLayer(s.getLayer()).elements.erase(&s);
-		s._notifyRenderInfo(0);
 	}
 }
 

@@ -141,8 +141,8 @@ namespace Dojo {
 
 		///adds a child
 		template <class T>
-		T& addChild(Unique<T> o, RenderLayer::ID layer = RenderLayer::InvalidID) {
-			return (T&)_addChild(std::move(o), layer);
+		T& addChild(Unique<T> o) {
+			return (T&)_addChild(std::move(o));
 		}
 
 		///removes a child if existing and gives it back to the caller
@@ -206,7 +206,7 @@ namespace Dojo {
 		Object* parent;
 		ChildList children;
 
-		Object& _addChild(Unique<Object> o, RenderLayer::ID layer);
+		Object& _addChild(Unique<Object> o);
 
 		void _unregisterChild(Object& child);
 	

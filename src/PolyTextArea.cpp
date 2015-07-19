@@ -6,8 +6,8 @@
 
 using namespace Dojo;
 
-PolyTextArea::PolyTextArea(Object& parent, Font& font, bool centered, RenderingType rt) :
-	Renderable(parent),
+Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, bool centered, RenderingType rt) :
+	Renderable(parent, layer),
 	mCentered(centered),
 	mDirty(true), //be sure to init anyways even if the user doesn't write anything
 	pFont(&font),

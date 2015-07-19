@@ -98,7 +98,7 @@ namespace Dojo {
 			\param pos its position
 			\param immediateAnim the name of the animation it will be set to
 			\param timePerFrame immediate animation's time per frame */
-		AnimatedQuad(Object& parent, const String& immediateAnim = String::Empty, float timePerFrame = 0.0f);
+		AnimatedQuad(Object& parent, RenderLayer::ID layer, const String& immediateAnim = String::Empty, float timePerFrame = 0.0f);
 
 		virtual ~AnimatedQuad();
 

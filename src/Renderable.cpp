@@ -5,21 +5,24 @@
 #include "Mesh.h"
 #include "GameState.h"
 #include "Object.h"
+#include "Platform.h"
+#include "Renderer.h"
 
 using namespace Dojo;
 
-Renderable::Renderable(Object& parent) :
-Component(parent) {
+Renderable::Renderable(Object& parent, RenderLayer::ID layer) :
+Component(parent),
+layer(layer) {
 	color = Color::White;
 }
 
-Renderable::Renderable(Object& parent, Mesh& m) :
-Renderable(parent) {
+Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m) :
+Renderable(parent, layer) {
 	mesh = &m;
 }
 
-Renderable::Renderable(Object& parent, const String& meshName) :
-Renderable(parent) {	
+Renderable::Renderable(Object& parent, RenderLayer::ID layer, const String& meshName) :
+Renderable(parent, layer) {	
 	DEBUG_ASSERT(meshName.size(), "Use another constructor if you don't want to supply a mesh");
 
 	mesh = parent.getGameState().getMesh(meshName);
@@ -97,10 +100,14 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-void Renderable::_notifyRenderInfo(RenderLayer::ID layerID) {
-	layer = layerID;
-}
-
 GameState& Dojo::Renderable::getGameState() const {
 	return getObject().getGameState();
+}
+
+void Renderable::onAttach() {
+	Platform::singleton().getRenderer().addRenderable(*this);
+}
+
+void Renderable::onDetach() {
+	Platform::singleton().getRenderer().removeRenderable(*this);
 }

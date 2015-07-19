@@ -37,8 +37,8 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 		totalTime = 1;
 }
 
-AnimatedQuad::AnimatedQuad(Object& parent, const String& immediateAnim /*= String::EMPTY*/, float timePerFrame /*= 0.0f*/) :
-	Renderable(parent),
+Dojo::AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const String& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
+	Renderable(parent, layer),
 	animationTime(0),
 	pixelScale(1, 1),
 	animationSpeedMultiplier(1),

@@ -22,16 +22,9 @@ Object::~Object() {
 	removeAllChildren();
 }
 
-Object& Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
+Object& Object::_addChild(Unique<Object> o) {
 	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
-
-	if (o->has<Renderable>()) {
-		//TODO make the layer a property of renderable, this is dumb
-		DEBUG_ASSERT(layer != RenderLayer::InvalidID, "Please specify a valid layer when making a object visible");
-
-		Platform::singleton().getRenderer().addRenderable(o->get<Renderable>(), layer);
-	}
 
 	o->parent = this;
 
@@ -40,16 +33,24 @@ Object& Object::_addChild(Unique<Object> o, RenderLayer::ID layer) {
 	o->updateWorldTransform();
 	children.emplace(std::move(o));
 
+	//call onAttach on all of the children components
+	for (auto& c : ptr->components) {
+		if (c) {
+			c->onAttach();
+		}
+	}
 	return *ptr;
 }
 
 void Object::_unregisterChild(Object& child) {
-	child.parent = nullptr;
-
-	//TODO it doesn't make much sense to keep this here
-	if (child.has<Renderable>()) {
-		Platform::singleton().getRenderer().removeRenderable(child.get<Renderable>()); //if existing	
+	//call onAttach on all of the children components
+	for (auto& c : child.components) {
+		if (c) {
+			c->onDetach();
+		}
 	}
+
+	child.parent = nullptr;
 }
 
 Unique<Object> Object::removeChild(Object& o) {
@@ -223,6 +224,8 @@ void Object::setSize(const Vector& bbSize) {
 }
 
 Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
+	DEBUG_ASSERT(parent == nullptr, "The object has been already added to the scene");
+
 	if (ID >= (int)components.size()) {
 		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage
 	}

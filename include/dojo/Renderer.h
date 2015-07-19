@@ -38,7 +38,7 @@ namespace Dojo {
 
 		~Renderer();
 
-		void addRenderable(Renderable& s, RenderLayer::ID layerID);
+		void addRenderable(Renderable& s);
 
 		void removeRenderable(Renderable& s);
 

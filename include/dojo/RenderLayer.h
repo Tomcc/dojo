@@ -4,14 +4,32 @@
 
 #include "SmallSet.h"
 
+#include "enum_cast.h"
+
 namespace Dojo {
 	class Renderable;
 
 	class RenderLayer {
 	public:
-		typedef byte ID;
+		struct ID {
+			byte value;
 
-		static const ID InvalidID = std::numeric_limits<ID>::max();
+			template<typename T>
+			ID(T raw) :
+			value(static_cast<decltype(value)>(enum_cast(raw))) {
+
+			};
+
+			bool operator != (const ID& rhs) const {
+				return value != rhs.value;
+			}
+
+			operator byte() {
+				return value;
+			}
+		};
+
+		static const ID InvalidID;
 
 		bool visible = true,
 			depthCheck = false,

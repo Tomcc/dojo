@@ -54,7 +54,7 @@ namespace Dojo {
 		void enableFrustum(Degrees VFOV, float zNear, float zFar);
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
-		void addFader();
+		void addFader(RenderLayer::ID layer);
 
 		///orients the camera to look at a given 3D point
 		void lookAt(const Vector& worldPos);

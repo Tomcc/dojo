@@ -33,6 +33,7 @@ namespace Dojo {
 		\param bounds TextArea's AABB
 		*/
 		TextArea(Object& l,
+				RenderLayer::ID layer,
 				const String& fontSetName,
 				bool center = false,
 				const Vector& bounds = Vector::One);

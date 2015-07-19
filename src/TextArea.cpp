@@ -9,11 +9,12 @@
 
 using namespace Dojo;
 
-TextArea::TextArea(Object& l,
+Dojo::TextArea::TextArea(Object& l,
+					RenderLayer::ID layer,
 					const String& fontSetName,
-					bool center,
-					const Vector& bounds) :
-	Renderable(l),
+					bool center /*= false*/,
+					const Vector& bounds /*= Vector::One*/) :
+	Renderable(l, layer),
 	fontName(fontSetName),
 	interline(0.2f),
 	maxLineLenght(0xfffffff),
@@ -333,11 +334,11 @@ Unique<Mesh> Dojo::TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), *meshPool.back());
+	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back());
 	r->scale = scale;
 	r->setVisible(false);
 
-	Platform::singleton().getRenderer().addRenderable(*r, getLayer());
+	Platform::singleton().getRenderer().addRenderable(*r);
 
 	freeLayers.emplace(std::move(r));
 }

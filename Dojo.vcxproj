@@ -25,6 +25,7 @@
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_gl_header.h" />
+    <ClInclude Include="include\dojo\enum_cast.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />
     <ClInclude Include="include\dojo\InputDevice.h" />
@@ -59,7 +60,6 @@
     <ClInclude Include="include\dojo\Mesh.h" />
     <ClInclude Include="include\dojo\Noise.h" />
     <ClInclude Include="include\dojo\Object.h" />
-    <ClInclude Include="include\dojo\Particle.h" />
     <ClInclude Include="include\dojo\Plane.h" />
     <ClInclude Include="include\dojo\Platform.h" />
     <ClInclude Include="include\dojo\Random.h" />
@@ -110,6 +110,7 @@
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
     <ClCompile Include="include\dojo\Random.cpp" />
+    <ClCompile Include="include\dojo\RenderLayer.cpp" />
     <ClCompile Include="include\dojo\Stream.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />

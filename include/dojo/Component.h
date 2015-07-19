@@ -23,6 +23,9 @@ namespace Dojo {
 			return self;
 		}
 
+		virtual void onAttach() {}
+		virtual void onDetach() {}
+
 		virtual void onDispose() {}
 
 		///"authorization" method useful to ask the engine to keep the objects alive for longer after disposed of
