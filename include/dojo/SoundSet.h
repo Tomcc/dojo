@@ -19,7 +19,7 @@ namespace Dojo {
 	public:
 
 		///Creates a new set named setName
-		SoundSet(ResourceGroup* creator, const String& setName);
+		SoundSet(ResourceGroup* creator, const std::string& setName);
 
 		virtual bool onLoad() override;
 		virtual void onUnload(bool soft = true) override;
@@ -31,7 +31,7 @@ namespace Dojo {
 			return buffers.size();
 		}
 
-		const String& getName() {
+		const std::string& getName() {
 			return name;
 		}
 
@@ -39,7 +39,7 @@ namespace Dojo {
 
 	protected:
 
-		String name;
+		std::string name;
 
 		std::vector<std::unique_ptr<SoundBuffer>> buffers;
 	};

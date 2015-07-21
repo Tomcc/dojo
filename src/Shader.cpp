@@ -66,13 +66,13 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
 }
 
-Shader::Shader(ResourceGroup* creator, const String& filePath) :
+Shader::Shader(ResourceGroup* creator, const std::string& filePath) :
 	Resource(creator, filePath) {
 	memset(pProgram, 0, sizeof( pProgram )); //init to null
 }
 
 void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
-	static const String typeKeyMap[] = {"vertexShader", "fragmentShader"};
+	static const std::string typeKeyMap[] = {"vertexShader", "fragmentShader"};
 	auto typeID = (unsigned char)type;
 
 	//check if this program is immediate or not
@@ -86,7 +86,7 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	mOwnsProgram[typeID] = (program == nullptr) && !mPreprocessorHeader.empty(); //if any preprocessor flag is defined, all programs are compiled as immediate
 
 	if (!program) //just load the immediate shader
-		program = new ShaderProgram(type, mPreprocessorHeader + keyValue.ASCII());
+		program = new ShaderProgram(type, mPreprocessorHeader + keyValue);
 
 	else if (program && mPreprocessorHeader.size()) //some preprocessor flags are set - copy the existing program and recompile it
 		program = program->cloneWithHeader(mPreprocessorHeader);
@@ -97,9 +97,7 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	pProgram[typeID] = program;
 }
 
-void Shader::setUniformCallback(const String& nameUTF, const UniformCallback& dataBinder) {
-	std::string name = nameUTF.ASCII();
-
+void Shader::setUniformCallback(const std::string& name, const UniformCallback& dataBinder) {
 	auto elem = mUniformMap.find(name);
 
 	if (elem != mUniformMap.end())
@@ -235,7 +233,7 @@ bool Shader::onLoad() {
 	auto& defines = desc.getTable("defines");
 
 	for (auto& entry : defines)
-		mPreprocessorHeader += std::string("#define ") + entry.second->getAs<String>().ASCII() + "\n";
+		mPreprocessorHeader += "#define " + entry.second->getAs<std::string>() + "\n";
 
 	//grab all types
 	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i)

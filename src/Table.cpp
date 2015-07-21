@@ -7,7 +7,7 @@ using namespace Dojo;
 const Table Table::Empty;
 const Table::Data Table::Data::Empty = Data(0, 0);
 
-Table Table::loadFromFile(const String& path) {
+Table Table::loadFromFile(const std::string& path) {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
 
 	auto file = Platform::singleton().getFile(path);
@@ -39,7 +39,7 @@ bool Table::onLoad() {
 	return (loaded = !isEmpty());
 }
 
-void Table::serialize(String& buf, String indent) const {
+void Table::serialize(std::string& buf, const std::string& indent) const {
 	using namespace std;
 
 	Data* data;
@@ -60,31 +60,31 @@ void Table::serialize(String& buf, String indent) const {
 
 		switch (e.type) {
 		case FieldType::Float:
-			buf.appendFloat(*((float*)e.getRawValue()));
+			buf += String::fromFloat(*((float*)e.getRawValue()));
 			break;
 		case FieldType::String:
-			buf += '\"' + *((String*)e.getRawValue()) + '\"';
+			buf += '\"' + *((std::string*)e.getRawValue()) + '\"';
 			break;
 		case FieldType::Vector:
 			v = (Vector*)e.getRawValue();
 			buf += '(';
-			buf.appendFloat(v->x);
+			buf += String::fromFloat(v->x);
 			buf += ' ';
-			buf.appendFloat(v->y);
+			buf += String::fromFloat(v->y);
 			buf += ' ';
-			buf.appendFloat(v->z);
+			buf += String::fromFloat(v->z);
 			buf += ')';
 
 			break;
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
-			buf += '#' + String(data->size) + ' ';
+			buf += '#' + String::fromInt(data->size) + ' ';
 
-			buf.appendRaw(data->ptr, data->size);
+			buf.append((const char*)data->ptr, data->size);
 
 			break;
 		case FieldType::ChildTable:
-			buf += String("{\n");
+			buf += std::string("{\n");
 			((Table*)e.getRawValue())->serialize(buf, indent + '\t');
 
 			buf += indent + '}';
@@ -120,23 +120,23 @@ enum class ParseTarget {
 	ImplicitTrue
 };
 
-bool isNameStarter(unichar c) {
+bool isNameStarter(uint32_t c) {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-bool isNumber(unichar c) {
+bool isNumber(uint32_t c) {
 	return (c >= '0' && c <= '9') || c == '-'; //- is part of a number!!!
 }
 
-bool isName(unichar c) {
+bool isName(uint32_t c) {
 	return isNameStarter(c) || isNumber(c) || c == '_';
 }
 
-bool isValidFloat(unichar c) {
+bool isValidFloat(uint32_t c) {
 	return isNumber(c) || c == '.';
 }
 
-bool isWhiteSpace(unichar c) {
+bool isWhiteSpace(uint32_t c) {
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
@@ -144,7 +144,7 @@ void Table::deserialize(StringReader& buf) {
 	ParseState state = ParseState::Table;
 	ParseTarget target = ParseTarget::Undefined;
 
-	String curName, str;
+	std::string curName, str;
 	float number;
 	Vector vec;
 	Data data;
@@ -154,8 +154,9 @@ void Table::deserialize(StringReader& buf) {
 	clear();
 
 	//feed one char at a time and do things
-	unichar c = 1, c2;
-	while (state != ParseState::End && state != ParseState::Error) {
+	uint32_t c, c2;
+
+	while( state != ParseState::End && state != ParseState::Error) {
 		c = buf.get();
 
 		switch (state) {
@@ -178,13 +179,13 @@ void Table::deserialize(StringReader& buf) {
 
 			if (state == ParseState::Name) {
 				curName.clear();
-				curName += c;
+				String::append(curName, c);
 			}
 
 			break;
 		case ParseState::Name:
 			if (isName(c))
-				curName += c;
+				String::append(curName, c);
 			else if (c == '=')
 				state = ParseState::Equal;
 			else
@@ -264,7 +265,7 @@ void Table::deserialize(StringReader& buf) {
 				c = buf.get();
 				if (c == '"')
 					break;
-				str += c;
+				String::append(str, c);
 			}
 
 			set(curName, str);
@@ -327,7 +328,7 @@ Table::Table(const Table& t) :
 		map[pair.first] = pair.second->clone();
 }
 
-Table::Table(ResourceGroup* creator, const String& path) :
+Table::Table(ResourceGroup* creator, const std::string& path) :
 	Resource(creator, path),
 	unnamedMembers(0) {
 
@@ -351,7 +352,7 @@ void Table::onUnload(bool soft /*= false */) {
 	}
 }
 
-Table* Table::getParentTable(const String& key, String& realKey) const {
+Table* Table::getParentTable(const std::string& key, std::string& realKey) const {
 	size_t dotIdx = 0;
 	for (; dotIdx < key.size() && key[dotIdx] != '.'; ++dotIdx);
 
@@ -360,15 +361,15 @@ Table* Table::getParentTable(const String& key, String& realKey) const {
 		return (Table*)this;
 	}
 
-	String partialKey = key.substr(dotIdx + 1);
-	String childName = key.substr(0, dotIdx);
+	std::string partialKey = key.substr(dotIdx + 1);
+	std::string childName = key.substr(0, dotIdx);
 	auto& child = getTable(childName);
 
 	return child.getParentTable(partialKey, realKey);
 }
 
-Table& Table::createTable(const String& key /*= String::EMPTY */) {
-	String name;
+Table& Table::createTable(const std::string& key /*= std::string::EMPTY */) {
+	std::string name;
 
 	if (key.size() == 0)
 		name = autoname();
@@ -407,13 +408,13 @@ void Table::inherit(Table* t) {
 	}
 }
 
-bool Table::exists(const String& key) const {
+bool Table::exists(const std::string& key) const {
 	DEBUG_ASSERT(key.size(), "exists: key is empty");
 
 	return map.find(key) != map.end();
 }
 
-bool Table::existsAs(const String& key, FieldType t) const {
+bool Table::existsAs(const std::string& key, FieldType t) const {
 	EntryMap::const_iterator itr = map.find(key);
 
 	if (itr != map.end())
@@ -422,8 +423,8 @@ bool Table::existsAs(const String& key, FieldType t) const {
 	return false;
 }
 
-Table::Entry* Table::get(const String& key) const {
-	String actualKey;
+Table::Entry* Table::get(const std::string& key) const {
+	std::string actualKey;
 	const Table* container = getParentTable(key, actualKey);
 
 	if (!container)
@@ -437,14 +438,14 @@ float Table::getNumber(int idx) const {
 	return getNumber(autoMemberName(idx));
 }
 
-String Table::autoMemberName(int idx) const {
+std::string Table::autoMemberName(int idx) const {
 	DEBUG_ASSERT(idx >= 0, "autoMemberName: idx is negative");
-	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", String("idx = ") + String(idx));
+	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", "idx = " + String::fromInt(idx));
 
-	return '_' + String(idx);
+	return '_' + String::fromInt(idx);
 }
 
-void Table::remove(const String& key) {
+void Table::remove(const std::string& key) {
 	map.erase(key);
 }
 
@@ -452,8 +453,8 @@ void Table::remove(int idx) {
 	map.erase(autoMemberName(idx));
 }
 
-String Table::toString() const {
-	String str;
+std::string Table::toString() const {
+	std::string str;
 	serialize(str);
 
 	return str;
@@ -465,6 +466,6 @@ void Table::debugPrint() const {
 #endif
 }
 
-String Table::autoname() {
-	return '_' + String(unnamedMembers++);
+std::string Table::autoname() {
+	return '_' + String::fromInt(unnamedMembers++);
 }

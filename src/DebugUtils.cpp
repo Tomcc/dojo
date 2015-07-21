@@ -13,13 +13,13 @@ std::stringstream  debug_stream_android;
 
 //the default assert fail implementation
 void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char* info, int line, const char* file, const char* function) {
-	DEBUG_MESSAGE( "Assertion failed: " + String( desc ) );
-	DEBUG_MESSAGE( "Condition is false: " + String( arg ) );
+	DEBUG_MESSAGE( "Assertion failed: " + std::string( desc ) );
+	DEBUG_MESSAGE( "Condition is false: " + std::string( arg ) );
 
 	if (info)
-	DEBUG_MESSAGE( "with " + String( info ) );
+	DEBUG_MESSAGE( "with " + std::string( info ) );
 
-	DEBUG_MESSAGE( "Function: " + String(function) + " in " + String(file) + " @ " + String(line) );
+	DEBUG_MESSAGE( "Function: " + std::string(function) + " in " + std::string(file) + " @ " + String::fromInt(line) );
 
 	//either catch this as a breakpoint in the debugger or abort (if not debugged)
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_OSX )
@@ -44,7 +44,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char*
 	}
 
 void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
-	String err;
+	std::string err;
 	bool glerror = false;
 	for (GLint g = glGetError(); g != GL_NONE; g = glGetError()) {
 		glerror = true;
@@ -68,7 +68,7 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, con
 		//forward the assertion
 		if (glerror != GL_NO_ERROR)
 			Dojo::gp_assert_handler(
-				("OpenGL encountered an error: " + String(err)).ASCII().c_str(),
+				("OpenGL encountered an error: " + std::string(err)).c_str(),
 				"error != GL_NO_ERROR",
 				NULL,
 				line,
@@ -99,7 +99,7 @@ bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char* file_source, int line, con
 	//forward the assertion
 	if (error != AL_NO_ERROR)
 		Dojo::gp_assert_handler(
-			("OpenAL encountered an error: " + String(err)).ASCII().c_str(),
+			("OpenAL encountered an error: " + std::string(err)).c_str(),
 			"error != AL_NO_ERROR",
 			NULL,
 			line,

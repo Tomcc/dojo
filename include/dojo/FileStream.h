@@ -18,7 +18,7 @@ namespace Dojo {
 		\param write open the file for writing, create if necessary
 		this WILL NOT open the file for i/o, remember to use open()
 		*/
-		FileStream(const String& path, bool write = false);
+		FileStream(const std::string& path, bool write = false);
 
 		virtual ~FileStream();
 
@@ -37,7 +37,7 @@ namespace Dojo {
 	protected:
 
 		bool mWrite;
-		String mPath;
+		std::string mPath;
 	private:
 	};
 }

@@ -10,7 +10,7 @@
 #ifndef PUBLISH
 
 #define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
-#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).ASCII().c_str() )
+#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).c_str() )
 #define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, nullptr )
 #define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 

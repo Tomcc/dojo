@@ -2,7 +2,7 @@
 
 using namespace Dojo;
 
-File::File(const String& path, bool write /*= false */) :
+File::File(const std::string& path, bool write /*= false */) :
 	FileStream(path, write),
 	mAccess(SA_BAD_FILE),
 	mFile(nullptr),
@@ -32,7 +32,7 @@ File::Access File::open() {
 
 	//open the file
 	const char* openmode = mWrite ? "wb" : "rb";
-	mFile = fopen(mPath.UTF8().c_str(), openmode);
+	mFile = fopen(mPath.c_str(), openmode);
 
 	if (mFile) {
 		mAccess = mWrite ? SA_WRITEONLY : SA_READONLY;

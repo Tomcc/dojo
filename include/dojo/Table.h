@@ -3,17 +3,17 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
-#include "Utils.h"
 #include "StringReader.h"
 #include "dojostring.h"
 #include "Resource.h"
+#include "Color.h"
 
 namespace Dojo {
 	class Entry;
 
 	///Table is the internal representation of the Dojo Script data definition format
 	/** 
-	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, String, Color, Raw Data and Table itself.
+	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, std::string, Color, Raw Data and Table itself.
 	
 	set( key, value ) sets a value to the given key;
 	get*( key, defaultValue ) gets the value of the given key, or returns defaultValue if the key was not found 
@@ -116,16 +116,16 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::unordered_map<String, Unique<Entry>> EntryMap;
+		typedef std::unordered_map<std::string, Unique<Entry>> EntryMap;
 
 		static const Table Empty;
 
-		static String index(int i) {
-			return '_' + String(i);
+		static std::string index(int i) {
+			return '_' + String::fromInt(i);
 		}
 
 		///loads the file at path
-		static Table loadFromFile(const String& path);
+		static Table loadFromFile(const std::string& path);
 
 		///Creates a new table
 		Table();
@@ -139,7 +139,7 @@ namespace Dojo {
 		Table& operator=(const Table&) = delete;
 
 		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
-		Table(ResourceGroup* creator, const String& path);
+		Table(ResourceGroup* creator, const std::string& path);
 
 		~Table();
 
@@ -151,16 +151,16 @@ namespace Dojo {
 		/** it returns "this" for a normal non-hierarchical key
 		returns "A" for a key such as "A.key"
 		returns "B" for a key such as "A.B.key" */
-		Table* getParentTable(const String& key, String& realKey) const;
+		Table* getParentTable(const std::string& key, std::string& realKey) const;
 
 		template <class T>
-		void setImpl(const String& key, FieldType type, T value) {
+		void setImpl(const std::string& key, FieldType type, T value) {
 			map[key.empty() ? autoname() : key] = make_unique<TypedEntry<T>>(type, std::move(value));
 		}
 
 		template <class T>
-		void set(const String& key, FieldType type, T value) {
-			String actualKey;
+		void set(const std::string& key, FieldType type, T value) {
+			std::string actualKey;
 			Table* t = getParentTable(key, actualKey);
 			DEBUG_ASSERT( t != nullptr, "Cannot add a key to a non-existing table" );
 
@@ -169,27 +169,27 @@ namespace Dojo {
 		}
 
 		template<typename T>
-		void set(const String& key, T value) {
+		void set(const std::string& key, T value) {
 			set(key, field_type_for<T>(), std::move(value));
 		}
 
 		template<>
-		void set<Color>(const String& key, Color value) {
+		void set<Color>(const std::string& key, Color value) {
 			set(key, Vector(value.r, value.g, value.b));
 		}
 		template<>
-		void set<int>(const String& key, int value) {
+		void set<int>(const std::string& key, int value) {
 			set(key, (float)value);
 		}
 		template<>
-		void set<bool>(const String& key, bool value) {
+		void set<bool>(const std::string& key, bool value) {
 			set(key, value ? 1.f : 0.f);
 		}
 
 		///creates a new nested table named key
 		/** 
 		nested Tables always have name == key */
-		Table& createTable(const String& key = String::Empty);
+		Table& createTable(const std::string& key = String::Empty);
 
 		///empties the map and deletes every value
 		void clear();
@@ -221,60 +221,60 @@ namespace Dojo {
 		}
 
 		///returns true if this Table contains key
-		bool exists(const String& key) const;
+		bool exists(const std::string& key) const;
 
 		///returns true if this Table contains key and the value is of type t
-		bool existsAs(const String& key, FieldType t) const;
+		bool existsAs(const std::string& key, FieldType t) const;
 
 		///generic get
-		Entry* get(const String& key) const;
+		Entry* get(const std::string& key) const;
 
 		template<typename T> 
-		const T& get(const String& key, const T& defaultValue) const {
+		const T& get(const std::string& key, const T& defaultValue) const {
 			auto e = get(key);
 			return (e && e->type == field_type_for<T>()) ? e->getAs<T>() : defaultValue;
 		}
 
 		//explicit implementations with defaulted default value
-		float getNumber(const String& key, float defaultValue = 0) const  {
+		float getNumber(const std::string& key, float defaultValue = 0) const  {
 			return get(key, defaultValue);
 		}
 
-		const String& getString(const String& key, const String& defaultValue = String::Empty) const {
+		const std::string& getString(const std::string& key, const std::string& defaultValue = String::Empty) const {
 			return get(key, defaultValue);
 		}
 
-		const Vector& getVector(const String& key, const Vector& defaultValue = Vector::Zero) const  {
+		const Vector& getVector(const std::string& key, const Vector& defaultValue = Vector::Zero) const  {
 			return get(key, defaultValue);
 		}
 
-		const Color getColor(const String& key, const Color& defaultValue = Color::Black) const  {
+		const Color getColor(const std::string& key, const Color& defaultValue = Color::Black) const  {
 			auto v = get(key, Vector(defaultValue.r, defaultValue.g, defaultValue.b));
 			return{ v.x, v.y, v.z, defaultValue.a };
 		}
 
-		const int64_t& getInt64(const String& key, const int64_t& defaultValue = 0) const  {
+		const int64_t& getInt64(const std::string& key, const int64_t& defaultValue = 0) const  {
 			return get(key, defaultValue);
 		}
 
-		const Table& getTable(const String& key, const Table& defaultValue = Empty) const  {
+		const Table& getTable(const std::string& key, const Table& defaultValue = Empty) const  {
 			return get(key, defaultValue);
 		}
 
-		const Data& getData(const String& key, const Data& defaultValue = Data::Empty) const {
+		const Data& getData(const std::string& key, const Data& defaultValue = Data::Empty) const {
 			return get(key, defaultValue);
 		}
 
 		//special implementations
-		int getInt(const String& key, int defaultValue = 0) const {
+		int getInt(const std::string& key, int defaultValue = 0) const {
 			return (int)get(key, (float)defaultValue);
 		}
 
-		bool getBool(const String& key, bool defaultValue = false) const {
+		bool getBool(const std::string& key, bool defaultValue = false) const {
 			return get(key, (float)defaultValue) > 0.f;
 		}
 
-		String autoMemberName(int idx) const;
+		std::string autoMemberName(int idx) const;
 
 		float getNumber(int idx) const;
 
@@ -286,7 +286,7 @@ namespace Dojo {
 			return getNumber(idx) > 0.f;
 		}
 
-		const String& getString(int idx) const {
+		const std::string& getString(int idx) const {
 			return getString(autoMemberName(idx));
 		}
 
@@ -307,7 +307,7 @@ namespace Dojo {
 		}
 
 		///returns a new unique anoymous id for a new "array member"
-		String autoname();
+		std::string autoname();
 
 		template <typename T>
 		void push(const T& t) {
@@ -323,18 +323,18 @@ namespace Dojo {
 		}
 
 		///removes a member named key
-		void remove(const String& key);
+		void remove(const std::string& key);
 
 		///removes the unnamed member index idx
 		void remove(int idx);
 
 		///write the table in string form over buf
-		void serialize(String& buf, String indent = String::Empty) const;
+		void serialize(std::string& buf, const std::string& indent = String::Empty) const;
 
 		void deserialize(StringReader& buf);
 
 		///diagnostic method that serializes the table in a string
-		String toString() const;
+		std::string toString() const;
 
 		void debugPrint() const;
 
@@ -370,7 +370,7 @@ namespace Dojo {
 				return FieldType::Float;
 			}
 		};
-		template<> struct field_type_for < String > {
+		template<> struct field_type_for < std::string > {
 			operator FieldType() const {
 				return FieldType::String;
 			}

@@ -26,7 +26,7 @@ namespace Dojo {
 		Texture(ResourceGroup* creator = NULL);
 
 		///Create a empty new texture that will be loaded from path
-		Texture(ResourceGroup* creator, const String& path);
+		Texture(ResourceGroup* creator, const std::string& path);
 
 		virtual ~Texture();
 
@@ -37,7 +37,7 @@ namespace Dojo {
 		bool loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat);
 
 		///loads the texture from the image pointed by the filename
-		bool loadFromFile(const String& path);
+		bool loadFromFile(const std::string& path);
 
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		/** 

@@ -34,7 +34,7 @@ namespace Dojo {
 		*/
 		TextArea(Object& l,
 				RenderLayer::ID layer,
-				const String& fontSetName,
+				const std::string& fontSetName,
 				bool center = false,
 				const Vector& bounds = Vector::One);
 
@@ -83,7 +83,7 @@ namespace Dojo {
 		void clearText();
 
 		///adds text to this TextArea
-		void addText(const String& text);
+		void addText(const std::string& text);
 
 		///adds a number to this TextArea
 		void addText(int n, char paddingChar = 0, int digits = 0);
@@ -104,8 +104,8 @@ namespace Dojo {
 			return characters.size();
 		}
 
-		///returns the text content in String format
-		const String& getContent() {
+		///returns the text content in std::string format
+		const std::string& getContent() {
 			return content;
 		}
 
@@ -130,9 +130,9 @@ namespace Dojo {
 		typedef SmallSet<Unique<Renderable>> LayerList;
 		typedef SmallSet<Font::Character*> CharacterList;
 
-		String content;
+		std::string content;
 
-		String fontName;
+		std::string fontName;
 		float spaceWidth, interline, charSpacing;
 		int maxLineLenght;
 		bool centered;

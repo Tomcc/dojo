@@ -7,7 +7,6 @@
 #include "Texture.h"
 #include "FrameSet.h"
 #include "Tessellation.h"
-#include "Utils.h"
 
 using namespace Dojo;
 
@@ -124,7 +123,7 @@ int _cubicTo(const FT_Vector* control1, const FT_Vector* control2, const FT_Vect
 	return 0;
 }
 
-void Font::Character::init(Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline) {
+void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline) {
 	DEBUG_ASSERT( p, "Character needs a non-null parent Page" );
 	DEBUG_ASSERT( metrics, "null FreeType font metrics" );
 
@@ -221,7 +220,7 @@ bool Font::Page::onLoad() {
 
 	font->_prepareFace();
 
-	auto code = (unichar)firstCharIdx;
+	auto code = (uint32_t)firstCharIdx;
 	Font::Character* character = chars;
 	int x, y;
 
@@ -319,7 +318,7 @@ void Font::Page::onUnload(bool soft /*= false */) {
 
 /// --------------------------------------------------------------------------------
 
-Font::Font(ResourceGroup* creator, const String& path) :
+Font::Font(ResourceGroup* creator, const std::string& path) :
 	Resource(creator, path) {
 
 }
@@ -333,7 +332,7 @@ bool Font::onLoad() {
 
 	Table t = Platform::singleton().load(filePath);
 
-	fontFile = Utils::getDirectory(filePath) + '/' + t.getString("truetype");
+	fontFile = Path::getDirectory(filePath) + '/' + t.getString("truetype");
 	fontWidth = fontHeight = t.getInt("size");
 
 	antialias = t.getBool("antialias");
@@ -405,7 +404,7 @@ void Font::_prepareFace() {
 		fontHeight);
 }
 
-int Font::getPixelLength(const String& str) {
+int Font::getPixelLength(const std::string& str) {
 	int l = 0;
 
 	Character* lastChar = nullptr;
@@ -442,11 +441,11 @@ int Font::getCharIndex(Character* c) {
 	return FT_Get_Char_Index(face, c->character);
 }
 
-Font::Character* Font::getCharacter(unichar c) {
+Font::Character* Font::getCharacter(uint32_t c) {
 	return getPageForChar(c)->getChar(c);
 }
 
-Texture* Font::getTexture(unichar c) {
+Texture* Font::getTexture(uint32_t c) {
 	return getPageForChar(c)->getTexture();
 }
 

@@ -9,7 +9,7 @@ namespace Dojo {
 	class File : public FileStream {
 	public:
 
-		File(const String& path, bool write = false);
+		File(const std::string& path, bool write = false);
 
 		virtual ~File();
 

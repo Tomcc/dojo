@@ -21,7 +21,7 @@ Renderable(parent, layer) {
 	mesh = &m;
 }
 
-Renderable::Renderable(Object& parent, RenderLayer::ID layer, const String& meshName) :
+Renderable::Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName) :
 Renderable(parent, layer) {	
 	DEBUG_ASSERT(meshName.size(), "Use another constructor if you don't want to supply a mesh");
 

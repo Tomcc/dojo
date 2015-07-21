@@ -51,13 +51,13 @@ namespace Dojo {
 		//various resource properties TODO: refactor
 		bool disableBilinear, disableMipmaps, disableTiling, logchanges = true;
 
-		typedef std::unordered_map<String, Unique<FrameSet>> FrameSetMap;
-		typedef std::unordered_map<String, Unique<Font>> FontMap;
-		typedef std::unordered_map<String, Unique<Mesh>> MeshMap;
-		typedef std::unordered_map<String, Unique<SoundSet>> SoundMap;
-		typedef std::unordered_map<String, Unique<Table>> TableMap;
-		typedef std::unordered_map<String, Unique<Shader>> ShaderMap;
-		typedef std::unordered_map<String, Unique<ShaderProgram>> ProgramMap;
+		typedef std::unordered_map<std::string, Unique<FrameSet>> FrameSetMap;
+		typedef std::unordered_map<std::string, Unique<Font>> FontMap;
+		typedef std::unordered_map<std::string, Unique<Mesh>> MeshMap;
+		typedef std::unordered_map<std::string, Unique<SoundSet>> SoundMap;
+		typedef std::unordered_map<std::string, Unique<Table>> TableMap;
+		typedef std::unordered_map<std::string, Unique<Shader>> ShaderMap;
+		typedef std::unordered_map<std::string, Unique<ShaderProgram>> ProgramMap;
 		typedef SmallSet<ResourceGroup*> SubgroupList;
 
 		///Create a new empty ResourceGroup
@@ -69,7 +69,7 @@ namespace Dojo {
 		/**
 		A locale is a subfolder with the given name, selectively loaded when a locale is provided
 		*/
-		void setLocale(const String& locID, const String& fallbackLocaleID) {
+		void setLocale(const std::string& locID, const std::string& fallbackLocaleID) {
 			DEBUG_ASSERT( locID.size(), "setLocale: the locale was an empty string" );
 			DEBUG_ASSERT( fallbackLocaleID.size(), "setLocale: the fallback locale was an empty string" );
 
@@ -79,14 +79,14 @@ namespace Dojo {
 
 		///returns the map containing the required resource type
 		template <class R>
-		std::unordered_map<String, R*>* getResourceMap(ResourceType r) const {
-			return (std::unordered_map<String, R*>*)mapArray[(int)r];
+		std::unordered_map<std::string, R*>* getResourceMap(ResourceType r) const {
+			return (std::unordered_map<std::string, R*>*)mapArray[(int)r];
 		}
 
 		///finds a named resource of type R
 		template <class R>
-		R* find(const String& name, ResourceType r) const {
-			typedef std::unordered_map<String, R*> RMap;
+		R* find(const std::string& name, ResourceType r) const {
+			typedef std::unordered_map<std::string, R*> RMap;
 
 			RMap* map = getResourceMap<R>(r);
 
@@ -107,21 +107,21 @@ namespace Dojo {
 			return nullptr;
 		}
 
-		FrameSet& addFrameSet(Unique<FrameSet> resource, const String& name);
+		FrameSet& addFrameSet(Unique<FrameSet> resource, const std::string& name);
 
-		void addFont(Unique<Font> resource, const String& name);
+		void addFont(Unique<Font> resource, const std::string& name);
 
-		void addMesh(Unique<Mesh> resource, const String& name);
+		void addMesh(Unique<Mesh> resource, const std::string& name);
 
-		SoundSet& addSoundSet(Unique<SoundSet> resource, const String& name);
+		SoundSet& addSoundSet(Unique<SoundSet> resource, const std::string& name);
 
-		void addTable(const String& name, Unique<Table> t);
+		void addTable(const std::string& name, Unique<Table> t);
 
 		///adds an existing Shader to this group
-		void addShader(Unique<Shader> resource, const String& name);
+		void addShader(Unique<Shader> resource, const std::string& name);
 
 		///adds an existing ShaderProgram to this group
-		void addProgram(Unique<ShaderProgram> resource, const String& name);
+		void addProgram(Unique<ShaderProgram> resource, const std::string& name);
 
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		void addSubgroup(ResourceGroup& g);
@@ -132,25 +132,25 @@ namespace Dojo {
 		///removes all of the registered subgrops from this ResourceGroup
 		void removeAllSubgroups();
 
-		void removeFrameSet(const String& name);
-		void removeFont(const String& name);
-		void removeMesh(const String& name);
-		void removeSound(const String& name);
-		void removeTable(const String& name);
+		void removeFrameSet(const std::string& name);
+		void removeFont(const std::string& name);
+		void removeMesh(const std::string& name);
+		void removeSound(const std::string& name);
+		void removeTable(const std::string& name);
 
 		///returns a dummy empty FrameSet
 		FrameSet& getEmptyFrameSet() const;
-		FrameSet* getFrameSet(const String& name) const;
-		Texture* getTexture(const String& name) const;
-		Font* getFont(const String& name) const;
-		Mesh* getMesh(const String& name) const;
-		SoundSet* getSound(const String& name) const;
-		Table* getTable(const String& name) const;
-		Shader* getShader(const String& name) const;
-		ShaderProgram* getProgram(const String& name) const;
+		FrameSet* getFrameSet(const std::string& name) const;
+		Texture* getTexture(const std::string& name) const;
+		Font* getFont(const std::string& name) const;
+		Mesh* getMesh(const std::string& name) const;
+		SoundSet* getSound(const std::string& name) const;
+		Table* getTable(const std::string& name) const;
+		Shader* getShader(const std::string& name) const;
+		ShaderProgram* getProgram(const std::string& name) const;
 
 		///return the locale of this ResourceGroup, eg: en, it, de, se
-		const String& getLocale() const;
+		const std::string& getLocale() const;
 
 		///returns if this group is finalized, meaning that its loading is finished
 		/**\remark useful for loading subgroups in the background! */
@@ -166,21 +166,21 @@ namespace Dojo {
 		///add all the Sets in a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addSets(const String& folder, int version = 0);
+		void addSets(const std::string& folder, int version = 0);
 		///add all the Fonts in a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addFonts(const String& folder, int version = 0);
+		void addFonts(const std::string& folder, int version = 0);
 		///add all the Meshes in a folder
-		void addMeshes(const String& folder);
+		void addMeshes(const std::string& folder);
 		///add all the Sounds in a folder
-		void addSounds(const String& folder);
+		void addSounds(const std::string& folder);
 		///add all the Tables in a folder
-		void addTables(const String& folder);
+		void addTables(const std::string& folder);
 		///add all the Shaders (.dsh) in a folder
-		void addShaders(const String& folder);
+		void addShaders(const std::string& folder);
 		///add all the ShaderPrograms (.vsh, .psh, ...) in a folder
-		void addPrograms(const String& folder);
+		void addPrograms(const std::string& folder);
 
 		///adds the prefab meshes, like quads, cubes, skyboxes...
 		void addPrefabMeshes();
@@ -188,14 +188,14 @@ namespace Dojo {
 		///adds all the file inside a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addFolderSimple(const String& folder, int version = 0);
+		void addFolderSimple(const std::string& folder, int version = 0);
 		///adds a localization folder located in baseFolder, choosing it using the current locale
 		/** 
 		for example, "base/en" if en; "base/it" if it, etc */
-		void addLocalizedFolder(const String& basefolder, int version = 0);
+		void addLocalizedFolder(const std::string& basefolder, int version = 0);
 
 		///adds all the resources and the localized resources in a folder
-		void addFolder(const String& folder, int version = 0);
+		void addFolder(const std::string& folder, int version = 0);
 
 		///asserts that this group will not load more resources in the future, useful for task-based loading
 		void finalize() {
@@ -221,7 +221,7 @@ namespace Dojo {
 
 	protected:
 
-		String locale, fallbackLocale;
+		std::string locale, fallbackLocale;
 		bool finalized;
 
 		Unique<FrameSet> emptyFrameSet;
@@ -240,7 +240,7 @@ namespace Dojo {
 
 		///load all unloaded registered resources
 		template <class T>
-		void _load(std::unordered_map<String, Unique<T>>& map) {
+		void _load(std::unordered_map<std::string, Unique<T>>& map) {
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (!resourcePair.second->isLoaded())
@@ -249,7 +249,7 @@ namespace Dojo {
 		}
 
 		template <class T>
-		void _unload(std::unordered_map<String, Unique<T>>& map, bool softUnload) {
+		void _unload(std::unordered_map<std::string, Unique<T>>& map, bool softUnload) {
 			//unload all the resources
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory

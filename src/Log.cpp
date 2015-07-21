@@ -5,7 +5,7 @@
 
 using namespace Dojo;
 
-void Log::_append(const String& message, LogEntry::Level level) {
+void Log::_append(const std::string& message, LogEntry::Level level) {
 	mOutput.push_back(LogEntry(message, level));
 
 	if (mOutput.size() == mMaxLines)
@@ -15,7 +15,7 @@ void Log::_append(const String& message, LogEntry::Level level) {
 }
 
 ///appends another message to the log, with an optional severity level
-void Log::append(const String& message, LogEntry::Level level) {
+void Log::append(const std::string& message, LogEntry::Level level) {
 	//execute the appending & notifying on the main thread!
 	auto q = Platform::singleton().getBackgroundQueue();
 

@@ -13,12 +13,9 @@ namespace Dojo {
 	public:
 
 		///"real file" Resource constructor. When onLoad is called, it will use filePath to load its contents
-		ShaderProgram(ResourceGroup* creator, const String& filePath);
+		ShaderProgram(ResourceGroup* creator, const std::string& filePath);
 
-		///"immediate" Resource constructor. When onLoad is called, it will use the String and type to load
-		/**
-		std::string is used because it has to be a pure ASCII string
-		*/
+		///"immediate" Resource constructor. When onLoad is called, it will use the std::string and type to load
 		ShaderProgram(ShaderProgramType type, const std::string& contents);
 
 		///returns the usage type of this shader, ie. fragment or vertex shader

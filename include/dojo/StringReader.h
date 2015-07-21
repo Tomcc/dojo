@@ -5,40 +5,36 @@
 #include "dojostring.h"
 
 namespace Dojo {
-	///StringReader wraps a String to help parsing
+	///StringReader wraps a std::string to help parsing
 	class StringReader {
 	public:
 
-		///UTF-32 constructor
-		StringReader(const String& string);
-
-		///UTF-8 constructor
 		StringReader(const std::string& string);
 
 		///returns a new unicode character or 0 if the stream ended
-		unichar get();
+		uint32_t get();
 
 		void back();
 
 		//TODO move all to Utils
-		static bool isNumber(unichar c);
+		static bool isNumber(uint32_t c);
 
-		static bool isLowerCaseLetter(unichar c);
+		static bool isLowerCaseLetter(uint32_t c);
 
-		static bool isUpperCaseLetter(unichar c);
+		static bool isUpperCaseLetter(uint32_t c);
 
-		static bool isLetter(unichar c);
+		static bool isLetter(uint32_t c);
 
 		///returns if the given char is ok for a name, 0-9A-Za-z
-		static bool isNameCharacter(unichar c);
+		static bool isNameCharacter(uint32_t c);
 
-		static bool isHex(unichar c);
+		static bool isHex(uint32_t c);
 
-		static bool isWhiteSpace(unichar c);
+		static bool isWhiteSpace(uint32_t c);
 
 		void skipWhiteSpace();
 
-		byte getHexValue(unichar c);
+		byte getHexValue(uint32_t c);
 
 		int getCurrentIndex();
 
@@ -51,9 +47,7 @@ namespace Dojo {
 		void readBytes(void* dest, int sizeBytes);
 
 	protected:
-
-		const String* wcharStr;
-		const std::string* utf8Str;
+		const std::string& string;
 
 		size_t idx;
 	};

@@ -36,7 +36,7 @@ namespace Dojo {
 		class Character {
 		public:
 
-			unichar character;
+			uint32_t character;
 			int gliphIdx;
 
 			Vector uvPos;
@@ -52,7 +52,7 @@ namespace Dojo {
 
 			Character();
 
-			void init(Page* p, unichar c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline);
+			void init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline);
 
 			///return 
 			Texture* getTexture();
@@ -87,7 +87,7 @@ namespace Dojo {
 			}
 
 			///get the char in this page
-			Character* getChar(unichar c) {
+			Character* getChar(uint32_t c) {
 				DEBUG_ASSERT( _charInPage(c), "getChar: the requested char doesn't belong to this page" );
 
 				return &(chars[c - firstCharIdx]);
@@ -101,11 +101,11 @@ namespace Dojo {
 
 			Font* font;
 			Texture* texture;
-			int index, firstCharIdx;
+			uint32_t index, firstCharIdx;
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
 
-			bool _charInPage(unichar c) {
+			bool _charInPage(uint32_t c) {
 				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
 			}
 		};
@@ -117,7 +117,7 @@ namespace Dojo {
 		\param creator the ResourceGroup which created this Resource
 		\path the path to the .font definition file
 		*/
-		Font(ResourceGroup* creator, const String& path);
+		Font(ResourceGroup* creator, const std::string& path);
 
 		virtual ~Font();
 
@@ -139,15 +139,15 @@ namespace Dojo {
 		Page* getPage(int index);
 
 		///returns (and lazy-loads) the Page containing this Unicode character
-		Page* getPageForChar(unichar c) {
+		Page* getPageForChar(uint32_t c) {
 			return getPage(c / FONT_CHARS_PER_PAGE);
 		}
 
 		///returns (and lazy-loads) the Character internal representation of this Unicode character
-		Character* getCharacter(unichar c);
+		Character* getCharacter(uint32_t c);
 
 		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
-		Texture* getTexture(unichar c);
+		Texture* getTexture(uint32_t c);
 
 		float getKerning(Character* next, Character* prev);
 
@@ -156,7 +156,7 @@ namespace Dojo {
 		}
 
 		///returns the length in pixel for the given string
-		int getPixelLength(const String& s);
+		int getPixelLength(const std::string& s);
 
 		int getCharIndex(Character* c);
 
@@ -188,7 +188,7 @@ namespace Dojo {
 
 	protected:
 
-		String fontFile;
+		std::string fontFile;
 
 		bool antialias, kerning, generateEdge, generateSurface;
 		float mPolyOutlineQuality;

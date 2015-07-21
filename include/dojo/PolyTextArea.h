@@ -34,10 +34,10 @@ namespace Dojo {
 		void setInterline(float interline);
 
 		///adds some text to this poly area
-		void addText(const String& str);
+		void addText(const std::string& str);
 
 		///replaces the poly area content with this text
-		void setText(const String& str);
+		void setText(const std::string& str);
 
 		void clear();
 
@@ -48,7 +48,7 @@ namespace Dojo {
 
 	protected:
 
-		String mContent;
+		std::string mContent;
 
 		bool mCentered;
 		Unique<Mesh> mMesh;

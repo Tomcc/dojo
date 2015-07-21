@@ -137,6 +137,7 @@ using std::make_shared;
 #pragma warning(disable:4100) //unreferenced formal parameters are ok
 #pragma warning(disable:4458) //there's way too much shadowing here //TODO remove shadowing?
 #pragma warning(disable:4512) //what's this even?
+#pragma warning(disable:4503) //template name is too long and was truncated 
 #endif
 
 

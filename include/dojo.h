@@ -48,7 +48,6 @@
 #include <dojo/Texture.h>
 #include <dojo/Timer.h>
 #include <dojo/TouchArea.h>
-#include <dojo/Utils.h>
 #include <dojo/Vector.h>
 #include <dojo/Viewport.h>
 #include <dojo/dojo_common_header.h>

@@ -22,7 +22,7 @@ Texture::Texture(ResourceGroup* creator) :
 
 }
 
-Texture::Texture(ResourceGroup* creator, const String& path) :
+Texture::Texture(ResourceGroup* creator, const std::string& path) :
 	Resource(creator, path),
 	width(0),
 	height(0),
@@ -247,7 +247,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 	return loaded;
 }
 
-bool Texture::loadFromFile(const String& path) {
+bool Texture::loadFromFile(const std::string& path) {
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 
 	void* imageData = NULL;

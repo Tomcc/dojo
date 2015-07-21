@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const String& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
+Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const std::string& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
 	AnimatedQuad(parent, layer),
 	mAnimationIdx(-1) {
 	this->pixelPerfect = pixelPerfect;
@@ -50,7 +50,7 @@ int Sprite::registerAnimation(FrameSet* set, float timePerFrame /*= -1 */) {
 	return animations.size() - 1;
 }
 
-int Sprite::registerAnimation(const String& base, float timePerFrame) {
+int Sprite::registerAnimation(const std::string& base, float timePerFrame) {
 	FrameSet* set = getGameState().getFrameSet(base);
 
 	DEBUG_ASSERT_INFO( set != nullptr, "The FrameSet to be registered could not be found", "name = " + base );

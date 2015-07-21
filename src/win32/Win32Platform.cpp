@@ -4,7 +4,6 @@
 
 #include "Renderer.h"
 #include "Game.h"
-#include "Utils.h"
 #include "Table.h"
 #include "FontSystem.h"
 #include "dojomath.h"
@@ -25,7 +24,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 	DWORD error = GetLastError();
 
 	gp_assert_handler(
-		("Win32 encountered an error: " + String((int)error) + " (" + msg + ")").ASCII().c_str(),
+		("Win32 encountered an error: " + String::fromInt((int)error) + " (" + msg + ")").c_str(),
 		"error != GL_NO_ERROR",
 		NULL,
 		line,
@@ -38,6 +37,14 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 #else
 #define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
+
+std::wstring toUTF16(const std::string& path) {
+	return{};
+}
+
+std::string toUTF8(const std::wstring& str) {
+	return{};
+}
 
 Touch::Type win32messageToMouseButton(UINT message) {
 	switch (message) {
@@ -321,8 +328,8 @@ void Win32Platform::_adjustWindow() {
 
 }
 
-bool Win32Platform::_initializeWindow(const String& windowCaption, int w, int h) {
-	DEBUG_MESSAGE("Creating " + String(w) + "x" + String(h) + " window");
+bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, int h) {
+	DEBUG_MESSAGE("Creating " + String::fromInt(w) + "x" + String::fromInt(h) + " window");
 
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
@@ -364,7 +371,7 @@ bool Win32Platform::_initializeWindow(const String& windowCaption, int w, int h)
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowW(L"DojoOpenGLWindow",
-		windowCaption.c_str(),
+		toUTF16(windowCaption).c_str(),
 		dwstyle, //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -473,8 +480,8 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 	save(config, "config");
 }
 
-String _cleanPath(const String& name) {
-	String path = name;
+std::string _cleanPath(const std::string& name) {
+	std::string path = name;
 	for (size_t i = 0; i < path.size(); ++i) {
 		auto& c = path[i];
 		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
@@ -500,20 +507,21 @@ void Win32Platform::initialize(Game* g) {
 		0,
 		szPath);
 
-	mAppDataPath = String(szPath) + '/' + _cleanPath(game->getName());
-	Utils::makeCanonicalPath(mAppDataPath);
+	auto appDataPathW = std::wstring(szPath) + L'/' + toUTF16(_cleanPath(game->getName()));
+	mAppDataPath = toUTF8(appDataPathW);
+	Path::makeCanonical(mAppDataPath);
 
 	//get root path
 	mRootPath.resize(MAX_PATH);
 	mRootPath.resize(GetModuleFileName(NULL, (TCHAR*) mRootPath.data(), MAX_PATH));
-	mRootPath.resize(mRootPath.find_last_of(L"\\/"));
+	mRootPath.resize(mRootPath.find_last_of("\\/"));
 
-	Utils::makeCanonicalPath(mRootPath);
+	Path::makeCanonical(mRootPath);
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
 	//create the appdata user folder
-	CreateDirectoryW(getAppDataPath().c_str(), NULL);
+	CreateDirectoryW(appDataPathW.c_str(), NULL);
 
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
@@ -833,17 +841,15 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(void*& bufptr, const String& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+PixelFormat Win32Platform::loadImageFile(void*& bufptr, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = NULL;
 
-	std::string ansipath = path.ASCII();
-
 	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(ansipath.c_str());
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilenameU(toUTF16(path).c_str());
 	//if still unkown, return failure
 	if (fif == FIF_UNKNOWN) {
-		if (Utils::getFileExtension(ansipath) == String("img"))
+		if (Path::getFileExtension(path) == "img")
 			fif = FIF_PNG;
 		else
 			return PixelFormat::Unknown;
@@ -910,20 +916,20 @@ Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(void*& bufptr, const String
 	return pixelSize == 4 ? PixelFormat::R8G8B8A8 : PixelFormat::R8G8B8;
 }
 
-const String& Win32Platform::getAppDataPath() {
+const std::string& Win32Platform::getAppDataPath() {
 	return mAppDataPath;
 }
 
-const String& Win32Platform::getRootPath() {
+const std::string& Win32Platform::getRootPath() {
 	return mRootPath;
 }
 
-const String& Win32Platform::getResourcesPath() {
+const std::string& Win32Platform::getResourcesPath() {
 	return getRootPath(); //on windows, it is the same
 }
 
-void Win32Platform::openWebPage(const String& site) {
-	ShellExecuteW(hwnd, L"open", site.c_str(), NULL, NULL, SW_SHOWNORMAL);
+void Win32Platform::openWebPage(const std::string& site) {
+	ShellExecuteW(hwnd, L"open", toUTF16(site).c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
 
 //init key map

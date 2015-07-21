@@ -102,12 +102,12 @@ void PolyTextArea::setInterline(float interline) {
 	mInterline = interline;
 }
 
-void PolyTextArea::addText(const String& str) {
+void PolyTextArea::addText(const std::string& str) {
 	mContent += str;
 	mDirty = true;
 }
 
-void PolyTextArea::setText(const String& str) {
+void PolyTextArea::setText(const std::string& str) {
 	mContent = str;
 	mDirty = true;
 }

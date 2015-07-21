@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "Renderer.h"
 #include "Platform.h"
+#include "range.h"
 
 using namespace Dojo;
 using namespace glm;

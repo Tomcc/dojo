@@ -11,7 +11,7 @@ using namespace Dojo;
 
 Dojo::TextArea::TextArea(Object& l,
 					RenderLayer::ID layer,
-					const String& fontSetName,
+					const std::string& fontSetName,
 					bool center /*= false*/,
 					const Vector& bounds /*= Vector::One*/) :
 	Renderable(l, layer),
@@ -81,11 +81,11 @@ void TextArea::setMaxLineLength(int l) {
 	maxLineLenght = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
 }
 
-void TextArea::addText(const String& text) {
+void TextArea::addText(const std::string& text) {
 	content += text;
 
 	Font::Character* currentChar;
-	unichar c;
+	uint32_t c;
 
 	//parse and setup characters
 	for (auto i : range(text.size())) {
@@ -116,9 +116,9 @@ void TextArea::addText(const String& text) {
 }
 
 void TextArea::addText(int n, char paddingChar, int digits) {
-	//TODO String already does this! remove
+	//TODO std::string already does this! remove
 
-	String number(n);
+	auto number = String::fromInt(n);
 
 	//stay in the digit budget?
 	if (paddingChar != 0) {
@@ -128,7 +128,7 @@ void TextArea::addText(int n, char paddingChar, int digits) {
 
 		//pad to fill
 		else if ((int) number.size() < digits) {
-			String padding;
+			std::string padding;
 
 			for (size_t i = 0; i < digits - number.size(); ++i)
 				padding += paddingChar;

@@ -2,15 +2,14 @@
 
 #include "dojo_common_header.h"
 
-#include "Utils.h"
 #include "Platform.h"
 
 namespace Dojo {
 	class FontSystem {
 	public:
 
-		typedef std::unordered_map<String, FT_Face> FaceMap;
-		typedef std::unordered_map<String, void*> FaceMemoryMap;
+		typedef std::unordered_map<std::string, FT_Face> FaceMap;
+		typedef std::unordered_map<std::string, void*> FaceMemoryMap;
 
 		FontSystem() {
 			//launch FreeType
@@ -26,7 +25,7 @@ namespace Dojo {
 			FT_Done_FreeType(freeType);
 		}
 
-		FT_Face getFace(const String& fileName) {
+		FT_Face getFace(const std::string& fileName) {
 			FaceMap::iterator where = faceMap.find(fileName);
 			return where != faceMap.end() ? where->second : _createFaceForFile(fileName);
 		}
@@ -51,7 +50,7 @@ namespace Dojo {
 
 		FT_Library freeType;
 
-		FT_Face _createFaceForFile(const String& fileName) {
+		FT_Face _createFaceForFile(const std::string& fileName) {
 			char* buf;
 			FT_Long size = Platform::singleton().loadFileContent(buf, fileName);
 

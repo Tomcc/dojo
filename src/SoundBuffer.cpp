@@ -5,7 +5,6 @@
 #include "SoundBuffer.h"
 #include "FileStream.h"
 #include "MemoryInputStream.h"
-#include "Utils.h"
 #include "Platform.h"
 #include "BackgroundQueue.h"
 
@@ -90,7 +89,7 @@ ALuint SoundBuffer::Chunk::getOpenALBuffer() {
 
 ///////////////////////////////////////
 
-SoundBuffer::SoundBuffer(ResourceGroup* creator, const String& path) :
+SoundBuffer::SoundBuffer(ResourceGroup* creator, const std::string& path) :
 	Resource(creator, path),
 	size(0),
 	mDuration(0) {
@@ -104,9 +103,9 @@ SoundBuffer::~SoundBuffer() {
 bool SoundBuffer::onLoad() {
 	DEBUG_ASSERT( isLoaded() == false, "The SoundBuffer is already loaded" );
 
-	String ext = Utils::getFileExtension(filePath);
+	std::string ext = Path::getFileExtension(filePath);
 
-	DEBUG_ASSERT( ext == String( "ogg" ), "Sound file extension is not ogg" );
+	DEBUG_ASSERT( ext == std::string( "ogg" ), "Sound file extension is not ogg" );
 
 	_loadOggFromFile();
 

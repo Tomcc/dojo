@@ -74,13 +74,13 @@ namespace Dojo {
 		typedef std::unordered_map<std::string, VertexAttribute> NameAttributeMap;
 
 		///Creates a new Shader from a file path
-		Shader(ResourceGroup* creator, const String& filePath);
+		Shader(ResourceGroup* creator, const std::string& filePath);
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**
 		the Binder will be executed each time something is rendered with this Shader
 		*/
-		void setUniformCallback(const String& name, const UniformCallback& dataBinder);
+		void setUniformCallback(const std::string& name, const UniformCallback& dataBinder);
 
 		///returns the program currently bound for "type" pipeline pass
 		ShaderProgram* getProgramFor(ShaderProgramType type) {

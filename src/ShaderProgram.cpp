@@ -6,14 +6,14 @@
 using namespace Dojo;
 
 ///"real file" Resource constructor. When onLoad is called, it will use filePath to load its contents
-ShaderProgram::ShaderProgram(ResourceGroup* creator, const String& filePath) :
+ShaderProgram::ShaderProgram(ResourceGroup* creator, const std::string& filePath) :
 	Resource(creator, filePath) {
 	//guess the type from the extension
-	String ext = Utils::getFileExtension(filePath);
+	std::string ext = Path::getFileExtension(filePath);
 
-	if (ext == String("vs"))
+	if (ext == std::string("vs"))
 		mType = ShaderProgramType::VertexShader;
-	else if (ext == String("ps"))
+	else if (ext == std::string("ps"))
 		mType = ShaderProgramType::FragmentShader;
 	else
 		FAIL( "Unsupported shader type" );
@@ -55,7 +55,7 @@ bool ShaderProgram::_load() {
 		if (blen > 1) {
 			GLchar* compiler_log = (GLchar*)malloc(blen);
 			glGetShaderInfoLog(mGLShader, blen, &slen, compiler_log);
-			DEBUG_MESSAGE( String( "Compiler error:\n" ) + compiler_log );
+			DEBUG_MESSAGE( std::string( "Compiler error:\n" ) + compiler_log );
 			free(compiler_log);
 		}
 

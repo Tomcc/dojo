@@ -3,34 +3,15 @@
 using namespace Dojo;
 
 
-StringReader::StringReader(const String& string) :
-	wcharStr(&string),
-	utf8Str(NULL),
-	idx(0) {
-
-}
-
 StringReader::StringReader(const std::string& string) :
-	utf8Str(&string),
-	wcharStr(NULL),
+	string(string),
 	idx(0) {
 
 }
 
-unichar StringReader::get() {
-	DEBUG_ASSERT((wcharStr && !utf8Str) || (!wcharStr && utf8Str), "StringReader is uninitialized");
-
-	//HACK this doesn't care about utf8 multichars!
-	if ((wcharStr && idx >= wcharStr->size()) || (utf8Str && idx >= utf8Str->size())) {
-		++idx;
-		return 0;
-	}
-	else if (wcharStr) {
-		return (*wcharStr)[idx++];
-	}
-	else {
-		return (unichar)(*utf8Str)[idx++];
-	}
+uint32_t StringReader::get() {
+	//TODO actual multibyte goddammit
+	return string[idx++];
 }
 
 void StringReader::back() {
@@ -39,31 +20,31 @@ void StringReader::back() {
 	--idx;
 }
 
-bool StringReader::isNumber(unichar c) {
+bool StringReader::isNumber(uint32_t c) {
 	return c >= '0' && c <= '9';
 }
 
-bool StringReader::isLowerCaseLetter(unichar c) {
+bool StringReader::isLowerCaseLetter(uint32_t c) {
 	return c >= 'a' && c <= 'z';
 }
 
-bool StringReader::isUpperCaseLetter(unichar c) {
+bool StringReader::isUpperCaseLetter(uint32_t c) {
 	return c >= 'A' && c <= 'Z';
 }
 
-bool StringReader::isLetter(unichar c) {
+bool StringReader::isLetter(uint32_t c) {
 	return isLowerCaseLetter(c) || isUpperCaseLetter(c);
 }
 
-bool StringReader::isNameCharacter(unichar c) {
+bool StringReader::isNameCharacter(uint32_t c) {
 	return isNumber(c) || isLetter(c);
 }
 
-bool StringReader::isHex(unichar c) {
+bool StringReader::isHex(uint32_t c) {
 	return isNumber(c) || (c >= 'a' && c <= 'f');
 }
 
-bool StringReader::isWhiteSpace(unichar c) {
+bool StringReader::isWhiteSpace(uint32_t c) {
 	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 
@@ -73,7 +54,7 @@ void StringReader::skipWhiteSpace() {
 	back(); //put back first non whitespace char
 }
 
-byte StringReader::getHexValue(unichar c) {
+byte StringReader::getHexValue(uint32_t c) {
 	if (isNumber(c))
 		return (byte)(c - '0');
 	else if (isHex(c))
@@ -112,7 +93,7 @@ float StringReader::readFloat() {
 
 	skipWhiteSpace();
 
-	unichar c;
+	uint32_t c;
 	float sign = 1;
 	float count = 0;
 	float res = 0;
@@ -172,20 +153,18 @@ float StringReader::readFloat() {
 }
 
 void StringReader::readBytes(void* dest, int sizeBytes) {
-	DEBUG_ASSERT((wcharStr && !utf8Str) || (!wcharStr && utf8Str), "Reading bytes from an uninitialized StringReader");
 
 	//load format data
-	int elemSize = wcharStr ? sizeof(unichar) : 1;
-	byte* buf = wcharStr ? (byte*)wcharStr->data() : (byte*)utf8Str->data();
-	int startingByte = idx * elemSize;
+	auto buf = string.data();
+	auto size = (int)string.size();
+	int startingByte = idx * 1;
 	buf += startingByte; //go to current element
-	int size = (wcharStr ? wcharStr->size() : utf8Str->size()) * elemSize;
-
+	
 	//clamp into string
 	if (startingByte + sizeBytes > size)
 		sizeBytes = size - startingByte;
 
 	memcpy(dest, buf, sizeBytes);
 
-	idx += sizeBytes / elemSize;
+	idx += sizeBytes;
 }
