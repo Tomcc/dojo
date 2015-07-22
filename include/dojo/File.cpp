@@ -2,9 +2,9 @@
 
 using namespace Dojo;
 
-File::File(const std::string& path, bool write /*= false */) :
-	FileStream(path, write),
-	mAccess(SA_BAD_FILE),
+File::File(const std::string& path) :
+	FileStream(path),
+	mAccess(Access::BadFile),
 	mFile(nullptr),
 	mSize(0) {
 
@@ -26,22 +26,38 @@ long File::getSize() {
 	return mSize;
 }
 
+const wchar_t* flagForW(Stream::Access request) {
+	switch (request)
+	{
+	case Stream::Access::Read:
+		return L"rb";
+	case Stream::Access::WriteOnly:
+		return L"wb";
+	case Stream::Access::ReadWrite:
+		return L"wb+";
+	default:
+		FAIL("Invalid access");
+	}
+}
 
-File::Access File::open() {
+bool File::open(Access accessType) {
 	DEBUG_ASSERT(!isOpen(), "The file was already open");
 
 	//open the file
-	const char* openmode = mWrite ? "wb" : "rb";
-	mFile = fopen(mPath.c_str(), openmode);
-
+#ifdef WIN32
+	mFile = _wfopen(String::toUTF16(mPath).c_str(), flagForW(accessType));
+#else
+	mFile = fopen(mPath.c_str(), mWrite ? "wb" : "rb");
+#endif
 	if (mFile) {
-		mAccess = mWrite ? SA_WRITEONLY : SA_READONLY;
+		mAccess = accessType;
 		_updateSize();
+		return true;
 	}
-	else
-		mAccess = SA_BAD_FILE;
-
-	return getAccess();
+	else {
+		mAccess = Access::BadFile;
+		return false;
+	}
 }
 
 long File::getCurrentPosition() {
@@ -78,11 +94,11 @@ void File::close() {
 
 	fclose(mFile);
 	mFile = nullptr;
-	mAccess = SA_BAD_FILE;
+	mAccess = Access::BadFile;
 }
 
-Stream* File::copy() {
-	return new File(mPath, mWrite);
+Unique<Stream> File::copy() const {
+	return make_unique<File>(mPath);
 }
 
 void File::_updateSize() {

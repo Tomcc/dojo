@@ -10,7 +10,7 @@
 #include "SoundManager.h"
 #include "InputSystem.h"
 #include "BackgroundQueue.h"
-
+#include "Path.h"
 #include "Keyboard.h"
 
 #pragma comment(lib, "opengl32.lib")
@@ -24,7 +24,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 	DWORD error = GetLastError();
 
 	gp_assert_handler(
-		("Win32 encountered an error: " + String::fromInt((int)error) + " (" + msg + ")").c_str(),
+		("Win32 encountered an error: " + std::to_string((int)error) + " (" + msg + ")").c_str(),
 		"error != GL_NO_ERROR",
 		NULL,
 		line,
@@ -37,14 +37,6 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 #else
 #define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
-
-std::wstring toUTF16(const std::string& path) {
-	return{};
-}
-
-std::string toUTF8(const std::wstring& str) {
-	return{};
-}
 
 Touch::Type win32messageToMouseButton(UINT message) {
 	switch (message) {
@@ -329,7 +321,7 @@ void Win32Platform::_adjustWindow() {
 }
 
 bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, int h) {
-	DEBUG_MESSAGE("Creating " + String::fromInt(w) + "x" + String::fromInt(h) + " window");
+	DEBUG_MESSAGE("Creating " + std::to_string(w) + "x" + std::to_string(h) + " window");
 
 	hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
@@ -371,7 +363,7 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowW(L"DojoOpenGLWindow",
-		toUTF16(windowCaption).c_str(),
+		String::toUTF16(windowCaption).c_str(),
 		dwstyle, //non-resizabile
 		rect.left, rect.top,
 		rect.right - rect.left, rect.bottom - rect.top,
@@ -482,6 +474,7 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 
 std::string _cleanPath(const std::string& name) {
 	std::string path = name;
+	//UNICODE
 	for (size_t i = 0; i < path.size(); ++i) {
 		auto& c = path[i];
 		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
@@ -507,15 +500,16 @@ void Win32Platform::initialize(Game* g) {
 		0,
 		szPath);
 
-	auto appDataPathW = std::wstring(szPath) + L'/' + toUTF16(_cleanPath(game->getName()));
-	mAppDataPath = toUTF8(appDataPathW);
+	auto appDataPathW = std::wstring(szPath) + L'/' + String::toUTF16(_cleanPath(game->getName()));
+	mAppDataPath = String::toUTF8(appDataPathW);
 	Path::makeCanonical(mAppDataPath);
 
 	//get root path
-	mRootPath.resize(MAX_PATH);
-	mRootPath.resize(GetModuleFileName(NULL, (TCHAR*) mRootPath.data(), MAX_PATH));
-	mRootPath.resize(mRootPath.find_last_of("\\/"));
+	GetModuleFileNameW(NULL, szPath, MAX_PATH);
+	auto rootPathW = std::wstring(szPath);
+	rootPathW.resize(rootPathW.find_last_of(L"\\/"));
 
+	mRootPath = String::toUTF8(rootPathW);
 	Path::makeCanonical(mRootPath);
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
@@ -846,7 +840,7 @@ PixelFormat Win32Platform::loadImageFile(void*& bufptr, const std::string& path,
 	FIBITMAP* dib = NULL;
 
 	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilenameU(toUTF16(path).c_str());
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilenameU(String::toUTF16(path).c_str());
 	//if still unkown, return failure
 	if (fif == FIF_UNKNOWN) {
 		if (Path::getFileExtension(path) == "img")
@@ -929,7 +923,7 @@ const std::string& Win32Platform::getResourcesPath() {
 }
 
 void Win32Platform::openWebPage(const std::string& site) {
-	ShellExecuteW(hwnd, L"open", toUTF16(site).c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteW(hwnd, L"open", String::toUTF16(site).c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
 
 //init key map

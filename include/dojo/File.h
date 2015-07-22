@@ -9,11 +9,10 @@ namespace Dojo {
 	class File : public FileStream {
 	public:
 
-		File(const std::string& path, bool write = false);
-
+		File(const std::string& path);
 		virtual ~File();
 
-		virtual Access open();
+		virtual bool open(Access accessType) override;
 
 		virtual long getSize();
 
@@ -30,7 +29,7 @@ namespace Dojo {
 		virtual void close();
 
 		///creates a new File* to read the underlying file. Does not copy reading status
-		virtual Stream* copy();
+		virtual Unique<Stream> copy() const override;
 
 	protected:
 

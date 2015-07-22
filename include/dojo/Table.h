@@ -121,7 +121,7 @@ namespace Dojo {
 		static const Table Empty;
 
 		static std::string index(int i) {
-			return '_' + String::fromInt(i);
+			return '_' + std::to_string(i);
 		}
 
 		///loads the file at path

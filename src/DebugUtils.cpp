@@ -19,7 +19,7 @@ void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char*
 	if (info)
 	DEBUG_MESSAGE( "with " + std::string( info ) );
 
-	DEBUG_MESSAGE( "Function: " + std::string(function) + " in " + std::string(file) + " @ " + String::fromInt(line) );
+	DEBUG_MESSAGE( "Function: " + std::string(function) + " in " + std::string(file) + " @ " + std::to_string(line) );
 
 	//either catch this as a breakpoint in the debugger or abort (if not debugged)
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_OSX )

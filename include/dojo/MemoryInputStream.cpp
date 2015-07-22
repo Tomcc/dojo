@@ -26,7 +26,7 @@ long MemoryInputStream::getSize() {
 }
 
 MemoryInputStream::Access MemoryInputStream::getAccess() {
-	return SA_READONLY;
+	return Access::BadFile;
 }
 
 long MemoryInputStream::getCurrentPosition() {

@@ -13,12 +13,12 @@ Table Table::loadFromFile(const std::string& path) {
 	auto file = Platform::singleton().getFile(path);
 
 	Table dest;
-	if (file->open()) {
+	if (file->open(Stream::Access::Read)) {
 		//read the contents directly in a string
 		std::string buf;
 		buf.resize(file->getSize());
 
-		file->read((byte*)buf.c_str(), buf.size());
+		file->readToFill(buf);
 
 		StringReader reader(buf);
 		dest.deserialize(reader);
@@ -60,7 +60,7 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 
 		switch (e.type) {
 		case FieldType::Float:
-			buf += String::fromFloat(*((float*)e.getRawValue()));
+			buf += std::to_string(*((float*)e.getRawValue()));
 			break;
 		case FieldType::String:
 			buf += '\"' + *((std::string*)e.getRawValue()) + '\"';
@@ -68,17 +68,17 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 		case FieldType::Vector:
 			v = (Vector*)e.getRawValue();
 			buf += '(';
-			buf += String::fromFloat(v->x);
+			buf += std::to_string(v->x);
 			buf += ' ';
-			buf += String::fromFloat(v->y);
+			buf += std::to_string(v->y);
 			buf += ' ';
-			buf += String::fromFloat(v->z);
+			buf += std::to_string(v->z);
 			buf += ')';
 
 			break;
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
-			buf += '#' + String::fromInt(data->size) + ' ';
+			buf += '#' + std::to_string(data->size) + ' ';
 
 			buf.append((const char*)data->ptr, data->size);
 
@@ -440,9 +440,9 @@ float Table::getNumber(int idx) const {
 
 std::string Table::autoMemberName(int idx) const {
 	DEBUG_ASSERT(idx >= 0, "autoMemberName: idx is negative");
-	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", "idx = " + String::fromInt(idx));
+	DEBUG_ASSERT_INFO(idx < getArrayLength(), "autoMemberName: idx is OOB", "idx = " + std::to_string(idx));
 
-	return '_' + String::fromInt(idx);
+	return '_' + std::to_string(idx);
 }
 
 void Table::remove(const std::string& key) {
@@ -467,5 +467,5 @@ void Table::debugPrint() const {
 }
 
 std::string Table::autoname() {
-	return '_' + String::fromInt(unnamedMembers++);
+	return '_' + std::to_string(unnamedMembers++);
 }

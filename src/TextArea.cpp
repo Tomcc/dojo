@@ -118,7 +118,7 @@ void TextArea::addText(const std::string& text) {
 void TextArea::addText(int n, char paddingChar, int digits) {
 	//TODO std::string already does this! remove
 
-	auto number = String::fromInt(n);
+	auto number = std::to_string(n);
 
 	//stay in the digit budget?
 	if (paddingChar != 0) {

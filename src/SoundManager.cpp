@@ -61,7 +61,7 @@ SoundManager::SoundManager() :
 	//ensure at least MIN sources have been built
 	DEBUG_ASSERT_INFO(
 		idleSoundPool.size() >= NUM_SOURCES_MIN,
-		"OpenAL could not preload the minimum sources number", "NUM_SOURCES_MIN = " + String::fromInt(NUM_SOURCES_MIN) );
+		"OpenAL could not preload the minimum sources number", "NUM_SOURCES_MIN = " + std::to_string(NUM_SOURCES_MIN) );
 
 	//dummy source to manage source shortage
 	fakeSource = make_unique<SoundSource>(0);
@@ -267,7 +267,7 @@ void SoundManager::pauseMusic() {
 
 void SoundManager::stopMusic(float stopFadeTime /*= 0*/, const Easing& fadeEasing /*= LinearEasing */) {
 	//TODO use easing
-	DEBUG_MESSAGE("Music fading out in " + String::fromFloat(stopFadeTime) + " s");
+	DEBUG_MESSAGE("Music fading out in " + std::to_string(stopFadeTime) + " s");
 
 	fadeState = FS_FADE_OUT;
 	nextMusicTrack = nullptr;

@@ -7,6 +7,7 @@
 #include "MemoryInputStream.h"
 #include "Platform.h"
 #include "BackgroundQueue.h"
+#include "Path.h"
 
 using namespace Dojo;
 
@@ -134,9 +135,9 @@ bool SoundBuffer::Chunk::onLoad() {
 	CHECK_AL_ERROR;
 
 	//copy the source to avoid side-effects
-	Unique<Stream> source(pParent->mSource->copy());
+	auto source = pParent->mSource->copy();
 
-	source->open();
+	source->open(Stream::Access::Read);
 
 	DEBUG_ASSERT( source->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
@@ -234,7 +235,7 @@ void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
 bool SoundBuffer::_loadOgg(Stream* source) {
 	DEBUG_ASSERT( source, "the data source cannot be null" );
 
-	if (!source->open()) {
+	if (!source->open(Stream::Access::Read)) {
 		DEBUG_ASSERT( mSource->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
 		return false;

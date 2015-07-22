@@ -12,6 +12,6 @@ void Stream::write(byte* buf, int size) {
 	FAIL("This stream is not write-enabled");
 }
 
-Stream* Stream::copy() {
+Unique<Stream> Stream::copy() const {
 	FAIL("This Stream type does not implement copy");
 }

@@ -11,6 +11,7 @@
 
 #include <Poco/File.h>
 #include "Texture.h"
+#include "Path.h"
 
 using namespace Dojo;
 

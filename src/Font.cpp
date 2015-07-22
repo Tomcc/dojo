@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "FrameSet.h"
 #include "Tessellation.h"
+#include "Path.h"
 
 using namespace Dojo;
 

@@ -12,7 +12,7 @@ SoundSet::SoundSet(ResourceGroup* creator, const std::string& setName) :
 
 SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 	DEBUG_ASSERT(buffers.size(), "This SoundSet is empty");
-	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + String::fromInt(i));
+	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + std::to_string(i));
 
 	if (i < 0) {
 		if (buffers.size() > 1)

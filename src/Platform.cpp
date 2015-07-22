@@ -7,6 +7,7 @@
 #include "ApplicationListener.h"
 #include "BackgroundQueue.h"
 #include "Log.h"
+#include "Path.h"
 
 #if defined (PLATFORM_WIN32)
 #include "win32/Win32Platform.h"
@@ -260,7 +261,7 @@ std::unique_ptr<FileStream> Platform::getFile(const std::string& path) {
 int Platform::loadFileContent(char*& bufptr, const std::string& path) {
 	auto file = getFile(path);
 	int size = 0;
-	if (file->open()) {
+	if (file->open(Stream::Access::Read)) {
 		size = file->getSize();
 		bufptr = (char*)malloc(size);
 
@@ -294,23 +295,16 @@ void Platform::save(const Table& src, const std::string& absPathOrName) {
 
 	std::string path = _getTablePath(absPathOrName);
 
-	DEBUG_MESSAGE( path );
-	FILE* f = fopen(path.c_str(), "w+");
+	auto f = getFile(path);
 
-	if (f == nullptr) {
-		DEBUG_MESSAGE( "WARNING: Table parent directory not found!" );
-		DEBUG_MESSAGE( path );
+	if (f->open(Stream::Access::ReadWrite)) {
+		f->write(buf);
 	}
-	DEBUG_ASSERT( f, "Cannot open a file for saving" );
-
-	std::string utf8; //TODO a real UTF8 conversion
-
-	for (uint32_t c : buf)
-		utf8 += (char)c;
-
-	fwrite(utf8.c_str(), sizeof( char), utf8.size(), f);
-
-	fclose(f);
+	else {
+		DEBUG_MESSAGE("WARNING: Table parent directory not found!");
+		DEBUG_MESSAGE(path);
+		DEBUG_ASSERT(f, "Cannot open a file for saving");
+	}
 }
 
 void Platform::_fireFocusLost() {

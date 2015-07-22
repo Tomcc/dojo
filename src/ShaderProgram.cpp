@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include "FileStream.h"
+#include "Path.h"
 
 using namespace Dojo;
 
@@ -95,7 +96,7 @@ bool ShaderProgram::onLoad() {
 	{
 		auto file = Platform::singleton().getFile(filePath);
 
-		if (file->open()) //open the file
+		if (file->open(Stream::Access::Read)) //open the file
 		{
 			mContentString.clear();
 			mContentString.resize(file->getSize());

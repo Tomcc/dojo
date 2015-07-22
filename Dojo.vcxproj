@@ -39,6 +39,7 @@
     <ClInclude Include="include\dojo\LogListener.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
+    <ClInclude Include="include\dojo\Path.h" />
     <ClInclude Include="include\dojo\Pipe.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="include\dojo\Keyboard.cpp" />
     <ClCompile Include="include\dojo\LogListener.cpp" />
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
+    <ClCompile Include="include\dojo\Path.cpp" />
     <ClCompile Include="include\dojo\Random.cpp" />
     <ClCompile Include="include\dojo\RenderLayer.cpp" />
     <ClCompile Include="include\dojo\Stream.cpp" />

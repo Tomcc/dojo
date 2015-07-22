@@ -18,7 +18,7 @@ namespace Dojo {
 		\param write open the file for writing, create if necessary
 		this WILL NOT open the file for i/o, remember to use open()
 		*/
-		FileStream(const std::string& path, bool write = false);
+		FileStream(const std::string& path);
 
 		virtual ~FileStream();
 
@@ -26,7 +26,7 @@ namespace Dojo {
 		/**
 		\returns the effective Access level granted. It might be read-only even if write was specified (ie. file is in signed iOS packages)
 		*/
-		virtual Access open() = 0;
+		virtual bool open(Access accessType) = 0;
 
 		///closes the file and flushed any buffered content
 		/**
@@ -36,7 +36,6 @@ namespace Dojo {
 
 	protected:
 
-		bool mWrite;
 		std::string mPath;
 	private:
 	};
