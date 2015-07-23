@@ -30,7 +30,7 @@ namespace Dojo {
 		///AStar::Graph defines a Graph on which AStar can operate
 		/** 
 		each Node is identified by its unique position vector */
-		class Graph : public std::unordered_map<Vector, Node*> {
+		class Graph : public std::unordered_map<Vector, Unique<Node>> {
 		public:
 
 			Graph();
@@ -68,7 +68,7 @@ namespace Dojo {
 
 		float mTotalLength;
 
-		float _distance(Node* A, Node* B);
+		float _distance(Node& A, Node& B);
 
 		Node* _nearest(const Graph& set, const Vector& pos);
 	};

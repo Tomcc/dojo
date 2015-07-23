@@ -16,7 +16,7 @@ Font::Character::Character() {
 
 }
 
-Texture* Font::Character::getTexture() {
+Texture& Font::Character::getTexture() {
 	return page->getTexture();
 }
 
@@ -158,7 +158,7 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 		Timer timer;
 
 		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
-		mTesselation = Unique<Tessellation>(new Tessellation());
+		mTesselation = make_unique<Tessellation>();
 
 		//find the normalizing scale and call the tesselation functions
 		gCurrentScale = (float)FONT_PPI / (float)fw;
@@ -179,19 +179,16 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 }
 
 
-Font::Page::Page(Font* f, int idx) :
+Font::Page::Page(Font& font, int index) :
 	Resource(),
-	index(idx),
-	firstCharIdx(idx * FONT_CHARS_PER_PAGE),
-	font(f),
-	texture(NULL) {
-	DEBUG_ASSERT( font, "Page needs a non-null parent font" );
-
-	texture = new Texture();
+	index(index),
+	firstCharIdx(index * FONT_CHARS_PER_PAGE),
+	font(&font),
+	texture(make_unique<Texture>()) {
 }
 
 Font::Page::~Page() {
-	SAFE_DELETE(texture);
+
 }
 
 
@@ -369,9 +366,6 @@ void Font::onUnload(bool soft) {
 	for (auto& pair : pages) {
 		if (pair.second->isLoaded())
 			pair.second->onUnload();
-
-		if (!soft)
-			delete pair.second;
 	}
 
 	if (!soft)
@@ -423,19 +417,18 @@ int Font::getPixelLength(const std::string& str) {
 	return l;
 }
 
-Font::Page* Font::getPage(int index) {
+Font::Page& Font::getPage(int index) {
 	DEBUG_ASSERT(index < FONT_MAX_PAGES, "getPage: requested page index is past the max page index");
 
 	PageMap::iterator itr = pages.find(index);
 
 	if (itr == pages.end()) {
-		Page* p = new Page(this, index);
-		pages[index] = p;
-		p->onLoad();
+		auto& p = *(pages[index] = make_unique<Page>(*this, index));
+		p.onLoad();
 		return p;
 	}
 	else
-		return itr->second;
+		return *itr->second;
 }
 
 int Font::getCharIndex(Character* c) {
@@ -443,11 +436,11 @@ int Font::getCharIndex(Character* c) {
 }
 
 Font::Character* Font::getCharacter(uint32_t c) {
-	return getPageForChar(c)->getChar(c);
+	return getPageForChar(c).getChar(c);
 }
 
-Texture* Font::getTexture(uint32_t c) {
-	return getPageForChar(c)->getTexture();
+Texture& Font::getTexture(uint32_t c) {
+	return getPageForChar(c).getTexture();
 }
 
 void Font::preloadPages(const char pages[], int n) {

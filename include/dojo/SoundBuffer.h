@@ -25,7 +25,7 @@ namespace Dojo {
 			static const int MAX_SIZE = 41000 * sizeof( short) * MAX_DURATION;
 
 			///Creates a new chunk that will use the given source span to load
-			Chunk(SoundBuffer* parent, long streamStartPosition, long uncompressedSize);
+			Chunk(SoundBuffer* parent, int64_t streamStartPosition, int64_t uncompressedSize);
 
 			~Chunk();
 
@@ -57,8 +57,7 @@ namespace Dojo {
 		protected:
 
 			SoundBuffer* pParent;
-			long mStartPosition;
-			long mUncompressedSize;
+			int64_t mStartPosition, mUncompressedSize;
 
 			ALuint size;
 			ALuint alBuffer;

@@ -150,7 +150,7 @@ namespace Dojo {
 		GLuint mGLProgram;
 
 		ShaderProgram* pProgram[ (byte)ShaderProgramType::_Count ];
-		bool mOwnsProgram[ (byte)ShaderProgramType::_Count ];
+		std::vector<Unique<ShaderProgram>> mOwnedPrograms;
 
 		void _assignProgram(const Table& desc, ShaderProgramType type);
 

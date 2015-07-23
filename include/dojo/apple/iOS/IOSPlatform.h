@@ -119,7 +119,7 @@ namespace Dojo
 #ifdef __OBJC__
 		void _initializeImpl( Application* application );
 		
-		inline Application* getNativeApplication()
+		Application* getNativeApplication()
 		{			
 			return app;
 		}

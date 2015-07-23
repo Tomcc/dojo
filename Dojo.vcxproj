@@ -105,6 +105,7 @@
     <ClCompile Include="include\dojo\dojostring.cpp" />
     <ClCompile Include="include\dojo\File.cpp" />
     <ClCompile Include="include\dojo\FileStream.cpp" />
+    <ClCompile Include="include\dojo\FontSystem.cpp" />
     <ClCompile Include="include\dojo\InputSystemListener.cpp" />
     <ClCompile Include="include\dojo\IteratedNoise.cpp" />
     <ClCompile Include="include\dojo\Keyboard.cpp" />

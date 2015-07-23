@@ -16,17 +16,18 @@ namespace Dojo {
 
 		friend class ZipArchive;
 
+		explicit ZipFile(ZZIP_FILE* file);
 		~ZipFile();
 		//close file
 		void close();
 		//read from file
 		size_t read(void* ptr, size_t size, size_t count);
 		//seek from file
-		int seek(long int offset, int origin);
+		int seek(int64_t offset, int origin);
 		//tell from file
-		long int tell();
+		int64_t tell();
 		//get file size
-		long int size();
+		int64_t size();
 		//return a uchar cast in int
 		int getc();
 		//rewind from file
@@ -36,7 +37,6 @@ namespace Dojo {
 
 	private:
 
-		explicit ZipFile(ZZIP_FILE* file);
 		ZZIP_FILE* file;
 	};
 
@@ -51,19 +51,19 @@ namespace Dojo {
 		//close zip file
 		void close();
 		//open file
-		ZipFile* openFile(const std::string& path, const std::string& mode);
+		Unique<ZipFile> openFile(const std::string& path, const std::string& mode);
 		//paths and files in zip
-		void getList(std::string path, std::vector<std::string>& out);
-		void getListFiles(std::string path, std::vector<std::string>& out);
-		void getListSubDirectories(std::string path, std::vector<std::string>& out);
+		void getList(const std::string& path, std::vector<std::string>& out);
+		void getListFiles(const std::string& path, std::vector<std::string>& out);
+		void getListSubDirectories(const std::string& path, std::vector<std::string>& out);
 
-		void getListAll(std::string path, std::vector<std::string>& out);
-		void getListAllFiles(std::string path, std::vector<std::string>& out);
-		void getListAllSubDirectories(std::string path, std::vector<std::string>& out);
+		void getListAll(const std::string& path, std::vector<std::string>& out);
+		void getListAllFiles(const std::string& path, std::vector<std::string>& out);
+		void getListAllSubDirectories(const std::string& path, std::vector<std::string>& out);
 
 	private:
 
-		void madeValidPath(std::string& path);
+		std::string makeValidPath(const std::string& path);
 		ZZIP_DIR* zip_file;
 
 	};

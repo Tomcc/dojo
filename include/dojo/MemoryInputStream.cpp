@@ -10,18 +10,18 @@ MemoryInputStream::MemoryInputStream(byte* mem, int size) :
 	DEBUG_ASSERT(size > 0, "the size must be a valid");
 }
 
-int MemoryInputStream::read(byte* buf, int number) {
+int64_t Dojo::MemoryInputStream::read(byte* buf, int64_t number) {
 	if (mPosition < 0 || mPosition >= mSize) //invalid position, cannot read
 		return 0;
 
-	int toRead = std::min(number, mSize - mPosition);
+	auto toRead = std::min(number, mSize - mPosition);
 
-	memcpy(buf, pMem + mPosition, toRead);
+	memcpy(buf, pMem + mPosition, (size_t)toRead);
 	mPosition += toRead;
 	return toRead;
 }
 
-long MemoryInputStream::getSize() {
+int64_t Dojo::MemoryInputStream::getSize() {
 	return mSize;
 }
 
@@ -29,11 +29,11 @@ MemoryInputStream::Access MemoryInputStream::getAccess() {
 	return Access::BadFile;
 }
 
-long MemoryInputStream::getCurrentPosition() {
+int64_t Dojo::MemoryInputStream::getCurrentPosition() {
 	return mPosition;
 }
 
-int MemoryInputStream::seek(long offset, int fromWhere /*= SEEK_SET */) {
+int Dojo::MemoryInputStream::seek(int64_t offset, int64_t fromWhere /*= SEEK_SET*/) {
 	if (fromWhere == SEEK_SET)
 		mPosition = offset;
 	else if (fromWhere == SEEK_CUR)

@@ -75,7 +75,7 @@ namespace Dojo {
 
 		///returns the default BackgroundQueue
 		BackgroundQueue* getBackgroundQueue() {
-			return mBackgroundQueue;
+			return mBackgroundQueue.get();
 		}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
@@ -134,7 +134,7 @@ namespace Dojo {
 		}
 
 		///initializes the platform and calls Game::onBegin()
-		virtual void initialize(Game* game) =0;
+		virtual void initialize(Unique<Game> g) =0;
 
 		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown() =0;
@@ -152,15 +152,9 @@ namespace Dojo {
 		virtual void loop() =0;
 
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
-		void run(Game* game) {
-			initialize(game);
+		void run(Unique<Game> game);
 
-			loop();
-
-			shutdownPlatform();
-		}
-
-		virtual PixelFormat loadImageFile(void*& bufptr, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) =0;
+		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) =0;
 
 		void addApplicationListener(ApplicationListener& f) {
 			focusListeners.emplace(&f);
@@ -197,7 +191,7 @@ namespace Dojo {
 		std::unique_ptr<FileStream> getFile(const std::string& path);
 
 		///loads the whole file allocating a new buffer
-		int loadFileContent(char*& bufptr, const std::string& path);
+		std::vector<byte> loadFileContent(const std::string& path);
 
 		///discovers all the files with an extension in a folder
 		/**\param type type extension, es "png"
@@ -251,19 +245,19 @@ namespace Dojo {
 
 		bool running, mFullscreen, mFrameSteppingEnabled;
 
-		Game* game;
+		Unique<Game> game;
 
-		SoundManager* sound;
-		Renderer* render;
-		InputSystem* input;
-		FontSystem* fonts;
+		Unique<SoundManager> sound;
+		Unique<Renderer> render;
+		Unique<InputSystem> input;
+		Unique<FontSystem> fonts;
 
 		float realFrameTime;
 
 		std::unique_ptr<Log> mLog;
 		std::unique_ptr<LogListener> mLogWriter;
 
-		BackgroundQueue* mBackgroundQueue;
+		Unique<BackgroundQueue> mBackgroundQueue;
 
 		SmallSet<ApplicationListener*> focusListeners;
 

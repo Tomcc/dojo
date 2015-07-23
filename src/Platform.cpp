@@ -8,6 +8,10 @@
 #include "BackgroundQueue.h"
 #include "Log.h"
 #include "Path.h"
+#include "SoundManager.h"
+#include "Renderer.h"
+#include "FontSystem.h"
+#include "Game.h"
 
 #if defined (PLATFORM_WIN32)
 #include "win32/Win32Platform.h"
@@ -227,48 +231,31 @@ std::unique_ptr<FileStream> Platform::getFile(const std::string& path) {
 		DEBUG_TODO;
 		//TODO use a ZipStream
 		return nullptr;
-
-		/*
-		std::string zipPath = path.substr( 0, internalZipPathIdx );
-		std::string zipInternalPath = path.substr( internalZipPathIdx+1 );
-		//OPEN ZIP
-		ZipArchive zip;
-		if(zip.open(zipPath)){
-			//OPEN FILE IN ZIP
-			auto pfile=zip.openFile(  zipInternalPath,"rb");
-			if(pfile!=nullptr){
-				//READ FILE
-				size = pfile->size();
-				bufptr = (char*)malloc( size+1 );
-				pfile->read(bufptr,size,1);
-				//CLOSE FILE
-				delete pfile;
-				//ADD terminator
-				bufptr[ size ] = 0;
-			}
-			else{
-				DEBUG_MESSAGE("can't read:"<<path.ASCII());
-				return 0;
-			}
-		}
-		else{
-			DEBUG_MESSAGE("can't open:"<<zipPath.ASCII());
-			return 0;
-		}*/
 	}
 }
 
-int Platform::loadFileContent(char*& bufptr, const std::string& path) {
+void Platform::run(Unique<Game> game) {
+	initialize(std::move(game));
+
+	loop();
+
+	shutdownPlatform();
+}
+
+std::vector<byte> Platform::loadFileContent(const std::string& path) {
 	auto file = getFile(path);
-	int size = 0;
 	if (file->open(Stream::Access::Read)) {
-		size = file->getSize();
-		bufptr = (char*)malloc(size);
+		auto size = file->getSize();
 
-		file->read((byte*)bufptr, size);
+		std::vector<byte> buf((size_t)size);
+
+		file->read(buf.data(), size);
+
+		return buf;
 	}
-
-	return size;
+	else {
+		return{};
+	}
 }
 
 std::string Platform::_getTablePath(const std::string& absPathOrName) {

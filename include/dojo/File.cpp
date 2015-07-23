@@ -19,7 +19,7 @@ File::Access File::getAccess() {
 	return mAccess;
 }
 
-long File::getSize() {
+int64_t File::getSize() {
 	DEBUG_ASSERT(isReadable(), "The file must be readable to get its size");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
@@ -60,25 +60,25 @@ bool File::open(Access accessType) {
 	}
 }
 
-long File::getCurrentPosition() {
+int64_t File::getCurrentPosition() {
 	DEBUG_ASSERT(isOpen(), "The file must be open");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
 	return ftell(mFile);
 }
 
-int File::seek(long offset, int fromWhere /*= SEEK_SET */) {
+int File::seek(int64_t offset, int64_t fromWhere /*= SEEK_SET*/) {
 	DEBUG_ASSERT(isOpen(), "The file must be open");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
-	return fseek(mFile, offset, fromWhere);
+	return fseek(mFile, (size_t)offset, (int)fromWhere);
 }
 
-int File::read(byte* buf, int number) {
+int64_t File::read(byte* buf, int64_t number) {
 	DEBUG_ASSERT(isReadable(), "The file must be open and readable");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
-	return fread(buf, 1, number, mFile);
+	return fread(buf, 1, (size_t)number, mFile);
 }
 
 void File::write(byte* buf, int size) {
@@ -105,7 +105,7 @@ void File::_updateSize() {
 	DEBUG_ASSERT(isReadable(), "The file must be readable to get its size");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
-	long curptr = ftell(mFile);
+	auto curptr = ftell(mFile);
 	fseek(mFile, 0, SEEK_END);
 	mSize = ftell(mFile);
 	fseek(mFile, curptr, SEEK_SET);

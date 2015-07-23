@@ -46,24 +46,7 @@ namespace Dojo {
 		public:
 			static const Data Empty;
 
-			void* ptr;
-			int size;
-
-			Data() :
-				ptr(nullptr),
-				size(0) {
-
-			}
-
-			Data(void* p, int s) :
-				ptr(p),
-				size(s) {
-
-			}
-
-			~Data() {
-
-			}
+			std::vector<byte> buf;
 		};
 
 		class Entry {

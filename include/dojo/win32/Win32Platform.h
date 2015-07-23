@@ -19,7 +19,7 @@ namespace Dojo {
 		Win32Platform(const Table& config);
 		virtual ~Win32Platform();
 
-		virtual void initialize(Game* g);
+		virtual void initialize(Unique<Game> g);
 		virtual void shutdown();
 
 		void prepareThreadContext();
@@ -36,7 +36,7 @@ namespace Dojo {
 		virtual void step(float dt);
 		virtual void loop();
 
-		virtual PixelFormat loadImageFile(void*& bufptr, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
+		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
 
 		virtual const std::string& getAppDataPath();
 		virtual const std::string& getResourcesPath();

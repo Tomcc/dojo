@@ -120,7 +120,7 @@ void Mesh::setVertexFieldEnabled(VertexField f) {
 }
 
 void Mesh::setVertexFields(const std::initializer_list<VertexField>& fs) {
-	for (auto f : fs)
+	for (auto&& f : fs)
 		setVertexFieldEnabled(f);
 }
 
@@ -451,12 +451,11 @@ bool Mesh::onLoad() {
 		return false;
 
 	//load binary mesh
-	char* data;
-	Platform::singleton().loadFileContent(data, filePath);
+	auto buf = Platform::singleton().loadFileContent(filePath);
 
-	DEBUG_ASSERT_INFO( data, "onLoad: cannot find or read file", "path = " + filePath );
+	DEBUG_ASSERT_INFO( buf.size() > 0, "onLoad: cannot find or read file", "path = " + filePath );
 
-	char* ptr = data;
+	byte* ptr = buf.data();
 
 	//index size
 	setIndexByteSize(*ptr++);

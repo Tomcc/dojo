@@ -28,19 +28,19 @@ size_t ZipFile::read(void* ptr, size_t size, size_t count) {
 }
 
 //seek from file
-int ZipFile::seek(long int offset, int origin) {
-	return (zzip_seek(file, offset, origin) != -1 ? 0 : -1);
+int ZipFile::seek(int64_t offset, int origin) {
+	return (zzip_seek(file, (zzip_off_t)offset, origin) != -1 ? 0 : -1);
 }
 
 //tell from file
-long int ZipFile::tell() {
+int64_t ZipFile::tell() {
 	return zzip_tell(file);
 }
 
 //get file size
-long int ZipFile::size() {
+int64_t ZipFile::size() {
 	seek(0L, SEEK_END);
-	long int size = tell();
+	int64_t size = tell();
 	seek(0L, SEEK_SET);
 	return size;
 }
@@ -90,7 +90,7 @@ void ZipArchive::close() {
 }
 
 //open file
-ZipFile* ZipArchive::openFile(const std::string& path, const std::string& mode) {
+Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::string& mode) {
 	if (zip_file != NULL) {
 		zzip_rewinddir(zip_file);
 		int mode_flags = ZZIP_CASELESS;
@@ -108,15 +108,15 @@ ZipFile* ZipArchive::openFile(const std::string& path, const std::string& mode) 
 		}
 		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.c_str(), mode_flags);
 		if (file_out != NULL)
-			return new ZipFile(file_out);
+			return make_unique<ZipFile>(file_out);
 	}
 	return NULL;
 }
 
 //open paths info
-void ZipArchive::getList(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -144,9 +144,9 @@ void ZipArchive::getList(std::string path, std::vector<std::string>& out) {
 	}
 }
 
-void ZipArchive::getListAll(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -160,9 +160,9 @@ void ZipArchive::getListAll(std::string path, std::vector<std::string>& out) {
 	}
 }
 
-void ZipArchive::getListFiles(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -192,9 +192,9 @@ void ZipArchive::getListFiles(std::string path, std::vector<std::string>& out) {
 	}
 }
 
-void ZipArchive::getListAllFiles(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -211,9 +211,9 @@ void ZipArchive::getListAllFiles(std::string path, std::vector<std::string>& out
 	}
 }
 
-void ZipArchive::getListSubDirectories(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -243,9 +243,9 @@ void ZipArchive::getListSubDirectories(std::string path, std::vector<std::string
 	}
 }
 
-void ZipArchive::getListAllSubDirectories(std::string path, std::vector<std::string>& out) {
+void ZipArchive::getListAllSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
 	if (zip_file != NULL) {
-		madeValidPath(path);
+		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
@@ -261,32 +261,35 @@ void ZipArchive::getListAllSubDirectories(std::string path, std::vector<std::str
 	}
 }
 
-void ZipArchive::madeValidPath(std::string& path) {
-	/* 1 delete \  */
-	for (auto& c : path) {
-		if (c == '\\')
-			c = '/';
-	}
-	/* 2 delete void string:  "path/    " */
-	for (int i = path.size() - 1; -1 < i; --i) {
-		if (path[i] == '/')
-			break;
-		if (path[i] != ' ' && path[i] != '\0') {
-			path = path.substr(0, i + 1) + '/'; //delete void path
-			break;
-		}
-	}
-	/* 3 delete //  */
-	for (int i = path.size() - 1; 0 < i; --i) {
-		if (path[i] == '/' && path[i - 1] == '/') {
-			path = path.substr(0, i - 2) + path.substr(i, path.size() - i);
-			break;
-		}
-	}
-	/* delete . */
-	if (path.size() && path[0] == '.')
-		path = path.substr(1, path.size() - 1);
-	/* delete /path */
-	if (path.size() && path[0] == '/')
-		path = path.substr(1, path.size() - 1);
+std::string ZipArchive::makeValidPath(const std::string& path) {
+	DEBUG_DEPRECATED; //this is pretty bad
+	return{};
+
+// 	/* 1 delete \  */
+// 	for (auto& c : path) {
+// 		if (c == '\\')
+// 			c = '/';
+// 	}
+// 	/* 2 delete void string:  "path/    " */
+// 	for (int i = path.size() - 1; -1 < i; --i) {
+// 		if (path[i] == '/')
+// 			break;
+// 		if (path[i] != ' ' && path[i] != '\0') {
+// 			path = path.substr(0, i + 1) + '/'; //delete void path
+// 			break;
+// 		}
+// 	}
+// 	/* 3 delete //  */
+// 	for (int i = path.size() - 1; 0 < i; --i) {
+// 		if (path[i] == '/' && path[i - 1] == '/') {
+// 			path = path.substr(0, i - 2) + path.substr(i, path.size() - i);
+// 			break;
+// 		}
+// 	}
+// 	/* delete . */
+// 	if (path.size() && path[0] == '.')
+// 		path = path.substr(1, path.size() - 1);
+// 	/* delete /path */
+// 	if (path.size() && path[0] == '/')
+// 		path = path.substr(1, path.size() - 1);
 }

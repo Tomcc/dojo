@@ -15,13 +15,13 @@ using namespace Dojo;
 size_t _vorbisRead(void* out, size_t size, size_t count, void* userdata) {
 	Stream* source = (Stream*)userdata;
 
-	return source->read((byte*)out, size * count);
+	return (size_t)source->read((byte*)out, size * count);
 }
 
 int _vorbisSeek(void* userdata, ogg_int64_t offset, int whence) {
 	Stream* source = (Stream*)userdata;
 
-	return source->seek((long)offset, whence);
+	return source->seek(offset, whence);
 }
 
 int _vorbisClose(void* userdata) {
@@ -32,7 +32,7 @@ int _vorbisClose(void* userdata) {
 }
 
 long _vorbisTell(void* userdata) {
-	return ((Stream*)userdata)->getCurrentPosition();
+	return (long)((Stream*)userdata)->getCurrentPosition();
 }
 
 
@@ -48,7 +48,7 @@ ov_callbacks VORBIS_CALLBACKS =
 };
 
 
-SoundBuffer::Chunk::Chunk(SoundBuffer* parent, long streamStartPosition, long uncompressedSize) :
+SoundBuffer::Chunk::Chunk(SoundBuffer* parent, int64_t streamStartPosition, int64_t uncompressedSize) :
 	size(0),
 	alBuffer(AL_NONE),
 	references(0),
@@ -141,12 +141,13 @@ bool SoundBuffer::Chunk::onLoad() {
 
 	DEBUG_ASSERT( source->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
-	char* uncompressedData = (char*)malloc(mUncompressedSize);
+	std::vector<char> uncompressed((size_t)mUncompressedSize);
 
 	OggVorbis_File file;
 	vorbis_info* info;
 	ALenum format;
-	int totalRead = 0;
+	ALsizei totalRead = 0;
+	ALsizei read = 0;
 
 	int error = ov_open_callbacks(source.get(), &file, nullptr, 0, VORBIS_CALLBACKS);
 
@@ -158,10 +159,7 @@ bool SoundBuffer::Chunk::onLoad() {
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
 	int bitrate = info->rate * 10; //wtf, why * 10 //HACK
-
-	//read all vorbis packets in the same buffer
-	long read = 0;
-
+	
 	//seek to the start of the file segment
 	error = ov_raw_seek(&file, mStartPosition);
 	DEBUG_ASSERT( error == 0, "Cannot seek into file" );
@@ -169,7 +167,7 @@ bool SoundBuffer::Chunk::onLoad() {
 	bool corrupt = false;
 	do {
 		int section = -1;
-		read = ov_read(&file, uncompressedData + totalRead, mUncompressedSize - totalRead, 0, wordSize, 1, &section);
+		read = (ALsizei)ov_read(&file, uncompressed.data() + totalRead, (ALsizei)mUncompressedSize - totalRead, 0, wordSize, 1, &section);
 
 		if (read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL)
 			corrupt = true;
@@ -190,11 +188,9 @@ bool SoundBuffer::Chunk::onLoad() {
 	DEBUG_ASSERT( !corrupt, "an ogg vorbis stream was corrupt and could not be read" );
 	DEBUG_ASSERT( totalRead > 0, "no data was read from the stream" );
 
-	alBufferData(alBuffer, format, uncompressedData, totalRead, bitrate);
+	alBufferData(alBuffer, format, uncompressed.data(), totalRead, bitrate);
 
 	loaded = CHECK_AL_ERROR;
-
-	free(uncompressedData);
 
 	return loaded;
 }

@@ -21,7 +21,7 @@ std::string Path::getFileName(const std::string& str) {
 		end = str.size();
 
 	std::string res;
-	for (auto i = start; i < end; ++i)
+	for (auto&& i = start; i < end; ++i)
 		res += str.at(i);
 
 	return res;

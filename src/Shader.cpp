@@ -83,16 +83,17 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 
 	ShaderProgram* program = getCreator()->getProgram(keyValue);
 
-	mOwnsProgram[typeID] = (program == nullptr) && !mPreprocessorHeader.empty(); //if any preprocessor flag is defined, all programs are compiled as immediate
-
-	if (!program) //just load the immediate shader
-		program = new ShaderProgram(type, mPreprocessorHeader + keyValue);
-
-	else if (program && mPreprocessorHeader.size()) //some preprocessor flags are set - copy the existing program and recompile it
-		program = program->cloneWithHeader(mPreprocessorHeader);
-
-	else
-	DEBUG_ASSERT_INFO(program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
+	if (!program) { //just load the immediate shader
+		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue));
+		program = mOwnedPrograms.back().get();
+	}
+	else if (program && mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
+		mOwnedPrograms.emplace_back(program->cloneWithHeader(mPreprocessorHeader));
+		program = mOwnedPrograms.back().get();
+	}
+	else {
+		DEBUG_ASSERT_INFO(program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
+	}
 
 	pProgram[typeID] = program;
 }
@@ -240,7 +241,7 @@ bool Shader::onLoad() {
 		_assignProgram(desc, (ShaderProgramType)i);
 
 	//ensure they're loaded
-	for (auto program : pProgram) {
+	for (auto&& program : pProgram) {
 		if (!program->isLoaded()) {
 			if (!program->onLoad()) //one program was not loaded, the shader can't work
 				return loaded;
@@ -250,7 +251,7 @@ bool Shader::onLoad() {
 	//link the shaders together in this high level shader
 	mGLProgram = glCreateProgram();
 
-	for (auto program : pProgram)
+	for (auto&& program : pProgram)
 	glAttachShader(mGLProgram, program->getGLShader());
 
 	glLinkProgram(mGLProgram);
@@ -332,12 +333,10 @@ void Shader::onUnload(bool soft /* = false */) {
 	DEBUG_ASSERT( isLoaded(), "This shader was already unloaded" );
 
 	//only manage the programs that aren't shared
-	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i) {
-		if (mOwnsProgram[i]) {
-			pProgram[i]->onUnload(false);
-			SAFE_DELETE( pProgram[i] );
-		}
+	for (auto& program : mOwnedPrograms) {
+			program->onUnload(false);
 	}
+	mOwnedPrograms.clear();
 
 	loaded = false;
 }

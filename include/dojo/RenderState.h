@@ -30,7 +30,7 @@ namespace Dojo {
 			Texture* texture;
 
 			TextureUnit();
-			TextureUnit(Texture* t);
+			explicit TextureUnit(Texture* t);
 
 			~TextureUnit();
 

@@ -96,12 +96,11 @@ bool ShaderProgram::onLoad() {
 	{
 		auto file = Platform::singleton().getFile(filePath);
 
-		if (file->open(Stream::Access::Read)) //open the file
-		{
-			mContentString.clear();
-			mContentString.resize(file->getSize());
+		if (file->open(Stream::Access::Read)) {
+			auto size = file->getSize();
+			mContentString.resize((size_t)size);
 
-			file->read((byte*)mContentString.c_str(), mContentString.size());
+			file->read((byte*)mContentString.data(), size);
 
 			loaded = _load(); //load from the temp buffer
 		}
@@ -114,8 +113,8 @@ bool ShaderProgram::onLoad() {
 	return loaded;
 }
 
-ShaderProgram* ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
+Unique<ShaderProgram> Dojo::ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
 
-	return new ShaderProgram(mType, preprocessorHeader + mContentString);
+	return make_unique<ShaderProgram>(mType, preprocessorHeader + mContentString);
 }

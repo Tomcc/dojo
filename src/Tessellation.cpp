@@ -219,7 +219,7 @@ void Tessellation::findContours(bool generateHoles) {
 	// 	if (mergeStraightLines)
 	// 	{
 	// 		//run over all the contours; if the angle between two consecutive segments is not significant, delete it
-	// 		for (auto contour : contours)
+	// 		for (auto&& contour : contours)
 	// 		{
 	// 			auto& indices = contour.indices;
 	// 			for (int ii = 0; ii < (int)indices.size(); ii += 2 )

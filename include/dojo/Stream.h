@@ -27,12 +27,9 @@ namespace Dojo {
 		}
 
 		///reads up to "number" bytes from the stream into buf, returns the number of bytes read
-		virtual int read(byte* buf, int number);
+		virtual int64_t read(byte* buf, int64_t number);
 
-		void readToFill(std::string& buf) {
-			auto r = read((byte*)buf.data(), buf.size());
-			buf.resize(r);
-		}
+		void readToFill(std::string& buf);
 
 		///writes the given buffer to the stream
 		virtual void write(byte* buf, int size);
@@ -42,19 +39,19 @@ namespace Dojo {
 		}
 
 		///returns the total bytes in the stream, -1 if this stream has no end
-		virtual long getSize() =0;
+		virtual int64_t getSize() =0;
 
 		///returns the kind of access this stream provides, ie. read-only
 		virtual Access getAccess() =0;
 
 		///returns the current reading/writing position
-		virtual long getCurrentPosition() =0;
+		virtual int64_t getCurrentPosition() =0;
 
 		///creates a new unopened Stream that points to the same underlying data, useful for concurrent reads in multithreading.
 		virtual Unique<Stream> copy() const;
 
 		///goes to the given position
-		virtual int seek(long offset, int fromWhere = SEEK_SET) =0;
+		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET) =0;
 
 		///utility method that tells if the stream is open
 		bool isOpen() {

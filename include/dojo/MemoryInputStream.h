@@ -12,26 +12,26 @@ namespace Dojo {
 		MemoryInputStream(byte* mem, int size);
 
 		///reads up to "number" bytes from the stream into buf, returns the number of bytes read
-		virtual int read(byte* buf, int number);
+		virtual int64_t read(byte* buf, int64_t number);
 
 		///returns the total bytes in the stream, -1 if this stream has no end
-		virtual long getSize();
+		virtual int64_t getSize();
 
 		///returns the kind of access this stream provides, ie. read-only
 		virtual Access getAccess();
 
 		///returns the current reading/writing position
-		virtual long getCurrentPosition();
+		virtual int64_t getCurrentPosition();
 
 		///goes to the given position
-		virtual int seek(long offset, int fromWhere = SEEK_SET);
+		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET);
 
 	protected:
 
 		byte* pMem;
-		int mSize;
+		int64_t mSize;
 
-		int mPosition;
+		int64_t mPosition;
 
 	private:
 	};

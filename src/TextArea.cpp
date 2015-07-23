@@ -43,11 +43,7 @@ Dojo::TextArea::TextArea(Object& l,
 TextArea::~TextArea() {
 	clearText();
 
-	if (mesh) {
-		if (mesh->isLoaded())
-			mesh->onUnload();
-		SAFE_DELETE( mesh );
-	}
+	DEBUG_ASSERT(!mesh, "This isn't renderable by itself");
 
 	_destroyLayers();
 }
@@ -88,7 +84,7 @@ void TextArea::addText(const std::string& text) {
 	uint32_t c;
 
 	//parse and setup characters
-	for (auto i : range(text.size())) {
+	for (auto&& i : range(text.size())) {
 		c = text[i];
 
 		currentChar = font->getCharacter(c);
@@ -242,7 +238,7 @@ void TextArea::_prepare() {
 		}
 		else //real character
 		{
-			auto& layer = *_getLayer(*rep->getTexture()).getMesh();
+			auto& layer = *_getLayer(rep->getTexture()).getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;

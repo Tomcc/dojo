@@ -57,9 +57,6 @@ extern std::stringstream  debug_stream_android;
 	
 #endif
 
-//a delete to ensure the deleted object was valid
-#define SAFE_DELETE( T ) { DEBUG_ASSERT( T, "Deleting a NULL pointer" ); delete T; T = nullptr; }
-
 //synonyms
 #define DEBUG_DEPRECATED DEBUG_TODO
 

@@ -5,7 +5,7 @@
 using namespace Dojo;
 
 const Table Table::Empty;
-const Table::Data Table::Data::Empty = Data(0, 0);
+const Table::Data Table::Data::Empty;
 
 Table Table::loadFromFile(const std::string& path) {
 	DEBUG_ASSERT( path.size(), "Tried to load a Table from an empty path string" );
@@ -16,7 +16,7 @@ Table Table::loadFromFile(const std::string& path) {
 	if (file->open(Stream::Access::Read)) {
 		//read the contents directly in a string
 		std::string buf;
-		buf.resize(file->getSize());
+		buf.resize((size_t)file->getSize());
 
 		file->readToFill(buf);
 
@@ -78,9 +78,9 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 			break;
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
-			buf += '#' + std::to_string(data->size) + ' ';
+			buf += '#' + std::to_string(data->buf.size()) + ' ';
 
-			buf.append((const char*)data->ptr, data->size);
+			buf.append((const char*)data->buf.data(), data->buf.size());
 
 			break;
 		case FieldType::ChildTable:
@@ -149,7 +149,7 @@ void Table::deserialize(StringReader& buf) {
 	Vector vec;
 	Data data;
 	Color col;
-
+	int nameStart = 0;
 	//clear old
 	clear();
 
@@ -157,14 +157,16 @@ void Table::deserialize(StringReader& buf) {
 	uint32_t c, c2;
 
 	while( state != ParseState::End && state != ParseState::Error) {
+		auto idx = buf.getCurrentIndex();
 		c = buf.get();
 
 		switch (state) {
 		case ParseState::Table: //wait for either a name, or an anon value	
 			if (c == '}' || c == 0)
 				state = ParseState::End;
-			else if (isNameStarter(c))
+			else if (isNameStarter(c)) {
 				state = ParseState::Name;
+			}
 
 			else if (c == '"')
 				target = ParseTarget::String;
@@ -178,18 +180,17 @@ void Table::deserialize(StringReader& buf) {
 				target = ParseTarget::Float;
 
 			if (state == ParseState::Name) {
-				curName.clear();
-				String::append(curName, c);
+				nameStart = idx;
 			}
 
 			break;
 		case ParseState::Name:
-			if (isName(c))
-				String::append(curName, c);
-			else if (c == '=')
+			if (c == '=')
 				state = ParseState::Equal;
-			else
+			else if (!isName(c)) {
 				state = ParseState::NameEnd;
+				curName = buf.getString().substr(nameStart, idx - nameStart);
+			}
 
 			break;
 
@@ -280,21 +281,19 @@ void Table::deserialize(StringReader& buf) {
 			break;
 
 		case ParseTarget::RawData:
-			data.size = (int)buf.readFloat();
-			data.ptr = malloc(data.size);
+			data.buf.resize((int)buf.readFloat());
 
 			//skip space
 			buf.get();
 
-			buf.readBytes(data.ptr, data.size);
+			buf.readBytes(data.buf.data(), data.buf.size());
 
-			set(curName, data); //always retain deserialized data
+			set(curName, std::move(data));
 			break;
 
-		case ParseTarget::Table: {
-
+		case ParseTarget::Table:
 			createTable(curName).deserialize(buf);
-		}
+
 			break;
 
 		default: 

@@ -46,6 +46,10 @@ namespace Dojo {
 		///reads n raw bytes from the file
 		void readBytes(void* dest, int sizeBytes);
 
+		const std::string& getString() const {
+			return string;
+		}
+
 	protected:
 		const std::string& string;
 

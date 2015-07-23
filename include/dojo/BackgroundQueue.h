@@ -22,7 +22,7 @@ namespace Dojo {
 		/**
 		\param poolSize the number of threads in the pool size. If -1 is passed, the default size is the available cores number x 2.
 		*/
-		BackgroundQueue(int poolSize = -1);
+		explicit BackgroundQueue(int poolSize = -1);
 
 		virtual ~BackgroundQueue() {
 			if (mRunning)
@@ -63,7 +63,7 @@ namespace Dojo {
 		class Worker {
 		public:
 
-			Worker(BackgroundQueue* parent);
+			explicit Worker(BackgroundQueue* parent);
 
 			void join() {
 				thread.join();

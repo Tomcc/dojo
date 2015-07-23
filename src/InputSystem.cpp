@@ -92,7 +92,7 @@ void InputSystem::poll(float dt) {
 	for (auto&& touch : mTouchList)
 		touch->_update();
 
-	for (auto device : mDeviceList)
+	for (auto&& device : mDeviceList)
 		device->poll(dt);
 };
 
@@ -168,6 +168,6 @@ void InputSystem::_fireDeviceDisconnected(InputDevice& j) {
 	DEBUG_ASSERT( mDeviceList.find(&j) != mDeviceList.end(), "Tried to disconnect a non existing device" );
 
 	//first notify this to all the listeners
-	for (auto l : listeners)
+	for (auto&& l : listeners)
 		l->onDeviceDisconnected(j);
 }

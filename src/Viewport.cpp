@@ -217,7 +217,7 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 
 	mLayerList.clear();
 
-	for (auto i : range(min.value, max.value)) {
+	for (auto&& i : range(min.value, max.value)) {
 		mLayerList.push_back(i);
 	}
 }
@@ -229,7 +229,7 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const {
 	Vector worldPos = r.getObject().getWorldPosition();
 
 	//for each plane, check where the AABB is placed
-	for (auto i : range(4)) {
+	for (auto&& i : range(4)) {
 		if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
 			return false;
 		}

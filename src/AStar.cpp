@@ -26,20 +26,17 @@ AStar::Graph::Graph() {
 
 AStar::Node* AStar::Graph::getNode(const Vector& pos) const {
 	const_iterator elem = find(pos);
-	return (elem != end()) ? elem->second : nullptr;
+	return (elem != end()) ? elem->second.get() : nullptr;
 }
 
 AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 	iterator elem = find(pos);
-	Node* n;
 	if (elem == end()) {
-		n = new Node(pos);
-		(*this)[pos] = n;
+		return *((*this)[pos] = make_unique<Node>(pos));
 	}
-	else
-		n = elem->second;
-
-	return *n;
+	else {
+		return *elem->second;
+	}
 }
 
 void AStar::_retrace(Node* cur, Node* start) {
@@ -68,11 +65,11 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	}
 
 	//cleanup data & setup h values
-	for (auto entry : set)
-		entry.second->_resetData(_distance(entry.second, end));
+	for (auto& entry : set)
+		entry.second->_resetData(_distance(*entry.second, *end));
 
 	PriorityQueue openSet;
-	openSet[start->_openValue = _distance(start, end)] = start; //insert start
+	openSet[start->_openValue = _distance(*start, *end)] = start; //insert start
 
 	while (!openSet.empty()) {
 		Node* cur = openSet.begin()->second;
@@ -95,7 +92,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 			if (neighbor->_closed)
 				continue;
 
-			float dist = _distance(cur, neighbor);
+			float dist = _distance(*cur, *neighbor);
 			float g = cur->_gScore + dist; //check if the node needs to be updated
 			if (neighbor->_openValue == 0 || g < neighbor->_gScore) {
 				neighbor->_cameFrom = cur;
@@ -112,11 +109,8 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	}
 }
 
-float AStar::_distance(Node* A, Node* B) {
-	DEBUG_ASSERT(A, "A Node is NULL");
-	DEBUG_ASSERT(B, "B Node is NULL");
-
-	return A->position.distance(B->position);
+float Dojo::AStar::_distance(Node& A, Node& B) {
+	return A.position.distance(B.position);
 }
 
 AStar::Node* AStar::_nearest(const Graph& set, const Vector& pos) {
@@ -125,11 +119,11 @@ AStar::Node* AStar::_nearest(const Graph& set, const Vector& pos) {
 	float minDistance = FLT_MAX;
 	Node* nearest = nullptr;
 
-	for (auto entry : set) {
+	for (auto&& entry : set) {
 		float d = pos.distanceSquared(entry.first);
 		if (d < minDistance) {
 			minDistance = d;
-			nearest = entry.second;
+			nearest = entry.second.get();
 		}
 	}
 

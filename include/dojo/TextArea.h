@@ -18,6 +18,7 @@ namespace Dojo {
 	class GameState;
 
 	///TextArea is a Renderable used to display Unicode text
+	//TODO don't inherit renderable,  be its own component, made of Renderables
 	class TextArea : public Renderable {
 	public:
 

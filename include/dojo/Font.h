@@ -55,7 +55,7 @@ namespace Dojo {
 			void init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline);
 
 			///return 
-			Texture* getTexture();
+			Texture& getTexture();
 
 			///returns the triangle tesselation of this character
 			Tessellation* getTesselation();
@@ -70,7 +70,7 @@ namespace Dojo {
 		public:
 
 			///create a new page for the given index
-			Page(Font* font, int index);
+			Page(Font& font, int index);
 
 			virtual ~Page();
 
@@ -82,8 +82,8 @@ namespace Dojo {
 				return true;
 			}
 
-			Texture* getTexture() {
-				return texture;
+			Texture& getTexture() {
+				return *texture;
 			}
 
 			///get the char in this page
@@ -100,7 +100,7 @@ namespace Dojo {
 		protected:
 
 			Font* font;
-			Texture* texture;
+			Unique<Texture> texture;
 			uint32_t index, firstCharIdx;
 
 			Character chars[ FONT_CHARS_PER_PAGE ];
@@ -110,7 +110,7 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::unordered_map<int, Page*> PageMap;
+		typedef std::unordered_map<int, Unique<Page>> PageMap;
 
 		///A Font represents a single .font file, and is bound to a .ttf TrueType font definition
 		/**
@@ -136,10 +136,10 @@ namespace Dojo {
 		}
 
 		///returns (and lazy-loads) the character Page with the given index
-		Page* getPage(int index);
+		Page& getPage(int index);
 
 		///returns (and lazy-loads) the Page containing this Unicode character
-		Page* getPageForChar(uint32_t c) {
+		Page& getPageForChar(uint32_t c) {
 			return getPage(c / FONT_CHARS_PER_PAGE);
 		}
 
@@ -147,7 +147,7 @@ namespace Dojo {
 		Character* getCharacter(uint32_t c);
 
 		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
-		Texture* getTexture(uint32_t c);
+		Texture& getTexture(uint32_t c);
 
 		float getKerning(Character* next, Character* prev);
 

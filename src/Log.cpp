@@ -31,6 +31,6 @@ void Log::append(const std::string& message, LogEntry::Level level) {
 }
 
 void Log::_fireOnLogUpdated(const LogEntry& e) {
-	for (auto listener : pListeners)
+	for (auto&& listener : pListeners)
 		listener->onLogUpdated(this, getLastMessage());
 }

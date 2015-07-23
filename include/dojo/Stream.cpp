@@ -4,8 +4,14 @@
 
 using namespace Dojo;
 
-int Stream::read(byte* buf, int number) {
+int64_t Stream::read(byte* buf, int64_t number) {
 	FAIL("This Stream is not read-enabled");
+}
+
+
+void Stream::readToFill(std::string& buf) {
+	auto r = read((byte*)buf.data(), (int64_t)buf.size());
+	buf.resize((size_t)r);
 }
 
 void Stream::write(byte* buf, int size) {

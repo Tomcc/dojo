@@ -8,7 +8,7 @@ namespace Dojo {
 	class XInputController : public InputDevice {
 	public:
 
-		XInputController(int n);
+		explicit XInputController(int n);
 
 		virtual ~XInputController() {
 		}

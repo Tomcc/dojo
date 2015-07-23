@@ -22,10 +22,10 @@ namespace Dojo {
 		///Creates a Noise object drawing numbers from the given Random generator
 		/** 
 		this allows to use the same random to obtain the same Perlin distribution */
-		Noise(Random& r);
+		explicit Noise(Random& r);
 
 		///Creates a Noise object drawing numbers from a new random number generator
-		Noise(RandomSeed seedInt);
+		explicit Noise(RandomSeed seedInt);
 
 		///creates a new noise object initialized with the default seeding method
 		Noise();

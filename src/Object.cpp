@@ -77,7 +77,7 @@ bool Object::canDestroy() const {
 }
 
 void Object::collectChilds() {
-	for (auto i : range(children.size())) {
+	for (auto&& i : range(children.size())) {
 		auto& child = children[i];
 		if (child->disposed && child->canDestroy()) {
 			_unregisterChild(*child);

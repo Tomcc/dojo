@@ -14,15 +14,15 @@ namespace Dojo {
 
 		virtual bool open(Access accessType) override;
 
-		virtual long getSize();
+		virtual int64_t getSize();
 
 		virtual Access getAccess();
 
-		virtual long getCurrentPosition();
+		virtual int64_t getCurrentPosition();
 
-		virtual int seek(long offset, int fromWhere = SEEK_SET);
+		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET);
 
-		virtual int read(byte* buf, int number);
+		virtual int64_t read(byte* buf, int64_t number);
 
 		virtual void write(byte* buf, int size);
 
@@ -34,7 +34,7 @@ namespace Dojo {
 	protected:
 
 		FILE* mFile;
-		long mSize;
+		int64_t mSize;
 
 		Access mAccess;
 

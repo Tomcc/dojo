@@ -250,9 +250,8 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 bool Texture::loadFromFile(const std::string& path) {
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 
-	void* imageData = NULL;
-
 	int pixelSize;
+	std::vector<byte> imageData;
 	auto format = Platform::singleton().loadImageFile(imageData, path, width, height, pixelSize);
 
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
@@ -287,9 +286,7 @@ bool Texture::loadFromFile(const std::string& path) {
 	else if( format == GL_RGB )	destFormat = GL_SRGB8;
 #endif
 
-	loadFromMemory((byte*)imageData, width, height, format, PixelFormat::R8G8B8A8);
-
-	free(imageData);
+	loadFromMemory(imageData.data(), width, height, format, PixelFormat::R8G8B8A8);
 
 	return loaded;
 }

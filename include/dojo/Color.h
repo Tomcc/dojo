@@ -46,7 +46,7 @@ namespace Dojo {
 		}
 
 		///creates from a single A8R8G8B8 32-bit value
-		Color(RGBAPixel p) {
+		explicit Color(RGBAPixel p) {
 			set(p);
 		}
 

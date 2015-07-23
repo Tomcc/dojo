@@ -56,39 +56,36 @@ Touch::Type win32messageToMouseButton(UINT message) {
 
 LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 	BOOL bHandled = FALSE;
-	UINT cInputs = LOWORD(wParam);
-	PTOUCHINPUT pInputs = new TOUCHINPUT[cInputs];
-	if (pInputs) {
-		auto& app = (Win32Platform&)Platform::singleton();
+	
+	static std::vector<TOUCHINPUT> inputs;
+	inputs.resize(LOWORD(wParam));
 
-		if (GetTouchInputInfo((HTOUCHINPUT)lParam, cInputs, pInputs, sizeof(TOUCHINPUT))) {
-			for (UINT i = 0; i < cInputs; i++) {
-				TOUCHINPUT ti = pInputs[i];
-				POINT ptInput = {
-					TOUCH_COORD_TO_PIXEL(ti.x),
-					TOUCH_COORD_TO_PIXEL(ti.y)
-				};
+	auto& app = (Win32Platform&)Platform::singleton();
 
-				ScreenToClient(hWnd, &ptInput);
+	if (GetTouchInputInfo((HTOUCHINPUT)lParam, inputs.size(), inputs.data(), sizeof(TOUCHINPUT))) {
+		for (UINT i = 0; i < inputs.size(); i++) {
+			auto& ti = inputs[i];
+			POINT ptInput = {
+				TOUCH_COORD_TO_PIXEL(ti.x),
+				TOUCH_COORD_TO_PIXEL(ti.y)
+			};
 
-				//do something with each touch input entry
-				if (ti.dwFlags & TOUCHEVENTF_DOWN)
-					app.mousePressed(ptInput.x, ptInput.y, Touch::Type::Tap);
-				else if (ti.dwFlags & TOUCHEVENTF_UP)
-					app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::Tap);
-				else if (ti.dwFlags & TOUCHEVENTF_MOVE)
-					app.mouseMoved(ptInput.x, ptInput.y);
-			}
-			bHandled = TRUE;
+			ScreenToClient(hWnd, &ptInput);
+
+			//do something with each touch input entry
+			if (ti.dwFlags & TOUCHEVENTF_DOWN)
+				app.mousePressed(ptInput.x, ptInput.y, Touch::Type::Tap);
+			else if (ti.dwFlags & TOUCHEVENTF_UP)
+				app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::Tap);
+			else if (ti.dwFlags & TOUCHEVENTF_MOVE)
+				app.mouseMoved(ptInput.x, ptInput.y);
 		}
-		else {
-			/* handle the error here */
-		}
-		delete[] pInputs;
+		bHandled = TRUE;
 	}
 	else {
-		/* handle the error here, probably out of memory */
+		/* handle the error here */
 	}
+
 	if (bHandled) {
 		// if you handled the message, close the touch input handle and return
 		CloseTouchInputHandle((HTOUCHINPUT)lParam);
@@ -263,7 +260,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	frameInterval(0),
 	mFramesToAdvance(0),
 	clientAreaYOffset(0),
-	mContextRequestsQueue(new ContextRequestsQueue) {
+	mContextRequestsQueue(make_unique<ContextRequestsQueue>()) {
 	/*
 #ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
@@ -486,9 +483,11 @@ std::string _cleanPath(const std::string& name) {
 	return path;
 }
 
-void Win32Platform::initialize(Game* g) {
-	game = g;
-	DEBUG_ASSERT( game, "The Game implementation passed to initialize() can't be null" );
+void Dojo::Win32Platform::initialize(Unique<Game> g) {
+
+	DEBUG_ASSERT(g, "The Game implementation passed to initialize() can't be null");
+
+	game = std::move(g);
 
 	//init appdata folder
 	TCHAR szPath[MAX_PATH];
@@ -541,11 +540,11 @@ void Win32Platform::initialize(Game* g) {
 
 	setVSync(config.getBool("disable_vsync") ? 0 : 1);
 
-	render = new Renderer(width, height, DO_LANDSCAPE_LEFT);
+	render = make_unique<Renderer>(width, height, DO_LANDSCAPE_LEFT);
 
-	sound = new SoundManager();
+	sound = make_unique<SoundManager>();
 
-	input = new InputSystem();
+	input = make_unique<InputSystem>();
 
 	//setup mouse
 	POINT mousePos;
@@ -561,7 +560,7 @@ void Win32Platform::initialize(Game* g) {
 		mXInputJoystick[i]->poll(1); //force detection of already connected pads
 	}
 
-	fonts = new FontSystem();
+	fonts = make_unique<FontSystem>();
 
 	//mBackgroundQueue = new BackgroundQueue( config.getInt( "threads", -1) );
 
@@ -597,17 +596,11 @@ void Win32Platform::shutdown() {
 
 	if (game) {
 		game->end();
-		delete game;
+		game = {};
 	}
 
 	//stop the background queue
-	delete mBackgroundQueue;
-
-	//destroy managers
-	delete render;
-	delete sound;
-	delete input;
-	delete fonts;
+	mBackgroundQueue = {};
 
 	// and a cheesy fade exit
 	AnimateWindow(hwnd, 200, AW_HIDE | AW_BLEND);
@@ -835,7 +828,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-PixelFormat Win32Platform::loadImageFile(void*& bufptr, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = NULL;
 
@@ -853,11 +846,10 @@ PixelFormat Win32Platform::loadImageFile(void*& bufptr, const std::string& path,
 	if (!FreeImage_FIFSupportsReading(fif))
 		return PixelFormat::Unknown;
 
-	char* buf;
-	int fileSize = loadFileContent(buf, path);
+	auto buf = loadFileContent(path);
 
 	// attach the binary data to a memory stream
-	FIMEMORY* hmem = FreeImage_OpenMemory((BYTE*)buf, fileSize);
+	FIMEMORY* hmem = FreeImage_OpenMemory(buf.data(), buf.size());
 
 	// load an image from the memory stream
 	dib = FreeImage_LoadFromMemory(fif, hmem, 0);
@@ -879,12 +871,14 @@ PixelFormat Win32Platform::loadImageFile(void*& bufptr, const std::string& path,
 	DEBUG_ASSERT( pixelSize == 3 || pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
 
 	uint32_t size = pitch * height;
-	bufptr = malloc(size); {
+	imageData.resize(size);
+
+	{
 		byte *in, *out;
 		for (uint32_t ii, i = 0; i < height; ++i) {
 			ii = height - i - 1;
 			for (uint32_t j = 0; j < width; ++j) {
-				out = (byte*)bufptr + j * pixelSize + i * pitch;
+				out = imageData.data() + j * pixelSize + i * pitch;
 				in = (byte*)data + j * pixelSize + ii * pitch;
 
 				if (pixelSize >= 4)
