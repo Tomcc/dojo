@@ -2,10 +2,6 @@
 
 using namespace Dojo;
 
-void String::append(std::string& str, uint32_t c) {
-	DEBUG_TODO;
-}
-
 bool String::isNumber(uint32_t c) {
 	return c >= '0' && c <= '9';
 }

@@ -13,8 +13,6 @@ namespace Dojo {
 	public:
 		static const std::string Empty;
 
-		static void append(std::string& str, uint32_t c);
-
 		static bool isNumber(uint32_t c);
 
 #ifdef WIN32

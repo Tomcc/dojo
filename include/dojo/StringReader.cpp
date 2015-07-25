@@ -66,7 +66,7 @@ byte StringReader::getHexValue(uint32_t c) {
 	}
 }
 
-int StringReader::getCurrentIndex() {
+int StringReader::getCurrentIndex() const {
 	return idx;
 }
 

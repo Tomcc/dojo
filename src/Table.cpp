@@ -286,20 +286,16 @@ void Table::deserialize(StringReader& buf) {
 			break;
 
 		case ParseTarget::String:
-
-			str.clear();
-
 			for (;;) {
 				c = buf.get();
 
 				if (c == '"') {
 					break;
 				}
-
-				String::append(str, c);
 			}
 
-			set(curName, str);
+			set(curName, buf.getString().substr(idx + 1, buf.getCurrentIndex() - idx - 2));
+
 			break;
 
 		case ParseTarget::Vector:

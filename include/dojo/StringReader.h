@@ -36,7 +36,7 @@ namespace Dojo {
 
 		byte getHexValue(uint32_t c);
 
-		int getCurrentIndex();
+		int getCurrentIndex() const;
 
 		///reads a formatted hex
 		unsigned int readHex();
