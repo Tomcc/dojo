@@ -5,12 +5,12 @@
 
 using namespace Dojo;
 
-int Tessellation::CLEAR_INPUTS = 0x1,
-	Tessellation::PREPARE_EXTRUSION = 0x1 << 1,
-	Tessellation::GUESS_HOLES = 0x1 << 2,
-	Tessellation::DONT_MERGE_POINTS = 0x1 << 3,
-	Tessellation::GENERATE_HULL = 0x1 << 4,
-	Tessellation::PRECISE_ARITHMETICS = 0x1 << 5;
+int Tessellation::CLEAR_INPUTS = 0x1;
+int Tessellation::PREPARE_EXTRUSION = 0x1 << 1;
+int Tessellation::GUESS_HOLES = 0x1 << 2;
+int Tessellation::DONT_MERGE_POINTS = 0x1 << 3;
+int Tessellation::GENERATE_HULL = 0x1 << 4;
+int Tessellation::PRECISE_ARITHMETICS = 0x1 << 5;
 
 Tessellation::Tessellation() {
 
@@ -21,16 +21,20 @@ void Tessellation::mergePoints(int i1, int i2) {
 	positions.erase(positions.begin() + i2);
 
 	//replace all the occurrences of i2 with i1; move all the indices > i2 down by one
-	for (auto& segment: segments) {
-		if (segment.i1 == i2)
+	for (auto& segment : segments) {
+		if (segment.i1 == i2) {
 			segment.i1 = i1;
-		else if (segment.i1 > i2)
+		}
+		else if (segment.i1 > i2) {
 			--segment.i1;
+		}
 
-		if (segment.i2 == i2)
+		if (segment.i2 == i2) {
 			segment.i2 = i1;
-		else if (segment.i2 > i2)
+		}
+		else if (segment.i2 > i2) {
 			--segment.i2;
+		}
 	}
 }
 
@@ -106,8 +110,9 @@ void Tessellation::mergeDuplicatePoints() {
 
 		int& slot = indexGrid[x + y * N];
 
-		if (slot < 0)
-			slot = i; //store the index
+		if (slot < 0) {
+			slot = i;    //store the index
+		}
 		else {
 			//merge with preexisting vertex
 			mergePoints(slot, i--);
@@ -119,6 +124,7 @@ int Tessellation::_assignToIncompleteContour(int start, int end) {
 	//look for an incomplete contour (still open) that ends with start
 	for (size_t i = 0; i < contours.size(); ++i) {
 		auto& cont = contours[i];
+
 		if (!cont.closed && cont.indices.back() == start) {
 			cont._addSegment(start, end);
 			return i;
@@ -140,8 +146,9 @@ bool Tessellation::_raycastSegmentAlongX(const Segment& segment, const Position&
 	Vector min((float) std::min(start.x, end.x), (float) std::min(start.y, end.y));
 
 	//early out: different y, or the segment is on the left of the start point, or parallel
-	if (max.y == min.y || startPosition.y <= min.y || startPosition.y > max.y || startPosition.x > max.x)
+	if (max.y == min.y || startPosition.y <= min.y || startPosition.y > max.y || startPosition.x > max.x) {
 		return false;
+	}
 
 	//do the actual line-line test and find the distance to the starting point
 	float x = (float)(((startPosition.y - start.y) * (end.x - start.x)) / (end.y - start.x) + start.x - startPosition.x);
@@ -153,10 +160,12 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 	auto& vert = extrusionContourVertices[s[i]];
 	auto& dest = vert.normal;
 
-	if (dest == Vector::Zero)
+	if (dest == Vector::Zero) {
 		dest = n;
+	}
 	else {
 		float divergence = dest * n;
+
 		if (abs(divergence) < 0.6) {
 			//create a new vertex with the new normal
 			int newIndex = extrusionContourVertices.size();
@@ -175,8 +184,9 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 }
 
 void Tessellation::generateExtrusionContour() {
-	for (auto& pos : positions)
+	for (auto& pos : positions) {
 		extrusionContourVertices.push_back(pos);
+	}
 
 	extrusionContourIndices = segments;
 
@@ -184,6 +194,7 @@ void Tessellation::generateExtrusionContour() {
 
 	Vector n;
 	extrusionContourIndices.size();
+
 	for (auto& segment : extrusionContourIndices) {
 		auto& a = positions[segment.i1];
 		auto& b = positions[segment.i2];
@@ -203,7 +214,7 @@ void Tessellation::generateExtrusionContour() {
 void Tessellation::findContours(bool generateHoles) {
 	//TODO sort segments? this might break if they are added in a unexpected manner?
 
-	//rearrange all the indices in continuous contours	
+	//rearrange all the indices in continuous contours
 	for (auto& segment : segments) {
 		//look for a contour that ends with the index this one starts with
 		//also assign the index of the contour to a backmap from segment to contour
@@ -212,10 +223,12 @@ void Tessellation::findContours(bool generateHoles) {
 
 	//trim still incomplete contours, they're just useless as everything is "out" of them
 	for (size_t i = 0; i < contours.size(); ++i) {
-		if (!contours[i].closed)
+		if (!contours[i].closed) {
 			contours.erase(contours.begin() + i--);
+		}
 	}
-	// 
+
+	//
 	// 	if (mergeStraightLines)
 	// 	{
 	// 		//run over all the contours; if the angle between two consecutive segments is not significant, delete it
@@ -228,21 +241,21 @@ void Tessellation::findContours(bool generateHoles) {
 	// 				int i1 = indices[previi];
 	// 				int i2 = indices[ii];
 	// 				int i3 = indices[ii + 1];
-	// 
+	//
 	// 				DEBUG_ASSERT(i2 == indices[previi + 1], "this and indices[previi+1] should be the same");
-	// 
+	//
 	// 				auto& A = positions[i1];
 	// 				auto& B = positions[i2];
 	// 				auto& C = positions[i3];
-	// 
+	//
 	// 				if (fabs((A.y - B.y) * (A.x - C.x) - (A.y - C.y) * (A.x - B.x)) <= 1e-9)
 	// 				{
 	// 					//merge the two segments and erase the current one
 	// 					indices[previi + 1] = indices[ii + 1];
-	// 
+	//
 	// 					indices.erase(indices.begin() + ii);
 	// 					indices.erase(indices.begin() + ii + 1);
-	// 
+	//
 	// 					ii -= 2;
 	// 				}
 	// 			}
@@ -250,8 +263,9 @@ void Tessellation::findContours(bool generateHoles) {
 	// 	}
 
 	if (generateHoles) {
-		if (contours.size() == 1)
-			contours.begin()->parity = 0; //obviously parity 0
+		if (contours.size() == 1) {
+			contours.begin()->parity = 0;    //obviously parity 0
+		}
 		else {
 			//compute the parity of each contour
 			for (size_t i = 0; i < contours.size(); ++i) {
@@ -260,18 +274,18 @@ void Tessellation::findContours(bool generateHoles) {
 				int intersections = 0;
 				auto& contour = contours[i];
 				auto& startPos = positions[contour.indices[0]];
+
 				for (size_t j = 0; j < segments.size(); ++j) {
-					if (_raycastSegmentAlongX(segments[j], startPos)) //has hit segment i, check to which contour it belongs
-					{
-						if (contourForSegment[j] != i) //didn't hit the contour we're tracing for
+					if (_raycastSegmentAlongX(segments[j], startPos)) { //has hit segment i, check to which contour it belongs
+						if (contourForSegment[j] != i) { //didn't hit the contour we're tracing for
 							++intersections;
+						}
 					}
 				}
 
 				contour.parity = intersections % 2;
 
-				if (contour.parity == 1) //odd contour, add an hole to the right or left of the startpos using a slight delta
-				{
+				if (contour.parity == 1) { //odd contour, add an hole to the right or left of the startpos using a slight delta
 					auto& endPos = positions[contour.indices[1]];
 					Vector d = Vector((float)(endPos.y - startPos.y), (float)(endPos.x - startPos.x)).normalized() * 0.001f;
 
@@ -286,11 +300,13 @@ void Tessellation::tessellate(int flags, int maxIndices) {
 	DEBUG_ASSERT( !positions.empty(), "Cannot tesselate an empty contour" );
 
 	//remove duplicate points
-	if (!(flags & DONT_MERGE_POINTS))
+	if (!(flags & DONT_MERGE_POINTS)) {
 		mergeDuplicatePoints();
+	}
 
-	if (flags & PREPARE_EXTRUSION)
+	if (flags & PREPARE_EXTRUSION) {
 		generateExtrusionContour();
+	}
 
 	findContours((flags & GUESS_HOLES) > 0);
 
@@ -323,19 +339,22 @@ void Tessellation::tessellate(int flags, int maxIndices) {
 
 	std::string commandLine = "zQNB";
 
-	if ((flags & PRECISE_ARITHMETICS) == 0)
-		commandLine += 'X'; //no need for precise arithmetics
+	if ((flags & PRECISE_ARITHMETICS) == 0) {
+		commandLine += 'X';    //no need for precise arithmetics
+	}
 
-	if (segments.size() > 0)
+	if (segments.size() > 0) {
 		commandLine += 'p';
+	}
 
 	if (flags & GENERATE_HULL) {
 		outHullSegments.resize(1000);
 		out.segmentlist = (int*)outHullSegments.data();
 		commandLine += 'c'; //generate enclosing hull
 	}
-	else
-		commandLine += 'P'; //ignore enclosing hull
+	else {
+		commandLine += 'P';    //ignore enclosing hull
+	}
 
 	//p - triangulates "in"
 	//z - indices numbered from 0

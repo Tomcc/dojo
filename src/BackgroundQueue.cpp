@@ -13,12 +13,14 @@ BackgroundQueue::BackgroundQueue(int poolSize /* = -1 */) :
 	mQueue(new TaskQueue) {
 	mMainThreadID = std::this_thread::get_id();
 
-	if (poolSize < 0)
+	if (poolSize < 0) {
 		poolSize = std::thread::hardware_concurrency();
+	}
 
 	//create the thread pool
-	for (int i = 0; i < poolSize; ++i)
+	for (int i = 0; i < poolSize; ++i) {
 		mWorkers.push_back(Unique<Worker>(new Worker(this)));
+	}
 }
 
 void BackgroundQueue::queueTask(const Task& task, const Callback& callback) {
@@ -27,23 +29,27 @@ void BackgroundQueue::queueTask(const Task& task, const Callback& callback) {
 		task();
 		callback();
 	}
-	else
+	else {
 		mQueue->enqueue(task, callback);
+	}
 }
 
 void BackgroundQueue::queueOnMainThread(const Callback& c) {
-	if (std::this_thread::get_id() == mMainThreadID) //is this already the main thread? just execute
+	if (std::this_thread::get_id() == mMainThreadID) { //is this already the main thread? just execute
 		c();
-	else
+	}
+	else {
 		mCompletedQueue->enqueue(c);
+	}
 }
 
 void BackgroundQueue::fireCompletedCallbacks() {
 	//now, execute the callbacks on the main thread
 	Task callback;
 
-	while (mCompletedQueue->try_dequeue(callback))
+	while (mCompletedQueue->try_dequeue(callback)) {
 		callback();
+	}
 }
 
 BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
@@ -56,8 +62,9 @@ BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
 		for (;;) {
 			TaskCallbackPair pair;
 
-			if (!pParent->_waitForTaskOrClose(pair)) //wait for a new task or close
+			if (!pParent->_waitForTaskOrClose(pair)) { //wait for a new task or close
 				break;
+			}
 
 			pair.first(); //execute the task
 

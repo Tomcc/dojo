@@ -11,18 +11,18 @@
 using namespace Dojo;
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer) :
-Component(parent),
-layer(layer) {
+	Component(parent),
+	layer(layer) {
 	color = Color::White;
 }
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m) :
-Renderable(parent, layer) {
+	Renderable(parent, layer) {
 	mesh = &m;
 }
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName) :
-Renderable(parent, layer) {	
+	Renderable(parent, layer) {
 	DEBUG_ASSERT(meshName.size(), "Use another constructor if you don't want to supply a mesh");
 
 	mesh = parent.getGameState().getMesh(meshName);
@@ -79,8 +79,7 @@ void Renderable::stopFade() {
 }
 
 void Renderable::advanceFade(float dt) {
-	if (fading) //fade is scheduled
-	{
+	if (fading) { //fade is scheduled
 		float fade = currentFadeTime / fadeEndTime;
 		float invf = 1.f - fade;
 
@@ -92,8 +91,9 @@ void Renderable::advanceFade(float dt) {
 		if (currentFadeTime > fadeEndTime) {
 			fading = false;
 
-			if (fadeEndColor.a == 0)
+			if (fadeEndColor.a == 0) {
 				setVisible(false);
+			}
 		}
 
 		currentFadeTime += dt;

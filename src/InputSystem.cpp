@@ -58,8 +58,9 @@ int InputSystem::_getExistingTouchID(const Vector& point, Touch::Type type) {
 	int nearest = -1;
 
 	for (size_t i = 0; i < mTouchList.size(); ++i) {
-		if (type != type)
+		if (type != type) {
 			continue;
+		}
 
 		float d = mTouchList[i]->point.distance(point);
 
@@ -89,11 +90,13 @@ std::unique_ptr<Touch> InputSystem::_popExistingTouch(const Vector& point, Touch
 
 void InputSystem::poll(float dt) {
 	//update all the touches
-	for (auto&& touch : mTouchList)
+	for (auto && touch : mTouchList) {
 		touch->_update();
+	}
 
-	for (auto&& device : mDeviceList)
+	for (auto && device : mDeviceList) {
 		device->poll(dt);
+	}
 };
 
 void InputSystem::_fireTouchBeginEvent(const Vector& point, Touch::Type type) {
@@ -101,8 +104,9 @@ void InputSystem::_fireTouchBeginEvent(const Vector& point, Touch::Type type) {
 		//create a new Touch
 		auto& t = _registertouch(point, type);
 
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onTouchBegan(t);
+		}
 	}
 }
 
@@ -113,8 +117,9 @@ void InputSystem::_fireTouchMoveEvent(const Vector& currentPos, const Vector& pr
 		t.point = currentPos;
 		t.speed = prevPos - currentPos; //get translation
 
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onTouchMove(t);
+		}
 	}
 }
 
@@ -123,43 +128,50 @@ void InputSystem::_fireTouchEndEvent(const Vector& point, Touch::Type type) {
 		auto t = _popExistingTouch(point, type);
 		t->point = point;
 
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onTouchEnd(*t);
+		}
 	}
 }
 
 void InputSystem::_fireMouseMoveEvent(const Vector& currentPos, const Vector& prevPos) {
 	if (enabled) {
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onMouseMove(currentPos, prevPos);
+		}
 	}
 }
 
 void InputSystem::_fireScrollWheelEvent(float scroll) {
-	if (!enabled)
+	if (!enabled) {
 		return;
+	}
 
-	for (auto&& listener : listeners)
+	for (auto && listener : listeners) {
 		listener->onScrollWheel(scroll);
+	}
 }
 
 void InputSystem::_fireShakeEvent() {
 	if (enabled)
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onShake();
+		}
 }
 
 void InputSystem::_fireAccelerationEvent(const Vector& accel, float roll) {
 	if (enabled) {
-		for (auto&& listener : listeners)
+		for (auto && listener : listeners) {
 			listener->onAcceleration(accel, roll);
+		}
 	}
 }
 
 void InputSystem::_fireDeviceConnected(InputDevice& j) {
 	//notify listeners
-	for (auto&& l : listeners)
+	for (auto && l : listeners) {
 		l->onDeviceConnected(j);
+	}
 
 	DEBUG_MESSAGE("Connected a new input device!");
 }
@@ -168,6 +180,7 @@ void InputSystem::_fireDeviceDisconnected(InputDevice& j) {
 	DEBUG_ASSERT( mDeviceList.find(&j) != mDeviceList.end(), "Tried to disconnect a non existing device" );
 
 	//first notify this to all the listeners
-	for (auto&& l : listeners)
+	for (auto && l : listeners) {
 		l->onDeviceDisconnected(j);
+	}
 }

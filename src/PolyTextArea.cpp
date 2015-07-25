@@ -55,8 +55,10 @@ void PolyTextArea::_centerLine(int rowStartIdx, float rowWidth) {
 	DEBUG_ASSERT( mesh->isEditing(), "Cannot center a row if mesh is locked" );
 
 	float halfRow = rowWidth * 0.5f;
-	for (Mesh::IndexType i = rowStartIdx; i < mMesh->getVertexCount(); ++i)
-		mMesh->getVertex(i).x -= halfRow; //change back each
+
+	for (Mesh::IndexType i = rowStartIdx; i < mMesh->getVertexCount(); ++i) {
+		mMesh->getVertex(i).x -= halfRow;    //change back each
+	}
 }
 
 void PolyTextArea::_tesselateExtrusionStrip(Tessellation* t, int baseIdx, int layerBbaseIdx) {
@@ -83,15 +85,16 @@ void PolyTextArea::_addExtrusionLayer(Tessellation* t, const Vector& origin, flo
 		mMesh->normal(forcedNormal ? *forcedNormal : vertex.normal);
 	}
 
-	if (mPrevLayerIdx >= 0)
+	if (mPrevLayerIdx >= 0) {
 		_tesselateExtrusionStrip(t, mPrevLayerIdx, layerIdx);
+	}
 
 	mPrevLayerIdx = layerIdx;
 }
 
 void PolyTextArea::setExtrusionParameters(float depth, float bevelDepth /*= 0*/, float inflateRadius /*= 0*/) {
 	DEBUG_ASSERT(depth > 0, "extrusion depth must be a positive number");
-	DEBUG_ASSERT(bevelDepth >= 0 && bevelDepth < depth*0.5, "the depth of the bevel must not exceed half of the total depth");
+	DEBUG_ASSERT(bevelDepth >= 0 && bevelDepth < depth * 0.5, "the depth of the bevel must not exceed half of the total depth");
 
 	mDepth = depth;
 	mBevelDepth = bevelDepth;
@@ -128,7 +131,7 @@ void PolyTextArea::_prepare() {
 
 	mMesh->begin();
 
-	for (auto&& c : mContent) {
+	for (auto && c : mContent) {
 		//get the tesselation for each character and stuff it into the mesh
 		auto character = pFont->getCharacter(c);
 		Tessellation* t = character->getTesselation();
@@ -136,8 +139,7 @@ void PolyTextArea::_prepare() {
 		DEBUG_ASSERT( t, "The character has no tesselation, have you forgotten to add the flag to the font definition file?" );
 
 		if (c == '\n') {
-			if (mCentered) //move all the added vertices back
-			{
+			if (mCentered) { //move all the added vertices back
 				_centerLine(rowStartIdx, basePosition.x);
 				rowStartIdx = mMesh->getVertexCount();
 				lastChar = nullptr;
@@ -157,31 +159,34 @@ void PolyTextArea::_prepare() {
 			charPosition.x += character->bearingU;
 			charPosition.y -= character->bearingV;
 
-			if (pFont->isKerningEnabled() && lastChar)
+			if (pFont->isKerningEnabled() && lastChar) {
 				charPosition.x -= pFont->getKerning(character, lastChar);
+			}
 
 			//merge this mesh in the VBO
 			int baseIdx = mMesh->getVertexCount();
 
 			if (mRendering == RT_SURFACE) {
-				for (auto& pos : t->positions)
+				for (auto& pos : t->positions) {
 					mMesh->vertex(charPosition + pos.toVec());
+				}
 
-				for (auto& index : t->outIndices)
+				for (auto& index : t->outIndices) {
 					mMesh->index(baseIdx + index);
+				}
 			}
 			else if (mRendering == RT_EXTRUDED) {
 				//tesselate front face
-				for (auto& index : t->outIndices)
+				for (auto& index : t->outIndices) {
 					mMesh->index(baseIdx + index);
+				}
 
 				//extrude the character
 				mPrevLayerIdx = -1;
 
 				_addExtrusionLayer(t, charPosition, 0, &Vector::UnitZ);
 
-				if (mInflateRadius && mBevelDepth > 0) //use a rounded extrusion only if the inflation and the bevel are valid
-				{
+				if (mInflateRadius && mBevelDepth > 0) { //use a rounded extrusion only if the inflation and the bevel are valid
 					_addExtrusionLayer(t, charPosition - Vector(0, 0, mBevelDepth), mInflateRadius, nullptr);
 					_addExtrusionLayer(t, charPosition - Vector(0, 0, mDepth - mBevelDepth), mInflateRadius, nullptr);
 				}
@@ -195,15 +200,15 @@ void PolyTextArea::_prepare() {
 						mPrevLayerIdx + t->outIndices[i + 1],
 						mPrevLayerIdx + t->outIndices[i]);
 			}
-			else //HACK do not actually use contours here
-			{
+			else { //HACK do not actually use contours here
 				for (size_t i = 0; i < t->positions.size(); ++i) {
 					mMesh->vertex(charPosition + t->positions[i].toVec());
 				}
 
 				for (auto& contour : t->contours)
-					for (auto& index : contour.indices)
+					for (auto& index : contour.indices) {
 						mMesh->index(baseIdx + index);
+					}
 			}
 		}
 
@@ -211,8 +216,9 @@ void PolyTextArea::_prepare() {
 		basePosition.x += character->advance + pFont->getSpacing();
 	}
 
-	if (mCentered)
+	if (mCentered) {
 		_centerLine(rowStartIdx, basePosition.x);
+	}
 
 	mMesh->end();
 
@@ -220,8 +226,9 @@ void PolyTextArea::_prepare() {
 }
 
 void PolyTextArea::update(float dt) {
-	if (mDirty)
+	if (mDirty) {
 		_prepare();
+	}
 
 	Renderable::update(dt);
 }

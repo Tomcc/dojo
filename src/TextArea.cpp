@@ -10,10 +10,10 @@
 using namespace Dojo;
 
 Dojo::TextArea::TextArea(Object& l,
-					RenderLayer::ID layer,
-					const std::string& fontSetName,
-					bool center /*= false*/,
-					const Vector& bounds /*= Vector::One*/) :
+						 RenderLayer::ID layer,
+						 const std::string& fontSetName,
+						 bool center /*= false*/,
+						 const Vector& bounds /*= Vector::One*/) :
 	Renderable(l, layer),
 	fontName(fontSetName),
 	interline(0.2f),
@@ -25,7 +25,7 @@ Dojo::TextArea::TextArea(Object& l,
 	visibleCharsNumber(0xfffffff) {
 
 	l.setSize(bounds); //TODO HMM
-	
+
 	font = getGameState().getFont(fontName);
 
 	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
@@ -84,7 +84,7 @@ void TextArea::addText(const std::string& text) {
 	uint32_t c;
 
 	//parse and setup characters
-	for (auto&& i : range(text.size())) {
+	for (auto && i : range(text.size())) {
 		c = text[i];
 
 		currentChar = font->getCharacter(c);
@@ -92,8 +92,9 @@ void TextArea::addText(const std::string& text) {
 
 		currentLineLength += currentChar->pixelWidth;
 
-		if (c == ' ' || c == '\t')
+		if (c == ' ' || c == '\t') {
 			lastSpace = characters.size() - 1;
+		}
 
 		else if (c == '\n') {
 			lastSpace = 0;
@@ -119,15 +120,17 @@ void TextArea::addText(int n, char paddingChar, int digits) {
 	//stay in the digit budget?
 	if (paddingChar != 0) {
 		//forget most significative digits
-		if ((int)number.size() > digits)
+		if ((int)number.size() > digits) {
 			number = number.substr(number.size() - digits);
+		}
 
 		//pad to fill
 		else if ((int) number.size() < digits) {
 			std::string padding;
 
-			for (size_t i = 0; i < digits - number.size(); ++i)
+			for (size_t i = 0; i < digits - number.size(); ++i) {
 				padding += paddingChar;
+			}
 
 			number = padding + number;
 		}
@@ -137,8 +140,9 @@ void TextArea::addText(int n, char paddingChar, int digits) {
 }
 
 Renderable& Dojo::TextArea::_enableLayer(Texture& tex) {
-	if (freeLayers.empty())
+	if (freeLayers.empty()) {
 		_pushLayer();
+	}
 
 	auto& layer = **freeLayers.begin();
 
@@ -155,11 +159,12 @@ Renderable& Dojo::TextArea::_enableLayer(Texture& tex) {
 }
 
 void TextArea::_endLayers() {
-	for (size_t i = 0; i < busyLayers.size(); ++i)
+	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		busyLayers[i]->getMesh()->end();
+	}
 }
 
-///Free any created layer			
+///Free any created layer
 void TextArea::_hideLayers() {
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		auto& l = busyLayers[i];
@@ -184,12 +189,14 @@ void TextArea::_destroyLayer(Renderable& r) {
 
 void TextArea::_prepare() {
 	//not changed
-	if (!changed)
+	if (!changed) {
 		return;
+	}
 
 	//no characters to show
-	if (!visibleCharsNumber || getLenght() == 0)
+	if (!visibleCharsNumber || getLenght() == 0) {
 		return;
+	}
 
 	//setup the aspect ratio
 	getGameState().getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
@@ -199,7 +206,7 @@ void TextArea::_prepare() {
 	scale = screenSize;
 
 	//render the font
-	Font::Character *rep, *lastRep = nullptr;
+	Font::Character* rep, *lastRep = nullptr;
 	Vector newSize(0, 0);
 	bool doKerning = font->isKerningEnabled();
 	int lastLineVertexID = 0;
@@ -236,15 +243,15 @@ void TextArea::_prepare() {
 			cursorPosition.x += spaceWidth;
 			lastRep = nullptr;
 		}
-		else //real character
-		{
+		else { //real character
 			auto& layer = *_getLayer(rep->getTexture()).getMesh();
 
 			float x = cursorPosition.x + rep->bearingU;
 			float y = cursorPosition.y - rep->bearingV;
 
-			if (doKerning && lastRep)
+			if (doKerning && lastRep) {
 				x += font->getKerning(rep, lastRep);
+			}
 
 			idx = layer.getVertexCount();
 
@@ -272,21 +279,23 @@ void TextArea::_prepare() {
 		}
 
 		//update size to contain cursorPos to the longest line
-		if (cursorPosition.x > newSize.x)
+		if (cursorPosition.x > newSize.x) {
 			newSize.x = cursorPosition.x;
+		}
 	}
 
 	//if centered move every character of this line along x of 1/2 size
 	if (centered) {
 		_centerLastLine(lastLineVertexID, cursorPosition.x);
 	}
+
 	//push any active layer on the GPU
 	_endLayers();
 
 	//find real mesh bounds
 	mLayersBound = AABB::Invalid;
 
-	for (auto&& layer : busyLayers) {
+	for (auto && layer : busyLayers) {
 		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());
 	}
 
@@ -296,11 +305,13 @@ void TextArea::_prepare() {
 }
 
 void TextArea::_destroyLayers() {
-	while (busyLayers.size() > 0)
+	while (busyLayers.size() > 0) {
 		_destroyLayer(**busyLayers.begin());
+	}
 
-	while (freeLayers.size() > 0)
+	while (freeLayers.size() > 0) {
 		_destroyLayer(**freeLayers.begin());
+	}
 
 	meshPool.clear();
 }
@@ -308,13 +319,13 @@ void TextArea::_destroyLayers() {
 void TextArea::_centerLastLine(int startingAt, float size) {
 	DEBUG_TODO; //it kind of never worked with unicode
 
-// 	if (mesh->getVertexCount() == 0)
-// 		return;
-// 
-// 	float halfWidth = size * 0.5f;
-// 
-// 	for (Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i)
-// 		mesh->getVertex(i).x -= halfWidth;
+	// 	if (mesh->getVertexCount() == 0)
+	// 		return;
+	//
+	// 	float halfWidth = size * 0.5f;
+	//
+	// 	for (Mesh::IndexType i = startingAt; i < mesh->getVertexCount(); ++i)
+	// 		mesh->getVertex(i).x -= halfWidth;
 }
 
 ///create a mesh to be used for text
@@ -342,8 +353,9 @@ void TextArea::_pushLayer() {
 Renderable& Dojo::TextArea::_getLayer(Texture& tex) {
 	//find this layer in the already assigned, or get new
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
-		if (busyLayers[i]->getTexture() == &tex)
+		if (busyLayers[i]->getTexture() == &tex) {
 			return *busyLayers[i];
+		}
 	}
 
 	//does not exist, hit a free one

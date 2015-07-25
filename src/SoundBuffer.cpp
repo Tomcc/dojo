@@ -39,8 +39,7 @@ long _vorbisTell(void* userdata) {
 #define OGG_ENDIAN 0
 
 //store the callbacks
-ov_callbacks VORBIS_CALLBACKS =
-{
+ov_callbacks VORBIS_CALLBACKS = {
 	_vorbisRead,
 	_vorbisSeek,
 	_vorbisClose,
@@ -65,20 +64,23 @@ SoundBuffer::Chunk::~Chunk() {
 }
 
 void SoundBuffer::Chunk::getAsync() {
-	if (references++ == 0 && !isLoaded()) //load it when referenced the first time
+	if (references++ == 0 && !isLoaded()) { //load it when referenced the first time
 		loadAsync();
+	}
 }
 
 void SoundBuffer::Chunk::get() {
-	if (references++ == 0 && !isLoaded()) //load it when referenced the first time
+	if (references++ == 0 && !isLoaded()) { //load it when referenced the first time
 		onLoad();
+	}
 }
 
 void SoundBuffer::Chunk::release() {
 	DEBUG_ASSERT(references > 0, "References should never be less than 0");
 
-	if (--references == 0) //unload it when dereferenced last time
+	if (--references == 0) { //unload it when dereferenced last time
 		onUnload();
+	}
 }
 
 ALuint SoundBuffer::Chunk::getOpenALBuffer() {
@@ -118,12 +120,14 @@ void SoundBuffer::onUnload(bool soft) {
 	DEBUG_ASSERT( isLoaded(), "SoundBuffer is not loaded" );
 
 	//just push the event to all its chunks
-	for (auto&& chunk : mChunks) {
-		if (!isStreaming()) //non-streaming buffers own all of their chunk (to avoid them being released each time)
+	for (auto && chunk : mChunks) {
+		if (!isStreaming()) { //non-streaming buffers own all of their chunk (to avoid them being released each time)
 			chunk->release();
+		}
 
-		if (chunk->isLoaded())
+		if (chunk->isLoaded()) {
 			chunk->onUnload(soft);
+		}
 	}
 }
 
@@ -159,24 +163,28 @@ bool SoundBuffer::Chunk::onLoad() {
 	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
 	int bitrate = info->rate * 10; //wtf, why * 10 //HACK
-	
+
 	//seek to the start of the file segment
 	error = ov_raw_seek(&file, mStartPosition);
 	DEBUG_ASSERT( error == 0, "Cannot seek into file" );
 
 	bool corrupt = false;
+
 	do {
 		int section = -1;
 		read = (ALsizei)ov_read(&file, uncompressed.data() + totalRead, (ALsizei)mUncompressedSize - totalRead, 0, wordSize, 1, &section);
 
-		if (read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL)
+		if (read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL) {
 			corrupt = true;
+		}
 
-		else if (read == 0)
+		else if (read == 0) {
 			break;
+		}
 
-		else
+		else {
 			totalRead += read;
+		}
 
 		DEBUG_ASSERT( totalRead <= mUncompressedSize, "Total read bytes overflow the buffer" ); //this should always be true
 
@@ -202,14 +210,13 @@ void SoundBuffer::Chunk::loadAsync() {
 
 	//async load
 	Platform::singleton().getBackgroundQueue()->queueTask([&]() {
-															onLoad();
+		onLoad();
 
-															std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK
-														},
-														[&]() //then,
-														{
-															release();
-														});
+		std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK
+	},
+	[&]() { //then,
+		release();
+	});
 }
 
 void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
@@ -272,11 +279,13 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 		ov_pcm_seek_page(&file, pcmEnd);
 		fileEnd = ov_raw_tell(&file);
 
-		if (fileStart == fileEnd) //check if EOF
+		if (fileStart == fileEnd) { //check if EOF
 			break;
+		}
 
-		if (pcmEnd == pcmStart) //buffer is too small, let's assume that there is just one page
+		if (pcmEnd == pcmStart) { //buffer is too small, let's assume that there is just one page
 			pcmEnd = totalPCM;
+		}
 
 		ogg_int64_t byteSize = (pcmEnd - pcmStart) * wordSize * info->channels;
 		mChunks.emplace_back(make_unique<Chunk>(this, (long)fileStart, (long)byteSize));
@@ -287,8 +296,9 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 
 	ov_clear(&file);
 
-	if (!isStreaming())
-		mChunks[0]->get(); //get() it to avoid that it is unloaded by the sources, and load synchronously
+	if (!isStreaming()) {
+		mChunks[0]->get();    //get() it to avoid that it is unloaded by the sources, and load synchronously
+	}
 
 	return true;
 }
@@ -305,10 +315,12 @@ bool SoundBuffer::_loadOggFromFile() {
 SoundBuffer::Chunk& SoundBuffer::getChunk(int n, bool loadAsync /*= false */) {
 	DEBUG_ASSERT(n >= 0 && n < (int)mChunks.size(), "The requested chunk is out of bounds");
 
-	if (loadAsync)
+	if (loadAsync) {
 		mChunks[n]->getAsync();
-	else
+	}
+	else {
 		mChunks[n]->get();
+	}
 
 	return *mChunks[n];
 }

@@ -38,6 +38,7 @@ void FrameSet::setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProv
 	auto& tiles = atlasTable.getTable("tiles");
 
 	int x, y, sx, sy;
+
 	for (int i = 0; i < tiles.getArrayLength(); ++i) {
 		auto& tile = tiles.getTable(i);
 
@@ -58,15 +59,17 @@ bool FrameSet::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "onLoad: this FrameSet is already loaded" );
 
 	loaded = true;
-	for (auto&& t : ownedFrames) {
+
+	for (auto && t : ownedFrames) {
 		if (!t->isLoaded()) {
 			t->onLoad();
 
 			loaded &= t->isLoaded();
 
 			// count bytesize
-			if (t->isLoaded())
+			if (t->isLoaded()) {
 				size += t->getByteSize();
+			}
 		}
 	}
 
@@ -76,8 +79,9 @@ bool FrameSet::onLoad() {
 void FrameSet::onUnload(bool soft) {
 	DEBUG_ASSERT(loaded, "onUnload: this FrameSet is not loaded");
 
-	for (auto&& f : ownedFrames)
+	for (auto && f : ownedFrames) {
 		f->onUnload(soft);
+	}
 
 	loaded = false;
 }
@@ -102,8 +106,10 @@ Texture* FrameSet::getRandomFrame() {
 
 int FrameSet::getFrameIndex(Texture& frame) const {
 	for (size_t i = 0; i < frames.size(); ++i) {
-		if (frames[i] == &frame)
+		if (frames[i] == &frame) {
 			return i;
+		}
 	}
+
 	return -1;
 }

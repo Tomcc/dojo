@@ -39,18 +39,21 @@ ResourceGroup::~ResourceGroup() {
 void ResourceGroup::addLocalizedFolder(const std::string& basefolder, int version) {
 	std::string lid = basefolder;
 
-	if (lid[lid.size() - 1] != '/')
+	if (lid[lid.size() - 1] != '/') {
 		lid += '/';
+	}
 
 	std::string localeDirPath = lid + locale;
 
 	//check if the folder exists or fallback to the default one
 	Poco::File localeDir(localeDirPath);
 
-	if (localeDir.exists())
+	if (localeDir.exists()) {
 		addFolderSimple(localeDirPath, version);
-	else
+	}
+	else {
 		addFolderSimple(lid + fallbackLocale, version);
+	}
 }
 
 void ResourceGroup::addTable(const std::string& name, Unique<Table> t) {
@@ -59,8 +62,9 @@ void ResourceGroup::addTable(const std::string& name, Unique<Table> t) {
 
 	tables[name] = std::move(t);
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE( "+" + name + "\t\t table" );
+	}
 }
 
 void ResourceGroup::addSets(const std::string& subdirectory, int version) {
@@ -80,8 +84,9 @@ void ResourceGroup::addSets(const std::string& subdirectory, int version) {
 		name = Path::getFileName(paths[i]);
 
 		//skip wrong versions
-		if (Path::getVersion(name) != version)
+		if (Path::getVersion(name) != version) {
 			continue;
+		}
 
 		if (!Path::arePathsInSequence(lastName, name)) {
 			std::string setPrefix = Path::removeTags(name);
@@ -99,14 +104,16 @@ void ResourceGroup::addSets(const std::string& subdirectory, int version) {
 	paths.clear();
 	Platform::singleton().getFilePathsForType("atlasinfo", subdirectory, paths);
 
-	//now add atlases!		
+	//now add atlases!
 	Table def;
+
 	for (int i = 0; i < paths.size(); ++i) {
 		name = Path::getFileName(paths[i]);
 
 		//skip wrong versions
-		if (Path::getVersion(name) != version)
+		if (Path::getVersion(name) != version) {
 			continue;
+		}
 
 		name = Path::removeVersion(name);
 
@@ -148,8 +155,9 @@ void ResourceGroup::addFonts(const std::string& subdirectory, int version) {
 		name = Path::getFileName(paths[i]);
 
 		//skip wrong versions
-		if (Path::getVersion(name) != version)
+		if (Path::getVersion(name) != version) {
 			continue;
+		}
 
 		name = Path::removeTags(name);
 
@@ -183,12 +191,12 @@ void ResourceGroup::addSounds(const std::string& subdirectory) {
 		name = Path::getFileName(paths[i]);
 
 		if (!Path::arePathsInSequence(lastName, name)) {
-			//create a new set		
+			//create a new set
 			std::string setPrefix = Path::removeTags(name);
 			currentSet = &addSoundSet(make_unique<SoundSet>(this, setPrefix), setPrefix);
 		}
 
-		//create a new buffer		
+		//create a new buffer
 		currentSet->addBuffer(make_unique<SoundBuffer>(this, paths[i]));
 
 		lastName = name;
@@ -237,14 +245,15 @@ void ResourceGroup::loadResources(bool recursive) {
 	_load<SoundSet>(sounds);
 	_load<Table>(tables);
 	_load<ShaderProgram>(programs);
- 	_load<Shader>(shaders);
+	_load<Shader>(shaders);
 
 	//load sets again to load missing atlases!
 	_load<FrameSet>(frameSets);
 
 	if (recursive)
-		for (auto&& sub : subs)
+		for (auto && sub : subs) {
 			sub->loadResources(recursive);
+		}
 }
 
 void ResourceGroup::unloadResources(bool recursive) {
@@ -258,8 +267,9 @@ void ResourceGroup::unloadResources(bool recursive) {
 	_unload<ShaderProgram>(programs, false);
 
 	if (recursive) {
-		for (auto&& sub : subs)
+		for (auto && sub : subs) {
 			sub->unloadResources(recursive);
+		}
 	}
 }
 
@@ -273,13 +283,15 @@ void ResourceGroup::softUnloadResources(bool recursive) {
 	_unload<Shader>(shaders, true);
 
 	if (recursive)
-		for (auto&& sub : subs)
+		for (auto && sub : subs) {
 			sub->softUnloadResources(recursive);
+		}
 }
 
 void ResourceGroup::addFolderSimple(const std::string& folder, int version) {
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("[" + folder + "]");
+	}
 
 	addSets(folder, version);
 	addFonts(folder, version);
@@ -295,8 +307,9 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const std::strin
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t set");
+	}
 
 	return *(frameSets[name] = std::move(resource));
 }
@@ -308,8 +321,9 @@ void ResourceGroup::addFont(Unique<Font> resource, const std::string& name) {
 
 	fonts[name] = std::move(resource);
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t font");
+	}
 }
 
 void ResourceGroup::addMesh(Unique<Mesh> resource, const std::string& name) {
@@ -319,8 +333,9 @@ void ResourceGroup::addMesh(Unique<Mesh> resource, const std::string& name) {
 
 	meshes[name] = std::move(resource);
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t mesh");
+	}
 }
 
 SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const std::string& name) {
@@ -328,8 +343,9 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const std::strin
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t sound");
+	}
 
 	return *(sounds[name] = std::move(resource));
 }
@@ -341,8 +357,9 @@ void ResourceGroup::addShader(Unique<Shader> resource, const std::string& name) 
 
 	shaders[name] = std::move(resource);
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t shader");
+	}
 }
 
 void ResourceGroup::addProgram(Unique<ShaderProgram> resource, const std::string& name) {
@@ -352,8 +369,9 @@ void ResourceGroup::addProgram(Unique<ShaderProgram> resource, const std::string
 
 	programs[name] = std::move(resource);
 
-	if (logchanges)
+	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t shader program");
+	}
 }
 
 void ResourceGroup::addSubgroup(ResourceGroup& g) {
@@ -442,8 +460,9 @@ void ResourceGroup::addFolder(const std::string& folder, int version /*= 0*/) {
 	addFolderSimple(folder, version);
 
 	//localized loading
-	if (isLocalizationRequired())
+	if (isLocalizationRequired()) {
 		addLocalizedFolder(folder, version);
+	}
 }
 
 void ResourceGroup::addPrefabMeshes() {

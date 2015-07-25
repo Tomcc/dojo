@@ -31,6 +31,7 @@ AStar::Node* AStar::Graph::getNode(const Vector& pos) const {
 
 AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 	iterator elem = find(pos);
+
 	if (elem == end()) {
 		return *((*this)[pos] = make_unique<Node>(pos));
 	}
@@ -40,8 +41,9 @@ AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 }
 
 void AStar::_retrace(Node* cur, Node* start) {
-	if (cur != start)
+	if (cur != start) {
 		_retrace(cur->_cameFrom, start);
+	}
 
 	mTotalLength += cur->_cameFromDistance;
 	push_back(cur->position);
@@ -59,14 +61,16 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 
 	Node* end = set.getNode(endPos);
 	bool endIsAPathNode = (end != nullptr);
+
 	if (!endIsAPathNode) {
 		end = _nearest(set, endPos);
 		mTotalLength += end->position.distance(endPos);
 	}
 
 	//cleanup data & setup h values
-	for (auto& entry : set)
+	for (auto& entry : set) {
 		entry.second->_resetData(_distance(*entry.second, *end));
+	}
 
 	PriorityQueue openSet;
 	openSet[start->_openValue = _distance(*start, *end)] = start; //insert start
@@ -74,11 +78,12 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	while (!openSet.empty()) {
 		Node* cur = openSet.begin()->second;
 
-		if (cur == end) //goal!
-		{
+		if (cur == end) { //goal!
 			_retrace(cur, start);
-			if (!endIsAPathNode) //remember to add the end position non-node
+
+			if (!endIsAPathNode) { //remember to add the end position non-node
 				push_back(endPos);
+			}
 
 			return;
 		}
@@ -89,18 +94,21 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 		openSet.erase(openSet.begin());
 
 		for (Node* neighbor : cur->edges) {
-			if (neighbor->_closed)
+			if (neighbor->_closed) {
 				continue;
+			}
 
 			float dist = _distance(*cur, *neighbor);
 			float g = cur->_gScore + dist; //check if the node needs to be updated
+
 			if (neighbor->_openValue == 0 || g < neighbor->_gScore) {
 				neighbor->_cameFrom = cur;
 				neighbor->_cameFromDistance = dist;
 				neighbor->_gScore = g;
 
-				if (neighbor->_openValue) //remove the old record in the priority queue
+				if (neighbor->_openValue) { //remove the old record in the priority queue
 					openSet.erase(neighbor->_openValue);
+				}
 
 				//(re)add the node to the priority queue with the new f-score
 				openSet[neighbor->_openValue = (neighbor->_gScore + neighbor->_hScore)] = neighbor;
@@ -119,8 +127,9 @@ AStar::Node* AStar::_nearest(const Graph& set, const Vector& pos) {
 	float minDistance = FLT_MAX;
 	Node* nearest = nullptr;
 
-	for (auto&& entry : set) {
+	for (auto && entry : set) {
 		float d = pos.distanceSquared(entry.first);
+
 		if (d < minDistance) {
 			minDistance = d;
 			nearest = entry.second.get();

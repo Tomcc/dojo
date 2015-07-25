@@ -9,14 +9,14 @@
 using namespace Dojo;
 
 RenderState::TextureUnit::TextureUnit() :
-scale(1, 1),
-rotation(0),
-offset(0, 0) {
+	scale(1, 1),
+	rotation(0),
+	offset(0, 0) {
 
 }
 
 RenderState::TextureUnit::TextureUnit(Texture* t) :
-TextureUnit() {
+	TextureUnit() {
 	texture = t;
 }
 
@@ -107,17 +107,17 @@ int RenderState::getDistance(RenderState* s) {
 	int dist = 0;
 
 	DEBUG_TODO; //dunno
-// 
-// 	if (s->mesh != mesh)
-// 		dist += 3;
-// 
-// 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
-// 		if (textures[i] != s->textures[i])
-// 			dist += 2;
-// 	}
-// 
-// 	if (s->isAlphaRequired() != isAlphaRequired())
-// 		dist += 1;
+	//
+	// 	if (s->mesh != mesh)
+	// 		dist += 3;
+	//
+	// 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
+	// 		if (textures[i] != s->textures[i])
+	// 			dist += 2;
+	// 	}
+	//
+	// 	if (s->isAlphaRequired() != isAlphaRequired())
+	// 		dist += 1;
 
 	return dist;
 }
@@ -130,8 +130,9 @@ void RenderState::applyState() {
 		if (textures[i].texture) {
 			textures[i].texture->bind(i);
 
-			if (textures[i].isTransformRequired())
+			if (textures[i].isTransformRequired()) {
 				textures[i].applyTransform();
+			}
 			else {
 				glMatrixMode(GL_TEXTURE);
 				glLoadIdentity();
@@ -147,10 +148,12 @@ void RenderState::applyState() {
 		}
 	}
 
-	if (blendingEnabled)
+	if (blendingEnabled) {
 		glEnable(GL_BLEND);
-	else
+	}
+	else {
 		glDisable(GL_BLEND);
+	}
 
 	glBlendFunc(srcBlend, destBlend);
 	glBlendEquation(blendFunction);

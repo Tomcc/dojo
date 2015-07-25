@@ -35,7 +35,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 #ifndef PUBLISH
 	#define CHECK_WIN32_ERROR(T, MSG ) { if( !(T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
 #else
-#define CHECK_WIN32_ERROR(T, MSG ) {}
+	#define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
 
 Touch::Type win32messageToMouseButton(UINT message) {
@@ -43,12 +43,15 @@ Touch::Type win32messageToMouseButton(UINT message) {
 	case WM_LBUTTONDOWN: //left down
 	case WM_LBUTTONUP:
 		return Touch::Type::LeftClick;
+
 	case WM_RBUTTONDOWN: //right up
 	case WM_RBUTTONUP:
 		return Touch::Type::RightClick;
+
 	case WM_MBUTTONDOWN:
 	case WM_MBUTTONUP:
 		return Touch::Type::LeftClick;
+
 	default:
 		return Touch::Type::Tap;
 	}
@@ -56,7 +59,7 @@ Touch::Type win32messageToMouseButton(UINT message) {
 
 LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 	BOOL bHandled = FALSE;
-	
+
 	static std::vector<TOUCHINPUT> inputs;
 	inputs.resize(LOWORD(wParam));
 
@@ -73,13 +76,17 @@ LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 			ScreenToClient(hWnd, &ptInput);
 
 			//do something with each touch input entry
-			if (ti.dwFlags & TOUCHEVENTF_DOWN)
+			if (ti.dwFlags & TOUCHEVENTF_DOWN) {
 				app.mousePressed(ptInput.x, ptInput.y, Touch::Type::Tap);
-			else if (ti.dwFlags & TOUCHEVENTF_UP)
+			}
+			else if (ti.dwFlags & TOUCHEVENTF_UP) {
 				app.mouseReleased(ptInput.x, ptInput.y, Touch::Type::Tap);
-			else if (ti.dwFlags & TOUCHEVENTF_MOVE)
+			}
+			else if (ti.dwFlags & TOUCHEVENTF_MOVE) {
 				app.mouseMoved(ptInput.x, ptInput.y);
+			}
 		}
+
 		bHandled = TRUE;
 	}
 	else {
@@ -112,22 +119,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		BeginPaint(hwnd, &ps);
 		EndPaint(hwnd, &ps);
 	}
-		return 0;
-		break;
+
+	return 0;
+	break;
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 
-		//enter / exit unfocused state
+	//enter / exit unfocused state
 	case WM_ACTIVATEAPP:
 	case WM_ACTIVATE:
 	case WM_SHOWWINDOW:
-		if (wparam == false) //minimized or defocused
+		if (wparam == false) { //minimized or defocused
 			app._fireFocusLost();
+		}
 
-		else
+		else {
 			app._fireFocusGained();
+		}
 
 		return 0;
 
@@ -138,23 +148,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 	case WM_LBUTTONDOWN: //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-		if (!mouseEventIsGesture)
+		if (!mouseEventIsGesture) {
 			app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		}
 
 		return 0;
 
 	case WM_LBUTTONUP: //left up
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
-		if (!mouseEventIsGesture)
+		if (!mouseEventIsGesture) {
 			app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
+		}
 
 		mouseEventIsGesture = false;
 		return 0;
 
 	case WM_MOUSEMOVE:
-		if (!mouseEventIsGesture)
+		if (!mouseEventIsGesture) {
 			app.mouseMoved(LOWORD(lparam), HIWORD(lparam));
+		}
 
 		return 0;
 
@@ -164,13 +177,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		break;
 
 	case WM_SYSKEYDOWN:
-		if (wparam == VK_F4) //listen for Alt+F4
-		{
+		if (wparam == VK_F4) { //listen for Alt+F4
 			PostQuitMessage(1);
 			return 0;
 		}
 
-		//continues after the jump!!
+	//continues after the jump!!
 
 	case WM_KEYDOWN:
 
@@ -181,11 +193,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 			PostQuitMessage( 0 );
 			break;
 #endif
+
 		default:
 
 			app.keyPressed(wparam);
 			break;
 		}
+
 		return 0;
 
 	case WM_SYSKEYUP: //needed to catch ALT separately
@@ -224,23 +238,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 	case WM_KILLFOCUS:
 		//if we were fullscreen in OpenGL, we need to reset the original setup
 		/*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
-        {
-            bool success = _changeDisplayMode( false, ox::TDimension() );
-            //hide window
-            ShowWindow( hWnd, FALSE );
+		{
+		    bool success = _changeDisplayMode( false, ox::TDimension() );
+		    //hide window
+		    ShowWindow( hWnd, FALSE );
 
-            DEBUG_ASSERT( success );
-        }*/
+		    DEBUG_ASSERT( success );
+		}*/
 		return 0;
 
 	case WM_SETFOCUS:
 		//if we are fullscreen in OpenGL, we need to change the res again
 		/*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
-        {
-            bool success = _changeDisplayMode( true, WindowSize );
-            ShowWindow( hWnd, TRUE );
-            DEBUG_ASSERT( success );
-        }*/
+		{
+		    bool success = _changeDisplayMode( true, WindowSize );
+		    ShowWindow( hWnd, TRUE );
+		    DEBUG_ASSERT( success );
+		}*/
 		return 0;
 	}
 
@@ -262,9 +276,9 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	clientAreaYOffset(0),
 	mContextRequestsQueue(make_unique<ContextRequestsQueue>()) {
 	/*
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
-#endif
+	#endif
 	*/
 	//TODO detect locale code
 	locale = "en";
@@ -302,7 +316,7 @@ void Win32Platform::_adjustWindow() {
 	InvalidateRect(NULL, NULL, false);
 
 	SetWindowPos(hwnd, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
-				SWP_SHOWWINDOW);
+				 SWP_SHOWWINDOW);
 
 	MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
@@ -360,57 +374,61 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowW(L"DojoOpenGLWindow",
-		String::toUTF16(windowCaption).c_str(),
-		dwstyle, //non-resizabile
-		rect.left, rect.top,
-		rect.right - rect.left, rect.bottom - rect.top,
-		NULL, NULL,
-		hInstance, NULL);
+						 String::toUTF16(windowCaption).c_str(),
+						 dwstyle, //non-resizabile
+						 rect.left, rect.top,
+						 rect.right - rect.left, rect.bottom - rect.top,
+						 NULL, NULL,
+						 hInstance, NULL);
 
-	if (hwnd == NULL)
+	if (hwnd == NULL) {
 		return false;
+	}
 
 	//configure it to receive touches instead of "mouse gestures" where available
 	{
 		// test for touch
 		auto value = GetSystemMetrics(SM_DIGITIZER);
-		if (value & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH)
+
+		if (value & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH) {
 			RegisterTouchWindow(hwnd, TWF_WANTPALM | TWF_FINETOUCH);
+		}
 	}
 
 	hdc = GetDC(hwnd);
 	// CREATE PFD:
-	static PIXELFORMATDESCRIPTOR pfd = // pfd Tells Windows How We Want Things To Be
-		{
-			sizeof(PIXELFORMATDESCRIPTOR), // Size Of This Pixel Format Descriptor
-			1, // Version Number
-			PFD_DRAW_TO_WINDOW | // Format Must Support Window
-			PFD_SUPPORT_OPENGL | // Format Must Support OpenGL
-			PFD_DOUBLEBUFFER | // Must Support Double Buffering
-			PFD_SWAP_EXCHANGE,
-			PFD_TYPE_RGBA, // Request An RGBA Format
-			32, // Select Our Color Depth
-			0, 0, 0, 0, 0, 0, // Color Bits Ignored
-			0, // No Alpha Resource
-			0, // Shift Bit Ignored
-			0, // No Accumulation Resource
-			0, 0, 0, 0, // Accumulation Bits Ignored
-			16, // 16Bit Z-Resource (Depth Resource)  
-			0, // No Stencil Resource
-			0, // No Auxiliary Resource
-			PFD_MAIN_PLANE, // Main Drawing Layer
-			0, // Reserved
-			0, 0, 0 // Layer Masks Ignored
-		};
+	static PIXELFORMATDESCRIPTOR pfd = { // pfd Tells Windows How We Want Things To Be
+		sizeof(PIXELFORMATDESCRIPTOR), // Size Of This Pixel Format Descriptor
+		1, // Version Number
+		PFD_DRAW_TO_WINDOW | // Format Must Support Window
+		PFD_SUPPORT_OPENGL | // Format Must Support OpenGL
+		PFD_DOUBLEBUFFER | // Must Support Double Buffering
+		PFD_SWAP_EXCHANGE,
+		PFD_TYPE_RGBA, // Request An RGBA Format
+		32, // Select Our Color Depth
+		0, 0, 0, 0, 0, 0, // Color Bits Ignored
+		0, // No Alpha Resource
+		0, // Shift Bit Ignored
+		0, // No Accumulation Resource
+		0, 0, 0, 0, // Accumulation Bits Ignored
+		16, // 16Bit Z-Resource (Depth Resource)
+		0, // No Stencil Resource
+		0, // No Auxiliary Resource
+		PFD_MAIN_PLANE, // Main Drawing Layer
+		0, // Reserved
+		0, 0, 0 // Layer Masks Ignored
+	};
 
 	int chosenPixelFormat;
 	ChooseAntiAliasingPixelFormat(chosenPixelFormat, config.getInt("MSAA"));
 
-	if (chosenPixelFormat == 0)
+	if (chosenPixelFormat == 0) {
 		return false;
+	}
 
-	if (!SetPixelFormat(hdc, chosenPixelFormat, &pfd))
+	if (!SetPixelFormat(hdc, chosenPixelFormat, &pfd)) {
 		return false;
+	}
 
 	hglrc = wglCreateContext(hdc);
 	bool err = wglMakeCurrent(hdc, hglrc) > 0;
@@ -457,8 +475,9 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 }
 
 void Win32Platform::setFullscreen(bool fullscreen) {
-	if (fullscreen == mFullscreen)
+	if (fullscreen == mFullscreen) {
 		return;
+	}
 
 	_setFullscreen(fullscreen);
 
@@ -471,9 +490,11 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 
 std::string _cleanPath(const std::string& name) {
 	std::string path = name;
+
 	//UNICODE
 	for (size_t i = 0; i < path.size(); ++i) {
 		auto& c = path[i];
+
 		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
 			path.erase(path.begin() + i);
 			--i;
@@ -519,8 +540,9 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
 
-	if (userConfig.isEmpty()) //also look in appdata
+	if (userConfig.isEmpty()) { //also look in appdata
 		userConfig = Table::loadFromFile(getAppDataPath() + "/config.ds");
+	}
 
 	config.inherit(&userConfig); //use the table that was loaded from file but override any config-passed members
 
@@ -535,8 +557,9 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	mFullscreen = windowWidth == screenWidth && windowHeight == screenHeight && config.getBool("fullscreen");
 
 	//just use the game's preferred settings
-	if (!_initializeWindow(game->getName(), windowWidth, windowHeight))
+	if (!_initializeWindow(game->getName(), windowWidth, windowHeight)) {
 		return;
+	}
 
 	setVSync(config.getBool("disable_vsync") ? 0 : 1);
 
@@ -554,6 +577,7 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 
 	//add the keyboard
 	input->addDevice(mKeyboard);
+
 	//create xinput persistent joysticks
 	for (int i = 0; i < 4; ++i) {
 		mXInputJoystick[i] = make_unique<XInputController>(i);
@@ -576,14 +600,17 @@ void Win32Platform::prepareThreadContext() {
 	mContextRequestsQueue->enqueue(&req);
 
 	//wait for the request
-	while (!req.done)
+	while (!req.done) {
 		std::this_thread::yield();
+	}
 
 	//be nice, wglMakeCurrent just wants you to ask politely and more than once
 	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
 	int tries = 0;
-	for (; wglMakeCurrent(hdc, req.contextHandle) == FALSE && tries < 1000; ++tries)
+
+	for (; wglMakeCurrent(hdc, req.contextHandle) == FALSE && tries < 1000; ++tries) {
 		std::this_thread::yield();
+	}
 
 	DEBUG_ASSERT( tries < 1000, "Cannot share OpenGL on this thread" );
 
@@ -611,8 +638,9 @@ void Win32Platform::acquireContext() {
 }
 
 void Win32Platform::present() {
-	if (isFullscreen())
-		glFinish(); //WAT //HACK if this is not called in fullscreen, the app actually blocks in the first next glUseProgram making realTime useless!
+	if (isFullscreen()) {
+		glFinish();    //WAT //HACK if this is not called in fullscreen, the app actually blocks in the first next glUseProgram making realTime useless!
+	}
 
 	SwapBuffers(hdc);
 }
@@ -620,10 +648,10 @@ void Win32Platform::present() {
 void Win32Platform::_pollDevices(float dt) {
 	input->poll(dt);
 
-	for (auto& j : mXInputJoystick) //poll disconnected pads for connection
-	{
-		if (!j->isConnected())
+	for (auto& j : mXInputJoystick) { //poll disconnected pads for connection
+		if (!j->isConnected()) {
 			j->poll(dt);
+		}
 	}
 
 	//TODO DInput joysticks
@@ -634,6 +662,7 @@ void Win32Platform::step(float dt) {
 
 	//check if some other thread requested a new context
 	ContextShareRequest* req;
+
 	while (mContextRequestsQueue->try_dequeue(req)) {
 		req->contextHandle = wglCreateContext(hdc);
 
@@ -672,6 +701,7 @@ void Win32Platform::loop() {
 
 	Timer timer;
 	running = true;
+
 	while (running && game->isRunning()) {
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -690,8 +720,9 @@ void Win32Platform::loop() {
 			if (!mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0)) {
 				step(dt);
 
-				if (mFrameSteppingEnabled)
+				if (mFrameSteppingEnabled) {
 					--mFramesToAdvance;
+				}
 			}
 		}
 	}
@@ -728,32 +759,35 @@ void Win32Platform::mouseMoved(int cx, int cy) {
 	cursorPos.y = (float)cy - clientAreaYOffset;
 
 	if (realMouseEvent) {
-		if (dragging)
-			input->_fireTouchMoveEvent(cursorPos, prevCursorPos, Touch::Type::LeftClick); //TODO this doesn't really work but Win doesn't tell
-		else
+		if (dragging) {
+			input->_fireTouchMoveEvent(cursorPos, prevCursorPos, Touch::Type::LeftClick);    //TODO this doesn't really work but Win doesn't tell
+		}
+		else {
 			input->_fireMouseMoveEvent(cursorPos, prevCursorPos);
+		}
 	}
 
 	prevCursorPos = cursorPos;
 
 	if (realMouseEvent) {
-		if (mouseLocked) //put the cursor back in the center
-		{
+		if (mouseLocked) { //put the cursor back in the center
 			realMouseEvent = false; //setcursor will cause another mouseMoved event, avoid to trigger a loop!
 			POINT center = {width / 2, height / 2};
 			ClientToScreen(hwnd, &center);
 			SetCursorPos(center.x, center.y);
 		}
 	}
-	else
+	else {
 		realMouseEvent = true;
+	}
 }
 
 void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type) {
 	//windows can actually send "released" messages whose "pressed" event was sent to another window
 	//or used to awake the current one - send a fake mousePressed event if this happens!
-	if (!mMousePressed)
+	if (!mMousePressed) {
 		mousePressed(cx, cy, type);
+	}
 
 	mMousePressed = false;
 	dragging = false;
@@ -778,7 +812,7 @@ void Win32Platform::setMouseLocked(bool locked) {
 }
 
 void Win32Platform::setVSync(int interval/*=1*/) {
-	typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+	typedef BOOL (APIENTRY * PFNWGLSWAPINTERVALFARPROC)(int);
 	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 
 	char* extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -790,8 +824,9 @@ void Win32Platform::setVSync(int interval/*=1*/) {
 	else {
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
 
-		if (wglSwapIntervalEXT)
+		if (wglSwapIntervalEXT) {
 			wglSwapIntervalEXT(interval);
+		}
 	}
 }
 
@@ -803,22 +838,41 @@ void Win32Platform::keyPressed(int kc) {
 	KeyCode key = mKeyMap[kc];
 
 #ifdef _DEBUG
-	if( key == KC_DIVIDE )	
-		mFrameSteppingEnabled = !mFrameSteppingEnabled; 
-	else if( mFrameSteppingEnabled )
-	{
-		if( key == KC_0 )		mFramesToAdvance = 1;
-		else if( key == KC_1 )	mFramesToAdvance = 5;
-		else if( key == KC_2 )	mFramesToAdvance = 10;
-		else if( key == KC_3 )	mFramesToAdvance = 20;
-		else if( key == KC_4 )	mFramesToAdvance = 50;
-		else if( key == KC_5 )	mFramesToAdvance = 100;
-		else if( key == KC_6 )	mFramesToAdvance = 200;
-		else if( key == KC_7 )	mFramesToAdvance = 500;
+
+	if ( key == KC_DIVIDE ) {
+		mFrameSteppingEnabled = !mFrameSteppingEnabled;
+	}
+	else if ( mFrameSteppingEnabled ) {
+		if ( key == KC_0 ) {
+			mFramesToAdvance = 1;
+		}
+		else if ( key == KC_1 )	{
+			mFramesToAdvance = 5;
+		}
+		else if ( key == KC_2 )	{
+			mFramesToAdvance = 10;
+		}
+		else if ( key == KC_3 )	{
+			mFramesToAdvance = 20;
+		}
+		else if ( key == KC_4 )	{
+			mFramesToAdvance = 50;
+		}
+		else if ( key == KC_5 )	{
+			mFramesToAdvance = 100;
+		}
+		else if ( key == KC_6 )	{
+			mFramesToAdvance = 200;
+		}
+		else if ( key == KC_7 )	{
+			mFramesToAdvance = 500;
+		}
 	}
 
-	if( mFramesToAdvance ) //capture the input
+	if ( mFramesToAdvance ) { //capture the input
 		return;
+	}
+
 #endif
 
 	mKeyboard._notifyButtonState(key, true);
@@ -834,17 +888,21 @@ Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageDat
 
 	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilenameU(String::toUTF16(path).c_str());
+
 	//if still unkown, return failure
 	if (fif == FIF_UNKNOWN) {
-		if (Path::getFileExtension(path) == "img")
+		if (Path::getFileExtension(path) == "img") {
 			fif = FIF_PNG;
-		else
+		}
+		else {
 			return PixelFormat::Unknown;
+		}
 	}
 
 	//check that the plugin has reading capabilities and load the file
-	if (!FreeImage_FIFSupportsReading(fif))
+	if (!FreeImage_FIFSupportsReading(fif)) {
 		return PixelFormat::Unknown;
+	}
 
 	auto buf = loadFileContent(path);
 
@@ -855,8 +913,9 @@ Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageDat
 	dib = FreeImage_LoadFromMemory(fif, hmem, 0);
 
 	//if the image failed to load, return failure
-	if (!dib)
+	if (!dib) {
 		return PixelFormat::Unknown;
+	}
 
 	//retrieve the image data
 	byte* data = (byte*)FreeImage_GetBits(dib);
@@ -874,15 +933,18 @@ Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageDat
 	imageData.resize(size);
 
 	{
-		byte *in, *out;
+		byte* in, *out;
+
 		for (uint32_t ii, i = 0; i < height; ++i) {
 			ii = height - i - 1;
+
 			for (uint32_t j = 0; j < width; ++j) {
 				out = imageData.data() + j * pixelSize + i * pitch;
 				in = (byte*)data + j * pixelSize + ii * pitch;
 
-				if (pixelSize >= 4)
+				if (pixelSize >= 4) {
 					out[3] = in[3];
+				}
 
 				if (pixelSize >= 3) {
 					out[2] = in[0];

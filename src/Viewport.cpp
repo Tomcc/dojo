@@ -31,8 +31,9 @@ Viewport::Viewport(
 	mTargetSize.x = (float)Platform::singleton().getWindowWidth();
 	mTargetSize.y = (float)Platform::singleton().getWindowHeight();
 
-	if (VFOV > 0.f)
+	if (VFOV > 0.f) {
 		enableFrustum(VFOV, zNear, zFar);
+	}
 }
 
 
@@ -42,8 +43,8 @@ Viewport::~Viewport() {
 
 Vector Viewport::makeWorldCoordinates(int x, int y) const {
 	return Vector(
-		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
-		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+			   mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
+			   mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
 Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
@@ -55,7 +56,7 @@ bool Viewport::isVisible(Renderable& s) {
 }
 
 void Dojo::Viewport::addFader(RenderLayer::ID layer) {
-	//create the fader object	
+	//create the fader object
 	addComponent([&]() {
 		auto fader = make_unique<Renderable>(*this, layer, "texturedQuad");
 		fader->color = Color::None;
@@ -73,8 +74,8 @@ void Viewport::setRenderTarget(Texture* target) {
 	mRT = target;
 
 	setTargetSize(target ?
-		Vector((float)target->getWidth(), (float)target->getHeight()) :
-		Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
+				  Vector((float)target->getWidth(), (float)target->getHeight()) :
+				  Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
@@ -109,16 +110,18 @@ void Viewport::_updateFrustum() {
 	if (mFrustumDirty) {
 		//compute frustum projection
 		mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
-			(float)mVFOV,
-			mTargetSize.x / mTargetSize.y,
-			mZNear,
-			mZFar);
+								(float)mVFOV,
+								mTargetSize.x / mTargetSize.y,
+								mZNear,
+								mZFar);
 
-		if (getRenderTarget()) //flip the projections to flip the image
+		if (getRenderTarget()) { //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
+		}
 
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 4; ++i) {
 			mWorldFrustumVertices[i] = getWorldPosition(mLocalFrustumVertices[i]);
+		}
 
 		Vector worldPosition = getWorldPosition();
 
@@ -127,6 +130,7 @@ void Viewport::_updateFrustum() {
 
 			mWorldFrustumPlanes[i].setup(worldPosition, mWorldFrustumVertices[i2], mWorldFrustumVertices[i]);
 		}
+
 		//far plane
 		mWorldFrustumPlanes[4].setup(mWorldFrustumVertices[2], mWorldFrustumVertices[1], mWorldFrustumVertices[0]);
 
@@ -146,14 +150,15 @@ void Viewport::_updateTransforms() {
 		//compute ortho projection
 		{
 			mOrthoTransform = glm::ortho(-getHalfSize().x,
-										getHalfSize().x,
-										-getHalfSize().y,
-										getHalfSize().y,
-										0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
-										mZFar);
+										 getHalfSize().x,
+										 -getHalfSize().y,
+										 getHalfSize().y,
+										 0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
+										 mZFar);
 
-			if (getRenderTarget()) //flip the projections to flip the image
+			if (getRenderTarget()) { //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;
+			}
 		}
 
 		mFrustumDirty = true;
@@ -217,7 +222,7 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 
 	mLayerList.clear();
 
-	for (auto&& i : range(min.value, max.value)) {
+	for (auto && i : range(min.value, max.value)) {
 		mLayerList.push_back(i);
 	}
 }
@@ -229,7 +234,7 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const {
 	Vector worldPos = r.getObject().getWorldPosition();
 
 	//for each plane, check where the AABB is placed
-	for (auto&& i : range(4)) {
+	for (auto && i : range(4)) {
 		if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
 			return false;
 		}
@@ -256,6 +261,7 @@ void Viewport::onAction(float dt) {
 	_updateTransforms();
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
-	if (!mRT)
+	if (!mRT) {
 		Platform::singleton().getSoundManager().setListenerTransform(getWorldTransform());
+	}
 }

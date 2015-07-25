@@ -14,19 +14,19 @@
 #include "Game.h"
 
 #if defined (PLATFORM_WIN32)
-#include "win32/Win32Platform.h"
+	#include "win32/Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
-    #include "OSXPlatform.h"
+	#include "OSXPlatform.h"
 
 #elif defined( PLATFORM_IOS )
-    #include "IOSPlatform.h"
+	#include "IOSPlatform.h"
 
 #elif defined( PLATFORM_LINUX )
-    #include "linux/LinuxPlatform.h"
+	#include "linux/LinuxPlatform.h"
 
 #elif defined( PLATFORM_ANDROID )
-    #include "android/AndroidPlatform.h"
+	#include "android/AndroidPlatform.h"
 
 #endif
 
@@ -47,17 +47,17 @@ Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 
 #elif defined( PLATFORM_OSX )
 	singletonPtr = make_unique<OSXPlatform>(config);
-    
+
 #elif defined( PLATFORM_IOS )
 	singletonPtr = make_unique<IOSPlatform>(config);
-    
+
 #elif defined( PLATFORM_LINUX )
 	singletonPtr = make_unique<LinuxPlatform>(config);
-    
+
 #elif defined( PLATFORM_ANDROID )
-    android_main(nullptr); //HACK
+	android_main(nullptr); //HACK
 	singletonPtr = make_unique<AndroidPlatform>(config);
-	
+
 #endif
 	return *singletonPtr;
 }
@@ -96,9 +96,12 @@ Platform::~Platform() {
 int Platform::_findZipExtension(const std::string& path) {
 	for (const std::string& ext : mZipExtensions) {
 		int idx = path.find(ext);
-		if (idx != std::string::npos)
+
+		if (idx != std::string::npos) {
 			return idx + ext.size();
+		}
 	}
+
 	return std::string::npos;
 }
 
@@ -115,6 +118,7 @@ std::string Platform::_replaceFoldersWithExistingZips(const std::string& relPath
 
 		//for each possibile zip extension, search a zip named like that
 		bool found = false;
+
 		for (const std::string& ext : mZipExtensions) {
 			std::string partialFolder = res + currentFolder + ext;
 
@@ -128,8 +132,9 @@ std::string Platform::_replaceFoldersWithExistingZips(const std::string& relPath
 			}
 		}
 
-		if (!found)
+		if (!found) {
 			res += currentFolder;
+		}
 
 		prev = next;
 
@@ -140,23 +145,26 @@ std::string Platform::_replaceFoldersWithExistingZips(const std::string& relPath
 }
 
 const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path, std::string& zipPath, std::string& remainder) {
-	//find the innermost zip 
+	//find the innermost zip
 	int idx = _findZipExtension(path);
 
 	zipPath = path.substr(0, idx);
 
-	if (idx < path.size())
+	if (idx < path.size()) {
 		remainder = path.substr(idx + 1);
-	else
+	}
+	else {
 		remainder = String::Empty;
+	}
 
 	DEBUG_ASSERT( remainder.find( std::string(".zip") ) == std::string::npos, "Error: nested zips are not supported!" );
 
 	//has this zip been already loaded?
 	ZipFileMapping::const_iterator elem = mZipFileMaps.find(zipPath);
 
-	if (elem != mZipFileMaps.end())
+	if (elem != mZipFileMaps.end()) {
 		return elem->second;
+	}
 	else {
 		mZipFileMaps[zipPath] = ZipFoldersMap();
 		ZipFoldersMap& map = mZipFileMaps.find(zipPath)->second;
@@ -165,8 +173,9 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path,
 		std::vector<std::string> zip_files;
 		zip.getListAllFiles(".", zip_files);
 
-		for (int i = 0; i < zip_files.size(); ++i)
+		for (int i = 0; i < zip_files.size(); ++i) {
 			map[Path::getDirectory(zip_files[i])].push_back(zip_files[i]);
+		}
 
 
 		return map;
@@ -178,8 +187,8 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 	std::string absPath = getResourcesPath() + "/" + _replaceFoldersWithExistingZips(wpath);
 
 	int idx = _findZipExtension(absPath);
-	if (idx != std::string::npos) //there's at least one zip in the path
-	{
+
+	if (idx != std::string::npos) { //there's at least one zip in the path
 		//now, get the file/folder mapping in memory for the zip
 		//it is cached because parsing the header from disk each time is TOO SLOW
 		std::string zipInternalPath, zipPath;
@@ -187,11 +196,13 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 
 		//do we have a folder named "zipInternalPath"?
 		auto folderItr = map.find(zipInternalPath);
+
 		if (folderItr != map.end()) {
 			//add all the files with the needed extension
 			for (std::string filePath : folderItr->second) {
-				if (Path::getFileExtension(filePath) == type)
+				if (Path::getFileExtension(filePath) == type) {
 					out.push_back(zipPath + "/" + filePath);
+				}
 			}
 		}
 	}
@@ -210,6 +221,7 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 
 					out.push_back(path);
 				}
+
 				++itr;
 			}
 		}
@@ -223,11 +235,11 @@ std::unique_ptr<FileStream> Platform::getFile(const std::string& path) {
 
 	int internalZipPathIdx = _findZipExtension(path);
 
-	if (internalZipPathIdx == std::string::npos) //normal file
+	if (internalZipPathIdx == std::string::npos) { //normal file
 		return make_unique<File>(path);
+	}
 
-	else //open a file from a zip
-	{
+	else { //open a file from a zip
 		DEBUG_TODO;
 		//TODO use a ZipStream
 		return nullptr;
@@ -244,6 +256,7 @@ void Platform::run(Unique<Game> game) {
 
 std::vector<byte> Platform::loadFileContent(const std::string& path) {
 	auto file = getFile(path);
+
 	if (file->open(Stream::Access::Read)) {
 		auto size = file->getSize();
 
@@ -261,11 +274,14 @@ std::vector<byte> Platform::loadFileContent(const std::string& path) {
 std::string Platform::_getTablePath(const std::string& absPathOrName) {
 	DEBUG_ASSERT(absPathOrName.size() > 0, "Cannot get a path for an unnamed table");
 
-	if (Path::isAbsolute(absPathOrName))
+	if (Path::isAbsolute(absPathOrName)) {
 		return absPathOrName;
+	}
 	else
-	//look for this file inside the prefs
+		//look for this file inside the prefs
+	{
 		return getAppDataPath() + '/' + absPathOrName + ".ds";
+	}
 }
 
 Table Platform::load(const std::string& absPathOrName) {
@@ -295,26 +311,31 @@ void Platform::save(const Table& src, const std::string& absPathOrName) {
 }
 
 void Platform::_fireFocusLost() {
-	for (auto&& l : focusListeners)
+	for (auto && l : focusListeners) {
 		l->onApplicationFocusLost();
+	}
 }
 
 void Platform::_fireFocusGained() {
-	for (auto&& l : focusListeners)
+	for (auto && l : focusListeners) {
 		l->onApplicationFocusGained();
+	}
 }
 
 void Platform::_fireFreeze() {
-	for (auto&& l : focusListeners)
+	for (auto && l : focusListeners) {
 		l->onApplicationFreeze();
+	}
 }
 
 void Platform::_fireDefreeze() {
-	for (auto&& l : focusListeners)
+	for (auto && l : focusListeners) {
 		l->onApplicationDefreeze();
+	}
 }
 
 void Platform::_fireTermination() {
-	for (auto&& l : focusListeners)
+	for (auto && l : focusListeners) {
 		l->onApplicationTermination();
+	}
 }

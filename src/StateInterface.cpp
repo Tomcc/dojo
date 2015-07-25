@@ -16,8 +16,9 @@ void StateInterface::setState(int newState) {
 	nextState = newState;
 
 	//start immediately if we have no current state
-	if (!hasCurrentState())
+	if (!hasCurrentState()) {
 		_applyNextState();
+	}
 }
 
 void StateInterface::setStateImmediate(int newState) {
@@ -35,8 +36,9 @@ void StateInterface::setState(std::shared_ptr<StateInterface> child) {
 	nextStatePtr = child;
 
 	//start immediately if we have no current state
-	if (!hasCurrentState())
+	if (!hasCurrentState()) {
 		_applyNextState();
+	}
 }
 
 void StateInterface::begin() {
@@ -44,11 +46,13 @@ void StateInterface::begin() {
 }
 
 void StateInterface::loop(float dt) {
-	if (mTransitionCompleted) //do not call a loop if the current state is not "active" (ie-transition in progress)
+	if (mTransitionCompleted) { //do not call a loop if the current state is not "active" (ie-transition in progress)
 		_subStateLoop(dt);
+	}
 
-	if (hasNextState())
+	if (hasNextState()) {
 		_applyNextState();
+	}
 
 	onLoop(dt);
 }
@@ -60,24 +64,30 @@ void StateInterface::end() {
 }
 
 void StateInterface::_subStateBegin() {
-	if (currentStatePtr)
+	if (currentStatePtr) {
 		currentStatePtr->begin();
-	else
+	}
+	else {
 		onStateBegin();
+	}
 }
 
 void StateInterface::_subStateLoop(float dt) {
-	if (currentStatePtr)
+	if (currentStatePtr) {
 		currentStatePtr->loop(dt);
-	else
+	}
+	else {
 		onStateLoop(dt);
+	}
 }
 
 void StateInterface::_subStateEnd() {
-	if (currentStatePtr)
+	if (currentStatePtr) {
 		currentStatePtr->end();
-	else
+	}
+	else {
 		onStateEnd();
+	}
 }
 
 
@@ -129,11 +139,14 @@ void StateInterface::_applyNextState() {
 	mCanSetNextState = false; //disable state setting - it can't be done while changing a state!
 
 	//change state
-	if (nextStatePtr)
+	if (nextStatePtr) {
 		_nextState(nextStatePtr);
-	else if (nextState != -1)
+	}
+	else if (nextState != -1) {
 		_nextState(nextState);
+	}
 
-	if (mTransitionCompleted)
+	if (mTransitionCompleted) {
 		mCanSetNextState = true;
+	}
 }

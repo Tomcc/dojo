@@ -50,7 +50,7 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	//on IOS this is default and the command is not supported
 #ifndef USING_OPENGLES
 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-#endif 
+#endif
 
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	glEnable( GL_FRAMEBUFFER_SRGB );
@@ -77,7 +77,7 @@ Renderer::~Renderer() {
 RenderLayer& Renderer::getLayer(RenderLayer::ID layerID) {
 	//layers "always" exist
 	if (layerID >= layers.size()) {
-		layers.resize(layerID+1);
+		layers.resize(layerID + 1);
 	}
 
 	return layers[layerID];
@@ -88,7 +88,7 @@ bool Renderer::hasLayer(RenderLayer::ID layerID) {
 }
 
 void Renderer::addRenderable(Renderable& s) {
-	//get the needed layer	
+	//get the needed layer
 	RenderLayer& layer = getLayer(s.getLayer());
 
 	//append at the end
@@ -102,8 +102,9 @@ void Renderer::removeRenderable(Renderable& s) {
 }
 
 void Renderer::removeAllRenderables() {
-	for (auto& l : layers)
+	for (auto& l : layers) {
 		l.elements.clear();
+	}
 }
 
 void Renderer::removeViewport(const Viewport& v) {
@@ -147,7 +148,7 @@ void Renderer::_renderElement(Renderable& elem) {
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
 	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
-	
+
 #ifndef PUBLISH
 	frameVertexCount += elem.getMesh()->getVertexCount();
 	frameTriCount += elem.getMesh()->getPrimitiveCount();
@@ -164,12 +165,15 @@ void Renderer::_renderElement(Renderable& elem) {
 	glLoadMatrixf(glm::value_ptr(currentState.worldView));
 
 #ifdef DOJO_SHADERS_AVAILABLE
+
 	if (elem.getShader()) {
 		currentState.worldViewProjection = currentState.projection * currentState.worldView;
 		elem.getShader()->use(elem);
 	}
-	else
-	glUseProgram(0);
+	else {
+		glUseProgram(0);
+	}
+
 #endif
 
 	//TODO actually use shaders and materials
@@ -194,8 +198,9 @@ void Renderer::_renderElement(Renderable& elem) {
 	Mesh* m = elem.getMesh();
 	GLenum mode = glModeMap[(byte)m->getTriangleMode()];
 
-	if (!m->isIndexed())
+	if (!m->isIndexed()) {
 		glDrawArrays(mode, 0, m->getVertexCount());
+	}
 	else {
 		DEBUG_ASSERT(m->getIndexCount() > 0, "Rendering an indexed mesh with no indices");
 		glDrawElements(mode, m->getIndexCount(), m->getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
@@ -206,11 +211,14 @@ void Renderer::_renderElement(Renderable& elem) {
 #endif
 
 #ifdef DOJO_SHADERS_AVAILABLE
+
 	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
 	if (elem.getShader()) {
-		for (auto& attr : elem.getShader()->getAttributes())
-		glDisableVertexAttribArray(attr.second.location);
+		for (auto& attr : elem.getShader()->getAttributes()) {
+			glDisableVertexAttribArray(attr.second.location);
+		}
 	}
+
 #endif
 }
 
@@ -219,18 +227,21 @@ bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable&
 }
 
 void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
-	if (!layer.elements.size() || !layer.visible)
+	if (!layer.elements.size() || !layer.visible) {
 		return;
+	}
 
 #ifdef DOJO_WIREFRAME_AVAILABLE
 	glPolygonMode(GL_FRONT_AND_BACK, layer.wireframe ? GL_LINE : GL_FILL);
 #endif
 
 	//make state changes
-	if (layer.depthCheck)
+	if (layer.depthCheck) {
 		glEnable(GL_DEPTH_TEST);
-	else
+	}
+	else {
 		glDisable(GL_DEPTH_TEST);
+	}
 
 	//set projection state
 	currentState.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
@@ -239,8 +250,9 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	glLoadMatrixf(glm::value_ptr(currentState.projection));
 
 	//we don't want different layers to be depth-checked together?
-	if (layer.depthClear)
+	if (layer.depthClear) {
 		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 
 	for (auto& r : layer.elements) {
 		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
@@ -252,10 +264,12 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 void Renderer::_renderViewport(Viewport& viewport) {
 	Texture* rt = viewport.getRenderTarget();
 
-	if (rt)
-		rt->bindAsRenderTarget(true); //TODO guess if this viewport doesn't render 3D layers to save memory?
-	else
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (rt) {
+		rt->bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
+	}
+	else {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 
 	glFrontFace(rt ? GL_CW : GL_CCW); //invert vertex winding when inverting the view
 
@@ -280,16 +294,15 @@ void Renderer::_renderViewport(Viewport& viewport) {
 
 	frameStarted = true;
 
-	if (viewport.getVisibleLayers().empty()) //using the default layer ordering/visibility
-	{
+	if (viewport.getVisibleLayers().empty()) { //using the default layer ordering/visibility
 		for (auto& l : layers) {
 			_renderLayer(viewport, l);
 		}
 	}
-	else //use the custom layer ordering/visibility
-	{
-		for (auto& layer : viewport.getVisibleLayers())
+	else { //use the custom layer ordering/visibility
+		for (auto& layer : viewport.getVisibleLayers()) {
 			_renderLayer(viewport, getLayer(layer));
+		}
 	}
 }
 
@@ -313,8 +326,9 @@ void Renderer::renderFrame(float dt) {
 	_updateRenderables(layers, dt);
 
 	//render all the viewports
-	for (auto& viewport : viewportList)
+	for (auto& viewport : viewportList) {
 		_renderViewport(*viewport);
+	}
 
 	frameStarted = false;
 }

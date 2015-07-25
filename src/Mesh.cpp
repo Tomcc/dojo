@@ -7,8 +7,7 @@
 
 using namespace Dojo;
 
-const GLuint glFeatureStateMap[] =
-{
+const GLuint glFeatureStateMap[] = {
 	GL_VERTEX_ARRAY, //VF_POSITION2D,
 	GL_VERTEX_ARRAY, //VF_POSITION3D,
 	GL_COLOR_ARRAY, //VF_COLOR,
@@ -46,12 +45,16 @@ Mesh::Mesh(ResourceGroup* creator, const std::string& filePath) :
 
 Mesh::~Mesh() {
 #ifndef DOJO_DISABLE_VAOS
-	if (vertexArrayDesc)
+
+	if (vertexArrayDesc) {
 		glDeleteVertexArrays(1, &vertexArrayDesc);
+	}
+
 #endif
 
-	if (loaded)
+	if (loaded) {
 		onUnload();
+	}
 }
 
 void Mesh::destroyBuffers() {
@@ -120,8 +123,9 @@ void Mesh::setVertexFieldEnabled(VertexField f) {
 }
 
 void Mesh::setVertexFields(const std::initializer_list<VertexField>& fs) {
-	for (auto&& f : fs)
+	for (auto && f : fs) {
 		setVertexFieldEnabled(f);
+	}
 }
 
 
@@ -140,9 +144,11 @@ void Mesh::index(IndexType idx) {
 	case 1:
 		*((unsigned char*)(indices.data() + curSize)) = (unsigned char)idx;
 		break;
+
 	case 2:
 		*((unsigned short*)(indices.data() + curSize)) = (unsigned short)idx;
 		break;
+
 	case 4:
 		*((unsigned int*)(indices.data() + curSize)) = (unsigned int)idx;
 		break;
@@ -180,8 +186,9 @@ int Mesh::vertex(float x, float y) {
 int Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
-	if (isVertexFieldEnabled(VertexField::Position3D))
+	if (isVertexFieldEnabled(VertexField::Position3D)) {
 		*((Vector*)currentVertex) = v;
+	}
 	else {
 		float* ptr = (float*)currentVertex;
 
@@ -222,12 +229,23 @@ void Mesh::appendRawVertexData(void* data, IndexType count) {
 
 int Mesh::getPrimitiveCount() const {
 	auto elemCount = isIndexed() ? getIndexCount() : getVertexCount();
+
 	switch (triangleMode) {
-	case PrimitiveMode::TriangleList: return elemCount / 3;
-	case PrimitiveMode::TriangleStrip: return elemCount - 2;
-	case PrimitiveMode::LineStrip: return elemCount - 1;
-	case PrimitiveMode::LineList: return elemCount / 2;
-	case PrimitiveMode::PointList: return elemCount;
+	case PrimitiveMode::TriangleList:
+		return elemCount / 3;
+
+	case PrimitiveMode::TriangleStrip:
+		return elemCount - 2;
+
+	case PrimitiveMode::LineStrip:
+		return elemCount - 1;
+
+	case PrimitiveMode::LineList:
+		return elemCount / 2;
+
+	case PrimitiveMode::PointList:
+		return elemCount;
+
 	default:
 		FAIL("Invalid triangle mode");
 	}
@@ -270,19 +288,26 @@ void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& ou
 	outOffset = (void*)_offset(field);
 
 	switch (field) {
-	case VertexField::Position2D: outComponentsType = GL_FLOAT;
+	case VertexField::Position2D:
+		outComponentsType = GL_FLOAT;
 		outComponents = 2;
 		outNormalized = false;
 		break;
-	case VertexField::Position3D: outComponentsType = GL_FLOAT;
+
+	case VertexField::Position3D:
+		outComponentsType = GL_FLOAT;
 		outComponents = 3;
 		outNormalized = false;
 		break;
-	case VertexField::Color: outComponentsType = GL_UNSIGNED_BYTE;
+
+	case VertexField::Color:
+		outComponentsType = GL_UNSIGNED_BYTE;
 		outComponents = 4;
 		outNormalized = true;
 		break;
-	case VertexField::Normal: outComponentsType = GL_FLOAT;
+
+	case VertexField::Normal:
+		outComponentsType = GL_FLOAT;
 		outComponents = 3;
 		outNormalized = false;
 		break;
@@ -299,16 +324,17 @@ void Mesh::_bindAttribArrays(Shader* shader) {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 
 #ifdef DOJO_SHADERS_AVAILABLE
-	if (shader) //use custom attributes only
-	{
+
+	if (shader) { //use custom attributes only
 		GLint components;
 		GLenum componentsType;
 		bool normalized;
 		void* offset;
 
 		for (auto& attr : shader->getAttributes()) {
-			if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) //skip non-provided attributes
+			if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) { //skip non-provided attributes
 				continue;
+			}
 
 			_getVertexFieldData(attr.second.builtInAttribute, components, componentsType, normalized, offset);
 
@@ -332,35 +358,46 @@ void Mesh::_bindAttribArrays(Shader* shader) {
 			GLenum state = glFeatureStateMap[i];
 			VertexField ft = (VertexField)i;
 
-			if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //a texture
-			glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0)); //bind the correct texture (this has to be called *before* EnableClientState
+			if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) { //a texture
+				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0));    //bind the correct texture (this has to be called *before* EnableClientState
+			}
 
-			if (isVertexFieldEnabled(ft)) //bind data and client states
-			{
+			if (isVertexFieldEnabled(ft)) { //bind data and client states
 				glEnableClientState(state);
 				CHECK_GL_ERROR;
 
 				void* fieldOffset = (void*)_offset(ft);
 
 				switch (ft) {
-				case VertexField::Position3D: glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);
+				case VertexField::Position3D:
+					glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);
 					break;
-				case VertexField::Position2D: glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset);
+
+				case VertexField::Position2D:
+					glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset);
 					break;
-				case VertexField::Normal: glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);
+
+				case VertexField::Normal:
+					glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);
 					break;
-				case VertexField::Color: glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);
+
+				case VertexField::Color:
+					glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);
 					break;
+
 				default:
-					if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) //texture binding						
+					if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) { //texture binding
 						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset);
+					}
+
 					break;
 				};
 
 				CHECK_GL_ERROR;
 			}
-			else if (state != GL_VERTEX_ARRAY) //do not disable the position
+			else if (state != GL_VERTEX_ARRAY) { //do not disable the position
 				glDisableClientState(state);
+			}
 		}
 	}
 
@@ -376,8 +413,9 @@ bool Mesh::end() {
 	DEBUG_ASSERT(!isLoaded() || dynamic, "Can't update a static mesh");
 
 	//don't load empty meshes
-	if (getVertexCount() == 0)
+	if (getVertexCount() == 0) {
 		return false;
+	}
 
 	//create the VBO
 	if (!vertexHandle) {
@@ -391,8 +429,7 @@ bool Mesh::end() {
 	CHECK_GL_ERROR;
 
 	//create the IBO
-	if (isIndexed()) //we support unindexed meshes
-	{
+	if (isIndexed()) { //we support unindexed meshes
 		if (!indexHandle) {
 			glGenBuffers(1, &indexHandle);
 		}
@@ -406,8 +443,9 @@ bool Mesh::end() {
 #ifndef DOJO_DISABLE_VAOS //if we're using VAOs
 
 	//create the VAO
-	if( !vertexArrayDesc )
+	if ( !vertexArrayDesc ) {
 		glGenVertexArrays( 1, &vertexArrayDesc );
+	}
 
 	glBindVertexArray( vertexArrayDesc );
 
@@ -426,8 +464,9 @@ bool Mesh::end() {
 	center = bounds.getCenter();
 	dimensions = bounds.getSize();
 
-	if (!dynamic) //won't be updated ever again
+	if (!dynamic) { //won't be updated ever again
 		destroyBuffers();
+	}
 
 	return loaded;
 }
@@ -447,8 +486,9 @@ void Mesh::bind(Shader* shader) {
 bool Mesh::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "onLoad: Mesh is already loaded" );
 
-	if (!isReloadable())
+	if (!isReloadable()) {
 		return false;
+	}
 
 	//load binary mesh
 	auto buf = Platform::singleton().loadFileContent(filePath);
@@ -465,8 +505,9 @@ bool Mesh::onLoad() {
 
 	//fields
 	for (int i = 0; i < (int)VertexField::_Count; ++i) {
-		if (*ptr++)
+		if (*ptr++) {
 			setVertexFieldEnabled((VertexField)i);
+		}
 	}
 
 	//max and min
@@ -543,9 +584,11 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 	case 1:
 		((unsigned char*)indices.data())[idxidx] = (unsigned char)idx;
 		return;
+
 	case 2:
 		((unsigned short*)indices.data())[idxidx] = (unsigned short)idx;
 		return;
+
 	default:
 		((unsigned int*)indices.data())[idxidx] = (unsigned int)idx;
 		return;
@@ -559,8 +602,10 @@ Mesh::IndexType Mesh::getIndex(int idxidx) const {
 	switch (indexSize) {
 	case 1:
 		return indices[idxidx];
+
 	case 2:
 		return ((unsigned short*)indices.data())[idxidx];
+
 	default:
 		return ((unsigned int*)indices.data())[idxidx];
 	}
@@ -648,8 +693,10 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 	if (isIndexed()) {
 		for (int i = 0; i < getIndexCount(); ++i) {
 			auto idx = getIndex(i);
-			if (idx >= vertexStart && idx < vertexEnd)
+
+			if (idx >= vertexStart && idx < vertexEnd) {
 				c->index(idx - vertexStart);
+			}
 		}
 	}
 

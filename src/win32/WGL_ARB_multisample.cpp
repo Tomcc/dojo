@@ -36,8 +36,11 @@ namespace {
 		switch (msg) {
 		case WM_CREATE:
 			g_hDC = GetDC(hWnd);
-			if (!g_hDC)
+
+			if (!g_hDC) {
 				return -1;
+			}
+
 			break;
 
 		case WM_DESTROY:
@@ -69,14 +72,16 @@ namespace {
 		g_wcl.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
 		g_wcl.lpszClassName = L"DummyGLWindowClass";
 
-		if (!RegisterClassEx(&g_wcl))
+		if (!RegisterClassEx(&g_wcl)) {
 			return false;
+		}
 
 		g_hWnd = CreateWindow(g_wcl.lpszClassName, L"", WS_OVERLAPPEDWINDOW,
-			0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
+							  0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
 
-		if (!g_hWnd)
+		if (!g_hWnd) {
 			return false;
+		}
 
 		PIXELFORMATDESCRIPTOR pfd = {0};
 
@@ -90,14 +95,19 @@ namespace {
 
 		int pf = ChoosePixelFormat(g_hDC, &pfd);
 
-		if (!SetPixelFormat(g_hDC, pf, &pfd))
+		if (!SetPixelFormat(g_hDC, pf, &pfd)) {
 			return false;
-		g_hRC = wglCreateContext(g_hDC);
-		if (!g_hRC)
-			return false;
+		}
 
-		if (!wglMakeCurrent(g_hDC, g_hRC))
+		g_hRC = wglCreateContext(g_hDC);
+
+		if (!g_hRC) {
 			return false;
+		}
+
+		if (!wglMakeCurrent(g_hDC, g_hRC)) {
+			return false;
+		}
 
 		return true;
 	}
@@ -109,25 +119,23 @@ namespace {
 			const char* pszDescription;
 		};
 
-		CSAAPixelFormat csaaPixelFormats[] =
-			{
-				{4, 8, "8x CSAA"},
-				{4, 16, "16x CSAA"},
-				{8, 8, "8xQ (Quality) CSAA"},
-				{8, 16, "16xQ (Quality) CSAA"}
-			};
+		CSAAPixelFormat csaaPixelFormats[] = {
+			{4, 8, "8x CSAA"},
+			{4, 16, "16x CSAA"},
+			{8, 8, "8xQ (Quality) CSAA"},
+			{8, 16, "16xQ (Quality) CSAA"}
+		};
 
 		int totalCSAAFormats = static_cast<int>(sizeof(csaaPixelFormats) /
-			sizeof(CSAAPixelFormat));
+												sizeof(CSAAPixelFormat));
 
-		int attributes[] =
-			{
-				WGL_SAMPLE_BUFFERS_ARB, 1,
-				WGL_COLOR_SAMPLES_NV, 0,
-				WGL_COVERAGE_SAMPLES_NV, 0,
-				WGL_DOUBLE_BUFFER_ARB, 1,
-				0, 0
-			};
+		int attributes[] = {
+			WGL_SAMPLE_BUFFERS_ARB, 1,
+			WGL_COLOR_SAMPLES_NV, 0,
+			WGL_COVERAGE_SAMPLES_NV, 0,
+			WGL_DOUBLE_BUFFER_ARB, 1,
+			0, 0
+		};
 
 		int returnedPixelFormat = 0;
 		UINT numFormats = 0;
@@ -138,7 +146,7 @@ namespace {
 			attributes[5] = csaaPixelFormats[i].numCoverageSamples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											&returnedPixelFormat, &numFormats);
+											  &returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -146,24 +154,24 @@ namespace {
 			}
 		}
 
-		if (bStatus == FALSE)
+		if (bStatus == FALSE) {
 			g_szAAPixelFormat[0] = '\0';
+		}
 	}
 
 	void ChooseBestMSAAPixelFormat(int& pf) {
-		int attributes[] =
-			{
-				WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-				WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-				WGL_COLOR_BITS_ARB, 24,
-				WGL_ALPHA_BITS_ARB, 8,
-				WGL_DEPTH_BITS_ARB, 24,
-				WGL_STENCIL_BITS_ARB, 8,
-				WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-				WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-				WGL_SAMPLES_ARB, 0,
-				0, 0
-			};
+		int attributes[] = {
+			WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+			WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+			WGL_COLOR_BITS_ARB, 24,
+			WGL_ALPHA_BITS_ARB, 8,
+			WGL_DEPTH_BITS_ARB, 24,
+			WGL_STENCIL_BITS_ARB, 8,
+			WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+			WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
+			WGL_SAMPLES_ARB, 0,
+			0, 0
+		};
 
 		int returnedPixelFormat = 0;
 		UINT numFormats = 0;
@@ -173,7 +181,7 @@ namespace {
 			attributes[17] = samples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											&returnedPixelFormat, &numFormats);
+											  &returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -181,8 +189,9 @@ namespace {
 			}
 		}
 
-		if (bStatus == FALSE)
+		if (bStatus == FALSE) {
 			g_szAAPixelFormat[0] = '\0';
+		}
 	}
 
 	void ChooseCSAAPixelFormat(int& pf, int samples) {
@@ -192,44 +201,43 @@ namespace {
 			const char* pszDescription;
 		};
 
-		CSAAPixelFormat csaaPixelFormats[] =
-			{
-				{4, 16, "16x CSAA"},
-				{4, 8, "8x CSAA"}
-			};
+		CSAAPixelFormat csaaPixelFormats[] = {
+			{4, 16, "16x CSAA"},
+			{4, 8, "8x CSAA"}
+		};
 
-		CSAAPixelFormat csaaQualityPixelFormats[] =
-			{
-				{8, 16, "16xQ (Quality) CSAA"},
-				{8, 8, "8xQ (Quality) CSAA"}
-			};
+		CSAAPixelFormat csaaQualityPixelFormats[] = {
+			{8, 16, "16xQ (Quality) CSAA"},
+			{8, 8, "8xQ (Quality) CSAA"}
+		};
 
 		CSAAPixelFormat* pCSAAFormats = 0;
 
-		int attributes[] =
-			{
-				WGL_SAMPLE_BUFFERS_ARB, 1,
-				WGL_COLOR_SAMPLES_NV, 0,
-				WGL_COVERAGE_SAMPLES_NV, 0,
-				WGL_DOUBLE_BUFFER_ARB, 1,
-				0, 0
-			};
+		int attributes[] = {
+			WGL_SAMPLE_BUFFERS_ARB, 1,
+			WGL_COLOR_SAMPLES_NV, 0,
+			WGL_COVERAGE_SAMPLES_NV, 0,
+			WGL_DOUBLE_BUFFER_ARB, 1,
+			0, 0
+		};
 
 		int returnedPixelFormat = 0;
 		UINT numFormats = 0;
 		BOOL bStatus = FALSE;
 
-		if (samples >= 8)
+		if (samples >= 8) {
 			pCSAAFormats = csaaQualityPixelFormats;
-		else
+		}
+		else {
 			pCSAAFormats = csaaPixelFormats;
+		}
 
 		for (int i = 0; i < 2; ++i) {
 			attributes[3] = pCSAAFormats[i].numColorSamples;
 			attributes[5] = pCSAAFormats[i].numCoverageSamples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											&returnedPixelFormat, &numFormats);
+											  &returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -237,29 +245,29 @@ namespace {
 			}
 		}
 
-		if (bStatus == FALSE)
+		if (bStatus == FALSE) {
 			g_szAAPixelFormat[0] = '\0';
+		}
 	}
 
 	void ChooseMSAAPixelFormat(int& pf, int samples) {
-		int attributes[] =
-			{
-				WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-				WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-				WGL_COLOR_BITS_ARB, 24,
-				WGL_ALPHA_BITS_ARB, 8,
-				WGL_DEPTH_BITS_ARB, 24,
-				WGL_STENCIL_BITS_ARB, 8,
-				WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-				WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-				WGL_SAMPLES_ARB, samples,
-				0, 0
-			};
+		int attributes[] = {
+			WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+			WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+			WGL_COLOR_BITS_ARB, 24,
+			WGL_ALPHA_BITS_ARB, 8,
+			WGL_DEPTH_BITS_ARB, 24,
+			WGL_STENCIL_BITS_ARB, 8,
+			WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+			WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
+			WGL_SAMPLES_ARB, samples,
+			0, 0
+		};
 
 		int returnedPixelFormat = 0;
 		UINT numFormats = 0;
 		BOOL bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-												&returnedPixelFormat, &numFormats);
+											   &returnedPixelFormat, &numFormats);
 
 		if (bStatus == TRUE && numFormats) {
 			pf = returnedPixelFormat;
@@ -289,25 +297,28 @@ namespace {
 		static const char* pszGLExtensions = 0;
 		static const char* pszWGLExtensions = 0;
 
-		if (!pszGLExtensions)
-			pszGLExtensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+		if (!pszGLExtensions) {
+			pszGLExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+		}
 
 		if (!pszWGLExtensions) {
 			// WGL_ARB_extensions_string.
 
-			typedef const char*(WINAPI * PFNWGLGETEXTENSIONSSTRINGARBPROC)(HDC);
+			typedef const char* (WINAPI * PFNWGLGETEXTENSIONSSTRINGARBPROC)(HDC);
 
 			PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB =
 				reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(
 					wglGetProcAddress("wglGetExtensionsStringARB"));
 
-			if (wglGetExtensionsStringARB)
+			if (wglGetExtensionsStringARB) {
 				pszWGLExtensions = wglGetExtensionsStringARB(wglGetCurrentDC());
+			}
 		}
 
 		if (!strstr(pszGLExtensions, pszExtensionName)) {
-			if (!strstr(pszWGLExtensions, pszExtensionName))
+			if (!strstr(pszWGLExtensions, pszExtensionName)) {
 				return false;
+			}
 		}
 
 		return true;
@@ -323,7 +334,7 @@ void ChooseBestAntiAliasingPixelFormat(int& pf) {
 	}
 
 	if (ExtensionSupported("GL_NV_multisample_coverage") &&
-		ExtensionSupported("WGL_NV_multisample_coverage")) {
+			ExtensionSupported("WGL_NV_multisample_coverage")) {
 		ChooseBestCSAAPixelFormat(pf);
 	}
 	else {
@@ -342,7 +353,7 @@ void ChooseAntiAliasingPixelFormat(int& pf, int samples) {
 	}
 
 	if (ExtensionSupported("GL_NV_multisample_coverage") &&
-		ExtensionSupported("WGL_NV_multisample_coverage")) {
+			ExtensionSupported("WGL_NV_multisample_coverage")) {
 		ChooseCSAAPixelFormat(pf, samples);
 	}
 	else {
@@ -371,7 +382,7 @@ BOOL wglGetPixelFormatAttribivARB(HDC hdc, int iPixelFormat, int iLayerPlane, UI
 }
 
 BOOL wglGetPixelFormatAttribfvARB(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, FLOAT* pfValues) {
-	typedef BOOL (WINAPI * PFNWGLGETPIXELFORMATATTRIBFVARBPROC)(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, FLOAT* pfValues);
+	typedef BOOL (WINAPI * PFNWGLGETPIXELFORMATATTRIBFVARBPROC)(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, FLOAT * pfValues);
 	static PFNWGLGETPIXELFORMATATTRIBFVARBPROC pfnGetPixelFormatAttribfvARB = 0;
 
 	if (!pfnGetPixelFormatAttribfvARB) {
@@ -383,7 +394,7 @@ BOOL wglGetPixelFormatAttribfvARB(HDC hdc, int iPixelFormat, int iLayerPlane, UI
 }
 
 BOOL wglChoosePixelFormatARB(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats, UINT* nNumFormats) {
-	typedef BOOL (WINAPI * PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats, UINT* nNumFormats);
+	typedef BOOL (WINAPI * PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc, const int* piAttribIList, const FLOAT * pfAttribFList, UINT nMaxFormats, int* piFormats, UINT * nNumFormats);
 	static PFNWGLCHOOSEPIXELFORMATARBPROC pfnChoosePixelFormatARB = 0;
 
 	if (!pfnChoosePixelFormatARB) {

@@ -31,6 +31,7 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
 	int rowy, idx;
+
 	if (bitmap->pixel_mode != FT_PIXEL_MODE_MONO) {
 		for (uint32_t i = 0; i < bitmap->rows; ++i) {
 			rowy = (i + y) * destside;
@@ -44,6 +45,7 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 	}
 	else {
 		byte b;
+
 		for (uint32_t i = 0; i < bitmap->rows; ++i) {
 			rowy = (i + y) * destside;
 
@@ -153,8 +155,7 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 
 	advance = ((float)metrics->horiAdvance * FONT_PPI) / fw;
 
-	if (page->getFont()->generateEdge || page->getFont()->generateSurface) //tesselate ALL the things!
-	{
+	if (page->getFont()->generateEdge || page->getFont()->generateSurface) { //tesselate ALL the things!
 		Timer timer;
 
 		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
@@ -162,7 +163,7 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 
 		//find the normalizing scale and call the tesselation functions
 		gCurrentScale = (float)FONT_PPI / (float)fw;
-		FT_Outline_Funcs funcs = {_moveTo, _lineTo, _conicTo, _cubicTo, 0,0};
+		FT_Outline_Funcs funcs = {_moveTo, _lineTo, _conicTo, _cubicTo, 0, 0};
 
 		FT_Outline_Decompose(outline, &funcs, this);
 
@@ -170,8 +171,10 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 		if (mTesselation->segments.size() && page->getFont()->generateSurface) { //HACK
 
 			int options = Tessellation::PREPARE_EXTRUSION | Tessellation::GUESS_HOLES;
-			if (!page->getFont()->generateEdge)
+
+			if (!page->getFont()->generateEdge) {
 				options |= Tessellation::CLEAR_INPUTS;
+			}
 
 			mTesselation->tessellate(options); //keep edges if they are needed too
 		}
@@ -206,9 +209,11 @@ bool Font::Page::onLoad() {
 	byte* buf = (byte*)malloc(bufsize);
 
 	unsigned int* ptr = (unsigned int*)buf;
+
 	//set alpha to 0 and colours to white
-	for (int i = sxp2 * syp2 - 1; i >= 0; --i)
+	for (int i = sxp2 * syp2 - 1; i >= 0; --i) {
 		*ptr++ = 0x00ffffff;
+	}
 
 	//render into buffer
 	FT_Render_Mode renderMode = (font->isAntialiased()) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
@@ -246,12 +251,13 @@ bool Font::Page::onLoad() {
 			bitmap = &(slot->bitmap);
 
 			//blit the bitmap if it was rendered
-			if (bitmap->buffer)
+			if (bitmap->buffer) {
 				_blit(buf, bitmap, x + font->glowRadius, y + font->glowRadius, sxp2);
+			}
 		}
 	}
 
-	//glow?	
+	//glow?
 	if (font->glowRadius > 0) {
 		unsigned int glowCol = font->glowColor.toRGBA();
 		byte* glowColChannel = (byte*)&glowCol;
@@ -284,8 +290,9 @@ bool Font::Page::onLoad() {
 
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
 
-			for (int channel = 0; channel < 4; ++channel)
+			for (int channel = 0; channel < 4; ++channel) {
 				orig[channel] = (byte)(orig[channel] * s + glow[channel] * (1.f - s));
+			}
 		}
 
 		free(glowBuf);
@@ -350,13 +357,16 @@ bool Font::onLoad() {
 	face = Platform::singleton().getFontSystem().getFace(fontFile);
 
 	auto& preload = t.getTable("preloadedPages");
-	for (int i = 0; i < preload.getArrayLength(); ++i)
+
+	for (int i = 0; i < preload.getArrayLength(); ++i) {
 		getPage(preload.getInt(i));
+	}
 
 	//load existing pages that were trimmed during a previous unload
 	for (auto& pair : pages) {
-		if (!pair.second->isLoaded())
+		if (!pair.second->isLoaded()) {
 			pair.second->onLoad();
+		}
 	}
 
 	return loaded = true;
@@ -364,12 +374,14 @@ bool Font::onLoad() {
 
 void Font::onUnload(bool soft) {
 	for (auto& pair : pages) {
-		if (pair.second->isLoaded())
+		if (pair.second->isLoaded()) {
 			pair.second->onUnload();
+		}
 	}
 
-	if (!soft)
+	if (!soft) {
 		pages.clear();
+	}
 
 	loaded = false;
 }
@@ -408,8 +420,9 @@ int Font::getPixelLength(const std::string& str) {
 		Character* chr = getCharacter(str[i]);
 		l += (int)(chr->advance * chr->pixelWidth);
 
-		if (lastChar && isKerningEnabled())
+		if (lastChar && isKerningEnabled()) {
 			l += (int)(getKerning(chr, lastChar) * fontWidth);
+		}
 
 		lastChar = chr;
 	}
@@ -427,8 +440,9 @@ Font::Page& Font::getPage(int index) {
 		p.onLoad();
 		return p;
 	}
-	else
+	else {
 		return *itr->second;
+	}
 }
 
 int Font::getCharIndex(Character* c) {
@@ -444,6 +458,7 @@ Texture& Font::getTexture(uint32_t c) {
 }
 
 void Font::preloadPages(const char pages[], int n) {
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < n; ++i) {
 		getPage(pages[i]);
+	}
 }

@@ -13,6 +13,7 @@ Table Table::loadFromFile(const std::string& path) {
 	auto file = Platform::singleton().getFile(path);
 
 	Table dest;
+
 	if (file->open(Stream::Access::Read)) {
 		//read the contents directly in a string
 		std::string buf;
@@ -31,8 +32,9 @@ bool Table::onLoad() {
 	//loads itself from file
 	DEBUG_ASSERT( !isLoaded(), "The Table is already loaded" );
 
-	if (!isReloadable())
+	if (!isReloadable()) {
 		return false;
+	}
 
 	*this = Platform::singleton().load(filePath);
 
@@ -45,26 +47,30 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 	Data* data;
 	Vector* v;
 
-	//serialize to the Table Format	
+	//serialize to the Table Format
 	EntryMap::const_iterator itr = map.begin();
 
 	for (; itr != map.end(); ++itr) {
 		auto& e = *itr->second;
 
-		if (indent.size())
+		if (indent.size()) {
 			buf += indent;
+		}
 
 		//write name and equal only if not anonymous and if not managed later
-		if (itr->first[0] != '_')
+		if (itr->first[0] != '_') {
 			buf += itr->first + " = ";
+		}
 
 		switch (e.type) {
 		case FieldType::Float:
 			buf += std::to_string(*((float*)e.getRawValue()));
 			break;
+
 		case FieldType::String:
 			buf += '\"' + *((std::string*)e.getRawValue()) + '\"';
 			break;
+
 		case FieldType::Vector:
 			v = (Vector*)e.getRawValue();
 			buf += '(';
@@ -76,6 +82,7 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 			buf += ')';
 
 			break;
+
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
 			buf += '#' + std::to_string(data->buf.size()) + ' ';
@@ -83,6 +90,7 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 			buf.append((const char*)data->buf.data(), data->buf.size());
 
 			break;
+
 		case FieldType::ChildTable:
 			buf += std::string("{\n");
 			((Table*)e.getRawValue())->serialize(buf, indent + '\t');
@@ -90,7 +98,8 @@ void Table::serialize(std::string& buf, const std::string& indent) const {
 			buf += indent + '}';
 
 			break;
-		default: 
+
+		default:
 			FAIL("Unsupported type");
 		}
 
@@ -156,37 +165,45 @@ void Table::deserialize(StringReader& buf) {
 	//feed one char at a time and do things
 	uint32_t c, c2;
 
-	while( state != ParseState::End && state != ParseState::Error) {
+	while ( state != ParseState::End && state != ParseState::Error) {
 		auto idx = buf.getCurrentIndex();
 		c = buf.get();
 
 		switch (state) {
-		case ParseState::Table: //wait for either a name, or an anon value	
-			if (c == '}' || c == 0)
+		case ParseState::Table: //wait for either a name, or an anon value
+			if (c == '}' || c == 0) {
 				state = ParseState::End;
+			}
 			else if (isNameStarter(c)) {
 				state = ParseState::Name;
 			}
 
-			else if (c == '"')
+			else if (c == '"') {
 				target = ParseTarget::String;
-			else if (c == '(')
+			}
+			else if (c == '(') {
 				target = ParseTarget::Vector;
-			else if (c == '#')
+			}
+			else if (c == '#') {
 				target = ParseTarget::RawData;
-			else if (c == '{')
+			}
+			else if (c == '{') {
 				target = ParseTarget::Table;
-			else if (isNumber(c))
+			}
+			else if (isNumber(c)) {
 				target = ParseTarget::Float;
+			}
 
 			if (state == ParseState::Name) {
 				nameStart = idx;
 			}
 
 			break;
+
 		case ParseState::Name:
-			if (c == '=')
+			if (c == '=') {
 				state = ParseState::Equal;
+			}
 			else if (!isName(c)) {
 				state = ParseState::NameEnd;
 				curName = buf.getString().substr(nameStart, idx - nameStart);
@@ -195,33 +212,42 @@ void Table::deserialize(StringReader& buf) {
 			break;
 
 		case ParseState::NameEnd: //wait for an equal; drop whitespace and fall back if other is found
-			if (c == '=')
+			if (c == '=') {
 				state = ParseState::Equal;
-			else if (!isWhiteSpace(c)) //it is something else - store this as an implicit bool and reset the parser
+			}
+			else if (!isWhiteSpace(c)) { //it is something else - store this as an implicit bool and reset the parser
 				target = ParseTarget::ImplicitTrue;
+			}
 
 			break;
 
 		case ParseState::Equal: //wait for value start
-			if (c == '"')
+			if (c == '"') {
 				target = ParseTarget::String;
-			else if (c == '(')
+			}
+			else if (c == '(') {
 				target = ParseTarget::Vector;
-			else if (c == '#')
+			}
+			else if (c == '#') {
 				target = ParseTarget::RawData;
-			else if (c == '{')
+			}
+			else if (c == '{') {
 				target = ParseTarget::Table;
-			else if (isNumber(c))
+			}
+			else if (isNumber(c)) {
 				target = ParseTarget::Float;
+			}
 
 			break;
-		default: 
+
+		default:
 			FAIL("Invalid State");
 		}
 
 		switch (target) {
 		case ParseTarget::Undefined:
 			break; //skip, allowed
+
 		case ParseTarget::ImplicitTrue:
 			buf.back();
 			set(curName, (int)1);
@@ -241,8 +267,7 @@ void Table::deserialize(StringReader& buf) {
 
 				set(curName, col);
 			}
-			else if (c == '-' && c2 == '-') //or, well, a comment! (LIKE A HACK)
-			{
+			else if (c == '-' && c2 == '-') { //or, well, a comment! (LIKE A HACK)
 				//just skip until newline
 				do {
 					c = buf.get();
@@ -259,13 +284,18 @@ void Table::deserialize(StringReader& buf) {
 			}
 
 			break;
+
 		case ParseTarget::String:
 
 			str.clear();
+
 			for (;;) {
 				c = buf.get();
-				if (c == '"')
+
+				if (c == '"') {
 					break;
+				}
+
 				String::append(str, c);
 			}
 
@@ -296,12 +326,11 @@ void Table::deserialize(StringReader& buf) {
 
 			break;
 
-		default: 
+		default:
 			FAIL("Invalid case");
 		}
 
-		if (target != ParseTarget::Undefined) //read something
-		{
+		if (target != ParseTarget::Undefined) { //read something
 			state = ParseState::Table;
 			target = ParseTarget::Undefined;
 			curName.clear();
@@ -323,8 +352,9 @@ Table::Table(Table&& t) :
 Table::Table(const Table& t) :
 	unnamedMembers(t.unnamedMembers) {
 	//deep copy
-	for (auto& pair : t.map)
+	for (auto& pair : t.map) {
 		map[pair.first] = pair.second->clone();
+	}
 }
 
 Table::Table(ResourceGroup* creator, const std::string& path) :
@@ -353,6 +383,7 @@ void Table::onUnload(bool soft /*= false */) {
 
 Table* Table::getParentTable(const std::string& key, std::string& realKey) const {
 	size_t dotIdx = 0;
+
 	for (; dotIdx < key.size() && key[dotIdx] != '.'; ++dotIdx);
 
 	if (dotIdx == key.size()) {
@@ -370,10 +401,12 @@ Table* Table::getParentTable(const std::string& key, std::string& realKey) const
 Table& Table::createTable(const std::string& key /*= std::string::EMPTY */) {
 	std::string name;
 
-	if (key.size() == 0)
+	if (key.size() == 0) {
 		name = autoname();
-	else
+	}
+	else {
 		name = key;
+	}
 
 	set(name, Table());
 
@@ -391,19 +424,22 @@ void Table::inherit(Table* t) {
 
 	//for each map member of the other map
 	EntryMap::iterator itr = t->map.begin(),
-		end = t->map.end(),
-		existing;
+					   end = t->map.end(),
+					   existing;
+
 	for (; itr != end; ++itr) {
 		existing = map.find(itr->first); //look for a local element with the same name
 
 		//element exists - do nothing except if it's a table
 		if (existing != map.end()) {
 			//if it's a table in both tables, inherit
-			if (itr->second->type == FieldType::ChildTable && existing->second->type == FieldType::ChildTable)
+			if (itr->second->type == FieldType::ChildTable && existing->second->type == FieldType::ChildTable) {
 				((Table*)existing->second->getRawValue())->inherit((Table*)itr->second->getRawValue());
+			}
 		}
-		else //just clone
+		else { //just clone
 			map[itr->first] = itr->second->clone();
+		}
 	}
 }
 
@@ -416,8 +452,9 @@ bool Table::exists(const std::string& key) const {
 bool Table::existsAs(const std::string& key, FieldType t) const {
 	EntryMap::const_iterator itr = map.find(key);
 
-	if (itr != map.end())
+	if (itr != map.end()) {
 		return itr->second->type == t;
+	}
 
 	return false;
 }
@@ -426,8 +463,9 @@ Table::Entry* Table::get(const std::string& key) const {
 	std::string actualKey;
 	const Table* container = getParentTable(key, actualKey);
 
-	if (!container)
+	if (!container) {
 		return nullptr;
+	}
 
 	auto elem = container->map.find(actualKey);
 	return elem != container->map.end() ? elem->second.get() : nullptr;
@@ -460,7 +498,7 @@ std::string Table::toString() const {
 }
 
 void Table::debugPrint() const {
-#ifdef _DEBUG 
+#ifdef _DEBUG
 	DEBUG_MESSAGE(toString());
 #endif
 }

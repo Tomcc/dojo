@@ -41,8 +41,9 @@ Texture::Texture(ResourceGroup* creator, const std::string& path) :
 Texture::~Texture() {
 	OBB.reset();
 
-	if (loaded)
+	if (loaded) {
 		onUnload();
+	}
 }
 
 void Texture::bind(GLuint index) {
@@ -64,8 +65,7 @@ void Texture::bind(GLuint index) {
 void Texture::bindAsRenderTarget(bool depthBuffer) {
 	DEBUG_ASSERT(!mMipmapsEnabled, "Can't use a texture with mipmaps as a rendertarget");
 
-	if (!mFBO) //create a new RT on the fly at the first request
-	{
+	if (!mFBO) { //create a new RT on the fly at the first request
 		bind(0);
 
 		glGenFramebuffers(1, &mFBO);
@@ -90,8 +90,9 @@ void Texture::bindAsRenderTarget(bool depthBuffer) {
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete" );
 	}
-	else
-	glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+	else {
+		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+	}
 }
 
 void Texture::enableAnisotropicFiltering(float level) {
@@ -107,14 +108,14 @@ void Texture::disableAnisotropicFiltering() {
 void Texture::enableBilinearFiltering() {
 	bind(0);
 
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 }
 
 void Texture::disableBilinearFiltering() {
 	bind(0);
 
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 void Texture::enableTiling() {
@@ -136,7 +137,7 @@ void Texture::enableMipmaps() {
 
 	if (glhandle) {
 		bind(0);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	}
 }
 
@@ -145,7 +146,7 @@ void Texture::disableMipmaps() {
 
 	if (glhandle) {
 		bind(0);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
 }
 
@@ -178,10 +179,12 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 
 	bind(0);
 
-	if (mMipmapsEnabled)
+	if (mMipmapsEnabled) {
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, true);
-	else
+	}
+	else {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
 
 
 	auto POTwidth = Math::nextPowerOfTwo(width);
@@ -213,14 +216,14 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 		//create an empty GPU mem space
 		glTexImage2D(
 			GL_TEXTURE_2D,
-						0,
-						internalFormat,
-						internalWidth,
-						internalHeight,
-						0,
-						internalFormat,
-						format.elementType,
-						dummyData.c_str());
+			0,
+			internalFormat,
+			internalWidth,
+			internalHeight,
+			0,
+			internalFormat,
+			format.elementType,
+			dummyData.c_str());
 	}
 
 	UVSize.x = (float)width / (float)internalWidth;
@@ -256,34 +259,45 @@ bool Texture::loadFromFile(const std::string& path) {
 
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
 
-	if (creator && creator->disableBilinear)
+	if (creator && creator->disableBilinear) {
 		disableBilinearFiltering();
-	else
+	}
+	else {
 		enableBilinearFiltering();
+	}
 
 	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
 
 	//guess if this is a texture or a sprite
-	if (!isSurface || (creator && creator->disableMipmaps))
+	if (!isSurface || (creator && creator->disableMipmaps)) {
 		disableMipmaps();
-	else
+	}
+	else {
 		enableMipmaps();
+	}
 
-	if (!isSurface || (creator && creator->disableTiling))
+	if (!isSurface || (creator && creator->disableTiling)) {
 		disableTiling();
-	else
+	}
+	else {
 		enableTiling();
+	}
 
-	if (isSurface) //TODO query anisotropic level
-	{
+	if (isSurface) { //TODO query anisotropic level
 		GLfloat aniso;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
 		enableAnisotropicFiltering(aniso / 2);
 	}
 
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
-	if( format == GL_RGBA )		destFormat = GL_SRGB8_ALPHA8;
-	else if( format == GL_RGB )	destFormat = GL_SRGB8;
+
+	if ( format == GL_RGBA ) {
+		destFormat = GL_SRGB8_ALPHA8;
+	}
+	else if ( format == GL_RGB )	{
+		destFormat = GL_SRGB8;
+	}
+
 #endif
 
 	loadFromMemory(imageData.data(), width, height, format, PixelFormat::R8G8B8A8);
@@ -294,8 +308,9 @@ bool Texture::loadFromFile(const std::string& path) {
 bool Texture::_setupAtlas() {
 	DEBUG_ASSERT( parentAtlas, "Tried to load a Texture as an atlas tile but the parent atlas is null" );
 
-	if (!parentAtlas->isLoaded())
+	if (!parentAtlas->isLoaded()) {
 		return (loaded = false);
+	}
 
 	internalWidth = parentAtlas->getInternalWidth();
 	internalHeight = parentAtlas->getInternalHeight();
@@ -339,12 +354,15 @@ bool Texture::onLoad() {
 	//invalidate the OBB
 	OBB.reset();
 
-	if (isReloadable())
+	if (isReloadable()) {
 		return loadFromFile(filePath);
-	else if (parentAtlas)
+	}
+	else if (parentAtlas) {
 		return _setupAtlas();
-	else
+	}
+	else {
 		return false;
+	}
 }
 
 void Texture::onUnload(bool soft) {
@@ -355,8 +373,7 @@ void Texture::onUnload(bool soft) {
 			OBB->onUnload();
 		}
 
-		if (!parentAtlas) //don't unload parent texture!
-		{
+		if (!parentAtlas) { //don't unload parent texture!
 			DEBUG_ASSERT( glhandle, "Tried to unload a texture but the texture handle was invalid" );
 			glDeleteTextures(1, &glhandle);
 
@@ -364,8 +381,7 @@ void Texture::onUnload(bool soft) {
 			internalFormat = GL_NONE;
 			glhandle = 0;
 
-			if (mFBO) //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
-			{
+			if (mFBO) { //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
 				glDeleteFramebuffers(1, &mFBO);
 				mFBO = GL_NONE;
 			}

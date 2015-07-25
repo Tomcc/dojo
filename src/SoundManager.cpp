@@ -33,8 +33,9 @@ SoundManager::SoundManager() :
 	// Initialization
 	device = alcOpenDevice(nullptr); // select the "preferred device"
 
-	if (!device)
-		return; //running without audio :(
+	if (!device) {
+		return;    //running without audio :(
+	}
 
 	context = alcCreateContext(device, nullptr);
 
@@ -52,10 +53,12 @@ SoundManager::SoundManager() :
 		ALuint src;
 		alGenSources(1, &src);
 
-		if (alGetError() == AL_NO_ERROR)
+		if (alGetError() == AL_NO_ERROR) {
 			idleSoundPool.emplace_back(make_unique<SoundSource>(src));
-		else
+		}
+		else {
 			break;
+		}
 	}
 
 	//ensure at least MIN sources have been built
@@ -73,10 +76,11 @@ SoundManager::SoundManager() :
 
 
 void SoundManager::clear() {
-	for (auto&& busy : busySoundPool) {
+	for (auto && busy : busySoundPool) {
 		busy->stop();
 		idleSoundPool.emplace_back(std::move(busy));
 	}
+
 	busySoundPool.clear();
 
 	musicTrack = nullptr;
@@ -85,8 +89,9 @@ void SoundManager::clear() {
 
 
 SoundManager::~SoundManager() {
-	if (device)
+	if (device) {
 		alcCloseDevice(device);
+	}
 }
 
 SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
@@ -96,8 +101,10 @@ SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
 	if (idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX) {
 		ALuint src;
 		alGenSources(1, & src);
-		if (alGetError() == AL_NO_ERROR)
+
+		if (alGetError() == AL_NO_ERROR) {
 			idleSoundPool.emplace_back(make_unique<SoundSource>(src));
+		}
 	}
 
 	//is there a source now?
@@ -108,6 +115,7 @@ SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
 		busySoundPool.back()->_setup(set->getBuffer(i));
 		return *busySoundPool.back();
 	}
+
 	//failed, return mute source
 	return *fakeSource;
 }
@@ -118,8 +126,9 @@ void SoundManager::playMusic(SoundSet* next, float trackFadeTime /* = 0 */, cons
 	DEBUG_ASSERT( next, "nullptr music source passed" );
 
 	//override music activation if the system sound is in use
-	if (Platform::singleton().isSystemSoundInUse())
+	if (Platform::singleton().isSystemSoundInUse()) {
 		return;
+	}
 
 	nextMusicTrack = &getSoundSource(next);
 
@@ -132,17 +141,18 @@ void SoundManager::playMusic(SoundSet* next, float trackFadeTime /* = 0 */, cons
 void SoundManager::setMasterVolume(float volume) {
 	DEBUG_ASSERT( volume >= 0, "Volumes cannot be negative" );
 
-	if (std::abs(masterVolume - volume) > 0.01f || volume == 0) //avoid doing this too often
-	{
+	if (std::abs(masterVolume - volume) > 0.01f || volume == 0) { //avoid doing this too often
 		masterVolume = volume;
 
 		//update volumes (masterVolume is used inside setVolume!)
-		if (!nextMusicTrack && musicTrack)
+		if (!nextMusicTrack && musicTrack) {
 			musicTrack->setVolume(musicVolume);
+		}
 
 		//update all the existing sounds
-		for (auto&& s : busySoundPool)
+		for (auto && s : busySoundPool) {
 			s->setVolume(s->getVolume());
+		}
 	}
 }
 
@@ -150,6 +160,7 @@ void SoundManager::update(float dt) {
 	for (size_t i = 0; i < busySoundPool.size(); ++i) {
 		auto& current = busySoundPool[i];
 		current->_update(dt);
+
 		if (current->_isWaitingForDelete()) {
 			current->_reset();
 
@@ -161,14 +172,14 @@ void SoundManager::update(float dt) {
 	}
 
 	//fai il fade
-	if (fadeState == FS_FADE_OUT) //abbassa il volume della track corrente
-	{
-		if (musicTrack && currentFadeTime < halfFadeTime)
+	if (fadeState == FS_FADE_OUT) { //abbassa il volume della track corrente
+		if (musicTrack && currentFadeTime < halfFadeTime) {
 			musicTrack->setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
-		else //scambia le tracks e fai partire la prossima
-		{
-			if (musicTrack)
+		}
+		else { //scambia le tracks e fai partire la prossima
+			if (musicTrack) {
 				musicTrack->stop();
+			}
 
 			musicTrack = nextMusicTrack;
 
@@ -184,19 +195,19 @@ void SoundManager::update(float dt) {
 				fadeState = FS_FADE_IN;
 				currentFadeTime = 0;
 			}
-			else
+			else {
 				fadeState = FS_NONE;
+			}
 		}
 
 		currentFadeTime += dt;
 	}
-	else if (fadeState == FS_FADE_IN) //alza il volume della track successiva
-	{
-		if (currentFadeTime < halfFadeTime)
+	else if (fadeState == FS_FADE_IN) { //alza il volume della track successiva
+		if (currentFadeTime < halfFadeTime) {
 			musicTrack->setVolume(musicVolume * (currentFadeTime / halfFadeTime));
+		}
 
-		else //finisci
-		{
+		else { //finisci
 			currentFadeTime = 0;
 
 			//force volume at max
@@ -211,8 +222,9 @@ void SoundManager::update(float dt) {
 
 void SoundManager::resumeMusic() {
 	//resume music, but only if the user didn't enable itunes meanwhile!
-	if (musicTrack && !Platform::singleton().isSystemSoundInUse())
+	if (musicTrack && !Platform::singleton().isSystemSoundInUse()) {
 		musicTrack->play();
+	}
 }
 
 void SoundManager::setListenerTransform(const Matrix& worldTransform) {
@@ -281,27 +293,31 @@ void SoundManager::setMusicVolume(float volume) {
 
 	musicVolume = volume;
 
-	if (!nextMusicTrack && musicTrack)
+	if (!nextMusicTrack && musicTrack) {
 		musicTrack->setVolume(musicVolume);
+	}
 }
 
 void SoundManager::pauseAll() {
-	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack)
+	for (auto && s : busySoundPool) {
+		if (s.get() != musicTrack) {
 			s->pause();
+		}
 	}
 }
 
 void SoundManager::resumeAll() {
-	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack)
+	for (auto && s : busySoundPool) {
+		if (s.get() != musicTrack) {
 			s->play();
+		}
 	}
 }
 
 void SoundManager::stopAllSounds() {
-	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack)
+	for (auto && s : busySoundPool) {
+		if (s.get() != musicTrack) {
 			s->stop();
+		}
 	}
 }

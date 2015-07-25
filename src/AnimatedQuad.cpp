@@ -30,11 +30,13 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 	if (frames) {
 		totalTime = timePerFrame * frames->getFrameNumber();
 
-		if (frames->getFrameNumber() > 0)
+		if (frames->getFrameNumber() > 0) {
 			currentFrame = frames->getFrame(0);
+		}
 	}
-	else
+	else {
 		totalTime = 1;
+	}
 }
 
 Dojo::AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
@@ -61,8 +63,9 @@ Dojo::AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const st
 		pixelScale.x = pixelScale.y = 1;
 		screenSize.x = screenSize.y = 1;
 
-		if (animation)
+		if (animation) {
 			animation->setup(nullptr, 0);
+		}
 
 		setTexture(nullptr);
 		mesh = parent.getGameState().getMesh("texturedQuad");
@@ -70,8 +73,9 @@ Dojo::AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const st
 		DEBUG_ASSERT(mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)");
 	}
 
-	if (immediateAnim.size())
+	if (immediateAnim.size()) {
 		immediateAnimation(immediateAnim, timePerFrame);
+	}
 }
 
 void AnimatedQuad::immediateAnimation(const std::string& name, float timePerFrame) {
@@ -178,11 +182,13 @@ void AnimatedQuad::Animation::setFrame(int i) {
 void AnimatedQuad::Animation::setAnimationTime(float t) {
 	DEBUG_ASSERT(frames, "Animation has no frames");
 
-	if (timePerFrame == 0)
+	if (timePerFrame == 0) {
 		return;
+	}
 
-	if (frames->getFrameNumber() <= 1) //can't set time on a void or one-frame animation
+	if (frames->getFrameNumber() <= 1) { //can't set time on a void or one-frame animation
 		return;
+	}
 
 	animationTime = t;
 
@@ -192,8 +198,9 @@ void AnimatedQuad::Animation::setAnimationTime(float t) {
 		animationTime -= totalTime;
 	}
 
-	while (animationTime < 0)
+	while (animationTime < 0) {
 		animationTime += totalTime;
+	}
 
 	currentFrame = frames->getFrame((int)(animationTime / timePerFrame));
 }

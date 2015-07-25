@@ -12,12 +12,15 @@ ShaderProgram::ShaderProgram(ResourceGroup* creator, const std::string& filePath
 	//guess the type from the extension
 	std::string ext = Path::getFileExtension(filePath);
 
-	if (ext == std::string("vs"))
+	if (ext == std::string("vs")) {
 		mType = ShaderProgramType::VertexShader;
-	else if (ext == std::string("ps"))
+	}
+	else if (ext == std::string("ps")) {
 		mType = ShaderProgramType::FragmentShader;
-	else
+	}
+	else {
 		FAIL( "Unsupported shader type" );
+	}
 }
 
 ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
@@ -53,6 +56,7 @@ bool ShaderProgram::_load() {
 		GLsizei slen = 0;
 
 		glGetShaderiv(mGLShader, GL_INFO_LOG_LENGTH, &blen);
+
 		if (blen > 1) {
 			GLchar* compiler_log = (GLchar*)malloc(blen);
 			glGetShaderInfoLog(mGLShader, blen, &slen, compiler_log);
@@ -77,14 +81,12 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 
 #else
 
-bool ShaderProgram::_load()
-{
+bool ShaderProgram::_load() {
 	FAIL( "Shaders not supported" );
 	return false;
 }
 
-void ShaderProgram::onUnload( bool soft /* = false */ )
-{
+void ShaderProgram::onUnload( bool soft /* = false */ ) {
 	FAIL( "Shaders not supported" );
 }
 #endif
@@ -92,8 +94,7 @@ void ShaderProgram::onUnload( bool soft /* = false */ )
 bool ShaderProgram::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "Cannot reload an already loaded program" );
 
-	if (getFilePath().size()) //try loading from file
-	{
+	if (getFilePath().size()) { //try loading from file
 		auto file = Platform::singleton().getFile(filePath);
 
 		if (file->open(Stream::Access::Read)) {
@@ -105,8 +106,7 @@ bool ShaderProgram::onLoad() {
 			loaded = _load(); //load from the temp buffer
 		}
 	}
-	else //load from the in-memory string
-	{
+	else { //load from the in-memory string
 		loaded = _load();
 	}
 

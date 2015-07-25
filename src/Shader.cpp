@@ -14,6 +14,7 @@ Shader::NameBuiltInAttributeMap Shader::sBuiltInAttributeNameMap; //TODO ^
 
 void Shader::_populateUniformNameMap() {
 	DEBUG_ASSERT( sBuiltiInUniformsNameMap.empty(), "The name-> builtinuniform map should be empty when populating" );
+
 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		std::string base = "TEXTURE_";
 		base += '0' + (char)i;
@@ -37,6 +38,7 @@ void Shader::_populateUniformNameMap() {
 
 void Shader::_populateAttributeNameMap() {
 	DEBUG_ASSERT( sBuiltInAttributeNameMap.empty(), "The name-> builtinattribute map should be empty when populating" );
+
 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		std::string base = "TEXCOORD_";
 		base += '0' + (char)i;
@@ -51,16 +53,18 @@ void Shader::_populateAttributeNameMap() {
 }
 
 Shader::BuiltInUniform Shader::_getUniformForName(const std::string& name) {
-	if (sBuiltiInUniformsNameMap.empty()) //populate it the first time only //HACK because VS12 doesn't support initializing the map with an initializer list
+	if (sBuiltiInUniformsNameMap.empty()) { //populate it the first time only //HACK because VS12 doesn't support initializing the map with an initializer list
 		_populateUniformNameMap();
+	}
 
 	auto elem = sBuiltiInUniformsNameMap.find(name);
 	return (elem != sBuiltiInUniformsNameMap.end()) ? elem->second : BU_NONE;
 }
 
 VertexField Shader::_getAttributeForName(const std::string& name) {
-	if (sBuiltInAttributeNameMap.empty())
+	if (sBuiltInAttributeNameMap.empty()) {
 		_populateAttributeNameMap();
+	}
 
 	auto elem = sBuiltInAttributeNameMap.find(name);
 	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
@@ -101,11 +105,13 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 void Shader::setUniformCallback(const std::string& name, const UniformCallback& dataBinder) {
 	auto elem = mUniformMap.find(name);
 
-	if (elem != mUniformMap.end())
-		elem->second.userUniformCallback = dataBinder; //assign the data source to the right uniform
+	if (elem != mUniformMap.end()) {
+		elem->second.userUniformCallback = dataBinder;    //assign the data source to the right uniform
+	}
 
-	else
-	DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
+	else {
+		DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
+	}
 }
 
 #ifdef DOJO_SHADERS_AVAILABLE
@@ -118,37 +124,47 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 	static Matrix tmpMat;
 
 	auto builtin = uniform.builtInUniform;
+
 	switch (builtin) {
 	case BU_NONE:
 		//TODO make global uniforms and remove this stuff
 		return uniform.userUniformCallback(user); //call the user callback and be happy
+
 	case BU_WORLD:
 		return &r.currentState.world;
+
 	case BU_VIEW:
 		return &r.currentState.view;
+
 	case BU_PROJECTION:
 		return &r.currentState.projection;
+
 	case BU_WORLDVIEW:
 		return &(r.currentState.worldView);
+
 	case BU_WORLDVIEWPROJ:
 		return &r.currentState.worldViewProjection;
+
 	case BU_OBJECT_COLOR:
 		return &user.color;
+
 	case BU_VIEW_DIRECTION:
 		return &r.currentState.viewDirection;
+
 	case BU_TIME:
 		DEBUG_TODO;
 		return nullptr;
+
 	case BU_TARGET_DIMENSION:
 		return &r.currentState.targetDimension;
+
 	case BU_TARGET_PIXEL:
 		tmpVec = {
 			1.f / r.currentState.targetDimension.x,
 			1.f / r.currentState.targetDimension.y
 		};
 		return &tmpVec;
-	default: //texture stuff
-	{
+	default: { //texture stuff
 		if (builtin >= BU_TEXTURE_0 && builtin <= BU_TEXTURE_N) {
 			tempInt[0] = builtin - BU_TEXTURE_0;
 			return &tempInt;
@@ -179,37 +195,63 @@ void Shader::use(const Renderable& user) {
 	for (auto& uniform : mUniformMap) {
 		const void* ptr = _getUniformData(uniform.second, user);
 
-		if (ptr == nullptr) //no data provided, skip
+		if (ptr == nullptr) { //no data provided, skip
 			break;
+		}
 
 		//assign the data to the uniform
 		//yes, this code is ugly...but don't be scared, it's as fast as a single glUniform in release :)
-		//the types supported here are only the GLSL ES 2.0 types specified at 
+		//the types supported here are only the GLSL ES 2.0 types specified at
 		//http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf, page 18
 		switch (uniform.second.type) {
-		case GL_FLOAT: glUniform1fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
-			break;
-		case GL_FLOAT_VEC2: glUniform2fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
-			break;
-		case GL_FLOAT_VEC3: glUniform3fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
-			break;
-		case GL_FLOAT_VEC4: glUniform4fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
-			break;
-		case GL_INT: case GL_SAMPLER_2D: case GL_SAMPLER_CUBE: case GL_BOOL:
-			glUniform1iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
-			break; //this call also sets the samplers
-		case GL_INT_VEC2: case GL_BOOL_VEC2: glUniform2iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
-			break;
-		case GL_INT_VEC3: case GL_BOOL_VEC3: glUniform3iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
-			break;
-		case GL_INT_VEC4: case GL_BOOL_VEC4: glUniform4iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+		case GL_FLOAT:
+			glUniform1fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
 			break;
 
-		case GL_FLOAT_MAT2: glUniformMatrix2fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+		case GL_FLOAT_VEC2:
+			glUniform2fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
 			break;
-		case GL_FLOAT_MAT3: glUniformMatrix3fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+
+		case GL_FLOAT_VEC3:
+			glUniform3fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
 			break;
-		case GL_FLOAT_MAT4: glUniformMatrix4fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+
+		case GL_FLOAT_VEC4:
+			glUniform4fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
+			break;
+
+		case GL_INT:
+		case GL_SAMPLER_2D:
+		case GL_SAMPLER_CUBE:
+		case GL_BOOL:
+			glUniform1iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			break; //this call also sets the samplers
+
+		case GL_INT_VEC2:
+		case GL_BOOL_VEC2:
+			glUniform2iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			break;
+
+		case GL_INT_VEC3:
+		case GL_BOOL_VEC3:
+			glUniform3iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			break;
+
+		case GL_INT_VEC4:
+		case GL_BOOL_VEC4:
+			glUniform4iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			break;
+
+		case GL_FLOAT_MAT2:
+			glUniformMatrix2fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+			break;
+
+		case GL_FLOAT_MAT3:
+			glUniformMatrix3fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+			break;
+
+		case GL_FLOAT_MAT4:
+			glUniformMatrix4fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
 			break;
 
 		default:
@@ -233,26 +275,30 @@ bool Shader::onLoad() {
 	mPreprocessorHeader.clear();
 	auto& defines = desc.getTable("defines");
 
-	for (auto& entry : defines)
+	for (auto& entry : defines) {
 		mPreprocessorHeader += "#define " + entry.second->getAs<std::string>() + "\n";
+	}
 
 	//grab all types
-	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i)
+	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i) {
 		_assignProgram(desc, (ShaderProgramType)i);
+	}
 
 	//ensure they're loaded
-	for (auto&& program : pProgram) {
+	for (auto && program : pProgram) {
 		if (!program->isLoaded()) {
-			if (!program->onLoad()) //one program was not loaded, the shader can't work
+			if (!program->onLoad()) { //one program was not loaded, the shader can't work
 				return loaded;
+			}
 		}
 	}
 
 	//link the shaders together in this high level shader
 	mGLProgram = glCreateProgram();
 
-	for (auto&& program : pProgram)
-	glAttachShader(mGLProgram, program->getGLShader());
+	for (auto && program : pProgram) {
+		glAttachShader(mGLProgram, program->getGLShader());
+	}
 
 	glLinkProgram(mGLProgram);
 
@@ -265,7 +311,7 @@ bool Shader::onLoad() {
 
 	DEBUG_ASSERT(linked, "Could not link a shader program");
 
-	if(linked) {
+	if (linked) {
 		GLchar namebuf[1024];
 		GLint nameLength, size;
 		GLenum type;
@@ -274,19 +320,18 @@ bool Shader::onLoad() {
 		for (int i = 0; ; ++i) {
 			glGetActiveUniform(mGLProgram, i, sizeof( namebuf ), &nameLength, &size, &type, namebuf);
 
-			if (glGetError() != GL_NO_ERROR) //check if this value existed
+			if (glGetError() != GL_NO_ERROR) { //check if this value existed
 				break;
-			else //store the Uniform data
-			{
+			}
+			else { //store the Uniform data
 				GLint loc = glGetUniformLocation(mGLProgram, namebuf);
 
-				if (loc >= 0) //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
-				{
+				if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
 					mUniformMap[namebuf] = Uniform(
-						loc,
-						size,
-						type,
-						_getUniformForName(namebuf));
+											   loc,
+											   size,
+											   type,
+											   _getUniformForName(namebuf));
 				}
 			}
 		}
@@ -295,16 +340,17 @@ bool Shader::onLoad() {
 		for (int i = 0;; ++i) {
 			glGetActiveAttrib(mGLProgram, i, sizeof(namebuf), &nameLength, &size, &type, namebuf);
 
-			if (glGetError() != GL_NO_ERROR)
+			if (glGetError() != GL_NO_ERROR) {
 				break;
+			}
 			else {
 				GLint loc = glGetAttribLocation(mGLProgram, namebuf);
 
 				if (loc >= 0) {
 					mAttributeMap[namebuf] = VertexAttribute(
-						loc,
-						size,
-						_getAttributeForName(namebuf));
+												 loc,
+												 size,
+												 _getAttributeForName(namebuf));
 				}
 			}
 		}
@@ -315,13 +361,11 @@ bool Shader::onLoad() {
 
 #else
 
-void Shader::use( Renderable* user )
-{
+void Shader::use( Renderable* user ) {
 	FAIL( "Shaders not supported" );
 }
 
-bool Shader::onLoad()
-{
+bool Shader::onLoad() {
 	FAIL( "Shaders not supported" );
 	return false;
 }
@@ -334,8 +378,9 @@ void Shader::onUnload(bool soft /* = false */) {
 
 	//only manage the programs that aren't shared
 	for (auto& program : mOwnedPrograms) {
-			program->onUnload(false);
+		program->onUnload(false);
 	}
+
 	mOwnedPrograms.clear();
 
 	loaded = false;

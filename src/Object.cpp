@@ -40,6 +40,7 @@ Object& Object::_addChild(Unique<Object> o) {
 			c->onAttach();
 		}
 	}
+
 	return *ptr;
 }
 
@@ -73,12 +74,14 @@ bool Object::canDestroy() const {
 			return false; //this one can't be destroyed, wait
 		}
 	}
+
 	return true;
 }
 
 void Object::collectChilds() {
-	for (auto&& i : range(children.size())) {
+	for (auto && i : range(children.size())) {
 		auto& child = children[i];
+
 		if (child->disposed && child->canDestroy()) {
 			_unregisterChild(*child);
 			children.erase(child);
@@ -107,8 +110,9 @@ AABB Object::transformAABB(const AABB& local) const {
 	Vector vertex;
 
 	for (byte i = 0; i < 8; ++i) {
-		for (byte j = 0; j < 3; ++j)
+		for (byte j = 0; j < 3; ++j) {
 			vertex[j] = Math::getBit(i, j) ? local.max[j] : local.min[j];
+		}
 
 		vertex = getWorldPosition(vertex);
 
@@ -124,8 +128,9 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
 		return Vector(pos.x, pos.y, pos.z);
 	}
-	else
+	else {
 		return localPos;
+	}
 }
 
 bool Object::isActive() const {
@@ -171,18 +176,19 @@ Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
 void Object::updateWorldTransform() {
 	//compute local matrix from position and orientation
 	mWorldTransform = getFullTransformRelativeTo(
-		parent ? parent->getWorldTransform() : Matrix(1));
+						  parent ? parent->getWorldTransform() : Matrix(1));
 }
 
 void Object::updateChilds(float dt) {
 	if (children.size() > 0) {
 
 		//WARNING: do not use a ranged for loop in this one!
-		//a child might remove any other child from the array 
+		//a child might remove any other child from the array
 		//so we need to always check with the updated size
 		for (size_t i = 0; i < children.size(); ++i) {
-			if (children[i]->isActive())
+			if (children[i]->isActive()) {
 				children[i]->onAction(dt);
+			}
 		}
 
 		collectChilds();
@@ -198,10 +204,11 @@ void Object::onAction(float dt) {
 }
 
 void Object::setAllChildrenVisibleHACK(bool visible) {
-	for (auto&& c : children) {
+	for (auto && c : children) {
 		if (c->has<Renderable>()) {
 			c->get<Renderable>().setVisible(visible);
 		}
+
 		c->setAllChildrenVisibleHACK(visible);
 	}
 }
@@ -210,6 +217,7 @@ void Object::dispose() {
 	DEBUG_ASSERT(!disposed, "Already disposed");
 
 	disposed = true;
+
 	for (auto& c : components) {
 		if (c) {
 			c->onDispose();
@@ -230,6 +238,7 @@ Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
 	if (ID >= (int)components.size()) {
 		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage
 	}
+
 	components[ID] = std::move(c);
 	return *components[ID];
 }

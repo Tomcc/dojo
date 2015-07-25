@@ -15,10 +15,12 @@ SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + std::to_string(i));
 
 	if (i < 0) {
-		if (buffers.size() > 1)
+		if (buffers.size() > 1) {
 			i = Random::instance.getInt(buffers.size());
-		else
+		}
+		else {
 			i = 0;
+		}
 	}
 
 	return *buffers.at(i);
@@ -29,9 +31,10 @@ void SoundSet::addBuffer(std::unique_ptr<SoundBuffer> b) {
 }
 
 bool SoundSet::onLoad() {
-	for (auto&& b : buffers) {
-		if (!b->isLoaded())
+	for (auto && b : buffers) {
+		if (!b->isLoaded()) {
 			b->onLoad();
+		}
 	}
 
 	loaded = true;
@@ -40,9 +43,10 @@ bool SoundSet::onLoad() {
 }
 
 void SoundSet::onUnload(bool soft) {
-	for (auto&& b : buffers) {
-		if (b->isLoaded())
+	for (auto && b : buffers) {
+		if (b->isLoaded()) {
 			b->onUnload(soft);
+		}
 	}
 
 	loaded = false;

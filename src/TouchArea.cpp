@@ -33,27 +33,31 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 	//set the state to clicked if there's at least one touch
 	bool active = mTouches.size() > 0;
 
-	if (mPressed != active) ///fire the event on state change
-	{
+	if (mPressed != active) { ///fire the event on state change
 		mPressed = active;
 
 		//if all the touches just began in this area, the user tapped
 		if (mPressed) {
 			bool tapped = true;
+
 			for (auto& t : mTouches) {
 				if (!t.firstFrame) {
 					tapped = false;
 					break;
 				}
 			}
-			if (tapped)
+
+			if (tapped) {
 				listener->onTouchAreaTapped(*this);
+			}
 		}
 
-		if (mPressed)
+		if (mPressed) {
 			listener->onTouchAreaPressed(*this);
-		else
+		}
+		else {
 			listener->onTouchAreaReleased(*this);
+		}
 	}
 }
 

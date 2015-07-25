@@ -23,11 +23,14 @@ Game::Game(const std::string& gamename, int w, int h, Orientation r, float nativ
 
 	auto& p = Platform::singleton();
 
-	if (w == 0)
+	if (w == 0) {
 		nativeWidth = p.getScreenWidth();
-	if (h == 0)
+	}
+
+	if (h == 0) {
 		nativeHeight = p.getScreenHeight();
-	
+	}
+
 	p.addApplicationListener(*this); //always listen to the app
 }
 

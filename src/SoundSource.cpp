@@ -52,8 +52,9 @@ float SoundSource::getVolume() {
 
 void SoundSource::play(float volume) {
 	//can the sound play?
-	if (!isValid() && buffer && buffer->isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0)
+	if (!isValid() && buffer && buffer->isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
 		return;
+	}
 
 	if (state == SS_INITIALISING) {
 		if (source && buffer) {
@@ -67,13 +68,11 @@ void SoundSource::play(float volume) {
 			mFrontChunk = &buffer->getChunk(0);
 			ALuint alBuffer = mFrontChunk->getOpenALBuffer();
 
-			if (chunkNumber == 1) //non-streaming
-			{
+			if (chunkNumber == 1) { //non-streaming
 				alSourcei(source, AL_BUFFER, alBuffer);
 				CHECK_AL_ERROR;
 			}
-			else //use a queue
-			{
+			else { //use a queue
 				alSourceQueueBuffers(source, 1, &alBuffer);
 				mQueuedChunks = 1;
 				CHECK_AL_ERROR;
@@ -82,8 +81,9 @@ void SoundSource::play(float volume) {
 				mBackChunk = &buffer->getChunk(++mCurrentChunkID, true);
 			}
 		}
-		else
+		else {
 			state = SS_FINISHED;
+		}
 	}
 
 	if (state == SS_INITIALISING || state == SS_PAUSED) {
@@ -125,6 +125,7 @@ void SoundSource::rewind() {
 void SoundSource::_update(float dt) {
 	//it can be moving, update pos
 	timeSincePositionChange += dt;
+
 	if (positionChanged) {
 		Vector v = (position - lastPosition) * timeSincePositionChange;
 
@@ -162,28 +163,34 @@ void SoundSource::_update(float dt) {
 
 			//find the new buffer ID, loop if the source is looping, else go OOB and stop
 			++mCurrentChunkID;
-			if (looping && mCurrentChunkID >= buffer->getChunkNumber())
+
+			if (looping && mCurrentChunkID >= buffer->getChunkNumber()) {
 				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
+			}
 
-			if (mCurrentChunkID < buffer->getChunkNumber()) //not exhausted? start loading a new backbuffer
+			if (mCurrentChunkID < buffer->getChunkNumber()) { //not exhausted? start loading a new backbuffer
 				mBackChunk = &buffer->getChunk(mCurrentChunkID, true);
+			}
 
-			else
+			else {
 				mBackChunk = nullptr;
+			}
 		}
 	}
 
 	alGetSourcei(source, AL_SOURCE_STATE, &playState);
 
 	if (autoRemove && state == SS_PLAYING && playState == AL_STOPPED) {
-		alSourcei(source, AL_BUFFER, AL_NONE); //clear the buffer for source reusing - this ALSO works for queued buffers 
+		alSourcei(source, AL_BUFFER, AL_NONE); //clear the buffer for source reusing - this ALSO works for queued buffers
 
 		//release all the used chunks
-		if (mFrontChunk)
+		if (mFrontChunk) {
 			mFrontChunk->release();
+		}
 
-		if (mBackChunk)
+		if (mBackChunk) {
 			mBackChunk->release();
+		}
 
 		state = SS_FINISHED;
 	}
@@ -191,14 +198,18 @@ void SoundSource::_update(float dt) {
 
 void SoundSource::setPitch(float p) {
 	pitch = p;
-	if (isActive())
+
+	if (isActive()) {
 		alSourcef(source, AL_PITCH, pitch);
+	}
 }
 
 void SoundSource::setLooping(bool l) {
 	looping = l;
-	if (isActive()) //do not use this looping flag on streaming sounds, we handle it in the update 
+
+	if (isActive()) { //do not use this looping flag on streaming sounds, we handle it in the update
 		alSourcei(source, AL_LOOPING, isStreaming() ? false : looping);
+	}
 }
 
 void SoundSource::stop() {
@@ -209,8 +220,10 @@ void SoundSource::stop() {
 		alSourcei(source, AL_BUFFER, AL_NONE);
 
 		mFrontChunk->release();
-		if (mBackChunk)
+
+		if (mBackChunk) {
 			mBackChunk->release();
+		}
 	}
 }
 
