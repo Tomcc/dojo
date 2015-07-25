@@ -134,27 +134,27 @@ namespace Dojo {
 		}
 
 		///initializes the platform and calls Game::onBegin()
-		virtual void initialize(Unique<Game> g) =0;
+		virtual void initialize(Unique<Game> g) = 0;
 
 		///shuts down the Platform and calls Game::onEnd()
-		virtual void shutdown() =0;
+		virtual void shutdown() = 0;
 
 		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
-		virtual void prepareThreadContext() =0;
+		virtual void prepareThreadContext() = 0;
 
 		///switches the game to windowed, if supported
 		virtual void setFullscreen(bool enabled) = 0;
 
-		virtual void acquireContext() =0;
-		virtual void present() =0;
+		virtual void acquireContext() = 0;
+		virtual void present() = 0;
 
-		virtual void step(float dt) =0;
-		virtual void loop() =0;
+		virtual void step(float dt) = 0;
+		virtual void loop() = 0;
 
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
 		void run(Unique<Game> game);
 
-		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) =0;
+		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
 
 		void addApplicationListener(ApplicationListener& f) {
 			focusListeners.emplace(&f);
@@ -165,7 +165,7 @@ namespace Dojo {
 		}
 
 		///returns true if the device is able to manage non-power-of-2 textures
-		virtual bool isNPOTEnabled() =0;
+		virtual bool isNPOTEnabled() = 0;
 
 		///returns TRUE if the screen is physically "small", not dependent on resolution
 		/**
@@ -176,11 +176,11 @@ namespace Dojo {
 		}
 
 		///returns the application data path for this game (eg. to save user files)
-		virtual const std::string& getAppDataPath() =0;
+		virtual const std::string& getAppDataPath() = 0;
 		///returns the read-only root path for this game (eg. working directory)
-		virtual const std::string& getRootPath() =0;
+		virtual const std::string& getRootPath() = 0;
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
-		virtual const std::string& getResourcesPath() =0;
+		virtual const std::string& getResourcesPath() = 0;
 
 		///returns the user configuration table
 		const Table& getUserConfiguration() {
@@ -213,7 +213,7 @@ namespace Dojo {
 		}
 
 		///opens a web page in the default browser
-		virtual void openWebPage(const std::string& site) =0;
+		virtual void openWebPage(const std::string& site) = 0;
 
 		///send an email object
 		virtual void sendEmail(const Email& email) {

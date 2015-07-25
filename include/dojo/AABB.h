@@ -17,7 +17,7 @@ namespace Dojo {
 
 		AABB() {}
 
-		AABB(const Vector& min, const Vector& max) : 
+		AABB(const Vector& min, const Vector& max) :
 			min(min),
 			max(max) {
 		}
@@ -74,7 +74,7 @@ namespace Dojo {
 
 		bool contains(const Vector& p) const {
 			return max.x >= p.x && max.y >= p.y && max.z >= p.z &&
-				min.x <= p.x && min.y <= p.y && min.z <= p.z;
+				   min.x <= p.x && min.y <= p.y && min.z <= p.z;
 		}
 	};
 }

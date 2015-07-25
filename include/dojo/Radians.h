@@ -15,7 +15,7 @@ namespace Dojo {
 
 		T& operator+=(const T& rhs) {
 			mValue += rhs.mValue;
-			return (T&)*this;
+			return (T&) * this;
 		}
 
 		constexpr operator BASE() const {
@@ -47,7 +47,7 @@ namespace Dojo {
 		Radians(const Degrees& e);
 		Radians& operator=(const Degrees& e);
 	};
-	
+
 	class Degrees : public RealNumber<Degrees, float> {
 	public:
 		constexpr explicit Degrees(BaseType v) :

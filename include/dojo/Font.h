@@ -54,7 +54,7 @@ namespace Dojo {
 
 			void init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline);
 
-			///return 
+			///return
 			Texture& getTexture();
 
 			///returns the triangle tesselation of this character
@@ -196,7 +196,7 @@ namespace Dojo {
 		float spacing;
 
 		int fontWidth, fontHeight; //clean measurements for the typeface
-		int mCellWidth, mCellHeight; //measurements of the "character box" 
+		int mCellWidth, mCellHeight; //measurements of the "character box"
 
 		int glowRadius;
 		Color glowColor;

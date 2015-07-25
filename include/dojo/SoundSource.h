@@ -30,7 +30,7 @@ namespace Dojo {
 
 		virtual ~SoundSource();
 
-		///sets the Source's position	
+		///sets the Source's position
 		void setPosition(const Vector& newPos) {
 			position = newPos;
 			positionChanged = true;
@@ -87,7 +87,7 @@ namespace Dojo {
 			return buffer;
 		}
 
-		///returns the elapsed time since source play 
+		///returns the elapsed time since source play
 		float getElapsedTime();
 
 		///is this a dummy sound?
@@ -123,13 +123,13 @@ namespace Dojo {
 		bool positionChanged;
 		float timeSincePositionChange = 0;
 
-		//members			
+		//members
 		SoundBuffer* buffer;
 		ALuint source;
 		ALint playState;
 
 		int mCurrentChunkID, mQueuedChunks;
-		SoundBuffer::Chunk *mFrontChunk, *mBackChunk;
+		SoundBuffer::Chunk* mFrontChunk, *mBackChunk;
 
 		SoundState state;
 

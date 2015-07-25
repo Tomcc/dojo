@@ -16,34 +16,44 @@ namespace Dojo {
 		template <class E>
 		static typename std::vector<E>::const_iterator find(const SmallSet<E>& c, const E& elem) {
 			auto itr = c.begin();
+
 			for (; itr != c.end(); ++itr) {
-				if (*itr == elem)
+				if (*itr == elem) {
 					return itr;
+				}
 			}
+
 			return c.end();
 		}
 
 		template <class E>
 		static typename std::vector<std::unique_ptr<E>>::const_iterator find(const SmallSet<std::unique_ptr<E>>& c, const E& elem) {
 			auto itr = c.begin();
+
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
+
 			return itr;
 		}
 
 		template <class E>
 		static typename std::vector<E>::iterator find(SmallSet<E>& c, const E& elem) {
 			auto itr = c.begin();
+
 			for (; itr != c.end(); ++itr) {
-				if (*itr == elem)
+				if (*itr == elem) {
 					return itr;
+				}
 			}
+
 			return c.end();
 		}
 
 		template <class E>
 		static typename std::vector<std::unique_ptr<E>>::iterator find(SmallSet<std::unique_ptr<E>>& c, const E& elem) {
 			auto itr = c.begin();
+
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
+
 			return itr;
 		}
 
@@ -65,9 +75,9 @@ namespace Dojo {
 		}
 
 		template <class... Args>
-		auto emplace(Args&&... args) {
+		auto emplace(Args&& ... args) {
 			c.emplace_back(std::forward<Args>(args)...);
-			return c.end()-1;
+			return c.end() - 1;
 		}
 
 		void erase(const const_iterator& where) {
@@ -77,8 +87,10 @@ namespace Dojo {
 
 		void erase(const T& elem) {
 			auto itr = find(elem);
-			if (itr != c.end())
+
+			if (itr != c.end()) {
 				erase(itr);
+			}
 		}
 
 		T& operator[](int idx) {

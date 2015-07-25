@@ -25,7 +25,7 @@ namespace Dojo {
 		public:
 
 			///onLoad is called when a registered resource needs to be loaded
-			virtual void onLoad(Resource*) =0;
+			virtual void onLoad(Resource*) = 0;
 		};
 
 		Resource(ResourceGroup* group = NULL) :
@@ -58,8 +58,8 @@ namespace Dojo {
 			DEBUG_ASSERT( loaded == false, "A Resource was destroyed without being unloaded before (resource leak!)" );
 		}
 
-		virtual bool onLoad() =0;
-		virtual void onUnload(bool soft = false) =0;
+		virtual bool onLoad() = 0;
+		virtual void onUnload(bool soft = false) = 0;
 
 		bool isLoaded() {
 			return loaded;

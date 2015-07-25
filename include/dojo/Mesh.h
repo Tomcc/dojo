@@ -40,7 +40,7 @@ namespace Dojo {
 
 		static const int VERTEX_PAGE_SIZE = 256;
 		static const int INDEX_PAGE_SIZE = 256;
-		
+
 		///Creates a new empty Mesh
 		explicit Mesh(ResourceGroup* creator = nullptr);
 

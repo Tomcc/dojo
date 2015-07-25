@@ -12,12 +12,12 @@ namespace Dojo {
 	class Entry;
 
 	///Table is the internal representation of the Dojo Script data definition format
-	/** 
+	/**
 	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, std::string, Color, Raw Data and Table itself.
-	
+
 	set( key, value ) sets a value to the given key;
-	get*( key, defaultValue ) gets the value of the given key, or returns defaultValue if the key was not found 
-	
+	get*( key, defaultValue ) gets the value of the given key, or returns defaultValue if the key was not found
+
 	Table does support numeric indexing via "auto values", or values which are not bound to a (explicit) name.
 	auto values can be queried using
 	get*( index, defaultValue )
@@ -36,8 +36,7 @@ namespace Dojo {
 		};
 
 		template<typename T>
-		struct field_type_for
-		{
+		struct field_type_for {
 			operator FieldType() const {
 				FAIL("Invalid type requested");
 			}
@@ -170,7 +169,7 @@ namespace Dojo {
 		}
 
 		///creates a new nested table named key
-		/** 
+		/**
 		nested Tables always have name == key */
 		Table& createTable(const std::string& key = String::Empty);
 
@@ -178,8 +177,8 @@ namespace Dojo {
 		void clear();
 
 		///Inherits all the member in table t
-		/** 
-		After the call, this Table contains a copy of all the field defined in t but not here. 
+		/**
+		After the call, this Table contains a copy of all the field defined in t but not here.
 		Nested Tables are an exception as if they're defined in both, the local nested table will
 		recursively inherit the other nested table.
 		*/
@@ -212,7 +211,7 @@ namespace Dojo {
 		///generic get
 		Entry* get(const std::string& key) const;
 
-		template<typename T> 
+		template<typename T>
 		const T& get(const std::string& key, const T& defaultValue) const {
 			auto e = get(key);
 			return (e && e->type == field_type_for<T>()) ? e->getAs<T>() : defaultValue;

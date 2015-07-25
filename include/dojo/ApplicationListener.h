@@ -30,7 +30,7 @@ namespace Dojo {
 		}
 
 		///called when the application is set into "background" state and should stop updating
-		/** 
+		/**
 		\remark the application can be terminated WITHOUT NOTICE from now on! */
 		virtual void onApplicationFreeze() {
 		}

@@ -13,16 +13,16 @@
 	#define WIN32_LEAN_AND_MEAN 1
 	#define _CRT_SECURE_NO_WARNINGS 1
 
-//are we on mac?
+	//are we on mac?
 #elif defined( __APPLE__ )
 
-#include <TargetConditionals.h>
+	#include <TargetConditionals.h>
 
 	#ifdef DOJO_IOS
 		#define PLATFORM_IOS
 	#else
 		#define PLATFORM_OSX
-	
+
 	#endif
 
 #elif defined( __ANDROID__ )
@@ -38,7 +38,7 @@
 
 
 #if !defined( _DEBUG ) && !defined( NDEBUG )
-#define NDEBUG  //to be sure!
+	#define NDEBUG  //to be sure!
 #endif
 
 #ifdef PLATFORM_ANDROID
@@ -75,10 +75,8 @@
 #define _HAS_AUTO_PTR_ETC 0
 
 //common enums
-namespace Dojo
-{
-	enum Orientation
-	{
+namespace Dojo {
+	enum Orientation {
 		DO_PORTRAIT,
 		DO_PORTRAIT_REVERSE,
 		DO_LANDSCAPE_LEFT,

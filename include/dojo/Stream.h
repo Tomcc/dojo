@@ -39,19 +39,19 @@ namespace Dojo {
 		}
 
 		///returns the total bytes in the stream, -1 if this stream has no end
-		virtual int64_t getSize() =0;
+		virtual int64_t getSize() = 0;
 
 		///returns the kind of access this stream provides, ie. read-only
-		virtual Access getAccess() =0;
+		virtual Access getAccess() = 0;
 
 		///returns the current reading/writing position
-		virtual int64_t getCurrentPosition() =0;
+		virtual int64_t getCurrentPosition() = 0;
 
 		///creates a new unopened Stream that points to the same underlying data, useful for concurrent reads in multithreading.
 		virtual Unique<Stream> copy() const;
 
 		///goes to the given position
-		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET) =0;
+		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET) = 0;
 
 		///utility method that tells if the stream is open
 		bool isOpen() {

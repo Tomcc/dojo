@@ -8,8 +8,9 @@ Keyboard::Keyboard() :
 }
 
 void Keyboard::addFakeAxis(Axis axis, KeyCode min, KeyCode max) {
-	if (!hasAxis(axis))
+	if (!hasAxis(axis)) {
 		mFakeAxes.emplace(axis, min, max);
+	}
 }
 
 void Keyboard::poll(float dt) {
@@ -20,14 +21,16 @@ void Keyboard::poll(float dt) {
 		accum[fakeAxis.axis] -= isKeyDown(fakeAxis.min) ? 1.f : 0.f;
 	}
 
-	for (int x = 0; x < mAxisNumber; ++x)
+	for (int x = 0; x < mAxisNumber; ++x) {
 		_notifyAxis((Axis)x, accum[x]);
+	}
 }
 
 bool Keyboard::hasAxis(Axis x) const {
 	for (auto& a : mFakeAxes) {
-		if (a.axis == x)
+		if (a.axis == x) {
 			return true;
+		}
 	}
 
 	return false;

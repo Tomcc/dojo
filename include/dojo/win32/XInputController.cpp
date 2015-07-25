@@ -17,8 +17,8 @@ XInputController::XInputController(int n) :
 	//set default dead zones
 	mDeadZone[AI_LX] =
 		mDeadZone[AI_LY] =
-		mDeadZone[AI_RX] =
-		mDeadZone[AI_RY] = 0.15f;
+			mDeadZone[AI_RX] =
+				mDeadZone[AI_RY] = 0.15f;
 }
 
 bool XInputController::isConnected() {
@@ -35,24 +35,29 @@ void XInputController::poll(float dt) {
 	if (!mConnected) {
 		mConnectionCheckTimer -= dt;
 
-		if (mConnectionCheckTimer > 0) //do not spam connection checks - check every 3 s
+		if (mConnectionCheckTimer > 0) { //do not spam connection checks - check every 3 s
 			return;
-		else
+		}
+		else {
 			mConnectionCheckTimer = XINPUTCONTROLLER_CONNECTION_CHECK_TIMEOUT;
+		}
 	}
 
 	HRESULT dwResult = XInputGetState(mID, &state);
 	bool connected = (dwResult == ERROR_SUCCESS);
 
 	if (connected) {
-		if (!mConnected) //yeeeee we're connected!
+		if (!mConnected) { //yeeeee we're connected!
 			Platform::singleton().getInput().addDevice(*this);
+		}
 
 		int buttonMask = state.Gamepad.wButtons; //wButtons is a mask where each bit represents a button state
 
 		int kc = (int)KC_JOYPAD_1;
-		for (byte b = 0; b < mButtonNumber; ++b)
+
+		for (byte b = 0; b < mButtonNumber; ++b) {
 			_notifyButtonState((KeyCode)(kc + b), Math::getBit(buttonMask, b));
+		}
 
 		_notifyAxis(AI_LX, (float)state.Gamepad.sThumbLX * (1.0f / (float)0x7fff));
 		_notifyAxis(AI_LY, (float)state.Gamepad.sThumbLY * (1.0f / (float)0x7fff));

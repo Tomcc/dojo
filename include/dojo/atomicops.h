@@ -14,23 +14,23 @@
 
 // Platform detection
 #if defined(__INTEL_COMPILER)
-#define AE_ICC
+	#define AE_ICC
 #elif defined(_MSC_VER)
-#define AE_VCPP
+	#define AE_VCPP
 #elif defined(__GNUC__)
-#define AE_GCC
+	#define AE_GCC
 #endif
 
 #if defined(_M_IA64) || defined(__ia64__)
-#define AE_ARCH_IA64
+	#define AE_ARCH_IA64
 #elif defined(_WIN64) || defined(__amd64__) || defined(_M_X64) || defined(__x86_64__)
-#define AE_ARCH_X64
+	#define AE_ARCH_X64
 #elif defined(_M_IX86) || defined(__i386__)
-#define AE_ARCH_X86
+	#define AE_ARCH_X86
 #elif defined(_M_PPC) || defined(__powerpc__)
-#define AE_ARCH_PPC
+	#define AE_ARCH_PPC
 #else
-#define AE_ARCH_UNKNOWN
+	#define AE_ARCH_UNKNOWN
 #endif
 
 
@@ -40,23 +40,23 @@
 
 // AE_FORCEINLINE
 #if defined(AE_VCPP) || defined(AE_ICC)
-#define AE_FORCEINLINE __forceinline
+	#define AE_FORCEINLINE __forceinline
 #elif defined(AE_GCC)
-//#define AE_FORCEINLINE __attribute__((always_inline)) 
-#define AE_FORCEINLINE inline
+	//#define AE_FORCEINLINE __attribute__((always_inline))
+	#define AE_FORCEINLINE inline
 #else
-#define AE_FORCEINLINE inline
+	#define AE_FORCEINLINE inline
 #endif
 
 
 // AE_ALIGN
 #if defined(AE_VCPP) || defined(AE_ICC)
-#define AE_ALIGN(x) __declspec(align(x))
+	#define AE_ALIGN(x) __declspec(align(x))
 #elif defined(AE_GCC)
-#define AE_ALIGN(x) __attribute__((aligned(x)))
+	#define AE_ALIGN(x) __attribute__((aligned(x)))
 #else
-// Assume GCC compliant syntax...
-#define AE_ALIGN(x) __attribute__((aligned(x)))
+	// Assume GCC compliant syntax...
+	#define AE_ALIGN(x) __attribute__((aligned(x)))
 #endif
 
 
@@ -84,34 +84,48 @@ namespace Dojo {
 #include <intrin.h>
 
 #if defined(AE_ARCH_X64) || defined(AE_ARCH_X86)
-#define AeFullSync _mm_mfence
-#define AeLiteSync _mm_mfence
+	#define AeFullSync _mm_mfence
+	#define AeLiteSync _mm_mfence
 #elif defined(AE_ARCH_IA64)
-#define AeFullSync __mf
-#define AeLiteSync __mf
+	#define AeFullSync __mf
+	#define AeLiteSync __mf
 #elif defined(AE_ARCH_PPC)
-#include <ppcintrinsics.h>
-#define AeFullSync __sync
-#define AeLiteSync __lwsync
+	#include <ppcintrinsics.h>
+	#define AeFullSync __sync
+	#define AeLiteSync __lwsync
 #endif
 
 
 #ifdef AE_VCPP
-#pragma warning(push)
-#pragma warning(disable: 4365)		// Disable erroneous 'conversion from long to unsigned int, signed/unsigned mismatch' error when using `assert`
+	#pragma warning(push)
+	#pragma warning(disable: 4365)		// Disable erroneous 'conversion from long to unsigned int, signed/unsigned mismatch' error when using `assert`
 #endif
 
 namespace Dojo {
 
-	AE_FORCEINLINE void compiler_fence(memory_order order)
-	{
+	AE_FORCEINLINE void compiler_fence(memory_order order) {
 		switch (order) {
-		case memory_order_relaxed: break;
-		case memory_order_acquire: _ReadBarrier(); break;
-		case memory_order_release: _WriteBarrier(); break;
-		case memory_order_acq_rel: _ReadWriteBarrier(); break;
-		case memory_order_seq_cst: _ReadWriteBarrier(); break;
-		default: assert(false);
+		case memory_order_relaxed:
+			break;
+
+		case memory_order_acquire:
+			_ReadBarrier();
+			break;
+
+		case memory_order_release:
+			_WriteBarrier();
+			break;
+
+		case memory_order_acq_rel:
+			_ReadWriteBarrier();
+			break;
+
+		case memory_order_seq_cst:
+			_ReadWriteBarrier();
+			break;
+
+		default:
+			assert(false);
 		}
 	}
 
@@ -119,49 +133,66 @@ namespace Dojo {
 	// acquire and release semantics automatically (so only need compiler
 	// barriers for those).
 #if defined(AE_ARCH_X86) || defined(AE_ARCH_X64)
-	AE_FORCEINLINE void fence(memory_order order)
-	{
+	AE_FORCEINLINE void fence(memory_order order) {
 		switch (order) {
-		case memory_order_relaxed: break;
-		case memory_order_acquire: _ReadBarrier(); break;
-		case memory_order_release: _WriteBarrier(); break;
-		case memory_order_acq_rel: _ReadWriteBarrier(); break;
+		case memory_order_relaxed:
+			break;
+
+		case memory_order_acquire:
+			_ReadBarrier();
+			break;
+
+		case memory_order_release:
+			_WriteBarrier();
+			break;
+
+		case memory_order_acq_rel:
+			_ReadWriteBarrier();
+			break;
+
 		case memory_order_seq_cst:
 			_ReadWriteBarrier();
 			AeFullSync();
 			_ReadWriteBarrier();
 			break;
-		default: assert(false);
+
+		default:
+			assert(false);
 		}
 	}
 #else
-	AE_FORCEINLINE void fence(memory_order order)
-	{
+	AE_FORCEINLINE void fence(memory_order order) {
 		// Non-specialized arch, use heavier memory barriers everywhere just in case :-(
 		switch (order) {
 		case memory_order_relaxed:
 			break;
+
 		case memory_order_acquire:
 			_ReadBarrier();
 			AeLiteSync();
 			_ReadBarrier();
 			break;
+
 		case memory_order_release:
 			_WriteBarrier();
 			AeLiteSync();
 			_WriteBarrier();
 			break;
+
 		case memory_order_acq_rel:
 			_ReadWriteBarrier();
 			AeLiteSync();
 			_ReadWriteBarrier();
 			break;
+
 		case memory_order_seq_cst:
 			_ReadWriteBarrier();
 			AeFullSync();
 			_ReadWriteBarrier();
 			break;
-		default: assert(false);
+
+		default:
+			assert(false);
 		}
 	}
 #endif
@@ -172,27 +203,55 @@ namespace Dojo {
 
 namespace Dojo {
 
-	AE_FORCEINLINE void compiler_fence(memory_order order)
-	{
+	AE_FORCEINLINE void compiler_fence(memory_order order) {
 		switch (order) {
-		case memory_order_relaxed: break;
-		case memory_order_acquire: std::atomic_signal_fence(std::memory_order_acquire); break;
-		case memory_order_release: std::atomic_signal_fence(std::memory_order_release); break;
-		case memory_order_acq_rel: std::atomic_signal_fence(std::memory_order_acq_rel); break;
-		case memory_order_seq_cst: std::atomic_signal_fence(std::memory_order_seq_cst); break;
-		default: assert(false);
+		case memory_order_relaxed:
+			break;
+
+		case memory_order_acquire:
+			std::atomic_signal_fence(std::memory_order_acquire);
+			break;
+
+		case memory_order_release:
+			std::atomic_signal_fence(std::memory_order_release);
+			break;
+
+		case memory_order_acq_rel:
+			std::atomic_signal_fence(std::memory_order_acq_rel);
+			break;
+
+		case memory_order_seq_cst:
+			std::atomic_signal_fence(std::memory_order_seq_cst);
+			break;
+
+		default:
+			assert(false);
 		}
 	}
 
-	AE_FORCEINLINE void fence(memory_order order)
-	{
+	AE_FORCEINLINE void fence(memory_order order) {
 		switch (order) {
-		case memory_order_relaxed: break;
-		case memory_order_acquire: std::atomic_thread_fence(std::memory_order_acquire); break;
-		case memory_order_release: std::atomic_thread_fence(std::memory_order_release); break;
-		case memory_order_acq_rel: std::atomic_thread_fence(std::memory_order_acq_rel); break;
-		case memory_order_seq_cst: std::atomic_thread_fence(std::memory_order_seq_cst); break;
-		default: assert(false);
+		case memory_order_relaxed:
+			break;
+
+		case memory_order_acquire:
+			std::atomic_thread_fence(std::memory_order_acquire);
+			break;
+
+		case memory_order_release:
+			std::atomic_thread_fence(std::memory_order_release);
+			break;
+
+		case memory_order_acq_rel:
+			std::atomic_thread_fence(std::memory_order_acq_rel);
+			break;
+
+		case memory_order_seq_cst:
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			break;
+
+		default:
+			assert(false);
 		}
 	}
 
@@ -204,11 +263,11 @@ namespace Dojo {
 
 
 #if !defined(AE_VCPP) || _MSC_VER >= 1700
-#define AE_USE_STD_ATOMIC_FOR_WEAK_ATOMIC
+	#define AE_USE_STD_ATOMIC_FOR_WEAK_ATOMIC
 #endif
 
 #ifdef AE_USE_STD_ATOMIC_FOR_WEAK_ATOMIC
-#include <atomic>
+	#include <atomic>
 #endif
 #include <utility>
 
@@ -218,8 +277,7 @@ namespace Dojo {
 // at the hardware level -- on most platforms this generally means aligned pointers and integers (only).
 namespace Dojo {
 	template<typename T>
-	class weak_atomic
-	{
+	class weak_atomic {
 	public:
 		weak_atomic() { }
 #ifdef AE_VCPP
@@ -232,29 +290,39 @@ namespace Dojo {
 #pragma warning(default: 4100)
 #endif
 
-		AE_FORCEINLINE operator T() const { return load(); }
+		AE_FORCEINLINE operator T() const {
+			return load();
+		}
 
 
 #ifndef AE_USE_STD_ATOMIC_FOR_WEAK_ATOMIC
-		template<typename U> AE_FORCEINLINE weak_atomic const& operator=(U&& x) { value = std::forward<U>(x); return *this; }
-		AE_FORCEINLINE weak_atomic const& operator=(weak_atomic const& other) { value = other.value; return *this; }
+		template<typename U> AE_FORCEINLINE weak_atomic const& operator=(U&& x) {
+			value = std::forward<U>(x);
+			return *this;
+		}
+		AE_FORCEINLINE weak_atomic const& operator=(weak_atomic const& other) {
+			value = other.value;
+			return *this;
+		}
 
-		AE_FORCEINLINE T load() const { return value; }
+		AE_FORCEINLINE T load() const {
+			return value;
+		}
 #else
 		template<typename U>
-		AE_FORCEINLINE weak_atomic const& operator=(U&& x)
-		{
+		AE_FORCEINLINE weak_atomic const& operator=(U&& x) {
 			value.store(std::forward<U>(x), std::memory_order_relaxed);
 			return *this;
 		}
 
-		AE_FORCEINLINE weak_atomic const& operator=(weak_atomic const& other)
-		{
+		AE_FORCEINLINE weak_atomic const& operator=(weak_atomic const& other) {
 			value.store(other.value.load(std::memory_order_relaxed), std::memory_order_relaxed);
 			return *this;
 		}
 
-		AE_FORCEINLINE T load() const { return value.load(std::memory_order_relaxed); }
+		AE_FORCEINLINE T load() const {
+			return value.load(std::memory_order_relaxed);
+		}
 #endif
 
 
@@ -272,5 +340,5 @@ namespace Dojo {
 
 
 #ifdef AE_VCPP
-#pragma warning(pop)
+	#pragma warning(pop)
 #endif

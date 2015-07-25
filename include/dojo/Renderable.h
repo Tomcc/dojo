@@ -22,7 +22,7 @@ namespace Dojo {
 	class Renderer;
 	class GameState;
 
-	class Renderable : 
+	class Renderable :
 		public Component,
 		public RenderState {
 	public:
@@ -58,7 +58,7 @@ namespace Dojo {
 		RenderLayer::ID getLayer() const {
 			return layer;
 		}
-		
+
 		const AABB& getGraphicsAABB() const {
 			return worldBB;
 		}
@@ -90,7 +90,7 @@ namespace Dojo {
 		bool visible = true;
 
 		RenderLayer::ID layer;
-		
+
 		bool fading = false;
 		float currentFadeTime = 0;
 		float fadeEndTime;

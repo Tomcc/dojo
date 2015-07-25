@@ -24,7 +24,7 @@ namespace Dojo {
 		/**
 			-Immediately when there's no current state, eg. at begin
 			-at the next loop when it replaces a previous state
-		 
+
 		Warning, calling setState
 			-with a pending state change
 			-during a state change (onStateBegin, onTransition, onStateEnd)
@@ -35,7 +35,7 @@ namespace Dojo {
 		///sets a new substate immediately
 		/**
 		 beware - this can cause MANY unexpected behaviours
-		 
+
 		 Warning, calling setState
 		 -with a pending state change
 		 -during a state change (onStateBegin, onTransition, onStateEnd)
@@ -47,7 +47,7 @@ namespace Dojo {
 		/**
 		 -Immediately when there's no current state, eg. at begin
 		 -at the next loop when it replaces a previous state
-		 
+
 		 \param autoDelete the child state is destroyed when replaced or when the parent (this) state is destroyed
 
 		 \remark calling setState
@@ -153,7 +153,7 @@ namespace Dojo {
 		virtual void onStateEnd() {
 		}
 
-		///this is called each time a transition will happen. 
+		///this is called each time a transition will happen.
 		/**
 		 returning false delays the transition to the next frame (with a new onTransition call)
 		*/

@@ -7,20 +7,18 @@
 
 #include "Timer.h"
 
-namespace Dojo
-{
-	class LinuxPlatform : public Platform
-	{
+namespace Dojo {
+	class LinuxPlatform : public Platform {
 	public:
 
 		LinuxPlatform( const Table& config );
-		
+
 		///initializes the platform and calls Game::onBegin()
 		virtual void initialize( Game* game );
 
 		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown();
-		
+
 		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
 		virtual void prepareThreadContext();
 
@@ -44,10 +42,10 @@ namespace Dojo
 		virtual const String& getRootPath();
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
 		virtual const String& getResourcesPath	();
-		
+
 		///opens a web page in the default browser
 		virtual void openWebPage( const String& site );
-		
+
 	protected:
 
 	private:

@@ -101,7 +101,7 @@ namespace Dojo {
 		float getFloatFullExcl();
 		/// real number in (0,n)
 		float getFloatFullExcl(const float n);
-		
+
 		///return a random point in the cube between min and max
 		Vector getPoint(const Vector& min, const Vector& max);
 
@@ -118,7 +118,7 @@ namespace Dojo {
 		///pick one element index from the vector
 		template<class CTR>
 		typename CTR::const_iterator pickIteratorFrom(const CTR& c) {
-			return c.begin() + getInt(c.size()-1);
+			return c.begin() + getInt(c.size() - 1);
 		}
 
 		///pick one element from the vector
@@ -140,7 +140,7 @@ namespace Dojo {
 
 		/// Saving and loading generator state
 		void save(uint32_t* saveArray) const; // to array of size SAVE
-		void load(uint32_t*const loadArray); // from such array
+		void load(uint32_t* const loadArray); // from such array
 
 		Random& operator=(const Random& o);
 

@@ -19,7 +19,7 @@ namespace Dojo {
 	class AnimatedQuad : public Renderable {
 	public:
 
-		///Animation wraps a single FrameSet with timing information. 
+		///Animation wraps a single FrameSet with timing information.
 		/**
 			\remark using directly an animation shouldn't be needed in most cases
 		*/
@@ -58,7 +58,7 @@ namespace Dojo {
 			}
 
 			///gets the current animation time
-			/** 
+			/**
 			\remark goes back to 0 when the animation loops! */
 			float getCurrentTime() {
 				return animationTime;
@@ -146,7 +146,7 @@ namespace Dojo {
 		void setAnimationTime(float t);
 
 		///forces the animation to a given time ratio
-		/** 
+		/**
 		\param t a ratio value where 0 is animation start and 1 is animation end; a value outside [0..1] will make the animation loop. */
 		void setAnimationPercent(float t);
 

@@ -10,6 +10,7 @@ InputSystemListener::InputSystemListener() :
 }
 
 InputSystemListener::~InputSystemListener() {
-	if (source)
+	if (source) {
 		source->removeListener(*this);
+	}
 }

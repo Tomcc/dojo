@@ -22,7 +22,7 @@ namespace Dojo {
 		/**
 		\remark the type of the data is deduced from the types in .ps and the .vs, so it is important to return the right kind of data
 		*/
-		typedef std::function<const void*(const Renderable&)> UniformCallback;
+		typedef std::function<const void* (const Renderable&)> UniformCallback;
 
 		///A built-in uniform is a uniform shader parameter which Dojo recognizes and provides to the shader being run
 		enum BuiltInUniform {

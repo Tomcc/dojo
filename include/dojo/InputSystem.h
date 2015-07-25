@@ -22,9 +22,9 @@ namespace Dojo {
 
 	///InputSystem manages the input at the lower level in Dojo
 	/**
-	Listening to the InputSystem allows to be updated about 
-	-Touches on the touch screen, 
-	-Accelerations on the gyroscope, 
+	Listening to the InputSystem allows to be updated about
+	-Touches on the touch screen,
+	-Accelerations on the gyroscope,
 	-mouse position and clicks
 	-InputDevice connection and disconnection
 	*/
@@ -40,12 +40,12 @@ namespace Dojo {
 		virtual ~InputSystem();
 
 		///registers a new device to this InputSystem
-		/** 
+		/**
 		and sends an event about its connection to the listeners */
 		void addDevice(InputDevice& device);
 
 		///unregisters a new device to this InputSystem
-		/** 
+		/**
 		and sends an event about its disconnection to the listeners */
 		void removeDevice(InputDevice& device);
 

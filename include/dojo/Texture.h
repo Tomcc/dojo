@@ -40,7 +40,7 @@ namespace Dojo {
 		bool loadFromFile(const std::string& path);
 
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
-		/** 
+		/**
 		a texture of this kind is loaded via an .atlasinfo and doesn't use VRAM in itself */
 		bool loadFromAtlas(Texture* tex, int x, int y, int sx, int sy);
 
@@ -116,8 +116,9 @@ namespace Dojo {
 
 		///obtain the optimal billboard to use this texture as a sprite, when the device does not support Power of 2 Textures
 		Mesh& getOptimalBillboard() {
-			if (!OBB)
+			if (!OBB) {
 				_rebuildOptimalBillboard();
+			}
 
 			return *OBB;
 		}

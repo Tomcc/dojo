@@ -61,12 +61,15 @@ namespace Dojo {
 		*/
 		bool loopElapsed(double* actualPeriod = NULL) {
 			double t = getElapsedTime();
-			if (t >= mPeriod)
+
+			if (t >= mPeriod) {
 				reset();
+			}
 
 			//send actual period to the user if needed
-			if (actualPeriod)
+			if (actualPeriod) {
 				*actualPeriod = t;
+			}
 
 			return t >= mPeriod;
 

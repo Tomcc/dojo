@@ -11,8 +11,9 @@ File::File(const std::string& path) :
 }
 
 File::~File() {
-	if (isOpen())
+	if (isOpen()) {
 		close();
+	}
 }
 
 File::Access File::getAccess() {
@@ -27,14 +28,16 @@ int64_t File::getSize() {
 }
 
 const wchar_t* flagForW(Stream::Access request) {
-	switch (request)
-	{
+	switch (request) {
 	case Stream::Access::Read:
 		return L"rb";
+
 	case Stream::Access::WriteOnly:
 		return L"wb";
+
 	case Stream::Access::ReadWrite:
 		return L"wb+";
+
 	default:
 		FAIL("Invalid access");
 	}
@@ -49,6 +52,7 @@ bool File::open(Access accessType) {
 #else
 	mFile = fopen(mPath.c_str(), mWrite ? "wb" : "rb");
 #endif
+
 	if (mFile) {
 		mAccess = accessType;
 		_updateSize();

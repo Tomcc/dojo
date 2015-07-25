@@ -31,7 +31,7 @@ namespace Dojo {
 			return *this;
 		}
 
-		operator const T&() const {
+		operator const T& () const {
 			return x;
 		}
 	};

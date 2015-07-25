@@ -25,8 +25,9 @@ namespace Dojo {
 		explicit BackgroundQueue(int poolSize = -1);
 
 		virtual ~BackgroundQueue() {
-			if (mRunning)
+			if (mRunning) {
 				stop();
+			}
 		}
 
 		///queues this task for execution in the current thread pool
@@ -47,8 +48,9 @@ namespace Dojo {
 			if (mRunning) {
 				mRunning = false;
 
-				for (auto& w : mWorkers)
+				for (auto& w : mWorkers) {
 					w->join();
+				}
 			}
 		}
 
@@ -90,11 +92,13 @@ namespace Dojo {
 
 		///waits for a task, returns false if the thread has to close
 		bool _waitForTaskOrClose(TaskCallbackPair& out) {
-			if (mRunning) //fetch a new task from the queue
+			if (mRunning) { //fetch a new task from the queue
 				return mQueue->try_enqueue(out);
+			}
 
-			else
+			else {
 				return false;
+			}
 		}
 
 	private:

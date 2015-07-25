@@ -1,9 +1,9 @@
 #pragma once
 
 #ifndef _MSC_VER
-#define ___ __attribute__((unused))auto&& __UNUSED__
+	#define ___ __attribute__((unused))auto&& __UNUSED__
 #else
-#define ___ void __UNUSED__
+	#define ___ void __UNUSED__
 #endif
 
 template<typename INDEX, INDEX STEP = 1>
@@ -70,12 +70,12 @@ Range<int, STEP> rangef(float begin, float end) {
 	return Range<int, STEP>((int)begin, (int)end);
 }
 
-template <typename INDEX, int STEP = -1>
+template < typename INDEX, int STEP = -1 >
 Range<int, STEP> reverse_range(INDEX begin, INDEX end) {
 	return range<int, STEP>(((int)end) + STEP, ((int)begin) + STEP);
 }
 
-template <typename INDEX, int STEP = -1>
+template < typename INDEX, int STEP = -1 >
 Range<int, STEP> reverse_range(INDEX count) {
 	return reverse_range<INDEX, STEP>(0, count);
 }

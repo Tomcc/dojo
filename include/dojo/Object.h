@@ -23,13 +23,13 @@ namespace Dojo {
 	class Component;
 
 	///Object is the base class of any object that can be placed and moved in a GameState
-	/** 
+	/**
 	it has a position, a speed, a rotation and a scale that are used to determine its world transform.
 	When other Objects are attached to a single root Object as children, they share their parent's
 	world transform and move in its local space
 
 	Objects automatically listen to the "action" event, that is called each frame.
-	
+
 	Objects are automatically collected when the dispose flag is set to true on them, or on one of its parents.
 	*/
 	class Object {
@@ -132,7 +132,7 @@ namespace Dojo {
 		Object* getParent() {
 			return parent;
 		}
-		
+
 		size_t getChildCount() const {
 			return children.size();
 		}
@@ -155,11 +155,11 @@ namespace Dojo {
 
 		template<class T>
 		T& get() const {
-			//this returns a reference and asserts for presence rather than 
+			//this returns a reference and asserts for presence rather than
 			//going the full check route because we enforce that it's the
 			//calling code that needs to call get() only when a component can be found
 			DEBUG_ASSERT(has<T>(), "Component not found");
-			return (T&)*components[T::ID];
+			return (T&) * components[T::ID];
 		}
 
 		///destroys all the children that have been marked by dispose
@@ -209,7 +209,7 @@ namespace Dojo {
 		Object& _addChild(Unique<Object> o);
 
 		void _unregisterChild(Object& child);
-	
-private:
+
+	private:
 	};
 }

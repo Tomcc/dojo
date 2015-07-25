@@ -99,7 +99,7 @@ namespace Dojo {
 		KC_NOCONVERT = 0x7B, // (Japanese keyboard)
 		KC_YEN = 0x7D, // (Japanese keyboard)
 		KC_ABNT_C2 = 0x7E, // Numpad . on Portugese (Brazilian) keyboards
-		KC_NUMPADEQUALS= 0x8D, // = on numeric keypad (NEC PC98)
+		KC_NUMPADEQUALS = 0x8D, // = on numeric keypad (NEC PC98)
 		KC_PREVTRACK = 0x90, // Previous Track (KC_CIRCUMFLEX on Japanese keyboard)
 		KC_AT = 0x91, //                     (NEC PC98)
 		KC_COLON = 0x92, //                     (NEC PC98)
@@ -140,7 +140,7 @@ namespace Dojo {
 		KC_SLEEP = 0xDF, // System Sleep
 		KC_WAKE = 0xE3, // System Wake
 		KC_WEBSEARCH = 0xE5, // Web Search
-		KC_WEBFAVORITES= 0xE6, // Web Favorites
+		KC_WEBFAVORITES = 0xE6, // Web Favorites
 		KC_WEBREFRESH = 0xE7, // Web Refresh
 		KC_WEBSTOP = 0xE8, // Web Stop
 		KC_WEBFORWARD = 0xE9, // Web Forward

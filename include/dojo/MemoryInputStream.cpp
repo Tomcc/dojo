@@ -11,8 +11,9 @@ MemoryInputStream::MemoryInputStream(byte* mem, int size) :
 }
 
 int64_t Dojo::MemoryInputStream::read(byte* buf, int64_t number) {
-	if (mPosition < 0 || mPosition >= mSize) //invalid position, cannot read
+	if (mPosition < 0 || mPosition >= mSize) { //invalid position, cannot read
 		return 0;
+	}
 
 	auto toRead = std::min(number, mSize - mPosition);
 
@@ -34,14 +35,18 @@ int64_t Dojo::MemoryInputStream::getCurrentPosition() {
 }
 
 int Dojo::MemoryInputStream::seek(int64_t offset, int64_t fromWhere /*= SEEK_SET*/) {
-	if (fromWhere == SEEK_SET)
+	if (fromWhere == SEEK_SET) {
 		mPosition = offset;
-	else if (fromWhere == SEEK_CUR)
+	}
+	else if (fromWhere == SEEK_CUR) {
 		mPosition += offset;
-	else if (fromWhere == SEEK_END)
+	}
+	else if (fromWhere == SEEK_END) {
 		mPosition = mSize - offset;
-	else
+	}
+	else {
 		FAIL("invalid seek origin");
+	}
 
 	return 0;
 }

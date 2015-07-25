@@ -22,15 +22,13 @@ extern "C" {
 	void android_handle_cmd(struct android_app* app, int32_t cmd);
 }
 
-namespace Dojo
-{
-	class AndroidPlatform : public Platform
-	{
+namespace Dojo {
+	class AndroidPlatform : public Platform {
 	public:
 
 		AndroidPlatform(const Table& table);
 
-		virtual void initialize(Game *game);
+		virtual void initialize(Game* game);
 		virtual void shutdown();
 
 		virtual void acquireContext();
@@ -39,43 +37,41 @@ namespace Dojo
 		virtual void step( float dt );
 		virtual void loop();
 
-		virtual void setFullscreen( bool fullscreen )
-		{
-			//android can only fullscreen 
+		virtual void setFullscreen( bool fullscreen ) {
+			//android can only fullscreen
 		}
 
 
-		virtual bool isNPOTEnabled()
-		{
+		virtual bool isNPOTEnabled() {
 			DEBUG_MESSAGE("AndroidPlatform::isNPOTEnabled");
-			return false; 
+			return false;
 		}
-                ///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
-                virtual void prepareThreadContext(){
+		///CALL THIS BEFORE USING ANY OTHER THREAD FOR GL OPERATIONS
+		virtual void prepareThreadContext() {
 			//???
 		}
-		
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int & pixelSize );
+
+		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize );
 		virtual const String& getAppDataPath();
 		virtual const String& getResourcesPath();
-		virtual const String& getRootPath();		
-		
-		
-		
+		virtual const String& getRootPath();
+
+
+
 		//TODO
-		virtual void openWebPage( const String& site ){}
-		
+		virtual void openWebPage( const String& site ) {}
+
 
 	protected:
-		
+
 		void ResetDisplay();
-		int32_t width, height;	
+		int32_t width, height;
 		String apkdir;
 		String apkdirResources;
 		String dirAppData;
 		//Keyboard
-		Keyboard androidKeyboard;		
-		//android	
+		Keyboard androidKeyboard;
+		//android
 		//app manager
 		struct android_app* app;
 		ASensorManager* sensorManager;
@@ -83,7 +79,7 @@ namespace Dojo
 		ASensorEventQueue* sensorEventQueue;
 		//android accelerometer
 		void UpdateEvent();
-		//timers		
+		//timers
 		Timer mStepTimer;
 		Timer frameTimer;
 		//openGL EGL
@@ -95,7 +91,7 @@ namespace Dojo
 
 		friend int32_t ::android_handle_input(struct android_app* app, AInputEvent* event) ;
 		friend void ::android_handle_cmd(struct android_app* app, int32_t cmd);
-		
+
 	private:
 	};
 

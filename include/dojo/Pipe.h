@@ -30,12 +30,12 @@
 #define CACHE_LINE_SIZE 64
 
 #ifdef AE_VCPP
-#pragma warning(push)
-#pragma warning(disable: 4324) // structure was padded due to __declspec(align())
+	#pragma warning(push)
+	#pragma warning(disable: 4324) // structure was padded due to __declspec(align())
 
-#pragma warning(disable: 4820) // padding was added
+	#pragma warning(disable: 4820) // padding was added
 
-#pragma warning(disable: 4127) // conditional expression is constant
+	#pragma warning(disable: 4127) // conditional expression is constant
 
 #endif
 
@@ -81,6 +81,7 @@ namespace Dojo {
 			Block* firstBlock = nullptr;
 
 			largestBlockSize = ceilToPow2(maxSize + 1); // We need a spare slot to fit maxSize elements in the block
+
 			if (largestBlockSize > MAX_BLOCK_SIZE * 2) {
 				// We need a spare block in case the producer is writing to a different block the consumer is reading from, and
 				// wants to enqueue the maximum number of elements. We also need a spare element in each block to avoid the ambiguity
@@ -90,28 +91,35 @@ namespace Dojo {
 				size_t initialBlockCount = (maxSize + MAX_BLOCK_SIZE * 2 - 3) / (MAX_BLOCK_SIZE - 1);
 				largestBlockSize = MAX_BLOCK_SIZE;
 				Block* lastBlock = nullptr;
+
 				for (size_t i = 0; i != initialBlockCount; ++i) {
 					auto block = make_block(largestBlockSize);
+
 					if (block == nullptr) {
 						throw std::bad_alloc();
 					}
+
 					if (firstBlock == nullptr) {
 						firstBlock = block;
 					}
 					else {
 						lastBlock->next = block;
 					}
+
 					lastBlock = block;
 					block->next = firstBlock;
 				}
 			}
 			else {
 				firstBlock = make_block(largestBlockSize);
+
 				if (firstBlock == nullptr) {
 					throw std::bad_alloc();
 				}
+
 				firstBlock->next = firstBlock;
 			}
+
 			frontBlock = firstBlock;
 			tailBlock = firstBlock;
 
@@ -128,6 +136,7 @@ namespace Dojo {
 			// Destroy any remaining objects in queue and free memory
 			Block* frontBlock_ = frontBlock;
 			Block* block = frontBlock_;
+
 			do {
 				Block* nextBlock = block->next;
 				size_t blockFront = block->front;
@@ -159,7 +168,7 @@ namespace Dojo {
 		// Returns true if the element was enqueued, false otherwise.
 		// Does not allocate memory.
 		template <class... Args>
-		AE_FORCEINLINE bool try_enqueue(Args&&... args) {
+		AE_FORCEINLINE bool try_enqueue(Args&& ... args) {
 			return inner_enqueue<CannotAlloc>(std::forward<Args>(args)...);
 		}
 
@@ -175,7 +184,7 @@ namespace Dojo {
 		// Only fails (returns false) if memory allocation fails.
 
 		template <class... Args>
-		AE_FORCEINLINE bool enqueue(Args&&... args) {
+		AE_FORCEINLINE bool enqueue(Args&& ... args) {
 			return inner_enqueue<CanAlloc>(std::forward<Args>(args)...);
 		}
 
@@ -213,7 +222,7 @@ namespace Dojo {
 			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
 
-			non_empty_front_block:
+non_empty_front_block:
 				// Front block not empty, dequeue from here
 				auto element = reinterpret_cast<T*>(frontBlock_->data + blockFront * sizeof(T));
 				result = std::move(*element);
@@ -294,7 +303,7 @@ namespace Dojo {
 
 			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
-			non_empty_front_block:
+non_empty_front_block:
 				return reinterpret_cast<T*>(frontBlock_->data + blockFront * sizeof(T));
 			}
 			else if (frontBlock_ != tailBlock.load()) {
@@ -336,7 +345,7 @@ namespace Dojo {
 			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
 
-			non_empty_front_block:
+non_empty_front_block:
 				auto element = reinterpret_cast<T*>(frontBlock_->data + blockFront * sizeof(T));
 				element->~T();
 
@@ -393,6 +402,7 @@ namespace Dojo {
 			size_t result = 0;
 			Block* frontBlock_ = frontBlock.load();
 			Block* block = frontBlock_;
+
 			do {
 				fence(memory_order_acquire);
 				size_t blockFront = block->front.load();
@@ -401,6 +411,7 @@ namespace Dojo {
 				block = block->next.load();
 			}
 			while (block != frontBlock_);
+
 			return result;
 		}
 
@@ -409,7 +420,7 @@ namespace Dojo {
 		enum AllocationMode { CanAlloc, CannotAlloc };
 
 		template <AllocationMode canAlloc, class... Args>
-		bool inner_enqueue(Args&&... args) {
+		bool inner_enqueue(Args&& ... args) {
 #ifndef NDEBUG
 			ReentrantGuard guard(this->enqueuing);
 #endif
@@ -426,6 +437,7 @@ namespace Dojo {
 			size_t blockTail = tailBlock_->tail.load();
 
 			size_t nextBlockTail = (blockTail + 1) & tailBlock_->sizeMask;
+
 			if (nextBlockTail != blockFront || nextBlockTail != (tailBlock_->localFront = tailBlock_->front.load())) {
 				fence(memory_order_acquire);
 				// This block has room for at least one more element
@@ -437,6 +449,7 @@ namespace Dojo {
 			}
 			else {
 				fence(memory_order_acquire);
+
 				if (tailBlock_->next.load() != frontBlock) {
 					// Note that the reason we can't advance to the frontBlock and start adding new entries there
 					// is because if we did, then dequeue would stay in that block, eventually reading the new values,
@@ -468,10 +481,12 @@ namespace Dojo {
 					// tailBlock is full and there's no free block ahead; create a new block
 					auto newBlockSize = largestBlockSize >= MAX_BLOCK_SIZE ? largestBlockSize : largestBlockSize * 2;
 					auto newBlock = make_block(newBlockSize);
+
 					if (newBlock == nullptr) {
 						// Could not allocate a block!
 						return false;
 					}
+
 					largestBlockSize = newBlockSize;
 
 					new(newBlock->data) T(std::forward<Args>(args)...);
@@ -517,9 +532,11 @@ namespace Dojo {
 			x |= x >> 1;
 			x |= x >> 2;
 			x |= x >> 4;
+
 			for (size_t i = 1; i < sizeof(size_t); i <<= 1) {
 				x |= x >> (i << 3);
 			}
+
 			++x;
 			return x;
 		}
@@ -532,12 +549,11 @@ namespace Dojo {
 
 	private:
 #ifndef NDEBUG
-		struct ReentrantGuard
-		{
+		struct ReentrantGuard {
 			ReentrantGuard(bool& _inSection)
-				: inSection(_inSection)
-			{
+				: inSection(_inSection) {
 				assert(!inSection);
+
 				if (inSection) {
 					throw std::runtime_error("Pipe does not support enqueuing or dequeuing elements from other elements' ctors and dtors");
 				}
@@ -545,7 +561,9 @@ namespace Dojo {
 				inSection = true;
 			}
 
-			~ReentrantGuard() { inSection = false; }
+			~ReentrantGuard() {
+				inSection = false;
+			}
 
 		private:
 			ReentrantGuard& operator=(ReentrantGuard const&);
@@ -591,6 +609,7 @@ namespace Dojo {
 			auto size = sizeof(Block) + std::alignment_of<Block>::value - 1;
 			size += sizeof(T) * capacity + std::alignment_of<T>::value - 1;
 			auto newBlockRaw = static_cast<char*>(std::malloc(size));
+
 			if (newBlockRaw == nullptr) {
 				return nullptr;
 			}
@@ -617,5 +636,5 @@ namespace Dojo {
 } // end namespace Dojo
 
 #ifdef AE_VCPP
-#pragma warning(pop)
+	#pragma warning(pop)
 #endif

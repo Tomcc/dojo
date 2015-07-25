@@ -14,9 +14,8 @@
 */
 
 #include "Timer.h"
- 
-namespace Dojo 
-{
+
+namespace Dojo {
 	class Game;
 	class IOSPlatform;
 	class Render;
@@ -27,19 +26,18 @@ namespace Dojo
 // This class wraps the CAEAGLLayer from CoreAnimation into a convenient UIView subclass.
 // The view content is basically an EAGL surface you render your OpenGL scene into.
 // Note that setting the view non-opaque will only work if the EAGL surface has an alpha channel.
-@interface Application : UIView < UIAccelerometerDelegate > //,MFMailComposeViewControllerDelegate >
-{    
-@protected	
+@interface Application : UIView < UIAccelerometerDelegate > { //,MFMailComposeViewControllerDelegate >
+@protected
 	Dojo::IOSPlatform* platform;
-	
+
 	Dojo::Render* renderImpl;
 	Dojo::InputSystem* touchSource;
-	
+
 	Dojo::Timer frameTimer;
-	
+
 @private
 	float lastAccelerationX, lastAccelerationY, lastRoll;
-	
+
 	BOOL animating;
 	BOOL displayVisible;
 	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
@@ -49,7 +47,7 @@ namespace Dojo
 	id displayLink;
 }
 
-@property (readonly, nonatomic, getter=isAnimating) BOOL animating;
+@property (readonly, nonatomic, getter = isAnimating) BOOL animating;
 
 - (Dojo::Game*) game;
 
@@ -60,13 +58,13 @@ namespace Dojo
 
 - (BOOL)canBecomeFirstResponder;
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+- (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event;
+- (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event;
+- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event;
 
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event;
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent*)event;
 
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
+- (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration;
 
 + (void)_keepMeInLibraryFile;
 @end

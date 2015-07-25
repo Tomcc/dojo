@@ -28,7 +28,7 @@ namespace Dojo {
 		};
 
 		///AStar::Graph defines a Graph on which AStar can operate
-		/** 
+		/**
 		each Node is identified by its unique position vector */
 		class Graph : public std::unordered_map<Vector, Unique<Node>> {
 		public:
@@ -55,7 +55,7 @@ namespace Dojo {
 
 		void _retrace(Node* cur, Node* start);
 		///instances a new run of the algorithm, and solves it
-		/** 
+		/**
 		the path is returned iterating this object (inherits Array) */
 		AStar(const Graph& set, const Vector& startPos, const Vector& endPos);
 

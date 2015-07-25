@@ -23,10 +23,10 @@ FT_Stroker FontSystem::getStroker(float width) {
 	FT_Stroker_New(freeType, &s);
 
 	FT_Stroker_Set(s,
-		(FT_Fixed)(width * 64.f),
-		FT_STROKER_LINECAP_ROUND,
-		FT_STROKER_LINEJOIN_ROUND,
-		0);
+				   (FT_Fixed)(width * 64.f),
+				   FT_STROKER_LINECAP_ROUND,
+				   FT_STROKER_LINEJOIN_ROUND,
+				   0);
 
 	return s;
 }

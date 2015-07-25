@@ -46,10 +46,12 @@ namespace Dojo {
 		static int setBit(int i, int n, bool state) {
 			DEBUG_ASSERT( n < 32, "setBit: byte number was more than 32" );
 
-			if (state)
+			if (state) {
 				return i | (0x1 << n);
-			else
+			}
+			else {
 				return i & (~(0x1 << n));
+			}
 		}
 
 		///clamps in [0..1[
@@ -59,12 +61,15 @@ namespace Dojo {
 
 		///returns the sign of val
 		static float sign(float val) {
-			if (val < 0)
+			if (val < 0) {
 				return -1.f;
-			else if (val > 0)
+			}
+			else if (val > 0) {
 				return 1.f;
-			else
+			}
+			else {
 				return 0;
+			}
 		}
 
 		///converts float to int by flooring
@@ -89,9 +94,9 @@ namespace Dojo {
 
 		static Vector lerp(const Vector& to, const Vector& from, float s) {
 			return Vector(
-				lerp(to.x, from.x, s),
-				lerp(to.y, from.y, s),
-				lerp(to.z, from.z, s));
+					   lerp(to.x, from.x, s),
+					   lerp(to.y, from.y, s),
+					   lerp(to.z, from.z, s));
 		}
 
 		///returns if a is inside ]b-bias, b+bias[
@@ -157,10 +162,9 @@ namespace Dojo {
 		*/
 		template<class T>
 		static void simulateSpring(
-			T &x, T &v, T xt,
+			T& x, T& v, T xt,
 			float zeta, float omega, float dt
-			)
-		{
+		) {
 			const auto f = 1.0f + 2.0f * dt * zeta * omega;
 			const auto oo = omega * omega;
 			const auto hoo = dt * oo;

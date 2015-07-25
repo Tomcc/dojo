@@ -15,8 +15,7 @@
 
 #include "InputSystem.h"
 
-namespace Dojo
-{
+namespace Dojo {
 	class Platform;
 }
 
@@ -24,47 +23,47 @@ namespace Dojo
 @private
 	Dojo::Platform* platform;
 	CFAbsoluteTime time;
-    
+
 	Dojo::InputSystem* input;
-    Dojo::InputDevice* keyboard;
-	
+	Dojo::InputDevice* keyboard;
+
 	Dojo::KeyCode keymap[0x80];
-    
-    NSPoint lastMousePos;
+
+	NSPoint lastMousePos;
 }
 
 - (void)setPlatform:(Dojo::Platform*)targetPlatform;
 
 //window callbacks
-- (void)windowWillClose:(NSNotification *)notification;
+- (void)windowWillClose:(NSNotification*)notification;
 
 //timer callback
-- (void) stepCallback:(NSTimer *)timer;
+- (void) stepCallback:(NSTimer*)timer;
 
-- (void)mouseDown: (NSEvent *)theEvent;
+- (void)mouseDown: (NSEvent*)theEvent;
 
-- (void)mouseDragged: (NSEvent *)theEvent;
+- (void)mouseDragged: (NSEvent*)theEvent;
 
-- (void)mouseUp: (NSEvent *)theEvent;
+- (void)mouseUp: (NSEvent*)theEvent;
 
-- (void)mouseMoved: (NSEvent *)theEvent;
+- (void)mouseMoved: (NSEvent*)theEvent;
 
-- (void)rightMouseDown: (NSEvent *)theEvent;
+- (void)rightMouseDown: (NSEvent*)theEvent;
 
-- (void)rightMouseDragged: (NSEvent *)theEvent;
+- (void)rightMouseDragged: (NSEvent*)theEvent;
 
-- (void)rightMouseUp: (NSEvent *)theEvent;
+- (void)rightMouseUp: (NSEvent*)theEvent;
 
-- (void)otherMouseDown: (NSEvent *)theEvent;
+- (void)otherMouseDown: (NSEvent*)theEvent;
 
-- (void)otherMouseDragged: (NSEvent *)theEvent;
+- (void)otherMouseDragged: (NSEvent*)theEvent;
 
-- (void)otherMouseUp: (NSEvent *)theEvent;
+- (void)otherMouseUp: (NSEvent*)theEvent;
 
-- (void)keyDown:(NSEvent *)theEvent;
+- (void)keyDown:(NSEvent*)theEvent;
 
-- (void)keyUp:(NSEvent *)theEvent;
+- (void)keyUp:(NSEvent*)theEvent;
 
-- (void)flagsChanged:(NSEvent *)theEvent;
+- (void)flagsChanged:(NSEvent*)theEvent;
 
 @end

@@ -34,10 +34,10 @@ namespace Dojo {
 		\param bounds TextArea's AABB
 		*/
 		TextArea(Object& l,
-				RenderLayer::ID layer,
-				const std::string& fontSetName,
-				bool center = false,
-				const Vector& bounds = Vector::One);
+				 RenderLayer::ID layer,
+				 const std::string& fontSetName,
+				 bool center = false,
+				 const Vector& bounds = Vector::One);
 
 		virtual ~TextArea();
 
@@ -145,7 +145,7 @@ namespace Dojo {
 		CharacterList characters;
 		bool changed;
 
-		float *vertexBuffer, *uvBuffer;
+		float* vertexBuffer, *uvBuffer;
 		uint32_t visibleCharsNumber;
 
 		Vector cursorPosition, screenSize, lastScale;
@@ -175,7 +175,7 @@ namespace Dojo {
 		///finishes editing the layers
 		void _endLayers();
 
-		///Free any created layer			
+		///Free any created layer
 		void _hideLayers();
 
 		void _destroyLayer(Renderable& r);

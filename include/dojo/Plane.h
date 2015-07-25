@@ -60,12 +60,15 @@ namespace Dojo {
 
 			float maxAbsDist = n.absDot(halfsize);
 
-			if (dist < -maxAbsDist)
+			if (dist < -maxAbsDist) {
 				return -1;
-			else if (dist > +maxAbsDist)
+			}
+			else if (dist > +maxAbsDist) {
 				return 1;
-			else
+			}
+			else {
 				return 0;
+			}
 		}
 
 		///returns the vector placed at the intersection between the line passing between these two points and the plane, or false if the line is parallel
@@ -74,8 +77,9 @@ namespace Dojo {
 			float num = (planeOrigin - origin) * n;
 			float den = direction * n;
 
-			if (num == 0 && den == 0) //no intersections
+			if (num == 0 && den == 0) { //no intersections
 				return false;
+			}
 
 			out = origin + direction * (num / den);
 			return true;

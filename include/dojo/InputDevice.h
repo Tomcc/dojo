@@ -108,7 +108,7 @@ namespace Dojo {
 			Binding(int action, KeyCode key) :
 				action(action),
 				key(key) {
-				
+
 			}
 		};
 

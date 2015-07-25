@@ -19,10 +19,10 @@ namespace Dojo {
 		static const ID InvalidID;
 
 		bool visible = true,
-			depthCheck = false,
-			orthographic = true,
-			depthClear = true,
-			wireframe = false;
+			 depthCheck = false,
+			 orthographic = true,
+			 depthClear = true,
+			 wireframe = false;
 
 		SmallSet<Renderable*> elements;
 	};

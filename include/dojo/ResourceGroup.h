@@ -24,14 +24,14 @@
 
 namespace Dojo {
 	///A ResourceGroup manages all of the Resources in Dojo
-	/** 
+	/**
 	Resources and folders are first added to a ResourceGroup via add* methods, but they are NOT loaded;
 	actual loading happens when loadResources() is called.
 	This allows to unload and reload the resources without breaking the game's state, by keeping the "empty" Resource objects as placeholders.
 
 	A ResourceGroup will load all the Tables, FrameSets, Sounds, Fonts and Meshes found in the folder that are added to it,
 	and individual Resources are referenced by their name, eg: "data/graphics/ninja.png" is retrieved with getFrameSet( "ninja" )
-	
+
 	A ResourceGroup can be attached to one or more "sub" ResourceGroups to share their resources. */
 	class ResourceGroup {
 	public:
@@ -92,16 +92,19 @@ namespace Dojo {
 
 			typename RMap::iterator itr = map->find(name);
 
-			if (itr != map->end())
+			if (itr != map->end()) {
 				return itr->second;
+			}
 
 			//try in subgroups
 			R* f;
-			for (auto&& sub : subs) {
+
+			for (auto && sub : subs) {
 				f = sub->find<R>(name, r);
 
-				if (f)
+				if (f) {
 					return f;
+				}
 			}
 
 			return nullptr;
@@ -190,7 +193,7 @@ namespace Dojo {
 		\remark all the assets without a version are by default version 0*/
 		void addFolderSimple(const std::string& folder, int version = 0);
 		///adds a localization folder located in baseFolder, choosing it using the current locale
-		/** 
+		/**
 		for example, "base/en" if en; "base/it" if it, etc */
 		void addLocalizedFolder(const std::string& basefolder, int version = 0);
 
@@ -241,20 +244,22 @@ namespace Dojo {
 		///load all unloaded registered resources
 		template <class T>
 		void _load(std::unordered_map<std::string, Unique<T>>& map) {
-			for (auto&& resourcePair : map) {
+			for (auto && resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
-				if (!resourcePair.second->isLoaded())
+				if (!resourcePair.second->isLoaded()) {
 					resourcePair.second->onLoad();
+				}
 			}
 		}
 
 		template <class T>
 		void _unload(std::unordered_map<std::string, Unique<T>>& map, bool softUnload) {
 			//unload all the resources
-			for (auto&& resourcePair : map) {
+			for (auto && resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
-				if (resourcePair.second->isLoaded())
+				if (resourcePair.second->isLoaded()) {
 					resourcePair.second->onUnload(softUnload);
+				}
 
 				//delete too?
 				if (!softUnload) {
@@ -269,8 +274,9 @@ namespace Dojo {
 				}
 			}
 
-			if (!softUnload)
+			if (!softUnload) {
 				map.clear();
+			}
 		}
 	};
 }

@@ -18,7 +18,7 @@ namespace Dojo {
 	class Table;
 
 	///A FrameSet represents a sequence of Textures, with an unique "prefix name" used by Animations and ResourceGroups (which do not manage Textures directly)
-	/** 
+	/**
 	there are two ways to specify a FrameSet:
 
 	-the easier one is to name more than one image with a common prefix and a sequential tag, ie:
@@ -28,7 +28,7 @@ namespace Dojo {
 
 	-the advanced way is to create an .atlasinfo file, each one specifying more than one FrameSet with a Table array;
 	this is much more efficient as it is faster to load, cleaner to mantain and faster to run (due to less texture switches)
-	the single FrameSet is defined with 
+	the single FrameSet is defined with
 	{
 		name = "frame set name"
 		texture = "atlas texture name"
@@ -79,7 +79,7 @@ namespace Dojo {
 		void addTexture(Unique<Texture> t);
 
 		///returns the (looped!) frame at index i
-		/** 
+		/**
 		if i > number of frames, i is looped over n as in i % size() */
 		Texture* getFrame(int i) {
 			return frames.at(i % frames.size());

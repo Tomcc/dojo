@@ -25,7 +25,7 @@
 // (CSAA) on the Windows platform.
 //
 // NVIDIA GeForce 8 series and higher GPUs support a new anti-aliasing method
-// called coverage sample anti-aliasing (CSAA). CSAA is usually used with 
+// called coverage sample anti-aliasing (CSAA). CSAA is usually used with
 // framebuffer objects (FBOs) for offscreen rendering. However CSAA can also be
 // used in an application window.
 //

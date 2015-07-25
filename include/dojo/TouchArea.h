@@ -21,7 +21,7 @@ namespace Dojo {
 	/**
 	When added to a GameState, a TouchArea will send Pressed and Released events to its listeners,
 	each time that the touch count on it change from 0 to one or more.
-	
+
 	Touching again an already touched TouchArea *will not* spawn new Pressed and Released events.
 	*/
 	class TouchArea : public Object {

@@ -121,7 +121,7 @@ namespace Dojo {
 
 		std::unique_ptr<SoundSource> fakeSource;
 
-		SoundSource *musicTrack, *nextMusicTrack;
+		SoundSource* musicTrack, *nextMusicTrack;
 		float halfFadeTime;
 		float currentFadeTime;
 		FadeState fadeState;

@@ -55,10 +55,12 @@ void StringReader::skipWhiteSpace() {
 }
 
 byte StringReader::getHexValue(uint32_t c) {
-	if (isNumber(c))
+	if (isNumber(c)) {
 		return (byte)(c - '0');
-	else if (isHex(c))
+	}
+	else if (isHex(c)) {
 		return 10 + (byte)(c - 'a');
+	}
 	else {
 		FAIL("The value is not an hex number");
 	}
@@ -76,8 +78,9 @@ unsigned int StringReader::readHex() {
 	unsigned int n = 0;
 
 	//read exactly 8 digits - could crash if not enough are available
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; ++i) {
 		n += getHexValue(get()) * (1 << ((7 - i) * 4));
+	}
 
 	return n;
 }
@@ -97,19 +100,22 @@ float StringReader::readFloat() {
 	float sign = 1;
 	float count = 0;
 	float res = 0;
+
 	while (state != PS_END) {
 		c = get();
 
 		if (state == PS_SIGN) {
-			if (c == '-')
+			if (c == '-') {
 				sign = -1;
+			}
 			else if (isNumber(c)) {
 				back();
 
 				state = PS_INT;
 			}
-			else if (!isWhiteSpace(c))
+			else if (!isWhiteSpace(c)) {
 				state = PS_ERROR;
+			}
 		}
 		else if (state == PS_INT) {
 			if (c == '.') {
@@ -125,8 +131,9 @@ float StringReader::readFloat() {
 				back();
 				state = PS_END;
 			}
-			else //not enough digits
+			else { //not enough digits
 				state = PS_ERROR;
+			}
 
 			++count;
 		}
@@ -135,8 +142,7 @@ float StringReader::readFloat() {
 				res += (float)(c - '0') / count;
 				count *= 10.f;
 			}
-			else //the number ended
-			{
+			else { //the number ended
 				back();
 				state = PS_END;
 			}
@@ -159,10 +165,11 @@ void StringReader::readBytes(void* dest, int sizeBytes) {
 	auto size = (int)string.size();
 	int startingByte = idx * 1;
 	buf += startingByte; //go to current element
-	
+
 	//clamp into string
-	if (startingByte + sizeBytes > size)
+	if (startingByte + sizeBytes > size) {
 		sizeBytes = size - startingByte;
+	}
 
 	memcpy(dest, buf, sizeBytes);
 

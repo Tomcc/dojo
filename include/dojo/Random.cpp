@@ -15,17 +15,21 @@ uint32_t Random::hash(time_t t, clock_t c) {
 	static uint32_t differ = 0; // guarantee time-based seeds will change
 
 	uint32_t h1 = 0;
-	unsigned char* p = (unsigned char *)&t;
+	unsigned char* p = (unsigned char*)&t;
+
 	for (size_t i = 0; i < sizeof(t); ++i) {
 		h1 *= UCHAR_MAX + 2U;
 		h1 += p[i];
 	}
+
 	uint32_t h2 = 0;
-	p = (unsigned char *)&c;
+	p = (unsigned char*)&c;
+
 	for (size_t j = 0; j < sizeof(c); ++j) {
 		h2 *= UCHAR_MAX + 2U;
 		h2 += p[j];
 	}
+
 	return (h1 + differ++) ^ h2;
 }
 
@@ -38,6 +42,7 @@ void Random::initialize(RandomSeed seed) {
 	register uint32_t* r = state;
 	register int i = 1;
 	*s++ = (uint32_t)seed & 0xffffffffUL;
+
 	for (; i < N; ++i) {
 		*s++ = (1812433253UL * (*r ^ (*r >> 30)) + i) & 0xffffffffUL;
 		r++;
@@ -50,10 +55,15 @@ void Random::reload() {
 	static const int MmN = int(M) - int(N); // in case enums are unsigned
 	register uint32_t* p = state;
 	register int i;
-	for (i = N - M; i--; ++p)
+
+	for (i = N - M; i--; ++p) {
 		*p = twist(p[M], p[0], p[1]);
-	for (i = M; --i; ++p)
+	}
+
+	for (i = M; --i; ++p) {
 		*p = twist(p[MmN], p[0], p[1]);
+	}
+
 	*p = twist(p[MmN], p[0], state[0]);
 
 	left = N, pget = state;
@@ -78,6 +88,7 @@ void Random::seed(const BigSeed& seed) {
 	register int i = 1;
 	register uint32_t j = 0;
 	register int k = (N > seed.size() ? N : seed.size());
+
 	for (; k; --k) {
 		state[i] =
 			state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1664525UL);
@@ -85,24 +96,30 @@ void Random::seed(const BigSeed& seed) {
 		state[i] &= 0xffffffffUL;
 		++i;
 		++j;
+
 		if (i >= N) {
 			state[0] = state[N - 1];
 			i = 1;
 		}
-		if (j >= seed.size())
+
+		if (j >= seed.size()) {
 			j = 0;
+		}
 	}
+
 	for (k = N - 1; k; --k) {
 		state[i] =
 			state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL);
 		state[i] -= i;
 		state[i] &= 0xffffffffUL;
 		++i;
+
 		if (i >= N) {
 			state[0] = state[N - 1];
 			i = 1;
 		}
 	}
+
 	state[0] = 0x80000000UL; // MSB is 1, assuring non-zero initial array
 	reload();
 }
@@ -124,8 +141,10 @@ Random::Random(const Random& o) {
 	register const uint32_t* t = o.state;
 	register uint32_t* s = state;
 	register int i = N;
+
 	for (; i--; *s++ = *t++) {
 	}
+
 	left = o.left;
 	pget = &state[N - left];
 }
@@ -134,8 +153,10 @@ uint32_t Random::getInt() {
 	// Pull a 32-bit integer from the generator state
 	// Every other access function simply transforms the numbers extracted here
 
-	if (left == 0)
+	if (left == 0) {
 		reload();
+	}
+
 	--left;
 
 	register uint32_t s1;
@@ -240,11 +261,14 @@ double Random::randNorm(const double mean /*= 0.0*/, const double stddev /*= 1.0
 	// Return a real number from a normal (Gaussian) distribution with given
 	// mean and standard deviation by polar form of Box-Muller transformation
 	double x, y, r;
+
 	do {
 		x = 2.0 * getDouble() - 1.0;
 		y = 2.0 * getDouble() - 1.0;
 		r = x * x + y * y;
-	} while (r >= 1.0 || r == 0.0);
+	}
+	while (r >= 1.0 || r == 0.0);
+
 	double s = sqrt(-2.0 * log(r) / r);
 	return mean + x * s * stddev;
 }
@@ -253,29 +277,37 @@ void Random::save(uint32_t* saveArray) const {
 	register const uint32_t* s = state;
 	register uint32_t* sa = saveArray;
 	register int i = N;
+
 	for (; i--; *sa++ = *s++) {
 	}
+
 	*sa = left;
 }
 
-void Random::load(uint32_t*const loadArray) {
+void Random::load(uint32_t* const loadArray) {
 	register uint32_t* s = state;
 	register uint32_t* la = loadArray;
 	register int i = N;
+
 	for (; i--; *s++ = *la++) {
 	}
+
 	left = *la;
 	pget = &state[N - left];
 }
 
 Random& Random::operator=(const Random& o) {
-	if (this == &o)
+	if (this == &o) {
 		return (*this);
+	}
+
 	register const uint32_t* t = o.state;
 	register uint32_t* s = state;
 	register int i = N;
+
 	for (; i--; *s++ = *t++) {
 	}
+
 	left = o.left;
 	pget = &state[N - left];
 	return (*this);

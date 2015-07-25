@@ -5,8 +5,7 @@
 namespace Dojo {
 	class Object;
 
-	class Component
-	{
+	class Component {
 	public:
 		Object& self;
 

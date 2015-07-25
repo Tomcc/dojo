@@ -70,8 +70,9 @@ namespace Dojo {
 
 			///returns the nth segment of the contour - it is unbounded, so oob locations are wrapped into the contour
 			int operator[](int n) {
-				while (n < 0)
+				while (n < 0) {
 					n += indices.size();
+				}
 
 				return indices[n % indices.size()];
 			}

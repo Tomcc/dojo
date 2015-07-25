@@ -32,15 +32,15 @@ namespace Dojo {
 			point(_point),
 			speed(Vector::Zero),
 			type(type),
-			firstFrame(2) //this is 2 because InputSystem::poll is called just after Touch creation - so it has to actually skip a frame
-		{
+			firstFrame(2) { //this is 2 because InputSystem::poll is called just after Touch creation - so it has to actually skip a frame
 
 		}
 
 		///internal - called to notice the Touch that it has existed for another frame
 		void _update() {
-			if (firstFrame)
+			if (firstFrame) {
 				firstFrame -= 1;
+			}
 		}
 	};
 }
