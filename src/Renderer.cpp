@@ -65,8 +65,6 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
 
-	setDefaultAmbient(Color::Black);
-
 	CHECK_GL_ERROR;
 }
 
@@ -117,11 +115,6 @@ void Renderer::removeAllViewports() {
 
 void Renderer::clearLayers() {
 	layers.clear();
-}
-
-void Renderer::setDefaultAmbient(const Color& a) {
-	defaultAmbient = a;
-	defaultAmbient.a = 1;
 }
 
 void Renderer::addViewport(Viewport& v) {
@@ -223,7 +216,7 @@ void Renderer::_renderElement(Renderable& elem) {
 }
 
 bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable& r) {
-	return true; //layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
+	return layer.orthographic ? viewport.isInViewRect(r) : viewport.isContainedInFrustum(r);
 }
 
 void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {

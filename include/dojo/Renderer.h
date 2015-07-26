@@ -55,8 +55,6 @@ namespace Dojo {
 
 		void setInterfaceOrientation(Orientation o);
 
-		void setDefaultAmbient(const Color& a);
-
 		Orientation getInterfaceOrientation() {
 			return renderOrientation;
 		}
@@ -85,10 +83,6 @@ namespace Dojo {
 			return frameBatchCount;
 		}
 
-		const Color& getDefaultAmbient() {
-			return defaultAmbient;
-		}
-
 		bool isValid() {
 			return valid;
 		}
@@ -113,8 +107,6 @@ namespace Dojo {
 		bool frameStarted;
 
 		LayerList layers;
-
-		Color defaultAmbient;
 
 		Matrix mRenderRotation;
 

@@ -31,8 +31,8 @@ int _vorbisClose(void* userdata) {
 	return 0;
 }
 
-long _vorbisTell(void* userdata) {
-	return (long)((Stream*)userdata)->getCurrentPosition();
+auto _vorbisTell(void* userdata) {
+	return (long)((Stream*)userdata)->getCurrentPosition(); /*safe*/
 }
 
 
