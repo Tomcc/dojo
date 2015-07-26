@@ -71,9 +71,9 @@ void PolyTextArea::_tesselateExtrusionStrip(Tessellation* t, int baseIdx, int la
 			baseIdx + segment.i1 + backFaceOffset,
 			baseIdx + segment.i1);
 		mMesh->triangle(
-			baseIdx + segment.i2,
-			baseIdx + segment.i2 + backFaceOffset,
-			baseIdx + segment.i1 + backFaceOffset);
+		baseIdx + segment.i2,
+		baseIdx + segment.i2 + backFaceOffset,
+		baseIdx + segment.i1 + backFaceOffset);
 	}
 }
 

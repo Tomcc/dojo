@@ -176,7 +176,7 @@ Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
 void Object::updateWorldTransform() {
 	//compute local matrix from position and orientation
 	mWorldTransform = getFullTransformRelativeTo(
-						  parent ? parent->getWorldTransform() : Matrix(1));
+		parent ? parent->getWorldTransform() : Matrix(1));
 }
 
 void Object::updateChilds(float dt) {

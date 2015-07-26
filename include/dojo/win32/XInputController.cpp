@@ -16,9 +16,9 @@ XInputController::XInputController(int n) :
 	mConnected(false) {
 	//set default dead zones
 	mDeadZone[AI_LX] =
-		mDeadZone[AI_LY] =
-			mDeadZone[AI_RX] =
-				mDeadZone[AI_RY] = 0.15f;
+	mDeadZone[AI_LY] =
+	mDeadZone[AI_RX] =
+	mDeadZone[AI_RY] = 0.15f;
 }
 
 bool XInputController::isConnected() {

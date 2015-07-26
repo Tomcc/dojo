@@ -328,10 +328,10 @@ bool Shader::onLoad() {
 
 				if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
 					mUniformMap[namebuf] = Uniform(
-											   loc,
-											   size,
-											   type,
-											   _getUniformForName(namebuf));
+					loc,
+					size,
+					type,
+					_getUniformForName(namebuf));
 				}
 			}
 		}
@@ -348,9 +348,9 @@ bool Shader::onLoad() {
 
 				if (loc >= 0) {
 					mAttributeMap[namebuf] = VertexAttribute(
-												 loc,
-												 size,
-												 _getAttributeForName(namebuf));
+					loc,
+					size,
+					_getAttributeForName(namebuf));
 				}
 			}
 		}

@@ -230,7 +230,7 @@ bool Font::Page::onLoad() {
 	Timer timer;
 
 	for (int i = 0; i < FONT_PAGE_SIDE; ++i) {
-		for (int j = 0; j < FONT_PAGE_SIDE; ++j , ++code , ++character) {
+		for (int j = 0; j < FONT_PAGE_SIDE; ++j, ++code, ++character) {
 			gliphidx = FT_Get_Char_Index(font->face, code);
 			FT_Load_Glyph(font->face, gliphidx, FT_LOAD_DEFAULT);
 

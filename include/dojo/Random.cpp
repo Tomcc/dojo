@@ -91,7 +91,7 @@ void Random::seed(const BigSeed& seed) {
 
 	for (; k; --k) {
 		state[i] =
-			state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1664525UL);
+		state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1664525UL);
 		state[i] += (seed[j] & 0xffffffffUL) + j;
 		state[i] &= 0xffffffffUL;
 		++i;
@@ -109,7 +109,7 @@ void Random::seed(const BigSeed& seed) {
 
 	for (k = N - 1; k; --k) {
 		state[i] =
-			state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL);
+		state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL);
 		state[i] -= i;
 		state[i] &= 0xffffffffUL;
 		++i;

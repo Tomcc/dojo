@@ -37,7 +37,7 @@ std::string Path::getDirectory(const std::string& str) {
 	auto end = str.find_last_of('/');
 
 	return (end == std::string::npos) ? std::string{} :
-		   str.substr(0, end);
+				str.substr(0, end);
 }
 
 bool Path::isAbsolute(const std::string& str) {

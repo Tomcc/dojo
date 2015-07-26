@@ -212,7 +212,7 @@ void ResourceGroup::addTables(const std::string& folder) {
 		addTable(
 			Path::getFileName(paths[i]),
 			make_unique<Table>(this, paths[i])
-		);
+			);
 }
 
 void ResourceGroup::addPrograms(const std::string& folder) {

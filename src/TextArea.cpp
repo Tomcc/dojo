@@ -10,10 +10,10 @@
 using namespace Dojo;
 
 Dojo::TextArea::TextArea(Object& l,
-						 RenderLayer::ID layer,
-						 const std::string& fontSetName,
-						 bool center /*= false*/,
-						 const Vector& bounds /*= Vector::One*/) :
+	RenderLayer::ID layer,
+	const std::string& fontSetName,
+	bool center /*= false*/,
+	const Vector& bounds /*= Vector::One*/) :
 	Renderable(l, layer),
 	fontName(fontSetName),
 	interline(0.2f),

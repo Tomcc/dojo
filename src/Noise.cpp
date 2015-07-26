@@ -67,11 +67,11 @@ float Noise::perlinNoise(float x, float y, float z) {
 		B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z; // THE 8 CUBE CORNERS,
 
 	return lerp(w, lerp(v, lerp(u, grad(p[AA], x, y, z), // AND ADD
-								grad(p[BA], x - 1.0f, y, z)), // BLENDED
-						lerp(u, grad(p[AB], x, y - 1.0f, z), // RESULTS
-							 grad(p[BB], x - 1.0f, y - 1.0f, z))),// FROM  8
-				lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1.0f), // CORNERS
-							 grad(p[BA + 1], x - 1.0f, y, z - 1.0f)), // OF CUBE
-					 lerp(u, grad(p[AB + 1], x, y - 1.0f, z - 1.0f),
-						  grad(p[BB + 1], x - 1.0f, y - 1.0f, z - 1.0f))));
+		grad(p[BA], x - 1.0f, y, z)), // BLENDED
+		lerp(u, grad(p[AB], x, y - 1.0f, z), // RESULTS
+		grad(p[BB], x - 1.0f, y - 1.0f, z))),// FROM  8
+		lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1.0f), // CORNERS
+		grad(p[BA + 1], x - 1.0f, y, z - 1.0f)), // OF CUBE
+		lerp(u, grad(p[AB + 1], x, y - 1.0f, z - 1.0f),
+		grad(p[BB + 1], x - 1.0f, y - 1.0f, z - 1.0f))));
 }

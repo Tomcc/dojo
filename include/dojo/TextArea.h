@@ -34,10 +34,10 @@ namespace Dojo {
 		\param bounds TextArea's AABB
 		*/
 		TextArea(Object& l,
-				 RenderLayer::ID layer,
-				 const std::string& fontSetName,
-				 bool center = false,
-				 const Vector& bounds = Vector::One);
+			RenderLayer::ID layer,
+			const std::string& fontSetName,
+			bool center = false,
+			const Vector& bounds = Vector::One);
 
 		virtual ~TextArea();
 

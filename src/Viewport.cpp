@@ -43,8 +43,8 @@ Viewport::~Viewport() {
 
 Vector Viewport::makeWorldCoordinates(int x, int y) const {
 	return Vector(
-			   mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
-			   mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
+		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
 }
 
 Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
@@ -74,8 +74,8 @@ void Viewport::setRenderTarget(Texture* target) {
 	mRT = target;
 
 	setTargetSize(target ?
-				  Vector((float)target->getWidth(), (float)target->getHeight()) :
-				  Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
+						Vector((float)target->getWidth(), (float)target->getHeight()) :
+						Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
@@ -110,10 +110,10 @@ void Viewport::_updateFrustum() {
 	if (mFrustumDirty) {
 		//compute frustum projection
 		mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
-								(float)mVFOV,
-								mTargetSize.x / mTargetSize.y,
-								mZNear,
-								mZFar);
+				(float)mVFOV,
+				mTargetSize.x / mTargetSize.y,
+				mZNear,
+				mZFar);
 
 		if (getRenderTarget()) { //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
@@ -150,11 +150,11 @@ void Viewport::_updateTransforms() {
 		//compute ortho projection
 		{
 			mOrthoTransform = glm::ortho(-getHalfSize().x,
-										 getHalfSize().x,
-										 -getHalfSize().y,
-										 getHalfSize().y,
-										 0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
-										 mZFar);
+					getHalfSize().x,
+					-getHalfSize().y,
+					getHalfSize().y,
+					0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
+					mZFar);
 
 			if (getRenderTarget()) { //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;

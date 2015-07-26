@@ -99,10 +99,10 @@ namespace Dojo {
 		Color lerp(float s, const Color& c) const {
 			float invs = 1.f - s;
 			return Color(
-					   r * invs + c.r * s,
-					   g * invs + c.g * s,
-					   b * invs + c.b * s,
-					   a * invs + c.a * s);
+						r * invs + c.r * s,
+						g * invs + c.g * s,
+						b * invs + c.b * s,
+						a * invs + c.a * s);
 		}
 
 		void operator *=(float s) {

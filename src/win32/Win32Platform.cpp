@@ -316,7 +316,7 @@ void Win32Platform::_adjustWindow() {
 	InvalidateRect(NULL, NULL, false);
 
 	SetWindowPos(hwnd, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
-				 SWP_SHOWWINDOW);
+											SWP_SHOWWINDOW);
 
 	MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
@@ -374,12 +374,12 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 	// specify the width and height of the window.
 
 	hwnd = CreateWindowW(L"DojoOpenGLWindow",
-						 String::toUTF16(windowCaption).c_str(),
-						 dwstyle, //non-resizabile
-						 rect.left, rect.top,
-						 rect.right - rect.left, rect.bottom - rect.top,
-						 NULL, NULL,
-						 hInstance, NULL);
+			String::toUTF16(windowCaption).c_str(),
+			dwstyle, //non-resizabile
+			rect.left, rect.top,
+			rect.right - rect.left, rect.bottom - rect.top,
+			NULL, NULL,
+			hInstance, NULL);
 
 	if (hwnd == NULL) {
 		return false;

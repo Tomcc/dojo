@@ -77,7 +77,7 @@ namespace {
 		}
 
 		g_hWnd = CreateWindow(g_wcl.lpszClassName, L"", WS_OVERLAPPEDWINDOW,
-							  0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
+									0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
 
 		if (!g_hWnd) {
 			return false;
@@ -127,7 +127,7 @@ namespace {
 		};
 
 		int totalCSAAFormats = static_cast<int>(sizeof(csaaPixelFormats) /
-												sizeof(CSAAPixelFormat));
+				sizeof(CSAAPixelFormat));
 
 		int attributes[] = {
 			WGL_SAMPLE_BUFFERS_ARB, 1,
@@ -146,7 +146,7 @@ namespace {
 			attributes[5] = csaaPixelFormats[i].numCoverageSamples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											  &returnedPixelFormat, &numFormats);
+					&returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -181,7 +181,7 @@ namespace {
 			attributes[17] = samples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											  &returnedPixelFormat, &numFormats);
+					&returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -237,7 +237,7 @@ namespace {
 			attributes[5] = pCSAAFormats[i].numCoverageSamples;
 
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											  &returnedPixelFormat, &numFormats);
+					&returnedPixelFormat, &numFormats);
 
 			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
@@ -267,7 +267,7 @@ namespace {
 		int returnedPixelFormat = 0;
 		UINT numFormats = 0;
 		BOOL bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
-											   &returnedPixelFormat, &numFormats);
+				&returnedPixelFormat, &numFormats);
 
 		if (bStatus == TRUE && numFormats) {
 			pf = returnedPixelFormat;

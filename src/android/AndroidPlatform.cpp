@@ -51,7 +51,7 @@ extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* e
 
 		for (int i = 0; i < count ; i++)
 			self->input->_fireTouchBeginEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-											  AMotionEvent_getY(event, i)));
+				AMotionEvent_getY(event, i)));
 
 	}
 	else if (flags == AMOTION_EVENT_ACTION_UP || flags == AMOTION_EVENT_ACTION_POINTER_UP) {   //up
@@ -60,7 +60,7 @@ extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* e
 
 		for (int i = 0; i < count ; i++)
 			self->input->_fireTouchEndEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-											AMotionEvent_getY(event, i)));
+				AMotionEvent_getY(event, i)));
 
 	}
 	else if (flags == AMOTION_EVENT_ACTION_MOVE) {                                             //move
@@ -78,7 +78,7 @@ extern "C"  int32_t android_handle_input(struct android_app* app, AInputEvent* e
 
 		for (int i = 1; i < count ; i++) {
 			self->input->_fireTouchMoveEvent(Dojo::Vector(AMotionEvent_getX(event, i),
-											 AMotionEvent_getY(event, i)), tmp);
+				AMotionEvent_getY(event, i)), tmp);
 			tmp = Dojo::Vector(AMotionEvent_getX(event, 1), AMotionEvent_getY(event, 1));
 		}
 
@@ -466,9 +466,9 @@ void AndroidPlatform::UpdateEvent() {
 			DEBUG_MESSAGE("UpdateEvent::init createEventQueue");
 
 			sensorEventQueue = ASensorManager_createEventQueue(sensorManager,
-							   app->looper,
-							   LOOPER_ID_USER,
-							   NULL, NULL);
+					app->looper,
+					LOOPER_ID_USER,
+					NULL, NULL);
 
 			DEBUG_MESSAGE("UpdateEvent::init enableSensor");
 
@@ -478,8 +478,8 @@ void AndroidPlatform::UpdateEvent() {
 			DEBUG_MESSAGE("UpdateEvent::init setEventRate");
 
 			ASensorEventQueue_setEventRate(sensorEventQueue,
-										   accelerometerSensor,
-										   (1000L / 60) * 1000);
+					accelerometerSensor,
+					(1000L / 60) * 1000);
 		}
 
 		int ident, events;
@@ -497,8 +497,8 @@ void AndroidPlatform::UpdateEvent() {
 
 					while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0) {
 						input->_fireAccelerationEvent(Dojo::Vector(event.acceleration.x,
-													  event.acceleration.y,
-													  event.acceleration.z), 0);
+								event.acceleration.y,
+								event.acceleration.z), 0);
 					}
 				}
 			}
