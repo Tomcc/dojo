@@ -23,7 +23,7 @@ namespace Dojo {
 	class Texture : public Resource {
 	public:
 		///Create a empty new texture
-		Texture(ResourceGroup* creator = NULL);
+		Texture(ResourceGroup* creator = nullptr);
 
 		///Create a empty new texture that will be loaded from path
 		Texture(ResourceGroup* creator, const std::string& path);
@@ -129,7 +129,7 @@ namespace Dojo {
 
 		///true if it belongs to an atlas
 		bool isAtlasTile() {
-			return parentAtlas != NULL;
+			return parentAtlas != nullptr;
 		}
 
 		void _notifyScreenSize(const Vector& ss) {
@@ -138,8 +138,8 @@ namespace Dojo {
 		}
 
 		void _notifyOwnerFrameSet(FrameSet* s) {
-			DEBUG_ASSERT( ownerFrameSet == NULL, "Tried to set an owner on an already owned Texture" );
-			DEBUG_ASSERT( s, "Tried to set a NULL owner on a Texture");
+			DEBUG_ASSERT( ownerFrameSet == nullptr, "Tried to set an owner on an already owned Texture" );
+			DEBUG_ASSERT( s, "Tried to set a nullptr owner on a Texture");
 
 			ownerFrameSet = s;
 		}

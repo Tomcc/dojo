@@ -174,7 +174,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path,
 		zip.getListAllFiles(".", zip_files);
 
 		for (int i = 0; i < zip_files.size(); ++i) {
-			map[Path::getDirectory(zip_files[i])].push_back(zip_files[i]);
+			map[Path::getDirectory(zip_files[i])].emplace_back(zip_files[i]);
 		}
 
 
@@ -201,7 +201,7 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 			//add all the files with the needed extension
 			for (std::string filePath : folderItr->second) {
 				if (Path::getFileExtension(filePath) == type) {
-					out.push_back(zipPath + "/" + filePath);
+					out.emplace_back(zipPath + "/" + filePath);
 				}
 			}
 		}
@@ -219,7 +219,7 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 				if (Path::getFileExtension(path) == extension) {
 					Path::makeCanonical(path);
 
-					out.push_back(path);
+					out.emplace_back(path);
 				}
 
 				++itr;

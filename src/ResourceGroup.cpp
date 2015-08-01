@@ -419,7 +419,7 @@ FrameSet* ResourceGroup::getFrameSet(const std::string& name) const {
 Texture* ResourceGroup::getTexture(const std::string& name) const {
 	FrameSet* s = getFrameSet(name);
 
-	return s ? s->getFrame(0) : NULL;
+	return s ? s->getFrame(0) : nullptr;
 }
 
 Font* ResourceGroup::getFont(const std::string& name) const {

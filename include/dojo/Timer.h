@@ -59,7 +59,7 @@ namespace Dojo {
 		When the method is called and period has passed, it returns the real cycle time
 		\remark If loop is disabled, this method always returns true.
 		*/
-		bool loopElapsed(double* actualPeriod = NULL) {
+		bool loopElapsed(double* actualPeriod = nullptr) {
 			double t = getElapsedTime();
 
 			if (t >= mPeriod) {

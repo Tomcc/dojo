@@ -14,8 +14,8 @@ Texture::Texture(ResourceGroup* creator) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	parentAtlas(NULL),
-	ownerFrameSet(NULL),
+	parentAtlas(nullptr),
+	ownerFrameSet(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
@@ -30,8 +30,8 @@ Texture::Texture(ResourceGroup* creator, const std::string& path) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	parentAtlas(NULL),
-	ownerFrameSet(NULL),
+	parentAtlas(nullptr),
+	ownerFrameSet(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {

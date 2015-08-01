@@ -11,7 +11,7 @@ double Timer::currentTime() {
 	d = (double)(gTime) / (double)freq;
 #else
 	struct timeval tv;
-	gettimeofday(&tv, NULL );
+	gettimeofday(&tv, nullptr );
 	d = (double)tv.tv_usec / 1000000 + (double)tv.tv_sec;
 #endif
 	return d;

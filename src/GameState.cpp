@@ -50,7 +50,7 @@ void GameState::touchAreaAtPoint(const Touch& touch) {
 				layer.clear();
 			}
 
-			layer.push_back(t);
+			layer.emplace_back(t);
 
 			topMostLayer = t->getLayer();
 		}
@@ -65,7 +65,7 @@ void GameState::touchAreaAtPoint(const Touch& touch) {
 void GameState::addTouchArea(TouchArea* t) {
 	DEBUG_ASSERT(t != nullptr, "addTouchArea: area passed was null");
 
-	mTouchAreas.push_back(t);
+	mTouchAreas.emplace_back(t);
 }
 
 void GameState::removeTouchArea(TouchArea* t) {

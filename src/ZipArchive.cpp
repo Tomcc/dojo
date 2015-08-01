@@ -17,11 +17,11 @@ ZipFile::~ZipFile() {
 
 //close file
 void ZipFile::close() {
-	if (file != NULL) {
+	if (file != nullptr) {
 		zzip_close(file);
 	}
 
-	file = NULL;
+	file = nullptr;
 }
 
 //read from file
@@ -65,7 +65,7 @@ size_t ZipFile::write(const void* ptr, size_t size, size_t count) {
 
 
 //ZipArchive imp
-ZipArchive::ZipArchive(): zip_file(NULL) {
+ZipArchive::ZipArchive(): zip_file(nullptr) {
 }
 
 //
@@ -81,21 +81,21 @@ ZipArchive::~ZipArchive() {
 //open zip file
 bool ZipArchive::open(const std::string& path) {
 	zip_file = zzip_opendir_ext_io(path.c_str(), ZZIP_CASELESS | ZZIP_ONLYZIP, 0, 0);
-	return zip_file != NULL;
+	return zip_file != nullptr;
 }
 
 //close zip file
 void ZipArchive::close() {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		zzip_closedir(zip_file);
 	}
 
-	zip_file = NULL;
+	zip_file = nullptr;
 }
 
 //open file
 Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::string& mode) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		zzip_rewinddir(zip_file);
 		int mode_flags = ZZIP_CASELESS;
 
@@ -115,23 +115,23 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::s
 
 		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.c_str(), mode_flags);
 
-		if (file_out != NULL) {
+		if (file_out != nullptr) {
 			return make_unique<ZipFile>(file_out);
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //open paths info
 void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (size_path < size && //not this dir and prev path
@@ -148,7 +148,7 @@ void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& ou
 				}
 
 				if (isnotasubsubdir) {
-					out.push_back(&dirp->d_name[size_path]);
+					out.emplace_back(&dirp->d_name[size_path]);
 				}
 
 			}
@@ -159,18 +159,18 @@ void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& ou
 }
 
 void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (size_path < size && //not this dir and prev path
 					strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
-				out.push_back(&dirp->d_name[size_path]);
+				out.emplace_back(&dirp->d_name[size_path]);
 			}
 		}
 
@@ -179,13 +179,13 @@ void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>&
 }
 
 void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
@@ -203,7 +203,7 @@ void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string
 					}
 
 					if (isnotasubsubdir) {
-						out.push_back(&dirp->d_name[size_path]);
+						out.emplace_back(&dirp->d_name[size_path]);
 					}
 
 				}
@@ -215,19 +215,19 @@ void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string
 }
 
 void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
 				if (size_path < size && //not this dir and prev path
 						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //file is in this directory
-					out.push_back(&dirp->d_name[size_path]);
+					out.emplace_back(&dirp->d_name[size_path]);
 				}
 			}
 		}
@@ -237,13 +237,13 @@ void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::str
 }
 
 void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
@@ -261,7 +261,7 @@ void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<st
 					}
 
 					if (isnotasubsubdir) {
-						out.push_back(&dirp->d_name[size_path]);
+						out.emplace_back(&dirp->d_name[size_path]);
 					}
 
 				}
@@ -273,19 +273,19 @@ void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<st
 }
 
 void ZipArchive::getListAllSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
-	if (zip_file != NULL) {
+	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
 		int size_path = path.size();
 
-		while ((dirp = zzip_readdir(zip_file)) != NULL) {
+		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
 				if (size_path < size && //not this dir and prev path
 						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
-					out.push_back(&dirp->d_name[size_path]);
+					out.emplace_back(&dirp->d_name[size_path]);
 				}
 			}
 		}

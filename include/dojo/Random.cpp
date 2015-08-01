@@ -38,9 +38,9 @@ void Random::initialize(RandomSeed seed) {
 	// See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
 	// In previous versions, most significant bits (MSBs) of the seed affect
 	// only MSBs of the state array.  Modified 9 Jan 2002 by Makoto Matsumoto.
-	register uint32_t* s = state;
-	register uint32_t* r = state;
-	register int i = 1;
+	uint32_t* s = state;
+	uint32_t* r = state;
+	int i = 1;
 	*s++ = (uint32_t)seed & 0xffffffffUL;
 
 	for (; i < N; ++i) {
@@ -53,8 +53,8 @@ void Random::reload() {
 	// Generate N new values in state
 	// Made clearer and faster by Matthew Bellew (matthew.bellew@home.com)
 	static const int MmN = int(M) - int(N); // in case enums are unsigned
-	register uint32_t* p = state;
-	register int i;
+	uint32_t* p = state;
+	int i;
 
 	for (i = N - M; i--; ++p) {
 		*p = twist(p[M], p[0], p[1]);
@@ -85,9 +85,9 @@ void Random::seed(const BigSeed& seed) {
 	// in each element are discarded.
 	// Just call seed() if you want to get array from /dev/urandom
 	initialize(19650218UL);
-	register int i = 1;
-	register uint32_t j = 0;
-	register int k = (N > seed.size() ? N : seed.size());
+	int i = 1;
+	uint32_t j = 0;
+	int k = (N > seed.size() ? N : seed.size());
 
 	for (; k; --k) {
 		state[i] =
@@ -138,9 +138,9 @@ Random::Random(const BigSeed& bigSeed) {
 }
 
 Random::Random(const Random& o) {
-	register const uint32_t* t = o.state;
-	register uint32_t* s = state;
-	register int i = N;
+	const uint32_t* t = o.state;
+	uint32_t* s = state;
+	int i = N;
 
 	for (; i--; *s++ = *t++) {
 	}
@@ -159,7 +159,7 @@ uint32_t Random::getInt() {
 
 	--left;
 
-	register uint32_t s1;
+	uint32_t s1;
 	s1 = *pget++;
 	s1 ^= (s1 >> 11);
 	s1 ^= (s1 << 7) & 0x9d2c5680UL;
@@ -274,9 +274,9 @@ double Random::randNorm(const double mean /*= 0.0*/, const double stddev /*= 1.0
 }
 
 void Random::save(uint32_t* saveArray) const {
-	register const uint32_t* s = state;
-	register uint32_t* sa = saveArray;
-	register int i = N;
+	const uint32_t* s = state;
+	uint32_t* sa = saveArray;
+	int i = N;
 
 	for (; i--; *sa++ = *s++) {
 	}
@@ -285,9 +285,9 @@ void Random::save(uint32_t* saveArray) const {
 }
 
 void Random::load(uint32_t* const loadArray) {
-	register uint32_t* s = state;
-	register uint32_t* la = loadArray;
-	register int i = N;
+	uint32_t* s = state;
+	uint32_t* la = loadArray;
+	int i = N;
 
 	for (; i--; *s++ = *la++) {
 	}
@@ -301,9 +301,9 @@ Random& Random::operator=(const Random& o) {
 		return (*this);
 	}
 
-	register const uint32_t* t = o.state;
-	register uint32_t* s = state;
-	register int i = N;
+	const uint32_t* t = o.state;
+	uint32_t* s = state;
+	int i = N;
 
 	for (; i--; *s++ = *t++) {
 	}

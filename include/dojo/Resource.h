@@ -28,11 +28,11 @@ namespace Dojo {
 			virtual void onLoad(Resource*) = 0;
 		};
 
-		Resource(ResourceGroup* group = NULL) :
+		Resource(ResourceGroup* group = nullptr) :
 			creator(group),
 			loaded(false),
 			size(0),
-			pDataProvider(NULL) {
+			pDataProvider(nullptr) {
 
 		}
 
@@ -41,7 +41,7 @@ namespace Dojo {
 			loaded(false),
 			size(0),
 			filePath(path),
-			pDataProvider(NULL) {
+			pDataProvider(nullptr) {
 			DEBUG_ASSERT( path.size(), "The file path is empty" );
 		}
 
@@ -50,7 +50,7 @@ namespace Dojo {
 			loaded(false),
 			size(0),
 			pDataProvider(source) {
-			DEBUG_ASSERT( source, "The DataProvider is NULL" );
+			DEBUG_ASSERT( source, "The DataProvider is nullptr" );
 		}
 
 		virtual ~Resource() {

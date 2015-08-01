@@ -9,8 +9,8 @@ InputDevice::InputDevice(Type type, int ID, byte buttonNumber, byte axisNumber) 
 	mAxisNumber(axisNumber),
 	type(type) {
 	for (byte i = 0; i < mAxisNumber; ++i) {
-		mAxis.push_back(0);
-		mDeadZone.push_back(0);
+		mAxis.emplace_back(0);
+		mDeadZone.emplace_back(0);
 	}
 }
 

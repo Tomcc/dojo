@@ -85,7 +85,7 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, con
 			Dojo::gp_assert_handler(
 				("OpenGL encountered an error: " + std::string(err)).c_str(),
 				"error != GL_NO_ERROR",
-				NULL,
+				nullptr,
 				line,
 				file_source,
 				function);
@@ -128,7 +128,7 @@ bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char* file_source, int line, con
 		Dojo::gp_assert_handler(
 			("OpenAL encountered an error: " + std::string(err)).c_str(),
 			"error != AL_NO_ERROR",
-			NULL,
+			nullptr,
 			line,
 			file_source,
 			function);

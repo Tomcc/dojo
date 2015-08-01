@@ -26,7 +26,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 	gp_assert_handler(
 		("Win32 encountered an error: " + std::to_string((int)error) + " (" + msg + ")").c_str(),
 		"error != GL_NO_ERROR",
-		NULL,
+		nullptr,
 		line,
 		file_source,
 		function);
@@ -217,7 +217,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 	case WM_ENTERSIZEMOVE: //this message is sent when the window is about to lose control in live resize
 		//start a timer to keep getting updates at 30 fps
-		//SetTimer( getWin32Window(), 1, 1./30., NULL );
+		//SetTimer( getWin32Window(), 1, 1./30., nullptr );
 		//_isInModalLoop = true;
 
 		return 0;
@@ -313,7 +313,7 @@ void Win32Platform::_adjustWindow() {
 	int windowTop = (GetSystemMetrics(SM_CYSCREEN) - realHeight) / 2;
 
 	// Make any window in the background repaint themselves
-	InvalidateRect(NULL, NULL, false);
+	InvalidateRect(nullptr, nullptr, false);
 
 	SetWindowPos(hwnd, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
 											SWP_SHOWWINDOW);
@@ -334,14 +334,14 @@ void Win32Platform::_adjustWindow() {
 bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, int h) {
 	DEBUG_MESSAGE("Creating " + std::to_string(w) + "x" + std::to_string(h) + " window");
 
-	hInstance = (HINSTANCE)GetModuleHandle(NULL);
+	hInstance = (HINSTANCE)GetModuleHandle(nullptr);
 
 	WNDCLASS wc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = TEXT("DojoOpenGLWindow") ;
@@ -378,10 +378,10 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 			dwstyle, //non-resizabile
 			rect.left, rect.top,
 			rect.right - rect.left, rect.bottom - rect.top,
-			NULL, NULL,
-			hInstance, NULL);
+			nullptr, nullptr,
+			hInstance, nullptr);
 
-	if (hwnd == NULL) {
+	if (hwnd == nullptr) {
 		return false;
 	}
 
@@ -448,7 +448,7 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 	SetWindowLong(hwnd, GWL_STYLE, style);
 
 	if (!fullscreen) {
-		ChangeDisplaySettings(NULL, 0);
+		ChangeDisplaySettings(nullptr, 0);
 
 		_adjustWindow(); //reset back
 	}
@@ -516,7 +516,7 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	SHGetFolderPathW(
 		hwnd,
 		CSIDL_APPDATA | CSIDL_FLAG_CREATE,
-		NULL,
+		nullptr,
 		0,
 		szPath);
 
@@ -525,7 +525,7 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	Path::makeCanonical(mAppDataPath);
 
 	//get root path
-	GetModuleFileNameW(NULL, szPath, MAX_PATH);
+	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
 	auto rootPathW = std::wstring(szPath);
 	rootPathW.resize(rootPathW.find_last_of(L"\\/"));
 
@@ -535,7 +535,7 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
 	//create the appdata user folder
-	CreateDirectoryW(appDataPathW.c_str(), NULL);
+	CreateDirectoryW(appDataPathW.c_str(), nullptr);
 
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
@@ -703,7 +703,7 @@ void Win32Platform::loop() {
 	running = true;
 
 	while (running && game->isRunning()) {
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
 				this->_fireTermination();
 				running = false;
@@ -884,7 +884,7 @@ void Win32Platform::keyReleased(int kc) {
 
 Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
-	FIBITMAP* dib = NULL;
+	FIBITMAP* dib = nullptr;
 
 	//I know that FreeImage can deduce the fif from file, but I want to enforce correct filenames
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilenameU(String::toUTF16(path).c_str());
@@ -979,7 +979,7 @@ const std::string& Win32Platform::getResourcesPath() {
 }
 
 void Win32Platform::openWebPage(const std::string& site) {
-	ShellExecuteW(hwnd, L"open", String::toUTF16(site).c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecuteW(hwnd, L"open", String::toUTF16(site).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 //init key map

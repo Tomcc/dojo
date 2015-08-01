@@ -45,7 +45,7 @@ namespace Dojo {
 		///add a format that will be recognized as a zip package by the file loader
 		void addZipFormat(const std::string& ext) {
 			DEBUG_ASSERT( ext.size(), "addZipFormat: empty format string" );
-			mZipExtensions.push_back(ext);
+			mZipExtensions.emplace_back(ext);
 		}
 
 		///returns the SoundManager instance

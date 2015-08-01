@@ -5,7 +5,7 @@
 using namespace Dojo;
 
 SoundSource::SoundSource(ALuint src) :
-	buffer(NULL),
+	buffer(nullptr),
 	source(src),
 	position(0, 0),
 	positionChanged(true) {
@@ -17,7 +17,7 @@ void SoundSource::_reset() {
 
 	position = Vector::Zero;
 	positionChanged = true;
-	buffer = NULL;
+	buffer = nullptr;
 	mFrontChunk = mBackChunk = nullptr;
 	mCurrentChunkID = 0;
 

@@ -46,7 +46,7 @@ void AStar::_retrace(Node* cur, Node* start) {
 	}
 
 	mTotalLength += cur->_cameFromDistance;
-	push_back(cur->position);
+	emplace_back(cur->position);
 }
 
 AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
@@ -54,7 +54,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	Node* start = set.getNode(startPos);
 
 	if (!start) {
-		push_back(startPos); //this is another point in the path
+		emplace_back(startPos); //this is another point in the path
 		start = _nearest(set, startPos);
 		mTotalLength += start->position.distance(startPos);
 	}
@@ -82,7 +82,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 			_retrace(cur, start);
 
 			if (!endIsAPathNode) { //remember to add the end position non-node
-				push_back(endPos);
+				emplace_back(endPos);
 			}
 
 			return;

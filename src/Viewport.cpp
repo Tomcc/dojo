@@ -223,7 +223,7 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 	mLayerList.clear();
 
 	for (auto && i : range(min.value, max.value)) {
-		mLayerList.push_back(i);
+		mLayerList.emplace_back(i);
 	}
 }
 

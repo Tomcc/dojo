@@ -6,7 +6,7 @@
 using namespace Dojo;
 
 void Log::_append(const std::string& message, LogEntry::Level level) {
-	mOutput.push_back(LogEntry(message, level));
+	mOutput.emplace_back(LogEntry(message, level));
 
 	if (mOutput.size() == mMaxLines) {
 		mOutput.erase(mOutput.begin());

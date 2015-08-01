@@ -9,8 +9,8 @@ const BackgroundQueue::Callback BackgroundQueue::NOP_CALLBACK = []() {
 
 BackgroundQueue::BackgroundQueue(int poolSize /* = -1 */) :
 	mRunning(true),
-	mCompletedQueue(new CompletedTaskQueue),
-	mQueue(new TaskQueue) {
+	mCompletedQueue(make_unique<CompletedTaskQueue>()),
+	mQueue(make_unique<TaskQueue>()) {
 	mMainThreadID = std::this_thread::get_id();
 
 	if (poolSize < 0) {
@@ -19,7 +19,7 @@ BackgroundQueue::BackgroundQueue(int poolSize /* = -1 */) :
 
 	//create the thread pool
 	for (int i = 0; i < poolSize; ++i) {
-		mWorkers.push_back(Unique<Worker>(new Worker(this)));
+		mWorkers.emplace_back(make_unique<Worker>(this));
 	}
 }
 

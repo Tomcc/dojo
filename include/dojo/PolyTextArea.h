@@ -67,7 +67,7 @@ namespace Dojo {
 		void _prepare();
 
 		void _tesselateExtrusionStrip(Tessellation* t, int layerAbaseIdx, int layerBbaseIdx);
-		void _addExtrusionLayer(Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal = NULL);
+		void _addExtrusionLayer(Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal = nullptr);
 
 	private:
 	};

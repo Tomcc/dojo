@@ -40,10 +40,10 @@ void Tessellation::mergePoints(int i1, int i2) {
 
 void Tessellation::addSegment(const Vector& p) {
 	int idx = positions.size() - 1;
-	positions.push_back(p);
+	positions.emplace_back(p);
 
 	//add indices to the point
-	segments.push_back(Segment(idx, idx + 1));
+	segments.emplace_back(Segment(idx, idx + 1));
 }
 
 void Tessellation::addQuadradratic(const Vector& B, const Vector& C, float pointsPerUnitLength) {
@@ -169,11 +169,11 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 		if (abs(divergence) < 0.6) {
 			//create a new vertex with the new normal
 			int newIndex = extrusionContourVertices.size();
-			extrusionContourVertices.push_back(ExtrusionVertex(vert.position, n));
+			extrusionContourVertices.emplace_back(ExtrusionVertex(vert.position, n));
 
 			//create a new "degenerate" segment between the two new vertices
 			//this closes gaps in extrusions that are inflated
-			additionalSegmentsBuffer.push_back(Segment(s[i], newIndex));
+			additionalSegmentsBuffer.emplace_back(Segment(s[i], newIndex));
 			s[i] = newIndex;
 		}
 		else {
@@ -185,7 +185,7 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 
 void Tessellation::generateExtrusionContour() {
 	for (auto& pos : positions) {
-		extrusionContourVertices.push_back(pos);
+		extrusionContourVertices.emplace_back(pos);
 	}
 
 	extrusionContourIndices = segments;
@@ -218,7 +218,7 @@ void Tessellation::findContours(bool generateHoles) {
 	for (auto& segment : segments) {
 		//look for a contour that ends with the index this one starts with
 		//also assign the index of the contour to a backmap from segment to contour
-		contourForSegment.push_back(_assignToIncompleteContour(segment.i1, segment.i2));
+		contourForSegment.emplace_back(_assignToIncompleteContour(segment.i1, segment.i2));
 	}
 
 	//trim still incomplete contours, they're just useless as everything is "out" of them
@@ -289,7 +289,7 @@ void Tessellation::findContours(bool generateHoles) {
 					auto& endPos = positions[contour.indices[1]];
 					Vector d = Vector((float)(endPos.y - startPos.y), (float)(endPos.x - startPos.x)).normalized() * 0.001f;
 
-					holes.push_back(Position(startPos.x + d.x, startPos.y + d.y));
+					holes.emplace_back(Position(startPos.x + d.x, startPos.y + d.y));
 				}
 			}
 		}

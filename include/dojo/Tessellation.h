@@ -79,8 +79,8 @@ namespace Dojo {
 
 			///adds a segment to this contour, marks it as closed if end == start
 			void _addSegment(int start, int end) {
-				indices.push_back(start);
-				indices.push_back(end);
+				indices.emplace_back(start);
+				indices.emplace_back(end);
 
 				closed = (end == indices.front());
 			}
@@ -128,7 +128,7 @@ namespace Dojo {
 
 		///Adds a 2D point to the tessellation contour
 		void startPath(const Vector& p) {
-			positions.push_back(p);
+			positions.emplace_back(p);
 		}
 
 		///adds a point and the indices to construct a single segment starting from the last point
@@ -142,7 +142,7 @@ namespace Dojo {
 
 		///manually signals that whatever surface chunk enclosing this marker is an hole
 		void addHoleMarker(const Vector& pos) {
-			holes.push_back(Position(pos.x, pos.z));
+			holes.emplace_back(Position(pos.x, pos.z));
 		}
 
 		///removes i2 from the point list and rearranges all the indices to point to i1

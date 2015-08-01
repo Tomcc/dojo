@@ -98,7 +98,7 @@ namespace Dojo {
 
 		///Sets a texture in the required slot.
 		/**
-		It can be NULL, which means that the slot is disabled.
+		It can be nullptr, which means that the slot is disabled.
 		*/
 		void setTexture(Texture* tex, int ID = 0);
 

@@ -91,7 +91,7 @@ void FrameSet::addTexture(Texture& t) {
 }
 
 void FrameSet::addTexture(Unique<Texture> t) {
-	DEBUG_ASSERT(t != nullptr, "Adding a NULL texture");
+	DEBUG_ASSERT(t != nullptr, "Adding a nullptr texture");
 	DEBUG_ASSERT(t->getOwnerFrameSet() == nullptr, "This Texture already has an owner FrameSet");
 
 	t->_notifyOwnerFrameSet(this);
