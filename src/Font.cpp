@@ -205,10 +205,9 @@ bool Font::Page::onLoad() {
 	int syp2 = npot ? sy : Math::nextPowerOfTwo(sy);
 
 	int pixelNumber = sxp2 * syp2;
-	int bufsize = pixelNumber * 4;
-	byte* buf = (byte*)malloc(bufsize);
+	std::vector<byte> buf(pixelNumber * 4);
 
-	unsigned int* ptr = (unsigned int*)buf;
+	auto ptr = (unsigned int*)buf.data();
 
 	//set alpha to 0 and colours to white
 	for (int i = sxp2 * syp2 - 1; i >= 0; --i) {
@@ -252,7 +251,7 @@ bool Font::Page::onLoad() {
 
 			//blit the bitmap if it was rendered
 			if (bitmap->buffer) {
-				_blit(buf, bitmap, x + font->glowRadius, y + font->glowRadius, sxp2);
+				_blit(buf.data(), bitmap, x + font->glowRadius, y + font->glowRadius, sxp2);
 			}
 		}
 	}
@@ -263,17 +262,16 @@ bool Font::Page::onLoad() {
 		byte* glowColChannel = (byte*)&glowCol;
 
 		//duplicate the buffer
-		byte* glowBuf = (byte*)malloc(bufsize);
-		memcpy(glowBuf, buf, bufsize);
+		auto glowBuf = buf;
 
 		for (int iteration = 0; iteration < font->glowRadius; ++iteration) {
 			for (int i = 1; i < syp2 - 1; ++i) {
 				for (int j = 1; j < sxp2 - 1; ++j) {
-					byte* cur = glowBuf + (j + i * sxp2) * 4;
-					byte* up = glowBuf + (j + (i + 1) * sxp2) * 4;
-					byte* down = glowBuf + (j + (i - 1) * sxp2) * 4;
-					byte* left = glowBuf + (j + 1 + i * sxp2) * 4;
-					byte* right = glowBuf + (j - 1 + i * sxp2) * 4;
+					byte* cur = glowBuf.data() + (j + i * sxp2) * 4;
+					byte* up = glowBuf.data() + (j + (i + 1) * sxp2) * 4;
+					byte* down = glowBuf.data() + (j + (i - 1) * sxp2) * 4;
+					byte* left = glowBuf.data() + (j + 1 + i * sxp2) * 4;
+					byte* right = glowBuf.data() + (j - 1 + i * sxp2) * 4;
 
 					cur[0] = glowColChannel[0];
 					cur[1] = glowColChannel[1];
@@ -285,8 +283,8 @@ bool Font::Page::onLoad() {
 
 		//now alpha-blend the blur over the original buffer
 		for (int i = 0; i < pixelNumber; ++i) {
-			byte* orig = buf + i * 4;
-			byte* glow = glowBuf + i * 4;
+			byte* orig = buf.data() + i * 4;
+			byte* glow = glowBuf.data() + i * 4;
 
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
 
@@ -294,18 +292,14 @@ bool Font::Page::onLoad() {
 				orig[channel] = (byte)(orig[channel] * s + glow[channel] * (1.f - s));
 			}
 		}
-
-		free(glowBuf);
 	}
 
 	//drop the buffer in the texture
 	//TODO can probably easily use 565 or less
-	loaded = texture->loadFromMemory(buf, sxp2, syp2, PixelFormat::R8G8B8A8, PixelFormat::R8G8B8A8);
+	loaded = texture->loadFromMemory(buf.data(), sxp2, syp2, PixelFormat::R8G8B8A8, PixelFormat::R8G8B8A8);
 	texture->disableBilinearFiltering();
 	texture->disableMipmaps();
 	texture->disableTiling();
-
-	free(buf);
 
 	return loaded;
 }

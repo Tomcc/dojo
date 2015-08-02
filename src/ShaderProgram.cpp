@@ -58,10 +58,9 @@ bool ShaderProgram::_load() {
 		glGetShaderiv(mGLShader, GL_INFO_LOG_LENGTH, &blen);
 
 		if (blen > 1) {
-			GLchar* compiler_log = (GLchar*)malloc(blen);
-			glGetShaderInfoLog(mGLShader, blen, &slen, compiler_log);
-			DEBUG_MESSAGE( std::string( "Compiler error:\n" ) + compiler_log );
-			free(compiler_log);
+			std::string compilerLog(blen, 0);
+			glGetShaderInfoLog(mGLShader, blen, &slen, (GLchar*)compilerLog.data());
+			DEBUG_MESSAGE( "Compiler error:\n" + compilerLog );
 		}
 
 		FAIL("A shader program failed to compile!");
