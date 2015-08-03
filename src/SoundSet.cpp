@@ -31,7 +31,7 @@ void SoundSet::addBuffer(std::unique_ptr<SoundBuffer> b) {
 }
 
 bool SoundSet::onLoad() {
-	for (auto && b : buffers) {
+	for (auto&& b : buffers) {
 		if (!b->isLoaded()) {
 			b->onLoad();
 		}
@@ -43,7 +43,7 @@ bool SoundSet::onLoad() {
 }
 
 void SoundSet::onUnload(bool soft) {
-	for (auto && b : buffers) {
+	for (auto&& b : buffers) {
 		if (b->isLoaded()) {
 			b->onUnload(soft);
 		}

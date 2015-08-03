@@ -285,7 +285,7 @@ bool Shader::onLoad() {
 	}
 
 	//ensure they're loaded
-	for (auto && program : pProgram) {
+	for (auto&& program : pProgram) {
 		if (!program->isLoaded()) {
 			if (!program->onLoad()) { //one program was not loaded, the shader can't work
 				return loaded;
@@ -296,7 +296,7 @@ bool Shader::onLoad() {
 	//link the shaders together in this high level shader
 	mGLProgram = glCreateProgram();
 
-	for (auto && program : pProgram) {
+	for (auto&& program : pProgram) {
 		glAttachShader(mGLProgram, program->getGLShader());
 	}
 

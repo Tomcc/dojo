@@ -84,7 +84,7 @@ void TextArea::addText(const std::string& text) {
 	uint32_t c;
 
 	//parse and setup characters
-	for (auto && i : range(text.size())) {
+	for (auto&& i : range(text.size())) {
 		c = text[i];
 
 		currentChar = font->getCharacter(c);
@@ -295,7 +295,7 @@ void TextArea::_prepare() {
 	//find real mesh bounds
 	mLayersBound = AABB::Invalid;
 
-	for (auto && layer : busyLayers) {
+	for (auto&& layer : busyLayers) {
 		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());
 	}
 

@@ -19,6 +19,7 @@
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
+    <ClInclude Include="include\dojo\Base64.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
     <ClInclude Include="include\dojo\CompileTimeID.h" />
     <ClInclude Include="include\dojo\Component.h" />
@@ -120,6 +121,7 @@
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundQueue.cpp" />
+    <ClCompile Include="src\Base64.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />

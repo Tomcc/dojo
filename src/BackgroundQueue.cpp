@@ -56,7 +56,7 @@ BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
 	pParent(parent) {
 	DEBUG_ASSERT(pParent, "the parent can't be null");
 
-	thread = std::thread([&]() {
+	thread = std::thread([&] {
 		Platform::singleton().prepareThreadContext();
 
 		for (;;) {

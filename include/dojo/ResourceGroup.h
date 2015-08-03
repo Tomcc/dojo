@@ -99,7 +99,7 @@ namespace Dojo {
 			//try in subgroups
 			R* f;
 
-			for (auto && sub : subs) {
+			for (auto&& sub : subs) {
 				f = sub->find<R>(name, r);
 
 				if (f) {
@@ -244,7 +244,7 @@ namespace Dojo {
 		///load all unloaded registered resources
 		template <class T>
 		void _load(std::unordered_map<std::string, Unique<T>>& map) {
-			for (auto && resourcePair : map) {
+			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (!resourcePair.second->isLoaded()) {
 					resourcePair.second->onLoad();
@@ -255,7 +255,7 @@ namespace Dojo {
 		template <class T>
 		void _unload(std::unordered_map<std::string, Unique<T>>& map, bool softUnload) {
 			//unload all the resources
-			for (auto && resourcePair : map) {
+			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (resourcePair.second->isLoaded()) {
 					resourcePair.second->onUnload(softUnload);

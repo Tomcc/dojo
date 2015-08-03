@@ -25,7 +25,7 @@ std::string Path::getFileName(const std::string& str) {
 
 	std::string res;
 
-	for (auto && i = start; i < end; ++i) {
+	for (auto&& i = start; i < end; ++i) {
 		res += str.at(i);
 	}
 

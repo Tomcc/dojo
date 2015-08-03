@@ -24,7 +24,7 @@ void Log::append(const std::string& message, LogEntry::Level level) {
 	//and anyway, when there's no BQ there should be no sync problems
 	if (q)
 		q->queueOnMainThread(
-		[&]() {
+		[&] {
 		_append(message, level);
 	});
 	else {
@@ -33,7 +33,7 @@ void Log::append(const std::string& message, LogEntry::Level level) {
 }
 
 void Log::_fireOnLogUpdated(const LogEntry& e) {
-	for (auto && listener : pListeners) {
+	for (auto&& listener : pListeners) {
 		listener->onLogUpdated(this, getLastMessage());
 	}
 }

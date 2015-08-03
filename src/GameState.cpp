@@ -43,7 +43,7 @@ void GameState::touchAreaAtPoint(const Touch& touch) {
 	std::vector<TouchArea*> layer;
 	int topMostLayer = INT32_MIN;
 
-	for (auto && t : mTouchAreas) {
+	for (auto&& t : mTouchAreas) {
 		if (t->isActive() && t->getLayer() >= topMostLayer && t->contains2D(pointer)) {
 			//new highest layer - discard lowest layers found
 			if (t->getLayer() > topMostLayer) {
@@ -57,7 +57,7 @@ void GameState::touchAreaAtPoint(const Touch& touch) {
 	}
 
 	//trigger all the areas overlapping in the topmost layer
-	for (auto && l : layer) {
+	for (auto&& l : layer) {
 		l->_incrementTouches(touch);
 	}
 }
@@ -80,19 +80,19 @@ void GameState::removeTouchArea(TouchArea* t) {
 
 void GameState::updateClickableState() {
 	//clear all the touchareas
-	for (auto && ta : mTouchAreas) {
+	for (auto&& ta : mTouchAreas) {
 		ta->_clearTouches();
 	}
 
 	auto& touchList = Platform::singleton().getInput().getTouchList();
 
 	//"touch" all the touchareas active in this frame
-	for (auto && touch : touchList) {
+	for (auto&& touch : touchList) {
 		touchAreaAtPoint(*touch);
 	}
 
 	///launch events
-	for (auto && ta : mTouchAreas) {
+	for (auto&& ta : mTouchAreas) {
 		ta->_fireOnTouchUsingCurrentTouches();
 	}
 }

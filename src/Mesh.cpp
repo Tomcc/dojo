@@ -123,7 +123,7 @@ void Mesh::setVertexFieldEnabled(VertexField f) {
 }
 
 void Mesh::setVertexFields(const std::initializer_list<VertexField>& fs) {
-	for (auto && f : fs) {
+	for (auto&& f : fs) {
 		setVertexFieldEnabled(f);
 	}
 }

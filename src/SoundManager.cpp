@@ -76,7 +76,7 @@ SoundManager::SoundManager() :
 
 
 void SoundManager::clear() {
-	for (auto && busy : busySoundPool) {
+	for (auto&& busy : busySoundPool) {
 		busy->stop();
 		idleSoundPool.emplace_back(std::move(busy));
 	}
@@ -150,7 +150,7 @@ void SoundManager::setMasterVolume(float volume) {
 		}
 
 		//update all the existing sounds
-		for (auto && s : busySoundPool) {
+		for (auto&& s : busySoundPool) {
 			s->setVolume(s->getVolume());
 		}
 	}
@@ -299,7 +299,7 @@ void SoundManager::setMusicVolume(float volume) {
 }
 
 void SoundManager::pauseAll() {
-	for (auto && s : busySoundPool) {
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack) {
 			s->pause();
 		}
@@ -307,7 +307,7 @@ void SoundManager::pauseAll() {
 }
 
 void SoundManager::resumeAll() {
-	for (auto && s : busySoundPool) {
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack) {
 			s->play();
 		}
@@ -315,7 +315,7 @@ void SoundManager::resumeAll() {
 }
 
 void SoundManager::stopAllSounds() {
-	for (auto && s : busySoundPool) {
+	for (auto&& s : busySoundPool) {
 		if (s.get() != musicTrack) {
 			s->stop();
 		}

@@ -263,7 +263,7 @@ void Table::deserialize(StringReader& buf) {
 				buf.back();
 
 				//create a color using the hex
-				col.set(buf.readHex());
+				col = Color::fromARGB(buf.readHex());
 
 				set(curName, col);
 			}

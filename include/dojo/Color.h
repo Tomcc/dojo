@@ -21,6 +21,16 @@ namespace Dojo {
 
 		static const Color Red, Green, Blue, Black, White, Gray, Yellow, Cyan, Purple, None;
 
+		static Color fromARGB(uint32_t pixel) {
+			byte* ch = (byte*)&pixel;
+			return{
+				ch[2] / 255.f,
+				ch[1] / 255.f,
+				ch[0] / 255.f,
+				ch[3] / 255.f
+			};
+		}
+
 		float r, g, b, a;
 
 		Color() :
@@ -46,21 +56,12 @@ namespace Dojo {
 		}
 
 		///creates from a single A8R8G8B8 32-bit value
-		explicit Color(RGBAPixel p) {
-			set(p);
-		}
 
 		void set(byte r, byte g, byte b, byte a = 255) {
 			this->r = (float)r / 255.f;
 			this->g = (float)g / 255.f;
 			this->b = (float)b / 255.f;
 			this->a = (float)a / 255.f;
-		}
-
-		///creates from a single A8R8G8B8 32-bit value
-		void set(RGBAPixel pixel) {
-			byte* ch = (byte*)&pixel;
-			set(ch[2], ch[1], ch[0], ch[3]);
 		}
 
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)

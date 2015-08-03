@@ -131,7 +131,7 @@ void PolyTextArea::_prepare() {
 
 	mMesh->begin();
 
-	for (auto && c : mContent) {
+	for (auto&& c : mContent) {
 		//get the tesselation for each character and stuff it into the mesh
 		auto character = pFont->getCharacter(c);
 		Tessellation* t = character->getTesselation();

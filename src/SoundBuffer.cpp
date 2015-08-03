@@ -120,7 +120,7 @@ void SoundBuffer::onUnload(bool soft) {
 	DEBUG_ASSERT( isLoaded(), "SoundBuffer is not loaded" );
 
 	//just push the event to all its chunks
-	for (auto && chunk : mChunks) {
+	for (auto&& chunk : mChunks) {
 		if (!isStreaming()) { //non-streaming buffers own all of their chunk (to avoid them being released each time)
 			chunk->release();
 		}
@@ -209,12 +209,12 @@ void SoundBuffer::Chunk::loadAsync() {
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
 	//async load
-	Platform::singleton().getBackgroundQueue()->queueTask([&]() {
+	Platform::singleton().getBackgroundQueue()->queueTask([&] {
 		onLoad();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK
 	},
-	[&]() { //then,
+	[&] { //then,
 		release();
 	});
 }

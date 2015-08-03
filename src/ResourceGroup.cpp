@@ -251,7 +251,7 @@ void ResourceGroup::loadResources(bool recursive) {
 	_load<FrameSet>(frameSets);
 
 	if (recursive)
-		for (auto && sub : subs) {
+		for (auto&& sub : subs) {
 			sub->loadResources(recursive);
 		}
 }
@@ -267,7 +267,7 @@ void ResourceGroup::unloadResources(bool recursive) {
 	_unload<ShaderProgram>(programs, false);
 
 	if (recursive) {
-		for (auto && sub : subs) {
+		for (auto&& sub : subs) {
 			sub->unloadResources(recursive);
 		}
 	}
@@ -283,7 +283,7 @@ void ResourceGroup::softUnloadResources(bool recursive) {
 	_unload<Shader>(shaders, true);
 
 	if (recursive)
-		for (auto && sub : subs) {
+		for (auto&& sub : subs) {
 			sub->softUnloadResources(recursive);
 		}
 }

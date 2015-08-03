@@ -79,7 +79,7 @@ bool Object::canDestroy() const {
 }
 
 void Object::collectChilds() {
-	for (auto && i : range(children.size())) {
+	for (auto&& i : range(children.size())) {
 		auto& child = children[i];
 
 		if (child->disposed && child->canDestroy()) {
@@ -204,7 +204,7 @@ void Object::onAction(float dt) {
 }
 
 void Object::setAllChildrenVisibleHACK(bool visible) {
-	for (auto && c : children) {
+	for (auto&& c : children) {
 		if (c->has<Renderable>()) {
 			c->get<Renderable>().setVisible(visible);
 		}

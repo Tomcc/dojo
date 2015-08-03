@@ -311,31 +311,31 @@ void Platform::save(const Table& src, const std::string& absPathOrName) {
 }
 
 void Platform::_fireFocusLost() {
-	for (auto && l : focusListeners) {
+	for (auto&& l : focusListeners) {
 		l->onApplicationFocusLost();
 	}
 }
 
 void Platform::_fireFocusGained() {
-	for (auto && l : focusListeners) {
+	for (auto&& l : focusListeners) {
 		l->onApplicationFocusGained();
 	}
 }
 
 void Platform::_fireFreeze() {
-	for (auto && l : focusListeners) {
+	for (auto&& l : focusListeners) {
 		l->onApplicationFreeze();
 	}
 }
 
 void Platform::_fireDefreeze() {
-	for (auto && l : focusListeners) {
+	for (auto&& l : focusListeners) {
 		l->onApplicationDefreeze();
 	}
 }
 
 void Platform::_fireTermination() {
-	for (auto && l : focusListeners) {
+	for (auto&& l : focusListeners) {
 		l->onApplicationTermination();
 	}
 }

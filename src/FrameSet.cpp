@@ -60,7 +60,7 @@ bool FrameSet::onLoad() {
 
 	loaded = true;
 
-	for (auto && t : ownedFrames) {
+	for (auto&& t : ownedFrames) {
 		if (!t->isLoaded()) {
 			t->onLoad();
 
@@ -79,7 +79,7 @@ bool FrameSet::onLoad() {
 void FrameSet::onUnload(bool soft) {
 	DEBUG_ASSERT(loaded, "onUnload: this FrameSet is not loaded");
 
-	for (auto && f : ownedFrames) {
+	for (auto&& f : ownedFrames) {
 		f->onUnload(soft);
 	}
 

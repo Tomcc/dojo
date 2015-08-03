@@ -31,7 +31,7 @@ bool InputDevice::isKeyDown(KeyCode key) {
 
 bool InputDevice::isKeyDown(int action) {
 	//check all the keys bound to this one
-	for (auto && binding : mBindings) {
+	for (auto&& binding : mBindings) {
 		if (binding.action == action && isKeyDown(binding.key)) {
 			return true;
 		}
@@ -41,7 +41,7 @@ bool InputDevice::isKeyDown(int action) {
 }
 
 bool InputDevice::hasBinding(int action, KeyCode key) const {
-	for (auto && b : mBindings) {
+	for (auto&& b : mBindings) {
 		if (action == b.action && key == b.key) {
 			return true;
 		}
@@ -69,7 +69,7 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 		mButton[key] = pressed; //buffer state
 
 		//notify once for every action connected to this key
-		for (auto && binding : mBindings) {
+		for (auto&& binding : mBindings) {
 			if (binding.key == key) {
 				if (pressed) {
 					for (size_t i = 0; i < pListeners.size(); ++i) { //do not use ranges! listeners can be added and removed in the inner loop

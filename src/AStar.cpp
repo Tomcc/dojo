@@ -127,7 +127,7 @@ AStar::Node* AStar::_nearest(const Graph& set, const Vector& pos) {
 	float minDistance = FLT_MAX;
 	Node* nearest = nullptr;
 
-	for (auto && entry : set) {
+	for (auto&& entry : set) {
 		float d = pos.distanceSquared(entry.first);
 
 		if (d < minDistance) {
