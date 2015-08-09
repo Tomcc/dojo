@@ -218,12 +218,6 @@ void SoundSource::stop() {
 		alSourceStop(source);
 
 		alSourcei(source, AL_BUFFER, AL_NONE);
-
-		mFrontChunk->release();
-
-		if (mBackChunk) {
-			mBackChunk->release();
-		}
 	}
 }
 
