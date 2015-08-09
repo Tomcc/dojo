@@ -201,8 +201,7 @@ namespace Dojo {
 		Matrix mWorldTransform;
 
 		bool active;
-		bool disposed;
-
+		
 		Object* parent;
 		ChildList children;
 
@@ -211,5 +210,6 @@ namespace Dojo {
 		void _unregisterChild(Object& child);
 
 	private:
+		bool disposed;
 	};
 }
