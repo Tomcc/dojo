@@ -103,15 +103,14 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 }
 
 void Shader::setUniformCallback(const std::string& name, const UniformCallback& dataBinder) {
-	auto elem = mUniformMap.find(name);
-
-	if (elem != mUniformMap.end()) {
-		elem->second.userUniformCallback = dataBinder;    //assign the data source to the right uniform
+	for (auto&& uniform : mUniforms) {
+		if (uniform.name == name) {
+			uniform.customDataBinding = dataBinder;
+			return;
+		}
 	}
 
-	else {
-		DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
-	}
+	DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
 }
 
 const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& user) {
@@ -126,7 +125,7 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 	switch (builtin) {
 	case BU_NONE:
 		//TODO make global uniforms and remove this stuff
-		return uniform.userUniformCallback(user); //call the user callback and be happy
+		return uniform.customDataBinding(user); //call the user callback and be happy
 
 	case BU_WORLD:
 		return &r.currentState.world;
@@ -190,8 +189,8 @@ void Shader::use(const Renderable& user) {
 	glUseProgram(mGLProgram);
 
 	//bind the uniforms and the attributes
-	for (auto&& uniform : mUniformMap) {
-		const void* ptr = _getUniformData(uniform.second, user);
+	for (auto&& uniform : mUniforms) {
+		const void* ptr = _getUniformData(uniform, user);
 
 		if (ptr == nullptr) { //no data provided, skip
 			break;
@@ -201,64 +200,64 @@ void Shader::use(const Renderable& user) {
 		//yes, this code is ugly...but don't be scared, it's as fast as a single glUniform in release :)
 		//the types supported here are only the GLSL ES 2.0 types specified at
 		//http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf, page 18
-		switch (uniform.second.type) {
+		switch (uniform.type) {
 		case GL_FLOAT:
-			glUniform1fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
+			glUniform1fv(uniform.location, uniform.count, (GLfloat*)ptr);
 			break;
 
 		case GL_FLOAT_VEC2:
-			glUniform2fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
+			glUniform2fv(uniform.location, uniform.count, (GLfloat*)ptr);
 			break;
 
 		case GL_FLOAT_VEC3:
-			glUniform3fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
+			glUniform3fv(uniform.location, uniform.count, (GLfloat*)ptr);
 			break;
 
 		case GL_FLOAT_VEC4:
-			glUniform4fv(uniform.second.location, uniform.second.count, (GLfloat*)ptr);
+			glUniform4fv(uniform.location, uniform.count, (GLfloat*)ptr);
 			break;
 
 		case GL_INT:
 		case GL_SAMPLER_2D:
 		case GL_SAMPLER_CUBE:
 		case GL_BOOL:
-			glUniform1iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			glUniform1iv(uniform.location, uniform.count, (GLint*)ptr);
 			break; //this call also sets the samplers
 
 		case GL_INT_VEC2:
 		case GL_BOOL_VEC2:
-			glUniform2iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			glUniform2iv(uniform.location, uniform.count, (GLint*)ptr);
 			break;
 
 		case GL_INT_VEC3:
 		case GL_BOOL_VEC3:
-			glUniform3iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			glUniform3iv(uniform.location, uniform.count, (GLint*)ptr);
 			break;
 
 		case GL_INT_VEC4:
 		case GL_BOOL_VEC4:
-			glUniform4iv(uniform.second.location, uniform.second.count, (GLint*)ptr);
+			glUniform4iv(uniform.location, uniform.count, (GLint*)ptr);
 			break;
 
 		case GL_FLOAT_MAT2:
-			glUniformMatrix2fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+			glUniformMatrix2fv(uniform.location, uniform.count, false, (GLfloat*)ptr);
 			break;
 
 		case GL_FLOAT_MAT3:
-			glUniformMatrix3fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+			glUniformMatrix3fv(uniform.location, uniform.count, false, (GLfloat*)ptr);
 			break;
 
 		case GL_FLOAT_MAT4:
-			glUniformMatrix4fv(uniform.second.location, uniform.second.count, false, (GLfloat*)ptr);
+			glUniformMatrix4fv(uniform.location, uniform.count, false, (GLfloat*)ptr);
 			break;
 
 		default:
 			//not found... but it's not possible to warn each frame. Do place a brk here if unsure
 			break;
 		}
-
-		CHECK_GL_ERROR;
 	}
+
+	CHECK_GL_ERROR;
 }
 
 bool Shader::onLoad() {
@@ -325,11 +324,13 @@ bool Shader::onLoad() {
 				GLint loc = glGetUniformLocation(mGLProgram, namebuf);
 
 				if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
-					mUniformMap[namebuf] = Uniform(
-					loc,
-					size,
-					type,
-					_getUniformForName(namebuf));
+					mUniforms.emplace_back(
+						namebuf,
+						loc,
+						size,
+						type,
+						_getUniformForName(namebuf)
+					);
 				}
 			}
 		}
@@ -345,10 +346,11 @@ bool Shader::onLoad() {
 				GLint loc = glGetAttribLocation(mGLProgram, namebuf);
 
 				if (loc >= 0) {
-					mAttributeMap[namebuf] = VertexAttribute(
-					loc,
-					size,
-					_getAttributeForName(namebuf));
+					mAttributes.emplace_back(
+						loc,
+						size,
+						_getAttributeForName(namebuf)
+					);
 				}
 			}
 		}

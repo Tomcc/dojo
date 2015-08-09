@@ -170,11 +170,11 @@ namespace Dojo {
 			return !indices.empty() || indexHandle;
 		}
 
-		GLenum getIndexGLType() {
+		GLenum getIndexGLType() const {
 			return indexGLType;
 		}
 
-		bool isVertexFieldEnabled(VertexField f) {
+		bool isVertexFieldEnabled(VertexField f) const {
 			return vertexFieldOffset[(unsigned char)f] != 0xff;
 		}
 
@@ -196,6 +196,8 @@ namespace Dojo {
 		void eraseIndex(int idxidx);
 
 		void setIndex(int idxidx, IndexType idx);
+
+		bool supportsShader(const Shader& shader) const;
 
 		///Creates a new empty mesh with the same format of this one
 		Unique<Mesh> cloneWithSameFormat() const;

@@ -20,6 +20,8 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& s
 	Renderable(parent, layer) {
 	mesh = &m;
 	pShader = &shader;
+
+	DEBUG_ASSERT(mesh->supportsShader(*pShader), "cannot use this mesh with this shader");
 }
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName, const std::string& shaderName) :
@@ -30,7 +32,9 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer, const std::string&
 	DEBUG_ASSERT_INFO( mesh, "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
 
 	pShader = parent.getGameState().getShader(shaderName);
-	DEBUG_ASSERT_INFO(pShader, "Tred to create a Renderable but the shader wasn't found", "name = " + shaderName);
+	DEBUG_ASSERT_INFO(pShader, "Tried to create a Renderable but the shader wasn't found", "name = " + shaderName);
+
+	DEBUG_ASSERT(mesh->supportsShader(*pShader), "cannot use this mesh with this shader");
 }
 
 Renderable::~Renderable() {

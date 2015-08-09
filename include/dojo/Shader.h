@@ -71,8 +71,6 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::unordered_map<std::string, VertexAttribute> NameAttributeMap;
-
 		///Creates a new Shader from a file path
 		Shader(ResourceGroup* creator, const std::string& filePath);
 
@@ -92,8 +90,8 @@ namespace Dojo {
 			return mGLProgram;
 		}
 
-		const NameAttributeMap& getAttributes() const {
-			return mAttributeMap;
+		const std::vector<VertexAttribute>& getAttributes() const {
+			return mAttributes;
 		}
 
 		///binds the shader to the OpenGL state with the object that is using it
@@ -112,23 +110,25 @@ namespace Dojo {
 			GLenum type;
 
 			BuiltInUniform builtInUniform;
-			UniformCallback userUniformCallback;
+			UniformCallback customDataBinding;
+
+			std::string name;
 
 			Uniform() {
 
 			}
 
-			Uniform(GLint loc, GLint elementCount, GLenum ty, BuiltInUniform biu) :
+			Uniform(const std::string& name, GLint loc, GLint elementCount, GLenum ty, BuiltInUniform biu) :
 				location(loc),
 				count(elementCount),
 				type(ty),
-				builtInUniform(biu) {
+				builtInUniform(biu),
+				name(name) {
 				DEBUG_ASSERT( location >= 0, "Invalid Uniform location" );
 				DEBUG_ASSERT( count > 0, "Invalid element count" );
+				DEBUG_ASSERT(name.size() > 0, "Invalid uniform name");
 			}
 		};
-
-		typedef std::unordered_map<std::string, Uniform> NameUniformMap;
 
 		typedef std::unordered_map<std::string, BuiltInUniform> NameBuiltInUniformMap;
 		typedef std::unordered_map<std::string, VertexField> NameBuiltInAttributeMap;
@@ -144,8 +144,8 @@ namespace Dojo {
 
 		std::string mPreprocessorHeader;
 
-		NameUniformMap mUniformMap;
-		NameAttributeMap mAttributeMap;
+		std::vector<Uniform> mUniforms;
+		std::vector<VertexAttribute> mAttributes;
 
 		GLuint mGLProgram;
 

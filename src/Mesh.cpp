@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "dojomath.h"
 #include "PrimitiveMode.h"
+#include "enum_cast.h"
 
 using namespace Dojo;
 
@@ -284,67 +285,45 @@ void Mesh::normal(float x, float y, float z) {
 	normal(Vector(x, y, z));
 }
 
-void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset) {
-	outOffset = (void*)_offset(field);
-
-	switch (field) {
-	case VertexField::Position2D:
-		outComponentsType = GL_FLOAT;
-		outComponents = 2;
-		outNormalized = false;
-		break;
-
-	case VertexField::Position3D:
-		outComponentsType = GL_FLOAT;
-		outComponents = 3;
-		outNormalized = false;
-		break;
-
-	case VertexField::Color:
-		outComponentsType = GL_UNSIGNED_BYTE;
-		outComponents = 4;
-		outNormalized = true;
-		break;
-
-	case VertexField::Normal:
-		outComponentsType = GL_FLOAT;
-		outComponents = 3;
-		outNormalized = false;
-		break;
-
-	default: //textures
-		outComponentsType = GL_FLOAT;
-		outComponents = 2;
-		outNormalized = false;
-		break;
-	}
+struct VertexFieldInfo {
+	GLenum type;
+	byte components;
+	bool normalized;
 }
 
-void Dojo::Mesh::_bindAttribArrays(const Shader& shader) {
+static const vertexFieldInfoMap[] = {
+	{ GL_FLOAT, 2, false },	// 	Position2D,
+	{ GL_FLOAT, 3, false },	// 	Position3D,
+	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
+	{ GL_FLOAT, 2, false },	// 	Normal, //TODO use an int? this is way too big
+
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+};
+
+void Mesh::_bindAttribArrays(const Shader& shader) {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	
-	GLint components;
-	GLenum componentsType;
-	bool normalized;
-	void* offset;
+	for (auto&& attribute : shader.getAttributes()) {
+		DEBUG_ASSERT(isVertexFieldEnabled(attribute.builtInAttribute), "This mesh doesn't provide a required attribute");
 
-	for (auto&& attr : shader.getAttributes()) {
-		if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) { //skip non-provided attributes
-			continue;
-		}
+		auto offset = (void*)_offset(attribute.builtInAttribute);
+		auto& field = vertexFieldInfoMap[enum_cast(attribute.builtInAttribute)];
 
-		_getVertexFieldData(attr.second.builtInAttribute, components, componentsType, normalized, offset);
-
-		glEnableVertexAttribArray(attr.second.location);
+		glEnableVertexAttribArray(attribute.location);
 		glVertexAttribPointer(
-			attr.second.location,
-			components,
-			componentsType,
-			normalized,
+			attribute.location,
+			field.components,
+			field.type,
+			field.normalized,
 			vertexSize,
 			offset);
-
-		CHECK_GL_ERROR;
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
@@ -417,7 +396,7 @@ bool Mesh::end() {
 	return loaded;
 }
 
-void Dojo::Mesh::bind(const Shader& shader) {
+void Mesh::bind(const Shader& shader) {
 #ifndef DOJO_DISABLE_VAOS
 
 	DEBUG_ASSERT( vertexArrayDesc );
@@ -648,4 +627,12 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 
 
 	return c;
+}
+
+bool Mesh::supportsShader(const Shader& shader) const {
+	for (auto&& attribute : shader.getAttributes()) {
+		if (!isVertexFieldEnabled(attribute.builtInAttribute))
+			return false;
+	}
+	return true;
 }
