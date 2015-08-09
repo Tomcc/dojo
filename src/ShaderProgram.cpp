@@ -6,16 +6,18 @@
 
 using namespace Dojo;
 
+const std::string ShaderProgram::fragmentExtension = "fragment", ShaderProgram::vertexExtension = "vertex";
+
 ///"real file" Resource constructor. When onLoad is called, it will use filePath to load its contents
 ShaderProgram::ShaderProgram(ResourceGroup* creator, const std::string& filePath) :
 	Resource(creator, filePath) {
 	//guess the type from the extension
 	std::string ext = Path::getFileExtension(filePath);
 
-	if (ext == std::string("vs")) {
+	if (ext == vertexExtension) {
 		mType = ShaderProgramType::VertexShader;
 	}
-	else if (ext == std::string("ps")) {
+	else if (ext == fragmentExtension) {
 		mType = ShaderProgramType::FragmentShader;
 	}
 	else {
@@ -29,8 +31,6 @@ ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents
 	mType(type) {
 	DEBUG_ASSERT(mContentString.size(), "No shader code was defined (empty string)");
 }
-
-#ifdef DOJO_SHADERS_AVAILABLE
 
 bool ShaderProgram::_load() {
 	static const GLuint typeGLTypeMap[] = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
@@ -78,18 +78,6 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 	loaded = false;
 }
 
-#else
-
-bool ShaderProgram::_load() {
-	FAIL( "Shaders not supported" );
-	return false;
-}
-
-void ShaderProgram::onUnload( bool soft /* = false */ ) {
-	FAIL( "Shaders not supported" );
-}
-#endif
-
 bool ShaderProgram::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "Cannot reload an already loaded program" );
 
@@ -112,7 +100,7 @@ bool ShaderProgram::onLoad() {
 	return loaded;
 }
 
-Unique<ShaderProgram> Dojo::ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
+Unique<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
 
 	return make_unique<ShaderProgram>(mType, preprocessorHeader + mContentString);

@@ -34,8 +34,6 @@ namespace Dojo {
 
 			~TextureUnit();
 
-			void applyTransform();
-
 			void setOffset(const Vector& v) {
 				offset = v;
 				hasTextureTransform = true;
@@ -120,7 +118,7 @@ namespace Dojo {
 		/**
 		\remark the shader may be null to remove shader use
 		*/
-		void setShader(Shader* shader);
+		void setShader(Shader& shader);
 
 		Texture* getTexture(int ID = 0) const;
 
@@ -132,8 +130,8 @@ namespace Dojo {
 		}
 
 		///returns the Shader currently bound to this state
-		Shader* getShader() {
-			return pShader;
+		Shader& getShader() {
+			return *pShader;
 		}
 
 		///returns the "weight" of the changes needed to pass from "this" to "s"

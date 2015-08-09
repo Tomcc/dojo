@@ -6,8 +6,8 @@
 
 using namespace Dojo;
 
-Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const std::string& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
-	AnimatedQuad(parent, layer),
+Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const std::string& shaderName, const std::string& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
+	AnimatedQuad(parent, layer, shaderName),
 	mAnimationIdx(-1) {
 	this->pixelPerfect = pixelPerfect;
 

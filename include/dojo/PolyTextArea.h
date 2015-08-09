@@ -18,7 +18,7 @@ namespace Dojo {
 		};
 
 		///creates a new PolyTextArea object at position, using "font", centered or not around the center, using rendering options RT
-		PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, bool centered, RenderingType rt);
+		PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const std::string& shaderName, bool centered, RenderingType rt);
 
 		virtual ~PolyTextArea();
 

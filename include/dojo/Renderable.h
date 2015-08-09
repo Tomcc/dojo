@@ -33,9 +33,9 @@ namespace Dojo {
 
 		Renderable(Object& parent, RenderLayer::ID layer);
 
-		Renderable(Object& parent, RenderLayer::ID layer, Mesh& m);
+		Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& shader);
 
-		Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName);
+		Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName, const std::string& shaderName);
 
 		virtual ~Renderable();
 

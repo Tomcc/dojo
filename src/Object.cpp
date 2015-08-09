@@ -35,7 +35,7 @@ Object& Object::_addChild(Unique<Object> o) {
 	children.emplace(std::move(o));
 
 	//call onAttach on all of the children components
-	for (auto& c : ptr->components) {
+	for (auto&& c : ptr->components) {
 		if (c) {
 			c->onAttach();
 		}
@@ -46,7 +46,7 @@ Object& Object::_addChild(Unique<Object> o) {
 
 void Object::_unregisterChild(Object& child) {
 	//call onAttach on all of the children components
-	for (auto& c : child.components) {
+	for (auto&& c : child.components) {
 		if (c) {
 			c->onDetach();
 		}
@@ -69,7 +69,7 @@ Unique<Object> Object::removeChild(Object& o) {
 }
 
 bool Object::canDestroy() const {
-	for (auto& component : components) {
+	for (auto&& component : components) {
 		if (!component->canDestroy()) {
 			return false; //this one can't be destroyed, wait
 		}
@@ -92,7 +92,7 @@ void Object::collectChilds() {
 }
 
 Object::ChildList Object::removeAllChildren() {
-	for (auto& c : children) {
+	for (auto&& c : children) {
 		_unregisterChild(*c);
 	}
 
@@ -218,7 +218,7 @@ void Object::dispose() {
 
 	disposed = true;
 
-	for (auto& c : components) {
+	for (auto&& c : components) {
 		if (c) {
 			c->onDispose();
 		}

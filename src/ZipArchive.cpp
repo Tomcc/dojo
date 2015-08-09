@@ -299,7 +299,7 @@ std::string ZipArchive::makeValidPath(const std::string& path) {
 	return{};
 
 	// 	/* 1 delete \  */
-	// 	for (auto& c : path) {
+	// 	for (auto&& c : path) {
 	// 		if (c == '\\')
 	// 			c = '/';
 	// 	}

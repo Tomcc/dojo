@@ -92,7 +92,7 @@ namespace Dojo {
 			return mGLProgram;
 		}
 
-		const NameAttributeMap& getAttributes() {
+		const NameAttributeMap& getAttributes() const {
 			return mAttributeMap;
 		}
 

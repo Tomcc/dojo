@@ -164,7 +164,7 @@ namespace Dojo {
 		virtual void onUnload(bool soft = false) override;
 
 		///binds the mesh buffers with the vertex format from the specified shader
-		virtual void bind(Shader* shader);
+		virtual void bind(const Shader& shader);
 
 		bool isIndexed() const {
 			return !indices.empty() || indexHandle;
@@ -234,7 +234,7 @@ namespace Dojo {
 		void _getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset);
 
 		///binds the attribute arrays and the Buffer Objects required to render the mesh
-		void _bindAttribArrays(Shader* shader);
+		void _bindAttribArrays(const Shader& shader);
 
 		byte& _offset(VertexField f);
 		byte& _offset(VertexField f, int subID);

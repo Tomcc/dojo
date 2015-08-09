@@ -28,7 +28,7 @@ namespace Dojo {
 			\param defaultAnimName the name of animation 0
 			\param timePerFrame the frame time of the animation
 			\param pixelPerfect if pixelPerfect, an objects' scale is bound to the pixel size of the current frame and to the pixel size of the current Viewport. A pixelPerfect object can still be scaled using pixelScale.*/
-		Sprite(Object& parent, RenderLayer::ID layer, const std::string& defaultAnimName = String::Empty, float timePerFrame = -1, bool pixelPerfect = true);
+		Sprite(Object& parent, RenderLayer::ID layer, const std::string& shaderName, const std::string& defaultAnimName = String::Empty, float timePerFrame = -1, bool pixelPerfect = true);
 
 		virtual ~Sprite();
 

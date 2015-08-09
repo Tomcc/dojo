@@ -39,7 +39,7 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 	}
 }
 
-Dojo::AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
+AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::string& shader, const std::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
 	Renderable(parent, layer),
 	animationTime(0),
 	pixelScale(1, 1),

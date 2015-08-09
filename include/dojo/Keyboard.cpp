@@ -16,7 +16,7 @@ void Keyboard::addFakeAxis(Axis axis, KeyCode min, KeyCode max) {
 void Keyboard::poll(float dt) {
 	float accum[Axis::_AI_COUNT] = {0};
 
-	for (auto& fakeAxis : mFakeAxes) {
+	for (auto&& fakeAxis : mFakeAxes) {
 		accum[fakeAxis.axis] += isKeyDown(fakeAxis.max) ? 1.f : 0.f;
 		accum[fakeAxis.axis] -= isKeyDown(fakeAxis.min) ? 1.f : 0.f;
 	}
@@ -27,7 +27,7 @@ void Keyboard::poll(float dt) {
 }
 
 bool Keyboard::hasAxis(Axis x) const {
-	for (auto& a : mFakeAxes) {
+	for (auto&& a : mFakeAxes) {
 		if (a.axis == x) {
 			return true;
 		}

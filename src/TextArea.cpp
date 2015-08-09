@@ -9,7 +9,7 @@
 
 using namespace Dojo;
 
-Dojo::TextArea::TextArea(Object& l,
+TextArea::TextArea(Object& l,
 	RenderLayer::ID layer,
 	const std::string& fontSetName,
 	bool center /*= false*/,
@@ -27,8 +27,10 @@ Dojo::TextArea::TextArea(Object& l,
 	l.setSize(bounds); //TODO HMM
 
 	font = getGameState().getFont(fontName);
-
 	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
+
+	mShader = getGameState().getShader("textured");
+	DEBUG_ASSERT_INFO(mShader, "Cannot find the required shader for a TextArea", std::string("shaderName = textured"));
 
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
@@ -48,7 +50,7 @@ TextArea::~TextArea() {
 	_destroyLayers();
 }
 
-void Dojo::TextArea::setVisibleCharacters(uint32_t n) {
+void TextArea::setVisibleCharacters(uint32_t n) {
 	if (n != visibleCharsNumber) {
 		visibleCharsNumber = n;
 
@@ -139,7 +141,7 @@ void TextArea::addText(int n, char paddingChar, int digits) {
 	addText(number);
 }
 
-Renderable& Dojo::TextArea::_enableLayer(Texture& tex) {
+Renderable& TextArea::_enableLayer(Texture& tex) {
 	if (freeLayers.empty()) {
 		_pushLayer();
 	}
@@ -329,7 +331,7 @@ void TextArea::_centerLastLine(int startingAt, float size) {
 }
 
 ///create a mesh to be used for text
-Unique<Mesh> Dojo::TextArea::_createMesh() {
+Unique<Mesh> TextArea::_createMesh() {
 	auto mesh = make_unique<Mesh>();
 	mesh->setDynamic(true);
 	mesh->setVertexFields({VertexField::Position2D, VertexField::UV0});
@@ -341,7 +343,7 @@ Unique<Mesh> Dojo::TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back());
+	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back(), *mShader);
 	r->scale = scale;
 	r->setVisible(false);
 
@@ -350,7 +352,7 @@ void TextArea::_pushLayer() {
 	freeLayers.emplace(std::move(r));
 }
 
-Renderable& Dojo::TextArea::_getLayer(Texture& tex) {
+Renderable& TextArea::_getLayer(Texture& tex) {
 	//find this layer in the already assigned, or get new
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
 		if (busyLayers[i]->getTexture() == &tex) {

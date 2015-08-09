@@ -114,8 +114,6 @@ void Shader::setUniformCallback(const std::string& name, const UniformCallback& 
 	}
 }
 
-#ifdef DOJO_SHADERS_AVAILABLE
-
 const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& user) {
 	auto& r = Platform::singleton().getRenderer();
 
@@ -192,7 +190,7 @@ void Shader::use(const Renderable& user) {
 	glUseProgram(mGLProgram);
 
 	//bind the uniforms and the attributes
-	for (auto& uniform : mUniformMap) {
+	for (auto&& uniform : mUniformMap) {
 		const void* ptr = _getUniformData(uniform.second, user);
 
 		if (ptr == nullptr) { //no data provided, skip
@@ -275,7 +273,7 @@ bool Shader::onLoad() {
 	mPreprocessorHeader.clear();
 	auto& defines = desc.getTable("defines");
 
-	for (auto& entry : defines) {
+	for (auto&& entry : defines) {
 		mPreprocessorHeader += "#define " + entry.second->getAs<std::string>() + "\n";
 	}
 
@@ -359,25 +357,11 @@ bool Shader::onLoad() {
 	return loaded;
 }
 
-#else
-
-void Shader::use( Renderable* user ) {
-	FAIL( "Shaders not supported" );
-}
-
-bool Shader::onLoad() {
-	FAIL( "Shaders not supported" );
-	return false;
-}
-
-#endif
-
-
 void Shader::onUnload(bool soft /* = false */) {
 	DEBUG_ASSERT( isLoaded(), "This shader was already unloaded" );
 
 	//only manage the programs that aren't shared
-	for (auto& program : mOwnedPrograms) {
+	for (auto&& program : mOwnedPrograms) {
 		program->onUnload(false);
 	}
 

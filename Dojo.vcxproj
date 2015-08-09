@@ -21,7 +21,6 @@
     <ClInclude Include="include\dojo\BackgroundQueue.h" />
     <ClInclude Include="include\dojo\Base64.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
-    <ClInclude Include="include\dojo\CompileTimeID.h" />
     <ClInclude Include="include\dojo\Component.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
     <ClInclude Include="include\dojo\dojostring.h" />

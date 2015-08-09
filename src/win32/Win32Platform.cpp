@@ -397,27 +397,21 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 
 	hdc = GetDC(hwnd);
 	// CREATE PFD:
-	static PIXELFORMATDESCRIPTOR pfd = { // pfd Tells Windows How We Want Things To Be
-		sizeof(PIXELFORMATDESCRIPTOR), // Size Of This Pixel Format Descriptor
-		1, // Version Number
-		PFD_DRAW_TO_WINDOW | // Format Must Support Window
-		PFD_SUPPORT_OPENGL | // Format Must Support OpenGL
-		PFD_DOUBLEBUFFER | // Must Support Double Buffering
-		PFD_SWAP_EXCHANGE,
-		PFD_TYPE_RGBA, // Request An RGBA Format
-		32, // Select Our Color Depth
-		0, 0, 0, 0, 0, 0, // Color Bits Ignored
-		0, // No Alpha Resource
-		0, // Shift Bit Ignored
-		0, // No Accumulation Resource
-		0, 0, 0, 0, // Accumulation Bits Ignored
-		16, // 16Bit Z-Resource (Depth Resource)
-		0, // No Stencil Resource
-		0, // No Auxiliary Resource
-		PFD_MAIN_PLANE, // Main Drawing Layer
-		0, // Reserved
-		0, 0, 0 // Layer Masks Ignored
-	};
+	PIXELFORMATDESCRIPTOR pixelFormatDescriptor = { 0 };
+	pixelFormatDescriptor.nSize = sizeof(pixelFormatDescriptor);
+	pixelFormatDescriptor.nVersion = 1;
+
+	pixelFormatDescriptor.dwFlags =
+		PFD_DRAW_TO_WINDOW |
+		PFD_SUPPORT_OPENGL |
+		PFD_DOUBLEBUFFER;
+	pixelFormatDescriptor.dwLayerMask = PFD_MAIN_PLANE;
+	pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
+	pixelFormatDescriptor.cAlphaBits = 8;
+	pixelFormatDescriptor.cColorBits = 32;
+	pixelFormatDescriptor.cDepthBits = 16;
+	pixelFormatDescriptor.cStencilBits = 8;
+
 
 	int chosenPixelFormat;
 	ChooseAntiAliasingPixelFormat(chosenPixelFormat, config.getInt("MSAA"));
@@ -426,7 +420,7 @@ bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, i
 		return false;
 	}
 
-	if (!SetPixelFormat(hdc, chosenPixelFormat, &pfd)) {
+	if (!SetPixelFormat(hdc, chosenPixelFormat, &pixelFormatDescriptor)) {
 		return false;
 	}
 
@@ -648,7 +642,7 @@ void Win32Platform::present() {
 void Win32Platform::_pollDevices(float dt) {
 	input->poll(dt);
 
-	for (auto& j : mXInputJoystick) { //poll disconnected pads for connection
+	for (auto&& j : mXInputJoystick) { //poll disconnected pads for connection
 		if (!j->isConnected()) {
 			j->poll(dt);
 		}

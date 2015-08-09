@@ -348,7 +348,7 @@ Table::Table(Table&& t) :
 Table::Table(const Table& t) :
 	unnamedMembers(t.unnamedMembers) {
 	//deep copy
-	for (auto& pair : t.map) {
+	for (auto&& pair : t.map) {
 		map[pair.first] = pair.second->clone();
 	}
 }

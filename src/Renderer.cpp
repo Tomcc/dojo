@@ -39,29 +39,13 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 
 	glCullFace(GL_BACK);
 
-	glShadeModel(GL_SMOOTH);
-
 	//default status for blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_COLOR_MATERIAL);
-
-	//on IOS this is default and the command is not supported
-#ifndef USING_OPENGLES
-	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-#endif
-
 #ifdef DOJO_GAMMA_CORRECTION_ENABLED
 	glEnable( GL_FRAMEBUFFER_SRGB );
 #endif
-
-	//projection is always the same
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	//always active!
-	glEnableClientState(GL_VERTEX_ARRAY);
 
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
 
@@ -100,7 +84,7 @@ void Renderer::removeRenderable(Renderable& s) {
 }
 
 void Renderer::removeAllRenderables() {
-	for (auto& l : layers) {
+	for (auto&& l : layers) {
 		l.elements.clear();
 	}
 }
@@ -138,45 +122,26 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 }
 
 void Renderer::_renderElement(Renderable& elem) {
+	Mesh* m = elem.getMesh();
+
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
-	DEBUG_ASSERT(elem.getMesh()->isLoaded(), "Rendering with a mesh with no GPU data!");
-	DEBUG_ASSERT(elem.getMesh()->getVertexCount() > 0, "Rendering a mesh with no vertices");
+	DEBUG_ASSERT(m, "Cannot render without a mesh!");
+	DEBUG_ASSERT(m->isLoaded(), "Rendering with a mesh with no GPU data!");
+	DEBUG_ASSERT(m->getVertexCount() > 0, "Rendering a mesh with no vertices");
 
 #ifndef PUBLISH
-	frameVertexCount += elem.getMesh()->getVertexCount();
-	frameTriCount += elem.getMesh()->getPrimitiveCount();
+	frameVertexCount += m->getVertexCount();
+	frameTriCount += m->getPrimitiveCount();
 
 	//each renderable is a single batch
 	++frameBatchCount;
 #endif // !PUBLISH
 
-
 	currentState.world = glm::scale(elem.getObject().getWorldTransform(), elem.scale);
 	currentState.worldView = currentState.view * currentState.world;
+	currentState.worldViewProjection = currentState.projection * currentState.worldView;
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(glm::value_ptr(currentState.worldView));
-
-#ifdef DOJO_SHADERS_AVAILABLE
-
-	if (elem.getShader()) {
-		currentState.worldViewProjection = currentState.projection * currentState.worldView;
-		elem.getShader()->use(elem);
-	}
-	else {
-		glUseProgram(0);
-	}
-
-#endif
-
-	//TODO actually use shaders and materials
-	//I'm not sure this actually makes sense
-#ifndef USING_OPENGLES
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-#endif
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (float*)(&elem.color));
-
-	glEnable(GL_COLOR_MATERIAL);
+	elem.getShader().use(elem);
 
 	elem.commitChanges();
 
@@ -188,7 +153,6 @@ void Renderer::_renderElement(Renderable& elem) {
 		GL_POINTS
 	};
 
-	Mesh* m = elem.getMesh();
 	GLenum mode = glModeMap[(byte)m->getTriangleMode()];
 
 	if (!m->isIndexed()) {
@@ -207,7 +171,7 @@ void Renderer::_renderElement(Renderable& elem) {
 
 	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
 	if (elem.getShader()) {
-		for (auto& attr : elem.getShader()->getAttributes()) {
+		for (auto&& attr : elem.getShader()->getAttributes()) {
 			glDisableVertexAttribArray(attr.second.location);
 		}
 	}
@@ -239,15 +203,12 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	//set projection state
 	currentState.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(currentState.projection));
-
 	//we don't want different layers to be depth-checked together?
-	if (layer.depthClear) {
-		glClear(GL_DEPTH_BUFFER_BIT);
-	}
+// 	if (layer.depthClear) {
+// 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+// 	}
 
-	for (auto& r : layer.elements) {
+	for (auto&& r : layer.elements) {
 		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
 			_renderElement(*r);
 		}
@@ -279,29 +240,27 @@ void Renderer::_renderViewport(Viewport& viewport) {
 			viewport.getClearColor().b,
 			viewport.getClearColor().a);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	currentState.view = viewport.getViewTransform();
 	currentState.viewDirection = viewport.getWorldDirection();
 
-	frameStarted = true;
-
 	if (viewport.getVisibleLayers().empty()) { //using the default layer ordering/visibility
-		for (auto& l : layers) {
+		for (auto&& l : layers) {
 			_renderLayer(viewport, l);
 		}
 	}
 	else { //use the custom layer ordering/visibility
-		for (auto& layer : viewport.getVisibleLayers()) {
+		for (auto&& layer : viewport.getVisibleLayers()) {
 			_renderLayer(viewport, getLayer(layer));
 		}
 	}
 }
 
 void Renderer::_updateRenderables(const LayerList& layers, float dt) {
-	for (auto& layer : layers) {
-		for (auto& r : layer.elements) {
+	for (auto&& layer : layers) {
+		for (auto&& r : layer.elements) {
 			if ((r->getObject().isActive() && r->isVisible()) || r->getGraphicsAABB().isEmpty()) {
 				r->update(dt);
 			}
@@ -319,7 +278,7 @@ void Renderer::renderFrame(float dt) {
 	_updateRenderables(layers, dt);
 
 	//render all the viewports
-	for (auto& viewport : viewportList) {
+	for (auto&& viewport : viewportList) {
 		_renderViewport(*viewport);
 	}
 

@@ -38,11 +38,6 @@ Matrix RenderState::TextureUnit::getTransform() const {
 	}
 }
 
-void RenderState::TextureUnit::applyTransform() {
-	glMatrixMode(GL_TEXTURE);
-	glLoadMatrixf(glm::value_ptr(getTransform()));
-}
-
 RenderState::RenderState() :
 	cullMode(CullMode::Back),
 	blendingEnabled(true),
@@ -83,8 +78,8 @@ void RenderState::setBlending(BlendingMode mode) {
 	blendFunction = blend.func;
 }
 
-void RenderState::setShader(Shader* shader) {
-	pShader = shader;
+void Dojo::RenderState::setShader(Shader& shader) {
+	pShader = &shader;
 }
 
 Texture* RenderState::getTexture(int ID /*= 0 */) const {
@@ -131,20 +126,8 @@ void RenderState::applyState() {
 			textures[i].texture->bind(i);
 
 			if (textures[i].isTransformRequired()) {
-				textures[i].applyTransform();
+				FAIL("To remove?");
 			}
-			else {
-				glMatrixMode(GL_TEXTURE);
-				glLoadIdentity();
-			}
-		}
-		else {
-			//override the previous bound texture with nothing
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glDisable(GL_TEXTURE_2D);
-
-			glMatrixMode(GL_TEXTURE);
-			glLoadIdentity();
 		}
 	}
 
@@ -174,7 +157,8 @@ void RenderState::applyState() {
 		break;
 	}
 
-	mesh->bind(pShader);
+	DEBUG_ASSERT(pShader, "Cannot use a renderstate without a shader");
+	mesh->bind(*pShader);
 }
 
 void RenderState::commitChanges() {

@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, bool centered, RenderingType rt) :
+Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const std::string& shaderName, bool centered, RenderingType rt) :
 	Renderable(parent, layer),
 	mCentered(centered),
 	mDirty(true), //be sure to init anyways even if the user doesn't write anything
@@ -65,7 +65,7 @@ void PolyTextArea::_tesselateExtrusionStrip(Tessellation* t, int baseIdx, int la
 	int backFaceOffset = layerBbaseIdx - baseIdx;
 
 	//create a strip to bind the two faces together
-	for (auto& segment : t->extrusionContourIndices) {
+	for (auto&& segment : t->extrusionContourIndices) {
 		mMesh->triangle(
 			baseIdx + segment.i2,
 			baseIdx + segment.i1 + backFaceOffset,
@@ -80,7 +80,7 @@ void PolyTextArea::_tesselateExtrusionStrip(Tessellation* t, int baseIdx, int la
 void PolyTextArea::_addExtrusionLayer(Tessellation* t, const Vector& origin, float inflate, const Vector* forcedNormal) {
 	int layerIdx = mMesh->getVertexCount();
 
-	for (auto& vertex : t->extrusionContourVertices) {
+	for (auto&& vertex : t->extrusionContourVertices) {
 		mMesh->vertex(origin + vertex.position + vertex.normal * inflate);
 		mMesh->normal(forcedNormal ? *forcedNormal : vertex.normal);
 	}
@@ -167,17 +167,17 @@ void PolyTextArea::_prepare() {
 			int baseIdx = mMesh->getVertexCount();
 
 			if (mRendering == RT_SURFACE) {
-				for (auto& pos : t->positions) {
+				for (auto&& pos : t->positions) {
 					mMesh->vertex(charPosition + pos.toVec());
 				}
 
-				for (auto& index : t->outIndices) {
+				for (auto&& index : t->outIndices) {
 					mMesh->index(baseIdx + index);
 				}
 			}
 			else if (mRendering == RT_EXTRUDED) {
 				//tesselate front face
-				for (auto& index : t->outIndices) {
+				for (auto&& index : t->outIndices) {
 					mMesh->index(baseIdx + index);
 				}
 
@@ -205,8 +205,8 @@ void PolyTextArea::_prepare() {
 					mMesh->vertex(charPosition + t->positions[i].toVec());
 				}
 
-				for (auto& contour : t->contours)
-					for (auto& index : contour.indices) {
+				for (auto&& contour : t->contours)
+					for (auto&& index : contour.indices) {
 						mMesh->index(baseIdx + index);
 					}
 			}

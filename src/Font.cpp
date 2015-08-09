@@ -357,7 +357,7 @@ bool Font::onLoad() {
 	}
 
 	//load existing pages that were trimmed during a previous unload
-	for (auto& pair : pages) {
+	for (auto&& pair : pages) {
 		if (!pair.second->isLoaded()) {
 			pair.second->onLoad();
 		}
@@ -367,7 +367,7 @@ bool Font::onLoad() {
 }
 
 void Font::onUnload(bool soft) {
-	for (auto& pair : pages) {
+	for (auto&& pair : pages) {
 		if (pair.second->isLoaded()) {
 			pair.second->onUnload();
 		}

@@ -48,7 +48,7 @@ namespace Dojo {
 			if (mRunning) {
 				mRunning = false;
 
-				for (auto& w : mWorkers) {
+				for (auto&& w : mWorkers) {
 					w->join();
 				}
 			}

@@ -140,6 +140,7 @@ namespace Dojo {
 
 		int currentLineLength, lastSpace;
 
+		Shader* mShader;
 		Font* font;
 
 		CharacterList characters;

@@ -21,7 +21,7 @@ void Tessellation::mergePoints(int i1, int i2) {
 	positions.erase(positions.begin() + i2);
 
 	//replace all the occurrences of i2 with i1; move all the indices > i2 down by one
-	for (auto& segment : segments) {
+	for (auto&& segment : segments) {
 		if (segment.i1 == i2) {
 			segment.i1 = i1;
 		}
@@ -87,7 +87,7 @@ void Tessellation::addCubic(const Vector& B, const Vector& C, const Vector& D, f
 void Tessellation::mergeDuplicatePoints() {
 	Position max(-DBL_MAX, -DBL_MAX), min(DBL_MAX, DBL_MAX);
 
-	for (auto& p : positions) {
+	for (auto&& p : positions) {
 		max.x = std::max(p.x, max.x);
 		max.y = std::max(p.y, max.y);
 
@@ -184,7 +184,7 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 }
 
 void Tessellation::generateExtrusionContour() {
-	for (auto& pos : positions) {
+	for (auto&& pos : positions) {
 		extrusionContourVertices.emplace_back(pos);
 	}
 
@@ -195,7 +195,7 @@ void Tessellation::generateExtrusionContour() {
 	Vector n;
 	extrusionContourIndices.size();
 
-	for (auto& segment : extrusionContourIndices) {
+	for (auto&& segment : extrusionContourIndices) {
 		auto& a = positions[segment.i1];
 		auto& b = positions[segment.i2];
 
@@ -215,7 +215,7 @@ void Tessellation::findContours(bool generateHoles) {
 	//TODO sort segments? this might break if they are added in a unexpected manner?
 
 	//rearrange all the indices in continuous contours
-	for (auto& segment : segments) {
+	for (auto&& segment : segments) {
 		//look for a contour that ends with the index this one starts with
 		//also assign the index of the contour to a backmap from segment to contour
 		contourForSegment.emplace_back(_assignToIncompleteContour(segment.i1, segment.i2));

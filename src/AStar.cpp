@@ -68,7 +68,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	}
 
 	//cleanup data & setup h values
-	for (auto& entry : set) {
+	for (auto&& entry : set) {
 		entry.second->_resetData(_distance(*entry.second, *end));
 	}
 

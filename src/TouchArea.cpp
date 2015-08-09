@@ -40,7 +40,7 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 		if (mPressed) {
 			bool tapped = true;
 
-			for (auto& t : mTouches) {
+			for (auto&& t : mTouches) {
 				if (!t.firstFrame) {
 					tapped = false;
 					break;

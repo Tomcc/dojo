@@ -320,85 +320,31 @@ void Mesh::_getVertexFieldData(VertexField field, int& outComponents, GLenum& ou
 	}
 }
 
-void Mesh::_bindAttribArrays(Shader* shader) {
+void Dojo::Mesh::_bindAttribArrays(const Shader& shader) {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+	
+	GLint components;
+	GLenum componentsType;
+	bool normalized;
+	void* offset;
 
-#ifdef DOJO_SHADERS_AVAILABLE
-
-	if (shader) { //use custom attributes only
-		GLint components;
-		GLenum componentsType;
-		bool normalized;
-		void* offset;
-
-		for (auto& attr : shader->getAttributes()) {
-			if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) { //skip non-provided attributes
-				continue;
-			}
-
-			_getVertexFieldData(attr.second.builtInAttribute, components, componentsType, normalized, offset);
-
-			glEnableVertexAttribArray(attr.second.location);
-			glVertexAttribPointer(
-				attr.second.location,
-				components,
-				componentsType,
-				normalized,
-				vertexSize,
-				offset);
-
-			CHECK_GL_ERROR;
+	for (auto&& attr : shader.getAttributes()) {
+		if (attr.second.builtInAttribute == VertexField::None || !isVertexFieldEnabled(attr.second.builtInAttribute)) { //skip non-provided attributes
+			continue;
 		}
-	}
-	else //fixed function vertex binding //TODO remove this
-#endif
-	{
-		//construct attributes
-		for (int i = 0; i < (int)VertexField::_Count; ++i) {
-			GLenum state = glFeatureStateMap[i];
-			VertexField ft = (VertexField)i;
 
-			if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) { //a texture
-				glClientActiveTexture(GL_TEXTURE0 + ((int)ft - (int)VertexField::UV0));    //bind the correct texture (this has to be called *before* EnableClientState
-			}
+		_getVertexFieldData(attr.second.builtInAttribute, components, componentsType, normalized, offset);
 
-			if (isVertexFieldEnabled(ft)) { //bind data and client states
-				glEnableClientState(state);
-				CHECK_GL_ERROR;
+		glEnableVertexAttribArray(attr.second.location);
+		glVertexAttribPointer(
+			attr.second.location,
+			components,
+			componentsType,
+			normalized,
+			vertexSize,
+			offset);
 
-				void* fieldOffset = (void*)_offset(ft);
-
-				switch (ft) {
-				case VertexField::Position3D:
-					glVertexPointer(3, GL_FLOAT, vertexSize, fieldOffset);
-					break;
-
-				case VertexField::Position2D:
-					glVertexPointer(2, GL_FLOAT, vertexSize, fieldOffset);
-					break;
-
-				case VertexField::Normal:
-					glNormalPointer(GL_FLOAT, vertexSize, fieldOffset);
-					break;
-
-				case VertexField::Color:
-					glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, fieldOffset);
-					break;
-
-				default:
-					if (ft >= VertexField::UV0 && ft <= VertexField::UVMax) { //texture binding
-						glTexCoordPointer(2, GL_FLOAT, vertexSize, fieldOffset);
-					}
-
-					break;
-				};
-
-				CHECK_GL_ERROR;
-			}
-			else if (state != GL_VERTEX_ARRAY) { //do not disable the position
-				glDisableClientState(state);
-			}
-		}
+		CHECK_GL_ERROR;
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
@@ -471,7 +417,7 @@ bool Mesh::end() {
 	return loaded;
 }
 
-void Mesh::bind(Shader* shader) {
+void Dojo::Mesh::bind(const Shader& shader) {
 #ifndef DOJO_DISABLE_VAOS
 
 	DEBUG_ASSERT( vertexArrayDesc );

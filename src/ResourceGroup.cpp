@@ -207,7 +207,7 @@ void ResourceGroup::addTables(const std::string& folder) {
 	std::vector<std::string> paths;
 
 	Platform::singleton().getFilePathsForType("ds", folder, paths);
-
+		
 	for (int i = 0; i < paths.size(); ++i)
 		addTable(
 			Path::getFileName(paths[i]),
@@ -218,10 +218,10 @@ void ResourceGroup::addTables(const std::string& folder) {
 void ResourceGroup::addPrograms(const std::string& folder) {
 	std::vector<std::string> paths;
 
-	Platform::singleton().getFilePathsForType("vs", folder, paths);
-	Platform::singleton().getFilePathsForType("ps", folder, paths);
+	Platform::singleton().getFilePathsForType(ShaderProgram::vertexExtension, folder, paths);
+	Platform::singleton().getFilePathsForType(ShaderProgram::fragmentExtension, folder, paths);
 
-	for (auto& path : paths) {
+	for (auto&& path : paths) {
 		std::string name = Path::getFileName(path);
 		addProgram(make_unique<ShaderProgram>(this, path), name);
 	}
@@ -232,7 +232,7 @@ void ResourceGroup::addShaders(const std::string& folder) {
 
 	Platform::singleton().getFilePathsForType("shader", folder, paths);
 
-	for (auto& path : paths) {
+	for (auto&& path : paths) {
 		std::string name = Path::getFileName(path);
 		addShader(make_unique<Shader>(this, path), name);
 	}
