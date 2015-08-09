@@ -94,8 +94,7 @@ SoundManager::~SoundManager() {
 	}
 }
 
-SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
-	DEBUG_ASSERT( set, "Cannot get a source for a nullptr SoundSet" );
+SoundSource& SoundManager::getSoundSource(SoundSet& set, int i) {
 
 	//try to lazy-create a new source, if allowed
 	if (idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX) {
@@ -112,7 +111,7 @@ SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
 		busySoundPool.emplace_back(std::move(idleSoundPool.back()));
 		idleSoundPool.pop_back();
 
-		busySoundPool.back()->_setup(set->getBuffer(i));
+		busySoundPool.back()->_setup(set.getBuffer(i));
 		return *busySoundPool.back();
 	}
 
@@ -120,10 +119,8 @@ SoundSource& SoundManager::getSoundSource(SoundSet* set, int i) {
 	return *fakeSource;
 }
 
-void SoundManager::playMusic(SoundSet* next, float trackFadeTime /* = 0 */, const Easing& easing) {
+void SoundManager::playMusic(SoundSet& next, float trackFadeTime /* = 0 */, const Easing& easing) {
 	//TODO use easing
-
-	DEBUG_ASSERT( next, "nullptr music source passed" );
 
 	//override music activation if the system sound is in use
 	if (Platform::singleton().isSystemSoundInUse()) {
@@ -246,26 +243,20 @@ void SoundManager::setListenerTransform(const Matrix& worldTransform) {
 	lastListenerPos = pos;
 }
 
-SoundSource& SoundManager::getSoundSource(const Vector& pos, SoundSet* set) {
-	DEBUG_ASSERT(set, "Getting a Source for a nullptr sound");
-
+SoundSource& SoundManager::getSoundSource(const Vector& pos, SoundSet& set) {
 	auto& s = getSoundSource(set);
 	s.setPosition(pos);
 
 	return s;
 }
 
-SoundSource& SoundManager::playSound(SoundSet* set, float volume /*= 1.0f*/) {
-	DEBUG_ASSERT(set, "Playing a nullptr sound");
-
+SoundSource& SoundManager::playSound(SoundSet& set, float volume /*= 1.0f*/) {
 	auto& s = getSoundSource(set);
 	s.play(volume);
 	return s;
 }
 
-SoundSource& SoundManager::playSound(const Vector& pos, SoundSet* set, float volume /*= 1.0f */) {
-	DEBUG_ASSERT(set, "Playing a nullptr sound");
-
+SoundSource& SoundManager::playSound(const Vector& pos, SoundSet& set, float volume /*= 1.0f */) {
 	auto& s = getSoundSource(pos, set);
 	s.play(volume);
 	return s;

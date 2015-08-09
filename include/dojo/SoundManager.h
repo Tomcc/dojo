@@ -35,22 +35,22 @@ namespace Dojo {
 		void clear();
 
 		///Returns a sound source ready to play a new sound
-		SoundSource& getSoundSource(SoundSet* set, int i = -1);
+		SoundSource& getSoundSource(SoundSet& set, int i = -1);
 
 		///Returns a sound source ready to play a new sound, with the position already set
-		SoundSource& getSoundSource(const Vector& pos, SoundSet* set);
+		SoundSource& getSoundSource(const Vector& pos, SoundSet& set);
 
 		///Plays the given set without spatial positioning
-		SoundSource& playSound(SoundSet* set, float volume = 1.0f);
+		SoundSource& playSound(SoundSet& set, float volume = 1.0f);
 
 		///Plays the given set at pos
-		SoundSource& playSound(const Vector& pos, SoundSet* set, float volume = 1.0f);
+		SoundSource& playSound(const Vector& pos, SoundSet& set, float volume = 1.0f);
 
 		///Starts a new sound using it as background music
 		/**
 			\param trackFadeTime the duration of the intro fade-in
 			*/
-		void playMusic(SoundSet* music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing);
+		void playMusic(SoundSet& music, float trackFadeTime = 0, const Easing& fadeEasing = LinearEasing);
 
 		void pauseMusic();
 
