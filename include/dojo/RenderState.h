@@ -134,6 +134,10 @@ namespace Dojo {
 			return *pShader;
 		}
 
+		const Matrix& getTransform() const {
+			return mTransform;
+		}
+
 		///returns the "weight" of the changes needed to pass from "this" to "s"
 		int getDistance(RenderState* s);
 
@@ -150,6 +154,8 @@ namespace Dojo {
 		Mesh* mesh = nullptr;
 
 		Shader* pShader;
+
+		Matrix mTransform;
 
 		void _bindTextureSlot(int i);
 	};

@@ -58,7 +58,7 @@ bool Viewport::isVisible(Renderable& s) {
 void Viewport::addFader(RenderLayer::ID layer) {
 	//create the fader object
 	addComponent([&] {
-		auto fader = make_unique<Renderable>(*this, layer, "texturedQuad", "textured");
+		auto fader = make_unique<Renderable>(*this, layer, "texturedQuad", "flat_color");
 		fader->color = Color::None;
 
 		fader->scale.x = size.x;

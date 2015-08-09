@@ -26,7 +26,11 @@ namespace Dojo {
 
 		template<typename T>
 		constexpr bool operator==(T raw) const {
-			return value == static_cast<decltype(value)>(enum_cast(raw));
+			return value == static_cast<BASE>(enum_cast(raw));
+		}
+		template<typename T>
+		constexpr bool operator!=(T raw) const {
+			return value != raw;
 		}
 	};
 }

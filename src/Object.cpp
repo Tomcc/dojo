@@ -70,7 +70,7 @@ Unique<Object> Object::removeChild(Object& o) {
 
 bool Object::canDestroy() const {
 	for (auto&& component : components) {
-		if (!component->canDestroy()) {
+		if (component && !component->canDestroy()) {
 			return false; //this one can't be destroyed, wait
 		}
 	}
@@ -79,7 +79,7 @@ bool Object::canDestroy() const {
 }
 
 void Object::collectChilds() {
-	for (auto&& i : range(children.size())) {
+	for (size_t i = 0; i < children.size(); ++i) {
 		auto& child = children[i];
 
 		if (child->disposed && child->canDestroy()) {
@@ -134,7 +134,7 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 }
 
 bool Object::isActive() const {
-	return active && (!parent || parent->isActive());
+	return active && !disposed && (!parent || parent->isActive());
 }
 
 void Object::reset() {

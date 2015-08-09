@@ -73,6 +73,8 @@ void Renderer::addRenderable(Renderable& s) {
 	//get the needed layer
 	RenderLayer& layer = getLayer(s.getLayer());
 
+	DEBUG_ASSERT(layer.elements.contains(&s) == false, "This object is already registered!");
+
 	//append at the end
 	layer.elements.emplace(&s);
 }
@@ -137,8 +139,8 @@ void Renderer::_renderElement(Renderable& elem) {
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	currentState.world = glm::scale(elem.getObject().getWorldTransform(), elem.scale);
-	currentState.worldView = currentState.view * currentState.world;
+	currentState.world = elem.getTransform();
+	currentState.worldView = currentState.view * elem.getTransform();
 	currentState.worldViewProjection = currentState.projection * currentState.worldView;
 
 	elem.getShader().use(elem);

@@ -75,6 +75,8 @@ void Renderable::update(float dt) {
 		worldBB = self.transformAABB(bounds);
 
 		advanceFade(dt);
+
+		mTransform = glm::scale(self.getWorldTransform(), scale);
 	}
 }
 
@@ -108,7 +110,7 @@ void Renderable::advanceFade(float dt) {
 	}
 }
 
-GameState& Dojo::Renderable::getGameState() const {
+GameState& Renderable::getGameState() const {
 	return getObject().getGameState();
 }
 
