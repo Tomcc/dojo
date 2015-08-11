@@ -131,6 +131,7 @@ using std::make_shared;
 	#pragma warning(3:4296) //expression is always false
 	#pragma warning(3:4701) //use of uninitialized variable
 	#pragma warning(3:4702) //unreachable code
+	#pragma warning(3:4189) //variable assigned but never used
 	#pragma warning(4:4242)
 	#pragma warning(default: 4254)
 
@@ -139,5 +140,7 @@ using std::make_shared;
 	#pragma warning(disable:4512) //what's this even?
 	#pragma warning(disable:4503) //template name is too long and was truncated
 #endif
+
+#define UNUSED(X) ((void)(X))
 
 

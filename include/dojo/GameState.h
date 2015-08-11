@@ -54,7 +54,7 @@ namespace Dojo {
 		}
 
 		///returns the Viewport that is primary on this GameState
-		Viewport* getViewport() {
+		Viewport* getViewport() const {
 			return camera;
 		}
 
