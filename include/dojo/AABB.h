@@ -13,6 +13,11 @@ namespace Dojo {
 			return{ center - hs, center + hs };
 		}
 
+		//TODO make variadic?
+		static AABB fromPoints(const Vector& A, const Vector& B) {
+			return{ Vector::min(A,B), Vector::max(A,B) };
+		}
+
 		Vector min, max;
 
 		AABB() {}
