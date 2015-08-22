@@ -11,7 +11,7 @@ using namespace Dojo;
 
 TextArea::TextArea(Object& l,
 	RenderLayer::ID layer,
-	const std::string& fontSetName,
+	const utf::string& fontSetName,
 	bool center /*= false*/,
 	const Vector& bounds /*= Vector::One*/) :
 	Renderable(l, layer),
@@ -30,7 +30,7 @@ TextArea::TextArea(Object& l,
 	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
 
 	mShader = getGameState().getShader("textured");
-	DEBUG_ASSERT_INFO(mShader, "Cannot find the required shader for a TextArea", std::string("shaderName = textured"));
+	DEBUG_ASSERT_INFO(mShader, "Cannot find the required shader for a TextArea", utf::string("shaderName = textured"));
 
 	charSpacing = font->getSpacing();
 	spaceWidth = font->getCharacter(' ')->advance;
@@ -79,16 +79,13 @@ void TextArea::setMaxLineLength(int l) {
 	maxLineLenght = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
 }
 
-void TextArea::addText(const std::string& text) {
+void TextArea::addText(const utf::string& text) {
 	content += text;
 
 	Font::Character* currentChar;
-	uint32_t c;
-
+	
 	//parse and setup characters
-	for (auto&& i : range(text.size())) {
-		c = text[i];
-
+	for(auto&& c : text) {
 		currentChar = font->getCharacter(c);
 		characters.emplace(currentChar);
 
@@ -114,32 +111,32 @@ void TextArea::addText(const std::string& text) {
 	changed = true;
 }
 
-void TextArea::addText(int n, char paddingChar, int digits) {
-	//TODO std::string already does this! remove
-
-	auto number = std::to_string(n);
-
-	//stay in the digit budget?
-	if (paddingChar != 0) {
-		//forget most significative digits
-		if ((int)number.size() > digits) {
-			number = number.substr(number.size() - digits);
-		}
-
-		//pad to fill
-		else if ((int) number.size() < digits) {
-			std::string padding;
-
-			for (size_t i = 0; i < digits - number.size(); ++i) {
-				padding += paddingChar;
-			}
-
-			number = padding + number;
-		}
-	}
-
-	addText(number);
-}
+// void TextArea::addText(int n, char paddingChar, int digits) {
+// 	//TODO utf::string already does this! remove
+// 
+// 	auto number = utf::to_string(n);
+// 
+// 	//stay in the digit budget?
+// 	if (paddingChar != 0) {
+// 		//forget most significative digits
+// 		if ((int)number.size() > digits) {
+// 			number = number.substr(number.size() - digits);
+// 		}
+// 
+// 		//pad to fill
+// 		else if ((int) number.size() < digits) {
+// 			utf::string padding;
+// 
+// 			for (size_t i = 0; i < digits - number.size(); ++i) {
+// 				padding += paddingChar;
+// 			}
+// 
+// 			number = padding + number;
+// 		}
+// 	}
+// 
+// 	addText(number);
+// }
 
 Renderable& TextArea::_enableLayer(Texture& tex) {
 	if (freeLayers.empty()) {

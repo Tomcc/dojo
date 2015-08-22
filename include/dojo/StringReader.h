@@ -5,14 +5,14 @@
 #include "dojostring.h"
 
 namespace Dojo {
-	///StringReader wraps a std::string to help parsing
+	///StringReader wraps a utf::string to help parsing
 	class StringReader {
 	public:
 
-		StringReader(const std::string& string);
+		StringReader(const utf::string& string);
 
 		///returns a new unicode character or 0 if the stream ended
-		uint32_t get();
+		utf::character get();
 
 		void back();
 
@@ -36,7 +36,7 @@ namespace Dojo {
 
 		byte getHexValue(uint32_t c);
 
-		int getCurrentIndex() const;
+		utf::string::const_iterator getCurrentIndex() const;
 
 		///reads a formatted hex
 		unsigned int readHex();
@@ -46,13 +46,13 @@ namespace Dojo {
 		///reads n raw bytes from the file
 		void readBytes(void* dest, int sizeBytes);
 
-		const std::string& getString() const {
+		const utf::string& getString() const {
 			return string;
 		}
 
 	protected:
-		const std::string& string;
+		const utf::string& string;
 
-		size_t idx;
+		utf::string::const_iterator idx;
 	};
 }

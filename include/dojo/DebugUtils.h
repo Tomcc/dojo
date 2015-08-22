@@ -10,7 +10,7 @@
 #ifndef PUBLISH
 
 	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
-	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).c_str() )
+	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).bytes().data() )
 	#define DEBUG_ASSERT( T, MSG )				DEBUG_ASSERT_IMPL( T, MSG, nullptr )
 	#define DEBUG_ASSERT_N( T )					DEBUG_ASSERT( T, "Internal error" );
 
@@ -25,7 +25,7 @@
 		//buffer output
 		extern std::stringstream  debug_stream_android;
 		//
-		#define __std_andr_cout debug_stream_android.str(std::string()); debug_stream_android
+		#define __std_andr_cout debug_stream_android.str(utf::string()); debug_stream_android
 		#define __std_andr_flush __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, "%s", debug_stream_android.str().c_str() );
 		#define DEBUG_OUT( T ) __std_andr_cout<< T << ' '; __std_andr_flush
 		#define DEBUG_MESSAGE( T ) __std_andr_cout << (T) << '\n'; __std_andr_flush

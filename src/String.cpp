@@ -2,4 +2,4 @@
 
 using namespace Dojo;
 
-const std::string String::Empty = std::string();
+const utf::string String::Empty = utf::string();

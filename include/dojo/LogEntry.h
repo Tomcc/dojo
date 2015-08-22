@@ -15,10 +15,10 @@ namespace Dojo {
 		};
 
 		time_t timestamp;
-		std::string text;
+		utf::string text;
 		Level level;
 
-		LogEntry(const std::string& msg, Level lvl) :
+		LogEntry(const utf::string& msg, Level lvl) :
 			text(msg),
 			level(lvl) {
 			timestamp = time(nullptr);

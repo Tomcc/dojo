@@ -4,37 +4,48 @@
 
 //#define STL_DROP_IN
 
-namespace UTF {
+namespace utf {
+	typedef uint32_t character;
+
 	class string {
 	public:
 		static const size_t npos;
 
-		typedef uint32_t character;
-
-		class iterator {
-		public:
-			character& operator*();
-			iterator& operator++();
-		};
-
 		class const_iterator {
 		public:
 			character& operator*();
-			iterator& operator++();
+			const_iterator& operator++();
+			const_iterator operator+(size_t i)const;
+			bool operator!=(const const_iterator&) const;
+			bool operator==(const const_iterator&) const;
 		};
 
-		class reverse_iterator {
+		class iterator {
 		public:
+			iterator(const_iterator);
 			character& operator*();
 			iterator& operator++();
-
+			bool operator!=(const iterator&) const;
+			iterator operator+(size_t i)const;
 		};
 
 		class const_reverse_iterator {
 		public:
 			character& operator*();
-			iterator& operator++();
+			const_reverse_iterator& operator++();
+			bool operator!=(const const_reverse_iterator&) const;
 		};
+
+		class reverse_iterator {
+		public:
+			reverse_iterator(const_reverse_iterator);
+			character& operator*();
+			reverse_iterator& operator++();
+			bool operator!=(const reverse_iterator&) const;
+
+		};
+
+
 		string() {}
 		string(const string& str) {
 			assign(str);
@@ -60,25 +71,34 @@ namespace UTF {
 		string(string&& str) noexcept {
 			assign(std::move(str));
 		}
+
+		string(std::string&& str) noexcept : raw(std::move(str)) {}
 		
 		string& operator= (const string& str) {
-			assign(str);
+			return assign(str);
 		}
 		string& operator= (const char* s) {
-			assign(s);
+			return assign(s);
 		}
 		string& operator= (character c) {
-			assign(c);
+			return assign(c);
 		}
 		string& operator= (std::initializer_list<character> il) {
-			assign(std::move(il));
+			return assign(std::move(il));
 		}
 		string& operator= (string&& str) noexcept {
-			assign(std::move(str));
+			return assign(std::move(str));
 		}
 
 		size_t size() const;
 		size_t length() const;
+
+		const std::string& bytes() const {
+			return raw;
+		}
+		std::string& bytes() {
+			return raw;
+		}
 
 		iterator begin() noexcept;
 		iterator end() noexcept;
@@ -97,19 +117,13 @@ namespace UTF {
 			return raw.max_size();
 		}
 
-		void resize(size_t bytes) {
-			raw.resize(bytes);
-		}
-		void resize(size_t bytes, character c);
+		void resize(size_t n);
+		void resize(size_t n, character c);
 
 		size_t capacity() const noexcept {
 			return raw.capacity();
 		}
-
-		size_t reserve(size_t bytes = 0) {
-			raw.resize(bytes);
-		}
-
+		
 		void clear() noexcept {
 			raw.clear();
 		}
@@ -146,9 +160,11 @@ namespace UTF {
 		string& append(const string& str, size_t subpos, size_t sublen = npos);
 		string& append(const char* s) {
 			raw.append(s);
+			return *this;
 		}
 		string& append(const char* s, size_t n) {
 			raw.append(s, n);
+			return *this;
 		}
 		string& append(size_t n, character c);
 		template <class InputIterator>
@@ -162,9 +178,11 @@ namespace UTF {
 		string& assign(const string& str, size_t subpos, size_t sublen);
 		string& assign(const char* s) {
 			raw.assign(s);
+			return *this;
 		}
 		string& assign(const char* s, size_t n) {
 			raw.assign(s, n);
+			return *this;
 		}
 		string& assign(size_t n, character c);
 		template <class InputIterator>
@@ -229,8 +247,13 @@ namespace UTF {
 		std::string::allocator_type get_allocator() const noexcept {
 			return raw.get_allocator();
 		}
-		const char* data() const noexcept {
-			return raw.data();
+		
+		size_t hash_code() const {
+			return std::hash<std::string>()(raw);
+		}
+
+		string substr(const_iterator start, const_iterator end) const {
+			return string(start, end);
 		}
 
 #ifdef STL_DROP_IN
@@ -286,11 +309,6 @@ namespace UTF {
 		int compare(size_t pos, size_t len, const char* s, size_t n) const;
 
 		string substr(size_t pos = 0, size_t len = npos) const;
-
-		const char* c_str() const noexcept {
-			return raw.data();
-		}
-
 #endif
 
 	private:
@@ -348,5 +366,21 @@ namespace UTF {
 	bool operator>= (const char*   lhs, const string& rhs);
 	bool operator>= (const string& lhs, const char*   rhs);
 #endif
+
+	template<typename T>
+	string to_string(T t) {
+		return std::to_string(t);
+	}
+}
+
+namespace std {
+	///hash specialization for unordered_maps
+	template <>
+	struct hash<utf::string> {
+		// hash functor for vector
+		size_t operator()(const utf::string& _Keyval) const {
+			return _Keyval.hash_code();
+		}
+	};
 }
 

@@ -43,7 +43,7 @@ namespace Dojo {
 		}
 
 		///add a format that will be recognized as a zip package by the file loader
-		void addZipFormat(const std::string& ext) {
+		void addZipFormat(const utf::string& ext) {
 			DEBUG_ASSERT( ext.size(), "addZipFormat: empty format string" );
 			mZipExtensions.emplace_back(ext);
 		}
@@ -87,7 +87,7 @@ namespace Dojo {
 		}
 
 		///gets the ISO locale code, es: en, it, de, se, fr
-		const std::string& getLocale() {
+		const utf::string& getLocale() {
 			return locale;
 		}
 
@@ -154,7 +154,7 @@ namespace Dojo {
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
 		void run(Unique<Game> game);
 
-		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
+		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
 
 		void addApplicationListener(ApplicationListener& f) {
 			focusListeners.emplace(&f);
@@ -176,11 +176,11 @@ namespace Dojo {
 		}
 
 		///returns the application data path for this game (eg. to save user files)
-		virtual const std::string& getAppDataPath() = 0;
+		virtual const utf::string& getAppDataPath() = 0;
 		///returns the read-only root path for this game (eg. working directory)
-		virtual const std::string& getRootPath() = 0;
+		virtual const utf::string& getRootPath() = 0;
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
-		virtual const std::string& getResourcesPath() = 0;
+		virtual const utf::string& getResourcesPath() = 0;
 
 		///returns the user configuration table
 		const Table& getUserConfiguration() {
@@ -188,24 +188,24 @@ namespace Dojo {
 		}
 
 		///creates a new FileStream object for the given path, but does not open it
-		std::unique_ptr<FileStream> getFile(const std::string& path);
+		std::unique_ptr<FileStream> getFile(const utf::string& path);
 
 		///loads the whole file allocating a new buffer
-		std::vector<byte> loadFileContent(const std::string& path);
+		std::vector<byte> loadFileContent(const utf::string& path);
 
 		///discovers all the files with an extension in a folder
 		/**\param type type extension, es "png"
 		\param path path where to look for, non recursive
 		\param out vector where the results are appended*/
-		void getFilePathsForType(const std::string& type, const std::string& path, std::vector<std::string>& out);
+		void getFilePathsForType(const utf::string& type, const utf::string& path, std::vector<utf::string>& out);
 
 		///loads the table found at absPath
 		/**if absPath is empty, the table file is loaded from $(Appdata)/$(GameName)/$(TableName).ds */
-		Table load(const std::string& absPathOrName);
+		Table load(const utf::string& absPathOrName);
 
 		///saves the table found at absPath into dest
 		/**if absPath is empty, the table file is saved to $(Appdata)/$(GameName)/$(TableName).ds */
-		void save(const Table& table, const std::string& absPathOrName);
+		void save(const Table& table, const utf::string& absPathOrName);
 
 		///returns true if an application is blocking the system output for this app, eg. a call or the mp3 player on iOS
 		virtual bool isSystemSoundInUse() {
@@ -213,7 +213,7 @@ namespace Dojo {
 		}
 
 		///opens a web page in the default browser
-		virtual void openWebPage(const std::string& site) = 0;
+		virtual void openWebPage(const utf::string& site) = 0;
 
 		///send an email object
 		virtual void sendEmail(const Email& email) {
@@ -229,17 +229,17 @@ namespace Dojo {
 
 	protected:
 
-		typedef std::vector<std::string> ZipExtensionList;
-		typedef std::vector<std::string> PathList;
-		typedef std::unordered_map<std::string, PathList> ZipFoldersMap;
-		typedef std::unordered_map<std::string, ZipFoldersMap> ZipFileMapping;
+		typedef std::vector<utf::string> ZipExtensionList;
+		typedef std::vector<utf::string> PathList;
+		typedef std::unordered_map<utf::string, PathList> ZipFoldersMap;
+		typedef std::unordered_map<utf::string, ZipFoldersMap> ZipFileMapping;
 
 		static Unique<Platform> singletonPtr;
 
 		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
 
-		std::string locale;
+		utf::string locale;
 
 		Table config;
 
@@ -265,14 +265,14 @@ namespace Dojo {
 		ZipFileMapping mZipFileMaps;
 		ZipExtensionList mZipExtensions;
 
-		std::string _getTablePath(const std::string& absPathOrName);
+		utf::string _getTablePath(const utf::string& absPathOrName);
 
 		///for each component in the path, check if a directory.zip file exists
-		std::string _replaceFoldersWithExistingZips(const std::string& absPath);
+		utf::string _replaceFoldersWithExistingZips(const utf::string& absPath);
 
-		const ZipFoldersMap& _getZipFileMap(const std::string& path, std::string& zipPath, std::string& reminder);
+		const ZipFoldersMap& _getZipFileMap(const utf::string& path, utf::string& zipPath, utf::string& reminder);
 
-		int _findZipExtension(const std::string& path);
+		utf::string::const_iterator _findZipExtension(const utf::string& path);
 
 		///protected singleton constructor
 		explicit Platform(const Table& configTable);

@@ -24,7 +24,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 	DWORD error = GetLastError();
 
 	gp_assert_handler(
-		("Win32 encountered an error: " + std::to_string((int)error) + " (" + msg + ")").c_str(),
+		("Win32 encountered an error: " + utf::to_string((int)error) + " (" + msg + ")").bytes().data(),
 		"error != GL_NO_ERROR",
 		nullptr,
 		line,
@@ -331,8 +331,8 @@ void Win32Platform::_adjustWindow() {
 
 }
 
-bool Win32Platform::_initializeWindow(const std::string& windowCaption, int w, int h) {
-	DEBUG_MESSAGE("Creating " + std::to_string(w) + "x" + std::to_string(h) + " window");
+bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, int h) {
+	DEBUG_MESSAGE("Creating " + utf::to_string(w) + "x" + utf::to_string(h) + " window");
 
 	hInstance = (HINSTANCE)GetModuleHandle(nullptr);
 
@@ -482,16 +482,17 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 	save(config, "config");
 }
 
-std::string _cleanPath(const std::string& name) {
-	std::string path = name;
+utf::string _cleanPath(const utf::string& name) {
+	utf::string path = name;
 
 	//UNICODE
-	for (size_t i = 0; i < path.size(); ++i) {
-		auto& c = path[i];
+	auto itr = path.begin();
+	auto end = path.end();
+	for (; itr != end; ++itr) {
+		auto& c = *itr;
 
 		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
-			path.erase(path.begin() + i);
-			--i;
+			*itr = c;
 		}
 	}
 
@@ -876,7 +877,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = nullptr;
 
@@ -960,19 +961,19 @@ Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageDat
 	return pixelSize == 4 ? PixelFormat::R8G8B8A8 : PixelFormat::R8G8B8;
 }
 
-const std::string& Win32Platform::getAppDataPath() {
+const utf::string& Win32Platform::getAppDataPath() {
 	return mAppDataPath;
 }
 
-const std::string& Win32Platform::getRootPath() {
+const utf::string& Win32Platform::getRootPath() {
 	return mRootPath;
 }
 
-const std::string& Win32Platform::getResourcesPath() {
+const utf::string& Win32Platform::getResourcesPath() {
 	return getRootPath(); //on windows, it is the same
 }
 
-void Win32Platform::openWebPage(const std::string& site) {
+void Win32Platform::openWebPage(const utf::string& site) {
 	ShellExecuteW(hwnd, L"open", String::toUTF16(site).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 

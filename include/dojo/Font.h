@@ -117,7 +117,7 @@ namespace Dojo {
 		\param creator the ResourceGroup which created this Resource
 		\path the path to the .font definition file
 		*/
-		Font(ResourceGroup* creator, const std::string& path);
+		Font(ResourceGroup* creator, const utf::string& path);
 
 		virtual ~Font();
 
@@ -156,7 +156,7 @@ namespace Dojo {
 		}
 
 		///returns the length in pixel for the given string
-		int getPixelLength(const std::string& s);
+		int getPixelLength(const utf::string& s);
 
 		int getCharIndex(Character* c);
 
@@ -188,7 +188,7 @@ namespace Dojo {
 
 	protected:
 
-		std::string fontFile;
+		utf::string fontFile;
 
 		bool antialias, kerning, generateEdge, generateSurface;
 		float mPolyOutlineQuality;

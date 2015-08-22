@@ -11,14 +11,14 @@
 namespace Dojo {
 	class String {
 	public:
-		static const std::string Empty;
+		static const utf::string Empty;
 
 		static bool isNumber(uint32_t c);
 
 #ifdef WIN32
-		static std::wstring toUTF16(const std::string& str);
+		static std::wstring toUTF16(const utf::string& str);
 
-		static std::string toUTF8(const std::wstring& wstr);
+		static utf::string toUTF8(const std::wstring& wstr);
 #endif
 	};
 }

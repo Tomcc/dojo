@@ -36,13 +36,13 @@ namespace Dojo {
 		virtual void step(float dt);
 		virtual void loop();
 
-		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const std::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
+		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
 
-		virtual const std::string& getAppDataPath();
-		virtual const std::string& getResourcesPath();
-		virtual const std::string& getRootPath();
+		virtual const utf::string& getAppDataPath();
+		virtual const utf::string& getResourcesPath();
+		virtual const utf::string& getRootPath();
 
-		virtual void openWebPage(const std::string& site);
+		virtual void openWebPage(const utf::string& site);
 
 		virtual void setMouseLocked(bool locked) override;
 
@@ -96,7 +96,7 @@ namespace Dojo {
 		typedef Pipe<ContextShareRequest*> ContextRequestsQueue;
 		Unique<ContextRequestsQueue> mContextRequestsQueue;
 
-		bool _initializeWindow(const std::string& caption, int w, int h);
+		bool _initializeWindow(const utf::string& caption, int w, int h);
 
 	private:
 
@@ -118,7 +118,7 @@ namespace Dojo {
 
 		Timer mStepTimer;
 
-		std::string mAppDataPath, mRootPath;
+		utf::string mAppDataPath, mRootPath;
 
 		void _initKeyMap();
 

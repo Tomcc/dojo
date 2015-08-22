@@ -105,6 +105,7 @@
 #include "DebugUtils.h"
 
 //string has to be included here!
+#include "UTFString.h"
 #include "dojostring.h"
 
 //keycode.h is a plain enum

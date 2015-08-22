@@ -35,7 +35,7 @@ Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
 	setIndexByteSize(sizeof(GLushort));
 }
 
-Mesh::Mesh(ResourceGroup* creator, const std::string& filePath) :
+Mesh::Mesh(ResourceGroup* creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
 	//set all fields to zero
 	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));

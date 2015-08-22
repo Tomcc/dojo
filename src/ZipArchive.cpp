@@ -69,7 +69,7 @@ ZipArchive::ZipArchive(): zip_file(nullptr) {
 }
 
 //
-ZipArchive::ZipArchive(const std::string& path) {
+ZipArchive::ZipArchive(const utf::string& path) {
 	open(path);
 }
 
@@ -79,8 +79,8 @@ ZipArchive::~ZipArchive() {
 }
 
 //open zip file
-bool ZipArchive::open(const std::string& path) {
-	zip_file = zzip_opendir_ext_io(path.c_str(), ZZIP_CASELESS | ZZIP_ONLYZIP, 0, 0);
+bool ZipArchive::open(const utf::string& path) {
+	zip_file = zzip_opendir_ext_io(path.bytes().data(), ZZIP_CASELESS | ZZIP_ONLYZIP, 0, 0);
 	return zip_file != nullptr;
 }
 
@@ -94,7 +94,7 @@ void ZipArchive::close() {
 }
 
 //open file
-Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::string& mode) {
+Unique<ZipFile> Dojo::ZipArchive::openFile(const utf::string& path, const utf::string& mode) {
 	if (zip_file != nullptr) {
 		zzip_rewinddir(zip_file);
 		int mode_flags = ZZIP_CASELESS;
@@ -104,16 +104,16 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::s
 #ifndef WIN32
 #define  O_BINARY 0x0000
 #endif
-			mode_flags |= mode[0] == 'b' ? O_BINARY : 0;
-			mode_flags |= mode[0] == 'r' ? O_RDONLY : 0;
+			mode_flags |= mode.front() == 'b' ? O_BINARY : 0;
+			mode_flags |= mode.front() == 'r' ? O_RDONLY : 0;
 
 			if (mode.size() >= 2) {
-				mode_flags |= mode[1] == 'b' ? O_BINARY : 0;
-				mode_flags |= mode[1] == 'r' ? O_RDONLY : 0;
+				mode_flags |= *(mode.begin()+1) == 'b' ? O_BINARY : 0;
+				mode_flags |= *(mode.begin()+1) == 'r' ? O_RDONLY : 0;
 			}
 		}
 
-		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.c_str(), mode_flags);
+		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.bytes().data(), mode_flags);
 
 		if (file_out != nullptr) {
 			return make_unique<ZipFile>(file_out);
@@ -124,7 +124,7 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const std::string& path, const std::s
 }
 
 //open paths info
-void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getList(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -135,7 +135,7 @@ void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& ou
 			size = strlen(dirp->d_name);
 
 			if (size_path < size && //not this dir and prev path
-					strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
+					strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 
 				//is not a sub sub directory?
 				bool isnotasubsubdir = true;
@@ -158,7 +158,7 @@ void ZipArchive::getList(const std::string& inPath, std::vector<std::string>& ou
 	}
 }
 
-void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getListAll(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -169,7 +169,7 @@ void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>&
 			size = strlen(dirp->d_name);
 
 			if (size_path < size && //not this dir and prev path
-					strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
+					strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 				out.emplace_back(&dirp->d_name[size_path]);
 			}
 		}
@@ -178,7 +178,7 @@ void ZipArchive::getListAll(const std::string& inPath, std::vector<std::string>&
 	}
 }
 
-void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getListFiles(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -190,7 +190,7 @@ void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
 				if (size_path < size && //not this dir and prev path
-						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //file is in this directory
+						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //file is in this directory
 
 					//is not in sub sub directory?
 					bool isnotasubsubdir = true;
@@ -214,7 +214,7 @@ void ZipArchive::getListFiles(const std::string& inPath, std::vector<std::string
 	}
 }
 
-void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getListAllFiles(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -226,7 +226,7 @@ void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::str
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
 				if (size_path < size && //not this dir and prev path
-						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //file is in this directory
+						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //file is in this directory
 					out.emplace_back(&dirp->d_name[size_path]);
 				}
 			}
@@ -236,7 +236,7 @@ void ZipArchive::getListAllFiles(const std::string& inPath, std::vector<std::str
 	}
 }
 
-void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getListSubDirectories(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -248,7 +248,7 @@ void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<st
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
 				if (size_path < size && //not this dir and prev path
-						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
+						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 
 					//is not a sub sub directory?
 					bool isnotasubsubdir = true;
@@ -272,7 +272,7 @@ void ZipArchive::getListSubDirectories(const std::string& inPath, std::vector<st
 	}
 }
 
-void ZipArchive::getListAllSubDirectories(const std::string& inPath, std::vector<std::string>& out) {
+void ZipArchive::getListAllSubDirectories(const utf::string& inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -284,7 +284,7 @@ void ZipArchive::getListAllSubDirectories(const std::string& inPath, std::vector
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
 				if (size_path < size && //not this dir and prev path
-						strncmp(dirp->d_name, path.c_str(), size_path) == 0) { //path is a "sub path"
+						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 					out.emplace_back(&dirp->d_name[size_path]);
 				}
 			}
@@ -294,7 +294,7 @@ void ZipArchive::getListAllSubDirectories(const std::string& inPath, std::vector
 	}
 }
 
-std::string ZipArchive::makeValidPath(const std::string& path) {
+utf::string ZipArchive::makeValidPath(const utf::string& path) {
 	DEBUG_DEPRECATED; //this is pretty bad
 	return{};
 

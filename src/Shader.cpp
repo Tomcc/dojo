@@ -70,13 +70,13 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
 }
 
-Shader::Shader(ResourceGroup* creator, const std::string& filePath) :
+Shader::Shader(ResourceGroup* creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
 	memset(pProgram, 0, sizeof( pProgram )); //init to null
 }
 
 void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
-	static const std::string typeKeyMap[] = {"vertexShader", "fragmentShader"};
+	static const utf::string typeKeyMap[] = {"vertexShader", "fragmentShader"};
 	auto typeID = (unsigned char)type;
 
 	//check if this program is immediate or not
@@ -88,7 +88,7 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	ShaderProgram* program = getCreator()->getProgram(keyValue);
 
 	if (!program) { //just load the immediate shader
-		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue));
+		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));
 		program = mOwnedPrograms.back().get();
 	}
 	else if (program && mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it

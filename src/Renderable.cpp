@@ -24,7 +24,7 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& s
 	DEBUG_ASSERT(mesh->supportsShader(*pShader), "cannot use this mesh with this shader");
 }
 
-Renderable::Renderable(Object& parent, RenderLayer::ID layer, const std::string& meshName, const std::string& shaderName) :
+Renderable::Renderable(Object& parent, RenderLayer::ID layer, const utf::string& meshName, const utf::string& shaderName) :
 	Renderable(parent, layer) {
 	DEBUG_ASSERT(meshName.size(), "Use another constructor if you don't want to supply a mesh");
 

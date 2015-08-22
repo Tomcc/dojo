@@ -36,7 +36,7 @@ namespace Dojo {
 
 		}
 
-		Resource(ResourceGroup* creatorGroup, const std::string& path) :
+		Resource(ResourceGroup* creatorGroup, const utf::string& path) :
 			creator(creatorGroup),
 			loaded(false),
 			size(0),
@@ -73,7 +73,7 @@ namespace Dojo {
 			return creator;
 		}
 
-		const std::string& getFilePath() {
+		const utf::string& getFilePath() {
 			return filePath;
 		}
 
@@ -96,7 +96,7 @@ namespace Dojo {
 		bool loaded;
 		int size;
 
-		std::string filePath;
+		utf::string filePath;
 		DataProvider* pDataProvider;
 	};
 }

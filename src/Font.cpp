@@ -317,7 +317,7 @@ void Font::Page::onUnload(bool soft /*= false */) {
 
 /// --------------------------------------------------------------------------------
 
-Font::Font(ResourceGroup* creator, const std::string& path) :
+Font::Font(ResourceGroup* creator, const utf::string& path) :
 	Resource(creator, path) {
 
 }
@@ -405,13 +405,13 @@ void Font::_prepareFace() {
 		fontHeight);
 }
 
-int Font::getPixelLength(const std::string& str) {
+int Font::getPixelLength(const utf::string& str) {
 	int l = 0;
 
 	Character* lastChar = nullptr;
 
-	for (size_t i = 0; i < str.size(); ++i) {
-		Character* chr = getCharacter(str[i]);
+	for(auto&& c : str) {
+		Character* chr = getCharacter(c);
 		l += (int)(chr->advance * chr->pixelWidth);
 
 		if (lastChar && isKerningEnabled()) {

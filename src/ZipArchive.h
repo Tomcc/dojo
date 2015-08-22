@@ -44,26 +44,26 @@ namespace Dojo {
 	public:
 
 		ZipArchive();
-		explicit ZipArchive(const std::string& path);
+		explicit ZipArchive(const utf::string& path);
 		~ZipArchive();
 		//open zip file
-		bool open(const std::string& path);
+		bool open(const utf::string& path);
 		//close zip file
 		void close();
 		//open file
-		Unique<ZipFile> openFile(const std::string& path, const std::string& mode);
+		Unique<ZipFile> openFile(const utf::string& path, const utf::string& mode);
 		//paths and files in zip
-		void getList(const std::string& path, std::vector<std::string>& out);
-		void getListFiles(const std::string& path, std::vector<std::string>& out);
-		void getListSubDirectories(const std::string& path, std::vector<std::string>& out);
+		void getList(const utf::string& path, std::vector<utf::string>& out);
+		void getListFiles(const utf::string& path, std::vector<utf::string>& out);
+		void getListSubDirectories(const utf::string& path, std::vector<utf::string>& out);
 
-		void getListAll(const std::string& path, std::vector<std::string>& out);
-		void getListAllFiles(const std::string& path, std::vector<std::string>& out);
-		void getListAllSubDirectories(const std::string& path, std::vector<std::string>& out);
+		void getListAll(const utf::string& path, std::vector<utf::string>& out);
+		void getListAllFiles(const utf::string& path, std::vector<utf::string>& out);
+		void getListAllSubDirectories(const utf::string& path, std::vector<utf::string>& out);
 
 	private:
 
-		std::string makeValidPath(const std::string& path);
+		utf::string makeValidPath(const utf::string& path);
 		ZZIP_DIR* zip_file;
 
 	};

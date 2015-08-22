@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const std::string& shaderName, bool centered, RenderingType rt) :
+Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const utf::string& shaderName, bool centered, RenderingType rt) :
 	Renderable(parent, layer),
 	mCentered(centered),
 	mDirty(true), //be sure to init anyways even if the user doesn't write anything
@@ -105,12 +105,12 @@ void PolyTextArea::setInterline(float interline) {
 	mInterline = interline;
 }
 
-void PolyTextArea::addText(const std::string& str) {
+void PolyTextArea::addText(const utf::string& str) {
 	mContent += str;
 	mDirty = true;
 }
 
-void PolyTextArea::setText(const std::string& str) {
+void PolyTextArea::setText(const utf::string& str) {
 	mContent = str;
 	mDirty = true;
 }

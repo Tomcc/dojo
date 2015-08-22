@@ -26,7 +26,7 @@ void FrameSet::setPreferredAnimationTime(float t) {
 void FrameSet::setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProvider) {
 	DEBUG_ASSERT( !isLoaded(), "setAtlas: this FrameSet is already loaded and can't be reset as an atlas" );
 
-	std::string atlasName = atlasTable.getString("texture");
+	utf::string atlasName = atlasTable.getString("texture");
 	FrameSet* atlasSet = atlasTextureProvider.getFrameSet(atlasName);
 
 	DEBUG_ASSERT_INFO( atlasSet, "The atlas Texture requested could not be found", "atlasName = " + atlasTable.getString( "texture" ) );

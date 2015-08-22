@@ -4,7 +4,7 @@
 
 using namespace Dojo;
 
-SoundSet::SoundSet(ResourceGroup* creator, const std::string& setName) :
+SoundSet::SoundSet(ResourceGroup* creator, const utf::string& setName) :
 	Resource(creator),
 	name(setName) {
 
@@ -12,7 +12,7 @@ SoundSet::SoundSet(ResourceGroup* creator, const std::string& setName) :
 
 SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 	DEBUG_ASSERT(buffers.size(), "This SoundSet is empty");
-	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + std::to_string(i));
+	DEBUG_ASSERT_INFO((int)buffers.size() > i, "Trying to get an OOB sound index", "index = " + utf::to_string(i));
 
 	if (i < 0) {
 		if (buffers.size() > 1) {

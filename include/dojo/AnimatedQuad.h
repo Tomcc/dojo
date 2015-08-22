@@ -98,7 +98,7 @@ namespace Dojo {
 			\param pos its position
 			\param immediateAnim the name of the animation it will be set to
 			\param timePerFrame immediate animation's time per frame */
-		AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::string& shader, const std::string& immediateAnim = String::Empty, float timePerFrame = 0.0f);
+		AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::string& shader, const utf::string& immediateAnim = String::Empty, float timePerFrame = 0.0f);
 
 		virtual ~AnimatedQuad();
 
@@ -111,7 +111,7 @@ namespace Dojo {
 		///forces an animation with the given FrameSet
 		/**
 		 \remark the FrameSet named "name" has to exist in the GameState used to create the AnimatedQuad*/
-		void immediateAnimation(const std::string& name, float timePerFrame);
+		void immediateAnimation(const utf::string& name, float timePerFrame);
 
 		///returns the default screen size for the current animation frame
 		const Vector& getScreenSize() {

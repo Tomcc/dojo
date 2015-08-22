@@ -3,22 +3,23 @@
 using namespace Dojo;
 
 
-StringReader::StringReader(const std::string& string) :
+StringReader::StringReader(const utf::string& string) :
 	string(string),
-	idx(0) {
+	idx(string.begin()) {
 
 }
 
-uint32_t StringReader::get() {
-	//TODO actual multibyte goddammit
-	return string[idx++];
+utf::character StringReader::get() {
+	auto c = *idx;
+	++idx;
+	return c;
 }
-
-void StringReader::back() {
-	DEBUG_ASSERT(idx > 0, "back: The StringReader is already at the start of the stream");
-
-	--idx;
-}
+// 
+// void StringReader::back() {
+// 	DEBUG_ASSERT(idx > 0, "back: The StringReader is already at the start of the stream");
+// 
+// 	--idx;
+// }
 
 bool StringReader::isNumber(uint32_t c) {
 	return c >= '0' && c <= '9';
@@ -66,7 +67,7 @@ byte StringReader::getHexValue(uint32_t c) {
 	}
 }
 
-int StringReader::getCurrentIndex() const {
+utf::string::const_iterator Dojo::StringReader::getCurrentIndex() const {
 	return idx;
 }
 
@@ -157,21 +158,21 @@ float StringReader::readFloat() {
 
 	return sign * res;
 }
-
-void StringReader::readBytes(void* dest, int sizeBytes) {
-
-	//load format data
-	auto buf = string.data();
-	auto size = (int)string.size();
-	int startingByte = idx * 1;
-	buf += startingByte; //go to current element
-
-	//clamp into string
-	if (startingByte + sizeBytes > size) {
-		sizeBytes = size - startingByte;
-	}
-
-	memcpy(dest, buf, sizeBytes);
-
-	idx += sizeBytes;
-}
+// 
+// void StringReader::readBytes(void* dest, int sizeBytes) {
+// 
+// 	//load format data
+// 	auto buf = string.bytes().data();
+// 	auto size = (int)string.size();
+// 	int startingByte = idx;
+// 	buf += startingByte; //go to current element
+// 
+// 	//clamp into string
+// 	if (startingByte + sizeBytes > size) {
+// 		sizeBytes = size - startingByte;
+// 	}
+// 
+// 	memcpy(dest, buf, sizeBytes);
+// 
+// 	idx += sizeBytes;
+// }

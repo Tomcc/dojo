@@ -2,7 +2,7 @@
 
 using namespace Dojo;
 
-File::File(const std::string& path) :
+File::File(const utf::string& path) :
 	FileStream(path),
 	mAccess(Access::BadFile),
 	mFile(nullptr),

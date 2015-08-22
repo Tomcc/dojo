@@ -72,7 +72,7 @@ namespace Dojo {
 		};
 
 		///Creates a new Shader from a file path
-		Shader(ResourceGroup* creator, const std::string& filePath);
+		Shader(ResourceGroup* creator, const utf::string& filePath);
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**

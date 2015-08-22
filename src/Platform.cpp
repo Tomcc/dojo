@@ -93,71 +93,71 @@ Platform::~Platform() {
 
 }
 
-int Platform::_findZipExtension(const std::string& path) {
-	for (const std::string& ext : mZipExtensions) {
-		int idx = path.find(ext);
+utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string& path) {
+	for (auto&& ext : mZipExtensions) {
+		auto idx = path.find(ext);
 
-		if (idx != std::string::npos) {
+		if (idx != path.end()) {
 			return idx + ext.size();
 		}
 	}
 
-	return std::string::npos;
+	return path.end();
 }
 
-std::string Platform::_replaceFoldersWithExistingZips(const std::string& relPath) {
-	//find the root (on windows it is not the first character)
-	int next, prev = 0;
+// utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath) {
+// 	//find the root (on windows it is not the first character)
+// 	int next, prev = 0;
+// 
+// 	utf::string res = relPath.substr(0, prev);
+// 
+// 	do {
+// 		next = relPath.find_first_of('/', prev + 1);
+// 
+// 		utf::string currentFolder = relPath.substr(prev, next - prev);
+// 
+// 		//for each possibile zip extension, search a zip named like that
+// 		bool found = false;
+// 
+// 		for (const utf::string& ext : mZipExtensions) {
+// 			utf::string partialFolder = res + currentFolder + ext;
+// 
+// 			//check if partialFolder exists as a zip file
+// 			Poco::File zipFile(partialFolder);
+// 
+// 			if (zipFile.exists() && zipFile.isFile()) {
+// 				res = partialFolder;
+// 				found = true;
+// 				break;
+// 			}
+// 		}
+// 
+// 		if (!found) {
+// 			res += currentFolder;
+// 		}
+// 
+// 		prev = next;
+// 
+// 	}
+// 	while (next != utf::string::npos);
+// 
+// 	return res;
+// }
 
-	std::string res = relPath.substr(0, prev);
-
-	do {
-		next = relPath.find_first_of('/', prev + 1);
-
-		std::string currentFolder = relPath.substr(prev, next - prev);
-
-		//for each possibile zip extension, search a zip named like that
-		bool found = false;
-
-		for (const std::string& ext : mZipExtensions) {
-			std::string partialFolder = res + currentFolder + ext;
-
-			//check if partialFolder exists as a zip file
-			Poco::File zipFile(partialFolder);
-
-			if (zipFile.exists() && zipFile.isFile()) {
-				res = partialFolder;
-				found = true;
-				break;
-			}
-		}
-
-		if (!found) {
-			res += currentFolder;
-		}
-
-		prev = next;
-
-	}
-	while (next != std::string::npos);
-
-	return res;
-}
-
-const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path, std::string& zipPath, std::string& remainder) {
+const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path, utf::string& zipPath, utf::string& remainder) {
 	//find the innermost zip
-	int idx = _findZipExtension(path);
+	auto idx = _findZipExtension(path);
 
-	zipPath = path.substr(0, idx);
+	zipPath = path.substr(path.begin(), idx);
 
-	if (idx < path.size()) {
-		remainder = path.substr(idx + 1);
+	if (idx != path.end()) {
+		remainder = path.substr(idx + 1, path.end());
 	}
 	else {
 		remainder = String::Empty;
 	}
 
-	DEBUG_ASSERT( remainder.find( std::string(".zip") ) == std::string::npos, "Error: nested zips are not supported!" );
+	DEBUG_ASSERT( remainder.find( ".zip" ) == remainder.cend(), "Error: nested zips are not supported!" );
 
 	//has this zip been already loaded?
 	ZipFileMapping::const_iterator elem = mZipFileMaps.find(zipPath);
@@ -170,7 +170,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path,
 		ZipFoldersMap& map = mZipFileMaps.find(zipPath)->second;
 
 		ZipArchive zip(zipPath);
-		std::vector<std::string> zip_files;
+		std::vector<utf::string> zip_files;
 		zip.getListAllFiles(".", zip_files);
 
 		for (int i = 0; i < zip_files.size(); ++i) {
@@ -182,16 +182,16 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const std::string& path,
 	}
 }
 
-void Platform::getFilePathsForType(const std::string& type, const std::string& wpath, std::vector<std::string>& out) {
+void Platform::getFilePathsForType(const utf::string& type, const utf::string& wpath, std::vector<utf::string>& out) {
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
-	std::string absPath = getResourcesPath() + "/" + _replaceFoldersWithExistingZips(wpath);
+	utf::string absPath = getResourcesPath() + "/" + _replaceFoldersWithExistingZips(wpath);
 
-	int idx = _findZipExtension(absPath);
+	auto idx = _findZipExtension(absPath);
 
-	if (idx != std::string::npos) { //there's at least one zip in the path
+	if (idx != absPath.cend()) { //there's at least one zip in the path
 		//now, get the file/folder mapping in memory for the zip
 		//it is cached because parsing the header from disk each time is TOO SLOW
-		std::string zipInternalPath, zipPath;
+		utf::string zipInternalPath, zipPath;
 		const ZipFoldersMap& map = _getZipFileMap(absPath, zipPath, zipInternalPath);
 
 		//do we have a folder named "zipInternalPath"?
@@ -199,7 +199,7 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 
 		if (folderItr != map.end()) {
 			//add all the files with the needed extension
-			for (std::string filePath : folderItr->second) {
+			for (utf::string filePath : folderItr->second) {
 				if (Path::getFileExtension(filePath) == type) {
 					out.emplace_back(zipPath + "/" + filePath);
 				}
@@ -208,13 +208,13 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 	}
 	else {
 		try {
-			Poco::DirectoryIterator itr(absPath);
+			Poco::DirectoryIterator itr(absPath.bytes());
 			Poco::DirectoryIterator end;
 
-			std::string extension = type;
+			utf::string extension = type;
 
 			while (itr != end) {
-				std::string path = itr->path();
+				utf::string path(itr->path().data());
 
 				if (Path::getFileExtension(path) == extension) {
 					Path::makeCanonical(path);
@@ -230,12 +230,12 @@ void Platform::getFilePathsForType(const std::string& type, const std::string& w
 	}
 }
 
-std::unique_ptr<FileStream> Platform::getFile(const std::string& path) {
+std::unique_ptr<FileStream> Platform::getFile(const utf::string& path) {
 	using namespace std;
 
-	int internalZipPathIdx = _findZipExtension(path);
+	auto internalZipPathIdx = _findZipExtension(path);
 
-	if (internalZipPathIdx == std::string::npos) { //normal file
+	if (internalZipPathIdx == path.end()) { //normal file
 		return make_unique<File>(path);
 	}
 
@@ -254,7 +254,7 @@ void Platform::run(Unique<Game> game) {
 	shutdownPlatform();
 }
 
-std::vector<byte> Platform::loadFileContent(const std::string& path) {
+std::vector<byte> Platform::loadFileContent(const utf::string& path) {
 	auto file = getFile(path);
 
 	if (file->open(Stream::Access::Read)) {
@@ -271,7 +271,7 @@ std::vector<byte> Platform::loadFileContent(const std::string& path) {
 	}
 }
 
-std::string Platform::_getTablePath(const std::string& absPathOrName) {
+utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
 	DEBUG_ASSERT(absPathOrName.size() > 0, "Cannot get a path for an unnamed table");
 
 	if (Path::isAbsolute(absPathOrName)) {
@@ -284,19 +284,19 @@ std::string Platform::_getTablePath(const std::string& absPathOrName) {
 	}
 }
 
-Table Platform::load(const std::string& absPathOrName) {
-	std::string buf;
-	std::string path = _getTablePath(absPathOrName);
+Table Platform::load(const utf::string& absPathOrName) {
+	utf::string buf;
+	utf::string path = _getTablePath(absPathOrName);
 
 	return Table::loadFromFile(path);
 }
 
-void Platform::save(const Table& src, const std::string& absPathOrName) {
-	std::string buf;
+void Platform::save(const Table& src, const utf::string& absPathOrName) {
+	utf::string buf;
 
 	src.serialize(buf);
 
-	std::string path = _getTablePath(absPathOrName);
+	utf::string path = _getTablePath(absPathOrName);
 
 	auto f = getFile(path);
 

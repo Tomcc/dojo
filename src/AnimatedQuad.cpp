@@ -39,7 +39,7 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 	}
 }
 
-AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::string& shader, const std::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
+AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::string& shader, const utf::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
 	Renderable(parent, layer),
 	animationTime(0),
 	pixelScale(1, 1),
@@ -78,7 +78,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const std::str
 	}
 }
 
-void AnimatedQuad::immediateAnimation(const std::string& name, float timePerFrame) {
+void AnimatedQuad::immediateAnimation(const utf::string& name, float timePerFrame) {
 	FrameSet* set = self.getGameState().getFrameSet(name);
 
 	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );

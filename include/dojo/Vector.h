@@ -172,7 +172,7 @@ namespace Dojo {
 			return std::abs(x * v.x) + std::abs(y * v.y) + std::abs(z * v.z);
 		}
 
-		std::string toString() const;
+		utf::string toString() const;
 
 		size_t getHash() const {
 			return (((size_t)x) * 73856093) ^ (((size_t)y) * 19349663) ^ (((size_t)z) * 83492791);

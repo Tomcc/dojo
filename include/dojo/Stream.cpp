@@ -9,8 +9,8 @@ int64_t Stream::read(byte* buf, int64_t number) {
 }
 
 
-void Stream::readToFill(std::string& buf) {
-	auto r = read((byte*)buf.data(), (int64_t)buf.size());
+void Stream::readToFill(utf::string& buf) {
+	auto r = read((byte*)buf.bytes().data(), (int64_t)buf.bytes().length());
 	buf.resize((size_t)r);
 }
 

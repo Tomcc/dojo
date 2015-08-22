@@ -18,7 +18,7 @@ namespace Dojo {
 		};
 
 		///creates a new PolyTextArea object at position, using "font", centered or not around the center, using rendering options RT
-		PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const std::string& shaderName, bool centered, RenderingType rt);
+		PolyTextArea(Object& parent, RenderLayer::ID layer, Font& font, const utf::string& shaderName, bool centered, RenderingType rt);
 
 		virtual ~PolyTextArea();
 
@@ -34,10 +34,10 @@ namespace Dojo {
 		void setInterline(float interline);
 
 		///adds some text to this poly area
-		void addText(const std::string& str);
+		void addText(const utf::string& str);
 
 		///replaces the poly area content with this text
-		void setText(const std::string& str);
+		void setText(const utf::string& str);
 
 		void clear();
 
@@ -48,7 +48,7 @@ namespace Dojo {
 
 	protected:
 
-		std::string mContent;
+		utf::string mContent;
 
 		bool mCentered;
 		Unique<Mesh> mMesh;
