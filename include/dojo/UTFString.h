@@ -321,6 +321,19 @@ namespace UTF {
 		return !(lhs < rhs);
 	}
 
+	string operator+ (const string& lhs, const string& rhs);
+	string operator+ (string&&      lhs, string&&      rhs);
+	string operator+ (string&&      lhs, const string& rhs);
+	string operator+ (const string& lhs, string&&      rhs);
+	string operator+ (const string& lhs, const char*   rhs);
+	string operator+ (string&&      lhs, const char*   rhs);
+	string operator+ (const char*   lhs, const string& rhs);
+	string operator+ (const char*   lhs, string&&      rhs);
+	string operator+ (const string& lhs, char          rhs);
+	string operator+ (string&&      lhs, char          rhs);
+	string operator+ (char          lhs, const string& rhs);
+	string operator+ (char          lhs, string&&      rhs);
+
 #ifdef STL_DROP_IN
 	bool operator== (const char*   lhs, const string& rhs);
 	bool operator== (const string& lhs, const char*   rhs);
