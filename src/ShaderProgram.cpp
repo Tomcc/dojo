@@ -81,7 +81,7 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 bool ShaderProgram::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "Cannot reload an already loaded program" );
 
-	if (getFilePath().size()) { //try loading from file
+	if (getFilePath().not_empty()) { //try loading from file
 		auto file = Platform::singleton().getFile(filePath);
 
 		if (file->open(Stream::Access::Read)) {

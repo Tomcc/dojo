@@ -98,7 +98,7 @@ utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string&
 		auto idx = path.find(ext);
 
 		if (idx != path.end()) {
-			return idx + ext.size();
+			return idx + ext.length();
 		}
 	}
 
@@ -272,7 +272,7 @@ std::vector<byte> Platform::loadFileContent(const utf::string& path) {
 }
 
 utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
-	DEBUG_ASSERT(absPathOrName.size() > 0, "Cannot get a path for an unnamed table");
+	DEBUG_ASSERT(absPathOrName.not_empty(), "Cannot get a path for an unnamed table");
 
 	if (Path::isAbsolute(absPathOrName)) {
 		return absPathOrName;

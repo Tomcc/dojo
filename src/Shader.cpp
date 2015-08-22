@@ -83,7 +83,7 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	//it is file-based if the resource can be found in the current RG
 	auto& keyValue = desc.getString(typeKeyMap[typeID]);
 
-	DEBUG_ASSERT_INFO(keyValue.size(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
+	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
 
 	ShaderProgram* program = getCreator()->getProgram(keyValue);
 

@@ -13,7 +13,7 @@ namespace utf {
 
 		class const_iterator {
 		public:
-			character& operator*();
+			character operator*();
 			const_iterator& operator++();
 			const_iterator operator+(size_t i)const;
 			bool operator!=(const const_iterator&) const;
@@ -23,7 +23,7 @@ namespace utf {
 		class iterator {
 		public:
 			iterator(const_iterator);
-			character& operator*();
+			character operator*();
 			iterator& operator++();
 			bool operator!=(const iterator&) const;
 			iterator operator+(size_t i)const;
@@ -31,7 +31,7 @@ namespace utf {
 
 		class const_reverse_iterator {
 		public:
-			character& operator*();
+			character operator*();
 			const_reverse_iterator& operator++();
 			bool operator!=(const const_reverse_iterator&) const;
 		};
@@ -39,7 +39,7 @@ namespace utf {
 		class reverse_iterator {
 		public:
 			reverse_iterator(const_reverse_iterator);
-			character& operator*();
+			character operator*();
 			reverse_iterator& operator++();
 			bool operator!=(const reverse_iterator&) const;
 
@@ -132,14 +132,18 @@ namespace utf {
 			return raw.empty(); 
 		}
 
+		bool not_empty() const noexcept {
+			return !empty();
+		}
+
 		void shrink_to_fit() {
 			raw.shrink_to_fit();
 		}
 
-		character& front() {
+		character front() {
 			return *begin();
 		}
-		const character& front() const {
+		const character front() const {
 			return *begin();
 		}
 		
@@ -172,7 +176,9 @@ namespace utf {
 		string& append(std::initializer_list<character> il);
 		string& append(character c);
 
-		void push_back(character c);
+		void push_back(character c) {
+			append(c);
+		}
 
 		string& assign(const string& str);
 		string& assign(const string& str, size_t subpos, size_t sublen);
@@ -315,42 +321,42 @@ namespace utf {
 		std::string raw;
 	};
 
-	bool operator== (const string& lhs, const string& rhs) noexcept {
+	inline bool operator== (const string& lhs, const string& rhs) noexcept {
 		return lhs.compare(rhs) == 0;
 	}
 	
-	bool operator!= (const string& lhs, const string& rhs) noexcept {
+	inline bool operator!= (const string& lhs, const string& rhs) noexcept {
 		return !(lhs == rhs);
 	}
 	
-	bool operator<  (const string& lhs, const string& rhs) noexcept {
+	inline bool operator<  (const string& lhs, const string& rhs) noexcept {
 		return lhs.compare(rhs) < 0;
 	}
 
-	bool operator>  (const string& lhs, const string& rhs) noexcept {
+	inline bool operator>  (const string& lhs, const string& rhs) noexcept {
 		return lhs.compare(rhs) > 0;
 	}
 
-	bool operator<= (const string& lhs, const string& rhs) noexcept {
+	inline bool operator<= (const string& lhs, const string& rhs) noexcept {
 		return !(lhs > rhs);
 	}
 
-	bool operator>= (const string& lhs, const string& rhs) noexcept {
+	inline bool operator>= (const string& lhs, const string& rhs) noexcept {
 		return !(lhs < rhs);
 	}
 
-	string operator+ (const string& lhs, const string& rhs);
-	string operator+ (string&&      lhs, string&&      rhs);
-	string operator+ (string&&      lhs, const string& rhs);
-	string operator+ (const string& lhs, string&&      rhs);
-	string operator+ (const string& lhs, const char*   rhs);
-	string operator+ (string&&      lhs, const char*   rhs);
-	string operator+ (const char*   lhs, const string& rhs);
-	string operator+ (const char*   lhs, string&&      rhs);
-	string operator+ (const string& lhs, char          rhs);
-	string operator+ (string&&      lhs, char          rhs);
-	string operator+ (char          lhs, const string& rhs);
-	string operator+ (char          lhs, string&&      rhs);
+	inline string operator+ (const string& lhs, const string& rhs);
+	inline string operator+ (string&&      lhs, string&&      rhs);
+	inline string operator+ (string&&      lhs, const string& rhs);
+	inline string operator+ (const string& lhs, string&&      rhs);
+	inline string operator+ (const string& lhs, const char*   rhs);
+	inline string operator+ (string&&      lhs, const char*   rhs);
+	inline string operator+ (const char*   lhs, const string& rhs);
+	inline string operator+ (const char*   lhs, string&&      rhs);
+	inline string operator+ (const string& lhs, char          rhs);
+	inline string operator+ (string&&      lhs, char          rhs);
+	inline string operator+ (char          lhs, const string& rhs);
+	inline string operator+ (char          lhs, string&&      rhs);
 
 #ifdef STL_DROP_IN
 	bool operator== (const char*   lhs, const string& rhs);
@@ -368,7 +374,7 @@ namespace utf {
 #endif
 
 	template<typename T>
-	string to_string(T t) {
+	inline string to_string(T t) {
 		return std::to_string(t);
 	}
 }

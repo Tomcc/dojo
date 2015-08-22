@@ -100,14 +100,14 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const utf::string& path, const utf::s
 		int mode_flags = ZZIP_CASELESS;
 
 		//fake fopen MODE like C
-		if (mode.size()) {
+		if (mode.not_empty()) {
 #ifndef WIN32
 #define  O_BINARY 0x0000
 #endif
 			mode_flags |= mode.front() == 'b' ? O_BINARY : 0;
 			mode_flags |= mode.front() == 'r' ? O_RDONLY : 0;
 
-			if (mode.size() >= 2) {
+			if (mode.length() >= 2) {
 				mode_flags |= *(mode.begin()+1) == 'b' ? O_BINARY : 0;
 				mode_flags |= *(mode.begin()+1) == 'r' ? O_RDONLY : 0;
 			}
@@ -129,7 +129,7 @@ void ZipArchive::getList(const utf::string& inPath, std::vector<utf::string>& ou
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -163,7 +163,7 @@ void ZipArchive::getListAll(const utf::string& inPath, std::vector<utf::string>&
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -183,7 +183,7 @@ void ZipArchive::getListFiles(const utf::string& inPath, std::vector<utf::string
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -219,7 +219,7 @@ void ZipArchive::getListAllFiles(const utf::string& inPath, std::vector<utf::str
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -241,7 +241,7 @@ void ZipArchive::getListSubDirectories(const utf::string& inPath, std::vector<ut
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -277,7 +277,7 @@ void ZipArchive::getListAllSubDirectories(const utf::string& inPath, std::vector
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
 		int size = 0;
-		int size_path = path.size();
+		int size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -304,7 +304,7 @@ utf::string ZipArchive::makeValidPath(const utf::string& path) {
 	// 			c = '/';
 	// 	}
 	// 	/* 2 delete void string:  "path/    " */
-	// 	for (int i = path.size() - 1; -1 < i; --i) {
+	// 	for (int i = path.length() - 1; -1 < i; --i) {
 	// 		if (path[i] == '/')
 	// 			break;
 	// 		if (path[i] != ' ' && path[i] != '\0') {
@@ -313,16 +313,16 @@ utf::string ZipArchive::makeValidPath(const utf::string& path) {
 	// 		}
 	// 	}
 	// 	/* 3 delete //  */
-	// 	for (int i = path.size() - 1; 0 < i; --i) {
+	// 	for (int i = path.length() - 1; 0 < i; --i) {
 	// 		if (path[i] == '/' && path[i - 1] == '/') {
-	// 			path = path.substr(0, i - 2) + path.substr(i, path.size() - i);
+	// 			path = path.substr(0, i - 2) + path.substr(i, path.length() - i);
 	// 			break;
 	// 		}
 	// 	}
 	// 	/* delete . */
-	// 	if (path.size() && path[0] == '.')
-	// 		path = path.substr(1, path.size() - 1);
+	// 	if (path.length() && path[0] == '.')
+	// 		path = path.substr(1, path.length() - 1);
 	// 	/* delete /path */
-	// 	if (path.size() && path[0] == '/')
-	// 		path = path.substr(1, path.size() - 1);
+	// 	if (path.length() && path[0] == '/')
+	// 		path = path.substr(1, path.length() - 1);
 }

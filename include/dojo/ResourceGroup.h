@@ -70,8 +70,8 @@ namespace Dojo {
 		A locale is a subfolder with the given name, selectively loaded when a locale is provided
 		*/
 		void setLocale(const utf::string& locID, const utf::string& fallbackLocaleID) {
-			DEBUG_ASSERT( locID.size(), "setLocale: the locale was an empty string" );
-			DEBUG_ASSERT( fallbackLocaleID.size(), "setLocale: the fallback locale was an empty string" );
+			DEBUG_ASSERT( locID.not_empty(), "setLocale: the locale was an empty string" );
+			DEBUG_ASSERT( fallbackLocaleID.not_empty(), "setLocale: the fallback locale was an empty string" );
 
 			locale = locID;
 			fallbackLocale = fallbackLocaleID;
@@ -163,7 +163,7 @@ namespace Dojo {
 
 		///true if localization-specific folders will be added too when adding a folder
 		bool isLocalizationRequired() const {
-			return locale.size() > 0;
+			return locale.not_empty();
 		}
 
 		///add all the Sets in a folder

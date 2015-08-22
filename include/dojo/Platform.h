@@ -44,7 +44,7 @@ namespace Dojo {
 
 		///add a format that will be recognized as a zip package by the file loader
 		void addZipFormat(const utf::string& ext) {
-			DEBUG_ASSERT( ext.size(), "addZipFormat: empty format string" );
+			DEBUG_ASSERT( ext.not_empty(), "addZipFormat: empty format string" );
 			mZipExtensions.emplace_back(ext);
 		}
 

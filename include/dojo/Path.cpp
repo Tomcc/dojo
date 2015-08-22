@@ -37,14 +37,18 @@ bool Path::isAbsolute(const utf::string& str) {
 }
 
 void Path::makeCanonical(utf::string& path) {
-	for (auto& c : path) {
+	utf::string canonical;
+	for (auto&& c : path) {
 		if (c == '\\') {
-			c = '/';
+			canonical += '/';
+		}
+		else {
+			canonical += c;
 		}
 	}
 
-	if (*(path.begin() + (path.size()-1)) == '/') {
-		path.resize(path.size() - 1);
+	if (*(path.begin() + (path.length()-1)) == '/') {
+		path.resize(path.length() - 1);
 	}
 }
 // 

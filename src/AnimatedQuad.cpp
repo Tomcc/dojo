@@ -73,7 +73,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 		DEBUG_ASSERT(mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)");
 	}
 
-	if (immediateAnim.size()) {
+	if (immediateAnim.not_empty()) {
 		immediateAnimation(immediateAnim, timePerFrame);
 	}
 }

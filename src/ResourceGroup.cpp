@@ -65,7 +65,7 @@ void ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
 }
 
 void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
-	DEBUG_ASSERT( subdirectory.size(), "addSets: folder path is empty" );
+	DEBUG_ASSERT( subdirectory.not_empty(), "addSets: folder path is empty" );
 	DEBUG_ASSERT( version >= 0, "addSets: negative versions are invalid" );
 
 	std::vector<utf::string> paths;
@@ -139,7 +139,7 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 
 void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
 	//add all the sets in the given folder
-	DEBUG_ASSERT( subdirectory.size(), "addFonts: folder path is empty" );
+	DEBUG_ASSERT( subdirectory.not_empty(), "addFonts: folder path is empty" );
 	DEBUG_ASSERT( version >= 0, "addFonts: negative versions are invalid" );
 
 	utf::string name;
@@ -408,7 +408,7 @@ FrameSet& ResourceGroup::getEmptyFrameSet() const {
 }
 
 FrameSet* ResourceGroup::getFrameSet(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "getFrameSet: empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "getFrameSet: empty name provided");
 
 	return find<FrameSet>(name, RT_FRAMESET);
 }
@@ -420,32 +420,32 @@ Texture* ResourceGroup::getTexture(const utf::string& name) const {
 }
 
 Font* ResourceGroup::getFont(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Font>(name, RT_FONT);
 }
 
 Mesh* ResourceGroup::getMesh(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Mesh>(name, RT_MESH);
 }
 
 SoundSet* ResourceGroup::getSound(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<SoundSet>(name, RT_SOUND);
 }
 
 Table* ResourceGroup::getTable(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Table>(name, RT_TABLE);
 }
 
 Shader* ResourceGroup::getShader(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Shader>(name, RT_SHADER);
 }
 
 ShaderProgram* ResourceGroup::getProgram(const utf::string& name) const {
-	DEBUG_ASSERT(name.size(), "empty name provided");
+	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<ShaderProgram>(name, RT_PROGRAM);
 }
 

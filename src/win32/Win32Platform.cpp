@@ -483,19 +483,12 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 }
 
 utf::string _cleanPath(const utf::string& name) {
-	utf::string path = name;
-
-	//UNICODE
-	auto itr = path.begin();
-	auto end = path.end();
-	for (; itr != end; ++itr) {
-		auto& c = *itr;
-
-		if (c == ':' || c == '\\' || c == '/') { //TODO more invalid chars
-			*itr = c;
+	utf::string path;
+	for(auto&& c : name) {
+		if (!(c == ':' || c == '\\' || c == '/')) { //TODO more invalid chars
+			path += c;
 		}
 	}
-
 	return path;
 }
 

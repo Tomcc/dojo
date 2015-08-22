@@ -11,7 +11,7 @@ Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const utf::string& s
 	mAnimationIdx(-1) {
 	this->pixelPerfect = pixelPerfect;
 
-	if (defaultAnimName.size()) {
+	if (defaultAnimName.not_empty()) {
 		setAnimation(registerAnimation(defaultAnimName, timePerFrame));
 
 		//set convenient size to fit the first frame

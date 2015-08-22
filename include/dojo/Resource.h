@@ -42,7 +42,7 @@ namespace Dojo {
 			size(0),
 			filePath(path),
 			pDataProvider(nullptr) {
-			DEBUG_ASSERT( path.size(), "The file path is empty" );
+			DEBUG_ASSERT( path.not_empty(), "The file path is empty" );
 		}
 
 		Resource(ResourceGroup* group, DataProvider* source) :
@@ -82,7 +82,7 @@ namespace Dojo {
 		}
 
 		bool isFiledBased() {
-			return filePath.size() > 0;
+			return filePath.not_empty();
 		}
 
 		bool isReloadable() {
