@@ -206,9 +206,9 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	currentState.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
 
 	//we don't want different layers to be depth-checked together?
-// 	if (layer.depthClear) {
-// 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-// 	}
+	if (layer.depthClear) {
+		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
 
 	for (auto&& r : layer.elements) {
 		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
