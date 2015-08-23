@@ -104,10 +104,6 @@
 
 #include "DebugUtils.h"
 
-//string has to be included here!
-#include "UTFString.h"
-#include "dojostring.h"
-
 //keycode.h is a plain enum
 #include "KeyCode.h"
 
@@ -144,4 +140,9 @@ using std::make_shared;
 
 #define UNUSED(X) ((void)(X))
 
+//TODO this stuff could be split off in another library?
+#include "UTFString.h"
+#include "dojostring.h"
+
+#include "enum_cast.h"
 

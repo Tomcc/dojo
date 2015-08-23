@@ -2,12 +2,6 @@
 
 #include "dojo_common_header.h"
 
-#ifdef __OBJC__
-	#import <Foundation/NSString.h>
-#endif
-
-#define STRING_MAX_FLOAT_DIGITS 6
-
 namespace Dojo {
 	class String {
 	public:

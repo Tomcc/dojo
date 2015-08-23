@@ -105,44 +105,46 @@ utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string&
 	return path.end();
 }
 
-// utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath) {
-// 	//find the root (on windows it is not the first character)
-// 	int next, prev = 0;
-// 
-// 	utf::string res = relPath.substr(0, prev);
-// 
-// 	do {
-// 		next = relPath.find_first_of('/', prev + 1);
-// 
-// 		utf::string currentFolder = relPath.substr(prev, next - prev);
-// 
-// 		//for each possibile zip extension, search a zip named like that
-// 		bool found = false;
-// 
-// 		for (const utf::string& ext : mZipExtensions) {
-// 			utf::string partialFolder = res + currentFolder + ext;
-// 
-// 			//check if partialFolder exists as a zip file
-// 			Poco::File zipFile(partialFolder);
-// 
-// 			if (zipFile.exists() && zipFile.isFile()) {
-// 				res = partialFolder;
-// 				found = true;
-// 				break;
-// 			}
-// 		}
-// 
-// 		if (!found) {
-// 			res += currentFolder;
-// 		}
-// 
-// 		prev = next;
-// 
-// 	}
-// 	while (next != utf::string::npos);
-// 
-// 	return res;
-// }
+utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath) {
+	//find the root (on windows it is not the first character)
+	
+	auto next = utf::string::const_iterator{};
+	auto prev = relPath.begin();
+
+	utf::string res;
+
+	do {
+		next = relPath.find_first_of('/', prev + 1);
+
+		utf::string currentFolder = relPath.substr(prev, next);
+
+		//for each possibile zip extension, search a zip named like that
+		bool found = false;
+
+		for (const utf::string& ext : mZipExtensions) {
+			utf::string partialFolder = res + currentFolder + ext;
+
+			//check if partialFolder exists as a zip file
+			Poco::File zipFile(partialFolder.bytes());
+
+			if (zipFile.exists() && zipFile.isFile()) {
+				res = partialFolder;
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			res += currentFolder;
+		}
+
+		prev = next;
+
+	}
+	while (next != relPath.end());
+
+	return res;
+}
 
 const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path, utf::string& zipPath, utf::string& remainder) {
 	//find the innermost zip
@@ -217,9 +219,7 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 				utf::string path(itr->path().data());
 
 				if (Path::getFileExtension(path) == extension) {
-					Path::makeCanonical(path);
-
-					out.emplace_back(path);
+					out.emplace_back(Path::makeCanonical(path));
 				}
 
 				++itr;

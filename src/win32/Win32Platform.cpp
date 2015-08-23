@@ -509,16 +509,14 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 		szPath);
 
 	auto appDataPathW = std::wstring(szPath) + L'/' + String::toUTF16(_cleanPath(game->getName()));
-	mAppDataPath = String::toUTF8(appDataPathW);
-	Path::makeCanonical(mAppDataPath);
+	mAppDataPath = Path::makeCanonical(String::toUTF8(appDataPathW));
 
 	//get root path
 	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
 	auto rootPathW = std::wstring(szPath);
 	rootPathW.resize(rootPathW.find_last_of(L"\\/"));
 
-	mRootPath = String::toUTF8(rootPathW);
-	Path::makeCanonical(mRootPath);
+	mRootPath = Path::makeCanonical(String::toUTF8(rootPathW));
 
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 

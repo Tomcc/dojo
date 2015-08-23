@@ -20,8 +20,6 @@
 #include "ShaderProgram.h"
 #include "Log.h"
 
-#undef RT_FONT
-
 namespace Dojo {
 	///A ResourceGroup manages all of the Resources in Dojo
 	/**
@@ -36,16 +34,16 @@ namespace Dojo {
 	class ResourceGroup {
 	public:
 
-		enum ResourceType {
-			RT_FRAMESET,
-			RT_FONT,
-			RT_MESH,
-			RT_SOUND,
-			RT_TABLE,
-			RT_SHADER,
-			RT_PROGRAM,
+		enum class ResourceType {
+			FrameSet,
+			Font,
+			Mesh,
+			SoundSet,
+			Table,
+			Material,
+			ShaderProgram,
 
-			_RT_COUNT
+			_count
 		};
 
 		//various resource properties TODO: refactor
@@ -79,28 +77,23 @@ namespace Dojo {
 
 		///returns the map containing the required resource type
 		template <class R>
-		std::unordered_map<utf::string, R*>* getResourceMap(ResourceType r) const {
-			return (std::unordered_map<utf::string, R*>*)mapArray[(int)r];
+		std::unordered_map<utf::string, R*>& getResourceMap(ResourceType r) const {
+			return *(std::unordered_map<utf::string, R*>*)mapArray[enum_cast(r)];
 		}
 
 		///finds a named resource of type R
 		template <class R>
 		R* find(const utf::string& name, ResourceType r) const {
-			typedef std::unordered_map<utf::string, R*> RMap;
+			auto& map = getResourceMap<R>(r);
+			auto itr = map.find(name);
 
-			RMap* map = getResourceMap<R>(r);
-
-			typename RMap::iterator itr = map->find(name);
-
-			if (itr != map->end()) {
+			if (itr != map.end()) {
 				return itr->second;
 			}
 
-			//try in subgroups
-			R* f;
-
+			//try in subgroups too
 			for (auto&& sub : subs) {
-				f = sub->find<R>(name, r);
+				auto f = sub->find<R>(name, r);
 
 				if (f) {
 					return f;
@@ -237,7 +230,7 @@ namespace Dojo {
 		ShaderMap shaders;
 		ProgramMap programs;
 
-		void* mapArray[ _RT_COUNT ];
+		void* mapArray[ enum_cast(ResourceType::_count) ];
 
 		SubgroupList subs;
 

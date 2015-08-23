@@ -10,16 +10,14 @@ StringReader::StringReader(const utf::string& string) :
 }
 
 utf::character StringReader::get() {
-	auto c = *idx;
-	++idx;
-	return c;
+	return *idx++;
 }
-// 
-// void StringReader::back() {
-// 	DEBUG_ASSERT(idx > 0, "back: The StringReader is already at the start of the stream");
-// 
-// 	--idx;
-// }
+
+void StringReader::back() {
+	DEBUG_ASSERT(idx != string.begin(), "back: The StringReader is already at the start of the stream");
+
+	--idx;
+}
 
 bool StringReader::isNumber(uint32_t c) {
 	return c >= '0' && c <= '9';
@@ -158,21 +156,22 @@ float StringReader::readFloat() {
 
 	return sign * res;
 }
-// 
-// void StringReader::readBytes(void* dest, int sizeBytes) {
-// 
-// 	//load format data
-// 	auto buf = string.bytes().data();
-// 	auto size = (int)string.size();
-// 	int startingByte = idx;
-// 	buf += startingByte; //go to current element
-// 
-// 	//clamp into string
-// 	if (startingByte + sizeBytes > size) {
-// 		sizeBytes = size - startingByte;
-// 	}
-// 
-// 	memcpy(dest, buf, sizeBytes);
-// 
-// 	idx += sizeBytes;
-// }
+
+void StringReader::readBytes(void* dest, int sizeBytes) {
+
+	auto startIdx = idx;
+
+	//load format data
+	auto buf = idx.get_ptr();
+	auto end = string.end().get_ptr();
+
+	//clamp into string
+	if (buf + sizeBytes > end) {
+		sizeBytes = end - buf;
+	}
+
+	memcpy(dest, buf, sizeBytes);
+
+	//we need to manually create a new iterator, because we can't normally iterate over raw data
+	idx = utf::string::const_iterator( startIdx.get_ptr() + sizeBytes );
+}

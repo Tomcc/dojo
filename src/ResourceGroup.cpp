@@ -21,13 +21,13 @@ ResourceGroup::ResourceGroup() :
 	disableMipmaps(false),
 	disableTiling(false) {
 	//link map array
-	mapArray[RT_FRAMESET] = &frameSets;
-	mapArray[RT_FONT] = &fonts;
-	mapArray[RT_MESH] = &meshes;
-	mapArray[RT_SOUND] = &sounds;
-	mapArray[RT_TABLE] = &tables;
-	mapArray[RT_SHADER] = &shaders;
-	mapArray[RT_PROGRAM] = &programs;
+	mapArray[enum_cast(ResourceType::FrameSet)] = &frameSets;
+	mapArray[enum_cast(ResourceType::Font)] = &fonts;
+	mapArray[enum_cast(ResourceType::Mesh)] = &meshes;
+	mapArray[enum_cast(ResourceType::SoundSet)] = &sounds;
+	mapArray[enum_cast(ResourceType::Table)] = &tables;
+	mapArray[enum_cast(ResourceType::Material)] = &shaders;
+	mapArray[enum_cast(ResourceType::ShaderProgram)] = &programs;
 
 	emptyFrameSet = make_unique<FrameSet>(this);
 }
@@ -37,8 +37,7 @@ ResourceGroup::~ResourceGroup() {
 }
 
 void ResourceGroup::addLocalizedFolder(const utf::string& basefolder, int version) {
-	utf::string lid = basefolder;
-	Path::makeCanonical(lid);
+	utf::string lid = Path::makeCanonical(basefolder);
 
 	utf::string localeDirPath = lid + '/' + locale;
 
@@ -77,15 +76,15 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 	Platform::singleton().getFilePathsForType("png", subdirectory, paths);
 	Platform::singleton().getFilePathsForType("jpg", subdirectory, paths);
 
-	for (int i = 0; i < paths.size(); ++i) {
-		name = Path::getFileName(paths[i]);
+	for(auto&& path : paths) {
+		name = Path::getFileName(path);
 
 		//skip wrong versions
 		if (Path::getVersion(name) != version) {
 			continue;
 		}
 
-		if (!Path::arePathsInSequence(lastName, name)) {
+		if (lastName.empty() || !Path::arePathsInSequence(lastName, name)) {
 			utf::string setPrefix = Path::removeTags(name);
 
 			//create a new set
@@ -93,7 +92,7 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 		}
 
 		//create a new buffer
-		currentSet->addTexture(make_unique<Texture>(this, paths[i]));
+		currentSet->addTexture(make_unique<Texture>(this, path));
 
 		lastName = name;
 	}
@@ -104,8 +103,8 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 	//now add atlases!
 	Table def;
 
-	for (int i = 0; i < paths.size(); ++i) {
-		name = Path::getFileName(paths[i]);
+	for(auto&& path : paths) {
+		name = Path::getFileName(path);
 
 		//skip wrong versions
 		if (Path::getVersion(name) != version) {
@@ -114,7 +113,7 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 
 		name = Path::removeVersion(name);
 
-		def = Platform::singleton().load(paths[i]);
+		def = Platform::singleton().load(path);
 
 		//standard flat atlasinfo
 		if (def.getArrayLength() == 0) {
@@ -187,7 +186,7 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 	for (int i = 0; i < paths.size(); ++i) {
 		name = Path::getFileName(paths[i]);
 
-		if (!Path::arePathsInSequence(lastName, name)) {
+		if (lastName.empty() || !Path::arePathsInSequence(lastName, name)) {
 			//create a new set
 			utf::string setPrefix = Path::removeTags(name);
 			currentSet = &addSoundSet(make_unique<SoundSet>(this, setPrefix), setPrefix);
@@ -410,7 +409,7 @@ FrameSet& ResourceGroup::getEmptyFrameSet() const {
 FrameSet* ResourceGroup::getFrameSet(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "getFrameSet: empty name provided");
 
-	return find<FrameSet>(name, RT_FRAMESET);
+	return find<FrameSet>(name, ResourceType::FrameSet);
 }
 
 Texture* ResourceGroup::getTexture(const utf::string& name) const {
@@ -421,32 +420,32 @@ Texture* ResourceGroup::getTexture(const utf::string& name) const {
 
 Font* ResourceGroup::getFont(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<Font>(name, RT_FONT);
+	return find<Font>(name, ResourceType::Font);
 }
 
 Mesh* ResourceGroup::getMesh(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<Mesh>(name, RT_MESH);
+	return find<Mesh>(name, ResourceType::Mesh);
 }
 
 SoundSet* ResourceGroup::getSound(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<SoundSet>(name, RT_SOUND);
+	return find<SoundSet>(name, ResourceType::SoundSet);
 }
 
 Table* ResourceGroup::getTable(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<Table>(name, RT_TABLE);
+	return find<Table>(name, ResourceType::Table);
 }
 
 Shader* ResourceGroup::getShader(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<Shader>(name, RT_SHADER);
+	return find<Shader>(name, ResourceType::Material);
 }
 
 ShaderProgram* ResourceGroup::getProgram(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
-	return find<ShaderProgram>(name, RT_PROGRAM);
+	return find<ShaderProgram>(name, ResourceType::ShaderProgram);
 }
 
 const utf::string& ResourceGroup::getLocale() const {
