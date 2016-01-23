@@ -31,6 +31,16 @@ namespace Dojo {
 			};
 		}
 
+		static Color fromRGB(uint32_t RGB) {
+			byte* ch = (byte*)&RGB;
+			return{
+				ch[2] / 255.f,
+				ch[1] / 255.f,
+				ch[0] / 255.f,
+				1.f
+			};
+		}
+
 		float r, g, b, a;
 
 		Color() :
@@ -64,8 +74,18 @@ namespace Dojo {
 			this->a = (float)a / 255.f;
 		}
 
+		bool isNormal() const {
+			return
+				r >= 0 && r <= 1.f &&
+				g >= 0 && g <= 1.f &&
+				b >= 0 && b <= 1.f &&
+				a >= 0 && a <= 1.f;
+		}
+
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)
 		RGBAPixel toRGBA() const {
+			DEBUG_ASSERT(isNormal(), "Cannot convert this color to a 32-bit int as it's out of range.");
+
 			RGBAPixel p;
 			byte* ch = (byte*)&p;
 
@@ -117,6 +137,8 @@ namespace Dojo {
 			g += c.g;
 			b += c.b;
 		}
+
+		Color clamped() const;
 
 	protected:
 	};

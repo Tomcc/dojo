@@ -226,7 +226,7 @@ void ResourceGroup::addPrograms(const utf::string& folder) {
 void ResourceGroup::addShaders(const utf::string& folder) {
 	std::vector<utf::string> paths;
 
-	Platform::singleton().getFilePathsForType("shader", folder, paths);
+	Platform::singleton().getFilePathsForType("material", folder, paths);
 
 	for (auto&& path : paths) {
 		utf::string name = Path::getFileName(path);

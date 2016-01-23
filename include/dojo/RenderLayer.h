@@ -24,6 +24,12 @@ namespace Dojo {
 			 depthClear = true,
 			 wireframe = false;
 
+		void make3D() {
+			depthCheck = true;
+			depthClear = true;
+			orthographic = false;
+		}
+		
 		SmallSet<Renderable*> elements;
 	};
 }
