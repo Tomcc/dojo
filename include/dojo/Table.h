@@ -60,7 +60,7 @@ namespace Dojo {
 
 			}
 
-			///returns a raw unyped pointer to the underlying data
+			///returns a raw untyped pointer to the underlying data
 			virtual void* getRawValue() = 0;
 
 			template<typename T>

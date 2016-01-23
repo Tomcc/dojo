@@ -250,7 +250,7 @@
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
@@ -288,7 +288,7 @@
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
@@ -325,7 +325,7 @@
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>zlib.lib;zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;glew32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>dependencies\win32\lib;dependencies\win32\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
