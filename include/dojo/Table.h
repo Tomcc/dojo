@@ -65,7 +65,7 @@ namespace Dojo {
 
 			template<typename T>
 			T& getAs() {
-				DEBUG_ASSERT(type == field_type_for<T>(), "type mismatch while reading from a Table Entry");
+				//DEBUG_ASSERT(type == field_type_for<T>(), "type mismatch while reading from a Table Entry");
 				return *(T*)getRawValue();
 			}
 
