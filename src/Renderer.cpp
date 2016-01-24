@@ -168,17 +168,6 @@ void Renderer::_renderElement(Renderable& elem) {
 #ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
 #endif
-
-#ifdef DOJO_SHADERS_AVAILABLE
-
-	//HACK //TODO remove fixed function pipeline (it breaks if generic arrays are set)
-	if (elem.getShader()) {
-		for (auto&& attr : elem.getShader()->getAttributes()) {
-			glDisableVertexAttribArray(attr.second.location);
-		}
-	}
-
-#endif
 }
 
 bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable& r) {

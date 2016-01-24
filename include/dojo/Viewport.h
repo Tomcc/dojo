@@ -151,6 +151,7 @@ namespace Dojo {
 		}
 
 		const Matrix& getPerspectiveProjectionTransform() {
+			_updateFrustum();
 			return mFrustumTransform;
 		}
 

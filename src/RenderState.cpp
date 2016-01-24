@@ -164,9 +164,6 @@ void RenderState::applyState() {
 void RenderState::commitChanges() {
 	DEBUG_ASSERT( mesh, "A mesh is required to setup a new renderstate" );
 
-	//always bind color as it is just not expensive
-	glColor4f(color.r, color.g, color.b, color.a);
-
 	//TODO incremental state switches please!
 	applyState();
 }
