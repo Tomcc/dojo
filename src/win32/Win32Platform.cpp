@@ -701,7 +701,7 @@ void Win32Platform::loop() {
 
 		if (running) {
 			//never send a dt lower than the minimum!
-			float dt = std::min(game->getMaximumFrameLength(), (float)timer.deltaTime());
+			float dt = std::min(game->getMaximumFrameLength(), (float)timer.getAndReset());
 
 			if (!mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0)) {
 				step(dt);

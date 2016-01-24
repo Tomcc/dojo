@@ -47,7 +47,7 @@ namespace Dojo {
 		}
 
 		///gets the time from the last reset and then resets the timer
-		double deltaTime() {
+		double getAndReset() {
 			double t = getElapsedTime();
 			reset();
 			return t;
