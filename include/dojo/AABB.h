@@ -69,6 +69,13 @@ namespace Dojo {
 			};
 		}
 
+		AABB scale(const Vector& scale) const {
+			return{
+				{min.x * scale.x, min.y * scale.y, min.z * scale.z},
+				{max.x * scale.x, max.y * scale.x, max.z * scale.z}
+			};
+		}
+
 		Vector getCenter() const {
 			return (max + min) * 0.5f;
 		}

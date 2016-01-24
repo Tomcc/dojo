@@ -228,7 +228,7 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	AABB bb = r.getObject().transformAABB(r.getMesh()->getBounds());
+	AABB bb = r.getObject().transformAABB(r.getMesh()->getBounds().scale(r.scale));
 
 	Vector halfSize = (bb.max - bb.min) * 0.5f;
 	Vector worldPos = r.getObject().getWorldPosition();
