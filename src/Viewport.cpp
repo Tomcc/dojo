@@ -79,7 +79,7 @@ void Viewport::setRenderTarget(Texture* target) {
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
-	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::NegativeUnitY))); //HACK why negative does work? Up is +Y
+	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::UnitY)));
 }
 
 void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {

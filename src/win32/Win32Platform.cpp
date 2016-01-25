@@ -624,10 +624,6 @@ void Win32Platform::acquireContext() {
 }
 
 void Win32Platform::present() {
-	if (isFullscreen()) {
-		glFinish();    //WAT //HACK if this is not called in fullscreen, the app actually blocks in the first next glUseProgram making realTime useless!
-	}
-
 	SwapBuffers(hdc);
 }
 
