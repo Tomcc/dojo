@@ -18,6 +18,15 @@ namespace Dojo {
 			return{ Vector::min(A,B), Vector::max(A,B) };
 		}
 
+		static AABB fromPoints(const std::vector<Vector>& points) {
+			Vector min = Vector::Max, max = Vector::Min;
+			for (auto&& point : points) {
+				min = Vector::min(min, point);
+				max = Vector::max(max, point);
+			}
+			return{ min, max };
+		}
+
 		Vector min, max;
 
 		AABB() {}
@@ -82,6 +91,11 @@ namespace Dojo {
 
 		Vector getSize() const {
 			return max - min;
+		}
+
+		float getVolume() const {
+			auto sz = getSize();
+			return sz.x * sz.y * sz.z;
 		}
 
 		bool contains(const Vector& p) const {
