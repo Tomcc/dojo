@@ -63,10 +63,11 @@ void Mesh::destroyBuffers() {
 	cleanup = std::move(indices);
 }
 
-void Mesh::begin(int extimatedVerts /*= 1 */) {
+void Mesh::begin(unsigned int extimatedVerts /*= 1 */) {
 	//be sure that we aren't already building
 	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
 	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
+	DEBUG_ASSERT(indexMaxValue > extimatedVerts, "The index format chosen is too small");
 
 	vertices.clear();
 	indices.clear();

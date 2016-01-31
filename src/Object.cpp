@@ -12,9 +12,11 @@ using namespace glm;
 
 Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 	position(pos),
-	gameState(parentObject.getGameState()),
 	active(true),
 	disposed(false) {
+	if (auto gs = parentObject.gameState.cast()) {
+		gameState = gs.get();
+	}
 	setSize(bbSize);
 }
 

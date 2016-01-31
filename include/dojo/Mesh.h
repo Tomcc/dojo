@@ -97,7 +97,7 @@ namespace Dojo {
 		/**
 		\param extimatedVertes number of vertices that have to be reserved
 		*/
-		void begin(int extimatedVerts = 1);
+		void begin(unsigned int extimatedVerts = 1);
 
 		///starts editing a dynamic mesh that was already begin'd and end'ed
 		/**

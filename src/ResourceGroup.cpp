@@ -52,15 +52,15 @@ void ResourceGroup::addLocalizedFolder(const utf::string& basefolder, int versio
 	}
 }
 
-void ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
+Table& ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
 	DEBUG_ASSERT( !name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
-
-	tables[name] = std::move(t);
 
 	if (logchanges) {
 		DEBUG_MESSAGE( "+" + name + "\t\t table" );
 	}
+
+	return *(tables[name] = std::move(t));
 }
 
 void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
@@ -310,28 +310,28 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::strin
 	return *(frameSets[name] = std::move(resource));
 }
 
-void ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
+Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	fonts[name] = std::move(resource);
-
 	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t font");
 	}
+
+	return *(fonts[name] = std::move(resource));
 }
 
-void ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
+Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getMesh(name).is_none(), "A Mesh with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	meshes[name] = std::move(resource);
-
 	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t mesh");
 	}
+
+	return *(meshes[name] = std::move(resource));
 }
 
 SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::string& name) {
@@ -346,28 +346,28 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::strin
 	return *(sounds[name] = std::move(resource));
 }
 
-void ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) {
+Shader& ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getShader(name).is_none(), "A Shader with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	shaders[name] = std::move(resource);
-
 	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t shader");
 	}
+
+	return *(shaders[name] = std::move(resource));
 }
 
-void ResourceGroup::addProgram(Unique<ShaderProgram> resource, const utf::string& name) {
+ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getProgram(name).is_none(), "A ShaderProgram with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
-	programs[name] = std::move(resource);
-
 	if (logchanges) {
 		DEBUG_MESSAGE("+" + name + "\t\t shader program");
 	}
+
+	return *(programs[name] = std::move(resource));
 }
 
 void ResourceGroup::addSubgroup(ResourceGroup& g) {

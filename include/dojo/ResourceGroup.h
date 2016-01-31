@@ -103,19 +103,19 @@ namespace Dojo {
 
 		FrameSet& addFrameSet(Unique<FrameSet> resource, const utf::string& name);
 
-		void addFont(Unique<Font> resource, const utf::string& name);
+		Font& addFont(Unique<Font> resource, const utf::string& name);
 
-		void addMesh(Unique<Mesh> resource, const utf::string& name);
+		Mesh& addMesh(Unique<Mesh> resource, const utf::string& name);
 
 		SoundSet& addSoundSet(Unique<SoundSet> resource, const utf::string& name);
 
-		void addTable(const utf::string& name, Unique<Table> t);
+		Table& addTable(const utf::string& name, Unique<Table> t);
 
 		///adds an existing Shader to this group
-		void addShader(Unique<Shader> resource, const utf::string& name);
+		Shader& addShader(Unique<Shader> resource, const utf::string& name);
 
 		///adds an existing ShaderProgram to this group
-		void addProgram(Unique<ShaderProgram> resource, const utf::string& name);
+		ShaderProgram& addProgram(Unique<ShaderProgram> resource, const utf::string& name);
 
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		void addSubgroup(ResourceGroup& g);
