@@ -43,8 +43,7 @@ RenderState::RenderState() :
 	blendingEnabled(true),
 	srcBlend(GL_SRC_ALPHA),
 	destBlend(GL_ONE_MINUS_SRC_ALPHA),
-	blendFunction(GL_FUNC_ADD),
-	pShader(nullptr) {
+	blendFunction(GL_FUNC_ADD) {
 	memset(textures, 0, sizeof(textures)); //zero all the textures
 }
 
@@ -79,7 +78,7 @@ void RenderState::setBlending(BlendingMode mode) {
 }
 
 void Dojo::RenderState::setShader(Shader& shader) {
-	pShader = &shader;
+	pShader = shader;
 }
 
 Texture* RenderState::getTexture(int ID /*= 0 */) const {

@@ -195,7 +195,7 @@ namespace Dojo {
 		template <typename U>
 		bool try_dequeue(U& result) {
 #ifndef NDEBUG
-			ReentrantGuard guard(this->dequeuing);
+			ReentrantGuard guard(self.dequeuing);
 #endif
 
 			// High-level pseudocode:
@@ -293,7 +293,7 @@ non_empty_front_block:
 		// Must be called only from the consumer thread.
 		T* peek() {
 #ifndef NDEBUG
-			ReentrantGuard guard(this->dequeuing);
+			ReentrantGuard guard(self.dequeuing);
 #endif
 			// See try_dequeue() for reasoning
 
@@ -334,7 +334,7 @@ non_empty_front_block:
 		// `pop` was called.
 		bool pop() {
 #ifndef NDEBUG
-			ReentrantGuard guard(this->dequeuing);
+			ReentrantGuard guard(self.dequeuing);
 #endif
 			// See try_dequeue() for reasoning
 
@@ -422,7 +422,7 @@ non_empty_front_block:
 		template <AllocationMode canAlloc, class... Args>
 		bool inner_enqueue(Args&& ... args) {
 #ifndef NDEBUG
-			ReentrantGuard guard(this->enqueuing);
+			ReentrantGuard guard(self.enqueuing);
 #endif
 
 			// High-level pseudocode (assuming we're allowed to alloc a new block):

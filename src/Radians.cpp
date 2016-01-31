@@ -12,7 +12,7 @@ Radians::Radians(const Degrees& e) :
 
 Radians& Radians::operator=(const Degrees& e) {
 	mValue = (float)e * EULER_TO_RADIANS;
-	return *this;
+	return self;
 }
 
 Degrees::Degrees(const Radians& r) :

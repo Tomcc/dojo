@@ -12,9 +12,8 @@ using namespace glm;
 
 Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 	position(pos),
-	gameState(&parentObject.getGameState()),
+	gameState(parentObject.getGameState()),
 	active(true),
-	parent(nullptr),
 	disposed(false) {
 	setSize(bbSize);
 }
@@ -27,7 +26,7 @@ Object& Object::_addChild(Unique<Object> o) {
 	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
-	o->parent = this;
+	o->parent = self;
 
 	auto ptr = o.get();
 
@@ -52,7 +51,7 @@ void Object::_unregisterChild(Object& child) {
 		}
 	}
 
-	child.parent = nullptr;
+	child.parent = {};
 }
 
 Unique<Object> Object::removeChild(Object& o) {

@@ -142,7 +142,7 @@ void PolyTextArea::_prepare() {
 			if (mCentered) { //move all the added vertices back
 				_centerLine(rowStartIdx, basePosition.x);
 				rowStartIdx = mMesh->getVertexCount();
-				lastChar = nullptr;
+				lastChar = {};
 			}
 
 			basePosition.x = 0;

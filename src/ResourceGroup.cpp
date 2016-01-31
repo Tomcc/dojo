@@ -29,7 +29,7 @@ ResourceGroup::ResourceGroup() :
 	mapArray[enum_cast(ResourceType::Material)] = &shaders;
 	mapArray[enum_cast(ResourceType::ShaderProgram)] = &programs;
 
-	emptyFrameSet = make_unique<FrameSet>(this);
+	emptyFrameSet = make_unique<FrameSet>(self);
 }
 
 ResourceGroup::~ResourceGroup() {
@@ -88,11 +88,11 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 			utf::string setPrefix = Path::removeTags(name);
 
 			//create a new set
-			currentSet = &addFrameSet(make_unique<FrameSet>(this), setPrefix);
+			currentSet = &addFrameSet(make_unique<FrameSet>(self), setPrefix);
 		}
 
 		//create a new buffer
-		currentSet->addTexture(make_unique<Texture>(this, path));
+		currentSet->addTexture(make_unique<Texture>(self, path));
 
 		lastName = name;
 	}
@@ -117,8 +117,8 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 
 		//standard flat atlasinfo
 		if (def.getArrayLength() == 0) {
-			auto set = make_unique<FrameSet>(this);
-			set->setAtlas(def, *this);
+			auto set = make_unique<FrameSet>(self);
+			set->setAtlas(def, self);
 
 			currentSet = &addFrameSet(std::move(set), name);
 		}
@@ -126,8 +126,8 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 			for (int j = 0; j < def.getArrayLength(); ++j) {
 				auto& sub = def.getTable(j);
 
-				auto set = make_unique<FrameSet>(this);
-				set->setAtlas(sub, *this);
+				auto set = make_unique<FrameSet>(self);
+				set->setAtlas(sub, self);
 
 				currentSet = &addFrameSet(std::move(set), sub.getString("name"));
 			}
@@ -157,7 +157,7 @@ void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
 
 		name = Path::removeTags(name);
 
-		addFont(make_unique<Font>(this, paths[i]), name);
+		addFont(make_unique<Font>(self, paths[i]), name);
 	}
 }
 
@@ -170,7 +170,7 @@ void ResourceGroup::addMeshes(const utf::string& subdirectory) {
 	for (int i = 0; i < paths.size(); ++i) {
 		name = Path::getFileName(paths[i]);
 
-		addMesh(make_unique<Mesh>(this, paths[i]), name);
+		addMesh(make_unique<Mesh>(self, paths[i]), name);
 	}
 }
 
@@ -189,11 +189,11 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 		if (lastName.empty() || !Path::arePathsInSequence(lastName, name)) {
 			//create a new set
 			utf::string setPrefix = Path::removeTags(name);
-			currentSet = &addSoundSet(make_unique<SoundSet>(this, setPrefix), setPrefix);
+			currentSet = &addSoundSet(make_unique<SoundSet>(self, setPrefix), setPrefix);
 		}
 
 		//create a new buffer
-		currentSet->addBuffer(make_unique<SoundBuffer>(this, paths[i]));
+		currentSet->addBuffer(make_unique<SoundBuffer>(self, paths[i]));
 
 		lastName = name;
 	}
@@ -207,7 +207,7 @@ void ResourceGroup::addTables(const utf::string& folder) {
 	for (int i = 0; i < paths.size(); ++i)
 		addTable(
 			Path::getFileName(paths[i]),
-			make_unique<Table>(this, paths[i])
+			make_unique<Table>(self, paths[i])
 			);
 }
 
@@ -219,7 +219,7 @@ void ResourceGroup::addPrograms(const utf::string& folder) {
 
 	for (auto&& path : paths) {
 		utf::string name = Path::getFileName(path);
-		addProgram(make_unique<ShaderProgram>(this, path), name);
+		addProgram(make_unique<ShaderProgram>(self, path), name);
 	}
 }
 
@@ -230,7 +230,7 @@ void ResourceGroup::addShaders(const utf::string& folder) {
 
 	for (auto&& path : paths) {
 		utf::string name = Path::getFileName(path);
-		addShader(make_unique<Shader>(this, path), name);
+		addShader(make_unique<Shader>(self, path), name);
 	}
 }
 
@@ -465,7 +465,7 @@ void ResourceGroup::addFolder(const utf::string& folder, int version /*= 0*/) {
 void ResourceGroup::addPrefabMeshes() {
 	//create an empty texturedQuad
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 		m->setTriangleMode(PrimitiveMode::TriangleStrip);
 		m->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
 
@@ -490,7 +490,7 @@ void ResourceGroup::addPrefabMeshes() {
 
 	//textured quad xz
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 		m->setTriangleMode(PrimitiveMode::TriangleStrip);
 		m->setVertexFields({ VertexField::Position3D, VertexField::UV0 });
 
@@ -516,7 +516,7 @@ void ResourceGroup::addPrefabMeshes() {
 	//create a texturedCube
 #define l 0.501f
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -621,7 +621,7 @@ void ResourceGroup::addPrefabMeshes() {
 
 	//create a cube
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -649,7 +649,7 @@ void ResourceGroup::addPrefabMeshes() {
 	}
 
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -677,7 +677,7 @@ void ResourceGroup::addPrefabMeshes() {
 	}
 
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -704,7 +704,7 @@ void ResourceGroup::addPrefabMeshes() {
 		addMesh(std::move(m), "prefabSkybox+Z");
 	}
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -731,7 +731,7 @@ void ResourceGroup::addPrefabMeshes() {
 		addMesh(std::move(m), "prefabSkybox+X");
 	}
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -758,7 +758,7 @@ void ResourceGroup::addPrefabMeshes() {
 		addMesh(std::move(m), "prefabSkybox+Y");
 	}
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 
 		m->setIndexByteSize(1); //byte indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
@@ -788,7 +788,7 @@ void ResourceGroup::addPrefabMeshes() {
 
 	//add cube for wireframe use
 	{
-		auto m = make_unique<Mesh>(this);
+		auto m = make_unique<Mesh>(self);
 		m->setTriangleMode(PrimitiveMode::LineStrip);
 		m->setVertexFieldEnabled(VertexField::Position2D);
 

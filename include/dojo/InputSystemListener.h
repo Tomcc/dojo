@@ -11,11 +11,9 @@ namespace Dojo {
 	class InputSystemListener {
 	public:
 
-		InputSystemListener();
-
 		virtual ~InputSystemListener();
 
-		InputSystem* getSource() {
+		optional_ref<InputSystem> getSource() {
 			return source;
 		}
 
@@ -46,12 +44,12 @@ namespace Dojo {
 		virtual void onDeviceDisconnected(InputDevice& j) {
 		}
 
-		void _notifySource(InputSystem* src) {
+		void _notifySource(optional_ref<InputSystem> src) {
 			source = src;
 		}
 
 	protected:
 
-		InputSystem* source;
+		optional_ref<InputSystem> source;
 	};
 }

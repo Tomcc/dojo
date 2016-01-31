@@ -52,26 +52,26 @@ namespace Dojo {
 		}
 
 		Color(float r, float g, float b, float a = 1.f) {
-			this->r = r;
-			this->g = g;
-			this->b = b;
-			this->a = a;
+			self.r = r;
+			self.g = g;
+			self.b = b;
+			self.a = a;
 		}
 
 		explicit Color(const Vector& v, float a = 1.f) {
-			this->r = v.x;
-			this->g = v.y;
-			this->b = v.z;
-			this->a = a;
+			self.r = v.x;
+			self.g = v.y;
+			self.b = v.z;
+			self.a = a;
 		}
 
 		///creates from a single A8R8G8B8 32-bit value
 
 		void set(byte r, byte g, byte b, byte a = 255) {
-			this->r = (float)r / 255.f;
-			this->g = (float)g / 255.f;
-			this->b = (float)b / 255.f;
-			this->a = (float)a / 255.f;
+			self.r = (float)r / 255.f;
+			self.g = (float)g / 255.f;
+			self.b = (float)b / 255.f;
+			self.a = (float)a / 255.f;
 		}
 
 		bool isNormal() const {

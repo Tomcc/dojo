@@ -261,7 +261,7 @@ void Mesh::uv(float u, float v, byte set /*= 0 */) {
 }
 
 void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
-	this->uv(uv.x, uv.y, set);
+	self.uv(uv.x, uv.y, set);
 }
 
 void Mesh::color(const Color& c) {

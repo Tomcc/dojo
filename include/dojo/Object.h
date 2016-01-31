@@ -93,7 +93,7 @@ namespace Dojo {
 		}
 
 		GameState& getGameState() const {
-			return *gameState;
+			return gameState.unwrap();
 		}
 
 		///returns the world position of a point in local space
@@ -192,7 +192,7 @@ namespace Dojo {
 		AABB transformAABB(const AABB& local) const;
 	protected:
 
-		GameState* gameState;
+		optional_ref<GameState> gameState;
 
 		std::vector<Unique<Component>> components; //TODO not a vector pls
 

@@ -285,7 +285,7 @@ bool SoundBuffer::_loadOgg(Stream& source) {
 		}
 
 		ogg_int64_t byteSize = (pcmEnd - pcmStart) * wordSize * info->channels;
-		mChunks.emplace_back(make_unique<Chunk>(*this, fileStart, byteSize));
+		mChunks.emplace_back(make_unique<Chunk>(self, fileStart, byteSize));
 
 		pcmStart = pcmEnd;
 		fileStart = fileEnd;

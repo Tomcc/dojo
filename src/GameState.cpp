@@ -12,12 +12,11 @@
 using namespace Dojo;
 
 GameState::GameState(Game& parentGame) :
-	Object(*this, Vector::Zero, Vector::One),
+	Object(self, Vector::Zero, Vector::One),
 	ResourceGroup(),
 	game(parentGame),
-	camera(nullptr),
 	timeElapsed(0) {
-	gameState = this; //useful to pass a GameState around as an Object
+	gameState = self; //useful to pass a GameState around as an Object
 }
 
 GameState::~GameState() {
@@ -32,7 +31,7 @@ void GameState::clear() {
 }
 
 void GameState::setViewport(Viewport& v) {
-	camera = &v;
+	camera = v;
 
 	Platform::singleton().getRenderer().addViewport(v);
 }

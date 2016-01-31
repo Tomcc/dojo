@@ -9,7 +9,7 @@ using namespace Dojo;
 Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const utf::string& shaderName, const utf::string& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
 	AnimatedQuad(parent, layer, shaderName),
 	mAnimationIdx(-1) {
-	this->pixelPerfect = pixelPerfect;
+	self.pixelPerfect = pixelPerfect;
 
 	if (defaultAnimName.not_empty()) {
 		setAnimation(registerAnimation(defaultAnimName, timePerFrame));
@@ -66,7 +66,7 @@ void Sprite::setAnimation(int i) {
 		a.get()._unset();
 	}
 
-	animation = animations[mAnimationIdx].get();
+	animation = *animations[mAnimationIdx];
 
 	_setTexture(*animation.unwrap().getCurrentFrame());
 

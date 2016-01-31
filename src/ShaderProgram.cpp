@@ -26,7 +26,7 @@ ShaderProgram::ShaderProgram(optional_ref<ResourceGroup> creator, const utf::str
 }
 
 ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
-	Resource(nullptr),
+	Resource(),
 	mContentString(contents),
 	mType(type) {
 	DEBUG_ASSERT(mContentString.size(), "No shader code was defined (empty string)");

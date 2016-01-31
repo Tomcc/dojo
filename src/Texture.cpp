@@ -15,7 +15,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	glhandle(0),
 	npot(false),
 	parentAtlas(nullptr),
-	ownerFrameSet(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
@@ -31,7 +30,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	glhandle(0),
 	npot(false),
 	parentAtlas(nullptr),
-	ownerFrameSet(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {

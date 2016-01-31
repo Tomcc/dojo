@@ -33,7 +33,7 @@ AStar::Node& AStar::Graph::addNode(const Vector& pos) {
 	iterator elem = find(pos);
 
 	if (elem == end()) {
-		return *((*this)[pos] = make_unique<Node>(pos));
+		return *((self)[pos] = make_unique<Node>(pos));
 	}
 	else {
 		return *elem->second;

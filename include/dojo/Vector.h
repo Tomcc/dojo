@@ -86,7 +86,7 @@ namespace Dojo {
 			y += v.y;
 			z += v.z;
 
-			return *this;
+			return self;
 		}
 
 		const Vector& operator -=(const Vector& v) {
@@ -94,7 +94,7 @@ namespace Dojo {
 			y -= v.y;
 			z -= v.z;
 
-			return *this;
+			return self;
 		}
 
 		Vector operator -(const Vector& v) const {
@@ -114,15 +114,15 @@ namespace Dojo {
 		}
 
 		float operator *(const Vector& v) const {
-			return glm::dot((const glm::vec3&)(*this), (const glm::vec3&)v);
+			return glm::dot((const glm::vec3&)(self), (const glm::vec3&)v);
 		}
 
 		Vector operator ^(const Vector& v) const {
-			return glm::cross(*this, v);
+			return glm::cross(self, v);
 		}
 
 		float lengthSquared() const {
-			return *this * *this;
+			return self * self;
 		}
 
 		///returns the length of this Vector
@@ -180,7 +180,7 @@ namespace Dojo {
 
 		///reflect this vector on the plane with the given normal
 		Vector reflect(const Vector& normal) const {
-			return 2.f * normal * (normal * *this) - *this;
+			return 2.f * normal * (normal * self) - self;
 		}
 
 		float* const data() const {
@@ -189,7 +189,7 @@ namespace Dojo {
 
 		///refracts this vector on the plane with the given normal, where eta is the refraction indices ratio
 		Vector refract(const Vector& n, float eta) const {
-			const Vector& i = -*this;
+			const Vector& i = -self;
 
 			float N_dot_I = n * i;
 			float k = 1.f - eta * eta * (1.f - N_dot_I * N_dot_I);

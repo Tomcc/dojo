@@ -134,7 +134,7 @@ void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy,
 	float fh = (float)page.getFont().getFontHeight();
 	
 	character = c;
-	gliphIdx = page.getFont().getCharIndex(this);
+	gliphIdx = page.getFont().getCharIndex(self);
 
 	pixelWidth = page.getFont().mCellWidth;
 	float pixelHeight = (float)metrics.height * FONT_PPI + page.getFont().glowRadius * 2;
@@ -160,7 +160,7 @@ void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy,
 		gCurrentScale = (float)FONT_PPI / (float)fw;
 		FT_Outline_Funcs funcs = {_moveTo, _lineTo, _conicTo, _cubicTo, 0, 0};
 
-		FT_Outline_Decompose(&outline, &funcs, this);
+		FT_Outline_Decompose(&outline, &funcs, &self);
 
 		//now that everything is loaded & in order, tessellate the mesh
 		if (mTesselation->segments.size() && page.getFont().generateSurface) { //HACK
@@ -236,7 +236,7 @@ bool Font::Page::onLoad() {
 
 			//load character data
 			character->init(
-				*this,
+				self,
 				code,
 				x, y,
 				sxp2, syp2,
@@ -427,7 +427,7 @@ Font::Page& Font::getPage(int index) {
 	PageMap::iterator itr = pages.find(index);
 
 	if (itr == pages.end()) {
-		auto& p = *(pages[index] = make_unique<Page>(*this, index));
+		auto& p = *(pages[index] = make_unique<Page>(self, index));
 		p.onLoad();
 		return p;
 	}
@@ -436,8 +436,8 @@ Font::Page& Font::getPage(int index) {
 	}
 }
 
-int Font::getCharIndex(Character* c) {
-	return FT_Get_Char_Index(face, c->character);
+int Font::getCharIndex(Character& c) {
+	return FT_Get_Char_Index(face, c.character);
 }
 
 Font::Character& Font::getCharacter(uint32_t c) {

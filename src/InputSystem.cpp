@@ -9,7 +9,7 @@ using namespace Dojo;
 
 InputSystem::InputSystem(bool enable) :
 	enabled(enable) {
-	Platform::singleton().addApplicationListener(*this);
+	Platform::singleton().addApplicationListener(self);
 }
 
 InputSystem::~InputSystem() {
@@ -32,17 +32,17 @@ void InputSystem::removeDevice(InputDevice& device) {
 }
 
 void InputSystem::addListener(InputSystemListener& l) {
-	if (l.getSource() == nullptr) {
+	if (l.getSource().is_none()) {
 		listeners.emplace(&l);
-		l._notifySource(this);
+		l._notifySource(self);
 	}
 }
 
 void InputSystem::removeListener(InputSystemListener& l) {
-	if (l.getSource() == this) {
-		listeners.erase(&l);
-		l._notifySource(nullptr);
-	}
+	DEBUG_ASSERT(listeners.find(&l) != listeners.end(), "Listener not found");
+
+	listeners.erase(&l);
+	l._notifySource({});
 }
 
 Touch& InputSystem::_registertouch(const Vector& point, Touch::Type type) {

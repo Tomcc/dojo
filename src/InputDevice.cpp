@@ -73,13 +73,13 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 			if (binding.key == key) {
 				if (pressed) {
 					for (size_t i = 0; i < pListeners.size(); ++i) { //do not use ranges! listeners can be added and removed in the inner loop
-						pListeners[i]->onButtonPressed(*this, binding.action);
+						pListeners[i]->onButtonPressed(self, binding.action);
 					}
 				}
 
 				else {
 					for (size_t i = 0; i < pListeners.size(); ++i) { //do not use ranges! listeners can be added and removed in the inner loop
-						pListeners[i]->onButtonReleased(*this, binding.action);
+						pListeners[i]->onButtonReleased(self, binding.action);
 					}
 				}
 			}
@@ -98,14 +98,14 @@ void InputDevice::_notifyAxis(Axis a, float state) {
 		mAxis[a] = state;
 
 		for (InputDeviceListener* l : pListeners) {
-			l->onAxisMoved(*this, a, state, change);
+			l->onAxisMoved(self, a, state, change);
 		}
 	}
 }
 
 void InputDevice::_fireDisconnected() {
 	for (InputDeviceListener* l : pListeners) {
-		l->onDisconnected(*this);
+		l->onDisconnected(self);
 	}
 }
 

@@ -69,11 +69,11 @@ void Renderable::update(float dt) {
 		AABB bounds = m.get().getBounds();
 		bounds.max = Vector::mul(bounds.max, scale);
 		bounds.min = Vector::mul(bounds.min, scale);
-		worldBB = self.transformAABB(bounds);
+		worldBB = object.transformAABB(bounds);
 
 		advanceFade(dt);
 
-		mTransform = glm::scale(self.getWorldTransform(), scale);
+		mTransform = glm::scale(object.getWorldTransform(), scale);
 	}
 }
 
@@ -117,9 +117,9 @@ GameState& Renderable::getGameState() const {
 }
 
 void Renderable::onAttach() {
-	Platform::singleton().getRenderer().addRenderable(*this);
+	Platform::singleton().getRenderer().addRenderable(self);
 }
 
 void Renderable::onDetach() {
-	Platform::singleton().getRenderer().removeRenderable(*this);
+	Platform::singleton().getRenderer().removeRenderable(self);
 }

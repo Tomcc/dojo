@@ -91,7 +91,7 @@ namespace Dojo {
 		virtual ~RenderState();
 
 		void setMesh(Mesh& m) {
-			mesh = &m;
+			mesh = m;
 		}
 
 		///Sets a texture in the required slot.

@@ -60,7 +60,7 @@ void TextArea::clearText() {
 
 	cursorPosition = Vector::Zero;
 
-	self.setSize(0, 0); //TODO hmm
+	object.setSize(0, 0); //TODO hmm
 
 	changed = true;
 
@@ -292,7 +292,7 @@ void TextArea::_prepare() {
 		mLayersBound = mLayersBound.expandToFit(layer->getMesh().unwrap().getBounds());
 	}
 
-	self.setSize(mLayersBound.max - mLayersBound.min); //TODO hmm
+	object.setSize(mLayersBound.max - mLayersBound.min); //TODO hmm
 
 	changed = false;
 }
@@ -360,7 +360,7 @@ void TextArea::update(float dt) {
 
 	//WARNING remember to keep this in sync with Renderable::update!
 
-	worldBB = self.transformAABB(mLayersBound);
+	worldBB = object.transformAABB(mLayersBound);
 
 	advanceFade(dt);
 }

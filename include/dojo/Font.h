@@ -161,7 +161,7 @@ namespace Dojo {
 		///returns the length in pixel for the given string
 		int getPixelLength(const utf::string& s);
 
-		int getCharIndex(Character* c);
+		int getCharIndex(Character& c);
 
 		///returns how many vertices per unit of lenght are created for the poly outlines of this font
 		float getPolyOutlineQuality() {

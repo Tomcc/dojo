@@ -105,7 +105,7 @@ namespace Dojo {
 		}
 
 		///returns the FrameSet that will load and delete this Texture
-		FrameSet* getOwnerFrameSet() {
+		optional_ref<FrameSet> getOwnerFrameSet() {
 			return ownerFrameSet;
 		}
 
@@ -137,9 +137,8 @@ namespace Dojo {
 			screenSize.y = ss.y;
 		}
 
-		void _notifyOwnerFrameSet(FrameSet* s) {
-			DEBUG_ASSERT( ownerFrameSet == nullptr, "Tried to set an owner on an already owned Texture" );
-			DEBUG_ASSERT( s, "Tried to set a nullptr owner on a Texture");
+		void _notifyOwnerFrameSet(FrameSet& s) {
+			DEBUG_ASSERT( ownerFrameSet.is_none(), "Tried to set an owner on an already owned Texture" );
 
 			ownerFrameSet = s;
 		}
@@ -152,7 +151,7 @@ namespace Dojo {
 		Vector UVSize, UVOffset;
 
 		Texture* parentAtlas;
-		FrameSet* ownerFrameSet;
+		optional_ref<FrameSet> ownerFrameSet;
 		int mAtlasOriginX, mAtlasOriginY;
 
 		Unique<Mesh> OBB;

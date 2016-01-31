@@ -109,7 +109,7 @@ namespace Dojo {
 		void _update(float dt);
 
 		void _setup(SoundBuffer& b) {
-			buffer = &b;
+			buffer = b;
 		}
 
 		bool isActive() const {

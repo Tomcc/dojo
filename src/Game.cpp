@@ -31,7 +31,7 @@ Game::Game(const utf::string& gamename, int w, int h, Orientation r, float nativ
 		nativeHeight = p.getScreenHeight();
 	}
 
-	p.addApplicationListener(*this); //always listen to the app
+	p.addApplicationListener(self); //always listen to the app
 }
 
 Game::~Game() {

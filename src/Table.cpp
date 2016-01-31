@@ -36,7 +36,7 @@ bool Table::onLoad() {
 		return false;
 	}
 
-	*this = Platform::singleton().load(filePath);
+	self = Platform::singleton().load(filePath);
 
 	return (loaded = !isEmpty());
 }
@@ -362,7 +362,7 @@ Table::Table(optional_ref<ResourceGroup> creator, const utf::string& path) :
 Table& Table::operator=(Table&& t) {
 	unnamedMembers = t.unnamedMembers;
 	map = std::move(t.map);
-	return *this;
+	return self;
 }
 
 Table::~Table() {

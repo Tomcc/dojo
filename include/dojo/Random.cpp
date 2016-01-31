@@ -297,8 +297,8 @@ void Random::load(uint32_t* const loadArray) {
 }
 
 Random& Random::operator=(const Random& o) {
-	if (this == &o) {
-		return (*this);
+	if (&self == &o) {
+		return (self);
 	}
 
 	const uint32_t* t = o.state;
@@ -310,5 +310,5 @@ Random& Random::operator=(const Random& o) {
 
 	left = o.left;
 	pget = &state[N - left];
-	return (*this);
+	return self;
 }

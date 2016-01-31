@@ -48,7 +48,7 @@ void XInputController::poll(float dt) {
 
 	if (connected) {
 		if (!mConnected) { //yeeeee we're connected!
-			Platform::singleton().getInput().addDevice(*this);
+			Platform::singleton().getInput().addDevice(self);
 		}
 
 		int buttonMask = state.Gamepad.wButtons; //wButtons is a mask where each bit represents a button state
@@ -78,7 +78,7 @@ void XInputController::poll(float dt) {
 	else if (mConnected) {
 		//notify disconnection to listeners and to the input system
 		_fireDisconnected();
-		Platform::singleton().getInput().removeDevice(*this);
+		Platform::singleton().getInput().removeDevice(self);
 
 		//clear the listeners because dojo's contract is to create a *new* joystick object for each connection
 		pListeners.clear();

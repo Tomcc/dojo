@@ -7,19 +7,19 @@ namespace Dojo {
 
 	class Component {
 	public:
-		Object& self;
+		Object& object;
 
-		Component(Object& self) :
-			self(self) {
+		Component(Object& object) :
+			object(object) {
 
 		}
 
 		Object& getObject() {
-			return self;
+			return object;
 		}
 
 		const Object& getObject() const {
-			return self;
+			return object;
 		}
 
 		virtual void onAttach() {}

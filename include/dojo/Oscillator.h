@@ -28,7 +28,7 @@ namespace Dojo {
 				damping,
 				frequency,
 				dt);
-			return *this;
+			return self;
 		}
 
 		operator const T& () const {

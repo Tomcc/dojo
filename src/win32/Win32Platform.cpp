@@ -687,7 +687,7 @@ void Win32Platform::loop() {
 	while (running && game->isRunning()) {
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
-				this->_fireTermination();
+				self._fireTermination();
 				running = false;
 			}
 

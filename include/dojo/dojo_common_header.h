@@ -141,6 +141,8 @@ using std::make_shared;
 
 #define UNUSED(X) ((void)(X))
 
+#define self (*this)
+
 //TODO this stuff could be split off in another library?
 #include "UTFString.h"
 #include "dojostring.h"

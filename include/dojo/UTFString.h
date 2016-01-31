@@ -385,14 +385,14 @@ namespace utf
 			{
 				--forward_iterator;
 
-				return *this;
+				return self;
 			}
 
 			// does not check to see if it goes past the end
 			// iterating past the end is undefined
 			value_reverse_iterator operator++(int)
 			{
-				value_reverse_iterator copy(*this);
+				value_reverse_iterator copy(self);
 
 				// increment
 				--forward_iterator;
@@ -405,14 +405,14 @@ namespace utf
 			value_reverse_iterator &operator--()
 			{
 				++forward_iterator;
-				return *this;
+				return self;
 			}
 
 			// does not check to see if it goes past the end
 			// iterating past begin is undefined
 			value_reverse_iterator operator--(int)
 			{
-				value_reverse_iterator copy(*this);
+				value_reverse_iterator copy(self);
 
 				++forward_iterator;
 
@@ -518,14 +518,14 @@ namespace utf
 			{
 				inc();
 
-				return *this;
+				return self;
 			}
 
 			// does not check to see if it goes past the end
 			// iterating past the end is undefined
 			utf8string_iterator operator++(int)
 			{
-				utf8string_iterator copy(*this);
+				utf8string_iterator copy(self);
 
 				// increment
 				inc();
@@ -538,14 +538,14 @@ namespace utf
 			utf8string_iterator &operator--()
 			{
 				dec();
-				return *this;
+				return self;
 			}
 
 			// does not check to see if it goes past the end
 			// iterating past begin is undefined
 			utf8string_iterator operator--(int)
 			{
-				utf8string_iterator copy(*this);
+				utf8string_iterator copy(self);
 
 				dec();
 
@@ -553,7 +553,7 @@ namespace utf
 			}
 
 			utf8string_iterator operator + (size_t n) const {
-				auto copy = *this;
+				auto copy = self;
 				for (size_t i = 0; i < n; ++i, copy.inc());
 				return copy;
 			}
@@ -730,7 +730,7 @@ namespace utf
 		{
 			raw_bytes = rvalue.raw_bytes;
 
-			return *this;
+			return self;
 		}
 
 		// move assignment operator
@@ -739,7 +739,7 @@ namespace utf
 		{
 			raw_bytes = std::move(rvalue.raw_bytes);
 
-			return *this;
+			return self;
 		}
 
 		// capacity ------------------------------------------------------------
@@ -1048,14 +1048,14 @@ namespace utf
 			// just use operator from std::basic_string
 			raw_bytes += str.raw_bytes;
 
-			return *this;
+			return self;
 		}
 
 		_utf8stringImpl &assign(const _char8bit *str)
 		{
 			raw_bytes.assign(str);
 
-			return *this;
+			return self;
 		}
 
 		// assigns a new value from a _utf8string
@@ -1063,7 +1063,7 @@ namespace utf
 		{
 			raw_bytes.assign(str.raw_bytes);
 
-			return *this;
+			return self;
 		}
 
 		// assigns a new value from a _utf8string (MOVE(
@@ -1071,7 +1071,7 @@ namespace utf
 		{
 			raw_bytes = std::move(str.raw_bytes);
 
-			return *this;
+			return self;
 		}
 
 		// assigns a new value from a std::string
@@ -1079,7 +1079,7 @@ namespace utf
 		{
 			raw_bytes.assign(instring);
 
-			return *this;
+			return self;
 		}
 
 		template <class InputIterator>
@@ -1118,7 +1118,7 @@ namespace utf
 			// just use the standard insert
 			raw_bytes.insert(get_byte_position(pos), str.raw_bytes);
 
-			return *this;
+			return self;
 		}
 
 // 		_utf8stringImpl& insert(size_type pos, const _utf8stringImpl& str, size_type subpos, size_type sublen)
@@ -1144,13 +1144,13 @@ namespace utf
 // 				raw_bytes.erase(real_pos, real_end_pos - real_pos);
 // 			}
 // 
-// 			return *this;
+// 			return self;
 // 		}
 
 		_utf8stringImpl& replace(const_iterator pos, size_type len, const _utf8stringImpl& str);
 //		{
 // 			// make copy so exceptions won't change string
-// 			_utf8stringImpl temp_copy(*this);
+// 			_utf8stringImpl temp_copy(self);
 // 
 // 			// erase
 // 			temp_copy.erase(pos, len);
@@ -1160,13 +1160,13 @@ namespace utf
 // 
 // 			assign(temp_copy);
 
-//			return *this;
+//			return self;
 //		}
 
 		_utf8stringImpl& replace(size_type pos, size_type len, const _utf8stringImpl& str, size_type subpos, size_type sublen);
 // 		{
 // 			// make copy so exceptions won't change string
-// 			_utf8stringImpl temp_copy(*this);
+// 			_utf8stringImpl temp_copy(self);
 // 			_utf8stringImpl sub_str = str.substr(subpos, sublen);
 // 
 // 			// erase
@@ -1177,13 +1177,13 @@ namespace utf
 // 
 // 			assign(temp_copy);
 // 
-// 			return *this;
+// 			return self;
 // 		}
 
 		_utf8stringImpl& replace(size_type pos, size_type len, size_type n, value_type c);
 // 		{
 // 			// make copy so exceptions won't change string
-// 			_utf8stringImpl temp_copy(*this);
+// 			_utf8stringImpl temp_copy(self);
 // 			_utf8stringImpl str(n, c);
 // 
 // 			// erase
@@ -1194,13 +1194,13 @@ namespace utf
 // 
 // 			assign(temp_copy);
 // 
-// 			return *this;
+// 			return self;
 // 		}
 
 		// swaps the contents of the strings
 		void swap(_utf8stringImpl& str)
 		{
-			std::swap(str, *this);
+			std::swap(str, self);
 		}
 
 		void KillEndingWhiteSpace()

@@ -22,8 +22,6 @@ void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
 ///////////////////////////////////////
 
 SoundManager::SoundManager() :
-	musicTrack(nullptr),
-	nextMusicTrack(nullptr),
 	fadeState(FS_NONE),
 	musicVolume(1),
 	masterVolume(1),
@@ -83,7 +81,7 @@ void SoundManager::clear() {
 
 	busySoundPool.clear();
 
-	musicTrack = nullptr;
+	musicTrack = {};
 	fadeState = FS_NONE;
 }
 
@@ -127,7 +125,7 @@ void SoundManager::playMusic(SoundSet& next, float trackFadeTime /* = 0 */, cons
 		return;
 	}
 
-	nextMusicTrack = &getSoundSource(next);
+	nextMusicTrack = getSoundSource(next);
 
 	halfFadeTime = trackFadeTime * 0.5f;
 	currentFadeTime = 0;
@@ -182,7 +180,7 @@ void SoundManager::update(float dt) {
 
 			//parte il fade in
 			if (auto track = musicTrack.cast()) {
-				nextMusicTrack = nullptr;
+				nextMusicTrack = {};
 
 				track.get().play(0);
 				track.get().setAutoRemove(false);
@@ -273,7 +271,7 @@ void SoundManager::stopMusic(float stopFadeTime /*= 0*/, const Easing& fadeEasin
 	DEBUG_MESSAGE("Music fading out in " + utf::to_string(stopFadeTime) + " s");
 
 	fadeState = FS_FADE_OUT;
-	nextMusicTrack = nullptr;
+	nextMusicTrack = {};
 
 	halfFadeTime = stopFadeTime;
 	currentFadeTime = 0;

@@ -25,8 +25,7 @@ Viewport::Viewport(
 	mClearColor(clear),
 	mVFOV(0),
 	mZNear(0),
-	mZFar(1000),
-	mRT(nullptr) {
+	mZFar(1000) {
 	//default size is window size
 	mTargetSize.x = (float)Platform::singleton().getWindowWidth();
 	mTargetSize.y = (float)Platform::singleton().getWindowHeight();
@@ -58,7 +57,7 @@ bool Viewport::isVisible(Renderable& s) {
 void Viewport::addFader(RenderLayer::ID layer) {
 	//create the fader object
 	addComponent([&] {
-		auto fader = make_unique<Renderable>(*this, layer, "texturedQuad", "flat_color_2D");
+		auto fader = make_unique<Renderable>(self, layer, "texturedQuad", "flat_color_2D");
 		fader->color = Color::None;
 
 		fader->scale.x = size.x;

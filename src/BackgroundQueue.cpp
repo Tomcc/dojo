@@ -19,7 +19,7 @@ BackgroundQueue::BackgroundQueue(int poolSize /* = -1 */) :
 
 	//create the thread pool
 	for (int i = 0; i < poolSize; ++i) {
-		mWorkers.emplace_back(make_unique<Worker>(*this));
+		mWorkers.emplace_back(make_unique<Worker>(self));
 	}
 }
 

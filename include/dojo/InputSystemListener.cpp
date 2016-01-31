@@ -3,14 +3,8 @@
 
 using namespace Dojo;
 
-
-InputSystemListener::InputSystemListener() :
-	source(nullptr) {
-
-}
-
 InputSystemListener::~InputSystemListener() {
-	if (source) {
-		source->removeListener(*this);
+	if (auto s = source.cast()) {
+		s.get().removeListener(self);
 	}
 }

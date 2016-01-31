@@ -7,26 +7,26 @@ using namespace Dojo;
 
 TouchArea::TouchArea(Listener& l, Object& parent, const Vector& pos, const Vector& size, int layer) :
 	Object(parent, pos, size),
-	listener(&l),
+	listener(l),
 	mPressed(false),
 	mTouches(0),
 	mLayer(layer) {
 
-	getGameState().addTouchArea(*this);
+	getGameState().addTouchArea(self);
 }
 
 TouchArea::TouchArea(Renderable& r, Listener& l) :
 	Object(r.getGameState(), Vector::Zero, r.getObject().getSize()), //TODO this should use the renderable's screensize instead
-	listener(&l),
+	listener(l),
 	mPressed(false),
 	mTouches(0),
 	mLayer(r.getLayer()) {
 
-	getGameState().addTouchArea(*this);
+	getGameState().addTouchArea(self);
 }
 
 TouchArea::~TouchArea() {
-	getGameState().removeTouchArea(*this);
+	getGameState().removeTouchArea(self);
 }
 
 void TouchArea::_fireOnTouchUsingCurrentTouches() {
@@ -48,15 +48,15 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 			}
 
 			if (tapped) {
-				listener.unwrap().onTouchAreaTapped(*this);
+				listener.unwrap().onTouchAreaTapped(self);
 			}
 		}
 
 		if (mPressed) {
-			listener.unwrap().onTouchAreaPressed(*this);
+			listener.unwrap().onTouchAreaPressed(self);
 		}
 		else {
-			listener.unwrap().onTouchAreaReleased(*this);
+			listener.unwrap().onTouchAreaReleased(self);
 		}
 	}
 }
@@ -74,7 +74,7 @@ void TouchArea::_incrementTouches(const Touch& touch) {
 }
 
 void TouchArea::setListener(Listener& l) {
-	listener = &l;
+	listener = l;
 }
 
 int TouchArea::getLayer() const {

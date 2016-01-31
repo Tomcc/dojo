@@ -5,7 +5,6 @@
 using namespace Dojo;
 
 SoundSource::SoundSource(ALuint src) :
-	buffer(nullptr),
 	source(src),
 	position(0, 0),
 	positionChanged(true) {
@@ -67,7 +66,7 @@ void SoundSource::play(float volume) {
 
 			int chunkNumber = b.getChunkNumber();
 
-			mFrontChunk = &b.getChunk(0);
+			mFrontChunk = b.getChunk(0);
 			ALuint alBuffer = mFrontChunk.unwrap().getOpenALBuffer();
 
 			if (chunkNumber == 1) { //non-streaming
@@ -80,7 +79,7 @@ void SoundSource::play(float volume) {
 				CHECK_AL_ERROR;
 
 				//start loading in the back buffer
-				mBackChunk = &b.getChunk(++mCurrentChunkID, true);
+				mBackChunk = b.getChunk(++mCurrentChunkID, true);
 			}
 		}
 		else {
@@ -171,11 +170,11 @@ void SoundSource::_update(float dt) {
 			}
 
 			if (mCurrentChunkID < buffer.unwrap().getChunkNumber()) { //not exhausted? start loading a new backbuffer
-				mBackChunk = &buffer.unwrap().getChunk(mCurrentChunkID, true);
+				mBackChunk = buffer.unwrap().getChunk(mCurrentChunkID, true);
 			}
 
 			else {
-				mBackChunk = nullptr;
+				mBackChunk = {};
 			}
 		}
 	}

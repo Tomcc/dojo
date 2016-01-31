@@ -25,17 +25,12 @@ void AnimatedQuad::Animation::setup(FrameSet& set, float tpf) {
 
 	animationTime = 0;
 	timePerFrame = tpf;
-	frames = &set;
+	frames = set;
 
-	if (auto f = frames.cast()) {
-		totalTime = timePerFrame * f.get().getFrameNumber();
+	totalTime = timePerFrame * set.getFrameNumber();
 
-		if (f.get().getFrameNumber() > 0) {
-			currentFrame = &f.get().getFrame(0);
-		}
-	}
-	else {
-		totalTime = 1;
+	if (set.getFrameNumber() > 0) {
+		currentFrame = &set.getFrame(0);
 	}
 }
 
@@ -55,7 +50,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 
 	auto& emptyFrameset = parent.getGameState().getEmptyFrameSet();
 	static Animation dummyAnimation(emptyFrameset, 0);
-	animation = &dummyAnimation;
+	animation = dummyAnimation;
 
 	{
 		pixelScale.x = pixelScale.y = 1;

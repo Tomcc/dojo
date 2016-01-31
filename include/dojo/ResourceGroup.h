@@ -88,7 +88,7 @@ namespace Dojo {
 			auto itr = map.find(name);
 
 			if (itr != map.end()) {
-				return itr->second;
+				return *itr->second;
 			}
 
 			//try in subgroups too

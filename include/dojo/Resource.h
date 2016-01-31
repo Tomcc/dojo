@@ -31,8 +31,7 @@ namespace Dojo {
 		Resource(optional_ref<ResourceGroup> group = {}) :
 			creator(group),
 			loaded(false),
-			size(0),
-			pDataProvider(nullptr) {
+			size(0) {
 
 		}
 
@@ -40,8 +39,7 @@ namespace Dojo {
 			creator(group),
 			loaded(false),
 			size(0),
-			filePath(path),
-			pDataProvider(nullptr) {
+			filePath(path) {
 			DEBUG_ASSERT( path.not_empty(), "The file path is empty" );
 		}
 
