@@ -85,6 +85,6 @@ namespace Dojo {
 
 		utf::string name;
 
-		bool running;
+		bool running = true;
 	};
 }
