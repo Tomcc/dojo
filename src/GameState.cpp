@@ -38,7 +38,7 @@ void GameState::setViewport(Viewport& v) {
 }
 
 void GameState::touchAreaAtPoint(const Touch& touch) {
-	Vector pointer = getViewport()->makeWorldCoordinates(touch.point);
+	Vector pointer = getViewport().unwrap().makeWorldCoordinates(touch.point);
 
 	std::vector<TouchArea*> layer;
 	int topMostLayer = INT32_MIN;
@@ -62,16 +62,12 @@ void GameState::touchAreaAtPoint(const Touch& touch) {
 	}
 }
 
-void GameState::addTouchArea(TouchArea* t) {
-	DEBUG_ASSERT(t != nullptr, "addTouchArea: area passed was null");
-
-	mTouchAreas.emplace_back(t);
+void GameState::addTouchArea(TouchArea& t) {
+	mTouchAreas.emplace_back(&t);
 }
 
-void GameState::removeTouchArea(TouchArea* t) {
-	DEBUG_ASSERT(t != nullptr, "removeTouchArea: area passed was null");
-
-	auto elem = std::find(mTouchAreas.begin(), mTouchAreas.end(), t);
+void GameState::removeTouchArea(TouchArea& t) {
+	auto elem = std::find(mTouchAreas.begin(), mTouchAreas.end(), &t);
 
 	if (elem != mTouchAreas.end()) {
 		mTouchAreas.erase(elem);

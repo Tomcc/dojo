@@ -47,14 +47,13 @@ ov_callbacks VORBIS_CALLBACKS = {
 };
 
 
-SoundBuffer::Chunk::Chunk(SoundBuffer* parent, int64_t streamStartPosition, int64_t uncompressedSize) :
+SoundBuffer::Chunk::Chunk(SoundBuffer& parent, int64_t streamStartPosition, int64_t uncompressedSize) :
 	size(0),
 	alBuffer(AL_NONE),
 	references(0),
 	pParent(parent),
 	mStartPosition(streamStartPosition),
 	mUncompressedSize(uncompressedSize) {
-	DEBUG_ASSERT(parent, "invalid parent");
 	DEBUG_ASSERT(streamStartPosition >= 0, "invalid starting position");
 	DEBUG_ASSERT(uncompressedSize > 0, "invalid PCM span size");
 }
@@ -92,7 +91,7 @@ ALuint SoundBuffer::Chunk::getOpenALBuffer() {
 
 ///////////////////////////////////////
 
-SoundBuffer::SoundBuffer(ResourceGroup* creator, const utf::string& path) :
+SoundBuffer::SoundBuffer(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path),
 	size(0),
 	mDuration(0) {
@@ -139,7 +138,7 @@ bool SoundBuffer::Chunk::onLoad() {
 	CHECK_AL_ERROR;
 
 	//copy the source to avoid side-effects
-	auto source = pParent->mSource->copy();
+	auto source = pParent.mSource.unwrap().copy();
 
 	source->open(Stream::Access::Read);
 
@@ -221,7 +220,7 @@ void SoundBuffer::Chunk::loadAsync() {
 
 void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
 	//either unload if forced, or if the parent is reloadable (loaded from file or persistent source)
-	if (!soft || pParent->isReloadable()) {
+	if (!soft || pParent.isReloadable()) {
 		DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
 		DEBUG_ASSERT( alBuffer != AL_NONE, "tried to delete an invalid alBuffer" );
 		DEBUG_ASSERT( references == 0, "Tried to unload a Chunk that is still in use" );
@@ -235,11 +234,9 @@ void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
 	}
 }
 
-bool SoundBuffer::_loadOgg(Stream* source) {
-	DEBUG_ASSERT( source, "the data source cannot be null" );
-
-	if (!source->open(Stream::Access::Read)) {
-		DEBUG_ASSERT( mSource->isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
+bool SoundBuffer::_loadOgg(Stream& source) {
+	if (!source.open(Stream::Access::Read)) {
+		DEBUG_ASSERT(source.isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
 		return false;
 	}
@@ -249,7 +246,7 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 	ALenum format;
 	ogg_int64_t uncompressedSize;
 
-	int error = ov_open_callbacks(source, &file, nullptr, 0, VORBIS_CALLBACKS);
+	int error = ov_open_callbacks(&source, &file, nullptr, 0, VORBIS_CALLBACKS);
 
 	DEBUG_ASSERT( error == 0, "Cannot load an ogg from the memory buffer" );
 
@@ -288,7 +285,7 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 		}
 
 		ogg_int64_t byteSize = (pcmEnd - pcmStart) * wordSize * info->channels;
-		mChunks.emplace_back(make_unique<Chunk>(this, fileStart, byteSize));
+		mChunks.emplace_back(make_unique<Chunk>(*this, fileStart, byteSize));
 
 		pcmStart = pcmEnd;
 		fileStart = fileEnd;
@@ -305,9 +302,9 @@ bool SoundBuffer::_loadOgg(Stream* source) {
 
 bool SoundBuffer::_loadOggFromFile() {
 	mFile = Platform::singleton().getFile(filePath);
-	mSource = mFile.get();
+	mSource = *mFile;
 
-	_loadOgg(mSource);
+	_loadOgg(mSource.unwrap());
 
 	return isLoaded();
 }

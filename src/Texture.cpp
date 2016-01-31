@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Texture::Texture(ResourceGroup* creator) :
+Texture::Texture(optional_ref<ResourceGroup> creator) :
 	Resource(creator),
 	width(0),
 	height(0),
@@ -22,7 +22,7 @@ Texture::Texture(ResourceGroup* creator) :
 
 }
 
-Texture::Texture(ResourceGroup* creator, const utf::string& path) :
+Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path),
 	width(0),
 	height(0),
@@ -259,7 +259,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
 
-	if (creator && creator->disableBilinear) {
+	if (creator && creator.unwrap().disableBilinear) {
 		disableBilinearFiltering();
 	}
 	else {
@@ -269,14 +269,14 @@ bool Texture::loadFromFile(const utf::string& path) {
 	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
 
 	//guess if this is a texture or a sprite
-	if (!isSurface || (creator && creator->disableMipmaps)) {
+	if (!isSurface || (creator && creator.unwrap().disableMipmaps)) {
 		disableMipmaps();
 	}
 	else {
 		enableMipmaps();
 	}
 
-	if (!isSurface || (creator && creator->disableTiling)) {
+	if (!isSurface || (creator && creator.unwrap().disableTiling)) {
 		disableTiling();
 	}
 	else {
@@ -331,11 +331,10 @@ bool Texture::_setupAtlas() {
 	return (loaded = true);
 }
 
-bool Texture::loadFromAtlas(Texture* tex, int x, int y, int sx, int sy) {
-	DEBUG_ASSERT( tex, "null atlas texture" );
+bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 
-	parentAtlas = tex;
+	parentAtlas = &tex;
 
 	width = sx;
 	height = sy;

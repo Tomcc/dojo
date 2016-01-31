@@ -65,14 +65,14 @@ namespace Dojo {
 		class Worker {
 		public:
 
-			explicit Worker(BackgroundQueue* parent);
+			explicit Worker(BackgroundQueue& parent);
 
 			void join() {
 				thread.join();
 			}
 
 		protected:
-			BackgroundQueue* pParent;
+			BackgroundQueue& pParent;
 			std::thread thread;
 		};
 

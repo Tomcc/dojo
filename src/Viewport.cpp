@@ -70,12 +70,14 @@ void Viewport::addFader(RenderLayer::ID layer) {
 	}());
 }
 
-void Viewport::setRenderTarget(Texture* target) {
+void Viewport::setRenderTarget(optional_ref<Texture> target) {
 	mRT = target;
-
-	setTargetSize(target ?
-						Vector((float)target->getWidth(), (float)target->getHeight()) :
-						Vector((float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight()));
+	if (mRT) {
+		setTargetSize({ (float)mRT.unwrap().getWidth(), (float)mRT.unwrap().getHeight() });
+	}
+	else {
+		setTargetSize({ (float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight() });
+	}
 }
 
 void Viewport::lookAt(const Vector& worldPos) {
@@ -228,19 +230,22 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	AABB bb = r.getObject().transformAABB(r.getMesh()->getBounds().scale(r.scale));
+	if (r.getMesh()) {
+		AABB bb = r.getObject().transformAABB(r.getMesh().unwrap().getBounds().scale(r.scale));
 
-	Vector halfSize = (bb.max - bb.min) * 0.5f;
-	Vector worldPos = r.getObject().getWorldPosition();
+		Vector halfSize = (bb.max - bb.min) * 0.5f;
+		Vector worldPos = r.getObject().getWorldPosition();
 
-	//for each plane, check where the AABB is placed
-	for (auto&& i : range(4)) {
-		if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
-			return false;
+		//for each plane, check where the AABB is placed
+		for (auto&& i : range(4)) {
+			if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
+				return false;
+			}
 		}
-	}
 
-	return true;
+		return true;
+	}
+	return false;
 }
 
 bool Viewport::isInViewRect(const Renderable& r) const {

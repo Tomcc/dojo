@@ -4,7 +4,7 @@
 
 using namespace Dojo;
 
-SoundSet::SoundSet(ResourceGroup* creator, const utf::string& setName) :
+SoundSet::SoundSet(optional_ref<ResourceGroup> creator, const utf::string& setName) :
 	Resource(creator),
 	name(setName) {
 

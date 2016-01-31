@@ -71,7 +71,7 @@ namespace Dojo {
 			return musicVolume;
 		}
 
-		SoundSource* getMusicTrack() {
+		optional_ref<SoundSource> getMusicTrack() {
 			return musicTrack;
 		}
 
@@ -94,7 +94,7 @@ namespace Dojo {
 
 		///is the music already playing?
 		bool isMusicPlaying() {
-			return musicTrack != nullptr;
+			return musicTrack;
 		}
 
 		///sets the openAL Listener's world transform
@@ -121,7 +121,7 @@ namespace Dojo {
 
 		std::unique_ptr<SoundSource> fakeSource;
 
-		SoundSource* musicTrack, *nextMusicTrack;
+		optional_ref<SoundSource> musicTrack, nextMusicTrack;
 		float halfFadeTime;
 		float currentFadeTime;
 		FadeState fadeState;

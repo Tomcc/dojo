@@ -406,44 +406,47 @@ FrameSet& ResourceGroup::getEmptyFrameSet() const {
 	return *emptyFrameSet;
 }
 
-FrameSet* ResourceGroup::getFrameSet(const utf::string& name) const {
+optional_ref<FrameSet> ResourceGroup::getFrameSet(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "getFrameSet: empty name provided");
 
 	return find<FrameSet>(name, ResourceType::FrameSet);
 }
 
-Texture* ResourceGroup::getTexture(const utf::string& name) const {
-	FrameSet* s = getFrameSet(name);
-
-	return s ? s->getFrame(0) : nullptr;
+optional_ref<Texture> ResourceGroup::getTexture(const utf::string& name) const {
+	if (auto s = getFrameSet(name)) {
+		return s.unwrap().getFrame(0);
+	} 
+	else {
+		return{};
+	}
 }
 
-Font* ResourceGroup::getFont(const utf::string& name) const {
+optional_ref<Font> ResourceGroup::getFont(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Font>(name, ResourceType::Font);
 }
 
-Mesh* ResourceGroup::getMesh(const utf::string& name) const {
+optional_ref<Mesh> ResourceGroup::getMesh(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Mesh>(name, ResourceType::Mesh);
 }
 
-SoundSet* ResourceGroup::getSound(const utf::string& name) const {
+optional_ref<SoundSet> ResourceGroup::getSound(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<SoundSet>(name, ResourceType::SoundSet);
 }
 
-Table* ResourceGroup::getTable(const utf::string& name) const {
+optional_ref<Table> ResourceGroup::getTable(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Table>(name, ResourceType::Table);
 }
 
-Shader* ResourceGroup::getShader(const utf::string& name) const {
+optional_ref<Shader> ResourceGroup::getShader(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Shader>(name, ResourceType::Material);
 }
 
-ShaderProgram* ResourceGroup::getProgram(const utf::string& name) const {
+optional_ref<ShaderProgram> ResourceGroup::getProgram(const utf::string& name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<ShaderProgram>(name, ResourceType::ShaderProgram);
 }

@@ -18,23 +18,20 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer) :
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& shader) :
 	Renderable(parent, layer) {
-	mesh = &m;
-	pShader = &shader;
+	mesh = m;
+	pShader = shader;
 
-	DEBUG_ASSERT(mesh->supportsShader(*pShader), "cannot use this mesh with this shader");
+	DEBUG_ASSERT(mesh.unwrap().supportsShader(pShader.unwrap()), "cannot use this mesh with this shader");
 }
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, const utf::string& meshName, const utf::string& shaderName) :
-	Renderable(parent, layer) {
-	DEBUG_ASSERT(meshName.not_empty(), "Use another constructor if you don't want to supply a mesh");
+	Renderable(
+		parent,
+		layer, 
+		parent.getGameState().getMesh(meshName).unwrap(), 
+		parent.getGameState().getShader(shaderName).unwrap()) {
 
-	mesh = parent.getGameState().getMesh(meshName);
-	DEBUG_ASSERT_INFO( mesh, "Tried to create a Renderable but the mesh wasn't found", "name = " + meshName );
-
-	pShader = parent.getGameState().getShader(shaderName);
-	DEBUG_ASSERT_INFO(pShader, "Tried to create a Renderable but the shader wasn't found", "name = " + shaderName);
-
-	DEBUG_ASSERT(mesh->supportsShader(*pShader), "cannot use this mesh with this shader");
+	DEBUG_ASSERT(mesh.unwrap().supportsShader(pShader.unwrap()), "cannot use this mesh with this shader");
 }
 
 Renderable::~Renderable() {
@@ -69,7 +66,7 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 
 void Renderable::update(float dt) {
 	if (mesh) {
-		AABB bounds = mesh->getBounds();
+		AABB bounds = mesh.unwrap().getBounds();
 		bounds.max = Vector::mul(bounds.max, scale);
 		bounds.min = Vector::mul(bounds.min, scale);
 		worldBB = self.transformAABB(bounds);
@@ -81,7 +78,13 @@ void Renderable::update(float dt) {
 }
 
 bool Renderable::canBeRendered() const {
-	return isVisible() && mesh && mesh->isLoaded() && mesh->getVertexCount() > 2;
+	if (mesh) {
+		auto& ref = mesh.unwrap();
+		return isVisible() && ref.isLoaded() && ref.getVertexCount() > 2;
+	}
+	else {
+		return false;
+	}
 }
 
 void Renderable::stopFade() {

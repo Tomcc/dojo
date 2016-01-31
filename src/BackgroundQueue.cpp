@@ -19,7 +19,7 @@ BackgroundQueue::BackgroundQueue(int poolSize /* = -1 */) :
 
 	//create the thread pool
 	for (int i = 0; i < poolSize; ++i) {
-		mWorkers.emplace_back(make_unique<Worker>(this));
+		mWorkers.emplace_back(make_unique<Worker>(*this));
 	}
 }
 
@@ -52,9 +52,8 @@ void BackgroundQueue::fireCompletedCallbacks() {
 	}
 }
 
-BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
+BackgroundQueue::Worker::Worker(BackgroundQueue& parent) :
 	pParent(parent) {
-	DEBUG_ASSERT(pParent, "the parent can't be null");
 
 	thread = std::thread([&] {
 		Platform::singleton().prepareThreadContext();
@@ -62,14 +61,14 @@ BackgroundQueue::Worker::Worker(BackgroundQueue* parent) :
 		for (;;) {
 			TaskCallbackPair pair;
 
-			if (!pParent->_waitForTaskOrClose(pair)) { //wait for a new task or close
+			if (!pParent._waitForTaskOrClose(pair)) { //wait for a new task or close
 				break;
 			}
 
 			pair.first(); //execute the task
 
 			//push the callback on the completed queue
-			pParent->queueOnMainThread(pair.second);
+			pParent.queueOnMainThread(pair.second);
 		}
 	});
 }

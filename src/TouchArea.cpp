@@ -12,7 +12,7 @@ TouchArea::TouchArea(Listener& l, Object& parent, const Vector& pos, const Vecto
 	mTouches(0),
 	mLayer(layer) {
 
-	getGameState().addTouchArea(this);
+	getGameState().addTouchArea(*this);
 }
 
 TouchArea::TouchArea(Renderable& r, Listener& l) :
@@ -22,11 +22,11 @@ TouchArea::TouchArea(Renderable& r, Listener& l) :
 	mTouches(0),
 	mLayer(r.getLayer()) {
 
-	getGameState().addTouchArea(this);
+	getGameState().addTouchArea(*this);
 }
 
 TouchArea::~TouchArea() {
-	getGameState().removeTouchArea(this);
+	getGameState().removeTouchArea(*this);
 }
 
 void TouchArea::_fireOnTouchUsingCurrentTouches() {
@@ -48,15 +48,15 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 			}
 
 			if (tapped) {
-				listener->onTouchAreaTapped(*this);
+				listener.unwrap().onTouchAreaTapped(*this);
 			}
 		}
 
 		if (mPressed) {
-			listener->onTouchAreaPressed(*this);
+			listener.unwrap().onTouchAreaPressed(*this);
 		}
 		else {
-			listener->onTouchAreaReleased(*this);
+			listener.unwrap().onTouchAreaReleased(*this);
 		}
 	}
 }

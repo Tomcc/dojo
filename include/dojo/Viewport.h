@@ -64,7 +64,7 @@ namespace Dojo {
 		}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
-		void setRenderTarget(Texture* target);
+		void setRenderTarget(optional_ref<Texture> target);
 
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers(const LayerList& layers);
@@ -136,7 +136,7 @@ namespace Dojo {
 		}
 
 		///returns the Texture this Viewport draws to
-		Texture* getRenderTarget() {
+		optional_ref<Texture> getRenderTarget() {
 			return mRT;
 		}
 
@@ -210,7 +210,7 @@ namespace Dojo {
 		Vector mFarPlaneSide;
 
 		LayerList mLayerList;
-		Texture* mRT;
+		optional_ref<Texture> mRT;
 
 		AABB mWorldBB;
 

@@ -17,8 +17,9 @@ void SoundSource::_reset() {
 
 	position = Vector::Zero;
 	positionChanged = true;
-	buffer = nullptr;
-	mFrontChunk = mBackChunk = nullptr;
+	buffer = {};
+	mFrontChunk = {};
+	mBackChunk = {};
 	mCurrentChunkID = 0;
 
 	//set default parameters
@@ -52,7 +53,7 @@ float SoundSource::getVolume() {
 
 void SoundSource::play(float volume) {
 	//can the sound play?
-	if (!isValid() && buffer && buffer->isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
+	if (!isValid() && buffer && buffer.unwrap().isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
 		return;
 	}
 
@@ -63,10 +64,10 @@ void SoundSource::play(float volume) {
 			//set global parameters
 			alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
 
-			int chunkNumber = buffer->getChunkNumber();
+			int chunkNumber = buffer.unwrap().getChunkNumber();
 
-			mFrontChunk = &buffer->getChunk(0);
-			ALuint alBuffer = mFrontChunk->getOpenALBuffer();
+			mFrontChunk = &buffer.unwrap().getChunk(0);
+			ALuint alBuffer = mFrontChunk.unwrap().getOpenALBuffer();
 
 			if (chunkNumber == 1) { //non-streaming
 				alSourcei(source, AL_BUFFER, alBuffer);
@@ -78,7 +79,7 @@ void SoundSource::play(float volume) {
 				CHECK_AL_ERROR;
 
 				//start loading in the back buffer
-				mBackChunk = &buffer->getChunk(++mCurrentChunkID, true);
+				mBackChunk = &buffer.unwrap().getChunk(++mCurrentChunkID, true);
 			}
 		}
 		else {
@@ -140,8 +141,8 @@ void SoundSource::_update(float dt) {
 	//if streaming, check if buffers have been used and replenish the queue
 	if (isStreaming() && mBackChunk) {
 		//check if the backbuffer has finished loading and add it to the queue
-		if (mQueuedChunks == 1 && mBackChunk->isLoaded()) {
-			ALuint b = mBackChunk->getOpenALBuffer();
+		if (mQueuedChunks == 1 && mBackChunk.unwrap().isLoaded()) {
+			ALuint b = mBackChunk.unwrap().getOpenALBuffer();
 			alSourceQueueBuffers(source, 1, &b);
 			++mQueuedChunks;
 			CHECK_AL_ERROR;
@@ -158,18 +159,18 @@ void SoundSource::_update(float dt) {
 			--mQueuedChunks;
 			CHECK_AL_ERROR;
 
-			mFrontChunk->release();
+			mFrontChunk.unwrap().release();
 			mFrontChunk = mBackChunk;
 
 			//find the new buffer ID, loop if the source is looping, else go OOB and stop
 			++mCurrentChunkID;
 
-			if (looping && mCurrentChunkID >= buffer->getChunkNumber()) {
-				mCurrentChunkID = mCurrentChunkID % buffer->getChunkNumber();
+			if (looping && mCurrentChunkID >= buffer.unwrap().getChunkNumber()) {
+				mCurrentChunkID = mCurrentChunkID % buffer.unwrap().getChunkNumber();
 			}
 
-			if (mCurrentChunkID < buffer->getChunkNumber()) { //not exhausted? start loading a new backbuffer
-				mBackChunk = &buffer->getChunk(mCurrentChunkID, true);
+			if (mCurrentChunkID < buffer.unwrap().getChunkNumber()) { //not exhausted? start loading a new backbuffer
+				mBackChunk = &buffer.unwrap().getChunk(mCurrentChunkID, true);
 			}
 
 			else {
@@ -185,11 +186,11 @@ void SoundSource::_update(float dt) {
 
 		//release all the used chunks
 		if (mFrontChunk) {
-			mFrontChunk->release();
+			mFrontChunk.unwrap().release();
 		}
 
 		if (mBackChunk) {
-			mBackChunk->release();
+			mBackChunk.unwrap().release();
 		}
 
 		state = SS_FINISHED;

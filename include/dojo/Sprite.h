@@ -38,7 +38,7 @@ namespace Dojo {
 		/**
 		If timePerFrame is not specified, the animation tries to use the frameset's preferred
 		*/
-		int registerAnimation(FrameSet* set, float timePerFrame = -1);
+		int registerAnimation(FrameSet& set, float timePerFrame = -1);
 
 		///registers an animation using the FrameSet named base
 		int registerAnimation(const utf::string& base, float timePerFrame = -1);

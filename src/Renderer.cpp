@@ -124,16 +124,15 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 }
 
 void Renderer::_renderElement(Renderable& elem) {
-	Mesh* m = elem.getMesh();
+	auto& m = elem.getMesh().unwrap();
 
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
-	DEBUG_ASSERT(m, "Cannot render without a mesh!");
-	DEBUG_ASSERT(m->isLoaded(), "Rendering with a mesh with no GPU data!");
-	DEBUG_ASSERT(m->getVertexCount() > 0, "Rendering a mesh with no vertices");
+	DEBUG_ASSERT(m.isLoaded(), "Rendering with a mesh with no GPU data!");
+	DEBUG_ASSERT(m.getVertexCount() > 0, "Rendering a mesh with no vertices");
 
 #ifndef PUBLISH
-	frameVertexCount += m->getVertexCount();
-	frameTriCount += m->getPrimitiveCount();
+	frameVertexCount += m.getVertexCount();
+	frameTriCount += m.getPrimitiveCount();
 
 	//each renderable is a single batch
 	++frameBatchCount;
@@ -143,7 +142,7 @@ void Renderer::_renderElement(Renderable& elem) {
 	currentState.worldView = currentState.view * elem.getTransform();
 	currentState.worldViewProjection = currentState.projection * currentState.worldView;
 
-	elem.getShader().use(elem);
+	elem.getShader().unwrap().use(elem);
 
 	elem.commitChanges();
 
@@ -155,14 +154,14 @@ void Renderer::_renderElement(Renderable& elem) {
 		GL_POINTS
 	};
 
-	GLenum mode = glModeMap[(byte)m->getTriangleMode()];
+	GLenum mode = glModeMap[(byte)m.getTriangleMode()];
 
-	if (!m->isIndexed()) {
-		glDrawArrays(mode, 0, m->getVertexCount());
+	if (!m.isIndexed()) {
+		glDrawArrays(mode, 0, m.getVertexCount());
 	}
 	else {
-		DEBUG_ASSERT(m->getIndexCount() > 0, "Rendering an indexed mesh with no indices");
-		glDrawElements(mode, m->getIndexCount(), m->getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
+		DEBUG_ASSERT(m.getIndexCount() > 0, "Rendering an indexed mesh with no indices");
+		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
 	}
 
 #ifndef DOJO_DISABLE_VAOS
@@ -207,19 +206,20 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 }
 
 void Renderer::_renderViewport(Viewport& viewport) {
-	Texture* rt = viewport.getRenderTarget();
-
-	if (rt) {
-		rt->bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
+	if (auto rt = viewport.getRenderTarget()) {
+		auto& ref = rt.unwrap();
+		ref.bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
+		glFrontFace(GL_CW); //invert vertex winding when inverting the view
+		currentState.targetDimension = {
+			(float)ref.getWidth(),
+			(float)ref.getHeight()
+		};
 	}
 	else {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glFrontFace(GL_CCW); //invert vertex winding when inverting the view
+		currentState.targetDimension = { (float)width, (float)height };
 	}
-
-	glFrontFace(rt ? GL_CW : GL_CCW); //invert vertex winding when inverting the view
-
-	currentState.targetDimension.x = (float)(rt ? rt->getWidth() : width);
-	currentState.targetDimension.y = (float)(rt ? rt->getHeight() : height);
 
 	glViewport(0, 0, (GLsizei) currentState.targetDimension.x, (GLsizei)currentState.targetDimension.y);
 

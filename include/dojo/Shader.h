@@ -72,7 +72,7 @@ namespace Dojo {
 		};
 
 		///Creates a new Shader from a file path
-		Shader(ResourceGroup* creator, const utf::string& filePath);
+		Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath);
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**
@@ -81,8 +81,8 @@ namespace Dojo {
 		void setUniformCallback(const std::string& name, const UniformCallback& dataBinder);
 
 		///returns the program currently bound for "type" pipeline pass
-		ShaderProgram* getProgramFor(ShaderProgramType type) {
-			return pProgram[(unsigned char)type];
+		ShaderProgram& getProgramFor(ShaderProgramType type) {
+			return pProgram[(unsigned char)type].unwrap();
 		}
 
 		///returns the GL program handle
@@ -149,7 +149,7 @@ namespace Dojo {
 
 		GLuint mGLProgram;
 
-		ShaderProgram* pProgram[ (byte)ShaderProgramType::_Count ];
+		optional_ref<ShaderProgram> pProgram[ (byte)ShaderProgramType::_Count ];
 		std::vector<Unique<ShaderProgram>> mOwnedPrograms;
 
 		void _assignProgram(const Table& desc, ShaderProgramType type);

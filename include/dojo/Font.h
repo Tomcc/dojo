@@ -48,11 +48,11 @@ namespace Dojo {
 
 			float bearingU, bearingV;
 
-			Page* page;
+			optional_ref<Page> parentPage;
 
 			Character();
 
-			void init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline);
+			void init(Page& page, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics& metrics, FT_Outline& outline);
 
 			///return
 			Texture& getTexture();
@@ -71,6 +71,9 @@ namespace Dojo {
 
 			///create a new page for the given index
 			Page(Font& font, int index);
+			Page(const Page&) = delete;
+
+			Page& operator=(const Page&) = delete;
 
 			virtual ~Page();
 
@@ -87,26 +90,26 @@ namespace Dojo {
 			}
 
 			///get the char in this page
-			Character* getChar(uint32_t c) {
+			Character& getChar(uint32_t c) {
 				DEBUG_ASSERT( _charInPage(c), "getChar: the requested char doesn't belong to this page" );
 
-				return &(chars[c - firstCharIdx]);
+				return chars[c - firstCharIdx];
 			}
 
-			Font* getFont() {
+			Font& getFont() {
 				return font;
 			}
 
 		protected:
 
-			Font* font;
+			Font& font;
 			Unique<Texture> texture;
 			uint32_t index, firstCharIdx;
 
-			Character chars[ FONT_CHARS_PER_PAGE ];
+			std::array<Character, FONT_CHARS_PER_PAGE> chars;
 
 			bool _charInPage(uint32_t c) {
-				return c >= firstCharIdx && c < (firstCharIdx + FONT_CHARS_PER_PAGE);
+				return c >= firstCharIdx && c < (firstCharIdx + chars.size());
 			}
 		};
 
@@ -117,7 +120,7 @@ namespace Dojo {
 		\param creator the ResourceGroup which created this Resource
 		\path the path to the .font definition file
 		*/
-		Font(ResourceGroup* creator, const utf::string& path);
+		Font(optional_ref<ResourceGroup> creator, const utf::string& path);
 
 		virtual ~Font();
 
@@ -144,12 +147,12 @@ namespace Dojo {
 		}
 
 		///returns (and lazy-loads) the Character internal representation of this Unicode character
-		Character* getCharacter(uint32_t c);
+		Character& getCharacter(uint32_t c);
 
 		///returns (and lazy-loads) the texture which will be bound to render this Unicode character
 		Texture& getTexture(uint32_t c);
 
-		float getKerning(Character* next, Character* prev);
+		float getKerning(const Character& next, const Character& prev);
 
 		float getSpacing() {
 			return spacing;

@@ -19,7 +19,7 @@ namespace Dojo {
 	public:
 
 		///Creates a new set named setName
-		SoundSet(ResourceGroup* creator, const utf::string& setName);
+		SoundSet(optional_ref<ResourceGroup> creator, const utf::string& setName);
 
 		virtual bool onLoad() override;
 		virtual void onUnload(bool soft = true) override;

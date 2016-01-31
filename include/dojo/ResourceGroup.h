@@ -83,7 +83,7 @@ namespace Dojo {
 
 		///finds a named resource of type R
 		template <class R>
-		R* find(const utf::string& name, ResourceType r) const {
+		optional_ref<R> find(const utf::string& name, ResourceType r) const {
 			auto& map = getResourceMap<R>(r);
 			auto itr = map.find(name);
 
@@ -100,7 +100,7 @@ namespace Dojo {
 				}
 			}
 
-			return nullptr;
+			return{};
 		}
 
 		FrameSet& addFrameSet(Unique<FrameSet> resource, const utf::string& name);
@@ -136,14 +136,14 @@ namespace Dojo {
 
 		///returns a dummy empty FrameSet
 		FrameSet& getEmptyFrameSet() const;
-		FrameSet* getFrameSet(const utf::string& name) const;
-		Texture* getTexture(const utf::string& name) const;
-		Font* getFont(const utf::string& name) const;
-		Mesh* getMesh(const utf::string& name) const;
-		SoundSet* getSound(const utf::string& name) const;
-		Table* getTable(const utf::string& name) const;
-		Shader* getShader(const utf::string& name) const;
-		ShaderProgram* getProgram(const utf::string& name) const;
+		optional_ref<FrameSet> getFrameSet(const utf::string& name) const;
+		optional_ref<Texture> getTexture(const utf::string& name) const;
+		optional_ref<Font> getFont(const utf::string& name) const;
+		optional_ref<Mesh> getMesh(const utf::string& name) const;
+		optional_ref<SoundSet> getSound(const utf::string& name) const;
+		optional_ref<Table> getTable(const utf::string& name) const;
+		optional_ref<Shader> getShader(const utf::string& name) const;
+		optional_ref<ShaderProgram> getProgram(const utf::string& name) const;
 
 		///return the locale of this ResourceGroup, eg: en, it, de, se
 		const utf::string& getLocale() const;

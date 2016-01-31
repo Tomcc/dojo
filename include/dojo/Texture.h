@@ -23,10 +23,10 @@ namespace Dojo {
 	class Texture : public Resource {
 	public:
 		///Create a empty new texture
-		Texture(ResourceGroup* creator = nullptr);
+		Texture(optional_ref<ResourceGroup> creator = {});
 
 		///Create a empty new texture that will be loaded from path
-		Texture(ResourceGroup* creator, const utf::string& path);
+		Texture(optional_ref<ResourceGroup> creator, const utf::string& path);
 
 		virtual ~Texture();
 
@@ -42,7 +42,7 @@ namespace Dojo {
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		/**
 		a texture of this kind is loaded via an .atlasinfo and doesn't use VRAM in itself */
-		bool loadFromAtlas(Texture* tex, int x, int y, int sx, int sy);
+		bool loadFromAtlas(Texture& tex, int x, int y, int sx, int sy);
 
 		///loads the texture with the given parameters
 		virtual bool onLoad();

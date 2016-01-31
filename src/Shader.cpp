@@ -70,7 +70,7 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
 }
 
-Shader::Shader(ResourceGroup* creator, const utf::string& filePath) :
+Shader::Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
 	memset(pProgram, 0, sizeof( pProgram )); //init to null
 }
@@ -85,21 +85,22 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 
 	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
 
-	ShaderProgram* program = getCreator()->getProgram(keyValue);
+	auto program = getCreator().unwrap().getProgram(keyValue);
 
-	if (!program) { //just load the immediate shader
-		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));
-		program = mOwnedPrograms.back().get();
-	}
-	else if (program && mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
-		mOwnedPrograms.emplace_back(program->cloneWithHeader(mPreprocessorHeader));
-		program = mOwnedPrograms.back().get();
+	if (program) {
+		if (mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
+			mOwnedPrograms.emplace_back(program.unwrap().cloneWithHeader(mPreprocessorHeader));
+			program = *mOwnedPrograms.back();
+		}
+		else {
+			DEBUG_ASSERT_INFO(program.unwrap().getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
+		}
+		pProgram[typeID] = program;
 	}
 	else {
-		DEBUG_ASSERT_INFO(program->getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
+		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));
+		pProgram[typeID] = *mOwnedPrograms.back();
 	}
-
-	pProgram[typeID] = program;
 }
 
 void Shader::setUniformCallback(const std::string& name, const UniformCallback& dataBinder) {
@@ -283,8 +284,8 @@ bool Shader::onLoad() {
 
 	//ensure they're loaded
 	for (auto&& program : pProgram) {
-		if (!program->isLoaded()) {
-			if (!program->onLoad()) { //one program was not loaded, the shader can't work
+		if (!program.unwrap().isLoaded()) {
+			if (!program.unwrap().onLoad()) { //one program was not loaded, the shader can't work
 				return loaded;
 			}
 		}
@@ -294,7 +295,7 @@ bool Shader::onLoad() {
 	mGLProgram = glCreateProgram();
 
 	for (auto&& program : pProgram) {
-		glAttachShader(mGLProgram, program->getGLShader());
+		glAttachShader(mGLProgram, program.unwrap().getGLShader());
 	}
 
 	glLinkProgram(mGLProgram);

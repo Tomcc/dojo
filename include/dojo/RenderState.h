@@ -115,9 +115,6 @@ namespace Dojo {
 		void setBlending(BlendingMode mode);
 
 		///sets the Shader material to be used for this RenderState
-		/**
-		\remark the shader may be null to remove shader use
-		*/
 		void setShader(Shader& shader);
 
 		Texture* getTexture(int ID = 0) const;
@@ -125,13 +122,13 @@ namespace Dojo {
 		const TextureUnit& getTextureUnit(int ID) const;
 
 		///returns the Mesh currently used by this state
-		Mesh* getMesh() const {
+		optional_ref<Mesh> getMesh() const {
 			return mesh;
 		}
 
 		///returns the Shader currently bound to this state
-		Shader& getShader() {
-			return *pShader;
+		optional_ref<Shader> getShader() {
+			return pShader;
 		}
 
 		const Matrix& getTransform() const {
@@ -151,9 +148,8 @@ namespace Dojo {
 
 		TextureUnit textures[ DOJO_MAX_TEXTURES ];
 
-		Mesh* mesh = nullptr;
-
-		Shader* pShader;
+		optional_ref<Mesh> mesh;
+		optional_ref<Shader> pShader;
 
 		Matrix mTransform;
 

@@ -34,11 +34,9 @@ void Sprite::reset() {
 	}
 }
 
-int Sprite::registerAnimation(FrameSet* set, float timePerFrame /*= -1 */) {
-	DEBUG_ASSERT(set != nullptr, "registering a null frameset");
-
+int Sprite::registerAnimation(FrameSet& set, float timePerFrame /*= -1 */) {
 	if (timePerFrame < 0) {
-		timePerFrame = set->getPreferredAnimationTime();
+		timePerFrame = set.getPreferredAnimationTime();
 	}
 
 	DEBUG_ASSERT(timePerFrame >= 0, "the time per frame of an animation can't be negative");
@@ -54,11 +52,8 @@ int Sprite::registerAnimation(FrameSet* set, float timePerFrame /*= -1 */) {
 }
 
 int Sprite::registerAnimation(const utf::string& base, float timePerFrame) {
-	FrameSet* set = getGameState().getFrameSet(base);
-
-	DEBUG_ASSERT_INFO( set != nullptr, "The FrameSet to be registered could not be found", "name = " + base );
-
-	return registerAnimation(set, timePerFrame);
+	auto set = getGameState().getFrameSet(base);
+	return registerAnimation(set.unwrap(), timePerFrame);
 }
 
 void Sprite::setAnimation(int i) {
@@ -68,12 +63,12 @@ void Sprite::setAnimation(int i) {
 	DEBUG_ASSERT((int)animations.size() > mAnimationIdx, "OOB animation index");
 
 	if (animation) {
-		animation->_unset();
+		animation.unwrap()._unset();
 	}
 
 	animation = animations[mAnimationIdx].get();
 
-	_setTexture(*animation->getCurrentFrame());
+	_setTexture(*animation.unwrap().getCurrentFrame());
 
 	_updateScreenSize();
 }

@@ -73,7 +73,7 @@ namespace Dojo {
 
 		///tells if this source is bound to a streaming SoundBuffer
 		bool isStreaming() {
-			return buffer && buffer->isStreaming();
+			return buffer && buffer.unwrap().isStreaming();
 		}
 
 		ALuint getSource() {
@@ -83,7 +83,7 @@ namespace Dojo {
 		float getVolume();
 
 		///returns the SoundBuffer that is currently being played
-		SoundBuffer* getSoundBuffer() {
+		optional_ref<SoundBuffer> getSoundBuffer() {
 			return buffer;
 		}
 
@@ -124,12 +124,12 @@ namespace Dojo {
 		float timeSincePositionChange = 0;
 
 		//members
-		SoundBuffer* buffer;
+		optional_ref<SoundBuffer> buffer;
 		ALuint source;
 		ALint playState;
 
 		int mCurrentChunkID, mQueuedChunks;
-		SoundBuffer::Chunk* mFrontChunk, *mBackChunk;
+		optional_ref<SoundBuffer::Chunk> mFrontChunk, mBackChunk;
 
 		SoundState state;
 

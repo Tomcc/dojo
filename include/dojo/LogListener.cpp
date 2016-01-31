@@ -4,6 +4,6 @@
 using namespace Dojo;
 
 
-void StdoutLog::onLogUpdated(Log* l, const LogEntry& message) {
+void StdoutLog::onLogUpdated(Log& l, const LogEntry& message) {
 	std::cout << message.text.bytes() << std::endl;
 }

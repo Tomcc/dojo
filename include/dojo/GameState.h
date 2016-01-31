@@ -40,10 +40,10 @@ namespace Dojo {
 		virtual ~GameState();
 
 		///Registers an existing TouchArea in this GameState
-		void addTouchArea(TouchArea* t);
+		void addTouchArea(TouchArea& t);
 
 		///Unregisters an existing TouchArea in this GameState
-		void removeTouchArea(TouchArea* t);
+		void removeTouchArea(TouchArea& t);
 
 		///Clears this GameState to a pre-initialization state
 		void clear();
@@ -54,7 +54,7 @@ namespace Dojo {
 		}
 
 		///returns the Viewport that is primary on this GameState
-		Viewport* getViewport() const {
+		optional_ref<Viewport> getViewport() const {
 			return camera;
 		}
 
@@ -86,7 +86,7 @@ namespace Dojo {
 
 		Game& game;
 
-		Viewport* camera;
+		optional_ref<Viewport> camera;
 
 		float timeElapsed;
 	};

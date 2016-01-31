@@ -94,7 +94,7 @@ namespace Dojo {
 
 		TouchList mTouches;
 
-		Listener* listener;
+		optional_ref<Listener> listener;
 
 		AABB worldBB;
 	};

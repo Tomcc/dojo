@@ -353,7 +353,7 @@ Table::Table(const Table& t) :
 	}
 }
 
-Table::Table(ResourceGroup* creator, const utf::string& path) :
+Table::Table(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path),
 	unnamedMembers(0) {
 

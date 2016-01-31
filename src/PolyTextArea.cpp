@@ -16,7 +16,7 @@ Dojo::PolyTextArea::PolyTextArea(Object& parent, RenderLayer::ID layer, Font& fo
 	mInflateRadius(0.01f),
 	mDepth(0.15f),
 	mBevelDepth(0.015f) {
-	mSpaceWidth = pFont->getCharacter(' ')->advance;
+	mSpaceWidth = pFont->getCharacter(' ').advance;
 
 	//create a new mesh with the required parameters
 	mMesh = make_unique<Mesh>();
@@ -52,7 +52,7 @@ PolyTextArea::~PolyTextArea() {
 void PolyTextArea::_centerLine(int rowStartIdx, float rowWidth) {
 	DEBUG_ASSERT( mCentered, "Cannot center an uncentered PolyTextArea" );
 	DEBUG_ASSERT( rowStartIdx >= 0, "invalid rowStartIdx" );
-	DEBUG_ASSERT( mesh->isEditing(), "Cannot center a row if mesh is locked" );
+	DEBUG_ASSERT( mesh.unwrap().isEditing(), "Cannot center a row if mesh is locked" );
 
 	float halfRow = rowWidth * 0.5f;
 
@@ -127,14 +127,14 @@ float PolyTextArea::getInterline() {
 void PolyTextArea::_prepare() {
 	Vector basePosition;
 	int rowStartIdx = 0;
-	Font::Character* lastChar = nullptr;
+	auto lastChar = optional_ref<Font::Character>();
 
 	mMesh->begin();
 
 	for (auto&& c : mContent) {
 		//get the tesselation for each character and stuff it into the mesh
-		auto character = pFont->getCharacter(c);
-		Tessellation* t = character->getTesselation();
+		auto& character = pFont->getCharacter(c);
+		Tessellation* t = character.getTesselation();
 
 		DEBUG_ASSERT( t, "The character has no tesselation, have you forgotten to add the flag to the font definition file?" );
 
@@ -156,11 +156,11 @@ void PolyTextArea::_prepare() {
 		}
 		else {
 			Vector charPosition = basePosition;
-			charPosition.x += character->bearingU;
-			charPosition.y -= character->bearingV;
+			charPosition.x += character.bearingU;
+			charPosition.y -= character.bearingV;
 
 			if (pFont->isKerningEnabled() && lastChar) {
-				charPosition.x -= pFont->getKerning(character, lastChar);
+				charPosition.x -= pFont->getKerning(character, lastChar.unwrap());
 			}
 
 			//merge this mesh in the VBO
@@ -213,7 +213,7 @@ void PolyTextArea::_prepare() {
 		}
 
 		lastChar = character;
-		basePosition.x += character->advance + pFont->getSpacing();
+		basePosition.x += character.advance + pFont->getSpacing();
 	}
 
 	if (mCentered) {

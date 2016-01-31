@@ -26,13 +26,13 @@ namespace Dojo {
 		class Animation {
 		public:
 
-			FrameSet* frames;
+			optional_ref<FrameSet> frames;
 
 			///Creates a new animation with frames from FrameSet, advancing frame each timePerFrame seconds
-			Animation(FrameSet* set, float timePerFrame);
+			Animation(FrameSet& set, float timePerFrame);
 
 			///Sets up an existing animation with frames from FrameSet, advancing frame each timePerFrame seconds
-			void setup(FrameSet* set, float tpf);
+			void setup(FrameSet& set, float tpf);
 
 			void _unset() {
 				mElapsedLoops = 0;
@@ -106,7 +106,7 @@ namespace Dojo {
 		virtual void reset();
 
 		///forces an animation with the given frameSet
-		void immediateAnimation(FrameSet* s, float timePerFrame);
+		void immediateAnimation(FrameSet& s, float timePerFrame);
 
 		///forces an animation with the given FrameSet
 		/**
@@ -118,28 +118,8 @@ namespace Dojo {
 			return screenSize;
 		}
 
-		FrameSet* getFrameSet() {
-			DEBUG_ASSERT( animation != nullptr, "getFrameSet: no animation set" );
-
-			return animation->frames;
-		}
-
-
-		int getCurrentFrameNumber() {
-			return animation->getCurrentFrameNumber();
-		}
-
-		float getCurrentAnimationLength() {
-			return animation->getTotalTime();
-		}
-
-		///gets how many loops have been elapsed on the current animation
-		int getAnimationElapsedLoops() {
-			return animation->getElapsedLoops();
-		}
-
 		Animation& getAnimation() {
-			return *animation;
+			return animation.unwrap();
 		}
 
 		///forces the animation to a given time
@@ -172,7 +152,7 @@ namespace Dojo {
 		Vector screenSize;
 
 		//assigned animation
-		Animation* animation;
+		optional_ref<Animation> animation;
 
 		void _setTexture(Texture& t);
 	};

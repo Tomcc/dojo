@@ -28,7 +28,7 @@ namespace Dojo {
 			virtual void onLoad(Resource*) = 0;
 		};
 
-		Resource(ResourceGroup* group = nullptr) :
+		Resource(optional_ref<ResourceGroup> group = {}) :
 			creator(group),
 			loaded(false),
 			size(0),
@@ -36,8 +36,8 @@ namespace Dojo {
 
 		}
 
-		Resource(ResourceGroup* creatorGroup, const utf::string& path) :
-			creator(creatorGroup),
+		Resource(optional_ref<ResourceGroup> group, const utf::string& path) :
+			creator(group),
 			loaded(false),
 			size(0),
 			filePath(path),
@@ -45,12 +45,12 @@ namespace Dojo {
 			DEBUG_ASSERT( path.not_empty(), "The file path is empty" );
 		}
 
-		Resource(ResourceGroup* group, DataProvider* source) :
+		Resource(optional_ref<ResourceGroup> group, DataProvider& source) :
 			creator(group),
 			loaded(false),
 			size(0),
 			pDataProvider(source) {
-			DEBUG_ASSERT( source, "The DataProvider is nullptr" );
+
 		}
 
 		virtual ~Resource() {
@@ -61,7 +61,7 @@ namespace Dojo {
 		virtual bool onLoad() = 0;
 		virtual void onUnload(bool soft = false) = 0;
 
-		bool isLoaded() {
+		bool isLoaded() const {
 			return loaded;
 		}
 
@@ -69,7 +69,7 @@ namespace Dojo {
 			return size;
 		}
 
-		ResourceGroup* getCreator() {
+		optional_ref<ResourceGroup> getCreator() {
 			return creator;
 		}
 
@@ -77,7 +77,7 @@ namespace Dojo {
 			return filePath;
 		}
 
-		DataProvider* getDataProvider() {
+		optional_ref<DataProvider> getDataProvider() {
 			return pDataProvider;
 		}
 
@@ -91,12 +91,12 @@ namespace Dojo {
 
 	protected:
 
-		ResourceGroup* creator;
+		optional_ref<ResourceGroup> creator;
 
 		bool loaded;
 		int size;
 
 		utf::string filePath;
-		DataProvider* pDataProvider;
+		optional_ref<DataProvider> pDataProvider;
 	};
 }

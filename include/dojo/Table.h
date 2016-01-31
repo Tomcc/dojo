@@ -121,7 +121,7 @@ namespace Dojo {
 		Table& operator=(const Table&) = delete;
 
 		///Constructs a new "Table Resource", or a table bound to a file path in a ResourceGroup
-		Table(ResourceGroup* creator, const utf::string& path);
+		Table(optional_ref<ResourceGroup> creator, const utf::string& path);
 
 		~Table();
 

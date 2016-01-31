@@ -72,7 +72,7 @@ namespace Dojo {
 
 		///returns the height in pixel of a line of this TextArea
 		int getLineHeight() {
-			return font->getFontHeight() * (1 + (int)getInterline());
+			return font.getFontHeight() * (1 + (int)getInterline());
 		}
 
 		///returns the number of characters that are currently shown
@@ -96,7 +96,7 @@ namespace Dojo {
 			addText(n % 60);
 		}
 
-		Font* getFont() {
+		Font& getFont() {
 			return font;
 		}
 
@@ -129,7 +129,7 @@ namespace Dojo {
 	protected:
 
 		typedef SmallSet<Unique<Renderable>> LayerList;
-		typedef SmallSet<Font::Character*> CharacterList;
+		typedef SmallSet<optional_ref<Font::Character>> CharacterList;
 
 		utf::string content;
 
@@ -140,13 +140,11 @@ namespace Dojo {
 
 		int currentLineLength, lastSpace;
 
-		Shader* mShader;
-		Font* font;
+		Font& font;
 
 		CharacterList characters;
 		bool changed;
 
-		float* vertexBuffer, *uvBuffer;
 		uint32_t visibleCharsNumber;
 
 		Vector cursorPosition, screenSize, lastScale;

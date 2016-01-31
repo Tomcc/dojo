@@ -157,13 +157,10 @@ void RenderState::applyState() {
 		break;
 	}
 
-	DEBUG_ASSERT(pShader, "Cannot use a renderstate without a shader");
-	mesh->bind(*pShader);
+	mesh.unwrap().bind(pShader.unwrap());
 }
 
 void RenderState::commitChanges() {
-	DEBUG_ASSERT( mesh, "A mesh is required to setup a new renderstate" );
-
 	//TODO incremental state switches please!
 	applyState();
 }

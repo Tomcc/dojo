@@ -26,7 +26,7 @@ const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat)
 };
 
-Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
+Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 	Resource(creator) {
 	//set all fields to zero
 	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
@@ -35,7 +35,7 @@ Mesh::Mesh(ResourceGroup* creator /*= nullptr */) :
 	setIndexByteSize(sizeof(GLushort));
 }
 
-Mesh::Mesh(ResourceGroup* creator, const utf::string& filePath) :
+Mesh::Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
 	//set all fields to zero
 	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));

@@ -11,6 +11,7 @@
 #include <climits>
 #include <cstdint>
 
+#include <array>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -145,4 +146,4 @@ using std::make_shared;
 #include "dojostring.h"
 
 #include "enum_cast.h"
-
+#include "optional_ref.h"

@@ -17,7 +17,7 @@ Font::Character::Character() {
 }
 
 Texture& Font::Character::getTexture() {
-	return page->getTexture();
+	return parentPage.unwrap().getTexture();
 }
 
 Tessellation* Font::Character::getTesselation() {
@@ -109,7 +109,7 @@ int _conicTo(const FT_Vector* control, const FT_Vector* to, void* ptr) {
 	t->addQuadradratic(
 		Vector(control->x * gCurrentScale, control->y * gCurrentScale),
 		Vector(to->x * gCurrentScale, to->y * gCurrentScale),
-		((Font::Character*)ptr)->page->getFont()->getPolyOutlineQuality());
+		((Font::Character*)ptr)->parentPage.unwrap().getFont().getPolyOutlineQuality());
 
 	return 0;
 }
@@ -121,27 +121,23 @@ int _cubicTo(const FT_Vector* control1, const FT_Vector* control2, const FT_Vect
 		Vector(control1->x * gCurrentScale, control1->y * gCurrentScale),
 		Vector(control2->x * gCurrentScale, control2->y * gCurrentScale),
 		Vector(to->x * gCurrentScale, to->y * gCurrentScale),
-		((Font::Character*)ptr)->page->getFont()->getPolyOutlineQuality());
+		((Font::Character*)ptr)->parentPage.unwrap().getFont().getPolyOutlineQuality());
 
 	return 0;
 }
 
-void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics* metrics, FT_Outline* outline) {
-	DEBUG_ASSERT( p, "Character needs a non-null parent Page" );
-	DEBUG_ASSERT( metrics, "null FreeType font metrics" );
+void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy, FT_Glyph_Metrics& metrics, FT_Outline& outline) {
 
 	float fsx = (float)sx;
 	float fsy = (float)sy;
-	float fw = (float)p->getFont()->getFontWidth();
-	float fh = (float)p->getFont()->getFontHeight();
-	Font* f = p->getFont();
-
-	page = p;
+	float fw = (float)page.getFont().getFontWidth();
+	float fh = (float)page.getFont().getFontHeight();
+	
 	character = c;
-	gliphIdx = f->getCharIndex(this);
+	gliphIdx = page.getFont().getCharIndex(this);
 
-	pixelWidth = page->getFont()->mCellWidth;
-	float pixelHeight = (float)metrics->height * FONT_PPI + page->getFont()->glowRadius * 2;
+	pixelWidth = page.getFont().mCellWidth;
+	float pixelHeight = (float)metrics.height * FONT_PPI + page.getFont().glowRadius * 2;
 
 	uvWidth = (float)pixelWidth / fsx;
 	uvHeight = pixelHeight / fsy;
@@ -150,35 +146,36 @@ void Font::Character::init(Page* p, uint32_t c, int x, int y, int sx, int sy, FT
 	widthRatio = (float)pixelWidth / fw;
 	heightRatio = pixelHeight / fh;
 
-	bearingU = ((float)metrics->horiBearingX * FONT_PPI) / fsy;
-	bearingV = ((float)(metrics->height - metrics->horiBearingY) * FONT_PPI) / fh;
+	bearingU = ((float)metrics.horiBearingX * FONT_PPI) / fsy;
+	bearingV = ((float)(metrics.height - metrics.horiBearingY) * FONT_PPI) / fh;
 
-	advance = ((float)metrics->horiAdvance * FONT_PPI) / fw;
+	advance = ((float)metrics.horiAdvance * FONT_PPI) / fw;
 
-	if (page->getFont()->generateEdge || page->getFont()->generateSurface) { //tesselate ALL the things!
+	if (page.getFont().generateEdge || page.getFont().generateSurface) { //tesselate ALL the things!
 		Timer timer;
 
-		DEBUG_ASSERT( outline, "No outline provided but the font should be tesselated" );
 		mTesselation = make_unique<Tessellation>();
 
 		//find the normalizing scale and call the tesselation functions
 		gCurrentScale = (float)FONT_PPI / (float)fw;
 		FT_Outline_Funcs funcs = {_moveTo, _lineTo, _conicTo, _cubicTo, 0, 0};
 
-		FT_Outline_Decompose(outline, &funcs, this);
+		FT_Outline_Decompose(&outline, &funcs, this);
 
 		//now that everything is loaded & in order, tessellate the mesh
-		if (mTesselation->segments.size() && page->getFont()->generateSurface) { //HACK
+		if (mTesselation->segments.size() && page.getFont().generateSurface) { //HACK
 
 			int options = Tessellation::PREPARE_EXTRUSION | Tessellation::GUESS_HOLES;
 
-			if (!page->getFont()->generateEdge) {
+			if (!page.getFont().generateEdge) {
 				options |= Tessellation::CLEAR_INPUTS;
 			}
 
 			mTesselation->tessellate(options); //keep edges if they are needed too
 		}
 	}
+
+	parentPage = page;
 }
 
 
@@ -186,7 +183,7 @@ Font::Page::Page(Font& font, int index) :
 	Resource(),
 	index(index),
 	firstCharIdx(index * FONT_CHARS_PER_PAGE),
-	font(&font),
+	font(font),
 	texture(make_unique<Texture>()) {
 }
 
@@ -197,8 +194,8 @@ Font::Page::~Page() {
 
 bool Font::Page::onLoad() {
 	//create the texture
-	int sx = font->mCellWidth * FONT_PAGE_SIDE;
-	int sy = font->mCellHeight * FONT_PAGE_SIDE;
+	int sx = font.mCellWidth * FONT_PAGE_SIDE;
+	int sy = font.mCellHeight * FONT_PAGE_SIDE;
 
 	bool npot = Platform::singleton().isNPOTEnabled();
 	int sxp2 = npot ? sx : Math::nextPowerOfTwo(sx);
@@ -215,35 +212,37 @@ bool Font::Page::onLoad() {
 	}
 
 	//render into buffer
-	FT_Render_Mode renderMode = (font->isAntialiased()) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
-	FT_GlyphSlot slot = font->face->glyph;
+	FT_Render_Mode renderMode = (font.isAntialiased()) ? FT_RENDER_MODE_NORMAL : FT_RENDER_MODE_MONO;
+	FT_GlyphSlot slot = font.face->glyph;
 	FT_Bitmap* bitmap;
 	int gliphidx;
 
-	font->_prepareFace();
+	font._prepareFace();
 
 	auto code = (uint32_t)firstCharIdx;
-	Font::Character* character = chars;
+	
+	Font::Character* character = chars.data();
 	int x, y;
 
 	Timer timer;
 
 	for (int i = 0; i < FONT_PAGE_SIDE; ++i) {
 		for (int j = 0; j < FONT_PAGE_SIDE; ++j, ++code, ++character) {
-			gliphidx = FT_Get_Char_Index(font->face, code);
-			FT_Load_Glyph(font->face, gliphidx, FT_LOAD_DEFAULT);
+			gliphidx = FT_Get_Char_Index(font.face, code);
+			FT_Load_Glyph(font.face, gliphidx, FT_LOAD_DEFAULT);
 
-			x = j * font->mCellWidth;
-			y = i * font->mCellHeight;
+			x = j * font.mCellWidth;
+			y = i * font.mCellHeight;
 
 			//load character data
 			character->init(
-				this,
+				*this,
 				code,
 				x, y,
 				sxp2, syp2,
-				&(slot->metrics),
-				&slot->outline);
+				slot->metrics,
+				slot->outline
+			);
 
 			FT_Render_Glyph(slot, renderMode);
 
@@ -251,20 +250,20 @@ bool Font::Page::onLoad() {
 
 			//blit the bitmap if it was rendered
 			if (bitmap->buffer) {
-				_blit(buf.data(), bitmap, x + font->glowRadius, y + font->glowRadius, sxp2);
+				_blit(buf.data(), bitmap, x + font.glowRadius, y + font.glowRadius, sxp2);
 			}
 		}
 	}
 
 	//glow?
-	if (font->glowRadius > 0) {
-		unsigned int glowCol = font->glowColor.toRGBA();
+	if (font.glowRadius > 0) {
+		unsigned int glowCol = font.glowColor.toRGBA();
 		byte* glowColChannel = (byte*)&glowCol;
 
 		//duplicate the buffer
 		auto glowBuf = buf;
 
-		for (int iteration = 0; iteration < font->glowRadius; ++iteration) {
+		for (int iteration = 0; iteration < font.glowRadius; ++iteration) {
 			for (int i = 1; i < syp2 - 1; ++i) {
 				for (int j = 1; j < sxp2 - 1; ++j) {
 					byte* cur = glowBuf.data() + (j + i * sxp2) * 4;
@@ -317,7 +316,7 @@ void Font::Page::onUnload(bool soft /*= false */) {
 
 /// --------------------------------------------------------------------------------
 
-Font::Font(ResourceGroup* creator, const utf::string& path) :
+Font::Font(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path) {
 
 }
@@ -380,17 +379,15 @@ void Font::onUnload(bool soft) {
 	loaded = false;
 }
 
-float Font::getKerning(Character* next, Character* prev) {
+float Font::getKerning(const Character& next, const Character& prev) {
 	DEBUG_ASSERT( kerning, "getKerning: kerning is not enabled on this font" );
-	DEBUG_ASSERT( next, "getKerning: next was null" );
-	DEBUG_ASSERT( prev, "getKerning: prev was null" );
 
 	FT_Vector vec;
 
 	FT_Get_Kerning(
 		face,
-		prev->gliphIdx,
-		next->gliphIdx,
+		prev.gliphIdx,
+		next.gliphIdx,
 		FT_KERNING_DEFAULT,
 		&vec);
 
@@ -408,14 +405,14 @@ void Font::_prepareFace() {
 int Font::getPixelLength(const utf::string& str) {
 	int l = 0;
 
-	Character* lastChar = nullptr;
+	auto lastChar = optional_ref<Character>();
 
 	for(auto&& c : str) {
-		Character* chr = getCharacter(c);
-		l += (int)(chr->advance * chr->pixelWidth);
+		auto& chr = getCharacter(c);
+		l += (int)(chr.advance * chr.pixelWidth);
 
 		if (lastChar && isKerningEnabled()) {
-			l += (int)(getKerning(chr, lastChar) * fontWidth);
+			l += (int)(getKerning(chr, lastChar.unwrap()) * fontWidth);
 		}
 
 		lastChar = chr;
@@ -443,7 +440,7 @@ int Font::getCharIndex(Character* c) {
 	return FT_Get_Char_Index(face, c->character);
 }
 
-Font::Character* Font::getCharacter(uint32_t c) {
+Font::Character& Font::getCharacter(uint32_t c) {
 	return getPageForChar(c).getChar(c);
 }
 

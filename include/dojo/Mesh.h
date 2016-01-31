@@ -42,10 +42,10 @@ namespace Dojo {
 		static const int INDEX_PAGE_SIZE = 256;
 
 		///Creates a new empty Mesh
-		explicit Mesh(ResourceGroup* creator = nullptr);
+		explicit Mesh(optional_ref<ResourceGroup> creator = {});
 
 		///Creates a new Mesh bound to the file at filePath
-		Mesh(ResourceGroup* creator, const utf::string& filePath);
+		Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath);
 
 		virtual ~Mesh();
 

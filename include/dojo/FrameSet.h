@@ -45,7 +45,7 @@ namespace Dojo {
 		typedef std::vector<Texture*> TextureList;
 
 		///Creates a single FrameSet with the given "prefix name"
-		FrameSet(ResourceGroup* creator = nullptr);
+		FrameSet(optional_ref<ResourceGroup> creator = {});
 
 		virtual ~FrameSet();
 
@@ -81,12 +81,12 @@ namespace Dojo {
 		///returns the (looped!) frame at index i
 		/**
 		if i > number of frames, i is looped over n as in i % size() */
-		Texture* getFrame(int i) {
-			return frames.at(i % frames.size());
+		Texture& getFrame(int i) {
+			return *frames.at(i % frames.size());
 		}
 
 		///returns a random frame
-		Texture* getRandomFrame();
+		Texture& getRandomFrame();
 
 		float getPreferredAnimationTime() {
 			return mPreferredAnimationTime;

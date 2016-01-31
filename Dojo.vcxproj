@@ -38,6 +38,7 @@
     <ClInclude Include="include\dojo\LogEntry.h" />
     <ClInclude Include="include\dojo\LogListener.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
+    <ClInclude Include="include\dojo\optional_ref.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
     <ClInclude Include="include\dojo\Pipe.h" />

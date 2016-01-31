@@ -8,7 +8,7 @@
 
 using namespace Dojo;
 
-FrameSet::FrameSet(ResourceGroup* creator) :
+FrameSet::FrameSet(optional_ref<ResourceGroup> creator) :
 	Resource(creator),
 	mPreferredAnimationTime(0) {
 
@@ -27,11 +27,9 @@ void FrameSet::setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProv
 	DEBUG_ASSERT( !isLoaded(), "setAtlas: this FrameSet is already loaded and can't be reset as an atlas" );
 
 	utf::string atlasName = atlasTable.getString("texture");
-	FrameSet* atlasSet = atlasTextureProvider.getFrameSet(atlasName);
+	auto atlasSet = atlasTextureProvider.getFrameSet(atlasName);
 
-	DEBUG_ASSERT_INFO( atlasSet, "The atlas Texture requested could not be found", "atlasName = " + atlasTable.getString( "texture" ) );
-
-	Texture* atlas = atlasSet->getFrame(0);
+	auto& atlas = atlasSet.unwrap().getFrame(0);
 
 	mPreferredAnimationTime = atlasTable.getNumber("animationFrameTime");
 
@@ -100,8 +98,8 @@ void FrameSet::addTexture(Unique<Texture> t) {
 	ownedFrames.emplace_back(std::move(t));
 }
 
-Texture* FrameSet::getRandomFrame() {
-	return frames.at(Random::instance.getInt(frames.size()));
+Texture& FrameSet::getRandomFrame() {
+	return *frames.at(Random::instance.getInt(frames.size()));
 }
 
 int FrameSet::getFrameIndex(Texture& frame) const {

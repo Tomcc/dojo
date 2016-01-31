@@ -143,7 +143,7 @@ void SoundManager::setMasterVolume(float volume) {
 
 		//update volumes (masterVolume is used inside setVolume!)
 		if (!nextMusicTrack && musicTrack) {
-			musicTrack->setVolume(musicVolume);
+			musicTrack.unwrap().setVolume(musicVolume);
 		}
 
 		//update all the existing sounds
@@ -171,11 +171,11 @@ void SoundManager::update(float dt) {
 	//fai il fade
 	if (fadeState == FS_FADE_OUT) { //abbassa il volume della track corrente
 		if (musicTrack && currentFadeTime < halfFadeTime) {
-			musicTrack->setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
+			musicTrack.unwrap().setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
 		}
 		else { //scambia le tracks e fai partire la prossima
 			if (musicTrack) {
-				musicTrack->stop();
+				musicTrack.unwrap().stop();
 			}
 
 			musicTrack = nextMusicTrack;
@@ -184,10 +184,10 @@ void SoundManager::update(float dt) {
 			if (musicTrack) {
 				nextMusicTrack = nullptr;
 
-				musicTrack->play(0);
-				musicTrack->setAutoRemove(false);
+				musicTrack.unwrap().play(0);
+				musicTrack.unwrap().setAutoRemove(false);
 
-				musicTrack->setLooping(true);
+				musicTrack.unwrap().setLooping(true);
 
 				fadeState = FS_FADE_IN;
 				currentFadeTime = 0;
@@ -201,14 +201,14 @@ void SoundManager::update(float dt) {
 	}
 	else if (fadeState == FS_FADE_IN) { //alza il volume della track successiva
 		if (currentFadeTime < halfFadeTime) {
-			musicTrack->setVolume(musicVolume * (currentFadeTime / halfFadeTime));
+			musicTrack.unwrap().setVolume(musicVolume * (currentFadeTime / halfFadeTime));
 		}
 
 		else { //finisci
 			currentFadeTime = 0;
 
 			//force volume at max
-			musicTrack->setVolume(musicVolume);
+			musicTrack.unwrap().setVolume(musicVolume);
 
 			fadeState = FS_NONE;
 		}
@@ -220,7 +220,7 @@ void SoundManager::update(float dt) {
 void SoundManager::resumeMusic() {
 	//resume music, but only if the user didn't enable itunes meanwhile!
 	if (musicTrack && !Platform::singleton().isSystemSoundInUse()) {
-		musicTrack->play();
+		musicTrack.unwrap().play();
 	}
 }
 
@@ -265,7 +265,7 @@ SoundSource& SoundManager::playSound(const Vector& pos, SoundSet& set, float vol
 void SoundManager::pauseMusic() {
 	DEBUG_ASSERT(isMusicPlaying(), "pauseMusic: music is not playing");
 
-	musicTrack->pause();
+	musicTrack.unwrap().pause();
 }
 
 void SoundManager::stopMusic(float stopFadeTime /*= 0*/, const Easing& fadeEasing /*= LinearEasing */) {
@@ -285,30 +285,24 @@ void SoundManager::setMusicVolume(float volume) {
 	musicVolume = volume;
 
 	if (!nextMusicTrack && musicTrack) {
-		musicTrack->setVolume(musicVolume);
+		musicTrack.unwrap().setVolume(musicVolume);
 	}
 }
 
 void SoundManager::pauseAll() {
 	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack) {
-			s->pause();
-		}
+		s->pause();
 	}
 }
 
 void SoundManager::resumeAll() {
 	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack) {
-			s->play();
-		}
+		s->play();
 	}
 }
 
 void SoundManager::stopAllSounds() {
 	for (auto&& s : busySoundPool) {
-		if (s.get() != musicTrack) {
-			s->stop();
-		}
+		s->stop();
 	}
 }

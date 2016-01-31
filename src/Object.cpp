@@ -24,7 +24,7 @@ Object::~Object() {
 }
 
 Object& Object::_addChild(Unique<Object> o) {
-	DEBUG_ASSERT(o->parent == nullptr, "The child you want to attach already has a parent");
+	DEBUG_ASSERT(o->parent == false, "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
 	o->parent = this;
@@ -134,7 +134,7 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 }
 
 bool Object::isActive() const {
-	return active && !disposed && (!parent || parent->isActive());
+	return active && !disposed && (!parent || parent.unwrap().isActive());
 }
 
 void Object::reset() {
@@ -176,7 +176,7 @@ Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
 void Object::updateWorldTransform() {
 	//compute local matrix from position and orientation
 	mWorldTransform = getFullTransformRelativeTo(
-		parent ? parent->getWorldTransform() : Matrix(1));
+		parent ? parent.unwrap().getWorldTransform() : Matrix(1));
 }
 
 void Object::updateChilds(float dt) {
@@ -233,7 +233,7 @@ void Object::setSize(const Vector& bbSize) {
 }
 
 Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
-	DEBUG_ASSERT(parent == nullptr, "The object has been already added to the scene");
+	DEBUG_ASSERT(parent == false, "The object has been already added to the scene");
 
 	if (ID >= (int)components.size()) {
 		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage

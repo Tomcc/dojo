@@ -22,18 +22,13 @@ TextArea::TextArea(Object& l,
 	pixelScale(1, 1),
 	currentLineLength(0),
 	lastSpace(0),
-	visibleCharsNumber(0xfffffff) {
+	visibleCharsNumber(0xfffffff),
+	font(getGameState().getFont(fontName).unwrap()) {
 
 	l.setSize(bounds); //TODO HMM
 
-	font = getGameState().getFont(fontName);
-	DEBUG_ASSERT_INFO( font, "Cannot find the required font for a TextArea", "fontName = " + fontName );
-
-	mShader = getGameState().getShader("textured");
-	DEBUG_ASSERT_INFO(mShader, "Cannot find the required shader for a TextArea", utf::string("shaderName = textured"));
-
-	charSpacing = font->getSpacing();
-	spaceWidth = font->getCharacter(' ')->advance;
+	charSpacing = font.getSpacing();
+	spaceWidth = font.getCharacter(' ').advance;
 
 	//not visible until prepared!
 	scale = Vector::Zero;
@@ -82,14 +77,12 @@ void TextArea::setMaxLineLength(int l) {
 void TextArea::addText(const utf::string& text) {
 	content += text;
 
-	Font::Character* currentChar;
-	
 	//parse and setup characters
 	for(auto&& c : text) {
-		currentChar = font->getCharacter(c);
+		auto& currentChar = font.getCharacter(c);
 		characters.emplace(currentChar);
 
-		currentLineLength += currentChar->pixelWidth;
+		currentLineLength += currentChar.pixelWidth;
 
 		if (c == ' ' || c == '\t') {
 			lastSpace = characters.size() - 1;
@@ -102,7 +95,7 @@ void TextArea::addText(const utf::string& text) {
 
 		//lenght eccess? find last whitespace and replace with \n.
 		if (currentLineLength > maxLineLenght && lastSpace) {
-			characters[lastSpace] = font->getCharacter('\n');
+			characters[lastSpace] = font.getCharacter('\n');
 			lastSpace = 0;
 			currentLineLength = 0;
 		}
@@ -148,7 +141,7 @@ Renderable& TextArea::_enableLayer(Texture& tex) {
 	layer.setVisible(true);
 	layer.setTexture(&tex);
 
-	layer.getMesh()->begin(getLenght() * 2);
+	layer.getMesh().unwrap().begin(getLenght() * 2);
 
 	//move it to the busy layer
 	busyLayers.emplace(std::move(*freeLayers.begin()));
@@ -159,7 +152,7 @@ Renderable& TextArea::_enableLayer(Texture& tex) {
 
 void TextArea::_endLayers() {
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
-		busyLayers[i]->getMesh()->end();
+		busyLayers[i]->getMesh().unwrap().end();
 	}
 }
 
@@ -198,16 +191,15 @@ void TextArea::_prepare() {
 	}
 
 	//setup the aspect ratio
-	getGameState().getViewport()->makeScreenSize(screenSize, font->getFontWidth(), font->getFontHeight());
+	getGameState().getViewport().unwrap().makeScreenSize(screenSize, font.getFontWidth(), font.getFontHeight());
 
 	pixelScale.z = 1;
 	screenSize = Vector::mul(screenSize, pixelScale);
 	scale = screenSize;
 
 	//render the font
-	Font::Character* rep, *lastRep = nullptr;
 	Vector newSize(0, 0);
-	bool doKerning = font->isKerningEnabled();
+	bool doKerning = font.isKerningEnabled();
 	int lastLineVertexID = 0;
 	int idx = 0;
 
@@ -217,12 +209,14 @@ void TextArea::_prepare() {
 	//clear layers
 	_hideLayers();
 
+	optional_ref<Font::Character> lastRep;
+
 	//either reach the last valid character or the last existing character
 	for (size_t i = 0; i < visibleCharsNumber && i < characters.size(); ++i) {
-		rep = characters[i];
+		auto& rep = characters[i].unwrap();
 
 		//avoid to rendering spaces
-		if (rep->character == '\n') {
+		if (rep.character == '\n') {
 			//if centered move every character of this line along x of 1/2 size
 			if (centered) {
 				DEBUG_TODO; //it kind of never worked with unicode
@@ -232,46 +226,46 @@ void TextArea::_prepare() {
 
 			cursorPosition.y -= 1.f + interline;
 			cursorPosition.x = 0;
-			lastRep = nullptr;
+			lastRep = {};
 		}
-		else if (rep->character == '\t') {
+		else if (rep.character == '\t') {
 			cursorPosition.x += spaceWidth * 4; //TODO align to nearest tab
-			lastRep = nullptr;
+			lastRep = {};
 		}
-		else if (rep->character == ' ') {
+		else if (rep.character == ' ') {
 			cursorPosition.x += spaceWidth;
-			lastRep = nullptr;
+			lastRep = {};
 		}
 		else { //real character
-			auto& layer = *_getLayer(rep->getTexture()).getMesh();
+			auto& layer = _getLayer(rep.getTexture()).getMesh().unwrap();
 
-			float x = cursorPosition.x + rep->bearingU;
-			float y = cursorPosition.y - rep->bearingV;
+			float x = cursorPosition.x + rep.bearingU;
+			float y = cursorPosition.y - rep.bearingV;
 
 			if (doKerning && lastRep) {
-				x += font->getKerning(rep, lastRep);
+				x += font.getKerning(rep, lastRep.unwrap());
 			}
 
 			idx = layer.getVertexCount();
 
 			//assign vertex positions and uv coordinates
 			layer.vertex(x, y);
-			layer.uv(rep->uvPos.x, rep->uvPos.y + rep->uvHeight);
+			layer.uv(rep.uvPos.x, rep.uvPos.y + rep.uvHeight);
 
-			layer.vertex(x + rep->widthRatio, y);
-			layer.uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y + rep->uvHeight);
+			layer.vertex(x + rep.widthRatio, y);
+			layer.uv(rep.uvPos.x + rep.uvWidth, rep.uvPos.y + rep.uvHeight);
 
-			layer.vertex(x, y + rep->heightRatio);
-			layer.uv(rep->uvPos.x, rep->uvPos.y);
+			layer.vertex(x, y + rep.heightRatio);
+			layer.uv(rep.uvPos.x, rep.uvPos.y);
 
-			layer.vertex(x + rep->widthRatio, y + rep->heightRatio);
-			layer.uv(rep->uvPos.x + rep->uvWidth, rep->uvPos.y);
+			layer.vertex(x + rep.widthRatio, y + rep.heightRatio);
+			layer.uv(rep.uvPos.x + rep.uvWidth, rep.uvPos.y);
 
 			layer.triangle(idx, idx + 1, idx + 2);
 			layer.triangle(idx + 1, idx + 3, idx + 2);
 
 			//now move to the next character
-			cursorPosition.x += rep->advance + charSpacing;
+			cursorPosition.x += rep.advance + charSpacing;
 
 			lastRep = rep;
 			++actualCharacters;
@@ -295,7 +289,7 @@ void TextArea::_prepare() {
 	mLayersBound = AABB::Invalid;
 
 	for (auto&& layer : busyLayers) {
-		mLayersBound = mLayersBound.expandToFit(layer->getMesh()->getBounds());
+		mLayersBound = mLayersBound.expandToFit(layer->getMesh().unwrap().getBounds());
 	}
 
 	self.setSize(mLayersBound.max - mLayersBound.min); //TODO hmm
@@ -340,7 +334,7 @@ Unique<Mesh> TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back(), *mShader);
+	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back(), getGameState().getShader("textured").unwrap());
 	r->scale = scale;
 	r->setVisible(false);
 

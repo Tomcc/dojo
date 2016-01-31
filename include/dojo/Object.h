@@ -129,7 +129,7 @@ namespace Dojo {
 			return mWorldTransform;
 		}
 
-		Object* getParent() {
+		optional_ref<Object> getParent() {
 			return parent;
 		}
 
@@ -202,7 +202,7 @@ namespace Dojo {
 
 		bool active;
 		
-		Object* parent;
+		optional_ref<Object> parent;
 		ChildList children;
 
 		Object& _addChild(Unique<Object> o);

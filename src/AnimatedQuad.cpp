@@ -10,7 +10,7 @@
 
 using namespace Dojo;
 
-AnimatedQuad::Animation::Animation(FrameSet* set, float timePerFrame) :
+AnimatedQuad::Animation::Animation(FrameSet& set, float timePerFrame) :
 	currentFrame(nullptr),
 	mElapsedLoops(0) {
 	setup(set, timePerFrame);
@@ -20,18 +20,18 @@ AnimatedQuad::~AnimatedQuad() {
 
 }
 
-void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
+void AnimatedQuad::Animation::setup(FrameSet& set, float tpf) {
 	DEBUG_ASSERT(tpf >= 0, "Cannot set a negative time per frame");
 
 	animationTime = 0;
 	timePerFrame = tpf;
-	frames = set;
+	frames = &set;
 
 	if (frames) {
-		totalTime = timePerFrame * frames->getFrameNumber();
+		totalTime = timePerFrame * frames.unwrap().getFrameNumber();
 
-		if (frames->getFrameNumber() > 0) {
-			currentFrame = frames->getFrame(0);
+		if (frames.unwrap().getFrameNumber() > 0) {
+			currentFrame = &frames.unwrap().getFrame(0);
 		}
 	}
 	else {
@@ -40,7 +40,12 @@ void AnimatedQuad::Animation::setup(FrameSet* set, float tpf) {
 }
 
 AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::string& shader, const utf::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
-	Renderable(parent, layer),
+	Renderable(
+		parent,
+		layer,
+		parent.getGameState().getMesh("texturedQuad").unwrap(),
+		parent.getGameState().getShader("textured").unwrap()
+	),
 	animationTime(0),
 	pixelScale(1, 1),
 	animationSpeedMultiplier(1),
@@ -48,15 +53,8 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 
 	cullMode = CullMode::None;
 
-	//inheritScale = false;
-
-	//use the default quad
-	mesh = parent.getGameState().getMesh("texturedQuad");
-
-	DEBUG_ASSERT( mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)" );
-
-	//TODO not thread safe? nothing else is anyway
-	static Animation dummyAnimation(nullptr, 0);
+	auto& emptyFrameset = parent.getGameState().getEmptyFrameSet();
+	static Animation dummyAnimation(emptyFrameset, 0);
 	animation = &dummyAnimation;
 
 	{
@@ -64,13 +62,10 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 		screenSize.x = screenSize.y = 1;
 
 		if (animation) {
-			animation->setup(nullptr, 0);
+			animation.unwrap().setup(emptyFrameset, 0);
 		}
 
 		setTexture(nullptr);
-		mesh = parent.getGameState().getMesh("texturedQuad");
-
-		DEBUG_ASSERT(mesh, "AnimatedQuad requires a quad mesh called 'texturedQuad' to be loaded (use addPrefabMeshes to load one)");
 	}
 
 	if (immediateAnim.not_empty()) {
@@ -79,55 +74,41 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 }
 
 void AnimatedQuad::immediateAnimation(const utf::string& name, float timePerFrame) {
-	FrameSet* set = self.getGameState().getFrameSet(name);
-
-	DEBUG_ASSERT_INFO( set != nullptr, "The required FrameSet was not found", "name = " + name );
-
-	immediateAnimation(set, timePerFrame);
+	immediateAnimation(self.getGameState().getFrameSet(name).unwrap(), timePerFrame);
 }
 
-void AnimatedQuad::immediateAnimation(FrameSet* s, float timePerFrame) {
-	DEBUG_ASSERT(s, "immediateAnimation: setting a nullptr animation");
+void AnimatedQuad::immediateAnimation(FrameSet& s, float timePerFrame) {
+	animation.unwrap().setup(s, timePerFrame);
 
-	animation->setup(s, timePerFrame);
-
-	_setTexture(*animation->getCurrentFrame());
+	_setTexture(*animation.unwrap().getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationTime(float t) {
-	DEBUG_ASSERT(animation != nullptr, "setAnimationTime: no animation set");
+	animation.unwrap().setAnimationTime(t);
 
-	animation->setAnimationTime(t);
-
-	_setTexture(*animation->getCurrentFrame());
+	_setTexture(*animation.unwrap().getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationPercent(float t) {
-	DEBUG_ASSERT(animation != nullptr, "setAnimationPercent: no animation set");
-
-	setAnimationTime(t * animation->getTotalTime());
+	setAnimationTime(t * animation.unwrap().getTotalTime());
 }
 
 void AnimatedQuad::advanceAnim(float dt) {
-	DEBUG_ASSERT(animation != nullptr, "advanceAnim: no animation set");
-
 	//active animation?
-	if (animationSpeedMultiplier > 0 && animation->getTimePerFrame() > 0) {
-		DEBUG_ASSERT(animation->frames->getFrameNumber() > 0, "advanceAnim: the current Animation has no frames");
+	if (animationSpeedMultiplier > 0 && animation.unwrap().getTimePerFrame() > 0) {
+		DEBUG_ASSERT(animation.unwrap().frames.unwrap().getFrameNumber() > 0, "advanceAnim: the current Animation has no frames");
 
 		//update the renderState using the animation
-		animation->advance(dt * animationSpeedMultiplier);
+		animation.unwrap().advance(dt * animationSpeedMultiplier);
 
-		_setTexture(*animation->getCurrentFrame());
+		_setTexture(*animation.unwrap().getCurrentFrame());
 	}
 }
 
 void AnimatedQuad::setFrame(int i) {
-	DEBUG_ASSERT(animation != nullptr, "setFrame: no animation set");
+	animation.unwrap().setFrame(i);
 
-	animation->setFrame(i);
-
-	_setTexture(*animation->getCurrentFrame());
+	_setTexture(*animation.unwrap().getCurrentFrame());
 }
 
 void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
@@ -161,20 +142,20 @@ void AnimatedQuad::_updateScreenSize() {
 	if (pixelPerfect) {
 		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		self.getGameState().getViewport()->makeScreenSize(screenSize, getTexture());
+		self.getGameState().getViewport().unwrap().makeScreenSize(screenSize, getTexture());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}
 	else {
-		screenSize.x = mesh->getDimensions().x * scale.x;
-		screenSize.y = mesh->getDimensions().y * scale.y;
+		screenSize.x = mesh.unwrap().getDimensions().x * scale.x;
+		screenSize.y = mesh.unwrap().getDimensions().y * scale.y;
 	}
 }
 
 void AnimatedQuad::Animation::setFrame(int i) {
 	DEBUG_ASSERT(frames, "Animation has no frames");
 
-	currentFrame = frames->getFrame(i);
+	currentFrame = &frames.unwrap().getFrame(i);
 
 	animationTime = i * timePerFrame;
 }
@@ -186,7 +167,7 @@ void AnimatedQuad::Animation::setAnimationTime(float t) {
 		return;
 	}
 
-	if (frames->getFrameNumber() <= 1) { //can't set time on a void or one-frame animation
+	if (frames.unwrap().getFrameNumber() <= 1) { //can't set time on a void or one-frame animation
 		return;
 	}
 
@@ -202,7 +183,7 @@ void AnimatedQuad::Animation::setAnimationTime(float t) {
 		animationTime += totalTime;
 	}
 
-	currentFrame = frames->getFrame((int)(animationTime / timePerFrame));
+	currentFrame = &frames.unwrap().getFrame((int)(animationTime / timePerFrame));
 }
 
 void AnimatedQuad::Animation::advance(float dt) {
@@ -210,5 +191,5 @@ void AnimatedQuad::Animation::advance(float dt) {
 }
 
 int AnimatedQuad::Animation::getCurrentFrameNumber() {
-	return frames->getFrameIndex(*currentFrame);
+	return frames.unwrap().getFrameIndex(*currentFrame);
 }
