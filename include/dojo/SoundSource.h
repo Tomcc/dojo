@@ -73,7 +73,10 @@ namespace Dojo {
 
 		///tells if this source is bound to a streaming SoundBuffer
 		bool isStreaming() {
-			return buffer && buffer.unwrap().isStreaming();
+			if (auto b = buffer.cast()) {
+				return b.get().isStreaming();
+			}
+			return false;
 		}
 
 		ALuint getSource() {

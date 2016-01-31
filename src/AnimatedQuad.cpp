@@ -27,11 +27,11 @@ void AnimatedQuad::Animation::setup(FrameSet& set, float tpf) {
 	timePerFrame = tpf;
 	frames = &set;
 
-	if (frames) {
-		totalTime = timePerFrame * frames.unwrap().getFrameNumber();
+	if (auto f = frames.cast()) {
+		totalTime = timePerFrame * f.get().getFrameNumber();
 
-		if (frames.unwrap().getFrameNumber() > 0) {
-			currentFrame = &frames.unwrap().getFrame(0);
+		if (f.get().getFrameNumber() > 0) {
+			currentFrame = &f.get().getFrame(0);
 		}
 	}
 	else {
@@ -61,8 +61,8 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 		pixelScale.x = pixelScale.y = 1;
 		screenSize.x = screenSize.y = 1;
 
-		if (animation) {
-			animation.unwrap().setup(emptyFrameset, 0);
+		if (auto a = animation.cast()) {
+			a.get().setup(emptyFrameset, 0);
 		}
 
 		setTexture(nullptr);
@@ -153,16 +153,12 @@ void AnimatedQuad::_updateScreenSize() {
 }
 
 void AnimatedQuad::Animation::setFrame(int i) {
-	DEBUG_ASSERT(frames, "Animation has no frames");
-
 	currentFrame = &frames.unwrap().getFrame(i);
 
 	animationTime = i * timePerFrame;
 }
 
 void AnimatedQuad::Animation::setAnimationTime(float t) {
-	DEBUG_ASSERT(frames, "Animation has no frames");
-
 	if (timePerFrame == 0) {
 		return;
 	}

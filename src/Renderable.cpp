@@ -65,8 +65,8 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 }
 
 void Renderable::update(float dt) {
-	if (mesh) {
-		AABB bounds = mesh.unwrap().getBounds();
+	if (auto m = mesh.cast()){
+		AABB bounds = m.get().getBounds();
 		bounds.max = Vector::mul(bounds.max, scale);
 		bounds.min = Vector::mul(bounds.min, scale);
 		worldBB = self.transformAABB(bounds);
@@ -78,9 +78,8 @@ void Renderable::update(float dt) {
 }
 
 bool Renderable::canBeRendered() const {
-	if (mesh) {
-		auto& ref = mesh.unwrap();
-		return isVisible() && ref.isLoaded() && ref.getVertexCount() > 2;
+	if (auto m = mesh.cast()) {
+		return isVisible() && m.get().isLoaded() && m.get().getVertexCount() > 2;
 	}
 	else {
 		return false;

@@ -94,7 +94,7 @@ namespace Dojo {
 
 		///is the music already playing?
 		bool isMusicPlaying() {
-			return musicTrack;
+			return musicTrack.is_some();
 		}
 
 		///sets the openAL Listener's world transform

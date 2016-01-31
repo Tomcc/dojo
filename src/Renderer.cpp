@@ -206,13 +206,12 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 }
 
 void Renderer::_renderViewport(Viewport& viewport) {
-	if (auto rt = viewport.getRenderTarget()) {
-		auto& ref = rt.unwrap();
-		ref.bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
+	if (auto rt = viewport.getRenderTarget().cast()) {
+		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
 		currentState.targetDimension = {
-			(float)ref.getWidth(),
-			(float)ref.getHeight()
+			(float)rt.get().getWidth(),
+			(float)rt.get().getHeight()
 		};
 	}
 	else {

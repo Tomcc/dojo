@@ -24,7 +24,7 @@ Object::~Object() {
 }
 
 Object& Object::_addChild(Unique<Object> o) {
-	DEBUG_ASSERT(o->parent == false, "The child you want to attach already has a parent");
+	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
 	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
 
 	o->parent = this;
@@ -124,9 +124,9 @@ AABB Object::transformAABB(const AABB& local) const {
 }
 
 Vector Object::getWorldPosition(const Vector& localPos) const {
-	if (parent) {
+	if (parent.is_some()) {
 		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
-		return Vector(pos.x, pos.y, pos.z);
+		return (Vector&)pos;
 	}
 	else {
 		return localPos;
@@ -134,7 +134,7 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 }
 
 bool Object::isActive() const {
-	return active && !disposed && (!parent || parent.unwrap().isActive());
+	return active && !disposed && (parent.is_none() || parent.unwrap().isActive());
 }
 
 void Object::reset() {
@@ -149,14 +149,14 @@ Vector Object::getLocalPosition(const Vector& worldPos) const {
 	glm::vec4 p(worldPos, 1);
 	p = glm::inverse(getWorldTransform()) * p;
 
-	return Vector(p.x, p.y, p.z);
+	return (Vector&)p;
 }
 
 Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z*/) const {
 	glm::vec4 dir(dir3, 0);
 	dir = getWorldTransform() * dir;
 
-	return Vector(dir.x, dir.y, dir.z);
+	return (Vector&)dir;
 }
 
 Vector Object::getLocalDirection(const Vector& worldDir) {
@@ -173,10 +173,16 @@ Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
 	return glm::translate(parent, position) * mat4_cast(rotation);
 }
 
-void Object::updateWorldTransform() {
+Matrix Object::getParentWorldTransform() const {
 	//compute local matrix from position and orientation
-	mWorldTransform = getFullTransformRelativeTo(
-		parent ? parent.unwrap().getWorldTransform() : Matrix(1));
+	if (auto p = parent.cast()) {
+		return p.get().getWorldTransform();
+	}
+	return Matrix{ 1 };
+}
+
+void Object::updateWorldTransform() {
+	mWorldTransform = getFullTransformRelativeTo(getParentWorldTransform());
 }
 
 void Object::updateChilds(float dt) {
@@ -233,7 +239,7 @@ void Object::setSize(const Vector& bbSize) {
 }
 
 Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
-	DEBUG_ASSERT(parent == false, "The object has been already added to the scene");
+	DEBUG_ASSERT(parent.is_none(), "The object has been already added to the scene");
 
 	if (ID >= (int)components.size()) {
 		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage

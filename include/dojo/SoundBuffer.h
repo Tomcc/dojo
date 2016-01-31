@@ -94,7 +94,7 @@ namespace Dojo {
 		}
 
 		virtual bool isReloadable() const {
-			return mSource;
+			return mSource.is_some();
 		}
 
 		///tells if this buffer has been loaded as a streaming (multi-part, lazy-loaded) buffer.

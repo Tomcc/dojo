@@ -129,6 +129,8 @@ namespace Dojo {
 			return mWorldTransform;
 		}
 
+		Matrix getParentWorldTransform() const;
+
 		optional_ref<Object> getParent() {
 			return parent;
 		}

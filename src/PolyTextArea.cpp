@@ -159,7 +159,7 @@ void PolyTextArea::_prepare() {
 			charPosition.x += character.bearingU;
 			charPosition.y -= character.bearingV;
 
-			if (pFont->isKerningEnabled() && lastChar) {
+			if (pFont->isKerningEnabled() && lastChar.is_some()) {
 				charPosition.x -= pFont->getKerning(character, lastChar.unwrap());
 			}
 

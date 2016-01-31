@@ -299,7 +299,7 @@ void ResourceGroup::addFolderSimple(const utf::string& folder, int version) {
 }
 
 FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getFrameSet(name), "A FrameSet with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getFrameSet(name).is_none(), "A FrameSet with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -311,7 +311,7 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::strin
 }
 
 void ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getFont(name), "A Sound with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -323,7 +323,7 @@ void ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 }
 
 void ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getMesh(name), "A Mesh with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getMesh(name).is_none(), "A Mesh with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -335,7 +335,7 @@ void ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
 }
 
 SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getSound(name), "A Sound with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getSound(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -347,7 +347,7 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::strin
 }
 
 void ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getShader(name), "A Shader with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getShader(name).is_none(), "A Shader with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -359,7 +359,7 @@ void ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) 
 }
 
 void ResourceGroup::addProgram(Unique<ShaderProgram> resource, const utf::string& name) {
-	DEBUG_ASSERT_INFO(!getProgram(name), "A ShaderProgram with this name already exists", "name = " + name);
+	DEBUG_ASSERT_INFO(getProgram(name).is_none(), "A ShaderProgram with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
@@ -413,12 +413,10 @@ optional_ref<FrameSet> ResourceGroup::getFrameSet(const utf::string& name) const
 }
 
 optional_ref<Texture> ResourceGroup::getTexture(const utf::string& name) const {
-	if (auto s = getFrameSet(name)) {
-		return s.unwrap().getFrame(0);
+	if (auto s = getFrameSet(name).cast()) {
+		return s.get().getFrame(0);
 	} 
-	else {
-		return{};
-	}
+	return{};
 }
 
 optional_ref<Font> ResourceGroup::getFont(const utf::string& name) const {

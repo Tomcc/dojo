@@ -259,7 +259,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
 
-	if (creator && creator.unwrap().disableBilinear) {
+	if (creator.is_some() && creator.unwrap().disableBilinear) {
 		disableBilinearFiltering();
 	}
 	else {
@@ -269,14 +269,14 @@ bool Texture::loadFromFile(const utf::string& path) {
 	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
 
 	//guess if this is a texture or a sprite
-	if (!isSurface || (creator && creator.unwrap().disableMipmaps)) {
+	if (!isSurface || (creator.is_some() && creator.unwrap().disableMipmaps)) {
 		disableMipmaps();
 	}
 	else {
 		enableMipmaps();
 	}
 
-	if (!isSurface || (creator && creator.unwrap().disableTiling)) {
+	if (!isSurface || (creator.is_some() && creator.unwrap().disableTiling)) {
 		disableTiling();
 	}
 	else {

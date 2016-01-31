@@ -84,18 +84,16 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	auto& keyValue = desc.getString(typeKeyMap[typeID]);
 
 	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
-
-	auto program = getCreator().unwrap().getProgram(keyValue);
-
-	if (program) {
+	
+	if (auto program = getCreator().unwrap().getProgram(keyValue).cast()) {
 		if (mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
-			mOwnedPrograms.emplace_back(program.unwrap().cloneWithHeader(mPreprocessorHeader));
+			mOwnedPrograms.emplace_back(program.get().cloneWithHeader(mPreprocessorHeader));
 			program = *mOwnedPrograms.back();
 		}
 		else {
-			DEBUG_ASSERT_INFO(program.unwrap().getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
+			DEBUG_ASSERT_INFO(program.get().getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
 		}
-		pProgram[typeID] = program;
+		pProgram[typeID] = program.get();
 	}
 	else {
 		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));

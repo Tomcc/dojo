@@ -72,8 +72,8 @@ void Viewport::addFader(RenderLayer::ID layer) {
 
 void Viewport::setRenderTarget(optional_ref<Texture> target) {
 	mRT = target;
-	if (mRT) {
-		setTargetSize({ (float)mRT.unwrap().getWidth(), (float)mRT.unwrap().getHeight() });
+	if (auto rt = mRT.cast()) {
+		setTargetSize({ (float)rt.get().getWidth(), (float)rt.get().getHeight() });
 	}
 	else {
 		setTargetSize({ (float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight() });
@@ -117,7 +117,7 @@ void Viewport::_updateFrustum() {
 				mZNear,
 				mZFar);
 
-		if (getRenderTarget()) { //flip the projections to flip the image
+		if (getRenderTarget().is_some()) { //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
 		}
 
@@ -158,7 +158,7 @@ void Viewport::_updateTransforms() {
 					0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
 					mZFar);
 
-			if (getRenderTarget()) { //flip the projections to flip the image
+			if (getRenderTarget().is_some()) { //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;
 			}
 		}
@@ -230,8 +230,8 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	if (r.getMesh()) {
-		AABB bb = r.getObject().transformAABB(r.getMesh().unwrap().getBounds().scale(r.scale));
+	if (auto mesh = r.getMesh().cast()) {
+		AABB bb = r.getObject().transformAABB(mesh.get().getBounds().scale(r.scale));
 
 		Vector halfSize = (bb.max - bb.min) * 0.5f;
 		Vector worldPos = r.getObject().getWorldPosition();
@@ -266,7 +266,7 @@ void Viewport::onAction(float dt) {
 	_updateTransforms();
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
-	if (!mRT) {
+	if (!mRT.is_some()) {
 		Platform::singleton().getSoundManager().setListenerTransform(getWorldTransform());
 	}
 }

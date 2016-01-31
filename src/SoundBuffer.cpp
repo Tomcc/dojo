@@ -95,7 +95,7 @@ SoundBuffer::SoundBuffer(optional_ref<ResourceGroup> creator, const utf::string&
 	Resource(creator, path),
 	size(0),
 	mDuration(0) {
-	DEBUG_ASSERT( creator, "SoundBuffer needs a creator object" );
+
 }
 
 SoundBuffer::~SoundBuffer() {

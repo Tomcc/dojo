@@ -53,20 +53,21 @@ float SoundSource::getVolume() {
 
 void SoundSource::play(float volume) {
 	//can the sound play?
-	if (!isValid() && buffer && buffer.unwrap().isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
+	if (!isValid() && buffer.is_some() && buffer.unwrap().isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
 		return;
 	}
 
 	if (state == SS_INITIALISING) {
-		if (source && buffer) {
+		if (source && buffer.is_some()) {
 			CHECK_AL_ERROR;
+			auto& b = buffer.unwrap();
 
 			//set global parameters
 			alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
 
-			int chunkNumber = buffer.unwrap().getChunkNumber();
+			int chunkNumber = b.getChunkNumber();
 
-			mFrontChunk = &buffer.unwrap().getChunk(0);
+			mFrontChunk = &b.getChunk(0);
 			ALuint alBuffer = mFrontChunk.unwrap().getOpenALBuffer();
 
 			if (chunkNumber == 1) { //non-streaming
@@ -79,7 +80,7 @@ void SoundSource::play(float volume) {
 				CHECK_AL_ERROR;
 
 				//start loading in the back buffer
-				mBackChunk = &buffer.unwrap().getChunk(++mCurrentChunkID, true);
+				mBackChunk = &b.getChunk(++mCurrentChunkID, true);
 			}
 		}
 		else {
@@ -139,7 +140,7 @@ void SoundSource::_update(float dt) {
 	}
 
 	//if streaming, check if buffers have been used and replenish the queue
-	if (isStreaming() && mBackChunk) {
+	if (isStreaming() && mBackChunk.is_some()) {
 		//check if the backbuffer has finished loading and add it to the queue
 		if (mQueuedChunks == 1 && mBackChunk.unwrap().isLoaded()) {
 			ALuint b = mBackChunk.unwrap().getOpenALBuffer();
@@ -185,12 +186,12 @@ void SoundSource::_update(float dt) {
 		alSourcei(source, AL_BUFFER, AL_NONE); //clear the buffer for source reusing - this ALSO works for queued buffers
 
 		//release all the used chunks
-		if (mFrontChunk) {
-			mFrontChunk.unwrap().release();
+		if (auto chunk = mFrontChunk.cast()) {
+			chunk.get().release();
 		}
 
-		if (mBackChunk) {
-			mBackChunk.unwrap().release();
+		if (auto chunk = mBackChunk.cast()) {
+			chunk.get().release();
 		}
 
 		state = SS_FINISHED;

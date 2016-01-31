@@ -411,7 +411,7 @@ int Font::getPixelLength(const utf::string& str) {
 		auto& chr = getCharacter(c);
 		l += (int)(chr.advance * chr.pixelWidth);
 
-		if (lastChar && isKerningEnabled()) {
+		if (lastChar.is_some() && isKerningEnabled()) {
 			l += (int)(getKerning(chr, lastChar.unwrap()) * fontWidth);
 		}
 

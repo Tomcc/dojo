@@ -40,7 +40,7 @@ TextArea::TextArea(Object& l,
 TextArea::~TextArea() {
 	clearText();
 
-	DEBUG_ASSERT(!mesh, "This isn't renderable by itself");
+	mesh.unwrap(); //This isn't renderable by itself
 
 	_destroyLayers();
 }
@@ -242,7 +242,7 @@ void TextArea::_prepare() {
 			float x = cursorPosition.x + rep.bearingU;
 			float y = cursorPosition.y - rep.bearingV;
 
-			if (doKerning && lastRep) {
+			if (doKerning && lastRep.is_some()) {
 				x += font.getKerning(rep, lastRep.unwrap());
 			}
 

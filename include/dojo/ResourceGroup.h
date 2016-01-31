@@ -93,10 +93,8 @@ namespace Dojo {
 
 			//try in subgroups too
 			for (auto&& sub : subs) {
-				auto f = sub->find<R>(name, r);
-
-				if (f) {
-					return f;
+				if (auto f = sub->find<R>(name, r).cast()) {
+					return f.get();
 				}
 			}
 

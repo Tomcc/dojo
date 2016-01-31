@@ -142,7 +142,7 @@ void SoundManager::setMasterVolume(float volume) {
 		masterVolume = volume;
 
 		//update volumes (masterVolume is used inside setVolume!)
-		if (!nextMusicTrack && musicTrack) {
+		if (nextMusicTrack.is_none() && musicTrack.is_some()) {
 			musicTrack.unwrap().setVolume(musicVolume);
 		}
 
@@ -170,24 +170,24 @@ void SoundManager::update(float dt) {
 
 	//fai il fade
 	if (fadeState == FS_FADE_OUT) { //abbassa il volume della track corrente
-		if (musicTrack && currentFadeTime < halfFadeTime) {
+		if (musicTrack.is_some() && currentFadeTime < halfFadeTime) {
 			musicTrack.unwrap().setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
 		}
 		else { //scambia le tracks e fai partire la prossima
-			if (musicTrack) {
-				musicTrack.unwrap().stop();
+			if (auto track = musicTrack.cast()) {
+				track.get().stop();
 			}
 
 			musicTrack = nextMusicTrack;
 
 			//parte il fade in
-			if (musicTrack) {
+			if (auto track = musicTrack.cast()) {
 				nextMusicTrack = nullptr;
 
-				musicTrack.unwrap().play(0);
-				musicTrack.unwrap().setAutoRemove(false);
+				track.get().play(0);
+				track.get().setAutoRemove(false);
 
-				musicTrack.unwrap().setLooping(true);
+				track.get().setLooping(true);
 
 				fadeState = FS_FADE_IN;
 				currentFadeTime = 0;
@@ -219,7 +219,7 @@ void SoundManager::update(float dt) {
 
 void SoundManager::resumeMusic() {
 	//resume music, but only if the user didn't enable itunes meanwhile!
-	if (musicTrack && !Platform::singleton().isSystemSoundInUse()) {
+	if (musicTrack.is_some() && !Platform::singleton().isSystemSoundInUse()) {
 		musicTrack.unwrap().play();
 	}
 }
@@ -284,7 +284,7 @@ void SoundManager::setMusicVolume(float volume) {
 
 	musicVolume = volume;
 
-	if (!nextMusicTrack && musicTrack) {
+	if (nextMusicTrack.is_none() && musicTrack.is_some()) {
 		musicTrack.unwrap().setVolume(musicVolume);
 	}
 }
