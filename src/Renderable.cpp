@@ -65,15 +65,18 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 }
 
 void Renderable::update(float dt) {
-	if (auto m = mesh.cast()){
-		AABB bounds = m.get().getBounds();
-		bounds.max = Vector::mul(bounds.max, scale);
-		bounds.min = Vector::mul(bounds.min, scale);
-		worldBB = object.transformAABB(bounds);
+	if (auto m = mesh.cast()) {
+		auto trans = glm::scale(object.getWorldTransform(), scale);
 
 		advanceFade(dt);
 
-		mTransform = glm::scale(object.getWorldTransform(), scale);
+		if (trans != mTransform) {
+			AABB bounds = m.get().getBounds();
+			bounds.max = Vector::mul(bounds.max, scale);
+			bounds.min = Vector::mul(bounds.min, scale);
+			worldBB = object.transformAABB(bounds);
+			mTransform = trans;
+		}
 	}
 }
 

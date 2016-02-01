@@ -127,7 +127,7 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 		return uniform.customDataBinding(user); //call the user callback and be happy
 
 	case BU_WORLD:
-		return &r.currentState.world;
+		return &user.getTransform();
 
 	case BU_VIEW:
 		return &r.currentState.view;
@@ -136,7 +136,7 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 		return &r.currentState.projection;
 
 	case BU_WORLDVIEW:
-		return &(r.currentState.worldView);
+		return &r.currentState.worldView;
 
 	case BU_WORLDVIEWPROJ:
 		return &r.currentState.worldViewProjection;

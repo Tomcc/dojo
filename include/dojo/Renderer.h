@@ -26,7 +26,7 @@ namespace Dojo {
 	public:
 		///a struct that exposes current rendering parameters such as transforms
 		struct CurrentState {
-			Matrix view, world, projection, worldView, worldViewProjection;
+			Matrix view, projection, worldView, worldViewProjection;
 			Vector viewDirection, targetDimension;
 
 		} currentState;

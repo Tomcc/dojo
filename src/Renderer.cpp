@@ -138,7 +138,6 @@ void Renderer::_renderElement(Renderable& elem) {
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	currentState.world = elem.getTransform();
 	currentState.worldView = currentState.view * elem.getTransform();
 	currentState.worldViewProjection = currentState.projection * currentState.worldView;
 
