@@ -446,12 +446,12 @@ bool Mesh::onLoad() {
 	ptr += sizeof( Vector);
 
 	//vertex count
-	IndexType vc = *((int*) ptr);
-	ptr += sizeof( int);
+	IndexType vc = *((IndexType*) ptr);
+	ptr += sizeof(IndexType);
 
 	//index count
-	int ic = *((int*)ptr);
-	ptr += sizeof( int);
+	uint32_t ic = *((uint32_t*)ptr);
+	ptr += sizeof(uint32_t);
 
 	setDynamic(false);
 
