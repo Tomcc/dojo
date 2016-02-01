@@ -97,7 +97,7 @@ namespace Dojo {
 		/**
 		\param extimatedVertes number of vertices that have to be reserved
 		*/
-		void begin(unsigned int extimatedVerts = 1);
+		void begin(IndexType extimatedVerts = 1);
 
 		///starts editing a dynamic mesh that was already begin'd and end'ed
 		/**
@@ -106,12 +106,12 @@ namespace Dojo {
 		void beginAppend();
 
 		///adds a vertex at the given position
-		int vertex(float x, float y);
+		IndexType vertex(float x, float y);
 
 		///adds a vertex at the given position
-		int vertex(float x, float y, float z);
+		IndexType vertex(float x, float y, float z);
 
-		int vertex(const Vector& v);
+		IndexType vertex(const Vector& v);
 
 		///sets the uv of the given UV set
 		void uv(float u, float v, byte set = 0);
@@ -136,14 +136,14 @@ namespace Dojo {
 		void index(IndexType idx);
 
 		///adds 3 clockwise indices to make a triangle
-		void triangle(unsigned int i1, unsigned int i2, unsigned int i3) {
+		void triangle(IndexType i1, IndexType i2, IndexType i3) {
 			index(i1);
 			index(i2);
 			index(i3);
 		}
 
 		///adds 2 clockwise triangles (6 indices) to make a quad
-		void quad(unsigned int i11, unsigned int i12, unsigned int i21, unsigned int i22) {
+		void quad(IndexType i11, IndexType i12, IndexType i21, IndexType i22) {
 			triangle(i11, i21, i12);
 			triangle(i21, i22, i12);
 		}

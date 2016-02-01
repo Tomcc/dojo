@@ -63,7 +63,7 @@ void Mesh::destroyBuffers() {
 	cleanup = std::move(indices);
 }
 
-void Mesh::begin(unsigned int extimatedVerts /*= 1 */) {
+void Mesh::begin(IndexType extimatedVerts /*= 1 */) {
 	//be sure that we aren't already building
 	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
 	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
@@ -174,7 +174,7 @@ void Mesh::_prepareVertex(const Vector& v) {
 	++vertexCount;
 }
 
-int Mesh::vertex(float x, float y) {
+Mesh::IndexType Mesh::vertex(float x, float y) {
 	_prepareVertex(Vector(x, y));
 
 	float* ptr = (float*)currentVertex;
@@ -185,7 +185,7 @@ int Mesh::vertex(float x, float y) {
 	return getVertexCount() - 1;
 }
 
-int Mesh::vertex(const Vector& v) {
+Mesh::IndexType Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
 	if (isVertexFieldEnabled(VertexField::Position3D)) {
@@ -201,7 +201,7 @@ int Mesh::vertex(const Vector& v) {
 	return getVertexCount() - 1;
 }
 
-int Mesh::vertex(float x, float y, float z) {
+Mesh::IndexType Mesh::vertex(float x, float y, float z) {
 	return vertex(Vector(x, y, z));
 }
 
