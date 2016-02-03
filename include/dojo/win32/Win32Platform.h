@@ -31,7 +31,7 @@ namespace Dojo {
 		}
 
 		virtual void acquireContext();
-		virtual void present();
+		void submitFrame() override;
 
 		virtual void step(float dt);
 		virtual void loop();

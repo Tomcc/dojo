@@ -623,7 +623,7 @@ void Win32Platform::acquireContext() {
 	wglMakeCurrent(hdc, hglrc);
 }
 
-void Win32Platform::present() {
+void Win32Platform::submitFrame() {
 	SwapBuffers(hdc);
 }
 
@@ -670,8 +670,6 @@ void Win32Platform::step(float dt) {
 
 	//take the time before swapBuffers because on some implementations it is blocking
 	realFrameTime = (float) mStepTimer.getElapsedTime();
-
-	present();
 }
 
 void Win32Platform::loop() {

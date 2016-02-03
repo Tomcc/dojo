@@ -22,7 +22,8 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	deviceOrientation(deviceOr),
 	frameVertexCount(0),
 	frameTriCount(0),
-	frameBatchCount(0) {
+	frameBatchCount(0),
+	submitter(Platform::singleton()) {
 	DEBUG_MESSAGE( "Creating OpenGL context...");
 	DEBUG_MESSAGE ("querying GL info... ");
 	DEBUG_MESSAGE ("vendor: " + utf::string( (const char*)glGetString (GL_VENDOR)));
@@ -272,4 +273,6 @@ void Renderer::renderFrame(float dt) {
 	}
 
 	frameStarted = false;
+
+	submitter.get().submitFrame();
 }

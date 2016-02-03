@@ -26,7 +26,6 @@ namespace Dojo {
 		virtual void setFullscreen( bool enabled );
 
 		virtual void acquireContext();
-		virtual void present();
 
 		virtual void step( float dt );
 		virtual void loop();

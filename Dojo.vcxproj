@@ -28,6 +28,7 @@
     <ClInclude Include="include\dojo\enum_cast.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />
+    <ClInclude Include="include\dojo\FrameSubmitter.h" />
     <ClInclude Include="include\dojo\InputDevice.h" />
     <ClInclude Include="include\dojo\InputDeviceListener.h" />
     <ClInclude Include="include\dojo\InputSystemListener.h" />

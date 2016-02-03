@@ -21,6 +21,7 @@ namespace Dojo {
 	class Viewport;
 	class Mesh;
 	class Game;
+	class FrameSubmitter;
 
 	class Renderer {
 	public:
@@ -67,6 +68,10 @@ namespace Dojo {
 			return layers.size();
 		}
 
+		void setFrameSubmitter(FrameSubmitter& newSubmitter) {
+			submitter = newSubmitter;
+		}
+
 		RenderLayer::ID getFrontLayerID() const {
 			return (RenderLayer::ID)layers.size();
 		}
@@ -101,6 +106,7 @@ namespace Dojo {
 		Orientation renderOrientation, deviceOrientation;
 
 		ViewportSet viewportList;
+		std::reference_wrapper<FrameSubmitter> submitter;
 
 		int frameVertexCount, frameTriCount, frameBatchCount;
 

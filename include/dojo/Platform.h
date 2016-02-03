@@ -4,6 +4,7 @@
 #include "Table.h"
 #include "Log.h"
 #include "PixelFormat.h"
+#include "FrameSubmitter.h"
 
 namespace Dojo {
 	class SoundManager;
@@ -18,7 +19,7 @@ namespace Dojo {
 
 	///Platform is the base of the engine; it runs the main loop, creates the windows and updates the Game
 	/** the Platform is the first object to be initialized in a Dojo game, using the static method Platform::create() */
-	class Platform {
+	class Platform : public FrameSubmitter {
 	public:
 
 		///creates the Platform
@@ -146,7 +147,6 @@ namespace Dojo {
 		virtual void setFullscreen(bool enabled) = 0;
 
 		virtual void acquireContext() = 0;
-		virtual void present() = 0;
 
 		virtual void step(float dt) = 0;
 		virtual void loop() = 0;

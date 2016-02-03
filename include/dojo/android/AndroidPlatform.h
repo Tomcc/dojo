@@ -32,7 +32,6 @@ namespace Dojo {
 		virtual void shutdown();
 
 		virtual void acquireContext();
-		virtual void present();
 
 		virtual void step( float dt );
 		virtual void loop();
