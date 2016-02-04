@@ -1,11 +1,46 @@
 #include "stdafx.h"
 
+#include <random>
+
 #include "Random.h"
 #include "dojomath.h"
 
 using namespace Dojo;
 
 Random Random::instance;
+
+Random::BigSeed Random::makeRandomSeed() {
+	BigSeed bigSeed;
+	std::random_device random;
+	for (auto& bits : bigSeed) {
+		bits = random();
+	}
+	return bigSeed;
+}
+
+Random::Random() {
+	seed(makeRandomSeed());
+}
+
+Random::Random(RandomSeed oneSeed) {
+	seed(oneSeed);
+}
+
+Random::Random(const BigSeed& bigSeed) {
+	seed(bigSeed);
+}
+
+Random::Random(const Random& o) {
+	const uint32_t* t = o.state;
+	uint32_t* s = state;
+	int i = N;
+
+	for (; i--; *s++ = *t++) {
+	}
+
+	left = o.left;
+	pget = &state[N - left];
+}
 
 uint32_t Random::hash(time_t t, clock_t c) {
 	// Get a uint32_t from t and c
@@ -76,8 +111,6 @@ void Random::seed(RandomSeed s) {
 }
 
 void Random::seed(const BigSeed& seed) {
-	DEBUG_ASSERT(seed.size() > 0, "Invalid seed");
-
 	// RandomSeed the generator with an array of uint32_t's
 	// There are 2^19937-1 possible initial states.  This function allows
 	// all of those to be accessed by providing at least 19937 bits (with a
@@ -122,31 +155,6 @@ void Random::seed(const BigSeed& seed) {
 
 	state[0] = 0x80000000UL; // MSB is 1, assuring non-zero initial array
 	reload();
-}
-
-Random::Random() {
-	//use an high-precision timer to grab microseconds
-	seed((RandomSeed)(Timer().currentTime() * 1000000));
-}
-
-Random::Random(RandomSeed oneSeed) {
-	seed(oneSeed);
-}
-
-Random::Random(const BigSeed& bigSeed) {
-	seed(bigSeed);
-}
-
-Random::Random(const Random& o) {
-	const uint32_t* t = o.state;
-	uint32_t* s = state;
-	int i = N;
-
-	for (; i--; *s++ = *t++) {
-	}
-
-	left = o.left;
-	pget = &state[N - left];
 }
 
 uint32_t Random::getInt() {
