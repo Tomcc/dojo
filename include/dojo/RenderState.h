@@ -39,6 +39,8 @@ namespace Dojo {
 		CullMode cullMode;
 
 		RenderState();
+		RenderState(const RenderState&) = delete;
+		RenderState& operator=(const RenderState&) = delete;
 
 		virtual ~RenderState();
 
@@ -86,7 +88,7 @@ namespace Dojo {
 		}
 
 		///returns the "weight" of the changes needed to pass from "this" to "s"
-		int getDistance(RenderState* s);
+		int getDistanceTo(const RenderState& s) const;
 
 		void apply(const GlobalUniformData& currentState) const;
 

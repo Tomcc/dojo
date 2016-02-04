@@ -66,9 +66,7 @@ optional_ref<Texture> Dojo::RenderState::getTexture(int ID /*= 0*/) const {
 	return textures[ID];
 }
 
-int RenderState::getDistance(RenderState* s) {
-	DEBUG_ASSERT(s, "getDistance: The input RenderState is null");
-
+int RenderState::getDistanceTo(const RenderState& s) const {
 	int dist = 0;
 
 	DEBUG_TODO; //dunno
@@ -133,7 +131,7 @@ void RenderState::apply(const GlobalUniformData& currentState) const {
 
 void RenderState::applyStateDiff(const GlobalUniformData& currentState, optional_ref<const RenderState> lastState) const {
 	if (auto lastRef = lastState.cast()) {
-		auto prev = lastRef.get();
+		auto& prev = lastRef.get();
 
 		bool rebindFormat = false;
 		if( prev.mesh != mesh ) {
