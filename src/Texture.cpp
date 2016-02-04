@@ -55,8 +55,6 @@ void Texture::bind(GLuint index) {
 	}
 
 	glActiveTexture(GL_TEXTURE0 + index);
-	glEnable(GL_TEXTURE_2D);
-
 	glBindTexture(GL_TEXTURE_2D, glhandle);
 }
 

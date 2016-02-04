@@ -8,8 +8,10 @@
 
 namespace Dojo {
 	class Renderable;
+	class RenderState;
 	class ShaderProgram;
 	class Table;
+	class GlobalUniformData;
 
 	///A Shader is an object representing a VSH+PSH couple and its attributes.
 	/**
@@ -22,7 +24,7 @@ namespace Dojo {
 		/**
 		\remark the type of the data is deduced from the types in .ps and the .vs, so it is important to return the right kind of data
 		*/
-		typedef std::function<const void* (const Renderable&)> UniformCallback;
+		typedef std::function<const void* (const RenderState&)> UniformCallback;
 
 		///A built-in uniform is a uniform shader parameter which Dojo recognizes and provides to the shader being run
 		enum BuiltInUniform {
@@ -33,9 +35,6 @@ namespace Dojo {
 
 			BU_TEXTURE_0_DIMENSION, ///<The dimensions in pixels of the texture currently bound to unit 0 (vec2)
 			BU_TEXTURE_N_DIMENSION = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES - 1,
-
-			BU_TEXTURE_0_TRANSFORM,
-			BU_TEXTURE_N_TRANSFORM = BU_TEXTURE_0_TRANSFORM + DOJO_MAX_TEXTURES - 1,
 
 			BU_WORLD = BU_TEXTURE_0_DIMENSION + DOJO_MAX_TEXTURES, ///<The world matrix
 			BU_VIEW, ///<The view matrix
@@ -95,7 +94,8 @@ namespace Dojo {
 		}
 
 		///binds the shader to the OpenGL state with the object that is using it
-		virtual void use(const Renderable& user);
+		void bind() const;
+		void loadUniforms(const GlobalUniformData& currentState, const RenderState& user);
 
 		virtual bool onLoad();
 
@@ -154,7 +154,7 @@ namespace Dojo {
 
 		void _assignProgram(const Table& desc, ShaderProgramType type);
 
-		const void* _getUniformData(const Uniform& uniform, const Renderable& user);
+		const void* _getUniformData(const GlobalUniformData& currentState, const Uniform& uniform, const RenderState& user);
 
 	private:
 	};

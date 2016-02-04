@@ -84,16 +84,22 @@ void Renderer::removeRenderable(Renderable& s) {
 	if (hasLayer(s.getLayer())) {
 		getLayer(s.getLayer()).elements.erase(&s);
 	}
+
+	if(lastRenderState == s) {
+		lastRenderState = {};
+	}
 }
 
 void Renderer::removeAllRenderables() {
 	for (auto&& l : layers) {
 		l.elements.clear();
 	}
+
+	lastRenderState = {};
 }
 
 void Renderer::removeViewport(const Viewport& v) {
-
+	DEBUG_TODO;
 }
 
 void Renderer::removeAllViewports() {
@@ -124,7 +130,7 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	mRenderRotation = glm::mat4_cast(Quaternion(Vector(0, 0, renderRotation)));
 }
 
-void Renderer::_renderElement(Renderable& elem) {
+void Dojo::Renderer::_renderElement(const RenderState& elem) {
 	auto& m = elem.getMesh().unwrap();
 
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
@@ -139,12 +145,10 @@ void Renderer::_renderElement(Renderable& elem) {
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	currentState.worldView = currentState.view * elem.getTransform();
-	currentState.worldViewProjection = currentState.projection * currentState.worldView;
-
-	elem.getShader().unwrap().use(elem);
-
-	elem.commitChanges();
+	globalUniforms.worldView = globalUniforms.view * elem.getTransform();
+	globalUniforms.worldViewProjection = globalUniforms.projection * globalUniforms.worldView;
+	
+	elem.applyStateDiff(globalUniforms, lastRenderState);
 
 	static const GLenum glModeMap[] = {
 		GL_TRIANGLE_STRIP, //TriangleStrip,
@@ -163,6 +167,8 @@ void Renderer::_renderElement(Renderable& elem) {
 		DEBUG_ASSERT(m.getIndexCount() > 0, "Rendering an indexed mesh with no indices");
 		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
 	}
+
+	lastRenderState = elem;
 
 #ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );
@@ -191,7 +197,7 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	}
 
 	//set projection state
-	currentState.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
+	globalUniforms.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
 
 	//we don't want different layers to be depth-checked together?
 	if (layer.depthClear) {
@@ -209,7 +215,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	if (auto rt = viewport.getRenderTarget().cast()) {
 		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
-		currentState.targetDimension = {
+		globalUniforms.targetDimension = {
 			(float)rt.get().getWidth(),
 			(float)rt.get().getHeight()
 		};
@@ -217,10 +223,10 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	else {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glFrontFace(GL_CCW); //invert vertex winding when inverting the view
-		currentState.targetDimension = { (float)width, (float)height };
+		globalUniforms.targetDimension = { (float)width, (float)height };
 	}
 
-	glViewport(0, 0, (GLsizei) currentState.targetDimension.x, (GLsizei)currentState.targetDimension.y);
+	glViewport(0, 0, (GLsizei) globalUniforms.targetDimension.x, (GLsizei)globalUniforms.targetDimension.y);
 
 	//clear the viewport
 	if (viewport.getClearEnabled()) {
@@ -233,8 +239,8 @@ void Renderer::_renderViewport(Viewport& viewport) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
-	currentState.view = viewport.getViewTransform();
-	currentState.viewDirection = viewport.getWorldDirection();
+	globalUniforms.view = viewport.getViewTransform();
+	globalUniforms.viewDirection = viewport.getWorldDirection();
 
 	if (viewport.getVisibleLayers().empty()) { //using the default layer ordering/visibility
 		for (auto&& l : layers) {

@@ -5,38 +5,9 @@
 #include "FrameSet.h"
 #include "Timer.h"
 #include "Shader.h"
+#include "range.h"
 
 using namespace Dojo;
-
-RenderState::TextureUnit::TextureUnit() :
-	scale(1, 1),
-	rotation(0),
-	offset(0, 0) {
-
-}
-
-RenderState::TextureUnit::TextureUnit(Texture* t) :
-	TextureUnit() {
-	texture = t;
-}
-
-RenderState::TextureUnit::~TextureUnit() {
-
-}
-
-
-Matrix RenderState::TextureUnit::getTransform() const {
-	if (hasTextureTransform) {
-		//build the transform
-		Matrix m = glm::scale(Matrix(1), scale);
-		m = glm::translate(m, offset);
-		m = glm::rotate(m, (float)(Degrees)rotation, Vector::UnitZ);
-		return m;
-	}
-	else {
-		return Matrix(1);
-	}
-}
 
 RenderState::RenderState() :
 	cullMode(CullMode::Back),
@@ -51,11 +22,18 @@ RenderState::~RenderState() {
 
 }
 
-void RenderState::setTexture(Texture* tex, int ID /*= 0 */) {
+void Dojo::RenderState::setTexture(optional_ref<Texture> tex, int ID /*= 0*/) {
 	DEBUG_ASSERT(ID >= 0, "Passed a negative texture ID to setTexture()");
 	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
-	textures[ID] = TextureUnit(tex);
+	textures[ID] = tex;
+
+	//find the new highest slot in use
+	for (maxTextureSlot = DOJO_MAX_TEXTURES; maxTextureSlot >= 0; --maxTextureSlot) {
+		if(textures[maxTextureSlot].is_some()) {
+			break;
+		}
+	}
 }
 
 void RenderState::setBlending(BlendingMode mode) {
@@ -77,18 +55,11 @@ void RenderState::setBlending(BlendingMode mode) {
 	blendFunction = blend.func;
 }
 
-void Dojo::RenderState::setShader(Shader& shader) {
-	pShader = shader;
+void RenderState::setShader(Shader& shader) {
+	mShader = shader;
 }
 
-Texture* RenderState::getTexture(int ID /*= 0 */) const {
-	DEBUG_ASSERT(ID >= 0, "Can't retrieve a negative texture ID");
-	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to getTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
-
-	return textures[ID].texture;
-}
-
-const RenderState::TextureUnit& RenderState::getTextureUnit(int ID) const {
+optional_ref<Texture> Dojo::RenderState::getTexture(int ID /*= 0*/) const {
 	DEBUG_ASSERT(ID >= 0, "Can't retrieve a negative textureUnit");
 	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to getTextureUnit must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
@@ -116,17 +87,20 @@ int RenderState::getDistance(RenderState* s) {
 	return dist;
 }
 
-void RenderState::applyState() {
-	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
-		//select current slot
-		glActiveTexture(GL_TEXTURE0 + i);
+void RenderState::apply(const GlobalUniformData& currentState) const {
+	auto& shader = getShader().unwrap();
+	shader.bind();
+	shader.loadUniforms(currentState, self);
 
-		if (textures[i].texture) {
-			textures[i].texture->bind(i);
+	mesh.unwrap().bind();
 
-			if (textures[i].isTransformRequired()) {
-				FAIL("To remove?");
-			}
+	for (auto i : range(DOJO_MAX_TEXTURES)) {
+		if (auto t = textures[i].cast()) {
+			t.get().bind(i);
+		}
+		else {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 
@@ -155,11 +129,75 @@ void RenderState::applyState() {
 		glCullFace(GL_FRONT);
 		break;
 	}
-
-	mesh.unwrap().bind(pShader.unwrap());
 }
 
-void RenderState::commitChanges() {
-	//TODO incremental state switches please!
-	applyState();
+void RenderState::applyStateDiff(const GlobalUniformData& currentState, optional_ref<const RenderState> lastState) const {
+	if (auto lastRef = lastState.cast()) {
+		auto prev = lastRef.get();
+
+		bool rebindFormat = false;
+		if( prev.mesh != mesh ) {
+			//when the mesh changes, the uniforms have to be rebound too
+			rebindFormat = true;
+			mesh.unwrap().bind();
+		}
+
+		if( prev.mShader != mShader) {
+			rebindFormat = true;
+			mShader.unwrap().bind();
+		}
+
+		if(rebindFormat) {
+			mesh.unwrap().bindVertexFormat(mShader.unwrap());
+		}
+
+		mShader.unwrap().loadUniforms(currentState, self);
+
+		for (auto i : range(maxTextureSlot)) {
+			//select current slot and load it, others can remain bound to old stuff with shaders
+			if (auto t = textures[i].cast()) {
+				if (textures[i] != prev.textures[i]) {
+					t.get().bind(i);
+				}
+			}
+		}
+
+		if (prev.blendingEnabled != blendingEnabled) {
+			if (blendingEnabled) {
+				glEnable(GL_BLEND);
+			}
+			else {
+				glDisable(GL_BLEND);
+			}
+		}
+
+		if (prev.srcBlend != srcBlend || prev.destBlend != destBlend) {
+			glBlendFunc(srcBlend, destBlend);
+		}
+
+		if( prev.blendFunction != blendFunction) {
+			glBlendEquation(blendFunction);
+		}
+
+		if (prev.cullMode != cullMode) {
+			switch (cullMode) {
+			case CullMode::None:
+				glDisable(GL_CULL_FACE);
+				break;
+
+			case CullMode::Back:
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+				break;
+
+			case CullMode::Front:
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
+				break;
+			}
+		}
+	}
+	else {
+		apply(currentState);
+	}
 }

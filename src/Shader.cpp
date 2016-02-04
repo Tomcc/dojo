@@ -21,7 +21,6 @@ void Shader::_populateUniformNameMap() {
 
 		sBuiltiInUniformsNameMap[base] = BuiltInUniform(BU_TEXTURE_0 + i);
 		sBuiltiInUniformsNameMap[base + "_DIMENSION"] = BuiltInUniform(BU_TEXTURE_0_DIMENSION + i);
-		sBuiltiInUniformsNameMap[base + "_TRANSFORM"] = BuiltInUniform(BU_TEXTURE_0_TRANSFORM + i);
 	}
 
 	sBuiltiInUniformsNameMap["WORLD"] = BU_WORLD;
@@ -112,13 +111,11 @@ void Shader::setUniformCallback(const std::string& name, const UniformCallback& 
 	DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
 }
 
-const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& user) {
-	auto& r = Platform::singleton().getRenderer();
+static GLint tempInt[2];
+static Vector tmpVec;
+static Matrix tmpMat;
 
-	static GLint tempInt[2];
-	static Vector tmpVec;
-	static Matrix tmpMat;
-
+const void* Shader::_getUniformData(const GlobalUniformData& currentState, const Uniform& uniform, const RenderState& user) {
 	auto builtin = uniform.builtInUniform;
 
 	switch (builtin) {
@@ -130,34 +127,34 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 		return &user.getTransform();
 
 	case BU_VIEW:
-		return &r.currentState.view;
+		return &currentState.view;
 
 	case BU_PROJECTION:
-		return &r.currentState.projection;
+		return &currentState.projection;
 
 	case BU_WORLDVIEW:
-		return &r.currentState.worldView;
+		return &currentState.worldView;
 
 	case BU_WORLDVIEWPROJ:
-		return &r.currentState.worldViewProjection;
+		return &currentState.worldViewProjection;
 
 	case BU_OBJECT_COLOR:
 		return &user.color;
 
 	case BU_VIEW_DIRECTION:
-		return &r.currentState.viewDirection;
+		return &currentState.viewDirection;
 
 	case BU_TIME:
 		DEBUG_TODO;
 		return nullptr;
 
 	case BU_TARGET_DIMENSION:
-		return &r.currentState.targetDimension;
+		return &currentState.targetDimension;
 
 	case BU_TARGET_PIXEL:
 		tmpVec = {
-			1.f / r.currentState.targetDimension.x,
-			1.f / r.currentState.targetDimension.y
+			1.f / currentState.targetDimension.x,
+			1.f / currentState.targetDimension.y
 		};
 		return &tmpVec;
 	default: { //texture stuff
@@ -166,14 +163,10 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 			return &tempInt;
 		}
 		else if (builtin >= BU_TEXTURE_0_DIMENSION && builtin <= BU_TEXTURE_N_DIMENSION) {
-			Texture* t = user.getTexture(builtin - BU_TEXTURE_0_DIMENSION);
-			tempInt[0] = t->getWidth();
-			tempInt[1] = t->getHeight();
+			auto& t = user.getTexture(builtin - BU_TEXTURE_0_DIMENSION).unwrap();
+			tempInt[0] = t.getWidth();
+			tempInt[1] = t.getHeight();
 			return &tempInt;
-		}
-		else if (builtin >= BU_TEXTURE_0_TRANSFORM && builtin <= BU_TEXTURE_N_TRANSFORM) {
-			tmpMat = user.getTextureUnit(builtin - BU_TEXTURE_0_TRANSFORM).getTransform();
-			return &tmpMat;
 		}
 		else {
 			FAIL("Shader built-in not recognized");
@@ -182,14 +175,18 @@ const void* Shader::_getUniformData(const Uniform& uniform, const Renderable& us
 	}
 }
 
-void Shader::use(const Renderable& user) {
-	DEBUG_ASSERT( isLoaded(), "tried to use a Shader that wasn't loaded" );
+void Shader::bind() const {
+	DEBUG_ASSERT(isLoaded(), "tried to use a Shader that wasn't loaded");
 
 	glUseProgram(mGLProgram);
+}
+
+void Shader::loadUniforms(const GlobalUniformData& currentState, const RenderState& user) {
+	DEBUG_ASSERT(isLoaded(), "tried to use a Shader that wasn't loaded");
 
 	//bind the uniforms and the attributes
 	for (auto&& uniform : mUniforms) {
-		const void* ptr = _getUniformData(uniform, user);
+		const void* ptr = _getUniformData(currentState, uniform, user);
 
 		if (ptr == nullptr) { //no data provided, skip
 			break;

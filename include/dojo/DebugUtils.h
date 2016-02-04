@@ -49,7 +49,7 @@
 	#define DEBUG_ASSERT( T, MSG ) {}
 	#define DEBUG_ASSERT_N( T ) {}
 	#define DEBUG_TODO {}
-	#define FAIL UNREACHABLE_BRANCH
+	#define FAIL(MSG) UNREACHABLE_BRANCH
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}
 	#define CHECK_GL_ERROR {}

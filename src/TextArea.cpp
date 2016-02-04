@@ -139,7 +139,7 @@ Renderable& TextArea::_enableLayer(Texture& tex) {
 	auto& layer = **freeLayers.begin();
 
 	layer.setVisible(true);
-	layer.setTexture(&tex);
+	layer.setTexture(tex);
 
 	layer.getMesh().unwrap().begin(getLenght() * 2);
 
@@ -346,7 +346,7 @@ void TextArea::_pushLayer() {
 Renderable& TextArea::_getLayer(Texture& tex) {
 	//find this layer in the already assigned, or get new
 	for (size_t i = 0; i < busyLayers.size(); ++i) {
-		if (busyLayers[i]->getTexture() == &tex) {
+		if (busyLayers[i]->getTexture() == tex) {
 			return *busyLayers[i];
 		}
 	}

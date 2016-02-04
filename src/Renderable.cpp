@@ -19,9 +19,9 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer) :
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& shader) :
 	Renderable(parent, layer) {
 	mesh = m;
-	pShader = shader;
+	mShader = shader;
 
-	DEBUG_ASSERT(mesh.unwrap().supportsShader(pShader.unwrap()), "cannot use this mesh with this shader");
+	DEBUG_ASSERT(mesh.unwrap().supportsShader(mShader.unwrap()), "cannot use this mesh with this shader");
 }
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, const utf::string& meshName, const utf::string& shaderName) :
@@ -31,7 +31,7 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer, const utf::string&
 		parent.getGameState().getMesh(meshName).unwrap(), 
 		parent.getGameState().getShader(shaderName).unwrap()) {
 
-	DEBUG_ASSERT(mesh.unwrap().supportsShader(pShader.unwrap()), "cannot use this mesh with this shader");
+	DEBUG_ASSERT(mesh.unwrap().supportsShader(mShader.unwrap()), "cannot use this mesh with this shader");
 }
 
 Renderable::~Renderable() {

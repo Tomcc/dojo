@@ -308,9 +308,7 @@ static const vertexFieldInfoMap[] = {
 	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
 };
 
-void Mesh::_bindAttribArrays(const Shader& shader) {
-	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
-	
+void Mesh::bindVertexFormat(const Shader& shader) {
 	for (auto&& attribute : shader.getAttributes()) {
 		DEBUG_ASSERT(isVertexFieldEnabled(attribute.builtInAttribute), "This mesh doesn't provide a required attribute");
 
@@ -326,8 +324,6 @@ void Mesh::_bindAttribArrays(const Shader& shader) {
 			vertexSize,
 			offset);
 	}
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 
 	CHECK_GL_ERROR;
 }
@@ -377,7 +373,7 @@ bool Mesh::end() {
 
 	CHECK_GL_ERROR;
 
-	_bindAttribArrays();
+	bindVertexFormat();
 
 	glBindVertexArray( 0 );
 #endif
@@ -397,14 +393,11 @@ bool Mesh::end() {
 	return loaded;
 }
 
-void Mesh::bind(const Shader& shader) {
-#ifndef DOJO_DISABLE_VAOS
+void Dojo::Mesh::bind()
+{
 
-	DEBUG_ASSERT( vertexArrayDesc );
-	glBindVertexArray( vertexArrayDesc );
-#else
-	_bindAttribArrays(shader); //bind attribs each frame! (costly)
-#endif
+	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 
 	CHECK_GL_ERROR;
 }

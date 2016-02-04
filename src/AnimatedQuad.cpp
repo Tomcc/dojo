@@ -60,7 +60,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 			a.get().setup(emptyFrameset, 0);
 		}
 
-		setTexture(nullptr);
+		setTexture({});
 	}
 
 	if (immediateAnim.not_empty()) {
@@ -113,7 +113,7 @@ void AnimatedQuad::setAnimationSpeedMultiplier(float m) {
 }
 
 void AnimatedQuad::_setTexture(Texture& t) {
-	setTexture(&t, 0);
+	setTexture(t, 0);
 
 	setMesh(t.getOptimalBillboard());
 
@@ -135,9 +135,9 @@ void AnimatedQuad::update(float dt) {
 
 void AnimatedQuad::_updateScreenSize() {
 	if (pixelPerfect) {
-		DEBUG_ASSERT( getTexture(), "Pixel perfect AnimatedQuads need a texture to be set" );
+		DEBUG_ASSERT( getTexture().is_some(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		self.getGameState().getViewport().unwrap().makeScreenSize(screenSize, getTexture());
+		self.getGameState().getViewport().unwrap().makeScreenSize(screenSize, getTexture().unwrap());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}

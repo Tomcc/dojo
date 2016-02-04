@@ -20,59 +20,11 @@ namespace Dojo {
 	class Texture;
 	class Mesh;
 	class Shader;
+	class GlobalUniformData;
 
 	///A render state is responsibile of managing the state of the underlying OGL render minimising the changes to be done when it is activated
 	class RenderState {
 	public:
-		class TextureUnit {
-		public:
-
-			Texture* texture;
-
-			TextureUnit();
-			explicit TextureUnit(Texture* t);
-
-			~TextureUnit();
-
-			void setOffset(const Vector& v) {
-				offset = v;
-				hasTextureTransform = true;
-			}
-
-			void setScale(const Vector& v) {
-				scale = v;
-				hasTextureTransform = true;
-			}
-
-			void setRotation(const Radians r) {
-				rotation = r;
-				hasTextureTransform = true;
-			}
-
-			const Vector& getOffset() {
-				return offset;
-			}
-
-			const Vector& getScale() {
-				return scale;
-			}
-
-			Radians getRotation() const {
-				return rotation;
-			}
-
-			Matrix getTransform() const;
-
-			bool isTransformRequired() const {
-				return hasTextureTransform;
-			}
-
-		protected:
-
-			Vector offset, scale;
-			Radians rotation;
-			bool hasTextureTransform = false;
-		};
 
 		enum class CullMode {
 			Front,
@@ -98,7 +50,7 @@ namespace Dojo {
 		/**
 		It can be nullptr, which means that the slot is disabled.
 		*/
-		void setTexture(Texture* tex, int ID = 0);
+		void setTexture(optional_ref<Texture> tex, int ID = 0);
 
 		///enables or disables blending of this RS
 		void setBlendingEnabled(bool enabled) {
@@ -117,9 +69,7 @@ namespace Dojo {
 		///sets the Shader material to be used for this RenderState
 		void setShader(Shader& shader);
 
-		Texture* getTexture(int ID = 0) const;
-
-		const TextureUnit& getTextureUnit(int ID) const;
+		optional_ref<Texture> getTexture(int ID = 0) const;
 
 		///returns the Mesh currently used by this state
 		optional_ref<Mesh> getMesh() const {
@@ -127,8 +77,8 @@ namespace Dojo {
 		}
 
 		///returns the Shader currently bound to this state
-		optional_ref<Shader> getShader() {
-			return pShader;
+		optional_ref<Shader> getShader() const {
+			return mShader;
 		}
 
 		const Matrix& getTransform() const {
@@ -138,18 +88,18 @@ namespace Dojo {
 		///returns the "weight" of the changes needed to pass from "this" to "s"
 		int getDistance(RenderState* s);
 
-		void applyState();
+		void apply(const GlobalUniformData& currentState) const;
 
-		void commitChanges();
+		void applyStateDiff(const GlobalUniformData& currentState, optional_ref<const RenderState> lastState) const;
 
 	protected:
 
 		bool blendingEnabled;
 
-		TextureUnit textures[ DOJO_MAX_TEXTURES ];
-
 		optional_ref<Mesh> mesh;
-		optional_ref<Shader> pShader;
+		optional_ref<Shader> mShader;
+		optional_ref<Texture> textures[DOJO_MAX_TEXTURES];
+		int maxTextureSlot = 0;
 
 		Matrix mTransform;
 

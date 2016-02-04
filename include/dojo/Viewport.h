@@ -176,7 +176,7 @@ namespace Dojo {
 		}
 
 		///converts the texture pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, Texture* tex) const;
+		void makeScreenSize(Vector& dest, const Texture& tex) const;
 
 		float getPixelSide() const {
 			return size.x / mTargetSize.x;

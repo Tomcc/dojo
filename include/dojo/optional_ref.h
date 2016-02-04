@@ -51,6 +51,14 @@ public:
 		return ptr == nullptr;
 	}
 
+	bool operator==(const T& ref) const {
+		return ptr == &ref;
+	}
+
+	bool operator != (const optional_ref<T>& ref) const {
+		return ptr != ref.ptr;
+	}
+
 protected:
 	T* ptr;
 };

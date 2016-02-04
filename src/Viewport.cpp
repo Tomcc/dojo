@@ -210,8 +210,8 @@ Vector Viewport::getRayDirection(const Vector& screenSpacePos) {
 	return (a - getWorldPosition()).normalized();
 }
 
-void Viewport::makeScreenSize(Vector& dest, Texture* tex) const {
-	makeScreenSize(dest, tex->getWidth(), tex->getHeight());
+void Viewport::makeScreenSize(Vector& dest, const Texture& tex) const {
+	makeScreenSize(dest, tex.getWidth(), tex.getHeight());
 }
 
 void Viewport::setVisibleLayers(const LayerList& layers) {

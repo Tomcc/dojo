@@ -73,11 +73,11 @@ namespace Dojo {
 		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void disableTiling();
 
-		int getWidth() {
+		int getWidth() const {
 			return width;
 		}
 
-		int getHeight() {
+		int getHeight() const {
 			return height;
 		}
 
