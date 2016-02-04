@@ -407,14 +407,19 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		PFD_DOUBLEBUFFER;
 	pixelFormatDescriptor.dwLayerMask = PFD_MAIN_PLANE;
 	pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
-	pixelFormatDescriptor.cAlphaBits = 8;
-	pixelFormatDescriptor.cColorBits = 32;
+	pixelFormatDescriptor.cColorBits = 16;
 	pixelFormatDescriptor.cDepthBits = 16;
 	pixelFormatDescriptor.cStencilBits = 8;
 
 
 	int chosenPixelFormat;
-	ChooseAntiAliasingPixelFormat(chosenPixelFormat, config.getInt("MSAA"));
+	int MSAALevel = config.getInt("MSAA");
+	if (MSAALevel > 0) {
+		ChooseAntiAliasingPixelFormat(chosenPixelFormat, config.getInt("MSAA"));
+	}
+	else {
+		chosenPixelFormat = ChoosePixelFormat(hdc, &pixelFormatDescriptor);
+	}
 
 	if (chosenPixelFormat == 0) {
 		return false;
