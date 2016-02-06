@@ -60,7 +60,7 @@ namespace Dojo {
 		}
 
 		const AABB& getGraphicsAABB() const {
-			return worldBB;
+			return mWorldBB;
 		}
 
 		///true if this object has been assigned to a Render::Layer
@@ -97,6 +97,6 @@ namespace Dojo {
 		Color fadeStartColor;
 		Color fadeEndColor;
 
-		AABB worldBB;
+		AABB mWorldBB;
 	};
 }

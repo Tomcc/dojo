@@ -21,8 +21,10 @@ static const RenderState::GLBlend modeToGLTable[] = {
 };
 
 RenderState::RenderState() :
-	cullMode(CullMode::Back) {
-	memset(textures, 0, sizeof(textures)); //zero all the textures
+	cullMode(CullMode::Back),
+	mTransform(0) //make sure it's invalid at first
+{
+
 }
 
 RenderState::~RenderState() {
@@ -31,7 +33,7 @@ RenderState::~RenderState() {
 
 void RenderState::_updateTransparency() {
 	mTransparency = false;
-	for(auto i : range(maxTextureSlot)) {
+	for(auto i : range(maxTextureSlots)) {
 		if(auto t = textures[i].cast()) {
 			mTransparency |= t.get().hasTransparency();
 		}
@@ -47,18 +49,18 @@ void RenderState::setMesh(Mesh& m) {
 	_updateTransparency();
 }
 
-void RenderState::setTexture(optional_ref<Texture> tex, int ID /*= 0*/) {
-	DEBUG_ASSERT(ID >= 0, "Passed a negative texture ID to setTexture()");
-	DEBUG_ASSERT(ID < DOJO_MAX_TEXTURES, "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
+void RenderState::setTexture(optional_ref<Texture> tex, byte ID /*= 0*/) {
+	DEBUG_ASSERT(ID < textures.size(), "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
 	textures[ID] = tex;
 
 	//find the new highest slot in use
-	for (maxTextureSlot = DOJO_MAX_TEXTURES; maxTextureSlot >= 0; --maxTextureSlot) {
-		if(textures[maxTextureSlot].is_some()) {
+	for (maxTextureSlots = byte(textures.size()-1); maxTextureSlots >= 0; --maxTextureSlots) {
+		if(textures[maxTextureSlots].is_some()) {
 			break;
 		}
 	}
+	++maxTextureSlots;
 
 	_updateTransparency();
 }
@@ -103,7 +105,7 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 
 	mShader.unwrap().loadUniforms(currentState, self);
 
-	for (auto i : range(maxTextureSlot)) {
+	for (auto i : range(maxTextureSlots)) {
 		//select current slot and load it, others can remain bound to old stuff with shaders
 		if (auto t = textures[i].cast()) {
 			if (!prev || textures[i] != prev->textures[i]) {
@@ -121,14 +123,13 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 			glDisable(GL_BLEND);
 		}
 	}
-	if( isBlendingEnabled()) {
-		if (!prev || prev->blending.src != blending.src || prev->blending.dest != blending.dest) {
-			glBlendFunc(blending.src, blending.dest);
-		}
 
-		if (!prev || prev->blending.func != blending.func) {
-			glBlendEquation(blending.func);
-		}
+	if (!prev || prev->blending.src != blending.src || prev->blending.dest != blending.dest) {
+		glBlendFunc(blending.src, blending.dest);
+	}
+
+	if (!prev || prev->blending.func != blending.func) {
+		glBlendEquation(blending.func);
 	}
 
 	if (!prev || prev->cullMode != cullMode) {

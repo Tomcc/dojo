@@ -360,7 +360,7 @@ void TextArea::update(float dt) {
 
 	//WARNING remember to keep this in sync with Renderable::update!
 
-	worldBB = object.transformAABB(mLayersBound);
+	mWorldBB = object.transformAABB(mLayersBound);
 
 	advanceFade(dt);
 }

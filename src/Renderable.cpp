@@ -74,7 +74,7 @@ void Renderable::update(float dt) {
 			AABB bounds = m.get().getBounds();
 			bounds.max = Vector::mul(bounds.max, scale);
 			bounds.min = Vector::mul(bounds.min, scale);
-			worldBB = object.transformAABB(bounds);
+			mWorldBB = object.transformAABB(bounds);
 			mTransform = trans;
 		}
 	}
