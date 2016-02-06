@@ -130,8 +130,8 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	mRenderRotation = glm::mat4_cast(Quaternion(Vector(0, 0, renderRotation)));
 }
 
-void Dojo::Renderer::_renderElement(const RenderState& elem) {
-	auto& m = elem.getMesh().unwrap();
+void Renderer::_renderElement(const RenderState& renderState) {
+	auto& m = renderState.getMesh().unwrap();
 
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
 	DEBUG_ASSERT(m.isLoaded(), "Rendering with a mesh with no GPU data!");
@@ -145,10 +145,10 @@ void Dojo::Renderer::_renderElement(const RenderState& elem) {
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	globalUniforms.worldView = globalUniforms.view * elem.getTransform();
+	globalUniforms.worldView = globalUniforms.view * renderState.getTransform();
 	globalUniforms.worldViewProjection = globalUniforms.projection * globalUniforms.worldView;
 	
-	elem.applyStateDiff(globalUniforms, lastRenderState);
+	renderState.apply(globalUniforms, lastRenderState);
 
 	static const GLenum glModeMap[] = {
 		GL_TRIANGLE_STRIP, //TriangleStrip,
@@ -168,7 +168,7 @@ void Dojo::Renderer::_renderElement(const RenderState& elem) {
 		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
 	}
 
-	lastRenderState = elem;
+	lastRenderState = renderState;
 
 #ifndef DOJO_DISABLE_VAOS
 	glBindVertexArray( 0 );

@@ -78,6 +78,7 @@ void Mesh::begin(IndexType extimatedVerts /*= 1 */) {
 
 	bounds.max = Vector::Min;
 	bounds.min = Vector::Max;
+	vertexTransparency = false;
 
 	editing = true;
 }
@@ -266,9 +267,9 @@ void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
 }
 
 void Mesh::color(const Color& c) {
-
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
+	vertexTransparency |= c.a < 1.f;
 	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
 }
 
@@ -393,9 +394,7 @@ bool Mesh::end() {
 	return loaded;
 }
 
-void Dojo::Mesh::bind()
-{
-
+void Mesh::bind() {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 

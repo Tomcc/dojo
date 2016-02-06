@@ -14,7 +14,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	parentAtlas(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
@@ -29,7 +28,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	parentAtlas(nullptr),
 	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
@@ -239,6 +237,16 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 
 	auto& format = GLFormat[(int)sourceFormat];
 
+	if(destFormat == PixelFormat::R8G8B8A8) {
+		auto end = imageData + (width * height * 4) + 3;
+		for (auto alpha = imageData; alpha < end; alpha += 4) {
+			if ( *alpha < 250 ) {
+				mTransparency = true;
+				break;
+			}
+		}
+	}
+
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData);
 
 	loaded = (glGetError() == GL_NO_ERROR);
@@ -302,19 +310,19 @@ bool Texture::loadFromFile(const utf::string& path) {
 }
 
 bool Texture::_setupAtlas() {
-	DEBUG_ASSERT( parentAtlas, "Tried to load a Texture as an atlas tile but the parent atlas is null" );
+	auto& atlas = parentAtlas.unwrap();
 
-	if (!parentAtlas->isLoaded()) {
+	if (!atlas.isLoaded()) {
 		return (loaded = false);
 	}
 
-	internalWidth = parentAtlas->getInternalWidth();
-	internalHeight = parentAtlas->getInternalHeight();
+	internalWidth = atlas.getInternalWidth();
+	internalHeight = atlas.getInternalHeight();
 
 	DEBUG_ASSERT( width > 0 && height > 0 && internalWidth > 0 && internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)" );
 
 	//copy bind handle
-	glhandle = parentAtlas->glhandle;
+	glhandle = atlas.glhandle;
 
 	//find uv coordinates
 	UVOffset.x = (float)mAtlasOriginX / (float)internalWidth;
@@ -330,7 +338,8 @@ bool Texture::_setupAtlas() {
 bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
 	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
 
-	parentAtlas = &tex;
+	parentAtlas = tex;
+	mTransparency = tex.mTransparency;
 
 	width = sx;
 	height = sy;
@@ -352,7 +361,7 @@ bool Texture::onLoad() {
 	if (isReloadable()) {
 		return loadFromFile(filePath);
 	}
-	else if (parentAtlas) {
+	else if (parentAtlas.is_some()) {
 		return _setupAtlas();
 	}
 	else {
@@ -368,13 +377,15 @@ void Texture::onUnload(bool soft) {
 			OBB->onUnload();
 		}
 
-		if (!parentAtlas) { //don't unload parent texture!
+		if (parentAtlas.is_none()) { //don't unload parent texture!
 			DEBUG_ASSERT( glhandle, "Tried to unload a texture but the texture handle was invalid" );
 			glDeleteTextures(1, &glhandle);
 
 			internalWidth = internalHeight = 0;
 			internalFormat = GL_NONE;
 			glhandle = 0;
+			parentAtlas = {};
+			mTransparency = false;
 
 			if (mFBO) { //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
 				glDeleteFramebuffers(1, &mFBO);

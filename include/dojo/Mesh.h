@@ -80,16 +80,20 @@ namespace Dojo {
 			return bounds;
 		}
 
-		const Vector& getDimensions() {
+		const Vector& getDimensions() const {
 			return dimensions;
 		}
 
-		const Vector& getCenter() {
+		const Vector& getCenter() const {
 			return center;
 		}
 
+		bool hasVertexTransparency() const {
+			return vertexTransparency;
+		}
+
 		///tells if begin() has been called not followed by an end()
-		bool isEditing() {
+		bool isEditing() const {
 			return editing;
 		}
 
@@ -233,6 +237,7 @@ namespace Dojo {
 
 		bool dynamic = false;
 		bool editing = false;
+		bool vertexTransparency = false;
 
 		void _prepareVertex(const Vector& v);
 

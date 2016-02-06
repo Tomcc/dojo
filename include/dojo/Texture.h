@@ -100,7 +100,7 @@ namespace Dojo {
 		}
 
 		///Returns a parent atlas Texture if this texture is a "fake" tile atlas
-		Texture* getParentAtlas() {
+		optional_ref<Texture> getParentAtlas() {
 			return parentAtlas;
 		}
 
@@ -123,13 +123,17 @@ namespace Dojo {
 			return *OBB;
 		}
 
-		bool isNonPowerOfTwo() {
+		bool isNonPowerOfTwo() const {
 			return npot;
+		}
+
+		bool hasTransparency() const {
+			return mTransparency;
 		}
 
 		///true if it belongs to an atlas
 		bool isAtlasTile() {
-			return parentAtlas != nullptr;
+			return parentAtlas.is_some();
 		}
 
 		void _notifyScreenSize(const Vector& ss) {
@@ -145,12 +149,12 @@ namespace Dojo {
 
 	protected:
 
-		bool npot, mMipmapsEnabled;
+		bool npot, mMipmapsEnabled, mTransparency = false;
 		uint32_t width, height, internalWidth, internalHeight;
 		GLenum internalFormat;
 		Vector UVSize, UVOffset;
 
-		Texture* parentAtlas;
+		optional_ref<Texture> parentAtlas;
 		optional_ref<FrameSet> ownerFrameSet;
 		int mAtlasOriginX, mAtlasOriginY;
 
