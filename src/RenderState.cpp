@@ -85,117 +85,69 @@ int RenderState::getDistanceTo(const RenderState& s) const {
 	return dist;
 }
 
-void RenderState::apply(const GlobalUniformData& currentState) const {
-	auto& shader = getShader().unwrap();
-	shader.bind();
-	shader.loadUniforms(currentState, self);
+void RenderState::applyStateDiff(const GlobalUniformData& currentState, optional_ref<const RenderState> lastState) const {
+	auto prev = lastState.to_raw_ptr();
+	prev = nullptr;
 
-	mesh.unwrap().bind();
+	bool rebindFormat = false;
+	if( !prev || prev->mesh != mesh ) {
+		//when the mesh changes, the uniforms have to be rebound too
+		rebindFormat = true;
+		mesh.unwrap().bind();
+	}
 
-	for (auto i : range(DOJO_MAX_TEXTURES)) {
+	if(!prev || prev->mShader != mShader) {
+		rebindFormat = true;
+		mShader.unwrap().bind();
+	}
+
+	if(rebindFormat) {
+		mesh.unwrap().bindVertexFormat(mShader.unwrap());
+	}
+
+	mShader.unwrap().loadUniforms(currentState, self);
+
+	for (auto i : range(maxTextureSlot)) {
+		//select current slot and load it, others can remain bound to old stuff with shaders
 		if (auto t = textures[i].cast()) {
-			t.get().bind(i);
+			if (!prev || textures[i] != prev->textures[i]) {
+				t.get().bind(i);
+			}
+		}
+	}
+
+	if (!prev || prev->blendingEnabled != blendingEnabled) {
+		if (blendingEnabled) {
+			glEnable(GL_BLEND);
 		}
 		else {
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_BLEND);
 		}
 	}
 
-	if (blendingEnabled) {
-		glEnable(GL_BLEND);
-	}
-	else {
-		glDisable(GL_BLEND);
+	if (!prev || prev->srcBlend != srcBlend || prev->destBlend != destBlend) {
+		glBlendFunc(srcBlend, destBlend);
 	}
 
-	glBlendFunc(srcBlend, destBlend);
-	glBlendEquation(blendFunction);
-
-	switch (cullMode) {
-	case CullMode::None:
-		glDisable(GL_CULL_FACE);
-		break;
-
-	case CullMode::Back:
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		break;
-
-	case CullMode::Front:
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-		break;
+	if(!prev || prev->blendFunction != blendFunction) {
+		glBlendEquation(blendFunction);
 	}
-}
 
-void RenderState::applyStateDiff(const GlobalUniformData& currentState, optional_ref<const RenderState> lastState) const {
-	if (auto lastRef = lastState.cast()) {
-		auto& prev = lastRef.get();
+	if (!prev || prev->cullMode != cullMode) {
+		switch (cullMode) {
+		case CullMode::None:
+			glDisable(GL_CULL_FACE);
+			break;
 
-		bool rebindFormat = false;
-		if( prev.mesh != mesh ) {
-			//when the mesh changes, the uniforms have to be rebound too
-			rebindFormat = true;
-			mesh.unwrap().bind();
+		case CullMode::Back:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			break;
+
+		case CullMode::Front:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+			break;
 		}
-
-		if( prev.mShader != mShader) {
-			rebindFormat = true;
-			mShader.unwrap().bind();
-		}
-
-		if(rebindFormat) {
-			mesh.unwrap().bindVertexFormat(mShader.unwrap());
-		}
-
-		mShader.unwrap().loadUniforms(currentState, self);
-
-		for (auto i : range(maxTextureSlot)) {
-			//select current slot and load it, others can remain bound to old stuff with shaders
-			if (auto t = textures[i].cast()) {
-				if (textures[i] != prev.textures[i]) {
-					t.get().bind(i);
-				}
-			}
-		}
-
-		if (prev.blendingEnabled != blendingEnabled) {
-			if (blendingEnabled) {
-				glEnable(GL_BLEND);
-			}
-			else {
-				glDisable(GL_BLEND);
-			}
-		}
-
-		if (prev.srcBlend != srcBlend || prev.destBlend != destBlend) {
-			glBlendFunc(srcBlend, destBlend);
-		}
-
-		if( prev.blendFunction != blendFunction) {
-			glBlendEquation(blendFunction);
-		}
-
-		if (prev.cullMode != cullMode) {
-			switch (cullMode) {
-			case CullMode::None:
-				glDisable(GL_CULL_FACE);
-				break;
-
-			case CullMode::Back:
-				glEnable(GL_CULL_FACE);
-				glCullFace(GL_BACK);
-				break;
-
-			case CullMode::Front:
-				glEnable(GL_CULL_FACE);
-				glCullFace(GL_FRONT);
-				break;
-			}
-		}
-	}
-	else {
-		apply(currentState);
 	}
 }

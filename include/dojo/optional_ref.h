@@ -43,6 +43,10 @@ public:
 		}
 	}
 
+	T* to_raw_ptr() const {
+		return ptr;
+	}
+
 	bool is_some() const {
 		return ptr != nullptr;
 	}
