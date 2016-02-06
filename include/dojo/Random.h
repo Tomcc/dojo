@@ -48,8 +48,11 @@ namespace Dojo {
 	public:
 		static Random instance;
 
+		//create a "small" 64 bit seed from the OS random number source
+		static RandomSeed makeRandomSeed();
+
 		//creates a mersenne twister seed from the OS random number source
-		static BigSeed makeRandomSeed();
+		static BigSeed makeBigRandomSeed();
 
 		///class Random initialized with std::random_device
 		Random();

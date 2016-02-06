@@ -9,7 +9,7 @@ using namespace Dojo;
 
 Random Random::instance;
 
-Random::BigSeed Random::makeRandomSeed() {
+Random::BigSeed Random::makeBigRandomSeed() {
 	BigSeed bigSeed;
 	std::random_device random;
 	for (auto& bits : bigSeed) {
@@ -18,8 +18,14 @@ Random::BigSeed Random::makeRandomSeed() {
 	return bigSeed;
 }
 
+RandomSeed Random::makeRandomSeed() {
+	std::random_device random;
+	RandomSeed seed = random();
+	return (seed << 32) | random();
+}
+
 Random::Random() {
-	seed(makeRandomSeed());
+	seed(makeBigRandomSeed());
 }
 
 Random::Random(RandomSeed oneSeed) {
@@ -105,7 +111,7 @@ void Random::reload() {
 }
 
 void Random::seed(RandomSeed s) {
-	// RandomSeed the generator with a simple uint32_t
+	// RandomSeed the generator with a small seed
 	initialize(s);
 	reload();
 }
