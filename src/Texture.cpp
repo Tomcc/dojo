@@ -241,8 +241,8 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 
 	mTransparency = false;
 	if(destFormat == PixelFormat::R8G8B8A8) {
-		auto end = imageData + (width * height * 4) + 3;
-		for (auto alpha = imageData; alpha < end; alpha += 4) {
+		auto end = imageData + (width * height * 4);
+		for (auto alpha = imageData + 3; alpha < end; alpha += 4) {
 			if ( *alpha < 250 ) {
 				mTransparency = true;
 				break;
