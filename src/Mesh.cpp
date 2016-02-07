@@ -25,12 +25,12 @@ const uint32_t glFeatureStateMap[] = {
 };
 
 const byte VERTEX_FIELD_SIZES[] = {
-	2 * sizeof( GLfloat), //position 2D
-	3 * sizeof( GLfloat), //position 3D
-	4 * sizeof( GLubyte), //color
-	4 * sizeof( GLubyte), //normal
-	2 * sizeof( GLfloat), //uv0
-	2 * sizeof( GLfloat)
+	2 * sizeof(GLfloat), //position 2D
+	3 * sizeof(GLfloat), //position 3D
+	4 * sizeof(GLubyte), //color
+	4 * sizeof(GLubyte), //normal
+	2 * sizeof(GLshort), //uv0
+	2 * sizeof(GLshort)
 };
 
 Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
@@ -249,9 +249,9 @@ int Mesh::getPrimitiveCount() const {
 void Mesh::uv(float u, float v, byte set /*= 0 */) {
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
-	float* ptr = (float*)(currentVertex + _offset(VertexField::UV0, set));
-	ptr[0] = u;
-	ptr[1] = v;
+	auto ptr = (GLshort*)(currentVertex + _offset(VertexField::UV0, set));
+	ptr[0] = packNormalized<GLshort>(u);
+	ptr[1] = packNormalized<GLshort>(v);
 }
 
 void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
