@@ -471,16 +471,16 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 
-		m->vertex(-0.5, -0.5);
+		m->vertex({-0.5, -0.5});
 		m->uv(0, 1);
 
-		m->vertex(0.5, -0.5);
+		m->vertex({0.5, -0.5});
 		m->uv(1, 1);
 
-		m->vertex(-0.5, 0.5);
+		m->vertex({-0.5, 0.5});
 		m->uv(0, 0);
 
-		m->vertex(0.5, 0.5);
+		m->vertex({0.5, 0.5});
 		m->uv(1, 0);
 
 		m->end();
@@ -496,16 +496,16 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 
-		m->vertex(-0.5, 0, -0.5);
+		m->vertex({-0.5, 0, -0.5});
 		m->uv(0, 0);
 
-		m->vertex(-0.5, 0, 0.5);
+		m->vertex({-0.5, 0, 0.5});
 		m->uv(0, 1);
 
-		m->vertex(0.5, 0, -0.5);
+		m->vertex({0.5, 0, -0.5});
 		m->uv(1, 0);
 
-		m->vertex(0.5, 0, 0.5);
+		m->vertex({0.5, 0, 0.5});
 		m->uv(1, 1);
 
 		m->end();
@@ -524,92 +524,92 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(24);
 
-		m->vertex(l, l, l);
-		m->normal(0, 0, 1);
+		m->vertex({l, l, l});
+		m->normal(Vector::UnitZ);
 		m->uv(1, 1);
-		m->vertex(l, -l, l);
-		m->normal(0, 0, 1);
+		m->vertex({l, -l, l});
+		m->normal(Vector::UnitZ);
 		m->uv(0, 1);
-		m->vertex(-l, l, l);
-		m->normal(0, 0, 1);
+		m->vertex({-l, l, l});
+		m->normal(Vector::UnitZ);
 		m->uv(1, 0);
-		m->vertex(-l, -l, l);
-		m->normal(0, 0, 1);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::UnitZ);
 		m->uv(0, 0);
 
 		m->quad(0, 1, 2, 3);
 
-		m->vertex(l, l, -l);
-		m->normal(0, 0, -1);
+		m->vertex({l, l, -l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(1, 1);
-		m->vertex(-l, l, -l);
-		m->normal(0, 0, -1);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(0, 1);
-		m->vertex(l, -l, -l);
-		m->normal(0, 0, -1);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(1, 0);
-		m->vertex(-l, -l, -l);
-		m->normal(0, 0, -1);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(0, 0);
 
 		m->quad(4, 5, 6, 7);
 
-		m->vertex(l, l, l);
-		m->normal(1, 0, 0);
+		m->vertex({l, l, l});
+		m->normal(Vector::UnitX);
 		m->uv(1, 1);
-		m->vertex(l, l, -l);
-		m->normal(1, 0, 0);
+		m->vertex({l, l, -l});
+		m->normal(Vector::UnitX);
 		m->uv(0, 1);
-		m->vertex(l, -l, l);
-		m->normal(1, 0, 0);
+		m->vertex({l, -l, l});
+		m->normal(Vector::UnitX);
 		m->uv(1, 0);
-		m->vertex(l, -l, -l);
-		m->normal(1, 0, 0);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::UnitX);
 		m->uv(0, 0);
 
 		m->quad(8, 9, 10, 11);
 
-		m->vertex(-l, l, l);
-		m->normal(-1, 0, 0);
+		m->vertex({-l, l, l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(1, 1);
-		m->vertex(-l, -l, l);
-		m->normal(-1, 0, 0);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(0, 1);
-		m->vertex(-l, l, -l);
-		m->normal(-1, 0, 0);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(1, 0);
-		m->vertex(-l, -l, -l);
-		m->normal(-1, 0, 0);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(0, 0);
 
 		m->quad(12, 13, 14, 15);
 
-		m->vertex(l, l, l);
-		m->normal(0, 1, 0);
+		m->vertex({l, l, l});
+		m->normal(Vector::UnitY);
 		m->uv(1, 1);
-		m->vertex(-l, l, l);
-		m->normal(0, 1, 0);
+		m->vertex({-l, l, l});
+		m->normal(Vector::UnitY);
 		m->uv(0, 1);
-		m->vertex(l, l, -l);
-		m->normal(0, 1, 0);
+		m->vertex({l, l, -l});
+		m->normal(Vector::UnitY);
 		m->uv(1, 0);
-		m->vertex(-l, l, -l);
-		m->normal(0, 1, 0);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::UnitY);
 		m->uv(0, 0);
 
 		m->quad(16, 17, 18, 19);
 
-		m->vertex(l, -l, l);
-		m->normal(0, -1, 0);
+		m->vertex({l, -l, l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(1, 1);
-		m->vertex(l, -l, -l);
-		m->normal(0, -1, 0);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(0, 1);
-		m->vertex(-l, -l, l);
-		m->normal(0, -1, 0);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(1, 0);
-		m->vertex(-l, -l, -l);
-		m->normal(0, -1, 0);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(0, 0);
 
 		m->quad(20, 21, 22, 23);
@@ -629,17 +629,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 		//-Z
-		m->vertex(l, l, -l);
-		m->normal(0, 0, 1);
+		m->vertex({l, l, -l});
+		m->normal(Vector::UnitZ);
 		m->uv(1, 0);
-		m->vertex(l, -l, -l);
-		m->normal(0, 0, 1);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::UnitZ);
 		m->uv(1, 1);
-		m->vertex(-l, l, -l);
-		m->normal(0, 0, 1);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::UnitZ);
 		m->uv(0, 0);
-		m->vertex(-l, -l, -l);
-		m->normal(0, 0, 1);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::UnitZ);
 		m->uv(0, 1);
 
 		m->quad(0, 1, 2, 3);
@@ -657,17 +657,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 		//+X
-		m->vertex(l, l, l);
-		m->normal(-1, 0, 0);
+		m->vertex({l, l, l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(1, 0);
-		m->vertex(l, -l, l);
-		m->normal(-1, 0, 0);
+		m->vertex({l, -l, l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(1, 1);
-		m->vertex(l, l, -l);
-		m->normal(-1, 0, 0);
+		m->vertex({l, l, -l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(0, 0);
-		m->vertex(l, -l, -l);
-		m->normal(-1, 0, 0);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::NegativeUnitX);
 		m->uv(0, 1);
 
 		m->quad(0, 1, 2, 3);
@@ -685,17 +685,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 		//+Z
-		m->vertex(l, l, l);
-		m->normal(0, 0, -1);
+		m->vertex({l, l, l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(0, 0);
-		m->vertex(-l, l, l);
-		m->normal(0, 0, -1);
+		m->vertex({-l, l, l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(1, 0);
-		m->vertex(l, -l, l);
-		m->normal(0, 0, -1);
+		m->vertex({l, -l, l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(0, 1);
-		m->vertex(-l, -l, l);
-		m->normal(0, 0, -1);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::NegativeUnitZ);
 		m->uv(1, 1);
 
 		m->quad(0, 1, 2, 3);
@@ -712,17 +712,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 		//-X
-		m->vertex(-l, l, l);
-		m->normal(1, 0, 0);
+		m->vertex({-l, l, l});
+		m->normal(Vector::UnitX);
 		m->uv(0, 0);
-		m->vertex(-l, l, -l);
-		m->normal(1, 0, 0);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::UnitX);
 		m->uv(1, 0);
-		m->vertex(-l, -l, l);
-		m->normal(1, 0, 0);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::UnitX);
 		m->uv(0, 1);
-		m->vertex(-l, -l, -l);
-		m->normal(1, 0, 0);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::UnitX);
 		m->uv(1, 1);
 
 		m->quad(0, 1, 2, 3);
@@ -739,17 +739,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 
-		m->vertex(l, l, l);
-		m->normal(0, -1, 0);
+		m->vertex({l, l, l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(1, 1);
-		m->vertex(l, l, -l);
-		m->normal(0, -1, 0);
+		m->vertex({l, l, -l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(0, 1);
-		m->vertex(-l, l, l);
-		m->normal(0, -1, 0);
+		m->vertex({-l, l, l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(1, 0);
-		m->vertex(-l, l, -l);
-		m->normal(0, -1, 0);
+		m->vertex({-l, l, -l});
+		m->normal(Vector::NegativeUnitY);
 		m->uv(0, 0);
 
 		m->quad(0, 1, 2, 3);
@@ -766,17 +766,17 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 
-		m->vertex(l, -l, l);
-		m->normal(0, 1, 0);
+		m->vertex({l, -l, l});
+		m->normal(Vector::UnitY);
 		m->uv(1, 0);
-		m->vertex(-l, -l, l);
-		m->normal(0, 1, 0);
+		m->vertex({-l, -l, l});
+		m->normal(Vector::UnitY);
 		m->uv(1, 1);
-		m->vertex(l, -l, -l);
-		m->normal(0, 1, 0);
+		m->vertex({l, -l, -l});
+		m->normal(Vector::UnitY);
 		m->uv(0, 0);
-		m->vertex(-l, -l, -l);
-		m->normal(0, 1, 0);
+		m->vertex({-l, -l, -l});
+		m->normal(Vector::UnitY);
 		m->uv(0, 1);
 
 		m->quad(0, 1, 2, 3);
@@ -794,10 +794,10 @@ void ResourceGroup::addPrefabMeshes() {
 
 		m->begin(4);
 
-		m->vertex(0.5, 0.5);
-		m->vertex(-0.5, 0.5);
-		m->vertex(0.5, -0.5);
-		m->vertex(-0.5, -0.5);
+		m->vertex({ 0.5, 0.5 });
+		m->vertex({ -0.5, 0.5 });
+		m->vertex({ 0.5, -0.5 });
+		m->vertex({ -0.5, -0.5 });
 
 		m->index(0);
 		m->index(1);

@@ -12,6 +12,7 @@
 #include "dojo_common_header.h"
 
 #include "Vector.h"
+#include "dojomath.h"
 
 namespace Dojo {
 	class Color {
@@ -89,10 +90,10 @@ namespace Dojo {
 			RGBAPixel p;
 			byte* ch = (byte*)&p;
 
-			ch[0] = (byte)(r * 255);
-			ch[1] = (byte)(g * 255);
-			ch[2] = (byte)(b * 255);
-			ch[3] = (byte)(a * 255);
+			ch[0] = Math::packNormalized<byte>(r);
+			ch[1] = Math::packNormalized<byte>(g);
+			ch[2] = Math::packNormalized<byte>(b);
+			ch[3] = Math::packNormalized<byte>(a);
 
 			return p;
 		}

@@ -175,5 +175,10 @@ namespace Dojo {
 			x = detX * detInv;
 			v = detV * detInv;
 		}
+
+		template<typename T>
+		static T packNormalized(float x) {
+			return (T)std::ceil(x * std::numeric_limits<T>::max());
+		}
 	};
 }

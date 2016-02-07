@@ -110,11 +110,6 @@ namespace Dojo {
 		void beginAppend();
 
 		///adds a vertex at the given position
-		IndexType vertex(float x, float y);
-
-		///adds a vertex at the given position
-		IndexType vertex(float x, float y, float z);
-
 		IndexType vertex(const Vector& v);
 
 		///sets the uv of the given UV set
@@ -124,13 +119,9 @@ namespace Dojo {
 		void uv(const Vector& uv, byte set = 0);
 
 		///sets the color of the current vertex
-		void color(float r, float g, float b, float a);
-
 		void color(const Color& c);
 
 		///adds a vertex at the given position
-		void normal(float x, float y, float z);
-
 		void normal(const Vector& n);
 
 		///appends a raw blob of vertices to the vertex array

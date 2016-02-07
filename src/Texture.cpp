@@ -411,19 +411,19 @@ void Texture::_rebuildOptimalBillboard() {
 
 	OBB->begin(4);
 
-	OBB->vertex(-0.5, -0.5);
+	OBB->vertex({-0.5, -0.5});
 	OBB->uv(UVOffset.x,
 			UVOffset.y + UVSize.y);
 
-	OBB->vertex(0.5, -0.5);
+	OBB->vertex({0.5, -0.5});
 	OBB->uv(UVOffset.x + UVSize.x,
 			UVOffset.y + UVSize.y);
 
-	OBB->vertex(-0.5, 0.5);
+	OBB->vertex({-0.5, 0.5});
 	OBB->uv(UVOffset.x,
 			UVOffset.y);
 
-	OBB->vertex(0.5, 0.5);
+	OBB->vertex({0.5, 0.5});
 	OBB->uv(UVOffset.x + UVSize.x,
 			UVOffset.y);
 

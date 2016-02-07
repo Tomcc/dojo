@@ -10,6 +10,11 @@
 
 using namespace Dojo;
 
+template<typename T>
+T packNormalized(float x) {
+	return (T)std::ceil(x * std::numeric_limits<T>::max());
+}
+
 const uint32_t glFeatureStateMap[] = {
 	GL_VERTEX_ARRAY, //VF_POSITION2D,
 	GL_VERTEX_ARRAY, //VF_POSITION3D,
@@ -23,7 +28,7 @@ const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof( GLfloat), //position 2D
 	3 * sizeof( GLfloat), //position 3D
 	4 * sizeof( GLubyte), //color
-	3 * sizeof( GLfloat), //normal
+	4 * sizeof( GLubyte), //normal
 	2 * sizeof( GLfloat), //uv0
 	2 * sizeof( GLfloat)
 };
@@ -147,15 +152,15 @@ void Mesh::index(IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		*((unsigned char*)(indices.data() + curSize)) = (unsigned char)idx;
+		*((byte*)(indices.data() + curSize)) = (byte)idx;
 		break;
 
 	case 2:
-		*((unsigned short*)(indices.data() + curSize)) = (unsigned short)idx;
+		*((uint16_t*)(indices.data() + curSize)) = (uint16_t)idx;
 		break;
 
 	case 4:
-		*((unsigned int*)(indices.data() + curSize)) = (unsigned int)idx;
+		*((uint32_t*)(indices.data() + curSize)) = (uint32_t)idx;
 		break;
 	}
 
@@ -177,17 +182,6 @@ void Mesh::_prepareVertex(const Vector& v) {
 	++vertexCount;
 }
 
-Mesh::IndexType Mesh::vertex(float x, float y) {
-	_prepareVertex(Vector(x, y));
-
-	float* ptr = (float*)currentVertex;
-
-	ptr[0] = x;
-	ptr[1] = y;
-
-	return getVertexCount() - 1;
-}
-
 Mesh::IndexType Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
@@ -202,10 +196,6 @@ Mesh::IndexType Mesh::vertex(const Vector& v) {
 	}
 
 	return getVertexCount() - 1;
-}
-
-Mesh::IndexType Mesh::vertex(float x, float y, float z) {
-	return vertex(Vector(x, y, z));
 }
 
 byte& Mesh::_offset(VertexField f) {
@@ -275,18 +265,14 @@ void Mesh::color(const Color& c) {
 	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
 }
 
-void Mesh::color(float r, float g, float b, float a) {
-	color(Color(r, g, b, a));
-}
-
 void Mesh::normal(const Vector& n) {
-	*((Vector*)(currentVertex + _offset(VertexField::Normal))) = n;
-}
-
-void Mesh::normal(float x, float y, float z) {
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
-	normal(Vector(x, y, z));
+	auto ptr = ((int8_t*)(currentVertex + _offset(VertexField::Normal)));
+	ptr[0] = packNormalized<int8_t>(n.x);
+	ptr[1] = packNormalized<int8_t>(n.y);
+	ptr[2] = packNormalized<int8_t>(n.z);
+	ptr[3] = 0;
 }
 
 struct VertexFieldInfo {
@@ -299,7 +285,7 @@ static const vertexFieldInfoMap[] = {
 	{ GL_FLOAT, 2, false },	// 	Position2D,
 	{ GL_FLOAT, 3, false },	// 	Position3D,
 	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
-	{ GL_FLOAT, 2, false },	// 	Normal, //TODO use an int? this is way too big
+	{ GL_BYTE, 4, true },	// 	Normal
 
 	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
 	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
@@ -502,15 +488,15 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		((unsigned char*)indices.data())[idxidx] = (unsigned char)idx;
+		((byte*)indices.data())[idxidx] = (byte)idx;
 		return;
 
 	case 2:
-		((unsigned short*)indices.data())[idxidx] = (unsigned short)idx;
+		((uint16_t*)indices.data())[idxidx] = (uint16_t)idx;
 		return;
 
 	default:
-		((unsigned int*)indices.data())[idxidx] = (unsigned int)idx;
+		((uint32_t*)indices.data())[idxidx] = (uint32_t)idx;
 		return;
 	}
 }
@@ -524,10 +510,10 @@ Mesh::IndexType Mesh::getIndex(int idxidx) const {
 		return indices[idxidx];
 
 	case 2:
-		return ((unsigned short*)indices.data())[idxidx];
+		return ((uint16_t*)indices.data())[idxidx];
 
 	default:
-		return ((unsigned int*)indices.data())[idxidx];
+		return ((uint32_t*)indices.data())[idxidx];
 	}
 }
 

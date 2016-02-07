@@ -249,16 +249,16 @@ void TextArea::_prepare() {
 			idx = layer.getVertexCount();
 
 			//assign vertex positions and uv coordinates
-			layer.vertex(x, y);
+			layer.vertex({x, y});
 			layer.uv(rep.uvPos.x, rep.uvPos.y + rep.uvHeight);
 
-			layer.vertex(x + rep.widthRatio, y);
+			layer.vertex({x + rep.widthRatio, y});
 			layer.uv(rep.uvPos.x + rep.uvWidth, rep.uvPos.y + rep.uvHeight);
 
-			layer.vertex(x, y + rep.heightRatio);
+			layer.vertex({x, y + rep.heightRatio});
 			layer.uv(rep.uvPos.x, rep.uvPos.y);
 
-			layer.vertex(x + rep.widthRatio, y + rep.heightRatio);
+			layer.vertex({x + rep.widthRatio, y + rep.heightRatio});
 			layer.uv(rep.uvPos.x + rep.uvWidth, rep.uvPos.y);
 
 			layer.triangle(idx, idx + 1, idx + 2);
