@@ -26,6 +26,7 @@
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_al_header.h" />
     <ClInclude Include="include\dojo\dojo_gl_header.h" />
+    <ClInclude Include="include\dojo\dojo_win_header.h" />
     <ClInclude Include="include\dojo\enum_cast.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />

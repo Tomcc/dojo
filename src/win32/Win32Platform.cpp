@@ -1,6 +1,4 @@
 #include "win32/Win32Platform.h"
-#include "win32/WGL_ARB_multisample.h"
-#include "win32/XInputController.h"
 
 #include "Renderer.h"
 #include "Game.h"
@@ -13,6 +11,9 @@
 #include "Path.h"
 #include "Keyboard.h"
 
+#include "dojo_win_header.h"
+#include "win32/WGL_ARB_multisample.h"
+#include "win32/XInputController.h"
 #include "dojo_gl_header.h"
 #include <FreeImage.h>
 
@@ -20,6 +21,11 @@
 #pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
+
+HINSTANCE hInstance; // window app instance
+HWND hWindow; // handle for the window
+HDC hdc; // handle to device context
+HGLRC hglrc; // handle to OpenGL rendering context
 
 #define WINDOWMODE_PROPERTIES (WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)
 
@@ -277,7 +283,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	frameInterval(0),
 	mFramesToAdvance(0),
 	clientAreaYOffset(0),
-	mContextRequestsQueue(make_unique<ContextRequestsQueue>()) {
+	mContextRequestsQueue(make_unique<Pipe<std::function<void()>>>()) {
 	/*
 	#ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
@@ -318,16 +324,16 @@ void Win32Platform::_adjustWindow() {
 	// Make any window in the background repaint themselves
 	InvalidateRect(nullptr, nullptr, false);
 
-	SetWindowPos(hwnd, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
+	SetWindowPos(hWindow, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
 											SWP_SHOWWINDOW);
 
-	MoveWindow(hwnd, windowLeft, windowTop, realWidth, realHeight, TRUE);
+	MoveWindow(hWindow, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
 	//get the new area and see what happened, get the offset
 	if (!isFullscreen()) {
 		RECT rcClient, rcWind;
-		GetClientRect(hwnd, &rcClient);
-		GetWindowRect(hwnd, &rcWind);
+		GetClientRect(hWindow, &rcClient);
+		GetWindowRect(hWindow, &rcWind);
 
 		clientAreaYOffset = rcWind.top - rcClient.top;
 	}
@@ -376,7 +382,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	// that adjusted RECT structure to
 	// specify the width and height of the window.
 
-	hwnd = CreateWindowW(L"DojoOpenGLWindow",
+	hWindow = CreateWindowW(L"DojoOpenGLWindow",
 			String::toUTF16(windowCaption).c_str(),
 			dwstyle, //non-resizabile
 			rect.left, rect.top,
@@ -384,7 +390,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 			nullptr, nullptr,
 			hInstance, nullptr);
 
-	if (hwnd == nullptr) {
+	if (hWindow == nullptr) {
 		return false;
 	}
 
@@ -394,11 +400,11 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		auto value = GetSystemMetrics(SM_DIGITIZER);
 
 		if (value & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH) {
-			RegisterTouchWindow(hwnd, TWF_WANTPALM | TWF_FINETOUCH);
+			RegisterTouchWindow(hWindow, TWF_WANTPALM | TWF_FINETOUCH);
 		}
 	}
 
-	hdc = GetDC(hwnd);
+	hdc = GetDC(hWindow);
 	// CREATE PFD:
 	PIXELFORMATDESCRIPTOR pixelFormatDescriptor = { 0 };
 	pixelFormatDescriptor.nSize = sizeof(pixelFormatDescriptor);
@@ -437,7 +443,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	glewInit();
 
 	// and show.
-	ShowWindow(hwnd, SW_SHOWNORMAL);
+	ShowWindow(hWindow, SW_SHOWNORMAL);
 
 	_setFullscreen(mFullscreen);
 
@@ -447,7 +453,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 void Win32Platform::_setFullscreen(bool fullscreen) {
 	//set window style
 	DWORD style = fullscreen ? (WS_POPUP | WS_VISIBLE) : WINDOWMODE_PROPERTIES;
-	SetWindowLong(hwnd, GWL_STYLE, style);
+	SetWindowLong(hWindow, GWL_STYLE, style);
 
 	if (!fullscreen) {
 		ChangeDisplaySettings(nullptr, 0);
@@ -468,7 +474,7 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 		CHECK_WIN32_ERROR( ret == DISP_CHANGE_SUCCESSFUL, "while setting fullscreen mode" );
 
 		//WARNING MoveWindow can change backbuffer size
-		MoveWindow(hwnd, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
+		MoveWindow(hWindow, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
 
 		clientAreaYOffset = 0;
 	}
@@ -510,7 +516,7 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 	TCHAR szPath[MAX_PATH];
 
 	SHGetFolderPathW(
-		hwnd,
+		hWindow,
 		CSIDL_APPDATA | CSIDL_FLAG_CREATE,
 		nullptr,
 		0,
@@ -589,20 +595,27 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 }
 
 void Win32Platform::prepareThreadContext() {
-	ContextShareRequest req;
+	auto job = make_shared<std::promise<HGLRC>>();
+	auto futureHandle = job->get_future();
 
-	mContextRequestsQueue->enqueue(&req);
+	//queue this on the main thread
+	mContextRequestsQueue->enqueue([job] {
+		auto context = wglCreateContext(hdc);
 
-	//wait for the request
-	while (!req.done) {
-		std::this_thread::yield();
-	}
+		bool success = wglShareLists(hglrc, context) != 0;
+
+		CHECK_WIN32_ERROR(success, "while creating and sharing a new context");
+
+		//signal the caller
+		job->set_value(context);
+	});
 
 	//be nice, wglMakeCurrent just wants you to ask politely and more than once
 	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
+	auto contextHandle = futureHandle.get();
 	int tries = 0;
 
-	for (; wglMakeCurrent(hdc, req.contextHandle) == FALSE && tries < 1000; ++tries) {
+	for (; wglMakeCurrent(hdc, contextHandle) == FALSE && tries < 1000; ++tries) {
 		std::this_thread::yield();
 	}
 
@@ -624,7 +637,7 @@ void Win32Platform::shutdown() {
 	mBackgroundQueue = {};
 
 	// and a cheesy fade exit
-	AnimateWindow(hwnd, 200, AW_HIDE | AW_BLEND);
+	AnimateWindow(hWindow, 200, AW_HIDE | AW_BLEND);
 }
 
 void Win32Platform::acquireContext() {
@@ -651,17 +664,9 @@ void Win32Platform::step(float dt) {
 	mStepTimer.reset();
 
 	//check if some other thread requested a new context
-	ContextShareRequest* req;
-
-	while (mContextRequestsQueue->try_dequeue(req)) {
-		req->contextHandle = wglCreateContext(hdc);
-
-		bool success = wglShareLists(hglrc, req->contextHandle) != 0;
-
-		CHECK_WIN32_ERROR( success, "while creating and sharing a new context" );
-
-		//signal the caller
-		req->done = true;
+	std::function<void()> task;
+	while (mContextRequestsQueue->try_dequeue(task)) {
+		task();
 	}
 
 	//update input
@@ -690,6 +695,7 @@ void Win32Platform::loop() {
 	Timer timer;
 	running = true;
 
+	MSG msg;
 	while (running && game->isRunning()) {
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
@@ -761,7 +767,7 @@ void Win32Platform::mouseMoved(int cx, int cy) {
 		if (mouseLocked) { //put the cursor back in the center
 			realMouseEvent = false; //setcursor will cause another mouseMoved event, avoid to trigger a loop!
 			POINT center = {width / 2, height / 2};
-			ClientToScreen(hwnd, &center);
+			ClientToScreen(hWindow, &center);
 			SetCursorPos(center.x, center.y);
 		}
 	}
@@ -967,7 +973,7 @@ const utf::string& Win32Platform::getResourcesPath() {
 }
 
 void Win32Platform::openWebPage(const utf::string& site) {
-	ShellExecuteW(hwnd, L"open", String::toUTF16(site).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+	ShellExecuteW(hWindow, L"open", String::toUTF16(site).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 //init key map

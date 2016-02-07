@@ -28,6 +28,7 @@
 #include <utility>
 #include <stdexcept>
 #include <map>
+#include <future>
 
 //TODO move as many libraries as possible as inner dependencies, stop pushing them on users
 
@@ -58,10 +59,6 @@
 		#include <crtdbg.h>
 
 	#endif
-
-	#include <windows.h>
-	#include <ShellAPI.h>
-	#include <ShlObj.h>
 
 #elif defined( PLATFORM_OSX )
 	#include <OpenAL/al.h>
@@ -110,6 +107,7 @@ using Shared = std::shared_ptr < T >;
 
 namespace Dojo {
 	typedef int64_t RandomSeed;
+	typedef uint8_t byte;
 }
 
 using std::make_unique;

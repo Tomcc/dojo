@@ -265,6 +265,7 @@ void Viewport::onAction(float dt) {
 	_updateTransforms();
 
 	//if it has no RT, it's the main viewport - use it to set the sound listener
+	//TODO soundListener should be a simple component
 	if (!mRT.is_some()) {
 		Platform::singleton().getSoundManager().setListenerTransform(getWorldTransform());
 	}

@@ -1,12 +1,14 @@
 #include "dojostring.h"
 
-using namespace Dojo;
+using Dojo::String;
 
 bool String::isNumber(uint32_t c) {
 	return c >= '0' && c <= '9';
 }
 
 #ifdef WIN32
+#include "dojo_win_header.h"
+
 std::wstring String::toUTF16(const utf::string& str) {
 	if (str.empty()) {
 		return std::wstring();

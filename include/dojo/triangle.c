@@ -12462,8 +12462,12 @@ char *polyfilename;
       printf("Recovering segments in Delaunay triangulation.\n");
     }
 #ifdef TRILIBRARY
-    strcpy(polyfilename, "input");
-    m->insegments = numberofsegments;
+	#ifdef WIN32
+		strcpy_s(polyfilename, "input");
+	#else
+		strcpy(polyfilename, "input");
+	#endif
+	m->insegments = numberofsegments;
     segmentmarkers = segmentmarkerlist != (int *) NULL;
     index = 0;
 #else /* not TRILIBRARY */

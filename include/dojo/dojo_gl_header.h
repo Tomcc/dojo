@@ -50,7 +50,6 @@
 	#include <GL/glext.h>
 	#include <GL/gl.h>
 	#include <gl/glu.h>
-	#include <gl/wglext.h>
 
 #elif defined( PLATFORM_OSX )
 	#include <OpenGL/gl.h>

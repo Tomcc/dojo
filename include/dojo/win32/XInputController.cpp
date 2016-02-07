@@ -4,6 +4,7 @@
 #include "InputSystem.h"
 #include "Platform.h"
 
+#include "dojo_win_header.h"
 #include <Xinput.h>
 
 #define XINPUTCONTROLLER_CONNECTION_CHECK_TIMEOUT 3.f

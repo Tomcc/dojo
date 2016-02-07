@@ -9,10 +9,6 @@
 //are we on windows?
 #if defined ( WIN32 )
 	#define PLATFORM_WIN32
-	#define NOMINMAX 1  //Y U NO LEAVE STL ALONE
-	#define WIN32_LEAN_AND_MEAN 1
-	#define _CRT_SECURE_NO_WARNINGS 1
-
 	//are we on mac?
 #elif defined( __APPLE__ )
 

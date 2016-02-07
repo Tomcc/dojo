@@ -1,6 +1,12 @@
+
+#ifdef PLATFORM_WIN32
+#include "dojo_win_header.h"
+#endif
+
 #include "File.h"
 
-using namespace Dojo;
+using Dojo::File;
+using Dojo::Stream;
 
 File::File(const utf::string& path) :
 	FileStream(path),
@@ -48,7 +54,7 @@ bool File::open(Access accessType) {
 
 	//open the file
 #ifdef WIN32
-	mFile = _wfopen(String::toUTF16(mPath).c_str(), flagForW(accessType));
+	_wfopen_s(&mFile, String::toUTF16(mPath).c_str(), flagForW(accessType));
 #else
 	mFile = fopen(mPath.c_str(), mWrite ? "wb" : "rb");
 #endif

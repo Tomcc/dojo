@@ -5,8 +5,7 @@
 #include "dojo_common_header.h"
 #include "dojo_gl_header.h"
 #include "dojo_al_header.h"
-
-using namespace Dojo;
+#include "dojo_win_header.h"
 
 #ifdef PLATFORM_ANDROID
 	//stream string buffer

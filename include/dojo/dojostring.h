@@ -1,7 +1,5 @@
 #pragma once
 
-#include "dojo_common_header.h"
-
 namespace Dojo {
 	class String {
 	public:

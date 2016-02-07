@@ -64,14 +64,6 @@ namespace Dojo {
 		void setVSync(int interval = 1);
 
 	protected:
-
-		HINSTANCE hInstance; // window app instance
-		HWND hwnd; // handle for the window
-		HDC hdc; // handle to device context
-		HGLRC hglrc; // handle to OpenGL rendering context
-
-		MSG msg;
-
 		int width, height;
 
 		Timer frameTimer;
@@ -81,20 +73,7 @@ namespace Dojo {
 		bool dragging;
 		bool mMousePressed;
 
-		//context sharing stuff needed for multithread creation
-		struct ContextShareRequest {
-			std::atomic<bool> done;
-
-			ContextShareRequest() :
-				done(false) {
-
-			}
-
-			HGLRC contextHandle;
-		};
-
-		typedef Pipe<ContextShareRequest*> ContextRequestsQueue;
-		Unique<ContextRequestsQueue> mContextRequestsQueue;
+		Unique<Pipe<std::function<void()>>> mContextRequestsQueue;
 
 		bool _initializeWindow(const utf::string& caption, int w, int h);
 
@@ -106,8 +85,6 @@ namespace Dojo {
 		int mFramesToAdvance;
 		bool mouseLocked = false;
 		bool realMouseEvent = true;
-
-		FT_Library freeType;
 
 		KeyCode mKeyMap[ 256 ];
 

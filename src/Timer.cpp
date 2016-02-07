@@ -1,8 +1,10 @@
 #include "Timer.h"
 
-using namespace Dojo;
+#ifdef PLATFORM_WIN32
+#include "dojo_win_header.h"
+#endif
 
-double Timer::currentTime() {
+double Dojo::Timer::currentTime() {
 	double d;
 #ifdef PLATFORM_WIN32
 	__int64 freq, gTime;
