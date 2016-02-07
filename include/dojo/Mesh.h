@@ -178,7 +178,7 @@ namespace Dojo {
 			return !indices.empty() || indexHandle;
 		}
 
-		GLenum getIndexGLType() const {
+		uint32_t getIndexGLType() const {
 			return indexGLType;
 		}
 
@@ -223,11 +223,11 @@ namespace Dojo {
 
 		byte indexSize = 0;
 		IndexType indexMaxValue = 0;
-		GLenum indexGLType = 0;
+		uint32_t indexGLType = 0;
 		std::vector<byte> indices;//indices have varying size
 
-		GLuint vertexArrayDesc = 0;
-		GLuint vertexHandle = 0, indexHandle = 0;
+		uint32_t vertexArrayDesc = 0;
+		uint32_t vertexHandle = 0, indexHandle = 0;
 
 		int vertexCount = 0, indexCount = 0;
 
@@ -242,7 +242,7 @@ namespace Dojo {
 		void _prepareVertex(const Vector& v);
 
 		///returns low level binding informations about a vertex field
-		void _getVertexFieldData(VertexField field, int& outComponents, GLenum& outComponentsType, bool& outNormalized, void*& outOffset);
+		void _getVertexFieldData(VertexField field, int& outComponents, uint32_t& outComponentsType, bool& outNormalized, void*& outOffset);
 
 		byte& _offset(VertexField f);
 		byte& _offset(VertexField f, int subID);

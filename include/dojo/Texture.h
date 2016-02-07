@@ -54,7 +54,7 @@ namespace Dojo {
 		}
 
 		///internal - binds this texture as the current GL active one
-		virtual void bind(GLuint index);
+		virtual void bind(uint32_t index);
 
 		///internal - binds this texture as the current Render Target
 		void bindAsRenderTarget(bool useDepthBuffer);
@@ -151,7 +151,7 @@ namespace Dojo {
 
 		bool npot, mMipmapsEnabled, mTransparency = false;
 		uint32_t width, height, internalWidth, internalHeight;
-		GLenum internalFormat;
+		uint32_t internalFormat;
 		Vector UVSize, UVOffset;
 
 		optional_ref<Texture> parentAtlas;
@@ -160,11 +160,11 @@ namespace Dojo {
 
 		Unique<Mesh> OBB;
 
-		GLuint glhandle, mDepthBuffer;
+		uint32_t glhandle, mDepthBuffer;
 
 		Vector screenSize;
 
-		GLuint mFBO;
+		uint32_t mFBO;
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _rebuildOptimalBillboard();

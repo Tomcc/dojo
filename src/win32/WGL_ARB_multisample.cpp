@@ -25,6 +25,8 @@
 #include <cstring>
 #include "win32/WGL_ARB_multisample.h"
 
+#include "dojo_gl_header.h"
+
 namespace {
 	WNDCLASSEX g_wcl;
 	HWND g_hWnd;

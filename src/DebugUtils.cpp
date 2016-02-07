@@ -3,6 +3,8 @@
 #include "Log.h"
 
 #include "dojo_common_header.h"
+#include "dojo_gl_header.h"
+#include "dojo_al_header.h"
 
 using namespace Dojo;
 
@@ -48,7 +50,7 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, con
 	utf::string err;
 	bool glerror = false;
 
-	for (GLint g = glGetError(); g != GL_NONE; g = glGetError()) {
+	for (int g = glGetError(); g != GL_NONE; g = glGetError()) {
 		glerror = true;
 
 		switch (g) {

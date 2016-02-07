@@ -4,6 +4,8 @@
 #include "FileStream.h"
 #include "Path.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
 const utf::string ShaderProgram::fragmentExtension = "fragment", ShaderProgram::vertexExtension = "vertex";
@@ -33,9 +35,9 @@ ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents
 }
 
 bool ShaderProgram::_load() {
-	static const GLuint typeGLTypeMap[] = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
+	static const uint32_t typeGLTypeMap[] = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
 
-	GLint compiled, sourceLength = mContentString.size();
+	int compiled, sourceLength = mContentString.size();
 	const char* src = mContentString.c_str();
 
 	mGLShader = glCreateShader(typeGLTypeMap[(byte)mType]);
@@ -52,7 +54,7 @@ bool ShaderProgram::_load() {
 
 	if (!loaded) {
 		//grab some info about the error
-		GLint blen = 0;
+		int blen = 0;
 		GLsizei slen = 0;
 
 		glGetShaderiv(mGLShader, GL_INFO_LOG_LENGTH, &blen);

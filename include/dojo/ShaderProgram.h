@@ -25,7 +25,7 @@ namespace Dojo {
 			return mType;
 		}
 
-		GLuint getGLShader() {
+		uint32_t getGLShader() {
 			return mGLShader;
 		}
 
@@ -40,7 +40,7 @@ namespace Dojo {
 		std::string mContentString;
 
 		ShaderProgramType mType;
-		GLuint mGLShader;
+		uint32_t mGLShader;
 
 		bool _load();
 	};

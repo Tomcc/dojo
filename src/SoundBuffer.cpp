@@ -9,6 +9,8 @@
 #include "BackgroundQueue.h"
 #include "Path.h"
 
+#include "dojo_al_header.h"
+
 using namespace Dojo;
 
 //STATIC CALLBACKS

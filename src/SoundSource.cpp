@@ -2,6 +2,8 @@
 #include "SoundManager.h"
 #include "Platform.h"
 
+#include "dojo_al_header.h"
+
 using namespace Dojo;
 
 SoundSource::SoundSource(ALuint src) :

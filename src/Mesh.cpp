@@ -6,9 +6,11 @@
 #include "PrimitiveMode.h"
 #include "enum_cast.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
-const GLuint glFeatureStateMap[] = {
+const uint32_t glFeatureStateMap[] = {
 	GL_VERTEX_ARRAY, //VF_POSITION2D,
 	GL_VERTEX_ARRAY, //VF_POSITION3D,
 	GL_COLOR_ARRAY, //VF_COLOR,
@@ -288,7 +290,7 @@ void Mesh::normal(float x, float y, float z) {
 }
 
 struct VertexFieldInfo {
-	GLenum type;
+	uint32_t type;
 	byte components;
 	bool normalized;
 }
@@ -345,7 +347,7 @@ bool Mesh::end() {
 		glGenBuffers(1, &vertexHandle);
 	}
 
-	GLenum usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	uint32_t usage = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size(), vertices.data(), usage);
 

@@ -7,6 +7,8 @@
 #include "Shader.h"
 #include "range.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
 RenderState::GLBlend::GLBlend() : GLBlend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, true) {}

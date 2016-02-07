@@ -39,7 +39,7 @@ namespace Dojo {
 			void release();
 
 			///returns the underlying OpenAL buffer
-			ALuint getOpenALBuffer();
+			uint32_t getOpenALBuffer();
 
 			///returns the size of this chunk
 			int getSize() {
@@ -59,8 +59,8 @@ namespace Dojo {
 			SoundBuffer& pParent;
 			int64_t mStartPosition, mUncompressedSize;
 
-			ALuint size;
-			ALuint alBuffer;
+			uint32_t size;
+			uint32_t alBuffer;
 			std::atomic<int> references;
 		};
 
@@ -110,7 +110,7 @@ namespace Dojo {
 
 	protected:
 
-		ALuint size;
+		uint32_t size;
 		float mDuration;
 
 		ChunkList mChunks;

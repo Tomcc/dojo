@@ -4,6 +4,8 @@
 #include "ResourceGroup.h"
 #include "Mesh.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
 Texture::Texture(optional_ref<ResourceGroup> creator) :
@@ -42,7 +44,7 @@ Texture::~Texture() {
 	}
 }
 
-void Texture::bind(GLuint index) {
+void Texture::bind(uint32_t index) {
 	//create the gl texture if still not created!
 	if (!glhandle) {
 		glGenTextures(1, &glhandle);
@@ -81,7 +83,7 @@ void Texture::bindAsRenderTarget(bool depthBuffer) {
 
 		CHECK_GL_ERROR;
 
-		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		uint32_t status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete" );
 	}
 	else {
@@ -146,7 +148,7 @@ void Texture::disableMipmaps() {
 
 struct FormatInfo {
 	size_t bytes;
-	GLenum glFormat, elementType;
+	uint32_t glFormat, elementType;
 
 	bool isGPUFormat() const {
 		return bytes == 2 || bytes == 4;
@@ -223,7 +225,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 	UVSize.x = (float)width / (float)internalWidth;
 	UVSize.y = (float)height / (float)internalHeight;
 
-	GLenum err = glGetError();
+	uint32_t err = glGetError();
 	loaded = (err == GL_NO_ERROR);
 	DEBUG_ASSERT( loaded, "Cannot load an empty texture" );
 

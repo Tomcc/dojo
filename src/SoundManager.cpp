@@ -3,6 +3,8 @@
 #include "SoundSource.h"
 #include "Platform.h"
 
+#include "dojo_al_header.h"
+
 using namespace Dojo;
 
 const float SoundManager::m = 100;
@@ -10,14 +12,6 @@ const float SoundManager::m = 100;
 const SoundManager::Easing SoundManager::LinearEasing = []( float t ) {
 	return t;
 };
-
-void SoundManager::vectorToALfloat(const Vector& vector, ALfloat* ALpos) {
-	DEBUG_ASSERT(ALpos, "nullptr AL position vector");
-
-	ALpos[0] = vector.x / m;
-	ALpos[1] = vector.y / m;
-	ALpos[2] = vector.z / m;
-}
 
 ///////////////////////////////////////
 

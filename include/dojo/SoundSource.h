@@ -26,7 +26,7 @@ namespace Dojo {
 		};
 
 		///Internal constructor
-		explicit SoundSource(ALuint source);
+		explicit SoundSource(uint32_t source);
 
 		virtual ~SoundSource();
 
@@ -79,7 +79,7 @@ namespace Dojo {
 			return false;
 		}
 
-		ALuint getSource() {
+		uint32_t getSource() {
 			return source;
 		}
 
@@ -128,8 +128,8 @@ namespace Dojo {
 
 		//members
 		optional_ref<SoundBuffer> buffer;
-		ALuint source;
-		ALint playState;
+		uint32_t source;
+		int playState;
 
 		int mCurrentChunkID, mQueuedChunks;
 		optional_ref<SoundBuffer::Chunk> mFrontChunk, mBackChunk;

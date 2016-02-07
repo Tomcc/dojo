@@ -7,6 +7,8 @@
 #include "Renderer.h"
 #include "Texture.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
 Shader::NameBuiltInUniformMap Shader::sBuiltiInUniformsNameMap; //TODO implement this with an initializer list when VS decides to work with it
@@ -111,7 +113,7 @@ void Shader::setUniformCallback(const std::string& name, const UniformCallback& 
 	DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
 }
 
-static GLint tempInt[2];
+static int tempInt[2];
 static Vector tmpVec;
 static Matrix tmpMat;
 
@@ -217,22 +219,22 @@ void Shader::loadUniforms(const GlobalUniformData& currentState, const RenderSta
 		case GL_SAMPLER_2D:
 		case GL_SAMPLER_CUBE:
 		case GL_BOOL:
-			glUniform1iv(uniform.location, uniform.count, (GLint*)ptr);
+			glUniform1iv(uniform.location, uniform.count, (int*)ptr);
 			break; //this call also sets the samplers
 
 		case GL_INT_VEC2:
 		case GL_BOOL_VEC2:
-			glUniform2iv(uniform.location, uniform.count, (GLint*)ptr);
+			glUniform2iv(uniform.location, uniform.count, (int*)ptr);
 			break;
 
 		case GL_INT_VEC3:
 		case GL_BOOL_VEC3:
-			glUniform3iv(uniform.location, uniform.count, (GLint*)ptr);
+			glUniform3iv(uniform.location, uniform.count, (int*)ptr);
 			break;
 
 		case GL_INT_VEC4:
 		case GL_BOOL_VEC4:
-			glUniform4iv(uniform.location, uniform.count, (GLint*)ptr);
+			glUniform4iv(uniform.location, uniform.count, (int*)ptr);
 			break;
 
 		case GL_FLOAT_MAT2:
@@ -298,7 +300,7 @@ bool Shader::onLoad() {
 	CHECK_GL_ERROR;
 
 	//check if the linking went ok
-	GLint linked;
+	int linked;
 	glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
 	loaded = linked != 0;
 
@@ -306,8 +308,8 @@ bool Shader::onLoad() {
 
 	if (linked) {
 		GLchar namebuf[1024];
-		GLint nameLength, size;
-		GLenum type;
+		int nameLength, size;
+		uint32_t type;
 
 		//get uniforms and their locations
 		for (int i = 0; ; ++i) {
@@ -317,7 +319,7 @@ bool Shader::onLoad() {
 				break;
 			}
 			else { //store the Uniform data
-				GLint loc = glGetUniformLocation(mGLProgram, namebuf);
+				int loc = glGetUniformLocation(mGLProgram, namebuf);
 
 				if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
 					mUniforms.emplace_back(
@@ -339,7 +341,7 @@ bool Shader::onLoad() {
 				break;
 			}
 			else {
-				GLint loc = glGetAttribLocation(mGLProgram, namebuf);
+				int loc = glGetAttribLocation(mGLProgram, namebuf);
 
 				if (loc >= 0) {
 					mAttributes.emplace_back(

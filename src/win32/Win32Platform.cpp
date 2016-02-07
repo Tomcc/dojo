@@ -13,6 +13,9 @@
 #include "Path.h"
 #include "Keyboard.h"
 
+#include "dojo_gl_header.h"
+#include <FreeImage.h>
+
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 

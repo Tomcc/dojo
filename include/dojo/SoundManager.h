@@ -10,6 +10,9 @@
 #define NUM_SOURCES_MIN 16
 #define NUM_SOURCES_MAX 256
 
+typedef struct ALCdevice_struct ALCdevice;
+typedef struct ALCcontext_struct ALCcontext;
+
 namespace Dojo {
 
 	class SoundListener;
@@ -24,8 +27,6 @@ namespace Dojo {
 
 		static const Easing LinearEasing;
 		static const float m;
-
-		static void vectorToALfloat(const Vector& vector, ALfloat* ALpos);
 
 		SoundManager();
 

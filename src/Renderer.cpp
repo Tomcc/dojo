@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "Texture.h"
 
+#include "dojo_gl_header.h"
+
 using namespace Dojo;
 
 Renderer::Renderer(int w, int h, Orientation deviceOr) :
@@ -150,7 +152,7 @@ void Renderer::_renderElement(const RenderState& renderState) {
 	
 	renderState.apply(globalUniforms, lastRenderState);
 
-	static const GLenum glModeMap[] = {
+	static const uint32_t glModeMap[] = {
 		GL_TRIANGLE_STRIP, //TriangleStrip,
 		GL_TRIANGLES, //TriangleList,
 		GL_LINE_STRIP, //LineStrip,
@@ -158,7 +160,7 @@ void Renderer::_renderElement(const RenderState& renderState) {
 		GL_POINTS
 	};
 
-	GLenum mode = glModeMap[(byte)m.getTriangleMode()];
+	uint32_t mode = glModeMap[(byte)m.getTriangleMode()];
 
 	if (!m.isIndexed()) {
 		glDrawArrays(mode, 0, m.getVertexCount());

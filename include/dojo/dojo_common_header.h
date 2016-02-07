@@ -51,9 +51,6 @@
 #endif
 
 #if defined(PLATFORM_WIN32)
-	#include <al.h>
-	#include <alc.h>
-
 	//this cant be in config.h as it breaks successive system includes
 	#ifdef _DEBUG
 
@@ -65,8 +62,6 @@
 	#include <windows.h>
 	#include <ShellAPI.h>
 	#include <ShlObj.h>
-
-	#include <FreeImage.h>
 
 #elif defined( PLATFORM_OSX )
 	#include <OpenAL/al.h>
@@ -96,8 +91,6 @@
 	#error "No Platform defined!"
 
 #endif
-
-#include "dojo_gl_header.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

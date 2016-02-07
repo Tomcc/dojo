@@ -52,8 +52,8 @@ namespace Dojo {
 
 		///A VertexAttribute represents a "attribute" binding in a vertex shader
 		struct VertexAttribute {
-			GLint location;
-			GLint count; ///<The array size *for a single vertex*
+			int location;
+			int count; ///<The array size *for a single vertex*
 
 			VertexField builtInAttribute;
 
@@ -61,7 +61,7 @@ namespace Dojo {
 
 			}
 
-			VertexAttribute(GLint loc, GLint size, VertexField bia) :
+			VertexAttribute(int loc, int size, VertexField bia) :
 				location(loc),
 				count(size),
 				builtInAttribute(bia) {
@@ -85,7 +85,7 @@ namespace Dojo {
 		}
 
 		///returns the GL program handle
-		GLuint getGLProgram() {
+		uint32_t getGLProgram() {
 			return mGLProgram;
 		}
 
@@ -104,10 +104,10 @@ namespace Dojo {
 	protected:
 
 		struct Uniform {
-			GLint location;
+			int location;
 
-			GLint count;
-			GLenum type;
+			int count;
+			uint32_t type;
 
 			BuiltInUniform builtInUniform;
 			UniformCallback customDataBinding;
@@ -118,7 +118,7 @@ namespace Dojo {
 
 			}
 
-			Uniform(const std::string& name, GLint loc, GLint elementCount, GLenum ty, BuiltInUniform biu) :
+			Uniform(const std::string& name, int loc, int elementCount, uint32_t ty, BuiltInUniform biu) :
 				location(loc),
 				count(elementCount),
 				type(ty),
@@ -147,7 +147,7 @@ namespace Dojo {
 		std::vector<Uniform> mUniforms;
 		std::vector<VertexAttribute> mAttributes;
 
-		GLuint mGLProgram;
+		uint32_t mGLProgram;
 
 		optional_ref<ShaderProgram> pProgram[ (byte)ShaderProgramType::_Count ];
 		std::vector<Unique<ShaderProgram>> mOwnedPrograms;
