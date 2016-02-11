@@ -609,12 +609,11 @@ void Win32Platform::prepareThreadContext() {
 		//signal the caller
 		job->set_value(context);
 	});
+	auto contextHandle = futureHandle.get();
 
 	//be nice, wglMakeCurrent just wants you to ask politely and more than once
 	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
-	auto contextHandle = futureHandle.get();
 	int tries = 0;
-
 	for (; wglMakeCurrent(hdc, contextHandle) == FALSE && tries < 1000; ++tries) {
 		std::this_thread::yield();
 	}
