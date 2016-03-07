@@ -10,11 +10,6 @@
 
 using namespace Dojo;
 
-template<typename T>
-T packNormalized(float x) {
-	return (T)std::ceil(x * std::numeric_limits<T>::max());
-}
-
 const uint32_t glFeatureStateMap[] = {
 	GL_VERTEX_ARRAY, //VF_POSITION2D,
 	GL_VERTEX_ARRAY, //VF_POSITION3D,
@@ -186,10 +181,10 @@ Mesh::IndexType Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
 	if (isVertexFieldEnabled(VertexField::Position3D)) {
-		*((Vector*)currentVertex) = v;
+		*((Vector*)(currentVertex + _offset(VertexField::Position3D))) = v;
 	}
 	else {
-		float* ptr = (float*)currentVertex;
+		auto ptr = (float*)(currentVertex + _offset(VertexField::Position2D));
 
 		ptr[0] = v.x;
 		ptr[1] = v.y;
@@ -247,11 +242,12 @@ int Mesh::getPrimitiveCount() const {
 }
 
 void Mesh::uv(float u, float v, byte set /*= 0 */) {
+	DEBUG_ASSERT(u <= 1.f && u >= -1.f && v <= 1.f && v >= -1.f, "UV out of range, can't be packed");
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
 	auto ptr = (GLshort*)(currentVertex + _offset(VertexField::UV0, set));
-	ptr[0] = packNormalized<GLshort>(u);
-	ptr[1] = packNormalized<GLshort>(v);
+	ptr[0] = Math::packNormalized<GLshort>(u);
+	ptr[1] = Math::packNormalized<GLshort>(v);
 }
 
 void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
@@ -266,12 +262,13 @@ void Mesh::color(const Color& c) {
 }
 
 void Mesh::normal(const Vector& n) {
+	DEBUG_ASSERT(n.length() <= 1.f, "normal is too long, cannot pack");
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
 	auto ptr = ((int8_t*)(currentVertex + _offset(VertexField::Normal)));
-	ptr[0] = packNormalized<int8_t>(n.x);
-	ptr[1] = packNormalized<int8_t>(n.y);
-	ptr[2] = packNormalized<int8_t>(n.z);
+	ptr[0] = Math::packNormalized<int8_t>(n.x);
+	ptr[1] = Math::packNormalized<int8_t>(n.y);
+	ptr[2] = Math::packNormalized<int8_t>(n.z);
 	ptr[3] = 0;
 }
 
@@ -287,14 +284,14 @@ static const vertexFieldInfoMap[] = {
 	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
 	{ GL_BYTE, 4, true },	// 	Normal
 
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
-	{ GL_FLOAT, 2, false },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
 };
 
 void Mesh::bindVertexFormat(const Shader& shader) {
