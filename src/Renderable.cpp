@@ -65,7 +65,7 @@ void Renderable::startFade(float startAlpha, float endAlpha, float duration) {
 }
 
 void Renderable::update(float dt) {
-	if (auto m = mesh.cast()) {
+	if (auto m = mesh.to_ref()) {
 		auto trans = glm::scale(object.getWorldTransform(), scale);
 
 		advanceFade(dt);
@@ -81,7 +81,7 @@ void Renderable::update(float dt) {
 }
 
 bool Renderable::canBeRendered() const {
-	if (auto m = mesh.cast()) {
+	if (auto m = mesh.to_ref()) {
 		return isVisible() && m.get().isLoaded() && m.get().getVertexCount() > 2;
 	}
 	else {

@@ -71,7 +71,7 @@ void Viewport::addFader(RenderLayer::ID layer) {
 
 void Viewport::setRenderTarget(optional_ref<Texture> target) {
 	mRT = target;
-	if (auto rt = mRT.cast()) {
+	if (auto rt = mRT.to_ref()) {
 		setTargetSize({ (float)rt.get().getWidth(), (float)rt.get().getHeight() });
 	}
 	else {
@@ -229,7 +229,7 @@ void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
 }
 
 bool Viewport::isContainedInFrustum(const Renderable& r) const {
-	if (auto mesh = r.getMesh().cast()) {
+	if (auto mesh = r.getMesh().to_ref()) {
 		AABB bb = r.getObject().transformAABB(mesh.get().getBounds().scale(r.scale));
 
 		Vector halfSize = (bb.max - bb.min) * 0.5f;

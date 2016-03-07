@@ -187,11 +187,11 @@ void SoundSource::_update(float dt) {
 		alSourcei(source, AL_BUFFER, AL_NONE); //clear the buffer for source reusing - this ALSO works for queued buffers
 
 		//release all the used chunks
-		if (auto chunk = mFrontChunk.cast()) {
+		if (auto chunk = mFrontChunk.to_ref()) {
 			chunk.get().release();
 		}
 
-		if (auto chunk = mBackChunk.cast()) {
+		if (auto chunk = mBackChunk.to_ref()) {
 			chunk.get().release();
 		}
 

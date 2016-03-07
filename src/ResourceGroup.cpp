@@ -413,7 +413,7 @@ optional_ref<FrameSet> ResourceGroup::getFrameSet(const utf::string& name) const
 }
 
 optional_ref<Texture> ResourceGroup::getTexture(const utf::string& name) const {
-	if (auto s = getFrameSet(name).cast()) {
+	if (auto s = getFrameSet(name).to_ref()) {
 		return s.get().getFrame(0);
 	} 
 	return{};

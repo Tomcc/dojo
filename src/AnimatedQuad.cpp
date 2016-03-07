@@ -56,7 +56,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 		pixelScale.x = pixelScale.y = 1;
 		screenSize.x = screenSize.y = 1;
 
-		if (auto a = animation.cast()) {
+		if (auto a = animation.to_ref()) {
 			a.get().setup(emptyFrameset, 0);
 		}
 

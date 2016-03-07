@@ -4,7 +4,7 @@
 using namespace Dojo;
 
 InputSystemListener::~InputSystemListener() {
-	if (auto s = source.cast()) {
+	if (auto s = source.to_ref()) {
 		s.get().removeListener(self);
 	}
 }

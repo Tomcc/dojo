@@ -86,7 +86,7 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 
 	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
 	
-	if (auto program = getCreator().unwrap().getProgram(keyValue).cast()) {
+	if (auto program = getCreator().unwrap().getProgram(keyValue).to_ref()) {
 		if (mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
 			mOwnedPrograms.emplace_back(program.get().cloneWithHeader(mPreprocessorHeader));
 			program = *mOwnedPrograms.back();

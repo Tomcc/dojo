@@ -14,7 +14,7 @@ Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 	position(pos),
 	active(true),
 	disposed(false) {
-	if (auto gs = parentObject.gameState.cast()) {
+	if (auto gs = parentObject.gameState.to_ref()) {
 		gameState = gs.get();
 	}
 	setSize(bbSize);
@@ -176,7 +176,7 @@ Matrix Object::getFullTransformRelativeTo(const Matrix& parent) const {
 
 Matrix Object::getParentWorldTransform() const {
 	//compute local matrix from position and orientation
-	if (auto p = parent.cast()) {
+	if (auto p = parent.to_ref()) {
 		return p.get().getWorldTransform();
 	}
 	return Matrix{ 1 };

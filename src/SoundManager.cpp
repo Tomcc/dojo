@@ -166,14 +166,14 @@ void SoundManager::update(float dt) {
 			musicTrack.unwrap().setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
 		}
 		else { //scambia le tracks e fai partire la prossima
-			if (auto track = musicTrack.cast()) {
+			if (auto track = musicTrack.to_ref()) {
 				track.get().stop();
 			}
 
 			musicTrack = nextMusicTrack;
 
 			//parte il fade in
-			if (auto track = musicTrack.cast()) {
+			if (auto track = musicTrack.to_ref()) {
 				nextMusicTrack = {};
 
 				track.get().play(0);

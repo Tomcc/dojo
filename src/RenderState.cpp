@@ -36,7 +36,7 @@ RenderState::~RenderState() {
 void RenderState::_updateTransparency() {
 	mTransparency = false;
 	for(auto i : range(maxTextureSlots)) {
-		if(auto t = textures[i].cast()) {
+		if(auto t = textures[i].to_ref()) {
 			mTransparency |= t.get().hasTransparency();
 		}
 	}
@@ -109,7 +109,7 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 
 	for (auto i : range(maxTextureSlots)) {
 		//select current slot and load it, others can remain bound to old stuff with shaders
-		if (auto t = textures[i].cast()) {
+		if (auto t = textures[i].to_ref()) {
 			if (!prev || textures[i] != prev->textures[i]) {
 				t.get().bind(i);
 			}

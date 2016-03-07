@@ -62,7 +62,7 @@ void Sprite::setAnimation(int i) {
 	DEBUG_ASSERT(mAnimationIdx >= 0, "negative animation index");
 	DEBUG_ASSERT((int)animations.size() > mAnimationIdx, "OOB animation index");
 
-	if (auto a = animation.cast()) {
+	if (auto a = animation.to_ref()) {
 		a.get()._unset();
 	}
 

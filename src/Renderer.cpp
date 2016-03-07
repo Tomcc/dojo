@@ -213,7 +213,7 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 }
 
 void Renderer::_renderViewport(Viewport& viewport) {
-	if (auto rt = viewport.getRenderTarget().cast()) {
+	if (auto rt = viewport.getRenderTarget().to_ref()) {
 		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
 		globalUniforms.targetDimension = {

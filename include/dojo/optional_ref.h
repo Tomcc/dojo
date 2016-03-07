@@ -1,68 +1,86 @@
 #pragma once
-template <class T>
-class reference_wrapper {
-public:
-	// types
-	typedef T type;
 
-	// construct/copy/destroy
-	reference_wrapper(T& ref) noexcept : ptr(std::addressof(ref)) {}
-	reference_wrapper() noexcept : ptr(nullptr) {}
-	reference_wrapper(T&&) = delete;
-	reference_wrapper(const reference_wrapper&) noexcept = default;
+namespace Dojo {
+	template <class T>
+	class reference_wrapper {
+	public:
+		// types
+		typedef T type;
 
-	// access
-	operator T& () const noexcept { return *ptr; }
-	T& get() const noexcept { return *ptr; } //TODO remove and use C++17's operator dot here
+		// construct/copy/destroy
+		reference_wrapper(T& ref) noexcept : ptr(std::addressof(ref)) {}
+		reference_wrapper() noexcept : ptr(nullptr) {}
+		reference_wrapper(T&&) = delete;
+		reference_wrapper(const reference_wrapper&) noexcept = default;
 
-	operator bool() const {
-		return ptr != nullptr;
-	}
+		// access
+		operator T& () const noexcept { return *ptr; }
+		T& get() const noexcept { return *ptr; } //TODO remove and use C++17's operator dot here
 
-private:
-	T* ptr;
-};
+		operator bool() const {
+			return ptr != nullptr;
+		}
 
-template<typename T>
-class optional_ref {
-public:
-	optional_ref() : ptr(nullptr) {} //invalid constructor
-	optional_ref(T& ref) : ptr(&ref) {} //valid constructor
+		size_t hash() const {
+			return reinterpret_cast<size_t>(ptr);
+		}
 
-	T& unwrap() const {
-		DEBUG_ASSERT(ptr, "Invalid dereference");
-		return *ptr;
-	}
+	private:
+		T* ptr;
+	};
 
-	reference_wrapper<T> cast() const {
-		if (ptr) {
+	template<typename T>
+	class optional_ref {
+	public:
+		optional_ref() : ptr(nullptr) {} //invalid constructor
+		optional_ref(T& ref) : ptr(&ref) {} //valid constructor
+
+		T& unwrap() const {
+			DEBUG_ASSERT(ptr, "Invalid dereference");
 			return *ptr;
 		}
-		else {
-			return{};
+
+		reference_wrapper<T> to_ref() const {
+			if (ptr) {
+				return *ptr;
+			}
+			else {
+				return{};
+			}
 		}
-	}
 
-	T* to_raw_ptr() const {
-		return ptr;
-	}
+		T* to_raw_ptr() const {
+			return ptr;
+		}
 
-	bool is_some() const {
-		return ptr != nullptr;
-	}
+		bool is_some() const {
+			return ptr != nullptr;
+		}
 
-	bool is_none() const {
-		return ptr == nullptr;
-	}
+		bool is_none() const {
+			return ptr == nullptr;
+		}
 
-	bool operator==(const T& ref) const {
-		return ptr == &ref;
-	}
+		bool operator==(const T& ref) const {
+			return ptr == &ref;
+		}
 
-	bool operator != (const optional_ref<T>& ref) const {
-		return ptr != ref.ptr;
-	}
+		bool operator != (const optional_ref<T>& ref) const {
+			return ptr != ref.ptr;
+		}
 
-protected:
-	T* ptr;
-};
+	protected:
+		T* ptr;
+	};
+}
+
+namespace std {
+	///hash specialization for unordered_maps
+	template <class T>
+	struct hash<Dojo::reference_wrapper<T>> {
+		// hash functor for vector
+		size_t operator()(const Dojo::reference_wrapper<T>& _Keyval) const {
+			return _Keyval.hash();
+		}
+	};
+}

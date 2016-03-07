@@ -73,7 +73,7 @@ namespace Dojo {
 
 		///tells if this source is bound to a streaming SoundBuffer
 		bool isStreaming() {
-			if (auto b = buffer.cast()) {
+			if (auto b = buffer.to_ref()) {
 				return b.get().isStreaming();
 			}
 			return false;
