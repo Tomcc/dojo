@@ -51,11 +51,6 @@
 	#define DOJO_ANISOTROPIC_FILTERING_AVAILABLE //anisotropic filtering has to be tested on Android //TODO move this to Platform, maybe make a caps class?
 #endif
 
-//#define DOJO_GAMMA_CORRECTION_ENABLED
-
-//do not use the differential state commit //HACK
-#define DOJO_FORCE_WHOLE_RENDERSTATE_COMMIT
-
 ///the cap for the textures bound to a single object
 #define DOJO_MAX_TEXTURES 2
 

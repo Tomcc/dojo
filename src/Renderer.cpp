@@ -33,26 +33,9 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	DEBUG_MESSAGE ("version: OpenGL " + utf::string( (const char*)glGetString (GL_VERSION)));
 
 	//clean errors (some drivers leave errors on the stack)
-	CHECK_GL_ERROR;
-	CHECK_GL_ERROR;
-
-	glEnable(GL_RESCALE_NORMAL);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_CULL_FACE);
-
-	glCullFace(GL_BACK);
-
-	//default status for blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#ifdef DOJO_GAMMA_CORRECTION_ENABLED
-	glEnable( GL_FRAMEBUFFER_SRGB );
-#endif
+	while (glGetError() != GL_NO_ERROR);
 
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
-
-	CHECK_GL_ERROR;
 }
 
 Renderer::~Renderer() {

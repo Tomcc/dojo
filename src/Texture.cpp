@@ -296,17 +296,6 @@ bool Texture::loadFromFile(const utf::string& path) {
 		enableAnisotropicFiltering(aniso / 2);
 	}
 
-#ifdef DOJO_GAMMA_CORRECTION_ENABLED
-
-	if ( format == GL_RGBA ) {
-		destFormat = GL_SRGB8_ALPHA8;
-	}
-	else if ( format == GL_RGB )	{
-		destFormat = GL_SRGB8;
-	}
-
-#endif
-
 	loadFromMemory(imageData.data(), width, height, format, PixelFormat::R8G8B8A8);
 
 	return loaded;
