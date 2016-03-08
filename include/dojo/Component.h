@@ -14,6 +14,8 @@ namespace Dojo {
 
 		}
 
+		virtual ~Component() {}
+
 		Object& getObject() {
 			return object;
 		}
@@ -24,8 +26,8 @@ namespace Dojo {
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}
-
 		virtual void onDispose() {}
+		virtual void onDestroy(Unique<Component> myself) {}
 
 		///"authorization" method useful to ask the engine to keep the objects alive for longer after disposed of
 		virtual bool canDestroy() const {

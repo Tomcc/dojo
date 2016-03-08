@@ -21,6 +21,14 @@ Object::Object(Object& parentObject, const Vector& pos, const Vector& bbSize):
 }
 
 Object::~Object() {
+	//allow each component to grab its own ownership, eg. for threaded destruction
+	for(auto&& c : components) {
+		if(c) {
+			auto& ref = *c;
+			ref.onDestroy(std::move(c));
+		}
+	}
+
 	removeAllChildren();
 }
 
