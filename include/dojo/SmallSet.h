@@ -26,8 +26,8 @@ namespace Dojo {
 			return c.end();
 		}
 
-		template <class E>
-		static typename std::vector<std::unique_ptr<E>>::const_iterator find(const SmallSet<std::unique_ptr<E>>& c, const E& elem) {
+		template <class PTR, class E>
+		static typename std::vector<PTR>::const_iterator find(const SmallSet<PTR>& c, const E& elem) {
 			auto itr = c.begin();
 
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
