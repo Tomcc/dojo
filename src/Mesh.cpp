@@ -310,7 +310,6 @@ void Mesh::bindVertexFormat(const Shader& shader) {
 			vertexSize,
 			offset);
 	}
-
 	CHECK_GL_ERROR;
 }
 
@@ -364,7 +363,7 @@ bool Mesh::end() {
 	glBindVertexArray( 0 );
 #endif
 
-	loaded = glGetError() == GL_NO_ERROR;
+	loaded = true;
 
 	currentVertex = nullptr;
 

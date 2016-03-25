@@ -15,12 +15,17 @@
 #include "win32/WGL_ARB_multisample.h"
 #include "win32/XInputController.h"
 #include "dojo_gl_header.h"
+
 #include <FreeImage.h>
+#include <GL/wglext.h>
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
 using namespace Dojo;
+
+//wglew is a tad outdated
+#define CONTEXT_FLAG_NO_ERROR_BIT_KHR    0x00000008
 
 HINSTANCE hInstance; // window app instance
 HWND hWindow; // handle for the window
@@ -439,15 +444,52 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	}
 
 	hglrc = wglCreateContext(hdc);
-	bool err = wglMakeCurrent(hdc, hglrc) > 0;
+	if (!hglrc) {
+		FAIL("wglCreateContext");
+	}
+
+	// Make the context current
+	if (!wglMakeCurrent(hdc, hglrc)) {
+		FAIL("Couldn't make the rendering context current");
+	}
+	
 	glewInit();
+
+	//if we can use OpenGL 3.x, do that and initialize with custom context attributes
+	if(auto wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB")) {
+		//destroy the current context
+		if(!wglMakeCurrent(nullptr, nullptr) || !wglDeleteContext(hglrc)) {
+			FAIL("Cannot remove dummy context");
+		}
+
+		const int glVersion[] = {
+			3, 2
+		};
+
+		int wglAttributes[] = {
+			WGL_CONTEXT_MAJOR_VERSION_ARB, glVersion[0],
+			WGL_CONTEXT_MINOR_VERSION_ARB, glVersion[1],
+			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,// core versus compatibility
+			WGL_CONTEXT_FLAGS_ARB, CONTEXT_FLAG_NO_ERROR_BIT_KHR,
+			0	// end array value, required
+		};
+
+		hglrc = wglCreateContextAttribsARB(hdc, 0, wglAttributes);
+		DEBUG_ASSERT(hglrc, "Cannot create context");
+
+		if(!wglMakeCurrent(hdc, hglrc)) {
+			FAIL("Cannot use this context");
+		}
+	}
+
+	CHECK_GL_ERROR;
 
 	// and show.
 	ShowWindow(hWindow, SW_SHOWNORMAL);
 
 	_setFullscreen(mFullscreen);
 
-	return err;
+	return true;
 }
 
 void Win32Platform::_setFullscreen(bool fullscreen) {
@@ -805,22 +847,12 @@ void Win32Platform::setMouseLocked(bool locked) {
 }
 
 void Win32Platform::setVSync(int interval/*=1*/) {
-	typedef BOOL (APIENTRY * PFNWGLSWAPINTERVALFARPROC)(int);
-	PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
-
-	char* extensions = (char*)glGetString(GL_EXTENSIONS);
-
-	if (strstr(extensions, "WGL_EXT_swap_control") == 0) {
+	if (glewIsExtensionSupported("WGL_EXT_swap_control")) {
 		DEBUG_MESSAGE("Warning: \"WGL_EXT_swap_control\" extension not supported on your computer, disabling vsync");
 		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
 	}
-	else {
-		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
 
-		if (wglSwapIntervalEXT) {
-			wglSwapIntervalEXT(interval);
-		}
-	}
+	((PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT"))(interval);
 }
 
 

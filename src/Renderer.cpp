@@ -15,6 +15,8 @@
 
 using namespace Dojo;
 
+GLuint gDefaultVAO = 0;
+
 Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	frameStarted(false),
 	valid(true),
@@ -36,10 +38,21 @@ Renderer::Renderer(int w, int h, Orientation deviceOr) :
 	while (glGetError() != GL_NO_ERROR);
 
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
+
+	//HACK GL core doesn't work without a VAO bound... but ain't nobody got time fo' dat
+	glGenVertexArrays(1, &gDefaultVAO);
+	glBindVertexArray(gDefaultVAO);
+
+	CHECK_GL_ERROR;
 }
 
 Renderer::~Renderer() {
 	clearLayers();
+
+	if(gDefaultVAO) {
+		glDeleteVertexArrays(1, &gDefaultVAO);
+		gDefaultVAO = 0;
+	}
 }
 
 RenderLayer& Renderer::getLayer(RenderLayer::ID layerID) {

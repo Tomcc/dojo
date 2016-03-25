@@ -62,9 +62,6 @@ namespace Dojo {
 		void enableBilinearFiltering();
 		void disableBilinearFiltering();
 
-		void enableMipmaps();
-		void disableMipmaps();
-
 		void enableAnisotropicFiltering(float level);
 		void disableAnisotropicFiltering();
 
@@ -149,7 +146,7 @@ namespace Dojo {
 
 	protected:
 
-		bool npot, mMipmapsEnabled, mTransparency = false;
+		bool npot, mTransparency = false;
 		uint32_t width, height, internalWidth, internalHeight;
 		uint32_t internalFormat;
 		Vector UVSize, UVOffset;

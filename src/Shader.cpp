@@ -8,6 +8,7 @@
 #include "Texture.h"
 
 #include "dojo_gl_header.h"
+#include "range.h"
 
 using namespace Dojo;
 
@@ -310,46 +311,39 @@ bool Shader::onLoad() {
 		GLchar namebuf[1024];
 		int nameLength, size;
 		uint32_t type;
+		GLint elemCount;
 
 		//get uniforms and their locations
-		for (int i = 0; ; ++i) {
+		glGetProgramiv(mGLProgram, GL_ACTIVE_UNIFORMS, &elemCount);
+
+		for (auto i : range(elemCount)) {
 			glGetActiveUniform(mGLProgram, i, sizeof( namebuf ), &nameLength, &size, &type, namebuf);
+			auto loc = glGetUniformLocation(mGLProgram, namebuf);
 
-			if (glGetError() != GL_NO_ERROR) { //check if this value existed
-				break;
-			}
-			else { //store the Uniform data
-				int loc = glGetUniformLocation(mGLProgram, namebuf);
-
-				if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
-					mUniforms.emplace_back(
-						namebuf,
-						loc,
-						size,
-						type,
-						_getUniformForName(namebuf)
-					);
-				}
+			if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
+				mUniforms.emplace_back(
+					namebuf,
+					loc,
+					size,
+					type,
+					_getUniformForName(namebuf)
+				);
 			}
 		}
 
 		//get attributes and their locations
-		for (int i = 0;; ++i) {
+		glGetProgramiv(mGLProgram, GL_ACTIVE_ATTRIBUTES, &elemCount);
+
+		for (auto i : range(elemCount)) {
 			glGetActiveAttrib(mGLProgram, i, sizeof(namebuf), &nameLength, &size, &type, namebuf);
+			auto loc = glGetAttribLocation(mGLProgram, namebuf);
 
-			if (glGetError() != GL_NO_ERROR) {
-				break;
-			}
-			else {
-				int loc = glGetAttribLocation(mGLProgram, namebuf);
-
-				if (loc >= 0) {
-					mAttributes.emplace_back(
-						loc,
-						size,
-						_getAttributeForName(namebuf)
+			if (loc >= 0) {
+				mAttributes.emplace_back(
+					loc,
+					size,
+					_getAttributeForName(namebuf)
 					);
-				}
 			}
 		}
 	}

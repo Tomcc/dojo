@@ -16,7 +16,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
 
@@ -30,7 +29,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	internalHeight(0),
 	glhandle(0),
 	npot(false),
-	mMipmapsEnabled(true),
 	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
 
@@ -59,8 +57,6 @@ void Texture::bind(uint32_t index) {
 }
 
 void Texture::bindAsRenderTarget(bool depthBuffer) {
-	DEBUG_ASSERT(!mMipmapsEnabled, "Can't use a texture with mipmaps as a rendertarget");
-
 	if (!mFBO) { //create a new RT on the fly at the first request
 		bind(0);
 
@@ -128,24 +124,6 @@ void Texture::disableTiling() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void Texture::enableMipmaps() {
-	mMipmapsEnabled = true;
-
-	if (glhandle) {
-		bind(0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	}
-}
-
-void Texture::disableMipmaps() {
-	mMipmapsEnabled = false;
-
-	if (glhandle) {
-		bind(0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
-}
-
 struct FormatInfo {
 	size_t bytes;
 	uint32_t glFormat, elementType;
@@ -175,13 +153,10 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 
 	bind(0);
 
-	if (mMipmapsEnabled) {
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, true);
-	}
-	else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
-
+	//TODO add back manually generated mipmaps
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	CHECK_GL_ERROR;
 
 	auto POTwidth = Math::nextPowerOfTwo(width);
 	auto POTheight = Math::nextPowerOfTwo(height);
@@ -225,11 +200,9 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 	UVSize.x = (float)width / (float)internalWidth;
 	UVSize.y = (float)height / (float)internalHeight;
 
-	uint32_t err = glGetError();
-	loaded = (err == GL_NO_ERROR);
-	DEBUG_ASSERT( loaded, "Cannot load an empty texture" );
+	CHECK_GL_ERROR;
 
-	return loaded;
+	return loaded = true;
 }
 
 bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat) {
@@ -251,10 +224,9 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 	}
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData);
+	CHECK_GL_ERROR;
 
-	loaded = (glGetError() == GL_NO_ERROR);
-	DEBUG_ASSERT( loaded, "OpenGL error, cannot load a Texture from memory" );
-	return loaded;
+	return loaded = true;
 }
 
 bool Texture::loadFromFile(const utf::string& path) {
@@ -274,14 +246,6 @@ bool Texture::loadFromFile(const utf::string& path) {
 	}
 
 	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
-
-	//guess if this is a texture or a sprite
-	if (!isSurface || (creator.is_some() && creator.unwrap().disableMipmaps)) {
-		disableMipmaps();
-	}
-	else {
-		enableMipmaps();
-	}
 
 	if (!isSurface || (creator.is_some() && creator.unwrap().disableTiling)) {
 		disableTiling();
