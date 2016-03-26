@@ -75,6 +75,7 @@
     <ClInclude Include="include\dojo\Renderable.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
     <ClInclude Include="include\dojo\ResourceGroup.h" />
+    <ClInclude Include="include\dojo\ring_buffer.h" />
     <ClInclude Include="include\dojo\Shader.h" />
     <ClInclude Include="include\dojo\ShaderProgram.h" />
     <ClInclude Include="include\dojo\ShaderProgramType.h" />
