@@ -39,33 +39,33 @@
 
 using namespace Dojo;
 
-Unique<Platform> Platform::singletonPtr;
+Unique<Platform> Platform::gSingletonPtr;
 
 Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 #if defined (PLATFORM_WIN32)
-	singletonPtr = make_unique<Win32Platform>(config);
+	gSingletonPtr = make_unique<Win32Platform>(config);
 
 #elif defined( PLATFORM_OSX )
-	singletonPtr = make_unique<OSXPlatform>(config);
+	gSingletonPtr = make_unique<OSXPlatform>(config);
 
 #elif defined( PLATFORM_IOS )
-	singletonPtr = make_unique<IOSPlatform>(config);
+	gSingletonPtr = make_unique<IOSPlatform>(config);
 
 #elif defined( PLATFORM_LINUX )
-	singletonPtr = make_unique<LinuxPlatform>(config);
+	gSingletonPtr = make_unique<LinuxPlatform>(config);
 
 #elif defined( PLATFORM_ANDROID )
 	android_main(nullptr); //HACK
-	singletonPtr = make_unique<AndroidPlatform>(config);
+	gSingletonPtr = make_unique<AndroidPlatform>(config);
 
 #endif
-	return *singletonPtr;
+	return *gSingletonPtr;
 }
 
 void Platform::shutdownPlatform() {
 	singleton().shutdown();
 
-	singletonPtr.reset();
+	gSingletonPtr = {};
 }
 
 Platform::Platform(const Table& configTable) :

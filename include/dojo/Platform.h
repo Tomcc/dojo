@@ -32,9 +32,9 @@ namespace Dojo {
 		static void shutdownPlatform();
 
 		static Platform& singleton() {
-			DEBUG_ASSERT( singletonPtr, "The Platform singleton was not created, use Platform::create() to create it" );
+			DEBUG_ASSERT( gSingletonPtr, "The Platform singleton was not created, use Platform::create() to create it" );
 
-			return *singletonPtr;
+			return *gSingletonPtr;
 		}
 
 		virtual ~Platform();
@@ -93,12 +93,12 @@ namespace Dojo {
 		}
 
 		///gets the physical screen width
-		int getScreenWidth() {
+		uint32_t getScreenWidth() {
 			return screenWidth;
 		}
 
 		///gets the physical screen height
-		int getScreenHeight() {
+		uint32_t getScreenHeight() {
 			return screenHeight;
 		}
 
@@ -234,7 +234,7 @@ namespace Dojo {
 		typedef std::unordered_map<utf::string, PathList> ZipFoldersMap;
 		typedef std::unordered_map<utf::string, ZipFoldersMap> ZipFileMapping;
 
-		static Unique<Platform> singletonPtr;
+		static Unique<Platform> gSingletonPtr;
 
 		int screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
