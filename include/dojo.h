@@ -32,6 +32,7 @@
 #include <dojo/PseudoEnum.h>
 #include <dojo/Random.h>
 #include <dojo/range.h>
+#include <dojo/RecorderSubmitter.h>
 #include <dojo/Renderer.h>
 #include <dojo/RenderState.h>
 #include <dojo/Renderable.h>

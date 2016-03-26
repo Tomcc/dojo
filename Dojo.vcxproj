@@ -51,6 +51,7 @@
     <ClInclude Include="include\dojo\PseudoEnum.h" />
     <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\range.h" />
+    <ClInclude Include="include\dojo\RecorderSubmitter.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
     <ClCompile Include="include\dojo\Path.cpp" />
     <ClCompile Include="include\dojo\Random.cpp" />
+    <ClCompile Include="include\dojo\RecorderSubmitter.cpp" />
     <ClCompile Include="include\dojo\RenderLayer.cpp" />
     <ClCompile Include="include\dojo\Stream.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
