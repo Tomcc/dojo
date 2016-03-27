@@ -26,6 +26,7 @@ namespace Dojo {
 	class Renderable;
 	class RenderLayer;
 	class Texture;
+	class RenderSurface;
 
 	///A Viewport is a View in a Dojo GameState, working both in 2D and 3D
 	/**
@@ -45,8 +46,8 @@ namespace Dojo {
 			const Vector& size,
 			const Color& clear,
 			Degrees VFOV = 0.0_deg,
-			float zNear = 0,
-			float zFar = 100);
+			float zNear = 0.01f,
+			float zFar = 1000.f);
 
 		virtual ~Viewport();
 
@@ -64,7 +65,10 @@ namespace Dojo {
 		}
 
 		///sets the texture to be used as rendering target, null means "render to screen"
-		void setRenderTarget(optional_ref<Texture> target);
+		void setRenderTexture(Texture& target);
+
+		///resets the RT to render to the backbuffer
+		void setRenderToBackbuffer();
 
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers(const LayerList& layers);
@@ -135,9 +139,9 @@ namespace Dojo {
 			return mEnableClear;
 		}
 
-		///returns the Texture this Viewport draws to
-		optional_ref<Texture> getRenderTarget() {
-			return mRT;
+		///returns the RenderSurface this Viewport draws to
+		RenderSurface& getRenderTarget() {
+			return mRT.unwrap();
 		}
 
 		///returns the on-screen position of the given world-space vector
@@ -210,11 +214,13 @@ namespace Dojo {
 		Vector mFarPlaneSide;
 
 		LayerList mLayerList;
-		optional_ref<Texture> mRT;
+		optional_ref<RenderSurface> mRT;
 
 		AABB mWorldBB;
 
 		void _updateFrustum();
 		void _updateTransforms();
+
+		void _setRenderTarget(RenderSurface& surface);
 	};
 }

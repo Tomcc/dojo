@@ -24,11 +24,10 @@ Viewport::Viewport(
 	Object(parent, pos, size),
 	mClearColor(clear),
 	mVFOV(0),
-	mZNear(0),
+	mZNear(0.01f),
 	mZFar(1000) {
-	//default size is window size
-	mTargetSize.x = (float)Platform::singleton().getWindowWidth();
-	mTargetSize.y = (float)Platform::singleton().getWindowHeight();
+	
+	setRenderToBackbuffer();
 
 	if (VFOV > 0.f) {
 		enableFrustum(VFOV, zNear, zFar);
@@ -68,16 +67,19 @@ void Viewport::addFader(RenderLayer::ID layer) {
 		return fader;
 	}());
 }
-
-void Viewport::setRenderTarget(optional_ref<Texture> target) {
-	mRT = target;
-	if (auto rt = mRT.to_ref()) {
-		setTargetSize({ (float)rt.get().getWidth(), (float)rt.get().getHeight() });
-	}
-	else {
-		setTargetSize({ (float)Platform::singleton().getWindowWidth(), (float)Platform::singleton().getWindowHeight() });
-	}
+void Viewport::_setRenderTarget(RenderSurface& surface) {
+	mRT = surface;
+	setTargetSize({ (float)surface.getWidth(), (float)surface.getHeight() });
 }
+
+void Viewport::setRenderTexture(Texture& target) {
+	_setRenderTarget(target);
+}
+
+void Viewport::setRenderToBackbuffer() {
+	_setRenderTarget(Platform::singleton().getRenderer().getBackbuffer());
+}
+
 
 void Viewport::lookAt(const Vector& worldPos) {
 	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::UnitY)));
@@ -116,7 +118,7 @@ void Viewport::_updateFrustum() {
 				mZNear,
 				mZFar);
 
-		if (getRenderTarget().is_some()) { //flip the projections to flip the image
+		if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
 		}
 
@@ -157,7 +159,7 @@ void Viewport::_updateTransforms() {
 					0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
 					mZFar);
 
-			if (getRenderTarget().is_some()) { //flip the projections to flip the image
+			if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;
 			}
 		}

@@ -3,6 +3,7 @@
 #include "Platform.h"
 #include "ResourceGroup.h"
 #include "Mesh.h"
+#include "TexFormatInfo.h"
 
 #include "dojo_gl_header.h"
 
@@ -10,26 +11,18 @@ using namespace Dojo;
 
 Texture::Texture(optional_ref<ResourceGroup> creator) :
 	Resource(creator),
-	width(0),
-	height(0),
 	internalWidth(0),
 	internalHeight(0),
 	glhandle(0),
-	npot(false),
-	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
 
 }
 
 Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path),
-	width(0),
-	height(0),
 	internalWidth(0),
 	internalHeight(0),
 	glhandle(0),
-	npot(false),
-	internalFormat(GL_NONE),
 	mFBO(GL_NONE) {
 
 }
@@ -124,32 +117,17 @@ void Texture::disableTiling() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-struct FormatInfo {
-	size_t bytes;
-	uint32_t glFormat, elementType;
-
-	bool isGPUFormat() const {
-		return bytes == 2 || bytes == 4;
-	}
-};
-
-const FormatInfo GLFormat[] = {
-	{4, GL_RGBA, GL_UNSIGNED_BYTE},
-	{3, GL_RGB, GL_UNSIGNED_BYTE},
-	{2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},
-	{0, 0, 0},
-};
-
-bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
+bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 	width = w;
 	height = h;
 
 	DEBUG_ASSERT( width > 0, "Width must be more than 0" );
 	DEBUG_ASSERT( height > 0, "Height must be more than 0" );
 
-	auto& format = GLFormat[(int)format_];
+	auto& formatInfo = TexFormatInfo::getFor(formatID);
+	auto& oldFormat = TexFormatInfo::getFor(internalFormat);
 
-	DEBUG_ASSERT(format.isGPUFormat(), "This format can't be loaded on the GPU!");
+	DEBUG_ASSERT(formatInfo.isGPUFormat(), "This format can't be loaded on the GPU!");
 
 	bind(0);
 
@@ -158,29 +136,24 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 	
 	CHECK_GL_ERROR;
 
-	auto POTwidth = Math::nextPowerOfTwo(width);
-	auto POTheight = Math::nextPowerOfTwo(height);
-
-	npot = width != POTwidth && height != POTheight;
-
 	uint32_t destWidth, destHeight;
 
 	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
-	if (!npot || Platform::singleton().isNPOTEnabled()) {
+	if (isPowerOfTwo() || Platform::singleton().isNPOTEnabled()) {
 		destWidth = width;
 		destHeight = height;
 	}
 	else {
-		destWidth = POTwidth;
-		destHeight = POTheight;
+		destWidth = glm::powerOfTwoAbove(width);
+		destHeight = glm::powerOfTwoAbove(height);
 	}
 
 	//check if the texture has to be recreated (changed dimensions)
-	if (destWidth != internalWidth || destHeight != internalHeight || internalFormat != format.glFormat) {
+	if (destWidth != internalWidth || destHeight != internalHeight || oldFormat.glFormat != formatInfo.glFormat) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
-		internalFormat = format.glFormat;
-		size = internalWidth * internalHeight * format.bytes;
+		internalFormat = formatID;
+		size = internalWidth * internalHeight * formatInfo.pixelSizeBytes;
 
 		std::string dummyData(size, 0); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
 
@@ -188,12 +161,12 @@ bool Texture::loadEmpty(int w, int h, PixelFormat format_) {
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
-			internalFormat,
+			formatInfo.glFormat,
 			internalWidth,
 			internalHeight,
 			0,
-			internalFormat,
-			format.elementType,
+			formatInfo.glFormat,
+			formatInfo.elementType,
 			dummyData.c_str());
 	}
 
@@ -210,7 +183,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 
 	loadEmpty(width, height, destFormat);
 
-	auto& format = GLFormat[(int)sourceFormat];
+	auto& format = TexFormatInfo::getFor(sourceFormat);
 
 	mTransparency = false;
 	if(destFormat == PixelFormat::R8G8B8A8) {
@@ -245,7 +218,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 		enableBilinearFiltering();
 	}
 
-	bool isSurface = width == Math::nextPowerOfTwo(width) && height == Math::nextPowerOfTwo(height);
+	bool isSurface = width == glm::powerOfTwoAbove(width) && height == glm::powerOfTwoAbove(height);
 
 	if (!isSurface || (creator.is_some() && creator.unwrap().disableTiling)) {
 		disableTiling();
@@ -338,7 +311,7 @@ void Texture::onUnload(bool soft) {
 			glDeleteTextures(1, &glhandle);
 
 			internalWidth = internalHeight = 0;
-			internalFormat = GL_NONE;
+			internalFormat = PixelFormat::Unknown;
 			glhandle = 0;
 			parentAtlas = {};
 			mTransparency = false;

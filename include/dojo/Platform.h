@@ -113,12 +113,12 @@ namespace Dojo {
 		}
 
 		///gets the window width
-		int getWindowWidth() {
+		uint32_t getWindowWidth() {
 			return windowWidth;
 		}
 
 		///gets the window height
-		int getWindowHeight() {
+		uint32_t getWindowHeight() {
 			return windowHeight;
 		}
 
@@ -243,7 +243,7 @@ namespace Dojo {
 
 		static Unique<Platform> gSingletonPtr;
 
-		int screenWidth, screenHeight, windowWidth, windowHeight;
+		uint32_t screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
 
 		utf::string locale;

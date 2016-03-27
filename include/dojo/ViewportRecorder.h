@@ -2,25 +2,24 @@
 
 #include "dojo_common_header.h"
 
-#include "FrameSubmitter.h"
 #include "TimedEvent.h"
 
 namespace Dojo {
-	//a class that just before submitting a frame, it adds it to a recorded stream
-	class RecorderSubmitter : public FrameSubmitter {
-	public:
-		RecorderSubmitter(FrameSubmitter& baseSubmitter, uint32_t FPS, uint32_t ringBufferSize);
-		virtual ~RecorderSubmitter();
+	class Viewport;
 
-		void setFPS(uint32_t FPS);
+	//a class that just before submitting a frame, it adds it to a recorded stream
+	class ViewportRecorder {
+	public:
+		ViewportRecorder(Viewport& viewport);
+		virtual ~ViewportRecorder();
+
+		void setViewport(Viewport& viewport);
 
 		bool hasPBOID(uint32_t ID) const;
 
-		virtual void submitFrame() override;
+		void submitFrame();
 	protected:
-		std::chrono::high_resolution_clock::duration mCaptureInterval;
-		std::chrono::high_resolution_clock::time_point mNextCaptureTime;
-		FrameSubmitter& mBase;
+		optional_ref<Viewport> mViewport;
 		uint32_t mFrameSize = 0;
 		std::vector<Shared<std::vector<byte>>> mBuffers;
 

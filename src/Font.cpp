@@ -198,8 +198,8 @@ bool Font::Page::onLoad() {
 	int sy = font.mCellHeight * FONT_PAGE_SIDE;
 
 	bool npot = Platform::singleton().isNPOTEnabled();
-	int sxp2 = npot ? sx : Math::nextPowerOfTwo(sx);
-	int syp2 = npot ? sy : Math::nextPowerOfTwo(sy);
+	int sxp2 = npot ? sx : glm::powerOfTwoAbove(sx);
+	int syp2 = npot ? sy : glm::powerOfTwoAbove(sy);
 
 	int pixelNumber = sxp2 * syp2;
 	std::vector<byte> buf(pixelNumber * 4);

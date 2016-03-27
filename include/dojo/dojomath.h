@@ -21,12 +21,6 @@ namespace Dojo {
 		static const Radians PI; ///well, pi
 		static const Radians TAU; ///2*pi
 
-		///returns if this machine is little endian
-		static bool isLittleEndian() {
-			unsigned short x = 0x0001;
-			return *((byte*)&x) != 0;
-		}
-
 		///clamps n between max and min
 		template <typename T>
 		static T clamp(T n, T min, T max) {
@@ -75,17 +69,6 @@ namespace Dojo {
 		///converts float to int by flooring
 		static int floorInt(float f) {
 			return (int)std::floorf(f);
-		}
-
-		///returns the smallest power of two greater than val
-		static unsigned int nextPowerOfTwo(unsigned int val) {
-			--val;
-			val = (val >> 1) | val;
-			val = (val >> 2) | val;
-			val = (val >> 4) | val;
-			val = (val >> 8) | val;
-			val = (val >> 16) | val;
-			return ++val;
 		}
 
 		static float lerp(float to, float from, float s) {

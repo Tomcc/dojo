@@ -41,6 +41,7 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/bit.hpp"
 
 #ifdef _MSC_VER
 	#pragma warning(4:4201)

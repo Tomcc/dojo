@@ -14,13 +14,16 @@
 #include "Resource.h"
 #include "Vector.h"
 #include "PixelFormat.h"
+#include "RenderSurface.h"
 
 namespace Dojo {
 	class Mesh;
 	class FrameSet;
 
 	///A Texture is the image container in Dojo; all the images to be displayed need to be loaded in GPU memory using one
-	class Texture : public Resource {
+	class Texture : 
+		public RenderSurface,
+		public Resource {
 	public:
 		///Create a empty new texture
 		Texture(optional_ref<ResourceGroup> creator = {});
@@ -70,14 +73,6 @@ namespace Dojo {
 		///A tiled texture repeats when UV > 1 or < 0, while a clamped texture does not
 		void disableTiling();
 
-		int getWidth() const {
-			return width;
-		}
-
-		int getHeight() const {
-			return height;
-		}
-
 		///returns the texture size in the UV space of the parent atlas/padded image
 		const Vector& getUVSize() {
 			return UVSize;
@@ -120,10 +115,6 @@ namespace Dojo {
 			return *OBB;
 		}
 
-		bool isNonPowerOfTwo() const {
-			return npot;
-		}
-
 		bool hasTransparency() const {
 			return mTransparency;
 		}
@@ -143,12 +134,14 @@ namespace Dojo {
 
 			ownerFrameSet = s;
 		}
+		virtual optional_ref<Texture> getTexture() {
+			return self;
+		}
 
 	protected:
 
-		bool npot, mTransparency = false;
-		uint32_t width, height, internalWidth, internalHeight;
-		uint32_t internalFormat;
+		bool mTransparency = false;
+		uint32_t internalWidth, internalHeight;
 		Vector UVSize, UVOffset;
 
 		optional_ref<Texture> parentAtlas;

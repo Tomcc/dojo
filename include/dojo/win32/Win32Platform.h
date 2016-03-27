@@ -64,8 +64,6 @@ namespace Dojo {
 		void setVSync(int interval = 1);
 
 	protected:
-		int width, height;
-
 		Timer frameTimer;
 
 		Vector cursorPos, prevCursorPos;

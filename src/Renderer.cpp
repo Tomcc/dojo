@@ -17,13 +17,12 @@ using namespace Dojo;
 
 GLuint gDefaultVAO = 0;
 
-Renderer::Renderer(int w, int h, Orientation deviceOr) :
+Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation) :
 	frameStarted(false),
 	valid(true),
-	width(w),
-	height(h),
 	renderOrientation(DO_LANDSCAPE_RIGHT),
-	deviceOrientation(deviceOr),
+	deviceOrientation(renderOrientation),
+	mBackBuffer(backbuffer),
 	frameVertexCount(0),
 	frameTriCount(0),
 	frameBatchCount(0),
@@ -209,7 +208,7 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 }
 
 void Renderer::_renderViewport(Viewport& viewport) {
-	if (auto rt = viewport.getRenderTarget().to_ref()) {
+	if (auto rt = viewport.getRenderTarget().getTexture().to_ref()) {
 		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
 		globalUniforms.targetDimension = {
@@ -220,7 +219,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	else {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glFrontFace(GL_CCW); //invert vertex winding when inverting the view
-		globalUniforms.targetDimension = { (float)width, (float)height };
+		globalUniforms.targetDimension = { (float)mBackBuffer.getWidth(), (float)mBackBuffer.getHeight() };
 	}
 
 	glViewport(0, 0, (GLsizei) globalUniforms.targetDimension.x, (GLsizei)globalUniforms.targetDimension.y);

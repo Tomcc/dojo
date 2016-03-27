@@ -45,13 +45,15 @@
     <ClInclude Include="include\dojo\optional_ref.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
+    <ClInclude Include="include\dojo\RenderSurface.h" />
     <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\PseudoEnum.h" />
     <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\range.h" />
-    <ClInclude Include="include\dojo\RecorderSubmitter.h" />
+    <ClInclude Include="include\dojo\TexFormatInfo.h" />
+    <ClInclude Include="include\dojo\ViewportRecorder.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\Color.h" />
@@ -123,7 +125,7 @@
     <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
     <ClCompile Include="include\dojo\Path.cpp" />
     <ClCompile Include="include\dojo\Random.cpp" />
-    <ClCompile Include="include\dojo\RecorderSubmitter.cpp" />
+    <ClCompile Include="include\dojo\ViewportRecorder.cpp" />
     <ClCompile Include="include\dojo\RenderLayer.cpp" />
     <ClCompile Include="include\dojo\Stream.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
@@ -152,6 +154,7 @@
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
+    <ClCompile Include="src\RenderSurface.cpp" />
     <ClCompile Include="src\ResourceGroup.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
@@ -164,6 +167,7 @@
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="src\Table.cpp" />
     <ClCompile Include="src\Tessellation.cpp" />
+    <ClCompile Include="src\TexFormatInfo.cpp" />
     <ClCompile Include="src\TextArea.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />

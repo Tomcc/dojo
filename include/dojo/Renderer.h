@@ -13,6 +13,7 @@
 #include "Vector.h"
 #include "RenderLayer.h"
 #include "GlobalUniformData.h"
+#include "RenderSurface.h"
 
 namespace Dojo {
 
@@ -32,7 +33,7 @@ namespace Dojo {
 		typedef std::vector<RenderLayer> LayerList;
 		typedef std::unordered_set<Viewport*> ViewportSet;
 
-		Renderer(int width, int height, Orientation renderOrientation);
+		Renderer(RenderSurface backbuffer, Orientation renderOrientation);
 
 		~Renderer();
 
@@ -73,6 +74,10 @@ namespace Dojo {
 			return (RenderLayer::ID)layers.size();
 		}
 
+		RenderSurface& getBackbuffer() {
+			return mBackBuffer;
+		}
+
 		int getLastFrameVertexCount() {
 			return frameVertexCount;
 		}
@@ -98,8 +103,7 @@ namespace Dojo {
 
 		bool valid;
 
-		// The pixel dimensions of the target system view
-		int width, height;
+		RenderSurface mBackBuffer;
 
 		Radians renderRotation = 0.0_rad;
 		Orientation renderOrientation, deviceOrientation;

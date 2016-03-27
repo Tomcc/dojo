@@ -1,4 +1,4 @@
-#include "RecorderSubmitter.h"
+#include "ViewportRecorder.h"
 
 #include "dojo_gl_header.h"
 #include "Platform.h"
@@ -6,24 +6,25 @@
 #include "range.h"
 #include "Timer.h"
 #include "WorkerPool.h"
+#include "Viewport.h"
+#include "TexFormatInfo.h"
+#include "RenderSurface.h"
 
 using namespace Dojo;
 using namespace std::chrono;
 
-Dojo::RecorderSubmitter::RecorderSubmitter(FrameSubmitter& baseSubmitter, uint32_t FPS, uint32_t ringBufferSize) :
-	mBase(baseSubmitter),
-	mMaxPBOCount(ringBufferSize) {
+ViewportRecorder::ViewportRecorder(Viewport& viewport) :
+	mViewport(viewport),
+	mMaxPBOCount(2),
+	mLockedReading(false) {
 
-	setFPS(FPS);
-	mNextCaptureTime = high_resolution_clock::now();
-	mLockedReading = false;
 }
 
-bool Dojo::RecorderSubmitter::hasPBOID(uint32_t ID) const {
+bool ViewportRecorder::hasPBOID(uint32_t ID) const {
 	return ID < mPBOs.size();
 }
 
-Shared<std::vector<byte>> RecorderSubmitter::_getBuffer(uint32_t size) {
+Shared<std::vector<byte>> ViewportRecorder::_getBuffer(uint32_t size) {
 	if(mBuffers.size() > 0) {
 		auto buf = std::move(mBuffers.back());
 		mBuffers.pop_back();
@@ -33,17 +34,11 @@ Shared<std::vector<byte>> RecorderSubmitter::_getBuffer(uint32_t size) {
 	return make_shared<std::vector<byte>>(size); //return a new one. It'll come back
 }
 
-RecorderSubmitter::~RecorderSubmitter() {
+ViewportRecorder::~ViewportRecorder() {
 	_destroyAllPBOs();
 }
 
-void RecorderSubmitter::setFPS(uint32_t FPS) {
-	auto invFPS = duration<float>(1.f / FPS);
-	mCaptureInterval = duration_cast<high_resolution_clock::duration>(invFPS);
-}
-
-void RecorderSubmitter::submitFrame() {
-
+void ViewportRecorder::submitFrame() {
 	//check if it's done reading in the background and unmap the buffer
 	if(mLockedReading == false && mLockedPBO) {
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, mLockedPBO);
@@ -52,16 +47,10 @@ void RecorderSubmitter::submitFrame() {
 		mLockedPBO = 0;
 	}
 
-	auto now = high_resolution_clock::now();
-	if(now >= mNextCaptureTime) {
-		_startFrameCapture();
-		mNextCaptureTime = now + mCaptureInterval;
-	}
-
-	mBase.submitFrame();
+	_startFrameCapture();
 }
 
-void RecorderSubmitter::_bindNextPBO() {
+void ViewportRecorder::_bindNextPBO() {
 	if (hasPBOID(mNextPBO)) {
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[mNextPBO]);
 	}
@@ -77,7 +66,7 @@ void RecorderSubmitter::_bindNextPBO() {
 	mNextPBO = (mNextPBO + 1) % mMaxPBOCount;
 }
 
-void Dojo::RecorderSubmitter::_destroyAllPBOs() {
+void ViewportRecorder::_destroyAllPBOs() {
 	DEBUG_ASSERT(!mLockedReading, "Cannot delete now");
 
 	glDeleteBuffers(mPBOs.size(), mPBOs.data());
@@ -85,7 +74,7 @@ void Dojo::RecorderSubmitter::_destroyAllPBOs() {
 	mNextPBO = 0;
 }
 
-void RecorderSubmitter::_writePBO(uint32_t PBO) {
+void ViewportRecorder::_writePBO(uint32_t PBO) {
 	mLockedReading = true;
 	mLockedPBO = PBO;
 	auto size = mFrameSize; //copy the size because it might change before the task runs
@@ -107,18 +96,16 @@ void RecorderSubmitter::_writePBO(uint32_t PBO) {
 	});
 }
 
-void RecorderSubmitter::_startFrameCapture() {
+void ViewportRecorder::_startFrameCapture() {
 	//TODO get all of these from the currently bound FBO
 	//WARNING do not use on OpenGL ES 2!
-	auto w = Platform::singleton().getScreenWidth();
-	auto h = Platform::singleton().getScreenHeight();
-	uint32_t pixelSize = 4;
-	auto format = GL_RGBA;
-	auto channelFormat = GL_UNSIGNED_BYTE;
+
+	auto& surface = mViewport.unwrap().getRenderTarget();
+	auto desc = TexFormatInfo::getFor(surface.getFormat());
 
 	DEBUG_ASSERT(mLockedReading == false, "Reading the next buffer should be done by now as now it needs to be reused");
 
-	auto frameSize = w * h * pixelSize;
+	auto frameSize = surface.getWidth() * surface.getHeight() * desc.pixelSizeBytes;
 	if(frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
@@ -129,7 +116,7 @@ void RecorderSubmitter::_startFrameCapture() {
 
 	//pick and bind a fresh PBO
 	glReadBuffer(GL_BACK);
-	glReadPixels(0, 0, w, h, format, channelFormat, nullptr);
+	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), desc.glFormat, desc.elementType, nullptr);
 	CHECK_GL_ERROR;
 
 	//also, if there is a "next PBO" initialized it's time to write it down
@@ -140,5 +127,10 @@ void RecorderSubmitter::_startFrameCapture() {
 
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
+
+}
+
+void Dojo::ViewportRecorder::setViewport(Viewport& viewport)
+{
 
 }

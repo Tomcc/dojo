@@ -371,9 +371,6 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	rect.bottom = rect.top + h + 7;
 	rect.right = rect.left + w;
 
-	width = w;
-	height = h;
-
 	DWORD dwstyle = WINDOWMODE_PROPERTIES;
 
 	AdjustWindowRect(&rect, dwstyle, true);
@@ -550,7 +547,7 @@ utf::string _cleanPath(const utf::string& name) {
 	return path;
 }
 
-void Dojo::Win32Platform::initialize(Unique<Game> g) {
+void Win32Platform::initialize(Unique<Game> g) {
 
 	DEBUG_ASSERT(g, "The Game implementation passed to initialize() can't be null");
 
@@ -590,12 +587,12 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 
 	config.inherit(&userConfig); //use the table that was loaded from file but override any config-passed members
 
-	int w = std::min(screenWidth, game->getNativeWidth());
-	int h = std::min(screenHeight, game->getNativeHeight());
+	auto w = std::min(screenWidth, game->getNativeWidth());
+	auto h = std::min(screenHeight, game->getNativeHeight());
 
 	Vector windowSize = config.getVector("windowSize", Vector((float)w, (float)h));
-	windowWidth = (int)windowSize.x;
-	windowHeight = (int)windowSize.y;
+	windowWidth = (uint32_t)windowSize.x;
+	windowHeight = (uint32_t)windowSize.y;
 
 	//a window can be fullscreen only if the windowSize equals the screenSize, and if it wants to
 	mFullscreen = windowWidth == screenWidth && windowHeight == screenHeight && config.getBool("fullscreen");
@@ -607,7 +604,13 @@ void Dojo::Win32Platform::initialize(Unique<Game> g) {
 
 	setVSync(config.getBool("disable_vsync") ? 0 : 1);
 
-	render = make_unique<Renderer>(width, height, DO_LANDSCAPE_LEFT);
+	render = make_unique<Renderer>(
+		RenderSurface{
+			windowWidth,
+			windowHeight,
+			PixelFormat::R8G8B8A8 }, //TODO actually read what format it is
+		DO_LANDSCAPE_LEFT
+	);
 
 	sound = make_unique<SoundManager>();
 
@@ -807,7 +810,7 @@ void Win32Platform::mouseMoved(int cx, int cy) {
 	if (realMouseEvent) {
 		if (mouseLocked) { //put the cursor back in the center
 			realMouseEvent = false; //setcursor will cause another mouseMoved event, avoid to trigger a loop!
-			POINT center = {width / 2, height / 2};
+			POINT center = {(LONG)windowWidth / 2, (LONG)windowWidth / 2};
 			ClientToScreen(hWindow, &center);
 			SetCursorPos(center.x, center.y);
 		}
@@ -907,7 +910,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-Dojo::PixelFormat Dojo::Win32Platform::loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = nullptr;
 
