@@ -5,19 +5,36 @@
 #include "Renderer.h"
 #include "range.h"
 #include "Timer.h"
+#include "WorkerPool.h"
 
 using namespace Dojo;
 using namespace std::chrono;
 
-Dojo::RecorderSubmitter::RecorderSubmitter(FrameSubmitter& baseSubmitter, uint32_t FPS) :
-	mBase(baseSubmitter) {
-	setFPS(FPS);
+Dojo::RecorderSubmitter::RecorderSubmitter(FrameSubmitter& baseSubmitter, uint32_t FPS, uint32_t ringBufferSize) :
+	mBase(baseSubmitter),
+	mMaxPBOCount(ringBufferSize) {
 
+	setFPS(FPS);
 	mNextCaptureTime = high_resolution_clock::now();
+	mReading = false;
+}
+
+bool Dojo::RecorderSubmitter::hasPBOID(uint32_t ID) const {
+	return ID < mPBOs.size();
+}
+
+Shared<std::vector<byte>> RecorderSubmitter::_getBuffer(uint32_t size) {
+	if(mBuffers.size() > 0) {
+		auto buf = std::move(mBuffers.back());
+		mBuffers.pop_back();
+		buf->resize(size);
+		return buf;
+	}
+	return make_shared<std::vector<byte>>(size); //return a new one. It'll come back
 }
 
 RecorderSubmitter::~RecorderSubmitter() {
-	glDeleteBuffers(2, mPBO);
+	_destroyAllPBOs();
 }
 
 void RecorderSubmitter::setFPS(uint32_t FPS) {
@@ -35,45 +52,81 @@ void RecorderSubmitter::submitFrame() {
 	mBase.submitFrame();
 }
 
+void RecorderSubmitter::_bindNextPBO() {
+	if (hasPBOID(mNextPBO)) {
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[mNextPBO]);
+	}
+	else {
+		GLuint pbo;
+		glGenBuffers(1, &pbo);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+		glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
+		CHECK_GL_ERROR;
+		mPBOs.emplace_back(pbo);
+	}
+
+	mNextPBO = (mNextPBO + 1) % mMaxPBOCount;
+}
+
+void Dojo::RecorderSubmitter::_destroyAllPBOs() {
+	glDeleteBuffers(mPBOs.size(), mPBOs.data());
+	CHECK_GL_ERROR;
+	mNextPBO = 0;
+}
+
 void RecorderSubmitter::_writePBO(uint32_t PBO) {
-	//TODO
+	mReading = true;
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
+	auto ptr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
+ 	auto bufptr = _getBuffer(mFrameSize);
+
+	//send the buffer to another thread to compress it
+	Platform::singleton().getWorkerPool().queue([buf = bufptr, ptr] {
+		//TODO
+	},
+	[this, bufptr, PBO] {
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		mReading = false;
+
+		//put back the buffer
+		mBuffers.emplace_back(bufptr);
+	});
 }
 
 void RecorderSubmitter::_startFrameCapture() {
 	//TODO get all of these from the currently bound FBO
+	//WARNING do not use on OpenGL ES 2!
 	auto w = Platform::singleton().getScreenWidth();
 	auto h = Platform::singleton().getScreenHeight();
 	uint32_t pixelSize = 4;
 	auto format = GL_RGBA;
 	auto channelFormat = GL_UNSIGNED_BYTE;
 
+	DEBUG_ASSERT(mReading == false, "Reading the next buffer should be done by now as now it needs to be reused");
+
 	auto frameSize = w * h * pixelSize;
 	if(frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
-		mPBO[0] = mPBO[1] = 0;
+		_destroyAllPBOs();
 	}
 
-	//if the buffer that needs to be written to is 0, then generate it
-	auto& pbo = mPBO[0];
-	if(pbo == 0) {
-		glGenBuffers(1, &pbo);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
-		glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
-		CHECK_GL_ERROR;
-	}
-	else { //else write it out so that it can be rewritten
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
-		_writePBO(pbo);
-	}
+	_bindNextPBO();
 
 	//pick and bind a fresh PBO
 	glReadBuffer(GL_BACK);
 	glReadPixels(0, 0, w, h, format, channelFormat, nullptr);
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-
-	//swap the buffers
-	std::swap(mPBO[0], mPBO[1]);
-
 	CHECK_GL_ERROR;
+
+	//also, if there is a "next PBO" initialized it's time to write it down
+	//as next frame it will be used
+	if(hasPBOID(mNextPBO)) {
+		_writePBO(mPBOs[mNextPBO]);
+	}
+
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+	CHECK_GL_ERROR;
+
 }
