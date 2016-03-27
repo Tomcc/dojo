@@ -17,7 +17,7 @@ namespace Dojo {
 
 		bool hasPBOID(uint32_t ID) const;
 
-		void submitFrame();
+		void captureFrame();
 	protected:
 		optional_ref<Viewport> mViewport;
 		uint32_t mFrameSize = 0;

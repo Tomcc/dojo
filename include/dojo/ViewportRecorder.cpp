@@ -9,15 +9,19 @@
 #include "Viewport.h"
 #include "TexFormatInfo.h"
 #include "RenderSurface.h"
+#include "Texture.h"
 
 using namespace Dojo;
 using namespace std::chrono;
 
 ViewportRecorder::ViewportRecorder(Viewport& viewport) :
-	mViewport(viewport),
-	mMaxPBOCount(2),
+	mMaxPBOCount(3),
 	mLockedReading(false) {
+	setViewport(viewport);
+}
 
+void ViewportRecorder::setViewport(Viewport& viewport) {
+	mViewport = viewport;
 }
 
 bool ViewportRecorder::hasPBOID(uint32_t ID) const {
@@ -38,7 +42,7 @@ ViewportRecorder::~ViewportRecorder() {
 	_destroyAllPBOs();
 }
 
-void ViewportRecorder::submitFrame() {
+void ViewportRecorder::captureFrame() {
 	//check if it's done reading in the background and unmap the buffer
 	if(mLockedReading == false && mLockedPBO) {
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, mLockedPBO);
@@ -112,10 +116,18 @@ void ViewportRecorder::_startFrameCapture() {
 		_destroyAllPBOs();
 	}
 
+	//pick and bind a fresh PBO
 	_bindNextPBO();
 
-	//pick and bind a fresh PBO
-	glReadBuffer(GL_BACK);
+	if(auto tex = surface.getTexture().to_ref()) {
+		tex.get().bindAsRenderTarget(false);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+	}
+	else {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glReadBuffer(GL_BACK);
+	}
+	
 	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), desc.glFormat, desc.elementType, nullptr);
 	CHECK_GL_ERROR;
 
@@ -127,10 +139,4 @@ void ViewportRecorder::_startFrameCapture() {
 
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
-
-}
-
-void Dojo::ViewportRecorder::setViewport(Viewport& viewport)
-{
-
 }
