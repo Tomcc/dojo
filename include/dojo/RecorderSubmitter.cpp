@@ -7,6 +7,12 @@
 #include "Timer.h"
 #include "WorkerPool.h"
 
+#pragma warning(push, 0)  
+extern "C" {
+	#include <libswscale/swscale.h>
+}
+#pragma warning(pop)
+
 using namespace Dojo;
 using namespace std::chrono;
 
