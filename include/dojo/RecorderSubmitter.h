@@ -26,7 +26,8 @@ namespace Dojo {
 		std::vector<uint32_t> mPBOs;
 		size_t mNextPBO = 0;
 		size_t mMaxPBOCount;
-		std::atomic<bool> mReading;
+		std::atomic<bool> mLockedReading;
+		uint32_t mLockedPBO = 0;
 		
 		void _bindNextPBO();
 

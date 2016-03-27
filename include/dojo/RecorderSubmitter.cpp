@@ -16,7 +16,7 @@ Dojo::RecorderSubmitter::RecorderSubmitter(FrameSubmitter& baseSubmitter, uint32
 
 	setFPS(FPS);
 	mNextCaptureTime = high_resolution_clock::now();
-	mReading = false;
+	mLockedReading = false;
 }
 
 bool Dojo::RecorderSubmitter::hasPBOID(uint32_t ID) const {
@@ -43,6 +43,15 @@ void RecorderSubmitter::setFPS(uint32_t FPS) {
 }
 
 void RecorderSubmitter::submitFrame() {
+
+	//check if it's done reading in the background and unmap the buffer
+	if(mLockedReading == false && mLockedPBO) {
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, mLockedPBO);
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		mLockedPBO = 0;
+	}
+
 	auto now = high_resolution_clock::now();
 	if(now >= mNextCaptureTime) {
 		_startFrameCapture();
@@ -69,27 +78,30 @@ void RecorderSubmitter::_bindNextPBO() {
 }
 
 void Dojo::RecorderSubmitter::_destroyAllPBOs() {
+	DEBUG_ASSERT(!mLockedReading, "Cannot delete now");
+
 	glDeleteBuffers(mPBOs.size(), mPBOs.data());
 	CHECK_GL_ERROR;
 	mNextPBO = 0;
 }
 
 void RecorderSubmitter::_writePBO(uint32_t PBO) {
-	mReading = true;
+	mLockedReading = true;
+	mLockedPBO = PBO;
+	auto size = mFrameSize; //copy the size because it might change before the task runs
+
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
 	auto ptr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
  	auto bufptr = _getBuffer(mFrameSize);
 
 	//send the buffer to another thread to compress it
-	Platform::singleton().getWorkerPool().queue([buf = bufptr, ptr] {
-		//TODO
+	Platform::singleton().getWorkerPool().queue([this, buf = bufptr, ptr, size] {
+		memcpy(buf->data(), ptr, size);
+		mLockedReading = false;
+
+		//TODO downscale, compress and store
 	},
 	[this, bufptr, PBO] {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
-		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-		mReading = false;
-
 		//put back the buffer
 		mBuffers.emplace_back(bufptr);
 	});
@@ -104,7 +116,7 @@ void RecorderSubmitter::_startFrameCapture() {
 	auto format = GL_RGBA;
 	auto channelFormat = GL_UNSIGNED_BYTE;
 
-	DEBUG_ASSERT(mReading == false, "Reading the next buffer should be done by now as now it needs to be reused");
+	DEBUG_ASSERT(mLockedReading == false, "Reading the next buffer should be done by now as now it needs to be reused");
 
 	auto frameSize = w * h * pixelSize;
 	if(frameSize != mFrameSize) {
