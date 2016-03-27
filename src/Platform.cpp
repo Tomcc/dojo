@@ -36,6 +36,8 @@
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Exception.h>
 #include "LogListener.h"
+#include "TimedEvent.h"
+#include "Random.h"
 
 using namespace Dojo;
 
@@ -86,6 +88,14 @@ Platform::Platform(const Table& configTable) :
 
 	mLogWriter = make_unique<StdoutLog>();
 	mLog->addListener(*mLogWriter);
+
+	//create thread pools
+	//map the main thread to the thread pool system
+	mPools.push_back(make_unique<WorkerPool>(1, false)); 
+
+	//allocate cpus-1 threads
+	//TODO handle asymmetric processors such as BIG.little that should use half the cores
+	mPools.push_back(make_unique<WorkerPool>(std::thread::hardware_concurrency() - 1));
 }
 
 Platform::~Platform() {
@@ -97,15 +107,24 @@ void Platform::_runASyncTasks(float elapsedTime) {
 
 	Timer timer;
 
+	TimedEvent::runTimedEvents(std::chrono::high_resolution_clock::now());
+
+	//TODO run the main thread queue
+
 	//TODO increase frame time if starved
 	//TODO try to predict if the next task will kill the frame
 
-	while (timer.getElapsedTime() < availableTime) {
-		if(!getWorkerPool().runOneCallback()) {
-			break; //all done for this frame
+	bool runAnything = false;
+	size_t startFrom = Random::instance.getInt(mPools.size());
+	size_t i = 0;
+	while( timer.getElapsedTime() < availableTime) {
+		runAnything |= mPools[(startFrom + i) % mPools.size()]->runOneCallback();
+
+		//if we've visited all the pools and nothing was run, return
+		if(++i == mPools.size() && !runAnything) {
+			break;
 		}
 	}
-	//TODO support more than one worker pool
 }
 
 utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string& path) {

@@ -210,7 +210,7 @@ void SoundBuffer::Chunk::loadAsync() {
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
 	//async load
-	Platform::singleton().getWorkerPool().queue([this] {
+	Platform::singleton().getBackgroundPool().queue([this] {
 		onLoad();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK

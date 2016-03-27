@@ -3,6 +3,7 @@
 #include "dojo_common_header.h"
 
 #include "FrameSubmitter.h"
+#include "TimedEvent.h"
 
 namespace Dojo {
 	//a class that just before submitting a frame, it adds it to a recorded stream

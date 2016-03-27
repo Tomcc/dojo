@@ -21,13 +21,14 @@ namespace Dojo {
 	*/
 	class BackgroundWorker {
 	public:
+		const bool isAsync;
 
 		///Creates a new BackgroundWorker
-		BackgroundWorker();
+		explicit BackgroundWorker(bool async);
 		virtual ~BackgroundWorker();
 
 		///Start the thread and begin running tasks
-		void start();
+		void startAsync();
 
 		///queues this task for execution in the current thread pool
 		/**
@@ -42,9 +43,12 @@ namespace Dojo {
 		*/
 		void stop();
 
-		bool _runOneCallback();
+		///waits for a task, returns true if any were run
+		bool runNextTask();
 
+		bool _runOneCallback();
 	protected:
+
 		std::atomic<bool> mRunning;
 		std::thread mThread;
 		std::condition_variable mTasksAvailable;
@@ -55,8 +59,6 @@ namespace Dojo {
 
 		AsyncJob _waitForNextTask();
 
-		///waits for a task, returns false if the thread has to close
-		void _processNextTask();
 	private:
 	};
 }

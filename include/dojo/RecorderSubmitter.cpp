@@ -95,7 +95,7 @@ void RecorderSubmitter::_writePBO(uint32_t PBO) {
  	auto bufptr = _getBuffer(mFrameSize);
 
 	//send the buffer to another thread to compress it
-	Platform::singleton().getWorkerPool().queue([this, buf = bufptr, ptr, size] {
+	Platform::singleton().getBackgroundPool().queue([this, buf = bufptr, ptr, size] {
 		memcpy(buf->data(), ptr, size);
 		mLockedReading = false;
 

@@ -48,6 +48,7 @@
 #include <dojo/Tessellation.h>
 #include <dojo/TextArea.h>
 #include <dojo/Texture.h>
+#include <dojo/TimedEvent.h>
 #include <dojo/Timer.h>
 #include <dojo/TouchArea.h>
 #include <dojo/Vector.h>

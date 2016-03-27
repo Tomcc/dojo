@@ -75,8 +75,13 @@ namespace Dojo {
 		}
 
 		///returns the default BackgroundQueue
-		WorkerPool& getWorkerPool() {
-			return *mWorkerPool;
+		WorkerPool& getBackgroundPool() {
+			return *mPools[1]; //HACK
+		}
+
+		///returns the pool for tasks that are executed asynchronously on the main thread
+		WorkerPool& getMainThreadPool() {
+			return *mPools[0]; //HACK
 		}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
@@ -259,7 +264,7 @@ namespace Dojo {
 		std::unique_ptr<Log> mLog;
 		std::unique_ptr<LogListener> mLogWriter;
 
-		Unique<WorkerPool> mWorkerPool;
+		std::vector<Unique<WorkerPool>> mPools;
 
 		SmallSet<ApplicationListener*> focusListeners;
 

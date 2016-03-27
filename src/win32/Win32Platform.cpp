@@ -305,9 +305,6 @@ Win32Platform::Win32Platform(const Table& configTable) :
 
 	_initKeyMap();
 
-	//allocate cpus-1 threads
-	//TODO handle asymmetric processors such as BIG.little that should use half the cores
-	mWorkerPool = make_unique<WorkerPool>(std::thread::hardware_concurrency() - 1);
 }
 
 Win32Platform::~Win32Platform() {
@@ -678,9 +675,6 @@ void Win32Platform::shutdown() {
 		game->end();
 		game = {};
 	}
-
-	//stop the background queue
-	mWorkerPool = {};
 
 	// and a cheesy fade exit
 	AnimateWindow(hWindow, 200, AW_HIDE | AW_BLEND);

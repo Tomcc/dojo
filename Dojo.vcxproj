@@ -92,6 +92,7 @@
     <ClInclude Include="include\dojo\Tessellation.h" />
     <ClInclude Include="include\dojo\TextArea.h" />
     <ClInclude Include="include\dojo\Texture.h" />
+    <ClInclude Include="include\dojo\TimedEvent.h" />
     <ClInclude Include="include\dojo\Timer.h" />
     <ClInclude Include="include\dojo\Touch.h" />
     <ClInclude Include="include\dojo\TouchArea.h" />
@@ -126,6 +127,7 @@
     <ClCompile Include="include\dojo\RenderLayer.cpp" />
     <ClCompile Include="include\dojo\Stream.cpp" />
     <ClCompile Include="include\dojo\StringReader.cpp" />
+    <ClCompile Include="include\dojo\TimedEvent.cpp" />
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />

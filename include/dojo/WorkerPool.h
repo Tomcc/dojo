@@ -6,10 +6,12 @@ namespace Dojo {
 	///a pool of worker that can execute tasks and sends back callbacks
 	class WorkerPool {
 	public:
-		WorkerPool(uint32_t workerCount);
+		const bool isAsync;
+
+		explicit WorkerPool(uint32_t workerCount, bool async = true);
 		~WorkerPool();
 
-		void queue(AsyncTask&& task, AsyncCallback&& callback = {});
+		void queue(AsyncTask task, AsyncCallback callback = {});
 
 		bool runOneCallback();
 

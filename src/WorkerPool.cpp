@@ -4,11 +4,13 @@
 
 using namespace Dojo;
 
-WorkerPool::WorkerPool(uint32_t workerCount) {
+WorkerPool::WorkerPool(uint32_t workerCount, bool async) :
+isAsync(async) {
 	DEBUG_ASSERT(workerCount > 0, "Invalid worker count");
+	DEBUG_ASSERT(async || workerCount == 1, "Either the pool is async, or it should only have one queue");
 
 	while(mWorkers.size() < workerCount) {
-		mWorkers.emplace_back(make_unique<BackgroundWorker>());
+		mWorkers.emplace_back(make_unique<BackgroundWorker>(isAsync));
 	}
 }
 
@@ -16,7 +18,7 @@ WorkerPool::~WorkerPool() {
 	//empty to instantiate ~BackgroundWorker here
 }
 
-void WorkerPool::queue(AsyncTask&& task, AsyncCallback&& callback /* = */ ) {
+void WorkerPool::queue(AsyncTask task, AsyncCallback callback /* = */ ) {
 	//round robin between the workers
 	//TODO use a sp-mc queue?
 
@@ -30,6 +32,14 @@ bool WorkerPool::runOneCallback() {
 			return true;
 		}
 	}
+
+	if(!isAsync) { //also try to run one task if tasks must be run on the main thread
+		for (auto& w : mWorkers) {
+			if(w->runNextTask()) {
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
-
