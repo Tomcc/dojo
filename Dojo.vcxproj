@@ -18,7 +18,7 @@
     <ClInclude Include="include\dojo\AABB.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\AStar.h" />
-    <ClInclude Include="include\dojo\BackgroundQueue.h" />
+    <ClInclude Include="include\dojo\BackgroundWorker.h" />
     <ClInclude Include="include\dojo\Base64.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
     <ClInclude Include="include\dojo\Component.h" />
@@ -45,7 +45,7 @@
     <ClInclude Include="include\dojo\optional_ref.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
-    <ClInclude Include="include\dojo\Pipe.h" />
+    <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
     <ClInclude Include="include\dojo\PseudoEnum.h" />
@@ -103,6 +103,7 @@
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
     <ClInclude Include="include\dojo\win32\XInputController.h" />
+    <ClInclude Include="include\dojo\WorkerPool.h" />
     <ClInclude Include="src\triangle.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
@@ -128,7 +129,7 @@
     <ClCompile Include="include\dojo\win32\XInputController.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
-    <ClCompile Include="src\BackgroundQueue.cpp" />
+    <ClCompile Include="src\BackgroundWorker.cpp" />
     <ClCompile Include="src\Base64.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
@@ -178,6 +179,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\win32\Win32Platform.cpp" />
+    <ClCompile Include="src\WorkerPool.cpp" />
     <ClCompile Include="src\ZipArchive.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

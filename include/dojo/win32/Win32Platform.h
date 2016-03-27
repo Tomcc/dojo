@@ -7,7 +7,7 @@
 #include "Timer.h"
 #include "InputSystem.h"
 #include "Keyboard.h"
-#include "Pipe.h"
+#include "SPSCQueue.h"
 
 namespace Dojo {
 	class XInputController;
@@ -73,7 +73,7 @@ namespace Dojo {
 		bool dragging;
 		bool mMousePressed;
 
-		Unique<Pipe<std::function<void()>>> mContextRequestsQueue;
+		Unique<SPSCQueue<std::function<void()>>> mContextRequestsQueue;
 
 		bool _initializeWindow(const utf::string& caption, int w, int h);
 

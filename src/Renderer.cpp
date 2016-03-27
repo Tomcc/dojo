@@ -276,6 +276,8 @@ void Renderer::renderFrame(float dt) {
 	}
 
 	frameStarted = false;
+}
 
+void Renderer::endFrame() {
 	submitter.get().submitFrame();
 }

@@ -6,7 +6,7 @@
 #include "FileStream.h"
 #include "MemoryInputStream.h"
 #include "Platform.h"
-#include "BackgroundQueue.h"
+#include "WorkerPool.h"
 #include "Path.h"
 
 #include "dojo_al_header.h"
@@ -210,7 +210,7 @@ void SoundBuffer::Chunk::loadAsync() {
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
 	//async load
-	Platform::singleton().getBackgroundQueue()->queueTask([&] {
+	Platform::singleton().getWorkerPool().queue([this] {
 		onLoad();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20)); //HACK

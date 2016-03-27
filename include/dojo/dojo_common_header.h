@@ -109,6 +109,9 @@ using Shared = std::shared_ptr < T >;
 namespace Dojo {
 	typedef int64_t RandomSeed;
 	typedef uint8_t byte;
+
+	typedef std::function<void()> AsyncTask;
+	typedef std::function<void()> AsyncCallback;
 }
 
 using std::make_unique;

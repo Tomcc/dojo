@@ -51,6 +51,7 @@ namespace Dojo {
 		SmallSet<LogListener*> pListeners;
 		LogQueue mOutput;
 		uint32_t mMaxLines;
+		std::mutex mAppendMutex;
 
 		void _append(const utf::string& message, LogEntry::Level level);
 

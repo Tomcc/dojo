@@ -92,6 +92,8 @@ namespace Dojo {
 		//renders all the layers and their contained Renderables in the given order
 		void renderFrame(float dt);
 
+		void endFrame();
+
 	protected:
 
 		bool valid;

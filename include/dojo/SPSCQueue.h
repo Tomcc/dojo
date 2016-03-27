@@ -42,7 +42,7 @@
 namespace Dojo {
 
 	template <typename T, size_t MAX_BLOCK_SIZE = 512>
-	class Pipe {
+	class SPSCQueue {
 		// Design: Based on a queue-of-queues. The low-level queues are just
 		// circular buffers with front and tail indices indicating where the
 		// next element to dequeue is and where the next element can be enqueued,
@@ -68,7 +68,7 @@ namespace Dojo {
 		// allocations. If more than MAX_BLOCK_SIZE elements are requested,
 		// then several blocks of MAX_BLOCK_SIZE each are reserved (including
 		// at least one extra buffer block).
-		explicit Pipe(size_t maxSize = 15)
+		explicit SPSCQueue(size_t maxSize = 15)
 #ifndef NDEBUG
 			: enqueuing(false)
 			, dequeuing(false)
@@ -129,7 +129,7 @@ namespace Dojo {
 
 		// Note: The queue should not be accessed concurrently while it's
 		// being deleted. It's up to the user to synchronize this.
-		~Pipe() {
+		~SPSCQueue() {
 			// Make sure we get the latest version of all variables from other CPUs:
 			fence(memory_order_sync);
 
@@ -521,10 +521,10 @@ non_empty_front_block:
 
 
 		// Disable copying
-		Pipe(Pipe const&) = delete;
+		SPSCQueue(SPSCQueue const&) = delete;
 
 		// Disable assignment
-		Pipe& operator=(Pipe const&) = delete;
+		SPSCQueue& operator=(SPSCQueue const&) = delete;
 
 		AE_FORCEINLINE static size_t ceilToPow2(size_t x) {
 			// From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2

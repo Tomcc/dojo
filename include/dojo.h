@@ -3,8 +3,8 @@
 #include <dojo/AnimatedQuad.h>
 #include <dojo/ApplicationListener.h>
 #include <dojo/AStar.h>
-#include <dojo/Pipe.h>
-#include <dojo/BackgroundQueue.h>
+#include <dojo/SPSCQueue.h>
+#include <dojo/BackgroundWorker.h>
 #include <dojo/Base64.h>
 #include <dojo/Component.h>
 #include <dojo/Resource.h>

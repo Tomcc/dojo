@@ -7,7 +7,7 @@
 #include "dojomath.h"
 #include "SoundManager.h"
 #include "InputSystem.h"
-#include "BackgroundQueue.h"
+#include "WorkerPool.h"
 #include "Path.h"
 #include "Keyboard.h"
 
@@ -288,7 +288,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	frameInterval(0),
 	mFramesToAdvance(0),
 	clientAreaYOffset(0),
-	mContextRequestsQueue(make_unique<Pipe<std::function<void()>>>()) {
+	mContextRequestsQueue(make_unique<SPSCQueue<std::function<void()>>>()) {
 	/*
 	#ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
@@ -304,6 +304,10 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	_initKeyMap();
+
+	//allocate cpus-1 threads
+	//TODO handle asymmetric processors such as BIG.little that should use half the cores
+	mWorkerPool = make_unique<WorkerPool>(std::thread::hardware_concurrency() - 1);
 }
 
 Win32Platform::~Win32Platform() {
@@ -421,9 +425,10 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		PFD_DOUBLEBUFFER;
 	pixelFormatDescriptor.dwLayerMask = PFD_MAIN_PLANE;
 	pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
-	pixelFormatDescriptor.cColorBits = 16;
+	pixelFormatDescriptor.cColorBits = 16; //allow 565
+	pixelFormatDescriptor.cAlphaBits = 0;
 	pixelFormatDescriptor.cDepthBits = 16;
-	pixelFormatDescriptor.cStencilBits = 8;
+	pixelFormatDescriptor.cStencilBits = 1;
 
 
 	int chosenPixelFormat;
@@ -675,7 +680,7 @@ void Win32Platform::shutdown() {
 	}
 
 	//stop the background queue
-	mBackgroundQueue = {};
+	mWorkerPool = {};
 
 	// and a cheesy fade exit
 	AnimateWindow(hWindow, 200, AW_HIDE | AW_BLEND);
@@ -713,17 +718,18 @@ void Win32Platform::step(float dt) {
 	//update input
 	_pollDevices(dt);
 
-	//update completed tasks
-	//mBackgroundQueue->fireCompletedCallbacks();
-
 	game->loop(dt);
 
 	sound->update(dt);
 
 	render->renderFrame(dt);
 
+	_runASyncTasks((float)mStepTimer.getElapsedTime());
+
 	//take the time before swapBuffers because on some implementations it is blocking
-	realFrameTime = (float) mStepTimer.getElapsedTime();
+	realFrameTime = (float)mStepTimer.getElapsedTime();
+
+	render->endFrame(); //present the frame
 }
 
 void Win32Platform::loop() {

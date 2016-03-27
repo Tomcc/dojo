@@ -5,7 +5,7 @@
 #include "File.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
-#include "BackgroundQueue.h"
+#include "WorkerPool.h"
 #include "Log.h"
 #include "Path.h"
 #include "SoundManager.h"
@@ -77,8 +77,7 @@ Platform::Platform(const Table& configTable) :
 	input(nullptr),
 	realFrameTime(0),
 	mFullscreen(0),
-	mFrameSteppingEnabled(false),
-	mBackgroundQueue(nullptr) {
+	mFrameSteppingEnabled(false) {
 	addZipFormat(".zip");
 	addZipFormat(".dpk");
 
@@ -91,6 +90,22 @@ Platform::Platform(const Table& configTable) :
 
 Platform::~Platform() {
 
+}
+
+void Platform::_runASyncTasks(float elapsedTime) {
+	auto availableTime = game->getNativeFrameLength();
+
+	Timer timer;
+
+	//TODO increase frame time if starved
+	//TODO try to predict if the next task will kill the frame
+
+	while (timer.getElapsedTime() < availableTime) {
+		if(!getWorkerPool().runOneCallback()) {
+			break; //all done for this frame
+		}
+	}
+	//TODO support more than one worker pool
 }
 
 utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string& path) {

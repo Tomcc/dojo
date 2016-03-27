@@ -15,7 +15,7 @@ namespace Dojo {
 	class Email;
 	class ApplicationListener;
 	class FileStream;
-	class BackgroundQueue;
+	class WorkerPool;
 
 	///Platform is the base of the engine; it runs the main loop, creates the windows and updates the Game
 	/** the Platform is the first object to be initialized in a Dojo game, using the static method Platform::create() */
@@ -75,8 +75,8 @@ namespace Dojo {
 		}
 
 		///returns the default BackgroundQueue
-		BackgroundQueue* getBackgroundQueue() {
-			return mBackgroundQueue.get();
+		WorkerPool& getWorkerPool() {
+			return *mWorkerPool;
 		}
 
 		///returns "real frame time" or the time actually consumed by game computations in the last frame
@@ -227,6 +227,8 @@ namespace Dojo {
 		void _fireDefreeze();
 		void _fireTermination();
 
+		void _runASyncTasks(float elapsedTime);
+
 	protected:
 
 		typedef std::vector<utf::string> ZipExtensionList;
@@ -253,11 +255,11 @@ namespace Dojo {
 		Unique<FontSystem> fonts;
 
 		float realFrameTime;
-
+		
 		std::unique_ptr<Log> mLog;
 		std::unique_ptr<LogListener> mLogWriter;
 
-		Unique<BackgroundQueue> mBackgroundQueue;
+		Unique<WorkerPool> mWorkerPool;
 
 		SmallSet<ApplicationListener*> focusListeners;
 
