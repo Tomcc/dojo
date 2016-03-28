@@ -5,7 +5,8 @@
 namespace Dojo {
 	struct TexFormatInfo {
 		size_t pixelSizeBytes;
-		uint32_t glFormat, elementType;
+		uint32_t internalFormat, sourceFormat, elementType;
+		bool hasAlpha;
 
 		static const TexFormatInfo& getFor(PixelFormat format);
 

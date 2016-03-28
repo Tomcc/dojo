@@ -37,7 +37,7 @@ namespace Dojo {
 		bool loadEmpty(int width, int height, PixelFormat destFormat);
 
 		///loads the texture from a memory area with RGBA8 format
-		bool loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat);
+		bool loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat);
 
 		///loads the texture from the image pointed by the filename
 		bool loadFromFile(const utf::string& path);

@@ -76,7 +76,7 @@ void ViewportRecorder::captureFrame() {
 		glReadBuffer(GL_BACK);
 	}
 
-	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.glFormat, mFormatInfo.elementType, nullptr);
+	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.sourceFormat, mFormatInfo.elementType, nullptr);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
 }

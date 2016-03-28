@@ -149,7 +149,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 	}
 
 	//check if the texture has to be recreated (changed dimensions)
-	if (destWidth != internalWidth || destHeight != internalHeight || oldFormat.glFormat != formatInfo.glFormat) {
+	if (destWidth != internalWidth || destHeight != internalHeight || oldFormat.internalFormat != formatInfo.internalFormat) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
 		internalFormat = formatID;
@@ -161,11 +161,11 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
-			formatInfo.glFormat,
+			formatInfo.internalFormat,
 			internalWidth,
 			internalHeight,
 			0,
-			formatInfo.glFormat,
+			formatInfo.sourceFormat,
 			formatInfo.elementType,
 			dummyData.c_str());
 	}
@@ -178,15 +178,15 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 	return loaded = true;
 }
 
-bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat, PixelFormat destFormat) {
+bool Dojo::Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
 	DEBUG_ASSERT( imageData, "null image data" );
 
-	loadEmpty(width, height, destFormat);
+	loadEmpty(width, height, sourceFormat);
 
 	auto& format = TexFormatInfo::getFor(sourceFormat);
 
 	mTransparency = false;
-	if(destFormat == PixelFormat::RGBA_8_8_8_8) {
+	if(format.hasAlpha) {
 		auto end = imageData + (width * height * 4);
 		for (auto alpha = imageData + 3; alpha < end; alpha += 4) {
 			if ( *alpha < 250 ) {
@@ -196,7 +196,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 		}
 	}
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.glFormat, format.elementType, imageData);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.sourceFormat, format.elementType, imageData);
 	CHECK_GL_ERROR;
 
 	return loaded = true;
@@ -218,22 +218,9 @@ bool Texture::loadFromFile(const utf::string& path) {
 		enableBilinearFiltering();
 	}
 
-	bool isSurface = width == glm::powerOfTwoAbove(width) && height == glm::powerOfTwoAbove(height);
+	enableTiling();
 
-	if (!isSurface || (creator.is_some() && creator.unwrap().disableTiling)) {
-		disableTiling();
-	}
-	else {
-		enableTiling();
-	}
-
-	if (isSurface) { //TODO query anisotropic level
-		GLfloat aniso;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-		enableAnisotropicFiltering(aniso / 2);
-	}
-
-	loadFromMemory(imageData.data(), width, height, format, PixelFormat::RGBA_8_8_8_8);
+	loadFromMemory(imageData.data(), width, height, format);
 
 	return loaded;
 }
