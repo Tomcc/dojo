@@ -141,6 +141,15 @@ namespace Dojo {
 
 		Color clamped() const;
 
+		Color applyGamma() const {
+			return{
+				std::pow(r, 2.2f),
+				std::pow(g, 2.2f),
+				std::pow(b, 2.2f),
+				a
+			};
+		};
+
 	protected:
 	};
 }

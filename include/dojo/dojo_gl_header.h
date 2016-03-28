@@ -9,7 +9,6 @@
 	#define glFrustumf glFrustum
 
 	#ifdef PLATFORM_OSX
-		#define GL_FRAMEBUFFER_SRGB GL_FRAMEBUFFER_SRGB_EXT
 		#define glDeleteVertexArrays glDeleteVertexArraysAPPLE
 		#define glGenVertexArrays glGenVertexArraysAPPLE
 		#define glBindVertexArray glBindVertexArrayAPPLE

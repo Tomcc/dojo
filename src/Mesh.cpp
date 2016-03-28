@@ -22,7 +22,7 @@ const uint32_t glFeatureStateMap[] = {
 const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof(GLfloat), //position 2D
 	3 * sizeof(GLfloat), //position 3D
-	4 * sizeof(GLubyte), //color
+	4 * sizeof(GLuint), //color
 	4 * sizeof(GLubyte), //normal
 	2 * sizeof(GLshort), //uv0
 	2 * sizeof(GLshort)
@@ -258,7 +258,18 @@ void Mesh::color(const Color& c) {
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
 	vertexTransparency |= c.a < 1.f;
-	*((Color::RGBAPixel*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
+	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Color)));
+
+	int red = (int)(c.r * 1024) & 0x3ff;
+	int green = (int)(c.g * 1024) & 0x3ff;
+	int blue = (int)(c.b * 1024) & 0x3ff;
+	int alpha = (int)(c.a * 4);
+
+	val = 0;
+	val = val | (alpha << 30);
+	val = val | (blue << 20);
+	val = val | (green << 10);
+	val = val | (red << 0);
 }
 
 void Mesh::normal(const Vector& n) {
@@ -281,7 +292,7 @@ struct VertexFieldInfo {
 static const vertexFieldInfoMap[] = {
 	{ GL_FLOAT, 2, false },	// 	Position2D,
 	{ GL_FLOAT, 3, false },	// 	Position3D,
-	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
+	{ GL_UNSIGNED_INT_2_10_10_10_REV, 4, true },	// 	Color,
 	{ GL_BYTE, 4, true },	// 	Normal
 
 	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
@@ -346,22 +357,6 @@ bool Mesh::end() {
 
 		CHECK_GL_ERROR;
 	}
-
-#ifndef DOJO_DISABLE_VAOS //if we're using VAOs
-
-	//create the VAO
-	if ( !vertexArrayDesc ) {
-		glGenVertexArrays( 1, &vertexArrayDesc );
-	}
-
-	glBindVertexArray( vertexArrayDesc );
-
-	CHECK_GL_ERROR;
-
-	bindVertexFormat();
-
-	glBindVertexArray( 0 );
-#endif
 
 	loaded = true;
 
