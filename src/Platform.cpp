@@ -107,27 +107,29 @@ void Platform::_runASyncTasks(float elapsedTime) {
 
 	Timer timer;
 
-	TimedEvent::runTimedEvents(std::chrono::high_resolution_clock::now());
+ 	TimedEvent::runTimedEvents(std::chrono::high_resolution_clock::now());
 
-	//TODO run the main thread queue
-
-	//TODO increase frame time if starved
-	//TODO try to predict if the next task will kill the frame
+//TODO increase frame time if starved
+//TODO try to predict if the next task will kill the frame
 
 	bool runAnything = false;
 	size_t startFrom = Random::instance.getInt(mPools.size());
 	size_t i = 0;
-	while( timer.getElapsedTime() < availableTime) {
+	while(timer.getElapsedTime() < availableTime) {
 		runAnything |= mPools[(startFrom + i) % mPools.size()]->runOneCallback();
-
+		 
 		//if we've visited all the pools and nothing was run, return
-		if(++i == mPools.size() && !runAnything) {
-			break;
+		if(++i == mPools.size()) {
+			if (!runAnything) {
+				break;
+			}
+			runAnything = false;
+			i = 0;
 		}
 	}
 }
 
-utf::string::const_iterator Dojo::Platform::_findZipExtension(const utf::string& path) {
+utf::string::const_iterator Platform::_findZipExtension(const utf::string& path) {
 	for (auto&& ext : mZipExtensions) {
 		auto idx = path.find(ext);
 
