@@ -14,9 +14,8 @@
 using namespace Dojo;
 using namespace std::chrono;
 
-ViewportRecorder::ViewportRecorder(Viewport& viewport) :
-	mMaxPBOCount(3),
-	mLockedReading(false) {
+ViewportRecorder::ViewportRecorder(Viewport& viewport, Duration videoLength, Duration frequency) :
+	mTotalFrameCount(videoLength / frequency) {
 	setViewport(viewport);
 }
 
@@ -25,17 +24,7 @@ void ViewportRecorder::setViewport(Viewport& viewport) {
 }
 
 bool ViewportRecorder::hasPBOID(uint32_t ID) const {
-	return ID < mPBOs.size();
-}
-
-Shared<std::vector<byte>> ViewportRecorder::_getBuffer(uint32_t size) {
-	if(mBuffers.size() > 0) {
-		auto buf = std::move(mBuffers.back());
-		mBuffers.pop_back();
-		buf->resize(size);
-		return buf;
-	}
-	return make_shared<std::vector<byte>>(size); //return a new one. It'll come back
+	return ID < mInitializedPBOs;
 }
 
 ViewportRecorder::~ViewportRecorder() {
@@ -43,83 +32,35 @@ ViewportRecorder::~ViewportRecorder() {
 }
 
 void ViewportRecorder::captureFrame() {
-	//check if it's done reading in the background and unmap the buffer
-	if(mLockedReading == false && mLockedPBO) {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, mLockedPBO);
-		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-		mLockedPBO = 0;
-	}
-
-	_startFrameCapture();
-}
-
-void ViewportRecorder::_bindNextPBO() {
-	if (hasPBOID(mNextPBO)) {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[mNextPBO]);
-	}
-	else {
-		GLuint pbo;
-		glGenBuffers(1, &pbo);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
-		glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
-		CHECK_GL_ERROR;
-		mPBOs.emplace_back(pbo);
-	}
-
-	mNextPBO = (mNextPBO + 1) % mMaxPBOCount;
-}
-
-void ViewportRecorder::_destroyAllPBOs() {
-	DEBUG_ASSERT(!mLockedReading, "Cannot delete now");
-
-	glDeleteBuffers(mPBOs.size(), mPBOs.data());
-	CHECK_GL_ERROR;
-	mNextPBO = 0;
-}
-
-void ViewportRecorder::_writePBO(uint32_t PBO) {
-	mLockedReading = true;
-	mLockedPBO = PBO;
-	auto size = mFrameSize; //copy the size because it might change before the task runs
-
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
-	auto ptr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
- 	auto bufptr = _getBuffer(mFrameSize);
-
-	//send the buffer to another thread to compress it
-	Platform::singleton().getBackgroundPool().queue([this, buf = bufptr, ptr, size] {
-		memcpy(buf->data(), ptr, size);
-		mLockedReading = false;
-
-		//TODO downscale, compress and store
-	},
-	[this, bufptr, PBO] {
-		//put back the buffer
-		mBuffers.emplace_back(bufptr);
-	});
-}
-
-void ViewportRecorder::_startFrameCapture() {
 	//TODO get all of these from the currently bound FBO
 	//WARNING do not use on OpenGL ES 2!
 
 	auto& surface = mViewport.unwrap().getRenderTarget();
 	auto desc = TexFormatInfo::getFor(surface.getFormat());
 
-	DEBUG_ASSERT(mLockedReading == false, "Reading the next buffer should be done by now as now it needs to be reused");
-
 	auto frameSize = surface.getWidth() * surface.getHeight() * desc.pixelSizeBytes;
-	if(frameSize != mFrameSize) {
+	if (frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
 		_destroyAllPBOs();
 	}
 
+	//there are no PBOs, recreate them all
+	if(mPBOs.empty()) {
+		mPBOs.resize((int)mTotalFrameCount);
+		glGenBuffers(mPBOs.size(), mPBOs.data());
+		for (auto&& pbo : mPBOs) {
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+			glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
+		}	
+		CHECK_GL_ERROR;
+	}
+
 	//pick and bind a fresh PBO
 	_bindNextPBO();
+	mInitializedPBOs = std::max(mInitializedPBOs, mNextPBO); //mark the current PBO as initialized
 
-	if(auto tex = surface.getTexture().to_ref()) {
+	if (auto tex = surface.getTexture().to_ref()) {
 		tex.get().bindAsRenderTarget(false);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
 	}
@@ -127,16 +68,21 @@ void ViewportRecorder::_startFrameCapture() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glReadBuffer(GL_BACK);
 	}
-	
+
 	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), desc.glFormat, desc.elementType, nullptr);
-	CHECK_GL_ERROR;
-
-	//also, if there is a "next PBO" initialized it's time to write it down
-	//as next frame it will be used
-	if(hasPBOID(mNextPBO)) {
-		_writePBO(mPBOs[mNextPBO]);
-	}
-
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
+}
+
+void ViewportRecorder::_bindNextPBO() {
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[mNextPBO]);
+	mNextPBO = (mNextPBO + 1) % mPBOs.size();
+}
+
+void ViewportRecorder::_destroyAllPBOs() {
+	glDeleteBuffers(mPBOs.size(), mPBOs.data());
+	CHECK_GL_ERROR;
+	mNextPBO = 0;
+	mInitializedPBOs = 0;
+	mPBOs.clear();
 }

@@ -4,9 +4,6 @@
 #include "WorkerPool.h"
 
 namespace Dojo {
-	using Interval = TimedEvent::Interval;
-	using TimePoint = TimedEvent::TimePoint;
-
 	class EventManager {
 	public:
 		static EventManager instance;
@@ -31,7 +28,7 @@ namespace Dojo {
 
 	class TimedEventImpl {
 	public:
-		Interval mInterval;
+		Duration mInterval;
 		TimePoint mNextTime;
 
 		bool mRunning = false;
@@ -39,7 +36,7 @@ namespace Dojo {
 		AsyncTask mTask;
 		WorkerPool& mTargetPool;
 
-		TimedEventImpl(Interval interval,
+		TimedEventImpl(Duration interval,
 			AsyncTask task,
 			AsyncCallback callback,
 			WorkerPool& targetPool) :

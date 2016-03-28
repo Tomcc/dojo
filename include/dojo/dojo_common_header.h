@@ -113,6 +113,10 @@ namespace Dojo {
 
 	typedef std::function<void()> AsyncTask;
 	typedef std::function<void()> AsyncCallback;
+
+	using TimePoint = std::chrono::high_resolution_clock::time_point;
+	using Duration = std::chrono::high_resolution_clock::duration;
+
 }
 
 using std::make_unique;

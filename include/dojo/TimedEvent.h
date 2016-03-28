@@ -7,9 +7,6 @@ namespace Dojo {
 	class TimedEvent {
 		friend class EventManager;
 	public:
-		using TimePoint = std::chrono::high_resolution_clock::time_point;
-		using Interval = std::chrono::high_resolution_clock::duration;
-
 		static void runTimedEvents(TimePoint now);
 		
 		TimedEvent();
@@ -22,7 +19,7 @@ namespace Dojo {
 		TimedEvent& operator=(const TimedEvent&) = delete;
 
 		void start(
-			Interval interval,
+			Duration interval,
 			AsyncTask task, 
 			AsyncCallback callback = {},
 			optional_ref<WorkerPool> targetPool = {}
