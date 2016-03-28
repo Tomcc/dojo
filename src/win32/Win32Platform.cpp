@@ -608,7 +608,7 @@ void Win32Platform::initialize(Unique<Game> g) {
 		RenderSurface{
 			windowWidth,
 			windowHeight,
-			PixelFormat::R8G8B8A8 }, //TODO actually read what format it is
+			PixelFormat::RGBA_8_8_8_8 }, //TODO actually read what format it is
 		DO_LANDSCAPE_LEFT
 	);
 
@@ -991,7 +991,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 	FreeImage_CloseMemory(hmem);
 
 	//TODO support more?
-	return pixelSize == 4 ? PixelFormat::R8G8B8A8 : PixelFormat::R8G8B8;
+	return pixelSize == 4 ? PixelFormat::RGBA_8_8_8_8 : PixelFormat::RGB_8_8_8;
 }
 
 const utf::string& Win32Platform::getAppDataPath() {

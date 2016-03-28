@@ -2,9 +2,10 @@
 
 namespace Dojo {
 	enum class PixelFormat {
-		R8G8B8A8,
-		R8G8B8,
-		R5G6B5,
+		RGBA_8_8_8_8,
+		RGB_8_8_8,
+		RGB_5_6_5,
+		RGBA_10_10_10_2,
 		Unknown
 	};
 }

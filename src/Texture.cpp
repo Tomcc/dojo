@@ -186,7 +186,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 	auto& format = TexFormatInfo::getFor(sourceFormat);
 
 	mTransparency = false;
-	if(destFormat == PixelFormat::R8G8B8A8) {
+	if(destFormat == PixelFormat::RGBA_8_8_8_8) {
 		auto end = imageData + (width * height * 4);
 		for (auto alpha = imageData + 3; alpha < end; alpha += 4) {
 			if ( *alpha < 250 ) {
@@ -233,7 +233,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 		enableAnisotropicFiltering(aniso / 2);
 	}
 
-	loadFromMemory(imageData.data(), width, height, format, PixelFormat::R8G8B8A8);
+	loadFromMemory(imageData.data(), width, height, format, PixelFormat::RGBA_8_8_8_8);
 
 	return loaded;
 }

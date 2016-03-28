@@ -8,6 +8,7 @@ namespace Dojo {
 			{ 4, GL_RGBA, GL_UNSIGNED_BYTE },
 			{ 3, GL_RGB, GL_UNSIGNED_BYTE },
 			{ 2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5 },
+			{ 4, GL_RGBA, GL_UNSIGNED_INT_10_10_10_2 },
 			{ 0, 0, 0 },
 		};
 
