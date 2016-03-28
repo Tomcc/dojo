@@ -27,6 +27,7 @@ namespace Dojo {
 
 		uint32_t mFrameSize = 0;
 		uint32_t mWidth, mHeight;
+		TexFormatInfo mFormatInfo;
 
 		std::vector<uint32_t> mPBOs;
 		size_t mInitializedPBOs = 0;

@@ -41,11 +41,11 @@ void ViewportRecorder::captureFrame() {
 	//WARNING do not use on OpenGL ES 2!
 
 	auto& surface = mViewport.unwrap().getRenderTarget();
-	auto desc = TexFormatInfo::getFor(surface.getFormat());
+	mFormatInfo = TexFormatInfo::getFor(surface.getFormat());
 	mWidth = surface.getWidth();
 	mHeight = surface.getHeight();
 
-	auto frameSize = mWidth * mHeight * desc.pixelSizeBytes;
+	auto frameSize = mWidth * mHeight * mFormatInfo.pixelSizeBytes;
 	if (frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
@@ -64,8 +64,8 @@ void ViewportRecorder::captureFrame() {
 	}
 
 	//pick and bind a fresh PBO
-	_bindNextPBO();
 	mInitializedPBOs = std::max(mInitializedPBOs, mNextPBO + 1); //mark the current PBO as initialized
+	_bindNextPBO();
 
 	if (auto tex = surface.getTexture().to_ref()) {
 		tex.get().bindAsRenderTarget(false);
@@ -76,14 +76,9 @@ void ViewportRecorder::captureFrame() {
 		glReadBuffer(GL_BACK);
 	}
 
-	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.glFormat, mFormatInfo.elementType, nullptr);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
-
-
-	if(mInitializedPBOs == mTotalFrameCount) {
-		makeVideo();
-	}
 }
 
 void ViewportRecorder::_bindNextPBO() {
@@ -102,7 +97,6 @@ void ViewportRecorder::_destroyAllPBOs() {
 #include <FreeImage.h>
 
 void ViewportRecorder::makeVideo() {
-
 	mStopRecording = true;
 	std::vector<byte*> mappedPointers;
 	std::vector<GLuint> mappedPBOs;
@@ -126,15 +120,22 @@ void ViewportRecorder::makeVideo() {
 		DWORD dwFrameTime = (DWORD)duration_cast<milliseconds>(mFrequency).count();
 
 		for (auto&& data : pointers) {
-			auto dib = FreeImage_ConvertFromRawBits(
+			//swap red and blue
+			for (uint32_t i = 0; i < mFrameSize; i += mFormatInfo.pixelSizeBytes) {
+				std::swap(data[i], data[i + 2]);
+			}
+
+			auto dibHiDef = FreeImage_ConvertFromRawBits(
 				data,
 				mWidth,
 				mHeight,
-				mFrameSize / mHeight,
-				8,
-				FI_RGBA_RED, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK,
-				true
-			);
+				mWidth * mFormatInfo.pixelSizeBytes,
+				mFormatInfo.pixelSizeBytes * 8,
+				FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK,
+				true);
+
+			auto dib = FreeImage_ColorQuantize(dibHiDef, FIQ_WUQUANT);
+			FreeImage_Unload(dibHiDef);
 
 			// clear any animation metadata used by this dib as we’ll adding our own ones
 			FreeImage_SetMetadata(FIMD_ANIMATION, dib, NULL, NULL);
