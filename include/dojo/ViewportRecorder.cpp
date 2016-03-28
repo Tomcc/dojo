@@ -15,7 +15,8 @@ using namespace Dojo;
 using namespace std::chrono;
 
 ViewportRecorder::ViewportRecorder(Viewport& viewport, Duration videoLength, Duration frequency) :
-	mTotalFrameCount(videoLength / frequency) {
+	mTotalFrameCount(videoLength / frequency),
+	mFrequency(frequency) {
 	setViewport(viewport);
 }
 
@@ -32,13 +33,19 @@ ViewportRecorder::~ViewportRecorder() {
 }
 
 void ViewportRecorder::captureFrame() {
+	if(mStopRecording) {
+		return;
+	}
+
 	//TODO get all of these from the currently bound FBO
 	//WARNING do not use on OpenGL ES 2!
 
 	auto& surface = mViewport.unwrap().getRenderTarget();
 	auto desc = TexFormatInfo::getFor(surface.getFormat());
+	mWidth = surface.getWidth();
+	mHeight = surface.getHeight();
 
-	auto frameSize = surface.getWidth() * surface.getHeight() * desc.pixelSizeBytes;
+	auto frameSize = mWidth * mHeight * desc.pixelSizeBytes;
 	if (frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
@@ -58,7 +65,7 @@ void ViewportRecorder::captureFrame() {
 
 	//pick and bind a fresh PBO
 	_bindNextPBO();
-	mInitializedPBOs = std::max(mInitializedPBOs, mNextPBO); //mark the current PBO as initialized
+	mInitializedPBOs = std::max(mInitializedPBOs, mNextPBO + 1); //mark the current PBO as initialized
 
 	if (auto tex = surface.getTexture().to_ref()) {
 		tex.get().bindAsRenderTarget(false);
@@ -69,9 +76,14 @@ void ViewportRecorder::captureFrame() {
 		glReadBuffer(GL_BACK);
 	}
 
-	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), desc.glFormat, desc.elementType, nullptr);
+	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
+
+
+	if(mInitializedPBOs == mTotalFrameCount) {
+		makeVideo();
+	}
 }
 
 void ViewportRecorder::_bindNextPBO() {
@@ -85,4 +97,72 @@ void ViewportRecorder::_destroyAllPBOs() {
 	mNextPBO = 0;
 	mInitializedPBOs = 0;
 	mPBOs.clear();
+}
+
+#include <FreeImage.h>
+
+void ViewportRecorder::makeVideo() {
+
+	mStopRecording = true;
+	std::vector<byte*> mappedPointers;
+	std::vector<GLuint> mappedPBOs;
+	
+	//map all the PBOs at the same time and pass them to a background thread
+	size_t startFrame = mNextPBO % mInitializedPBOs;
+
+	for (size_t i = 0; i < mInitializedPBOs; ++i) {
+		auto idx = (startFrame + i) % mInitializedPBOs;
+
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[idx]);
+		auto ptr = (byte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
+		mappedPointers.push_back(ptr);
+		mappedPBOs.push_back(mPBOs[idx]);
+	}
+	CHECK_GL_ERROR;
+
+	Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)] {
+		FIMULTIBITMAP *multi = FreeImage_OpenMultiBitmap(FIF_GIF, "C:/Users/Tommaso/DEV/the-scavenger/VS2015/bin/output.gif", TRUE, FALSE);
+
+		DWORD dwFrameTime = (DWORD)duration_cast<milliseconds>(mFrequency).count();
+
+		for (auto&& data : pointers) {
+			auto dib = FreeImage_ConvertFromRawBits(
+				data,
+				mWidth,
+				mHeight,
+				mFrameSize / mHeight,
+				8,
+				FI_RGBA_RED, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK,
+				true
+			);
+
+			// clear any animation metadata used by this dib as we’ll adding our own ones
+			FreeImage_SetMetadata(FIMD_ANIMATION, dib, NULL, NULL);
+			// add animation tags to dib  
+			FITAG *tag = FreeImage_CreateTag();
+			if (tag) {
+				FreeImage_SetTagKey(tag, "FrameTime");
+				FreeImage_SetTagType(tag, FIDT_LONG);
+				FreeImage_SetTagCount(tag, 1);
+				FreeImage_SetTagLength(tag, 4);
+				FreeImage_SetTagValue(tag, &dwFrameTime);
+				FreeImage_SetMetadata(FIMD_ANIMATION, dib, FreeImage_GetTagKey(tag), tag);
+				FreeImage_DeleteTag(tag);
+			}
+			FreeImage_AppendPage(multi, dib);
+			FreeImage_Unload(dib);
+		}
+		FreeImage_CloseMultiBitmap(multi);
+	},
+	[this, pbos = std::move(mappedPBOs)] {
+		//finally, unmap the buffers
+		for(auto&& pbo : pbos) {
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		}
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		CHECK_GL_ERROR;
+
+		mStopRecording = false; //resume recording
+	});
 }
