@@ -102,6 +102,7 @@ namespace Dojo {
 		}
 
 		FrameSet& addFrameSet(Unique<FrameSet> resource, const utf::string& name);
+		Texture& addTexture(Unique<Texture> texture, const utf::string& name);
 
 		Font& addFont(Unique<Font> resource, const utf::string& name);
 

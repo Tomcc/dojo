@@ -27,16 +27,17 @@ namespace Dojo {
 			return glm::isPowerOfTwo(width) && glm::isPowerOfTwo(height);
 		}
 
-		virtual optional_ref<Texture> getTexture() const {
+		optional_ref<Texture> getTexture() {
 			//TODO perhaps make component based for real
-			return{};
+			return mTexturePart;
 		}
 
-		bool isFlipped() const {
-			return getTexture().is_some();
+		virtual bool isFlipped() const {
+			return mTexturePart.is_some();
 		}
 
 	protected:
+		optional_ref<Texture> mTexturePart;
 		uint32_t width, height;
 		PixelFormat internalFormat;
 	};

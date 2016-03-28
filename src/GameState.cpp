@@ -32,8 +32,6 @@ void GameState::clear() {
 
 void GameState::setViewport(Viewport& v) {
 	camera = v;
-
-	Platform::singleton().getRenderer().addViewport(v);
 }
 
 void GameState::touchAreaAtPoint(const Touch& touch) {

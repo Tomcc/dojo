@@ -15,7 +15,7 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	internalHeight(0),
 	glhandle(0),
 	mFBO(GL_NONE) {
-
+	mTexturePart = self; //HACK
 }
 
 Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
@@ -24,7 +24,7 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	internalHeight(0),
 	glhandle(0),
 	mFBO(GL_NONE) {
-
+	mTexturePart = self; //HACK
 }
 
 Texture::~Texture() {
@@ -354,4 +354,23 @@ void Texture::_rebuildOptimalBillboard() {
 			UVOffset.y);
 
 	OBB->end();
+}
+
+Mesh& Texture::getOptimalBillboard() {
+	if (!OBB) {
+		_rebuildOptimalBillboard();
+	}
+
+	return *OBB;
+}
+
+void Texture::_notifyScreenSize(const Vector& ss) {
+	screenSize.x = ss.x;
+	screenSize.y = ss.y;
+}
+
+void Texture::_notifyOwnerFrameSet(FrameSet& s) {
+	DEBUG_ASSERT(ownerFrameSet.is_none(), "Tried to set an owner on an already owned Texture");
+
+	ownerFrameSet = s;
 }

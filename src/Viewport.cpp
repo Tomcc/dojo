@@ -15,18 +15,20 @@ using namespace Dojo;
 
 Viewport::Viewport(
 	Object& parent,
-	const Vector& pos,
-	const Vector& size,
+	const Vector& worldSize2D,
 	const Color& clear,
 	Degrees VFOV,
 	float zNear,
 	float zFar) :
-	Object(parent, pos, size),
+	Component(parent),
 	mClearColor(clear),
 	mVFOV(0),
 	mZNear(0.01f),
-	mZFar(1000) {
+	mZFar(1000),
+	m2DRect(worldSize2D) {
 	
+	DEBUG_ASSERT(m2DRect.x > 0 && m2DRect.y > 0, "Invalid dimension for 2D");
+
 	setRenderToBackbuffer();
 
 	if (VFOV > 0.f) {
@@ -40,9 +42,10 @@ Viewport::~Viewport() {
 }
 
 Vector Viewport::makeWorldCoordinates(int x, int y) const {
+	//TODO take into account the parent's size too
 	return Vector(
-		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * size.x,
-		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * size.y);
+		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * m2DRect.x,
+		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * m2DRect.y);
 }
 
 Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
@@ -53,20 +56,21 @@ bool Viewport::isVisible(Renderable& s) {
 	return s.isVisible() && isInViewRect(s);
 }
 
-void Viewport::addFader(RenderLayer::ID layer) {
-	//create the fader object
-	addComponent([&] {
-		auto fader = make_unique<Renderable>(self, layer, "texturedQuad", "flat_color_2D");
-		fader->color = Color::None;
+// void Viewport::addFader(RenderLayer::ID layer) {
+// 	//create the fader object
+// 	addComponent([&] {
+// 		auto fader = make_unique<Renderable>(self, layer, "texturedQuad", "flat_color_2D");
+// 		fader->color = Color::None;
+// 
+// 		fader->scale.x = size.x;
+// 		fader->scale.y = size.y;
+// 
+// 		fader->setVisible(false);
+// 
+// 		return fader;
+// 	}());
+// }
 
-		fader->scale.x = size.x;
-		fader->scale.y = size.y;
-
-		fader->setVisible(false);
-
-		return fader;
-	}());
-}
 void Viewport::_setRenderTarget(RenderSurface& surface) {
 	mRT = surface;
 	setTargetSize({ (float)surface.getWidth(), (float)surface.getHeight() });
@@ -78,11 +82,6 @@ void Viewport::setRenderTexture(Texture& target) {
 
 void Viewport::setRenderToBackbuffer() {
 	_setRenderTarget(Platform::singleton().getRenderer().getBackbuffer());
-}
-
-
-void Viewport::lookAt(const Vector& worldPos) {
-	setRotation(glm::quat_cast(glm::lookAt(getWorldPosition(), worldPos, Vector::UnitY)));
 }
 
 void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {
@@ -123,10 +122,10 @@ void Viewport::_updateFrustum() {
 		}
 
 		for (int i = 0; i < 4; ++i) {
-			mWorldFrustumVertices[i] = getWorldPosition(mLocalFrustumVertices[i]);
+			mWorldFrustumVertices[i] = object.getWorldPosition(mLocalFrustumVertices[i]);
 		}
 
-		Vector worldPosition = getWorldPosition();
+		Vector worldPosition = object.getWorldPosition();
 
 		for (int i = 0; i < 4; ++i) {
 			int i2 = (i + 1) % 4;
@@ -141,44 +140,13 @@ void Viewport::_updateFrustum() {
 	}
 }
 
-void Viewport::_updateTransforms() {
-	updateWorldTransform();
-
-	if (mLastWorldTransform != mWorldTransform) {
-		mViewTransform = glm::inverse(mWorldTransform);
-
-		//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
-
-		//TODO only compute projections if the params change
-		//compute ortho projection
-		{
-			mOrthoTransform = glm::ortho(-getHalfSize().x,
-					getHalfSize().x,
-					-getHalfSize().y,
-					getHalfSize().y,
-					0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
-					mZFar);
-
-			if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
-				mOrthoTransform[1][1] *= -1;
-			}
-		}
-
-		mFrustumDirty = true;
-
-		mLastWorldTransform = mWorldTransform;
-
-		mWorldBB = transformAABB({ -getHalfSize(), getHalfSize() });
-	}
-}
-
 const AABB& Viewport::getGraphicsAABB() const {
 	return mWorldBB;
 }
 
 Vector Viewport::getScreenPosition(const Vector& pos) {
 	//get local position
-	Vector local = getLocalPosition(pos);
+	Vector local = object.getLocalPosition(pos);
 
 	//project local on the local far plane
 	float f = (mZFar / local.z);
@@ -186,8 +154,8 @@ Vector Viewport::getScreenPosition(const Vector& pos) {
 	local.y *= f;
 
 	//bring in screen space
-	local.x = -(local.x / mFarPlaneSide.x) * halfSize.x;
-	local.y = (local.y / mFarPlaneSide.y) * halfSize.y;
+	local.x = -(local.x / mFarPlaneSide.x) * (m2DRect.x * 0.5f);
+	local.y = (local.y / mFarPlaneSide.y) * (m2DRect.y * 0.5f);
 
 	return local;
 }
@@ -209,7 +177,7 @@ Vector Viewport::getRayDirection(const Vector& screenSpacePos) {
 	//now we can find the final far plane projection and the ray direction
 	a = a.lerpTo(yf, b);
 
-	return (a - getWorldPosition()).normalized();
+	return (a - object.getWorldPosition()).normalized();
 }
 
 void Viewport::makeScreenSize(Vector& dest, const Texture& tex) const {
@@ -220,7 +188,7 @@ void Viewport::setVisibleLayers(const LayerList& layers) {
 	mLayerList = layers;
 }
 
-void Viewport::setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max) {
+void Viewport::setVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max) {
 	DEBUG_ASSERT(min < max, "Invalid layer range");
 
 	mLayerList.clear();
@@ -261,14 +229,43 @@ bool Viewport::isInViewRect(const Vector& pos) const {
 	return Math::AABBContains2D(mWorldBB.max, mWorldBB.min, pos);
 }
 
-void Viewport::onAction(float dt) {
-	Object::onAction(dt);
+void Viewport::_update() {
+	if (mLastWorldTransform != object.getWorldTransform()) {
+		mViewTransform = glm::inverse(object.getWorldTransform());
 
-	_updateTransforms();
+		//DEBUG_ASSERT( Matrix(1) == (mViewTransform * mWorldTransform ) );
 
-	//if it has no RT, it's the main viewport - use it to set the sound listener
-	//TODO soundListener should be a simple component
-	if (!mRT.is_some()) {
-		Platform::singleton().getSoundManager().setListenerTransform(getWorldTransform());
+		//TODO only compute projections if the params change
+		//compute ortho projection
+
+		//2D stuff... //TODO only compute if there's any 2D to do?
+		{
+			auto halfSize = m2DRect * 0.5f;
+			mOrthoTransform = glm::ortho(
+				-halfSize.x,
+				halfSize.x,
+				-halfSize.y,
+				halfSize.y,
+				0.f, //zNear has to be 0 in ortho because in 2D mode objects with default z (0) need to be seen!
+				mZFar
+				);
+			mWorldBB = object.transformAABB({ -halfSize, halfSize });
+
+			if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
+				mOrthoTransform[1][1] *= -1;
+			}
+		}
+
+		mFrustumDirty = true;
+
+		mLastWorldTransform = object.getWorldTransform();
 	}
+}
+
+void Dojo::Viewport::onAttach() {
+	Platform::singleton().getRenderer().addViewport(self);
+}
+
+void Dojo::Viewport::onDetach() {
+	Platform::singleton().getRenderer().removeViewport(self);
 }

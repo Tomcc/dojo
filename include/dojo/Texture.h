@@ -107,13 +107,7 @@ namespace Dojo {
 		}
 
 		///obtain the optimal billboard to use this texture as a sprite, when the device does not support Power of 2 Textures
-		Mesh& getOptimalBillboard() {
-			if (!OBB) {
-				_rebuildOptimalBillboard();
-			}
-
-			return *OBB;
-		}
+		Mesh& getOptimalBillboard();
 
 		bool hasTransparency() const {
 			return mTransparency;
@@ -124,19 +118,9 @@ namespace Dojo {
 			return parentAtlas.is_some();
 		}
 
-		void _notifyScreenSize(const Vector& ss) {
-			screenSize.x = ss.x;
-			screenSize.y = ss.y;
-		}
+		void _notifyScreenSize(const Vector& ss);
 
-		void _notifyOwnerFrameSet(FrameSet& s) {
-			DEBUG_ASSERT( ownerFrameSet.is_none(), "Tried to set an owner on an already owned Texture" );
-
-			ownerFrameSet = s;
-		}
-		virtual optional_ref<Texture> getTexture() {
-			return self;
-		}
+		void _notifyOwnerFrameSet(FrameSet& s);
 
 	protected:
 

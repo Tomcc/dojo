@@ -310,6 +310,16 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::strin
 	return *(frameSets[name] = std::move(resource));
 }
 
+Texture& ResourceGroup::addTexture(Unique<Texture> texture, const utf::string& name) {
+	auto frameset = make_unique<FrameSet>(self);
+	auto& ref = *texture;
+	frameset->addTexture(std::move(texture));
+	addFrameSet(std::move(frameset), name);
+
+	return ref;
+}
+
+
 Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");

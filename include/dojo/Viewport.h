@@ -35,15 +35,15 @@ namespace Dojo {
 	when rendering a 3D layer, it culls the scene and renders the perspective using its Frustum
 	*/
 	//TODO a Viewport should be a component!
-	class Viewport : public Object {
+	class Viewport : public Component {
 	public:
+		static const int ID = 5;
 
 		typedef std::vector<RenderLayer::ID> LayerList;
 
 		Viewport(
-			Object& level,
-			const Vector& pos,
-			const Vector& size,
+			Object& parent,
+			const Vector& worldSize2D,
 			const Color& clear,
 			Degrees VFOV = 0.0_deg,
 			float zNear = 0.01f,
@@ -55,10 +55,7 @@ namespace Dojo {
 		void enableFrustum(Degrees VFOV, float zNear, float zFar);
 
 		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
-		void addFader(RenderLayer::ID layer);
-
-		///orients the camera to look at a given 3D point
-		void lookAt(const Vector& worldPos);
+		//void addFader(RenderLayer::ID layer);
 
 		void setClearColor(const Color& color) {
 			mClearColor = color;
@@ -74,7 +71,7 @@ namespace Dojo {
 		void setVisibleLayers(const LayerList& layers);
 
 		///sets which subset of Render Layers this Viewport is able to "see"
-		void setVisibleLayers(RenderLayer::ID min, RenderLayer::ID max);
+		void setVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max);
 
 		///returns the subset of visible layers that has been set by setVisibleLayers
 		/**
@@ -93,12 +90,16 @@ namespace Dojo {
 			mTargetSize = size;
 		}
 
-		const Color& getClearColor() {
+		const Color& getClearColor() const {
 			return mClearColor;
 		}
 
-		Renderable* getFader() {
-			return has<Renderable>() ? &get<Renderable>() : nullptr;
+		Vector get2DExtents() const {
+			return m2DRect * 0.5f;
+		}
+
+		const Vector& get2DRect() const {
+			return m2DRect;
 		}
 
 		Degrees getVFOV() const {
@@ -175,26 +176,29 @@ namespace Dojo {
 
 		///converts the w and h pixel sizes in a screen space size
 		void makeScreenSize(Vector& dest, int w, int h) const {
-			dest.x = ((float)w / mTargetSize.x) * size.x;// * nativeToScreenRatio;
-			dest.y = ((float)h / mTargetSize.y) * size.y;// * nativeToScreenRatio;
+			dest.x = ((float)w / mTargetSize.x) * m2DRect.x;// * nativeToScreenRatio;
+			dest.y = ((float)h / mTargetSize.y) * m2DRect.y;// * nativeToScreenRatio;
 		}
 
 		///converts the texture pixel sizes in a screen space size
 		void makeScreenSize(Vector& dest, const Texture& tex) const;
 
 		float getPixelSide() const {
-			return size.x / mTargetSize.x;
+			return m2DRect.x / mTargetSize.x;
 		}
 
 		void setEyeTransform(const Matrix& t) {
 			mPerspectiveEyeTransform = t;
 		}
 
-		virtual void onAction(float dt) override;
+		void _update();
+
+		void onAttach() override;
+		void onDetach() override;
 
 	protected:
 
-		Vector mTargetSize;
+		Vector mTargetSize, m2DRect;
 
 		bool mEnableClear = true, mFrustumDirty = true;
 
@@ -219,7 +223,6 @@ namespace Dojo {
 		AABB mWorldBB;
 
 		void _updateFrustum();
-		void _updateTransforms();
 
 		void _setRenderTarget(RenderSurface& surface);
 	};

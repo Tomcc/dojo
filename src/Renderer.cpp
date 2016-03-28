@@ -208,6 +208,8 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 }
 
 void Renderer::_renderViewport(Viewport& viewport) {
+	viewport._update();
+
 	if (auto rt = viewport.getRenderTarget().getTexture().to_ref()) {
 		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
@@ -236,7 +238,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	}
 
 	globalUniforms.view = viewport.getViewTransform();
-	globalUniforms.viewDirection = viewport.getWorldDirection();
+	globalUniforms.viewDirection = viewport.getObject().getWorldDirection();
 
 	if (viewport.getVisibleLayers().empty()) { //using the default layer ordering/visibility
 		for (auto&& l : layers) {
