@@ -1,3 +1,6 @@
 [submodule "dependencies"]
 	path = dependencies
 	url = https://github.com/Tomcc/dojo-dependencies
+[submodule "include/dojo/glm"]
+	path = include/dojo/glm
+	url = git@github.com:g-truc/glm.git
