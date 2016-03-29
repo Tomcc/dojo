@@ -144,8 +144,8 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 		destHeight = height;
 	}
 	else {
-		destWidth = glm::powerOfTwoAbove(width);
-		destHeight = glm::powerOfTwoAbove(height);
+		destWidth = glm::ceilPowerOfTwo(width);
+		destHeight = glm::ceilPowerOfTwo(height);
 	}
 
 	//check if the texture has to be recreated (changed dimensions)

@@ -34,17 +34,18 @@
 //TODO move as many libraries as possible as inner dependencies, stop pushing them on users
 
 #ifdef _MSC_VER
-	#pragma warning(disable:4201)
+#pragma warning(push, 0)
 #endif
 #define GLM_FORCE_RADIANS //for sanity - why would it use degrees in places by default?
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtx/bit.hpp"
-
+#include "glm/glm/glm.hpp"
+#include "glm/glm/gtc/quaternion.hpp"
+#include "glm/glm/gtc/type_ptr.hpp"
+#include "glm/glm/gtc/matrix_transform.hpp"
+#include "glm/glm/gtc/round.hpp"
+#include "glm/glm/gtc/packing.hpp"
+#include "glm/glm/gtx/bit.hpp""
 #ifdef _MSC_VER
-	#pragma warning(4:4201)
+#pragma warning(pop)
 #endif
 
 #include "SmallSet.h"

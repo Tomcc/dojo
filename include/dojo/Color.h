@@ -98,6 +98,15 @@ namespace Dojo {
 			return p;
 		}
 
+		uint32_t toARGB_10_10_10_2() const {
+			return glm::packU3x10_1x2(glm::vec4{
+				Math::packNormalized(r, 1024),
+				Math::packNormalized(g, 1024),
+				Math::packNormalized(b, 1024),
+				Math::packNormalized(a, 4)
+			});
+		}
+
 		///scales each color's component except alpha
 		Color operator *(float s) const {
 			return Color(r * s, g * s, b * s, a);

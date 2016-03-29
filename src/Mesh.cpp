@@ -258,18 +258,7 @@ void Mesh::color(const Color& c) {
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
 	vertexTransparency |= c.a < 1.f;
-	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Color)));
-
-	int red = (int)(c.r * 1024) & 0x3ff;
-	int green = (int)(c.g * 1024) & 0x3ff;
-	int blue = (int)(c.b * 1024) & 0x3ff;
-	int alpha = (int)(c.a * 4);
-
-	val = 0;
-	val = val | (alpha << 30);
-	val = val | (blue << 20);
-	val = val | (green << 10);
-	val = val | (red << 0);
+	*((GLuint*)(currentVertex + _offset(VertexField::Color))) = c.toARGB_10_10_10_2();
 }
 
 void Mesh::normal(const Vector& n) {

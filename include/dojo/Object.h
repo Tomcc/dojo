@@ -77,7 +77,7 @@ namespace Dojo {
 
 		///rotates the object starting from the current orientation around the given axis
 		void rotate(Degrees r, const Vector& axis = Vector::UnitZ) {
-			rotation = glm::rotate(rotation, r, axis);
+			rotation = glm::rotate(rotation, (float)r, axis);
 		}
 
 		void setActive(bool a) {

@@ -160,8 +160,8 @@ namespace Dojo {
 		}
 
 		template<typename T>
-		static T packNormalized(float x) {
-			return (T)std::ceil(x * std::numeric_limits<T>::max());
+		static T packNormalized(float x, T max = std::numeric_limits<T>::max()) {
+			return (T)std::ceil(x * max);
 		}
 	};
 }
