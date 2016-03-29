@@ -91,6 +91,7 @@ bool ShaderProgram::onLoad() {
 			mContentString.resize((size_t)size);
 
 			file->read((byte*)mContentString.data(), size);
+			file->close(); //close as soon as possible to release the file if there's an error
 
 			loaded = _load(); //load from the temp buffer
 		}

@@ -8,6 +8,7 @@ namespace Dojo {
 		RGBA_10_10_10_2,
 		RGBA_8_8_8_8_SRGB,
 		RGB_8_8_8_SRGB,
+		RGBA_16_16_16_16,
 		Unknown
 	};
 }

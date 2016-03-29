@@ -45,7 +45,7 @@ void ViewportRecorder::captureFrame() {
 	mWidth = surface.getWidth();
 	mHeight = surface.getHeight();
 
-	auto frameSize = mWidth * mHeight * mFormatInfo.pixelSizeBytes;
+	auto frameSize = mWidth * mHeight * mFormatInfo.internalPixelSize;
 	if (frameSize != mFrameSize) {
 		//size changed, throw away all PBOs & recreate them...
 		mFrameSize = frameSize;
@@ -76,7 +76,7 @@ void ViewportRecorder::captureFrame() {
 		glReadBuffer(GL_BACK);
 	}
 
-	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.sourceFormat, mFormatInfo.elementType, nullptr);
+	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.internalFormat, mFormatInfo.internalElementType, nullptr);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
 }
@@ -121,7 +121,7 @@ void ViewportRecorder::makeVideo() {
 
 		for (auto&& data : pointers) {
 			//swap red and blue
-			for (uint32_t i = 0; i < mFrameSize; i += mFormatInfo.pixelSizeBytes) {
+			for (uint32_t i = 0; i < mFrameSize; i += mFormatInfo.internalElementType) {
 				std::swap(data[i], data[i + 2]);
 			}
 
@@ -129,8 +129,8 @@ void ViewportRecorder::makeVideo() {
 				data,
 				mWidth,
 				mHeight,
-				mWidth * mFormatInfo.pixelSizeBytes,
-				mFormatInfo.pixelSizeBytes * 8,
+				mWidth * mFormatInfo.internalElementType,
+				mFormatInfo.internalElementType * 8,
 				FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK,
 				true);
 

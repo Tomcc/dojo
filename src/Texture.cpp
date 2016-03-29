@@ -153,7 +153,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
 		internalFormat = formatID;
-		size = internalWidth * internalHeight * formatInfo.pixelSizeBytes;
+		size = internalWidth * internalHeight * formatInfo.sourcePixelSize;
 
 		std::string dummyData(size, 0); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
 
@@ -166,7 +166,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 			internalHeight,
 			0,
 			formatInfo.sourceFormat,
-			formatInfo.elementType,
+			formatInfo.sourceElementType,
 			dummyData.c_str());
 	}
 
@@ -196,7 +196,7 @@ bool Dojo::Texture::loadFromMemory(const byte* imageData, int width, int height,
 		}
 	}
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.sourceFormat, format.elementType, imageData);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.sourceFormat, format.sourceElementType, imageData);
 	CHECK_GL_ERROR;
 
 	return loaded = true;
