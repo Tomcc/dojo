@@ -150,11 +150,18 @@ namespace Dojo {
 
 		Color clamped() const;
 
-		Color applyGamma() const {
+		static float SRGBToLinear(float val) {
+			if (val < 0.04045f) {
+				return val / 12.92f;
+			}
+			return pow((val + 0.055f) / 1.055f, 2.4f);
+		}
+
+		Color SRGBToLinear() const {
 			return{
-				std::pow(r, 2.2f),
-				std::pow(g, 2.2f),
-				std::pow(b, 2.2f),
+				SRGBToLinear(r),
+				SRGBToLinear(g),
+				SRGBToLinear(b),
 				a
 			};
 		};
