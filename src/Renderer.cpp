@@ -96,7 +96,9 @@ void Renderer::removeAllRenderables() {
 }
 
 void Renderer::removeViewport(const Viewport& v) {
-	DEBUG_TODO;
+	DEBUG_ASSERT(std::find(viewportList.begin(), viewportList.end(), &v) != viewportList.end(), "Viewport not found");
+
+	std::remove(viewportList.begin(), viewportList.end(), &v);
 }
 
 void Renderer::removeAllViewports() {
@@ -107,8 +109,14 @@ void Renderer::clearLayers() {
 	layers.clear();
 }
 
-void Renderer::addViewport(Viewport& v) {
-	viewportList.insert(&v);
+void Renderer::addViewport(Viewport& v, int index /*= -1*/) {
+	if (index < 0) {
+		viewportList.push_back(&v);
+	}
+	else {
+		DEBUG_ASSERT(index <= (int)viewportList.size(), "Invalid index");
+		viewportList.insert(viewportList.begin() + index, 1, &v);
+	}
 }
 
 void Renderer::setInterfaceOrientation(Orientation o) {

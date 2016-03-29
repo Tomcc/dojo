@@ -31,8 +31,7 @@ namespace Dojo {
 		GlobalUniformData globalUniforms;
 
 		typedef std::vector<RenderLayer> LayerList;
-		typedef std::unordered_set<Viewport*> ViewportSet;
-
+		
 		Renderer(RenderSurface backbuffer, Orientation renderOrientation);
 
 		~Renderer();
@@ -50,7 +49,7 @@ namespace Dojo {
 		///completely removes all layers!
 		void clearLayers();
 
-		void addViewport(Viewport& v);
+		void addViewport(Viewport& v, int index = -1);
 
 		void setInterfaceOrientation(Orientation o);
 
@@ -108,7 +107,7 @@ namespace Dojo {
 		Radians renderRotation = 0.0_rad;
 		Orientation renderOrientation, deviceOrientation;
 
-		ViewportSet viewportList;
+		std::vector<Viewport*> viewportList;
 		std::reference_wrapper<FrameSubmitter> submitter;
 		optional_ref<const RenderState> lastRenderState;
 
