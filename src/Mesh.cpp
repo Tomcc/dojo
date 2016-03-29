@@ -258,7 +258,7 @@ void Mesh::color(const Color& c) {
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
 	vertexTransparency |= c.a < 1.f;
-	*((GLuint*)(currentVertex + _offset(VertexField::Color))) = c.toARGB_10_10_10_2();
+	*((GLuint*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
 }
 
 void Mesh::normal(const Vector& n) {
@@ -281,7 +281,7 @@ struct VertexFieldInfo {
 static const vertexFieldInfoMap[] = {
 	{ GL_FLOAT, 2, false },	// 	Position2D,
 	{ GL_FLOAT, 3, false },	// 	Position3D,
-	{ GL_UNSIGNED_INT_2_10_10_10_REV, 4, true },	// 	Color,
+	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
 	{ GL_BYTE, 4, true },	// 	Normal
 
 	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
