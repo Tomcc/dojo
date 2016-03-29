@@ -90,7 +90,7 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 	auto prev = lastState.to_raw_ptr();
 
 	bool rebindFormat = false;
-	if( !prev || prev->mesh != mesh ) {
+	if( !prev || prev->mesh != mesh || Mesh::gBufferBindingsDirty) {
 		//when the mesh changes, the uniforms have to be rebound too
 		rebindFormat = true;
 		mesh.unwrap().bind();

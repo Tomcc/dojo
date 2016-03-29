@@ -36,6 +36,7 @@ namespace Dojo {
 	*/
 	class Mesh : public Resource {
 	public:
+		static bool gBufferBindingsDirty;
 		typedef unsigned int IndexType;
 
 		static const int VERTEX_PAGE_SIZE = 256;

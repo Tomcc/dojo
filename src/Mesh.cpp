@@ -28,6 +28,8 @@ const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof(GLshort)
 };
 
+bool Mesh::gBufferBindingsDirty = true;
+
 Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 	Resource(creator) {
 	//set all fields to zero
@@ -359,6 +361,7 @@ bool Mesh::end() {
 		destroyBuffers();
 	}
 
+	gBufferBindingsDirty = true;
 	return loaded;
 }
 
@@ -366,6 +369,7 @@ void Mesh::bind() {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 
+	gBufferBindingsDirty = false;
 	CHECK_GL_ERROR;
 }
 
@@ -452,6 +456,7 @@ void Mesh::onUnload(bool soft /*= false */) {
 
 		destroyBuffers(); //free CPU side memory
 
+		gBufferBindingsDirty = true;
 		loaded = false;
 	}
 }
