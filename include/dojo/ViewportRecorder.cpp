@@ -10,6 +10,8 @@
 #include "TexFormatInfo.h"
 #include "RenderSurface.h"
 #include "Texture.h"
+#include "Game.h"
+#include "Path.h"
 
 using namespace Dojo;
 using namespace std::chrono;
@@ -95,6 +97,20 @@ void ViewportRecorder::_destroyAllPBOs() {
 }
 
 #include <FreeImage.h>
+#include <iomanip>
+
+#pragma warning(push)
+#pragma warning( disable : 4996 )
+
+std::string getDateString() {
+	auto now = std::chrono::system_clock::now();
+	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+	return ss.str();
+}
+#pragma warning(pop)
 
 void ViewportRecorder::makeVideo() {
 	mStopRecording = true;
@@ -115,13 +131,18 @@ void ViewportRecorder::makeVideo() {
 	CHECK_GL_ERROR;
 
 	Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)] {
-		FIMULTIBITMAP *multi = FreeImage_OpenMultiBitmap(FIF_GIF, "C:/Users/Tommaso/DEV/the-scavenger/VS2015/bin/output.gif", TRUE, FALSE);
+		auto path = Platform::singleton().getPicturesPath();
+		path += "/" + Platform::singleton().getGame().getName();
+		path += "_" + Path::removeInvalidChars(getDateString());
+		path += ".gif";
+
+		FIMULTIBITMAP *multi = FreeImage_OpenMultiBitmap(FIF_GIF, path.bytes().data(), TRUE, FALSE);
 
 		DWORD dwFrameTime = (DWORD)duration_cast<milliseconds>(mFrequency).count();
 
 		for (auto&& data : pointers) {
 			//swap red and blue
-			for (uint32_t i = 0; i < mFrameSize; i += mFormatInfo.internalElementType) {
+			for (uint32_t i = 0; i < mFrameSize; i += mFormatInfo.internalPixelSize) {
 				std::swap(data[i], data[i + 2]);
 			}
 
@@ -129,8 +150,8 @@ void ViewportRecorder::makeVideo() {
 				data,
 				mWidth,
 				mHeight,
-				mWidth * mFormatInfo.internalElementType,
-				mFormatInfo.internalElementType * 8,
+				mWidth * mFormatInfo.internalPixelSize,
+				mFormatInfo.internalPixelSize * 8,
 				FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK,
 				true);
 
