@@ -195,7 +195,8 @@
     <ProjectGuid>{DBF4FEB9-2857-4BC2-8413-3B52002C9FF8}</ProjectGuid>
     <RootNamespace>Dojo</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <TargetPlatformVersion>10.0.10069.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
