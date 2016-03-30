@@ -38,6 +38,7 @@
 #include <dojo/Renderable.h>
 #include <dojo/ResourceGroup.h>
 #include <dojo/SoundBuffer.h>
+#include <dojo/SoundListener.h>
 #include <dojo/SoundManager.h>
 #include <dojo/SoundSet.h>
 #include <dojo/SoundSource.h>

@@ -98,10 +98,10 @@ namespace Dojo {
 			return musicTrack.is_some();
 		}
 
-		///sets the openAL Listener's world transform
-		void setListenerTransform(const Matrix& worldTransform);
-
 		void update(float dt);
+
+		void _setSoundListener(SoundListener& listener);
+		void _notifySoundListenerDetached(SoundListener& listener);
 
 	protected:
 
@@ -114,6 +114,7 @@ namespace Dojo {
 		ALCcontext* context;
 		ALCdevice* device;
 
+		optional_ref<SoundListener> mListener;
 		glm::vec4 lastListenerPos;
 
 		//pool di suoni
@@ -129,5 +130,8 @@ namespace Dojo {
 
 		float musicVolume;
 		float masterVolume;
+
+		///sets the openAL Listener's world transform
+		void _setListenerTransform(const Matrix& worldTransform);
 	};
 }

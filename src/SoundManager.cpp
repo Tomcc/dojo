@@ -2,6 +2,8 @@
 
 #include "SoundSource.h"
 #include "Platform.h"
+#include "SoundListener.h"
+#include "Object.h"
 
 #include "dojo_al_header.h"
 
@@ -61,7 +63,7 @@ SoundManager::SoundManager() :
 	//dummy source to manage source shortage
 	fakeSource = make_unique<SoundSource>(0);
 
-	setListenerTransform(Matrix(1));
+	_setListenerTransform(Matrix(1));
 
 	CHECK_AL_ERROR;
 }
@@ -146,6 +148,10 @@ void SoundManager::setMasterVolume(float volume) {
 }
 
 void SoundManager::update(float dt) {
+	if(auto listener = mListener.to_ref()) {
+		_setListenerTransform(listener.get().getObject().getWorldTransform());
+	}
+
 	for (size_t i = 0; i < busySoundPool.size(); ++i) {
 		auto& current = busySoundPool[i];
 		current->_update(dt);
@@ -216,7 +222,7 @@ void SoundManager::resumeMusic() {
 	}
 }
 
-void SoundManager::setListenerTransform(const Matrix& worldTransform) {
+void SoundManager::_setListenerTransform(const Matrix& worldTransform) {
 	glm::vec4 pos(0.f, 0.f, 0.f, 1.f), up(0.f, 1.f, 0.f, 0.f), forward(0.f, 0.f, -1.f, 0.f);
 
 	pos = worldTransform * pos;
@@ -296,5 +302,15 @@ void SoundManager::resumeAll() {
 void SoundManager::stopAllSounds() {
 	for (auto&& s : busySoundPool) {
 		s->stop();
+	}
+}
+
+void SoundManager::_setSoundListener(SoundListener& listener) {
+	mListener = listener;
+}
+
+void SoundManager::_notifySoundListenerDetached(SoundListener& listener) {
+	if(mListener == listener) {
+		mListener = {};
 	}
 }
