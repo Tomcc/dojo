@@ -138,6 +138,22 @@ utf::string Path::removeVersion(const utf::string& str) {
 	return str;
 }
 
+utf::string Path::removeInvalidChars(const utf::string& str) {
+#ifdef WIN32
+	static const std::vector<utf::character> invalidChars = { ':', '\\', '/' }; //TODO more invalid chars
+
+	utf::string path;
+	for (auto&& c : str) {
+		if (std::find(invalidChars.begin(), invalidChars.end(), c) == invalidChars.end()) { 
+			path += c;
+		}
+	}
+	return path;
+#else
+	DEBUG_TODO;
+#endif
+}
+
 bool Path::arePathsInSequence(const utf::string& first, const utf::string& second) {
 	//get number postfixes
 	int t1 = getTag(first);

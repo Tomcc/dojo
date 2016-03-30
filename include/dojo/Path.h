@@ -31,6 +31,8 @@ public:
 
 	static utf::string removeVersion(const utf::string& str);
 
+	static utf::string removeInvalidChars(const utf::string& str);
+
 	static bool arePathsInSequence(const utf::string& first, const utf::string& second);
 };
 

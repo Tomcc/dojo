@@ -38,9 +38,10 @@ namespace Dojo {
 
 		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
 
-		virtual const utf::string& getAppDataPath();
-		virtual const utf::string& getResourcesPath();
-		virtual const utf::string& getRootPath();
+		virtual const utf::string& getAppDataPath() override;
+		virtual const utf::string& getResourcesPath() override;
+		virtual const utf::string& getRootPath() override;
+		virtual const utf::string& getPicturesPath() override;
 
 		virtual void openWebPage(const utf::string& site);
 

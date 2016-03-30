@@ -537,14 +537,18 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 	save(config, "config");
 }
 
-utf::string _cleanPath(const utf::string& name) {
-	utf::string path;
-	for(auto&& c : name) {
-		if (!(c == ':' || c == '\\' || c == '/')) { //TODO more invalid chars
-			path += c;
-		}
-	}
-	return path;
+TCHAR szPath[MAX_PATH];
+
+utf::string getSystemFolderPath(DWORD folderID) {
+	SHGetFolderPathW(
+		hWindow,
+		folderID | CSIDL_FLAG_CREATE,
+		nullptr,
+		0,
+		szPath);
+
+	std::wstring path(szPath);
+	return Path::makeCanonical(String::toUTF8(path));
 }
 
 void Win32Platform::initialize(Unique<Game> g) {
@@ -554,17 +558,7 @@ void Win32Platform::initialize(Unique<Game> g) {
 	game = std::move(g);
 
 	//init appdata folder
-	TCHAR szPath[MAX_PATH];
-
-	SHGetFolderPathW(
-		hWindow,
-		CSIDL_APPDATA | CSIDL_FLAG_CREATE,
-		nullptr,
-		0,
-		szPath);
-
-	auto appDataPathW = std::wstring(szPath) + L'/' + String::toUTF16(_cleanPath(game->getName()));
-	mAppDataPath = Path::makeCanonical(String::toUTF8(appDataPathW));
+	mAppDataPath = Path::makeCanonical(getSystemFolderPath(CSIDL_APPDATA) + '/' + Path::removeInvalidChars(game->getName()));
 
 	//get root path
 	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
@@ -576,7 +570,7 @@ void Win32Platform::initialize(Unique<Game> g) {
 	DEBUG_MESSAGE( "Initializing Dojo Win32" );
 
 	//create the appdata user folder
-	CreateDirectoryW(appDataPathW.c_str(), nullptr);
+	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
@@ -1004,6 +998,11 @@ const utf::string& Win32Platform::getRootPath() {
 
 const utf::string& Win32Platform::getResourcesPath() {
 	return getRootPath(); //on windows, it is the same
+}
+
+const utf::string& Win32Platform::getPicturesPath() {
+	static auto picturesPath = getSystemFolderPath(CSIDL_MYPICTURES);
+	return picturesPath;
 }
 
 void Win32Platform::openWebPage(const utf::string& site) {

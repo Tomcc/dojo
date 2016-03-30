@@ -186,6 +186,8 @@ namespace Dojo {
 		virtual const utf::string& getRootPath() = 0;
 		///returns the read-only resources path, eg working directory on windows or Bundle/Contents/Resources on Mac
 		virtual const utf::string& getResourcesPath() = 0;
+		///return the pictures path for this platform, to store images
+		virtual const utf::string& getPicturesPath() = 0;
 
 		///returns the user configuration table
 		const Table& getUserConfiguration() {
