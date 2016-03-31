@@ -55,6 +55,7 @@
     <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\range.h" />
     <ClInclude Include="include\dojo\TexFormatInfo.h" />
+    <ClInclude Include="include\dojo\TinySHA1.h" />
     <ClInclude Include="include\dojo\ViewportRecorder.h" />
     <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\Resource.h" />

@@ -294,17 +294,13 @@ std::vector<byte> Platform::loadFileContent(const utf::string& path) {
 	auto file = getFile(path);
 
 	if (file->open(Stream::Access::Read)) {
-		auto size = file->getSize();
+		std::vector<byte> buf((size_t)file->getSize());
 
-		std::vector<byte> buf((size_t)size);
-
-		file->read(buf.data(), size);
+		file->read(buf.data(), buf.size());
 
 		return buf;
 	}
-	else {
-		return{};
-	}
+	return{};
 }
 
 utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
@@ -313,9 +309,8 @@ utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
 	if (Path::isAbsolute(absPathOrName)) {
 		return absPathOrName;
 	}
-	else
-		//look for this file inside the prefs
-	{
+	else { //look for this file inside the prefs
+
 		return getAppDataPath() + '/' + absPathOrName + ".ds";
 	}
 }

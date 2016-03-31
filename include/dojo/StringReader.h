@@ -9,7 +9,7 @@ namespace Dojo {
 	class StringReader {
 	public:
 
-		StringReader(const utf::string& string);
+		StringReader(utf::string string);
 
 		///returns a new unicode character or 0 if the stream ended
 		utf::character get();
@@ -47,12 +47,12 @@ namespace Dojo {
 		void readBytes(void* dest, int sizeBytes);
 
 		const utf::string& getString() const {
-			return string;
+			return mString;
 		}
 
 	protected:
-		const utf::string& string;
+		const utf::string mString;
 
-		utf::string::const_iterator idx;
+		utf::string::const_iterator mIdx;
 	};
 }

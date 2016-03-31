@@ -559,6 +559,8 @@ void Win32Platform::initialize(Unique<Game> g) {
 
 	//init appdata folder
 	mAppDataPath = Path::makeCanonical(getSystemFolderPath(CSIDL_APPDATA) + '/' + Path::removeInvalidChars(game->getName()));
+	//create the appdata user folder
+	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
 	//get root path
 	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
@@ -567,11 +569,13 @@ void Win32Platform::initialize(Unique<Game> g) {
 
 	mRootPath = Path::makeCanonical(String::toUTF8(rootPathW));
 
-	DEBUG_MESSAGE( "Initializing Dojo Win32" );
-
-	//create the appdata user folder
+	GetTempPathW(MAX_PATH, szPath);
+	mShaderCachePath = Path::makeCanonical(String::toUTF8(std::wstring(szPath)) + "dojoshadercache");
 	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
+	DEBUG_MESSAGE( "Initializing Dojo Win32" );
+
+	
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
 
@@ -1003,6 +1007,10 @@ const utf::string& Win32Platform::getResourcesPath() {
 const utf::string& Win32Platform::getPicturesPath() {
 	static auto picturesPath = getSystemFolderPath(CSIDL_MYPICTURES);
 	return picturesPath;
+}
+
+const utf::string& Win32Platform::getShaderCachePath() {
+	return mShaderCachePath;
 }
 
 void Win32Platform::openWebPage(const utf::string& site) {

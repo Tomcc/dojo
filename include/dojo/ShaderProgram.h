@@ -29,6 +29,10 @@ namespace Dojo {
 			return mGLShader;
 		}
 
+		const std::string& getSourceString() const {
+			return mContentString;
+		}
+
 		///creates a new ShaderProgram using the source of this one, concatenated with the given preprocessor header
 		Unique<ShaderProgram> cloneWithHeader(const std::string& preprocessorHeader);
 

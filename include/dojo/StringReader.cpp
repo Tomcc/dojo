@@ -3,20 +3,19 @@
 using namespace Dojo;
 
 
-StringReader::StringReader(const utf::string& string) :
-	string(string),
-	idx(string.begin()) {
-
+StringReader::StringReader(utf::string string) :
+	mString(std::move(string)) {
+	mIdx = mString.begin();
 }
 
 utf::character StringReader::get() {
-	return *idx++;
+	return *mIdx++;
 }
 
 void StringReader::back() {
-	DEBUG_ASSERT(idx != string.begin(), "back: The StringReader is already at the start of the stream");
+	DEBUG_ASSERT(mIdx != mString.begin(), "back: The StringReader is already at the start of the stream");
 
-	--idx;
+	--mIdx;
 }
 
 bool StringReader::isNumber(uint32_t c) {
@@ -66,7 +65,7 @@ byte StringReader::getHexValue(uint32_t c) {
 }
 
 utf::string::const_iterator Dojo::StringReader::getCurrentIndex() const {
-	return idx;
+	return mIdx;
 }
 
 unsigned int StringReader::readHex() {
@@ -159,11 +158,11 @@ float StringReader::readFloat() {
 
 void StringReader::readBytes(void* dest, int sizeBytes) {
 
-	auto startIdx = idx;
+	auto startIdx = mIdx;
 
 	//load format data
-	auto buf = idx.get_ptr();
-	auto end = string.end().get_ptr();
+	auto buf = mIdx.get_ptr();
+	auto end = mString.end().get_ptr();
 
 	//clamp into string
 	if (buf + sizeBytes > end) {
@@ -173,5 +172,5 @@ void StringReader::readBytes(void* dest, int sizeBytes) {
 	memcpy(dest, buf, sizeBytes);
 
 	//we need to manually create a new iterator, because we can't normally iterate over raw data
-	idx = utf::string::const_iterator( startIdx.get_ptr() + sizeBytes );
+	mIdx = utf::string::const_iterator( startIdx.get_ptr() + sizeBytes );
 }

@@ -188,6 +188,8 @@ namespace Dojo {
 		virtual const utf::string& getResourcesPath() = 0;
 		///return the pictures path for this platform, to store images
 		virtual const utf::string& getPicturesPath() = 0;
+		///return the path where to place the (possibly shared) shader cache
+		virtual const utf::string& getShaderCachePath() = 0;
 
 		///returns the user configuration table
 		const Table& getUserConfiguration() {

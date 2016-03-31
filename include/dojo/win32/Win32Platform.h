@@ -42,6 +42,7 @@ namespace Dojo {
 		virtual const utf::string& getResourcesPath() override;
 		virtual const utf::string& getRootPath() override;
 		virtual const utf::string& getPicturesPath() override;
+		virtual const utf::string& getShaderCachePath() override;
 
 		virtual void openWebPage(const utf::string& site);
 
@@ -94,7 +95,7 @@ namespace Dojo {
 
 		Timer mStepTimer;
 
-		utf::string mAppDataPath, mRootPath;
+		utf::string mAppDataPath, mRootPath, mShaderCachePath;
 
 		void _initKeyMap();
 

@@ -61,7 +61,9 @@ bool File::open(Access accessType) {
 
 	if (mFile) {
 		mAccess = accessType;
-		_updateSize();
+		if (isReadable()) {
+			_updateSize();
+		}
 		return true;
 	}
 	else {

@@ -22,7 +22,8 @@ int64_t Dojo::MemoryInputStream::read(byte* buf, int64_t number) {
 	return toRead;
 }
 
-int64_t Dojo::MemoryInputStream::getSize() {
+int64_t Dojo::MemoryInputStream::getSize()
+{
 	return mSize;
 }
 

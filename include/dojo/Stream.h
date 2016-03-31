@@ -29,7 +29,7 @@ namespace Dojo {
 		///reads up to "number" bytes from the stream into buf, returns the number of bytes read
 		virtual int64_t read(byte* buf, int64_t number);
 
-		void readToFill(utf::string& buf);
+		void readToFill(std::string& buf);
 
 		///writes the given buffer to the stream
 		virtual void write(byte* buf, int size);

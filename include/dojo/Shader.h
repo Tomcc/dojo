@@ -12,6 +12,7 @@ namespace Dojo {
 	class ShaderProgram;
 	class Table;
 	class GlobalUniformData;
+	class SHA1;
 
 	///A Shader is an object representing a VSH+PSH couple and its attributes.
 	/**
@@ -102,6 +103,15 @@ namespace Dojo {
 		virtual void onUnload(bool soft = false);
 
 	protected:
+		struct Binary {
+			std::string bytes;
+			uint32_t format;
+			operator bool() const {
+				return bytes.size() > 0;
+			}
+
+			std::string toString() const;
+		};
 
 		struct Uniform {
 			int location;
@@ -152,10 +162,13 @@ namespace Dojo {
 		optional_ref<ShaderProgram> pProgram[ (byte)ShaderProgramType::_Count ];
 		std::vector<Unique<ShaderProgram>> mOwnedPrograms;
 
-		void _assignProgram(const Table& desc, ShaderProgramType type);
+		ShaderProgram& _assignProgram(const Table& desc, ShaderProgramType type);
 
 		const void* _getUniformData(const GlobalUniformData& currentState, const Uniform& uniform, const RenderState& user);
 
+		Binary _getCachedBinary(const utf::string& path);
+
+		void _storeCachedBinary(const utf::string& path, const Shader::Binary& binary) const;
 	private:
 	};
 }

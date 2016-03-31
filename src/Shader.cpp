@@ -9,6 +9,10 @@
 
 #include "dojo_gl_header.h"
 #include "range.h"
+#include "TinySHA1.h"
+#include "Base64.h"
+#include "FileStream.h"
+#include "Path.h"
 
 using namespace Dojo;
 
@@ -77,7 +81,7 @@ Shader::Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath)
 	memset(pProgram, 0, sizeof( pProgram )); //init to null
 }
 
-void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
+ShaderProgram& Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 	static const utf::string typeKeyMap[] = {"vertexShader", "fragmentShader"};
 	auto typeID = (unsigned char)type;
 
@@ -95,11 +99,11 @@ void Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
 		else {
 			DEBUG_ASSERT_INFO(program.get().getType() == type, "The linked shader is of the wrong type", "expected type = " + typeKeyMap[typeID]);
 		}
-		pProgram[typeID] = program.get();
+		return (pProgram[typeID] = program.get()).unwrap();
 	}
 	else {
 		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));
-		pProgram[typeID] = *mOwnedPrograms.back();
+		return (pProgram[typeID] = *mOwnedPrograms.back()).unwrap();
 	}
 }
 
@@ -259,10 +263,40 @@ void Shader::loadUniforms(const GlobalUniformData& currentState, const RenderSta
 	CHECK_GL_ERROR;
 }
 
+utf::string _getCachedBinaryPath(SHA1& sha) {
+	//decide the filename of the binary
+	SHA1::digest8_t digest;
+	return Platform::singleton().getShaderCachePath() + "/" + Path::removeInvalidChars(Base64::fromBytes(sha.getDigestBytes(digest), sizeof(digest)));
+}
+
+Shader::Binary Shader::_getCachedBinary(const utf::string& path) {
+	auto file = Platform::singleton().getFile(path);
+	if(file->open(Stream::Access::Read)) {
+		std::string content((size_t)file->getSize(), 0);
+		file->readToFill(content);
+
+		return{content.substr(4), *(uint32_t*)(content.data()) };
+	}
+	return{};
+}
+
+std::string Shader::Binary::toString() const {
+	return std::string((char*)&format, 4) + bytes;
+}
+
+void Shader::_storeCachedBinary(const utf::string& path, const Shader::Binary& binary) const {
+	auto file = Platform::singleton().getFile(path);
+	if (file->open(Stream::Access::WriteOnly)) {
+		file->write(binary.toString());
+	}
+}
+
 bool Shader::onLoad() {
 	DEBUG_ASSERT( !isLoaded(), "cannot reload an already loaded Shader" );
 
 	loaded = false;
+
+	int linked = 0;
 
 	//load the descriptor table
 	auto desc = Table::loadFromFile(filePath);
@@ -275,36 +309,60 @@ bool Shader::onLoad() {
 		mPreprocessorHeader += "#define " + entry.second->getAs<std::string>() + "\n";
 	}
 
+	auto sha = SHA1{};
+
 	//grab all types
 	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i) {
-		_assignProgram(desc, (ShaderProgramType)i);
+		auto& source = _assignProgram(desc, (ShaderProgramType)i).getSourceString();
+		sha.processBytes(source.data(), source.length());
 	}
-
-	//ensure they're loaded
-	for (auto&& program : pProgram) {
-		if (!program.unwrap().isLoaded()) {
-			if (!program.unwrap().onLoad()) { //one program was not loaded, the shader can't work
-				return loaded;
-			}
-		}
-	}
+	auto cachedPath = _getCachedBinaryPath(sha);
 
 	//link the shaders together in this high level shader
 	mGLProgram = glCreateProgram();
 
-	for (auto&& program : pProgram) {
-		glAttachShader(mGLProgram, program.unwrap().getGLShader());
+	auto binary = _getCachedBinary(cachedPath);
+	if (binary) {
+		glProgramBinary(mGLProgram, binary.format, binary.bytes.data(), binary.bytes.length());
+
+		CHECK_GL_ERROR;
+		glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
+	}
+	
+	if (linked == 0) {
+		//ensure they're loaded
+		for (auto&& program : pProgram) {
+			if (!program.unwrap().isLoaded()) {
+				if (!program.unwrap().onLoad()) { //one program was not loaded, the shader can't work
+					return loaded;
+				}
+			}
+		}
+
+		for (auto&& program : pProgram) {
+			glAttachShader(mGLProgram, program.unwrap().getGLShader());
+		}
+		glLinkProgram(mGLProgram);
+
+		//now as it was successful, store the compiled shader for next time
+		Binary obj;
+		GLsizei length;
+
+		glGetProgramiv(mGLProgram, GL_PROGRAM_BINARY_LENGTH, &length);
+		obj.bytes.resize(length);
+		glGetProgramBinary(mGLProgram, length, nullptr, &obj.format, (char*)obj.bytes.data());
+
+		//check if the linking went ok
+		glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
+		
+		if (linked) {
+			_storeCachedBinary(cachedPath, obj);
+		}
 	}
 
-	glLinkProgram(mGLProgram);
-
 	CHECK_GL_ERROR;
-
-	//check if the linking went ok
-	int linked;
-	glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
+	
 	loaded = linked != 0;
-
 	DEBUG_ASSERT(linked, "Could not link a shader program");
 
 	if (linked) {
@@ -363,3 +421,4 @@ void Shader::onUnload(bool soft /* = false */) {
 
 	loaded = false;
 }
+

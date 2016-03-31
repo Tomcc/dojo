@@ -16,8 +16,7 @@ Table Table::loadFromFile(const utf::string& path) {
 
 	if (file->open(Stream::Access::Read)) {
 		//read the contents directly in a string
-		utf::string buf;
-		buf.resize((size_t)file->getSize());
+		std::string buf((size_t)file->getSize(), 0);
 
 		file->readToFill(buf);
 
