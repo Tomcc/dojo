@@ -35,7 +35,7 @@ ViewportRecorder::~ViewportRecorder() {
 }
 
 void ViewportRecorder::captureFrame() {
-	if(mStopRecording) {
+	if(mAsyncJobStatus != AsyncJob::Status::NotRunning) {
 		return;
 	}
 
@@ -113,7 +113,6 @@ std::string getDateString() {
 #pragma warning(pop)
 
 void ViewportRecorder::makeVideo() {
-	mStopRecording = true;
 	std::vector<byte*> mappedPointers;
 	std::vector<GLuint> mappedPBOs;
 	
@@ -130,7 +129,7 @@ void ViewportRecorder::makeVideo() {
 	}
 	CHECK_GL_ERROR;
 
-	Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)] {
+	mAsyncJobStatus = Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)] {
 		auto path = Platform::singleton().getPicturesPath();
 		path += "/" + Platform::singleton().getGame().getName();
 		path += "_" + Path::removeInvalidChars(getDateString());
@@ -184,7 +183,5 @@ void ViewportRecorder::makeVideo() {
 		}
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 		CHECK_GL_ERROR;
-
-		mStopRecording = false; //resume recording
 	});
 }

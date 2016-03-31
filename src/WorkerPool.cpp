@@ -18,11 +18,15 @@ WorkerPool::~WorkerPool() {
 	//empty to instantiate ~BackgroundWorker here
 }
 
-void WorkerPool::queue(AsyncTask task, AsyncCallback callback /* = */ ) {
+AsyncJob::StatusPtr WorkerPool::queue(AsyncTask task, AsyncCallback callback /* = */ ) {
 	//round robin between the workers
 	//TODO use a sp-mc queue?
+	auto job = AsyncJob{ std::move(task), std::move(callback) };
+	AsyncJob::StatusPtr ptr = job.mStatus;
 
-	mWorkers[mNextWorker]->queueJob({ std::move(task), std::move(callback) });
+	mWorkers[mNextWorker]->queueJob(std::move(job));
+
+	return ptr;
 }
 
 bool WorkerPool::runOneCallback() {

@@ -3,17 +3,10 @@
 #include "dojo_common_header.h"
 
 #include "SPSCQueue.h"
+#include "AsyncJob.h"
 
 namespace Dojo {
-	class AsyncJob {
-	public:
-		AsyncTask task;
-		AsyncCallback callback;
-
-		operator bool() const {
-			return task || callback;
-		}
-	};
+	
 	///A BackgroundQueue queues the tasks that are assigned to it and eventually assigns them to an available thread from its thread pool
 	/**
 	Dojo always spawns a default BackgroundQueue that can be retrieved with Platform::getBackgroundQueue(), but more can be created if needed.
@@ -55,7 +48,7 @@ namespace Dojo {
 		std::mutex mTasksAvailableMutex;
 
 		Unique<SPSCQueue<AsyncJob>> mQueue;
-		Unique<SPSCQueue<AsyncCallback>> mCompletedQueue;
+		Unique<SPSCQueue<AsyncJob>> mCompletedQueue;
 
 		AsyncJob _waitForNextTask();
 

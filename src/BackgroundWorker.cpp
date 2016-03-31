@@ -6,7 +6,7 @@ using namespace Dojo;
 
 BackgroundWorker::BackgroundWorker(bool async) :
 	mRunning(false),
-	mCompletedQueue(make_unique<SPSCQueue<AsyncCallback>>()),
+	mCompletedQueue(make_unique<SPSCQueue<AsyncJob>>()),
 	mQueue(make_unique<SPSCQueue<AsyncJob>>()),
 	isAsync(async) {
 
@@ -55,12 +55,14 @@ AsyncJob BackgroundWorker::_waitForNextTask() {
 
 bool BackgroundWorker::runNextTask() {
 	if (auto job = _waitForNextTask()) {
+		auto& status = *job.mStatus;
+		status = AsyncJob::Status::Running;
 		job.task();
 
 		if (job.callback) {
-			mCompletedQueue->enqueue(std::move(job.callback));
+			status = AsyncJob::Status::Callback;
+			mCompletedQueue->enqueue(std::move(job));
 		}
-
 		return true;
 	}
 	return false;
@@ -96,9 +98,9 @@ void BackgroundWorker::stop() {
 }
 
 bool BackgroundWorker::_runOneCallback() {
-	AsyncCallback callback;
-	if(mCompletedQueue->try_dequeue(callback)){
-		callback();
+	AsyncJob job;
+	if(mCompletedQueue->try_dequeue(job)){
+		job.callback();
 		return true;
 	}
 	return false;

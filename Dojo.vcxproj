@@ -18,6 +18,7 @@
     <ClInclude Include="include\dojo\AABB.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
     <ClInclude Include="include\dojo\AStar.h" />
+    <ClInclude Include="include\dojo\AsyncJob.h" />
     <ClInclude Include="include\dojo\BackgroundWorker.h" />
     <ClInclude Include="include\dojo\Base64.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />

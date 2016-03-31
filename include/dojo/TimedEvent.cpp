@@ -31,7 +31,7 @@ namespace Dojo {
 		Duration mInterval;
 		TimePoint mNextTime;
 
-		bool mRunning = false;
+		AsyncJob::StatusPtr mStatus;
 		AsyncCallback mCallback;
 		AsyncTask mTask;
 		WorkerPool& mTargetPool;
@@ -44,30 +44,24 @@ namespace Dojo {
 			mTargetPool(targetPool),
 			mCallback(std::move(callback)) {
 
-			//wrap the task to report that it's finished
-			//it would be nice to use std::future for this
-			//but checking if a future is obtained is blocking.
-			mTask = [this, task]{
-				task();
-				mRunning = false;
-			};
-
 			EventManager::instance.registerEvent(self);
 		}
 
 		~TimedEventImpl() {
 			EventManager::instance.removeEvent(self);
+
+			//stall until the task is done
+			while (mStatus != AsyncJob::Status::NotRunning && mTargetPool.runOneCallback());
 		}
 
 		bool isReady(TimePoint now) {
-			return !mRunning && now >= mNextTime;
+			return mStatus == AsyncJob::Status::NotRunning && now >= mNextTime;
 		}
 
 		void run() {
-			DEBUG_ASSERT(mRunning == false, "Cannot run now");
+			DEBUG_ASSERT(mStatus == AsyncJob::Status::NotRunning, "Cannot run now");
 
-			mRunning = true;
-			mTargetPool.queue(mTask, mCallback);
+			mStatus = mTargetPool.queue(mTask, mCallback);
 
 			mNextTime = std::chrono::high_resolution_clock::now() + mInterval;
 		}

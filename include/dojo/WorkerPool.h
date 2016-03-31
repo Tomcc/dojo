@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AsyncJob.h"
+
 namespace Dojo {
 	class BackgroundWorker;
 
@@ -11,7 +13,7 @@ namespace Dojo {
 		explicit WorkerPool(uint32_t workerCount, bool async = true);
 		~WorkerPool();
 
-		void queue(AsyncTask task, AsyncCallback callback = {});
+		AsyncJob::StatusPtr queue(AsyncTask task, AsyncCallback callback = {});
 
 		bool runOneCallback();
 

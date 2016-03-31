@@ -4,6 +4,7 @@
 
 #include "TimedEvent.h"
 #include "TexFormatInfo.h"
+#include "AsyncJob.h"
 
 namespace Dojo {
 	class Viewport;
@@ -35,7 +36,7 @@ namespace Dojo {
 		int64_t mTotalFrameCount;
 		Duration mFrequency;
 
-		bool mStopRecording = false;
+		AsyncJob::StatusPtr mAsyncJobStatus;
 		
 		void _bindNextPBO();
 		void _destroyAllPBOs();
