@@ -17,23 +17,26 @@ Tessellation::Tessellation() {
 }
 
 void Tessellation::mergePoints(int i1, int i2) {
-	//remove i2 from the list
-	positions.erase(positions.begin() + i2);
+	//remove i2 from the list by swapping it to the back and popping it
+	int removedIdx = positions.size() - 1;
+	std::swap(positions[i2], positions.back());
+	positions.pop_back();
 
-	//replace all the occurrences of i2 with i1; move all the indices > i2 down by one
+	//replace all the occurrences of i2 with i1; 
+	//replace all the occurrences of removedIdx with i2 (its new index)
 	for (auto&& segment : segments) {
 		if (segment.i1 == i2) {
 			segment.i1 = i1;
 		}
-		else if (segment.i1 > i2) {
-			--segment.i1;
+		else if (segment.i1 == removedIdx) {
+			segment.i1 = i2;
 		}
 
 		if (segment.i2 == i2) {
 			segment.i2 = i1;
 		}
-		else if (segment.i2 > i2) {
-			--segment.i2;
+		else if (segment.i2 == removedIdx) {
+			segment.i2 = i2;
 		}
 	}
 }
@@ -46,7 +49,7 @@ void Tessellation::addSegment(const Vector& p) {
 	segments.emplace_back(Segment(idx, idx + 1));
 }
 
-void Tessellation::addQuadradratic(const Vector& B, const Vector& C, float pointsPerUnitLength) {
+void Tessellation::addQuadratic(const Vector& B, const Vector& C, float pointsPerUnitLength) {
 	Vector U, V, A = positions.back().toVec();
 
 	//TODO actually add points evaluating the "curvyness" of the path
@@ -84,7 +87,9 @@ void Tessellation::addCubic(const Vector& B, const Vector& C, const Vector& D, f
 	}
 }
 
-void Tessellation::mergeDuplicatePoints() {
+void Tessellation::mergeDuplicatePoints(float resolution /*= 0.1*/) {
+	DEBUG_ASSERT(resolution > 0, "Invalid resolution");
+
 	Position max(-DBL_MAX, -DBL_MAX), min(DBL_MAX, DBL_MAX);
 
 	for (auto&& p : positions) {
@@ -97,18 +102,20 @@ void Tessellation::mergeDuplicatePoints() {
 
 	DEBUG_ASSERT(max.x > min.x && max.y > min.y, "Degenerate set, fully lies on a line/point");
 
-	const int N = 1024;
-	indexGrid.clear();
-	indexGrid.resize(N * N, -1);
+	auto w = (int)std::ceil((max.x - min.x) / resolution);
+	auto h = (int)std::ceil((max.y - min.y) / resolution);
+
+	indexGrid.clear(); 
+	indexGrid.resize(w * h, -1);
 
 	for (size_t i = 0; i < positions.size(); ++i) {
 		auto& p = positions[i];
-		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (N - 1));
-		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (N - 1));
+		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (w - 1));
+		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (h - 1));
 
-		DEBUG_ASSERT(x < N && y < N && x >= 0 && y >= 0, "OOB");
+		DEBUG_ASSERT(x < w && y < h && x >= 0 && y >= 0, "OOB");
 
-		int& slot = indexGrid[x + y * N];
+		int& slot = indexGrid[x + y * w];
 
 		if (slot < 0) {
 			slot = i;    //store the index

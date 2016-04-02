@@ -106,7 +106,7 @@ int _lineTo(const FT_Vector* to, void* ptr) {
 int _conicTo(const FT_Vector* control, const FT_Vector* to, void* ptr) {
 	auto t = ((Font::Character*)ptr)->getTesselation();
 
-	t->addQuadradratic(
+	t->addQuadratic(
 		Vector(control->x * gCurrentScale, control->y * gCurrentScale),
 		Vector(to->x * gCurrentScale, to->y * gCurrentScale),
 		((Font::Character*)ptr)->parentPage.unwrap().getFont().getPolyOutlineQuality());

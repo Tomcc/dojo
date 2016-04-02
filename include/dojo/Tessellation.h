@@ -135,7 +135,7 @@ namespace Dojo {
 		void addSegment(const Vector& p);
 
 		///adds a quadratic bezier curve (single control point) starting from the last point
-		void addQuadradratic(const Vector& B, const Vector& C, float pointsPerUnitLength);
+		void addQuadratic(const Vector& B, const Vector& C, float pointsPerUnitLength);
 
 		///adds a cubic bezier curve (double control point) starting from the last point
 		void addCubic(const Vector& B, const Vector& C, const Vector& D, float pointsPerUnitLength);
@@ -152,7 +152,7 @@ namespace Dojo {
 		/**
 		this method will be automatically run by tessellate() as the triangulation algorithm doesn't allow for duplicate points
 		*/
-		void mergeDuplicatePoints();
+		void mergeDuplicatePoints(float resolution = 0.1);
 
 		///generates an extrusion contour mesh - it is different from the normal contour because vertices with an excessive angles are split
 		void generateExtrusionContour();
