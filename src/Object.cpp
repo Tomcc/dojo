@@ -233,6 +233,7 @@ void Object::dispose() {
 
 	disposed = true;
 
+	onDispose();
 	for (auto&& c : components) {
 		if (c) {
 			c->onDispose();

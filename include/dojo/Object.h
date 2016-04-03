@@ -184,7 +184,9 @@ namespace Dojo {
 		///sets all children visible or invisible. //HACK this needs to be removed in favor of an actual scene graph traversal
 		void setAllChildrenVisibleHACK(bool visible);
 
-		virtual void dispose();
+		void dispose();
+
+		virtual void onDispose() {}
 
 		///"authorization" method called when disposing. Useful to override when waiting for threaded stuff to finish on destruction
 		virtual bool canDestroy() const;
