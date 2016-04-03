@@ -64,8 +64,27 @@ byte StringReader::getHexValue(uint32_t c) {
 	}
 }
 
-utf::string::const_iterator Dojo::StringReader::getCurrentIndex() const {
+bool StringReader::startsWith(const utf::string& str) const {
+	auto idx = mIdx;
+	for(auto&& c : str) {
+		if (idx == getString().end() || *idx != c) {
+			return false;
+		}
+		++idx;
+	}
+	return true;
+}
+
+utf::string::const_iterator StringReader::getCurrentIndex() const {
 	return mIdx;
+}
+
+utf::string StringReader::readString() {
+	auto start = mIdx;
+	while (get() != '"');
+
+	auto end = mIdx;
+	return getString().substr(start, --end);
 }
 
 unsigned int StringReader::readHex() {

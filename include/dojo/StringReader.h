@@ -14,6 +14,8 @@ namespace Dojo {
 		///returns a new unicode character or 0 if the stream ended
 		utf::character get();
 
+		bool startsWith(const utf::string& str) const;
+
 		void back();
 
 		//TODO move all to Utils
@@ -42,6 +44,8 @@ namespace Dojo {
 		unsigned int readHex();
 
 		float readFloat();
+
+		utf::string readString();
 
 		///reads n raw bytes from the file
 		void readBytes(void* dest, int sizeBytes);

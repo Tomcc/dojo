@@ -1,6 +1,7 @@
 #include "Table.h"
 #include "Platform.h"
 #include "FileStream.h"
+#include "..\include\dojo\Base64.h"
 
 using namespace Dojo;
 
@@ -97,6 +98,9 @@ void Table::serialize(utf::string& buf, const utf::string& indent) const {
 			buf += indent + '}';
 
 			break;
+		case FieldType::Int64:
+			buf += "i64\"" + Base64::fromObject(e.getAs<int64_t>()) + "\"";
+			break;
 
 		default:
 			FAIL("Unsupported type");
@@ -173,6 +177,9 @@ void Table::deserialize(StringReader& buf) {
 			if (c == '}' || c == 0) {
 				state = ParseState::End;
 			}
+			else if(buf.startsWith("i64\"")) {
+				target = ParseTarget::Int64;
+			}
 			else if (isNameStarter(c)) {
 				state = ParseState::Name;
 			}
@@ -236,6 +243,9 @@ void Table::deserialize(StringReader& buf) {
 			else if (isNumber(c)) {
 				target = ParseTarget::Float;
 			}
+			else if (buf.startsWith("i64\"")) {
+				target = ParseTarget::Int64;
+			}
 
 			break;
 
@@ -285,16 +295,7 @@ void Table::deserialize(StringReader& buf) {
 			break;
 
 		case ParseTarget::String:
-			for (;;) {
-				c = buf.get();
-
-				if (c == '"') {
-					break;
-				}
-			}
-
-			set(curName, buf.getString().substr(idx + 1, --buf.getCurrentIndex()));
-
+			set(curName, buf.readString());
 			break;
 
 		case ParseTarget::Vector:
@@ -315,6 +316,23 @@ void Table::deserialize(StringReader& buf) {
 
 			set(curName, std::move(data));
 			break;
+
+		case ParseTarget::Int64: {
+			//skip prefix
+			buf.get();
+			buf.get();
+			buf.get();
+			buf.get();
+
+			auto bytes = Base64::decode(buf.readString());
+			if (bytes.length() == 8) {
+				set(curName, *(int64_t*)bytes.data());
+			}
+			else {
+				DEBUG_MESSAGE("Key " + curName + " is not a valid int64");
+			}
+		}
+		break;
 
 		case ParseTarget::Table:
 			createTable(curName).deserialize(buf);

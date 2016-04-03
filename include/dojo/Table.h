@@ -46,6 +46,14 @@ namespace Dojo {
 			static const Data Empty;
 
 			std::vector<byte> buf;
+
+			template<class T>
+			static Data fromVec(const std::vector<T>& vec) {
+				Data data;
+				data.buf.resize(vec.size() * sizeof(T));
+				memcpy(data.buf.data(), vec.data(), data.buf.size());
+				return data;
+			}
 		};
 
 		class Entry {
