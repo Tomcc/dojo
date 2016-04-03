@@ -23,6 +23,7 @@
 #include <dojo/Keyboard.h>
 #include <dojo/Log.h>
 #include <dojo/Mesh.h>
+#include <dojo/MPSCQueue.h>
 #include <dojo/Noise.h>
 #include <dojo/Object.h>
 #include <dojo/Oscillator.h>

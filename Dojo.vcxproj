@@ -43,12 +43,14 @@
     <ClInclude Include="include\dojo\LogEntry.h" />
     <ClInclude Include="include\dojo\LogListener.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
+    <ClInclude Include="include\dojo\MPSCQueue.h" />
     <ClInclude Include="include\dojo\optional_ref.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
     <ClInclude Include="include\dojo\RenderSurface.h" />
     <ClInclude Include="include\dojo\Semaphore.h" />
     <ClInclude Include="include\dojo\SoundListener.h" />
+    <ClInclude Include="include\dojo\SpinLock.h" />
     <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
     <ClInclude Include="include\dojo\PolyTextArea.h" />
