@@ -247,7 +247,7 @@ void Object::setSize(const Vector& bbSize) {
 	halfSize = size * 0.5f;
 }
 
-Component& Dojo::Object::_addComponent(Unique<Component> c, int ID) {
+Component& Object::_addComponent(Unique<Component> c, int ID) {
 	DEBUG_ASSERT(parent.is_none(), "The object has been already added to the scene");
 
 	if (ID >= (int)components.size()) {

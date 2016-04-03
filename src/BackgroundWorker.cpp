@@ -8,7 +8,8 @@ BackgroundWorker::BackgroundWorker(bool async) :
 	mRunning(false),
 	mCompletedQueue(make_unique<SPSCQueue<AsyncJob>>()),
 	mQueue(make_unique<SPSCQueue<AsyncJob>>()),
-	isAsync(async) {
+	isAsync(async),
+	mAvailableTasksSemaphore(0) {
 
 	if (isAsync) {
 		startAsync();
@@ -34,8 +35,7 @@ AsyncJob BackgroundWorker::_waitForNextTask() {
 	// 	}
 
 		do {
-			std::unique_lock<std::mutex> lock(mTasksAvailableMutex);
-			mTasksAvailable.wait(lock);
+			mAvailableTasksSemaphore.wait();
 
 			//the thread was killed while sleeping, return nothing
 			if (!mRunning) {
@@ -83,7 +83,7 @@ void BackgroundWorker::startAsync() {
 
 void BackgroundWorker::queueJob(AsyncJob&& job) {
 	mQueue->enqueue(std::move(job));
-	mTasksAvailable.notify_one();
+	mAvailableTasksSemaphore.notifyOne();
 }
 
 void BackgroundWorker::stop() {
@@ -91,7 +91,7 @@ void BackgroundWorker::stop() {
 		mRunning = false;
 
 		//wake up the thread so it can kill itself (muahah)
-		mTasksAvailable.notify_one();
+		mAvailableTasksSemaphore.notifyOne();
 
 		mThread.join();
 	}

@@ -26,6 +26,8 @@ AsyncJob::StatusPtr WorkerPool::queue(AsyncTask task, AsyncCallback callback /* 
 
 	mWorkers[mNextWorker]->queueJob(std::move(job));
 
+	mNextWorker = (mNextWorker + 1) % mWorkers.size();
+
 	return ptr;
 }
 

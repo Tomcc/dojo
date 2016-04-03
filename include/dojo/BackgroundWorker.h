@@ -4,6 +4,7 @@
 
 #include "SPSCQueue.h"
 #include "AsyncJob.h"
+#include "Semaphore.h"
 
 namespace Dojo {
 	
@@ -44,8 +45,7 @@ namespace Dojo {
 
 		std::atomic<bool> mRunning;
 		std::thread mThread;
-		std::condition_variable mTasksAvailable;
-		std::mutex mTasksAvailableMutex;
+		Semaphore mAvailableTasksSemaphore;
 
 		Unique<SPSCQueue<AsyncJob>> mQueue;
 		Unique<SPSCQueue<AsyncJob>> mCompletedQueue;

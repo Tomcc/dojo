@@ -8,9 +8,11 @@ namespace Dojo {
 	template <typename T>
 	class Oscillator {
 	public:
-		float damping, frequency;
+		float damping = 0, frequency = 0;
 
 		T x, speed;
+
+		Oscillator() {}
 
 		Oscillator(const T& start, float damping, float frequency) :
 			x(start),

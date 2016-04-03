@@ -47,6 +47,7 @@
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
     <ClInclude Include="include\dojo\RenderSurface.h" />
+    <ClInclude Include="include\dojo\Semaphore.h" />
     <ClInclude Include="include\dojo\SoundListener.h" />
     <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="src\RenderState.cpp" />
     <ClCompile Include="src\RenderSurface.cpp" />
     <ClCompile Include="src\ResourceGroup.cpp" />
+    <ClCompile Include="src\Semaphore.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\SoundBuffer.cpp" />

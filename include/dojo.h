@@ -54,6 +54,7 @@
 #include <dojo/TouchArea.h>
 #include <dojo/Vector.h>
 #include <dojo/Viewport.h>
+#include <dojo/WorkerPool.h>
 #include <dojo/dojo_common_header.h>
 #include <dojo/dojo_config.h>
 #include <dojo/dojomath.h>
