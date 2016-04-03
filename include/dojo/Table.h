@@ -60,6 +60,14 @@ namespace Dojo {
 				return fromRaw(vec.data(), vec.size());
 			}
 
+			template<class T>
+			std::vector<T> toVec() const {
+				DEBUG_ASSERT(buf.size() % sizeof(T) == 0, "Invalid cast");
+				std::vector<T> res(buf.size() / sizeof(T));
+				memcpy(res.data(), buf.data(), buf.size());
+				return res;
+			}
+
 		};
 
 		class Entry {
