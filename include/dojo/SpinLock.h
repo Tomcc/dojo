@@ -5,20 +5,20 @@
 namespace Dojo {
 	class SpinLock {
 	public:
-		SpinLock() : mLocked(false) {}
+		SpinLock() {
+			mLock.clear(std::memory_order_release);
+		}
 
 		void lock() {
-			while (mLocked); //spin
-			mLocked = true; //lock
+			while (mLock.test_and_set(std::memory_order_acquire)); //spin
 		}
 
 		void unlock() {
-			DEBUG_ASSERT(mLocked, "Cannot unlock now");
-			mLocked = false;
+			mLock.clear(std::memory_order_release);
 		}
 
 	protected:
-		std::atomic<bool> mLocked;
+		std::atomic_flag mLock;
 	};
 }
 
