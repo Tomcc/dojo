@@ -12,7 +12,7 @@
 using namespace Dojo;
 
 XInputController::XInputController(int n) :
-	InputDevice(InputDevice::Type::Xbox, n, 16, 8),
+	InputDevice(InputDevice::Type::XboxController, n, 16, 8),
 	mConnectionCheckTimer(0),
 	mConnected(false) {
 	//set default dead zones

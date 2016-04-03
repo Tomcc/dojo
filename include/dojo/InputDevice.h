@@ -14,7 +14,7 @@ namespace Dojo {
 		enum class Type {
 			Keyboard,
 			Mouse,
-			Xbox,
+			XboxController,
 		};
 
 		//! each pad has a number of analog inputs; each one is a float

@@ -96,9 +96,9 @@ void Renderer::removeAllRenderables() {
 }
 
 void Renderer::removeViewport(const Viewport& v) {
-	DEBUG_ASSERT(std::find(viewportList.begin(), viewportList.end(), &v) != viewportList.end(), "Viewport not found");
-
-	std::remove(viewportList.begin(), viewportList.end(), &v);
+	auto elem = std::find(viewportList.begin(), viewportList.end(), &v);
+	DEBUG_ASSERT(elem != viewportList.end(), "Viewport not found");
+	viewportList.erase(elem);
 }
 
 void Renderer::removeAllViewports() {
