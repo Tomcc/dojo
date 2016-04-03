@@ -48,12 +48,18 @@ namespace Dojo {
 			std::vector<byte> buf;
 
 			template<class T>
-			static Data fromVec(const std::vector<T>& vec) {
+			static Data fromRaw(const T* ptr, size_t count) {
 				Data data;
-				data.buf.resize(vec.size() * sizeof(T));
-				memcpy(data.buf.data(), vec.data(), data.buf.size());
+				data.buf.resize(count * sizeof(T));
+				memcpy(data.buf.data(), ptr, data.buf.size());
 				return data;
 			}
+
+			template<class T>
+			static Data fromVec(const std::vector<T>& vec) {
+				return fromRaw(vec.data(), vec.size());
+			}
+
 		};
 
 		class Entry {
@@ -163,6 +169,8 @@ namespace Dojo {
 			set(key, field_type_for<T>(), std::move(value));
 		}
 
+		//specialization magic
+
 		template<>
 		void set<Color>(const utf::string& key, Color value) {
 			set(key, Vector(value.r, value.g, value.b));
@@ -174,6 +182,11 @@ namespace Dojo {
 		template<>
 		void set<bool>(const utf::string& key, bool value) {
 			set(key, value ? 1.f : 0.f);
+		}
+
+		template<>
+		void set<Quaternion>(const utf::string& key, Quaternion value) {
+			set(key, Vector(glm::eulerAngles(value)));
 		}
 
 		///creates a new nested table named key
@@ -236,6 +249,10 @@ namespace Dojo {
 
 		const Vector& getVector(const utf::string& key, const Vector& defaultValue = Vector::Zero) const  {
 			return get(key, defaultValue);
+		}
+
+		Quaternion getQuaternion(const utf::string& key, const Quaternion& defaultValue = {}) const {
+			return Quaternion(getVector(key, glm::eulerAngles(defaultValue)));
 		}
 
 		const Color getColor(const utf::string& key, const Color& defaultValue = Color::Black) const  {

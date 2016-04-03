@@ -85,9 +85,7 @@ void Table::serialize(utf::string& buf, const utf::string& indent) const {
 
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
-			buf += '#' + utf::to_string(data->buf.size()) + ' ';
-
-			buf.bytes().append((const char*)data->buf.data(), data->buf.size());
+			buf += "raw\"" + Base64::fromVec(data->buf) + '"';
 
 			break;
 
@@ -180,24 +178,23 @@ void Table::deserialize(StringReader& buf) {
 			else if(buf.startsWith("i64\"")) {
 				target = ParseTarget::Int64;
 			}
-			else if (isNameStarter(c)) {
-				state = ParseState::Name;
+			else if (buf.startsWith("raw\"")) {
+				target = ParseTarget::RawData;
 			}
-
 			else if (c == '"') {
 				target = ParseTarget::String;
 			}
 			else if (c == '(') {
 				target = ParseTarget::Vector;
 			}
-			else if (c == '#') {
-				target = ParseTarget::RawData;
-			}
 			else if (c == '{') {
 				target = ParseTarget::Table;
 			}
 			else if (isNumber(c)) {
 				target = ParseTarget::Float;
+			}
+			else if (isNameStarter(c)) {
+				state = ParseState::Name;
 			}
 
 			if (state == ParseState::Name) {
@@ -245,6 +242,9 @@ void Table::deserialize(StringReader& buf) {
 			}
 			else if (buf.startsWith("i64\"")) {
 				target = ParseTarget::Int64;
+			}
+			else if (buf.startsWith("raw\"")) {
+				target = ParseTarget::RawData;
 			}
 
 			break;
@@ -307,14 +307,13 @@ void Table::deserialize(StringReader& buf) {
 			break;
 
 		case ParseTarget::RawData:
-			data.buf.resize((int)buf.readFloat());
-
-			//skip space
+			//skip prefix
+			buf.get();
+			buf.get();
+			buf.get();
 			buf.get();
 
-			buf.readBytes(data.buf.data(), data.buf.size());
-
-			set(curName, std::move(data));
+			set(curName, Data{ Base64::decode(buf.readString()) });
 			break;
 
 		case ParseTarget::Int64: {
@@ -325,7 +324,7 @@ void Table::deserialize(StringReader& buf) {
 			buf.get();
 
 			auto bytes = Base64::decode(buf.readString());
-			if (bytes.length() == 8) {
+			if (bytes.size() == 8) {
 				set(curName, *(int64_t*)bytes.data());
 			}
 			else {

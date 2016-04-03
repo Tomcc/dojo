@@ -33,7 +33,7 @@ using namespace Dojo;
 static const std::string base64_chars =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "abcdefghijklmnopqrstuvwxyz"
-"0123456789+/";
+"0123456789+-";
 
 
 static inline bool is_base64(unsigned char c) {
@@ -83,14 +83,14 @@ utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int
 
 }
 
-std::string Base64::decode(utf::string const& encoded_string_utf) {
+std::vector<byte> Base64::decode(utf::string const& encoded_string_utf) {
 	auto& encoded_string = encoded_string_utf.bytes();
 	int in_len = encoded_string.size();
 	int i = 0;
 	int j = 0;
 	int in_ = 0;
 	unsigned char char_array_4[4], char_array_3[3];
-	std::string ret;
+	std::vector<byte> ret;
 
 	while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
 		char_array_4[i++] = encoded_string[in_]; in_++;
@@ -103,7 +103,7 @@ std::string Base64::decode(utf::string const& encoded_string_utf) {
 			char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
 			for (i = 0; (i < 3); i++)
-				ret += char_array_3[i];
+				ret.emplace_back(char_array_3[i]);
 			i = 0;
 		}
 	}
@@ -119,7 +119,8 @@ std::string Base64::decode(utf::string const& encoded_string_utf) {
 		char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 		char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-		for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
+		for (j = 0; (j < i - 1); j++) 
+			ret.emplace_back(char_array_3[j]);
 	}
 
 	return ret;
