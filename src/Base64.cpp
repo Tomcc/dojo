@@ -37,7 +37,7 @@ static const std::string base64_chars =
 
 
 static inline bool is_base64(unsigned char c) {
-	return (isalnum(c) || (c == '+') || (c == '/'));
+	return (isalnum(c) || (c == '+') || (c == '-'));
 }
 
 utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int in_len) {

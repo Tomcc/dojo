@@ -231,9 +231,6 @@ void Table::deserialize(StringReader& buf) {
 			else if (c == '(') {
 				target = ParseTarget::Vector;
 			}
-			else if (c == '#') {
-				target = ParseTarget::RawData;
-			}
 			else if (c == '{') {
 				target = ParseTarget::Table;
 			}
