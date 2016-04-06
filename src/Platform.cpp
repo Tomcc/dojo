@@ -222,7 +222,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 
 void Platform::getFilePathsForType(const utf::string& type, const utf::string& wpath, std::vector<utf::string>& out) {
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
-	utf::string absPath = getResourcesPath() + "/" + _replaceFoldersWithExistingZips(wpath);
+	utf::string absPath = getResourcesPath() + _replaceFoldersWithExistingZips(wpath) + '/';
 
 	auto idx = _findZipExtension(absPath);
 
@@ -255,7 +255,7 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 				utf::string path(itr->path().data());
 
 				if (Path::getFileExtension(path) == extension) {
-					out.emplace_back(Path::makeCanonical(path));
+					out.emplace_back(Path::makeCanonical(path, true));
 				}
 
 				++itr;

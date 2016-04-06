@@ -35,20 +35,22 @@ bool Path::isAbsolute(const utf::string& str) {
 	return *(str.begin()+1) == ':' || str.front() == '/';
 }
 
-utf::string Path::makeCanonical(const utf::string& path) {
+utf::string Path::makeCanonical(const utf::string& path, bool isFile /*= false*/) {
 	utf::string canonical;
+	bool endsWithSlash = false;
 	for (auto&& c : path) {
 		if (c == '\\') {
 			canonical += '/';
+			endsWithSlash = true;
 		}
 		else {
 			canonical += c;
+			endsWithSlash = c == '/';
 		}
 	}
 
-	//TODO rather than do this, avoid copying in the thing above
-	if (*(path.begin() + (canonical.length()-1)) == '/') {
-		canonical.resize(canonical.length() - 1);
+	if(!endsWithSlash && !isFile) {
+		canonical += '/';
 	}
 
 	return canonical;

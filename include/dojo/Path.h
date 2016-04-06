@@ -13,7 +13,7 @@ public:
 	static bool isAbsolute(const utf::string& str);
 
 	///replace any "\\" in the path with the canonical / and removes any last /
-	static utf::string makeCanonical(const utf::string& path);
+	static utf::string makeCanonical(const utf::string& path, bool isFile = false);
 
 	static bool hasExtension(const utf::string& ext, const utf::string& nameOrPath);
 

@@ -558,7 +558,7 @@ void Win32Platform::initialize(Unique<Game> g) {
 	game = std::move(g);
 
 	//init appdata folder
-	mAppDataPath = Path::makeCanonical(getSystemFolderPath(CSIDL_APPDATA) + '/' + Path::removeInvalidChars(game->getName()));
+	mAppDataPath = getSystemFolderPath(CSIDL_APPDATA) + Path::removeInvalidChars(game->getName()) + '/';
 	//create the appdata user folder
 	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
@@ -566,7 +566,6 @@ void Win32Platform::initialize(Unique<Game> g) {
 	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
 	auto rootPathW = std::wstring(szPath);
 	rootPathW.resize(rootPathW.find_last_of(L"\\/"));
-
 	mRootPath = Path::makeCanonical(String::toUTF8(rootPathW));
 
 	GetTempPathW(MAX_PATH, szPath);
