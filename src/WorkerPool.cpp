@@ -15,7 +15,12 @@ isAsync(async) {
 }
 
 WorkerPool::~WorkerPool() {
-	//empty to instantiate ~BackgroundWorker here
+	//stop the workers
+	if(isAsync) {
+		for(auto&& w : mWorkers) {
+			w->stop();
+		}
+	}
 }
 
 AsyncJob::StatusPtr WorkerPool::queue(AsyncTask task, AsyncCallback callback /* = */ ) {
