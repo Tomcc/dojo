@@ -15,6 +15,8 @@ namespace Dojo {
 
 		AsyncJob::StatusPtr queue(AsyncTask task, AsyncCallback callback = {});
 
+		void sync();
+
 		bool runOneCallback();
 	protected:
 		uint32_t mNextWorker = 0;

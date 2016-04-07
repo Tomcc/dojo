@@ -24,6 +24,12 @@ WorkerPool::~WorkerPool() {
 	}
 }
 
+void WorkerPool::sync() {
+	for (auto&& w : mWorkers) {
+		w->sync();
+	}
+}
+
 AsyncJob::StatusPtr WorkerPool::queue(AsyncTask task, AsyncCallback callback /* = */ ) {
 	//round robin between the workers
 	//TODO use a sp-mc queue?

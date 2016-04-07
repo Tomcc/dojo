@@ -96,6 +96,10 @@ Platform::Platform(const Table& configTable) :
 	//allocate cpus-1 threads
 	//TODO handle asymmetric processors such as BIG.little that should use half the cores
 	mPools.push_back(make_unique<WorkerPool>(std::thread::hardware_concurrency() - 1));
+
+	for(auto&& p : mPools) {
+		mAllPools.emplace(p.get());
+	}
 }
 
 Platform::~Platform() {
@@ -113,13 +117,13 @@ void Platform::_runASyncTasks(float elapsedTime) {
 //TODO try to predict if the next task will kill the frame
 
 	bool runAnything = false;
-	size_t startFrom = Random::instance.getInt(mPools.size());
+	size_t startFrom = Random::instance.getInt(mAllPools.size());
 	size_t i = 0;
 	while(timer.getElapsedTime() < availableTime) {
-		runAnything |= mPools[(startFrom + i) % mPools.size()]->runOneCallback();
+		runAnything |= mAllPools[(startFrom + i) % mAllPools.size()]->runOneCallback();
 		 
 		//if we've visited all the pools and nothing was run, return
-		if(++i == mPools.size()) {
+		if(++i == mAllPools.size()) {
 			if (!runAnything) {
 				break;
 			}
@@ -369,4 +373,24 @@ void Platform::_fireTermination() {
 	for (auto&& l : focusListeners) {
 		l->onApplicationTermination();
 	}
+}
+
+void Dojo::Platform::addApplicationListener(ApplicationListener& f) {
+	DEBUG_ASSERT(!focusListeners.contains(&f), "Already registered");
+	focusListeners.emplace(&f);
+}
+
+void Dojo::Platform::removeApplicationListener(ApplicationListener& f) {
+	DEBUG_ASSERT(focusListeners.contains(&f), "Already registered");
+	focusListeners.erase(&f);
+}
+
+void Dojo::Platform::addWorkerPool(WorkerPool& pool) {
+	DEBUG_ASSERT(!mAllPools.contains(&pool), "Already registered");
+	mAllPools.emplace(&pool);
+}
+
+void Dojo::Platform::removeWorkerPool(WorkerPool& pool) {
+	DEBUG_ASSERT(mAllPools.contains(&pool), "Already registered");
+	mAllPools.erase(&pool);
 }

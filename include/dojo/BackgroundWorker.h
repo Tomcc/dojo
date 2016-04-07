@@ -44,6 +44,7 @@ namespace Dojo {
 		bool runNextTask();
 
 		bool _runOneCallback();
+		bool _runAllCallbacks();
 	protected:
 
 		std::atomic<bool> mRunning;

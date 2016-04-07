@@ -161,13 +161,15 @@ namespace Dojo {
 
 		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
 
-		void addApplicationListener(ApplicationListener& f) {
-			focusListeners.emplace(&f);
-		}
+		void addApplicationListener(ApplicationListener& f);
 
-		void removeApplicationListener(ApplicationListener& f) {
-			focusListeners.erase(&f);
-		}
+		void removeApplicationListener(ApplicationListener& f);
+
+		///register a new queue whose callbacks to run on the main thread
+		void addWorkerPool(WorkerPool& pool);
+
+		///remove a queue that was registered for execution
+		void removeWorkerPool(WorkerPool& pool);
 
 		///returns true if the device is able to manage non-power-of-2 textures
 		virtual bool isNPOTEnabled() = 0;
@@ -269,6 +271,7 @@ namespace Dojo {
 		std::unique_ptr<LogListener> mLogWriter;
 
 		std::vector<Unique<WorkerPool>> mPools;
+		SmallSet<WorkerPool*> mAllPools;
 
 		SmallSet<ApplicationListener*> focusListeners;
 

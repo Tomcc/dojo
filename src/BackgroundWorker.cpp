@@ -106,9 +106,24 @@ bool BackgroundWorker::_runOneCallback() {
 	return false;
 }
 
+bool BackgroundWorker::_runAllCallbacks() {
+	int runTasks = 0;
+	while(true) {
+		if(_runOneCallback()) {
+			++runTasks;
+		}
+		else {
+			break;
+		}
+	}
+	return runTasks > 0;
+}
+
 void BackgroundWorker::sync() {
-	DEBUG_ASSERT(isAsync, "not implemented for main thread");
+	DEBUG_ASSERT(isAsync, "TODO implement for sync queues");
 	if (mRunning) {
+		_runAllCallbacks(); //run all callbacks because they might have tasks which queue new jobs here
+
 		//repeat until all the jobs have been pushed
 		do {
 			std::atomic<bool> done = false;
