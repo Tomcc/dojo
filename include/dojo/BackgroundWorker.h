@@ -31,6 +31,9 @@ namespace Dojo {
 		*/
 		void queueJob(AsyncJob&& job);
 
+		///wait until all tasks are completed
+		void sync();
+
 		///Waits until this queue stops itself
 		/**
 		be sure that no tasks are stalling it!

@@ -105,3 +105,21 @@ bool BackgroundWorker::_runOneCallback() {
 	}
 	return false;
 }
+
+void BackgroundWorker::sync() {
+	DEBUG_ASSERT(isAsync, "not implemented for main thread");
+	if (mRunning) {
+		//repeat until all the jobs have been pushed
+		do {
+			std::atomic<bool> done = false;
+			queueJob(AsyncJob{ [this, &done]() {
+				done = true;
+				return true;
+			},
+			[] {} });
+			while(!done) {
+				std::this_thread::yield();
+			}
+		} while (_runOneCallback());
+	}
+}

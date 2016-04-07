@@ -16,8 +16,9 @@ isAsync(async) {
 
 WorkerPool::~WorkerPool() {
 	//stop the workers
-	if(isAsync) {
-		for(auto&& w : mWorkers) {
+	if (isAsync) {
+		for (auto&& w : mWorkers) {
+			w->sync();
 			w->stop();
 		}
 	}
