@@ -18,7 +18,7 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer) :
 
 Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& shader) :
 	Renderable(parent, layer) {
-	mesh = m;
+	setMesh(m);
 	mShader = shader;
 
 	DEBUG_ASSERT(mesh.unwrap().supportsShader(mShader.unwrap()), "cannot use this mesh with this shader");
