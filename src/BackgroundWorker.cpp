@@ -126,15 +126,12 @@ void BackgroundWorker::sync() {
 
 		//repeat until all the jobs have been pushed
 		do {
-			std::atomic<bool> done = false;
-			queueJob(AsyncJob{ [this, &done]() {
-				done = true;
-				return true;
+			Semaphore sync(0);
+			queueJob(AsyncJob{ [this, &sync]() {
+				sync.notifyOne();
 			},
-			[] {} });
-			while(!done) {
-				std::this_thread::yield();
-			}
+			AsyncCallback() });
+			sync.wait();
 		} while (_runOneCallback());
 	}
 }
