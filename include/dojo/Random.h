@@ -78,6 +78,11 @@ namespace Dojo {
 
 		int getInt(int min, int max);
 
+		int64_t getInt64() {
+			auto low = getInt();
+			return ((int64_t)getInt() << 32) | low;
+		}
+
 		/// real number in [0,1]
 		float getFloat();
 
