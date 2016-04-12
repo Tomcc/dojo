@@ -133,13 +133,8 @@ AABB Object::transformAABB(const AABB& local) const {
 }
 
 Vector Object::getWorldPosition(const Vector& localPos) const {
-	if (parent.is_some()) {
-		glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
-		return (Vector&)pos;
-	}
-	else {
-		return localPos;
-	}
+	glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
+	return (Vector&)pos;
 }
 
 bool Object::isActive() const {
