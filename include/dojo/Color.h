@@ -20,7 +20,7 @@ namespace Dojo {
 
 		typedef unsigned int RGBAPixel;
 
-		static const Color Red, Green, Blue, Black, White, Gray, Yellow, Cyan, Purple, None;
+		static const Color Red, Green, Blue, Black, White, Gray, Yellow, Cyan, Purple, Zero;
 
 		static Color fromARGB(uint32_t pixel) {
 			byte* ch = (byte*)&pixel;

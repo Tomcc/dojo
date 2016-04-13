@@ -12,7 +12,7 @@ const Color Color::Gray = Color(0.5f, 0.5f, 0.5f, 1);
 const Color Color::Yellow = Color(1, 1, 0, 1);
 const Color Color::Cyan = Color(0, 1, 1, 1);
 const Color Color::Purple = Color(1, 0, 1, 1);
-const Color Color::None = Color(0, 0, 0, 0);
+const Color Color::Zero = Color(0, 0, 0, 0);
 
 Dojo::Color Dojo::Color::clamped() const
 {
