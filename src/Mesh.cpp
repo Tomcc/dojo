@@ -23,7 +23,7 @@ const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof(GLfloat), //position 2D
 	3 * sizeof(GLfloat), //position 3D
 	4 * sizeof(GLuint), //color
-	4 * sizeof(GLubyte), //normal
+	1 * sizeof(GLuint), //normal
 	2 * sizeof(GLshort), //uv0
 	2 * sizeof(GLshort)
 };
@@ -264,14 +264,13 @@ void Mesh::color(const Color& c) {
 }
 
 void Mesh::normal(const Vector& n) {
-	DEBUG_ASSERT(n.length() <= 1.f, "normal is too long, cannot pack");
+	DEBUG_ASSERT(std::abs(n.x) <= 1.f &&std::abs(n.y) <= 1.f &&std::abs(n.z) <= 1.f, "normal is too long, cannot pack");
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
-	auto ptr = ((int8_t*)(currentVertex + _offset(VertexField::Normal)));
-	ptr[0] = Math::packNormalized<int8_t>(n.x);
-	ptr[1] = Math::packNormalized<int8_t>(n.y);
-	ptr[2] = Math::packNormalized<int8_t>(n.z);
-	ptr[3] = 0;
+	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Normal)));
+	val = (Math::packNormalized<int>(n.z, 511) << 20);
+	val |= (Math::packNormalized<int>(n.y, 511) << 10);
+	val |= (Math::packNormalized<int>(n.x, 511) << 0);
 }
 
 struct VertexFieldInfo {
@@ -284,7 +283,7 @@ static const vertexFieldInfoMap[] = {
 	{ GL_FLOAT, 2, false },	// 	Position2D,
 	{ GL_FLOAT, 3, false },	// 	Position3D,
 	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
-	{ GL_BYTE, 4, true },	// 	Normal
+	{ GL_INT_2_10_10_10_REV, 4, true },	// 	Normal
 
 	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
 	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
