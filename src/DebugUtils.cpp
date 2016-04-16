@@ -7,6 +7,9 @@
 #include "dojo_al_header.h"
 #include "dojo_win_header.h"
 
+//let's assume that the thread who has main() remains the main thread
+const std::thread::id gDebugMainThreadID = std::this_thread::get_id();
+
 #ifdef PLATFORM_ANDROID
 	//stream string buffer
 	std::stringstream  debug_stream_android;

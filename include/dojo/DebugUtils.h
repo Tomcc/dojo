@@ -6,8 +6,8 @@
 	#define UNREACHABLE_BRANCH __assume(0)
 #endif
 
-
 #ifndef PUBLISH
+	extern const std::thread::id gDebugMainThreadID;
 
 	#define DEBUG_ASSERT_IMPL( T, MSG, INFO )	{if( !(T) )	{ Dojo::gp_assert_handler( MSG, #T, INFO, __LINE__, __FILE__, __FUNCTION__ ); }}
 	#define DEBUG_ASSERT_INFO( T, MSG, INFO )	DEBUG_ASSERT_IMPL( T, MSG, (INFO).bytes().data() )
@@ -16,7 +16,10 @@
 
 	#define DEBUG_TODO {Dojo::gp_assert_handler( "error", "METHOD NOT IMPLEMENTED", nullptr, __LINE__, __FILE__, __FUNCTION__ );};
 	#define FAIL( MSG ) {Dojo::gp_assert_handler( "error", MSG, nullptr, __LINE__, __FILE__, __FUNCTION__ ); UNREACHABLE_BRANCH; };
-	//fix...7
+	
+	#define DEBUG_ASSERT_MAIN_THREAD DEBUG_ASSERT(std::this_thread::get_id() == gDebugMainThreadID, "This code needs to run on the main thread");
+
+	//TODO fix...
 	#if defined( __ANDROID__ )
 		#include <sstream>
 		#include <string>
@@ -54,6 +57,7 @@
 	#define DEBUG_MESSAGE( T ) {}
 	#define CHECK_GL_ERROR {}
 	#define CHECK_AL_ERROR	true
+	#define DEBUG_ASSERT_MAIN_THREAD {}
 
 #endif
 

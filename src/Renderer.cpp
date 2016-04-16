@@ -68,6 +68,8 @@ bool Renderer::hasLayer(RenderLayer::ID layerID) {
 }
 
 void Renderer::addRenderable(Renderable& s) {
+	DEBUG_ASSERT_MAIN_THREAD;
+
 	//get the needed layer
 	RenderLayer& layer = getLayer(s.getLayer());
 
@@ -78,6 +80,8 @@ void Renderer::addRenderable(Renderable& s) {
 }
 
 void Renderer::removeRenderable(Renderable& s) {
+	DEBUG_ASSERT_MAIN_THREAD;
+
 	if (hasLayer(s.getLayer())) {
 		getLayer(s.getLayer()).elements.erase(&s);
 	}
