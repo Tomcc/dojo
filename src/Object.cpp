@@ -32,25 +32,51 @@ Object::~Object() {
 	removeAllChildren();
 }
 
-Object& Object::_addChild(Unique<Object> o) {
-	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
-	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
-
-	o->parent = self;
-
-	auto ptr = o.get();
-
-	o->updateWorldTransform();
-	children.emplace(std::move(o));
+void Object::_addChildEvent(Object& child) {
+	child.updateWorldTransform();
 
 	//call onAttach on all of the children components
-	for (auto&& c : ptr->components) {
+	for (auto&& c : child.components) {
 		if (c) {
 			c->onAttach();
 		}
 	}
 
-	return *ptr;
+	//also call this on all the children's childs now. As they were added before this had a parent, their callbacks weren't called
+	for(auto&& c : child.children) {
+		child._addChildEvent(*c);
+	}
+}
+
+bool Object::isAttachedToScene() const {
+	auto cur = &self;
+
+	//return true if all the chain of parents exists and the last parent is the root
+	while(!cur->isRoot()) {
+		if(cur->parent.is_none()) {
+			return false;
+		}
+		cur = &parent.unwrap();
+	}
+	return true;
+}
+
+Object& Object::_addChild(Unique<Object> o) {
+	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
+	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
+
+	auto& child = *o;
+	child.parent = self;
+
+	children.emplace(std::move(o));
+	if (isAttachedToScene()) {
+		_addChildEvent(child);
+	}
+	else {
+		child.updateWorldTransform(); //update this anyway to not have temporarily a wrong transform
+	}
+
+	return child;
 }
 
 void Object::_unregisterChild(Object& child) {

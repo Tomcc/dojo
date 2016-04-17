@@ -121,6 +121,13 @@ namespace Dojo {
 
 		bool isActive() const;
 
+		virtual bool isRoot() const {
+			return false;
+		}
+
+		///returns true if this object is connected to the root object
+		bool isAttachedToScene() const;
+
 		bool hasChilds() const {
 			return children.size() > 0;
 		}
@@ -209,6 +216,7 @@ namespace Dojo {
 		optional_ref<Object> parent;
 		ChildList children;
 
+		void _addChildEvent(Object& child);
 		Object& _addChild(Unique<Object> o);
 
 		void _unregisterChild(Object& child);

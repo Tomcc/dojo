@@ -39,6 +39,10 @@ namespace Dojo {
 
 		virtual ~GameState();
 
+		virtual bool isRoot() const override {
+			return true;
+		}
+
 		///Registers an existing TouchArea in this GameState
 		void addTouchArea(TouchArea& t);
 
