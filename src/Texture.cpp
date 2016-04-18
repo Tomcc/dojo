@@ -117,7 +117,7 @@ void Texture::disableTiling() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
+bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) {
 	width = w;
 	height = h;
 
@@ -153,9 +153,11 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
 		internalFormat = formatID;
-		size = internalWidth * internalHeight * formatInfo.sourcePixelSize;
 
-		std::string dummyData(size, 0); //needs to preallocate the storage if this tex is used as rendertarget (TODO avoid this if we have data)
+		std::vector<byte> dummyData(
+			initStorage ? internalWidth * internalHeight * formatInfo.sourcePixelSize : 0,
+			0
+		);
 
 		//create an empty GPU mem space
 		glTexImage2D(
@@ -167,7 +169,7 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 			0,
 			formatInfo.sourceFormat,
 			formatInfo.sourceElementType,
-			dummyData.c_str());
+			initStorage ? dummyData.data() : nullptr);
 	}
 
 	UVSize.x = (float)width / (float)internalWidth;
@@ -178,10 +180,14 @@ bool Texture::loadEmpty(int w, int h, PixelFormat formatID) {
 	return loaded = true;
 }
 
-bool Dojo::Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
+bool Texture::loadEmpty(int width, int height, PixelFormat destFormat) {
+	return _load(width, height, destFormat, true);
+}
+
+bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
 	DEBUG_ASSERT( imageData, "null image data" );
 
-	loadEmpty(width, height, sourceFormat);
+	_load(width, height, sourceFormat, false);
 
 	auto& format = TexFormatInfo::getFor(sourceFormat);
 

@@ -144,5 +144,6 @@ namespace Dojo {
 		void _rebuildOptimalBillboard();
 
 		bool _setupAtlas();
+		bool _load(int w, int h, PixelFormat formatID, bool initStorage);
 	};
 }
