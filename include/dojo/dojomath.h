@@ -17,7 +17,7 @@
 namespace Dojo {
 	class Math {
 	public:
-
+		static const Radians HALF_PI;
 		static const Radians PI; ///well, pi
 		static const Radians TAU; ///2*pi
 
