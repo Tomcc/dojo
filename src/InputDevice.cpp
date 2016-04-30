@@ -32,7 +32,7 @@ bool InputDevice::isKeyDown(KeyCode key) {
 bool InputDevice::isKeyDown(int action) {
 	//check all the keys bound to this one
 	for (auto&& binding : mBindings) {
-		if (binding.action == action && isKeyDown(binding.key)) {
+		if (binding.action == action and isKeyDown(binding.key)) {
 			return true;
 		}
 	}
@@ -42,7 +42,7 @@ bool InputDevice::isKeyDown(int action) {
 
 bool InputDevice::hasBinding(int action, KeyCode key) const {
 	for (auto&& b : mBindings) {
-		if (action == b.action && key == b.key) {
+		if (action == b.action and key == b.key) {
 			return true;
 		}
 	}
@@ -51,7 +51,7 @@ bool InputDevice::hasBinding(int action, KeyCode key) const {
 }
 
 void InputDevice::addBinding(int action, KeyCode key) {
-	if (!hasBinding(action, key)) {
+	if (not hasBinding(action, key)) {
 		mBindings.emplace(action, key);
 	}
 }

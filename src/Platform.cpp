@@ -124,7 +124,7 @@ void Platform::_runASyncTasks(float elapsedTime) {
 		 
 		//if we've visited all the pools and nothing was run, return
 		if(++i == mAllPools.size()) {
-			if (!runAnything) {
+			if (not runAnything) {
 				break;
 			}
 			runAnything = false;
@@ -167,14 +167,14 @@ utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath
 			//check if partialFolder exists as a zip file
 			Poco::File zipFile(partialFolder.bytes());
 
-			if (zipFile.exists() && zipFile.isFile()) {
+			if (zipFile.exists() and zipFile.isFile()) {
 				res = partialFolder;
 				found = true;
 				break;
 			}
 		}
 
-		if (!found) {
+		if (not found) {
 			res += currentFolder;
 		}
 
@@ -376,7 +376,7 @@ void Platform::_fireTermination() {
 }
 
 void Dojo::Platform::addApplicationListener(ApplicationListener& f) {
-	DEBUG_ASSERT(!focusListeners.contains(&f), "Already registered");
+	DEBUG_ASSERT(not focusListeners.contains(&f), "Already registered");
 	focusListeners.emplace(&f);
 }
 
@@ -386,7 +386,7 @@ void Dojo::Platform::removeApplicationListener(ApplicationListener& f) {
 }
 
 void Dojo::Platform::addWorkerPool(WorkerPool& pool) {
-	DEBUG_ASSERT(!mAllPools.contains(&pool), "Already registered");
+	DEBUG_ASSERT(not mAllPools.contains(&pool), "Already registered");
 	mAllPools.emplace(&pool);
 }
 

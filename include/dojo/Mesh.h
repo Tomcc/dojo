@@ -167,7 +167,7 @@ namespace Dojo {
 
 
 		bool isIndexed() const {
-			return !indices.empty() || indexHandle;
+			return not indices.empty() or indexHandle;
 		}
 
 		uint32_t getIndexGLType() const {

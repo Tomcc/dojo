@@ -134,7 +134,7 @@ void ZipArchive::getList(const utf::string& inPath, std::vector<utf::string>& ou
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
-			if (size_path < size && //not this dir and prev path
+			if (size_path < size and //not this dir and prev path
 					strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 
 				//is not a sub sub directory?
@@ -168,7 +168,7 @@ void ZipArchive::getListAll(const utf::string& inPath, std::vector<utf::string>&
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
 
-			if (size_path < size && //not this dir and prev path
+			if (size_path < size and //not this dir and prev path
 					strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 				out.emplace_back(&dirp->d_name[size_path]);
 			}
@@ -189,7 +189,7 @@ void ZipArchive::getListFiles(const utf::string& inPath, std::vector<utf::string
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
-				if (size_path < size && //not this dir and prev path
+				if (size_path < size and //not this dir and prev path
 						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //file is in this directory
 
 					//is not in sub sub directory?
@@ -225,7 +225,7 @@ void ZipArchive::getListAllFiles(const utf::string& inPath, std::vector<utf::str
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] != '/') { //is not a dir
-				if (size_path < size && //not this dir and prev path
+				if (size_path < size and //not this dir and prev path
 						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //file is in this directory
 					out.emplace_back(&dirp->d_name[size_path]);
 				}
@@ -247,7 +247,7 @@ void ZipArchive::getListSubDirectories(const utf::string& inPath, std::vector<ut
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
-				if (size_path < size && //not this dir and prev path
+				if (size_path < size and //not this dir and prev path
 						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 
 					//is not a sub sub directory?
@@ -283,7 +283,7 @@ void ZipArchive::getListAllSubDirectories(const utf::string& inPath, std::vector
 			size = strlen(dirp->d_name);
 
 			if (dirp->d_name[size - 1] == '/') { //is a dir
-				if (size_path < size && //not this dir and prev path
+				if (size_path < size and //not this dir and prev path
 						strncmp(dirp->d_name, path.bytes().data(), size_path) == 0) { //path is a "sub path"
 					out.emplace_back(&dirp->d_name[size_path]);
 				}
@@ -307,22 +307,22 @@ utf::string ZipArchive::makeValidPath(const utf::string& path) {
 	// 	for (int i = path.length() - 1; -1 < i; --i) {
 	// 		if (path[i] == '/')
 	// 			break;
-	// 		if (path[i] != ' ' && path[i] != '\0') {
+	// 		if (path[i] != ' ' and path[i] != '\0') {
 	// 			path = path.substr(0, i + 1) + '/'; //delete void path
 	// 			break;
 	// 		}
 	// 	}
 	// 	/* 3 delete //  */
 	// 	for (int i = path.length() - 1; 0 < i; --i) {
-	// 		if (path[i] == '/' && path[i - 1] == '/') {
+	// 		if (path[i] == '/' and path[i - 1] == '/') {
 	// 			path = path.substr(0, i - 2) + path.substr(i, path.length() - i);
 	// 			break;
 	// 		}
 	// 	}
 	// 	/* delete . */
-	// 	if (path.length() && path[0] == '.')
+	// 	if (path.length() and path[0] == '.')
 	// 		path = path.substr(1, path.length() - 1);
 	// 	/* delete /path */
-	// 	if (path.length() && path[0] == '/')
+	// 	if (path.length() and path[0] == '/')
 	// 		path = path.substr(1, path.length() - 1);
 }

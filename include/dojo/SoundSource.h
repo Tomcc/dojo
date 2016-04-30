@@ -113,7 +113,7 @@ namespace Dojo {
 		}
 
 		bool isActive() const {
-			return state == SS_INITIALISING || state == SS_PAUSED || state == SS_PLAYING;
+			return state == SS_INITIALISING or state == SS_PAUSED or state == SS_PLAYING;
 		}
 
 		void _reset();

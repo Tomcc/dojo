@@ -32,7 +32,7 @@ utf::string Path::getDirectory(const utf::string& str) {
 }
 
 bool Path::isAbsolute(const utf::string& str) {
-	return *(str.begin()+1) == ':' || str.front() == '/';
+	return *(str.begin()+1) == ':' or str.front() == '/';
 }
 
 utf::string Path::makeCanonical(const utf::string& path, bool isFile /*= false*/) {
@@ -49,7 +49,7 @@ utf::string Path::makeCanonical(const utf::string& path, bool isFile /*= false*/
 		}
 	}
 
-	if(!endsWithSlash && !isFile) {
+	if(not endsWithSlash and not isFile) {
 		canonical += '/';
 	}
 
@@ -71,7 +71,7 @@ utf::string::const_iterator Path::getTagIdx(const utf::string& str) {
 			return tagIdx;
 		}
 
-		else if (!String::isNumber(c)) {
+		else if (not String::isNumber(c)) {
 			break;    //if a non-number char is encountered, this was not a tag
 		}
 	}
@@ -82,9 +82,9 @@ utf::string::const_iterator Path::getTagIdx(const utf::string& str) {
 utf::string::const_iterator Path::getVersionIdx(const utf::string& str) {
 	auto idx = str.rbegin();
 
-	for (; idx != str.rend() && !String::isNumber(*idx); ++idx);
+	for (; idx != str.rend() and not String::isNumber(*idx); ++idx);
 
-	if (idx != str.rbegin() && idx != str.rend() && *idx == '@') {
+	if (idx != str.rbegin() and idx != str.rend() and *idx == '@') {
 		return ++idx.forward_iterator;
 	}
 	else {
@@ -161,5 +161,5 @@ bool Path::arePathsInSequence(const utf::string& first, const utf::string& secon
 	int t1 = getTag(first);
 	int t2 = getTag(second);
 
-	return t1 >= 0 && t2 >= 0 && t1 + 1 == t2;
+	return t1 >= 0 and t2 >= 0 and t1 + 1 == t2;
 }

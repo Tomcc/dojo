@@ -94,7 +94,7 @@ void PolyTextArea::_addExtrusionLayer(Tessellation* t, const Vector& origin, flo
 
 void PolyTextArea::setExtrusionParameters(float depth, float bevelDepth /*= 0*/, float inflateRadius /*= 0*/) {
 	DEBUG_ASSERT(depth > 0, "extrusion depth must be a positive number");
-	DEBUG_ASSERT(bevelDepth >= 0 && bevelDepth < depth * 0.5, "the depth of the bevel must not exceed half of the total depth");
+	DEBUG_ASSERT(bevelDepth >= 0 and bevelDepth < depth * 0.5, "the depth of the bevel must not exceed half of the total depth");
 
 	mDepth = depth;
 	mBevelDepth = bevelDepth;
@@ -159,7 +159,7 @@ void PolyTextArea::_prepare() {
 			charPosition.x += character.bearingU;
 			charPosition.y -= character.bearingV;
 
-			if (pFont->isKerningEnabled() && lastChar.is_some()) {
+			if (pFont->isKerningEnabled() and lastChar.is_some()) {
 				charPosition.x -= pFont->getKerning(character, lastChar.unwrap());
 			}
 
@@ -186,7 +186,7 @@ void PolyTextArea::_prepare() {
 
 				_addExtrusionLayer(t, charPosition, 0, &Vector::UnitZ);
 
-				if (mInflateRadius && mBevelDepth > 0) { //use a rounded extrusion only if the inflation and the bevel are valid
+				if (mInflateRadius and mBevelDepth > 0) { //use a rounded extrusion only if the inflation and the bevel are valid
 					_addExtrusionLayer(t, charPosition - Vector(0, 0, mBevelDepth), mInflateRadius, nullptr);
 					_addExtrusionLayer(t, charPosition - Vector(0, 0, mDepth - mBevelDepth), mInflateRadius, nullptr);
 				}

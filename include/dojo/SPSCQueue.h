@@ -75,8 +75,8 @@ namespace Dojo {
 #endif
 		{
 			assert(maxSize > 0);
-			assert(MAX_BLOCK_SIZE == ceilToPow2(MAX_BLOCK_SIZE) && "MAX_BLOCK_SIZE must be a power of 2");
-			assert(MAX_BLOCK_SIZE >= 2 && "MAX_BLOCK_SIZE must be at least 2");
+			assert(MAX_BLOCK_SIZE == ceilToPow2(MAX_BLOCK_SIZE) and "MAX_BLOCK_SIZE must be a power of 2");
+			assert(MAX_BLOCK_SIZE >= 2 and "MAX_BLOCK_SIZE must be at least 2");
 
 			Block* firstBlock = nullptr;
 
@@ -219,7 +219,7 @@ namespace Dojo {
 			size_t blockTail = frontBlock_->localTail;
 			size_t blockFront = frontBlock_->front.load();
 
-			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
+			if (blockFront != blockTail or blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
 
 non_empty_front_block:
@@ -301,7 +301,7 @@ non_empty_front_block:
 			size_t blockTail = frontBlock_->localTail;
 			size_t blockFront = frontBlock_->front.load();
 
-			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
+			if (blockFront != blockTail or blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
 non_empty_front_block:
 				return reinterpret_cast<T*>(frontBlock_->data + blockFront * sizeof(T));
@@ -342,7 +342,7 @@ non_empty_front_block:
 			size_t blockTail = frontBlock_->localTail;
 			size_t blockFront = frontBlock_->front.load();
 
-			if (blockFront != blockTail || blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
+			if (blockFront != blockTail or blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
 				fence(memory_order_acquire);
 
 non_empty_front_block:
@@ -438,7 +438,7 @@ non_empty_front_block:
 
 			size_t nextBlockTail = (blockTail + 1) & tailBlock_->sizeMask;
 
-			if (nextBlockTail != blockFront || nextBlockTail != (tailBlock_->localFront = tailBlock_->front.load())) {
+			if (nextBlockTail != blockFront or nextBlockTail != (tailBlock_->localFront = tailBlock_->front.load())) {
 				fence(memory_order_acquire);
 				// This block has room for at least one more element
 				char* location = tailBlock_->data + blockTail * sizeof(T);
@@ -511,7 +511,7 @@ non_empty_front_block:
 					return false;
 				}
 				else {
-					assert(false && "Should be unreachable code");
+					assert(false and "Should be unreachable code");
 					return false;
 				}
 			}
@@ -552,7 +552,7 @@ non_empty_front_block:
 		struct ReentrantGuard {
 			ReentrantGuard(bool& _inSection)
 				: inSection(_inSection) {
-				assert(!inSection);
+				assert(not inSection);
 
 				if (inSection) {
 					throw std::runtime_error("Pipe does not support enqueuing or dequeuing elements from other elements' ctors and dtors");

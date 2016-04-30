@@ -30,7 +30,7 @@ AsyncJob BackgroundWorker::_waitForNextTask() {
 
 	if (isAsync) {
 		//TODO try work-stealing here
-	// 	if(!mQueue->try_dequeue(job)) {
+	// 	if(not mQueue->try_dequeue(job)) {
 	//      teek jerbs
 	// 	}
 
@@ -38,11 +38,11 @@ AsyncJob BackgroundWorker::_waitForNextTask() {
 			mAvailableTasksSemaphore.wait();
 
 			//the thread was killed while sleeping, return nothing
-			if (!mRunning) {
+			if (not mRunning) {
 				return{};
 			}
 
-		} while (!mQueue->try_dequeue(job)); //it's not sure that a job will be there, condition_variable has spurious wakeups
+		} while (not mQueue->try_dequeue(job)); //it's not sure that a job will be there, condition_variable has spurious wakeups
 
 		return job;
 	}
@@ -69,7 +69,7 @@ bool BackgroundWorker::runNextTask() {
 }
 
 void BackgroundWorker::startAsync() {
-	DEBUG_ASSERT(mRunning == false && !mThread.joinable(), "Already running");
+	DEBUG_ASSERT(mRunning == false and not mThread.joinable(), "Already running");
 
 	mRunning = true;
 	mThread = std::thread([this] {

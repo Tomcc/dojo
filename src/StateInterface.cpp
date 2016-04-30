@@ -16,7 +16,7 @@ void StateInterface::setState(int newState) {
 	nextState = newState;
 
 	//start immediately if we have no current state
-	if (!hasCurrentState()) {
+	if (not hasCurrentState()) {
 		_applyNextState();
 	}
 }
@@ -31,12 +31,12 @@ void StateInterface::setStateImmediate(int newState) {
 
 void StateInterface::setState(std::shared_ptr<StateInterface> child) {
 	DEBUG_ASSERT(mCanSetNextState, "This State Machine is in an active transition and can't change its destination state");
-	DEBUG_ASSERT(!hasNextState(), "this State Machine already has a pending state to be set, cannot set another");
+	DEBUG_ASSERT(not hasNextState(), "this State Machine already has a pending state to be set, cannot set another");
 
 	nextStatePtr = child;
 
 	//start immediately if we have no current state
-	if (!hasCurrentState()) {
+	if (not hasCurrentState()) {
 		_applyNextState();
 	}
 }

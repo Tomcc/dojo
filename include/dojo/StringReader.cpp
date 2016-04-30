@@ -19,31 +19,31 @@ void StringReader::back() {
 }
 
 bool StringReader::isNumber(uint32_t c) {
-	return c >= '0' && c <= '9';
+	return c >= '0' and c <= '9';
 }
 
 bool StringReader::isLowerCaseLetter(uint32_t c) {
-	return c >= 'a' && c <= 'z';
+	return c >= 'a' and c <= 'z';
 }
 
 bool StringReader::isUpperCaseLetter(uint32_t c) {
-	return c >= 'A' && c <= 'Z';
+	return c >= 'A' and c <= 'Z';
 }
 
 bool StringReader::isLetter(uint32_t c) {
-	return isLowerCaseLetter(c) || isUpperCaseLetter(c);
+	return isLowerCaseLetter(c) or isUpperCaseLetter(c);
 }
 
 bool StringReader::isNameCharacter(uint32_t c) {
-	return isNumber(c) || isLetter(c);
+	return isNumber(c) or isLetter(c);
 }
 
 bool StringReader::isHex(uint32_t c) {
-	return isNumber(c) || (c >= 'a' && c <= 'f');
+	return isNumber(c) or (c >= 'a' and c <= 'f');
 }
 
 bool StringReader::isWhiteSpace(uint32_t c) {
-	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+	return c == ' ' or c == '\n' or c == '\r' or c == '\t';
 }
 
 void StringReader::skipWhiteSpace() {
@@ -67,7 +67,7 @@ byte StringReader::getHexValue(uint32_t c) {
 bool StringReader::startsWith(const utf::string& str) const {
 	auto idx = mIdx;
 	for(auto&& c : str) {
-		if (idx == getString().end() || *idx != c) {
+		if (idx == getString().end() or *idx != c) {
 			return false;
 		}
 		++idx;
@@ -130,7 +130,7 @@ float StringReader::readFloat() {
 
 				state = PS_INT;
 			}
-			else if (!isWhiteSpace(c)) {
+			else if (not isWhiteSpace(c)) {
 				state = PS_ERROR;
 			}
 		}

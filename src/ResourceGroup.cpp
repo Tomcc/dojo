@@ -53,8 +53,8 @@ void ResourceGroup::addLocalizedFolder(const utf::string& basefolder, int versio
 }
 
 Table& ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
-	DEBUG_ASSERT( !name.empty(), "addTable: a table with this name was already added" );
-	DEBUG_ASSERT( !finalized, "This ResourceGroup can't be modified" );
+	DEBUG_ASSERT(not name.empty(), "addTable: a table with this name was already added" );
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified" );
 
 	if (logchanges) {
 		DEBUG_MESSAGE( "+" + name + "\t\t table" );
@@ -84,7 +84,7 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 			continue;
 		}
 
-		if (lastName.empty() || !Path::arePathsInSequence(lastName, name)) {
+		if (lastName.empty() or not Path::arePathsInSequence(lastName, name)) {
 			utf::string setPrefix = Path::removeTags(name);
 
 			//create a new set
@@ -186,7 +186,7 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 	for (int i = 0; i < paths.size(); ++i) {
 		name = Path::getFileName(paths[i]);
 
-		if (lastName.empty() || !Path::arePathsInSequence(lastName, name)) {
+		if (lastName.empty() or not Path::arePathsInSequence(lastName, name)) {
 			//create a new set
 			utf::string setPrefix = Path::removeTags(name);
 			currentSet = &addSoundSet(make_unique<SoundSet>(self, setPrefix), setPrefix);
@@ -300,7 +300,7 @@ void ResourceGroup::addFolderSimple(const utf::string& folder, int version) {
 
 FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getFrameSet(name).is_none(), "A FrameSet with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {
@@ -322,7 +322,7 @@ Texture& ResourceGroup::addTexture(Unique<Texture> texture, const utf::string& n
 
 Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {
@@ -334,7 +334,7 @@ Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 
 Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getMesh(name).is_none(), "A Mesh with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {
@@ -346,7 +346,7 @@ Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
 
 SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getSound(name).is_none(), "A Sound with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {
@@ -358,7 +358,7 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::strin
 
 Shader& ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getShader(name).is_none(), "A Shader with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {
@@ -370,7 +370,7 @@ Shader& ResourceGroup::addShader(Unique<Shader> resource, const utf::string& nam
 
 ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, const utf::string& name) {
 	DEBUG_ASSERT_INFO(getProgram(name).is_none(), "A ShaderProgram with this name already exists", "name = " + name);
-	DEBUG_ASSERT(!finalized, "This ResourceGroup can't be modified");
+	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
 
 	if (logchanges) {

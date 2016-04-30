@@ -169,7 +169,7 @@ void Renderer::_renderElement(const RenderState& renderState) {
 
 	uint32_t mode = glModeMap[(byte)m.getTriangleMode()];
 
-	if (!m.isIndexed()) {
+	if (not m.isIndexed()) {
 		glDrawArrays(mode, 0, m.getVertexCount());
 	}
 	else {
@@ -189,7 +189,7 @@ bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable&
 }
 
 void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
-	if (!layer.elements.size() || !layer.visible) {
+	if (not layer.elements.size() or not layer.visible) {
 		return;
 	}
 
@@ -213,7 +213,7 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	globalUniforms.projection = mRenderRotation * (layer.orthographic ? viewport.getOrthoProjectionTransform() : viewport.getPerspectiveProjectionTransform());
 
 	for (auto&& r : layer.elements) {
-		if (r->canBeRendered() && _cull(layer, viewport, *r)) {
+		if (r->canBeRendered() and _cull(layer, viewport, *r)) {
 			_renderElement(*r);
 		}
 	}
@@ -267,7 +267,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 void Renderer::_updateRenderables(const LayerList& layers, float dt) {
 	for (auto&& layer : layers) {
 		for (auto&& r : layer.elements) {
-			if ((r->getObject().isActive() && r->isVisible()) || r->getGraphicsAABB().isEmpty()) {
+			if ((r->getObject().isActive() and r->isVisible()) or r->getGraphicsAABB().isEmpty()) {
 				r->update(dt);
 			}
 		}
@@ -275,7 +275,7 @@ void Renderer::_updateRenderables(const LayerList& layers, float dt) {
 }
 
 void Renderer::renderFrame(float dt) {
-	DEBUG_ASSERT( !frameStarted, "Tried to start rendering but the frame was already started" );
+	DEBUG_ASSERT(not frameStarted, "Tried to start rendering but the frame was already started" );
 
 	frameVertexCount = frameTriCount = frameBatchCount = 0;
 	frameStarted = true;

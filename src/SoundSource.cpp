@@ -54,12 +54,12 @@ float SoundSource::getVolume() {
 
 void SoundSource::play(float volume) {
 	//can the sound play?
-	if (!isValid() && buffer.is_some() && buffer.unwrap().isLoaded() && Platform::singleton().getSoundManager().getMasterVolume() > 0) {
+	if (not isValid() and buffer.is_some() and buffer.unwrap().isLoaded() and Platform::singleton().getSoundManager().getMasterVolume() > 0) {
 		return;
 	}
 
 	if (state == SS_INITIALISING) {
-		if (source && buffer.is_some()) {
+		if (source and buffer.is_some()) {
 			CHECK_AL_ERROR;
 			auto& b = buffer.unwrap();
 
@@ -89,7 +89,7 @@ void SoundSource::play(float volume) {
 		}
 	}
 
-	if (state == SS_INITIALISING || state == SS_PAUSED) {
+	if (state == SS_INITIALISING or state == SS_PAUSED) {
 		setVolume(volume);
 		setPitch(pitch);
 		setLooping(looping);
@@ -141,9 +141,9 @@ void SoundSource::_update(float dt) {
 	}
 
 	//if streaming, check if buffers have been used and replenish the queue
-	if (isStreaming() && mBackChunk.is_some()) {
+	if (isStreaming() and mBackChunk.is_some()) {
 		//check if the backbuffer has finished loading and add it to the queue
-		if (mQueuedChunks == 1 && mBackChunk.unwrap().isLoaded()) {
+		if (mQueuedChunks == 1 and mBackChunk.unwrap().isLoaded()) {
 			ALuint b = mBackChunk.unwrap().getOpenALBuffer();
 			alSourceQueueBuffers(source, 1, &b);
 			++mQueuedChunks;
@@ -167,7 +167,7 @@ void SoundSource::_update(float dt) {
 			//find the new buffer ID, loop if the source is looping, else go OOB and stop
 			++mCurrentChunkID;
 
-			if (looping && mCurrentChunkID >= buffer.unwrap().getChunkNumber()) {
+			if (looping and mCurrentChunkID >= buffer.unwrap().getChunkNumber()) {
 				mCurrentChunkID = mCurrentChunkID % buffer.unwrap().getChunkNumber();
 			}
 
@@ -183,7 +183,7 @@ void SoundSource::_update(float dt) {
 
 	alGetSourcei(source, AL_SOURCE_STATE, &playState);
 
-	if (autoRemove && state == SS_PLAYING && playState == AL_STOPPED) {
+	if (autoRemove and state == SS_PLAYING and playState == AL_STOPPED) {
 		alSourcei(source, AL_BUFFER, AL_NONE); //clear the buffer for source reusing - this ALSO works for queued buffers
 
 		//release all the used chunks

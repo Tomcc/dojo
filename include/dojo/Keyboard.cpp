@@ -8,7 +8,7 @@ Keyboard::Keyboard() :
 }
 
 void Keyboard::addFakeAxis(Axis axis, KeyCode min, KeyCode max) {
-	if (!hasAxis(axis)) {
+	if (not hasAxis(axis)) {
 		mFakeAxes.emplace(axis, min, max);
 	}
 }

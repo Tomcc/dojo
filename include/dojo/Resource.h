@@ -84,7 +84,7 @@ namespace Dojo {
 		}
 
 		bool isReloadable() {
-			return isFiledBased() || getDataProvider().is_some();
+			return isFiledBased() or getDataProvider().is_some();
 		}
 
 	protected:

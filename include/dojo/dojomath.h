@@ -84,7 +84,7 @@ namespace Dojo {
 
 		///returns if a is inside ]b-bias, b+bias[
 		static bool isNear(float a, float b, float bias) {
-			return a < b + bias && a > b - bias;
+			return a < b + bias and a > b - bias;
 		}
 
 		static float abs(float a) {
@@ -92,31 +92,31 @@ namespace Dojo {
 		}
 
 		static bool AABBContains(const Vector& max, const Vector& min, const Vector& point) {
-			return max.x >= point.x && max.y >= point.y && max.z >= point.z && min.x <= point.x && min.y <= point.y && min.z <= point.z;
+			return max.x >= point.x and max.y >= point.y and max.z >= point.z and min.x <= point.x and min.y <= point.y and min.z <= point.z;
 		}
 
 		static bool AABBContains2D(const Vector& max, const Vector& min, const Vector& point) {
-			return max.x >= point.x && max.y >= point.y && min.x <= point.x && min.y <= point.y;
+			return max.x >= point.x and max.y >= point.y and min.x <= point.x and min.y <= point.y;
 		}
 
 		static bool AABBContainsAABB(const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB) {
-			return AABBContains(maxA, minA, maxB) && AABBContains(maxA, minA, minB);
+			return AABBContains(maxA, minA, maxB) and AABBContains(maxA, minA, minB);
 		}
 
 		static bool segmentsOverlap(float x2, float x1, float y2, float y1) {
-			return x2 >= y1 && y2 >= x1;
+			return x2 >= y1 and y2 >= x1;
 		}
 
 		static bool AABBsCollide(const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB) {
 			return
-				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) &&
-				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y) &&
+				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) and
+				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y) and
 				segmentsOverlap(maxA.z, minA.z, maxB.z, minB.z);
 		}
 
 		static bool AABBsCollide2D(const Vector& maxA, const Vector& minA, const Vector& maxB, const Vector& minB) {
 			return
-				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) &&
+				segmentsOverlap(maxA.x, minA.x, maxB.x, minB.x) and
 				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y);
 		}
 

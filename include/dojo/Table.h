@@ -228,7 +228,7 @@ namespace Dojo {
 		}
 
 		operator bool() const {
-			return !map.empty();
+			return not map.empty();
 		}
 
 		///returns true if this Table contains key
@@ -243,7 +243,10 @@ namespace Dojo {
 		template<typename T>
 		const T& get(const utf::string& key, const T& defaultValue) const {
 			auto e = get(key);
-			return (e && e->type == field_type_for<T>()) ? e->getAs<T>() : defaultValue;
+			if(e and e->type == field_type_for<T>()) {
+				return e->getAs<T>();
+			}
+			return defaultValue;
 		}
 
 		//explicit implementations with defaulted default value

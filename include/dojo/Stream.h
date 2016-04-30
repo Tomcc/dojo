@@ -60,12 +60,12 @@ namespace Dojo {
 
 		///tells if the stream can be read
 		bool isReadable() {
-			return getAccess() == Access::Read || getAccess() == Access::ReadWrite;
+			return getAccess() == Access::Read or getAccess() == Access::ReadWrite;
 		}
 
 		///tells if the stream can be written to
 		bool isWriteable() {
-			return getAccess() == Access::WriteOnly || getAccess() == Access::ReadWrite;
+			return getAccess() == Access::WriteOnly or getAccess() == Access::ReadWrite;
 		}
 
 		///ensures that the stream is in sync with the underlying data, ie. buffered data will be written to file

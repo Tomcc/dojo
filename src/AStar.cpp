@@ -53,7 +53,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	mTotalLength(0) {
 	Node* start = set.getNode(startPos);
 
-	if (!start) {
+	if (not start) {
 		emplace_back(startPos); //this is another point in the path
 		start = _nearest(set, startPos);
 		mTotalLength += start->position.distance(startPos);
@@ -62,7 +62,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	Node* end = set.getNode(endPos);
 	bool endIsAPathNode = (end != nullptr);
 
-	if (!endIsAPathNode) {
+	if (not endIsAPathNode) {
 		end = _nearest(set, endPos);
 		mTotalLength += end->position.distance(endPos);
 	}
@@ -75,13 +75,13 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 	PriorityQueue openSet;
 	openSet[start->_openValue = _distance(*start, *end)] = start; //insert start
 
-	while (!openSet.empty()) {
+	while (not openSet.empty()) {
 		Node* cur = openSet.begin()->second;
 
 		if (cur == end) { //goal!
 			_retrace(cur, start);
 
-			if (!endIsAPathNode) { //remember to add the end position non-node
+			if (not endIsAPathNode) { //remember to add the end position non-node
 				emplace_back(endPos);
 			}
 
@@ -101,7 +101,7 @@ AStar::AStar(const Graph& set, const Vector& startPos, const Vector& endPos) :
 			float dist = _distance(*cur, *neighbor);
 			float g = cur->_gScore + dist; //check if the node needs to be updated
 
-			if (neighbor->_openValue == 0 || g < neighbor->_gScore) {
+			if (neighbor->_openValue == 0 or g < neighbor->_gScore) {
 				neighbor->_cameFrom = cur;
 				neighbor->_cameFromDistance = dist;
 				neighbor->_gScore = g;

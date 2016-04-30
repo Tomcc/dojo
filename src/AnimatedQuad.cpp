@@ -90,7 +90,7 @@ void AnimatedQuad::setAnimationPercent(float t) {
 
 void AnimatedQuad::advanceAnim(float dt) {
 	//active animation?
-	if (animationSpeedMultiplier > 0 && animation.unwrap().getTimePerFrame() > 0) {
+	if (animationSpeedMultiplier > 0 and animation.unwrap().getTimePerFrame() > 0) {
 		DEBUG_ASSERT(animation.unwrap().frames.unwrap().getFrameNumber() > 0, "advanceAnim: the current Animation has no frames");
 
 		//update the renderState using the animation

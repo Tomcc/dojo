@@ -90,7 +90,7 @@ namespace Dojo {
 		}
 
 		bool isLoaded() const {
-			return !mChunks.empty();
+			return not mChunks.empty();
 		}
 
 		virtual bool isReloadable() const {

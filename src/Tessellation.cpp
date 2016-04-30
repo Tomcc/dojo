@@ -100,7 +100,7 @@ void Tessellation::mergeDuplicatePoints(float resolution /*= 0.1*/) {
 		min.y = std::min(p.y, min.y);
 	}
 
-	DEBUG_ASSERT(max.x > min.x && max.y > min.y, "Degenerate set, fully lies on a line/point");
+	DEBUG_ASSERT(max.x > min.x and max.y > min.y, "Degenerate set, fully lies on a line/point");
 
 	auto w = (int)std::ceil((max.x - min.x) / resolution);
 	auto h = (int)std::ceil((max.y - min.y) / resolution);
@@ -113,7 +113,7 @@ void Tessellation::mergeDuplicatePoints(float resolution /*= 0.1*/) {
 		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (w - 1));
 		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (h - 1));
 
-		DEBUG_ASSERT(x < w && y < h && x >= 0 && y >= 0, "OOB");
+		DEBUG_ASSERT(x < w and y < h and x >= 0 and y >= 0, "OOB");
 
 		int& slot = indexGrid[x + y * w];
 
@@ -132,7 +132,7 @@ int Tessellation::_assignToIncompleteContour(int start, int end) {
 	for (size_t i = 0; i < contours.size(); ++i) {
 		auto& cont = contours[i];
 
-		if (!cont.closed && cont.indices.back() == start) {
+		if (not cont.closed and cont.indices.back() == start) {
 			cont._addSegment(start, end);
 			return i;
 		}
@@ -153,7 +153,7 @@ bool Tessellation::_raycastSegmentAlongX(const Segment& segment, const Position&
 	Vector min((float) std::min(start.x, end.x), (float) std::min(start.y, end.y));
 
 	//early out: different y, or the segment is on the left of the start point, or parallel
-	if (max.y == min.y || startPosition.y <= min.y || startPosition.y > max.y || startPosition.x > max.x) {
+	if (max.y == min.y or startPosition.y <= min.y or startPosition.y > max.y or startPosition.x > max.x) {
 		return false;
 	}
 
@@ -230,7 +230,7 @@ void Tessellation::findContours(bool generateHoles) {
 
 	//trim still incomplete contours, they're just useless as everything is "out" of them
 	for (size_t i = 0; i < contours.size(); ++i) {
-		if (!contours[i].closed) {
+		if (not contours[i].closed) {
 			contours.erase(contours.begin() + i--);
 		}
 	}
@@ -304,10 +304,10 @@ void Tessellation::findContours(bool generateHoles) {
 }
 
 void Tessellation::tessellate(int flags, int maxIndices) {
-	DEBUG_ASSERT( !positions.empty(), "Cannot tesselate an empty contour" );
+	DEBUG_ASSERT(not positions.empty(), "Cannot tesselate an empty contour" );
 
 	//remove duplicate points
-	if (!(flags & DONT_MERGE_POINTS)) {
+	if (not (flags & DONT_MERGE_POINTS)) {
 		mergeDuplicatePoints();
 	}
 

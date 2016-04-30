@@ -30,15 +30,15 @@ Table Table::loadFromFile(const utf::string& path) {
 
 bool Table::onLoad() {
 	//loads itself from file
-	DEBUG_ASSERT( !isLoaded(), "The Table is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Table is already loaded" );
 
-	if (!isReloadable()) {
+	if (not isReloadable()) {
 		return false;
 	}
 
 	self = Platform::singleton().load(filePath);
 
-	return (loaded = !isEmpty());
+	return (loaded = not isEmpty());
 }
 
 void Table::serialize(utf::string& buf, const utf::string& indent) const {
@@ -131,23 +131,23 @@ enum class ParseTarget {
 };
 
 bool isNameStarter(uint32_t c) {
-	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+	return (c >= 'A' and c <= 'Z') or (c >= 'a' and c <= 'z');
 }
 
 bool isNumber(uint32_t c) {
-	return (c >= '0' && c <= '9') || c == '-'; //- is part of a number!!!
+	return (c >= '0' and c <= '9') or c == '-'; //- is part of a number!!!
 }
 
 bool isName(uint32_t c) {
-	return isNameStarter(c) || isNumber(c) || c == '_';
+	return isNameStarter(c) or isNumber(c) or c == '_';
 }
 
 bool isValidFloat(uint32_t c) {
-	return isNumber(c) || c == '.';
+	return isNumber(c) or c == '.';
 }
 
 bool isWhiteSpace(uint32_t c) {
-	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+	return c == ' ' or c == '\t' or c == '\r' or c == '\n';
 }
 
 void Table::deserialize(StringReader& buf) {
@@ -166,13 +166,13 @@ void Table::deserialize(StringReader& buf) {
 	//feed one char at a time and do things
 	uint32_t c, c2;
 
-	while ( state != ParseState::End && state != ParseState::Error) {
+	while ( state != ParseState::End and state != ParseState::Error) {
 		auto idx = buf.getCurrentIndex();
 		c = buf.get();
 
 		switch (state) {
 		case ParseState::Table: //wait for either a name, or an anon value
-			if (c == '}' || c == 0) {
+			if (c == '}' or c == 0) {
 				state = ParseState::End;
 			}
 			else if(buf.startsWith("i64\"")) {
@@ -207,7 +207,7 @@ void Table::deserialize(StringReader& buf) {
 			if (c == '=') {
 				state = ParseState::Equal;
 			}
-			else if (!isName(c)) {
+			else if (not isName(c)) {
 				state = ParseState::NameEnd;
 				curName = buf.getString().substr(nameStart, idx);
 			}
@@ -218,7 +218,7 @@ void Table::deserialize(StringReader& buf) {
 			if (c == '=') {
 				state = ParseState::Equal;
 			}
-			else if (!isWhiteSpace(c)) { //it is something else - store this as an implicit bool and reset the parser
+			else if (not isWhiteSpace(c)) { //it is something else - store this as an implicit bool and reset the parser
 				target = ParseTarget::ImplicitTrue;
 			}
 
@@ -264,7 +264,7 @@ void Table::deserialize(StringReader& buf) {
 			//check if next char is x, that is, really we have an hex color!
 			c2 = buf.get();
 
-			if (c == '0' && c2 == 'x') {
+			if (c == '0' and c2 == 'x') {
 				buf.back();
 				buf.back();
 
@@ -273,12 +273,12 @@ void Table::deserialize(StringReader& buf) {
 
 				set(curName, col);
 			}
-			else if (c == '-' && c2 == '-') { //or, well, a comment! (LIKE A HACK)
+			else if (c == '-' and c2 == '-') { //or, well, a comment! (LIKE A HACK)
 				//just skip until newline
 				do {
 					c = buf.get();
 				}
-				while (c != 0 && c != '\n');
+				while (c != 0 and c != '\n');
 			}
 			else {
 				buf.back();
@@ -383,7 +383,7 @@ Table::~Table() {
 }
 
 void Table::onUnload(bool soft /*= false */) {
-	if (!soft || isReloadable()) {
+	if (not soft or isReloadable()) {
 		clear();
 
 		loaded = false;
@@ -392,7 +392,7 @@ void Table::onUnload(bool soft /*= false */) {
 
 Table* Table::getParentTable(const utf::string& key, utf::string& realKey) const {
 	auto dotIdx = key.begin();
-	for (; dotIdx != key.end() && *dotIdx != '.'; ++dotIdx);
+	for (; dotIdx != key.end() and *dotIdx != '.'; ++dotIdx);
 
 	if (dotIdx == key.end()) {
 		realKey = key;
@@ -441,7 +441,7 @@ void Table::inherit(Table* t) {
 		//element exists - do nothing except if it's a table
 		if (existing != map.end()) {
 			//if it's a table in both tables, inherit
-			if (itr->second->type == FieldType::ChildTable && existing->second->type == FieldType::ChildTable) {
+			if (itr->second->type == FieldType::ChildTable and existing->second->type == FieldType::ChildTable) {
 				((Table*)existing->second->getRawValue())->inherit((Table*)itr->second->getRawValue());
 			}
 		}
@@ -471,7 +471,7 @@ Table::Entry* Table::get(const utf::string& key) const {
 	utf::string actualKey;
 	const Table* container = getParentTable(key, actualKey);
 
-	if (!container) {
+	if (not container) {
 		return nullptr;
 	}
 

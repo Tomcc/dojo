@@ -65,13 +65,13 @@ SoundBuffer::Chunk::~Chunk() {
 }
 
 void SoundBuffer::Chunk::getAsync() {
-	if (references++ == 0 && !isLoaded()) { //load it when referenced the first time
+	if (references++ == 0 and not isLoaded()) { //load it when referenced the first time
 		loadAsync();
 	}
 }
 
 void SoundBuffer::Chunk::get() {
-	if (references++ == 0 && !isLoaded()) { //load it when referenced the first time
+	if (references++ == 0 and not isLoaded()) { //load it when referenced the first time
 		onLoad();
 	}
 }
@@ -122,7 +122,7 @@ void SoundBuffer::onUnload(bool soft) {
 
 	//just push the event to all its chunks
 	for (auto&& chunk : mChunks) {
-		if (!isStreaming()) { //non-streaming buffers own all of their chunk (to avoid them being released each time)
+		if (not isStreaming()) { //non-streaming buffers own all of their chunk (to avoid them being released each time)
 			chunk->release();
 		}
 
@@ -133,7 +133,7 @@ void SoundBuffer::onUnload(bool soft) {
 }
 
 bool SoundBuffer::Chunk::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "The Chunk is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Chunk is already loaded" );
 
 	alGenBuffers(1, &alBuffer); //gen the buffer if it didn't exist
 
@@ -175,7 +175,7 @@ bool SoundBuffer::Chunk::onLoad() {
 		int section = -1;
 		read = (ALsizei)ov_read(&file, uncompressed.data() + totalRead, (ALsizei)mUncompressedSize - totalRead, 0, wordSize, 1, &section);
 
-		if (read == OV_HOLE || read == OV_EBADLINK || read == OV_EINVAL) {
+		if (read == OV_HOLE or read == OV_EBADLINK or read == OV_EINVAL) {
 			corrupt = true;
 		}
 
@@ -190,11 +190,11 @@ bool SoundBuffer::Chunk::onLoad() {
 		DEBUG_ASSERT( totalRead <= mUncompressedSize, "Total read bytes overflow the buffer" ); //this should always be true
 
 	}
-	while (!corrupt && totalRead < mUncompressedSize);
+	while (not corrupt and totalRead < mUncompressedSize);
 
 	ov_clear(&file);
 
-	DEBUG_ASSERT( !corrupt, "an ogg vorbis stream was corrupt and could not be read" );
+	DEBUG_ASSERT(not corrupt, "an ogg vorbis stream was corrupt and could not be read" );
 	DEBUG_ASSERT( totalRead > 0, "no data was read from the stream" );
 
 	alBufferData(alBuffer, format, uncompressed.data(), totalRead, bitrate);
@@ -205,7 +205,7 @@ bool SoundBuffer::Chunk::onLoad() {
 }
 
 void SoundBuffer::Chunk::loadAsync() {
-	DEBUG_ASSERT( !isLoaded(), "The Chunk is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Chunk is already loaded" );
 
 	++references; //grab a reference and release to be sure that the chunk is not destroyed while loading
 
@@ -222,7 +222,7 @@ void SoundBuffer::Chunk::loadAsync() {
 
 void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
 	//either unload if forced, or if the parent is reloadable (loaded from file or persistent source)
-	if (!soft || pParent.isReloadable()) {
+	if (not soft or pParent.isReloadable()) {
 		DEBUG_ASSERT( isLoaded(), "Tried to unload an unloaded Chunk" );
 		DEBUG_ASSERT( alBuffer != AL_NONE, "tried to delete an invalid alBuffer" );
 		DEBUG_ASSERT( references == 0, "Tried to unload a Chunk that is still in use" );
@@ -237,7 +237,7 @@ void SoundBuffer::Chunk::onUnload(bool soft /* = false */) {
 }
 
 bool SoundBuffer::_loadOgg(Stream& source) {
-	if (!source.open(Stream::Access::Read)) {
+	if (not source.open(Stream::Access::Read)) {
 		DEBUG_ASSERT(source.isReadable(), "The data source for the Ogg stream could not be open, or isn't readable" );
 
 		return false;
@@ -295,7 +295,7 @@ bool SoundBuffer::_loadOgg(Stream& source) {
 
 	ov_clear(&file);
 
-	if (!isStreaming()) {
+	if (not isStreaming()) {
 		mChunks[0]->get();    //get() it to avoid that it is unloaded by the sources, and load synchronously
 	}
 
@@ -312,7 +312,7 @@ bool SoundBuffer::_loadOggFromFile() {
 }
 
 SoundBuffer::Chunk& SoundBuffer::getChunk(int n, bool loadAsync /*= false */) {
-	DEBUG_ASSERT(n >= 0 && n < (int)mChunks.size(), "The requested chunk is out of bounds");
+	DEBUG_ASSERT(n >= 0 and n < (int)mChunks.size(), "The requested chunk is out of bounds");
 
 	if (loadAsync) {
 		mChunks[n]->getAsync();

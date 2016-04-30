@@ -11,7 +11,7 @@ MemoryInputStream::MemoryInputStream(byte* mem, int size) :
 }
 
 int64_t Dojo::MemoryInputStream::read(byte* buf, int64_t number) {
-	if (mPosition < 0 || mPosition >= mSize) { //invalid position, cannot read
+	if (mPosition < 0 or mPosition >= mSize) { //invalid position, cannot read
 		return 0;
 	}
 

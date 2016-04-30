@@ -27,7 +27,7 @@ SoundManager::SoundManager() :
 	// Initialization
 	device = alcOpenDevice(nullptr); // select the "preferred device"
 
-	if (!device) {
+	if (not device) {
 		return;    //running without audio :(
 	}
 
@@ -91,7 +91,7 @@ SoundManager::~SoundManager() {
 SoundSource& SoundManager::getSoundSource(SoundSet& set, int i) {
 
 	//try to lazy-create a new source, if allowed
-	if (idleSoundPool.empty() && busySoundPool.size() < NUM_SOURCES_MAX) {
+	if (idleSoundPool.empty() and busySoundPool.size() < NUM_SOURCES_MAX) {
 		ALuint src;
 		alGenSources(1, & src);
 
@@ -101,7 +101,7 @@ SoundSource& SoundManager::getSoundSource(SoundSet& set, int i) {
 	}
 
 	//is there a source now?
-	if (!idleSoundPool.empty()) {
+	if (not idleSoundPool.empty()) {
 		busySoundPool.emplace_back(std::move(idleSoundPool.back()));
 		idleSoundPool.pop_back();
 
@@ -132,11 +132,11 @@ void SoundManager::playMusic(SoundSet& next, float trackFadeTime /* = 0 */, cons
 void SoundManager::setMasterVolume(float volume) {
 	DEBUG_ASSERT( volume >= 0, "Volumes cannot be negative" );
 
-	if (std::abs(masterVolume - volume) > 0.01f || volume == 0) { //avoid doing this too often
+	if (std::abs(masterVolume - volume) > 0.01f or volume == 0) { //avoid doing this too often
 		masterVolume = volume;
 
 		//update volumes (masterVolume is used inside setVolume!)
-		if (nextMusicTrack.is_none() && musicTrack.is_some()) {
+		if (nextMusicTrack.is_none() and musicTrack.is_some()) {
 			musicTrack.unwrap().setVolume(musicVolume);
 		}
 
@@ -168,7 +168,7 @@ void SoundManager::update(float dt) {
 
 	//fai il fade
 	if (fadeState == FS_FADE_OUT) { //abbassa il volume della track corrente
-		if (musicTrack.is_some() && currentFadeTime < halfFadeTime) {
+		if (musicTrack.is_some() and currentFadeTime < halfFadeTime) {
 			musicTrack.unwrap().setVolume(musicVolume * (1.f - currentFadeTime / halfFadeTime));
 		}
 		else { //scambia le tracks e fai partire la prossima
@@ -217,7 +217,7 @@ void SoundManager::update(float dt) {
 
 void SoundManager::resumeMusic() {
 	//resume music, but only if the user didn't enable itunes meanwhile!
-	if (musicTrack.is_some() && !Platform::singleton().isSystemSoundInUse()) {
+	if (musicTrack.is_some() and not Platform::singleton().isSystemSoundInUse()) {
 		musicTrack.unwrap().play();
 	}
 }
@@ -282,7 +282,7 @@ void SoundManager::setMusicVolume(float volume) {
 
 	musicVolume = volume;
 
-	if (nextMusicTrack.is_none() && musicTrack.is_some()) {
+	if (nextMusicTrack.is_none() and musicTrack.is_some()) {
 		musicTrack.unwrap().setVolume(musicVolume);
 	}
 }

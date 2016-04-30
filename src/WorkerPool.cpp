@@ -7,7 +7,7 @@ using namespace Dojo;
 WorkerPool::WorkerPool(uint32_t workerCount, bool async) :
 isAsync(async) {
 	DEBUG_ASSERT(workerCount > 0, "Invalid worker count");
-	DEBUG_ASSERT(async || workerCount == 1, "Either the pool is async, or it should only have one queue");
+	DEBUG_ASSERT(async or workerCount == 1, "Either the pool is async, or it should only have one queue");
 
 	while(mWorkers.size() < workerCount) {
 		mWorkers.emplace_back(make_unique<BackgroundWorker>(isAsync));
@@ -51,7 +51,7 @@ bool WorkerPool::runOneCallback() {
 		}
 	}
 
-	if(!isAsync) { //also try to run one task if tasks must be run on the main thread
+	if(not isAsync) { //also try to run one task if tasks must be run on the main thread
 		for (auto& w : mWorkers) {
 			if(w->runNextTask()) {
 				return true;

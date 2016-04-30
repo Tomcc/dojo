@@ -33,7 +33,7 @@ public:
 		beginIDX(beginIDX),
 		endIDX(endIDX) {
 		static_assert(STEP != 0, "Invalid step size");
-		DEBUG_ASSERT((STEP > 0 && beginIDX <= endIDX) || (STEP < 0 && beginIDX >= endIDX), "Malformed iterator");
+		DEBUG_ASSERT((STEP > 0 and beginIDX <= endIDX) or (STEP < 0 and beginIDX >= endIDX), "Malformed iterator");
 	}
 
 	const iterator begin() const {

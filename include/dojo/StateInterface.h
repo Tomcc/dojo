@@ -82,15 +82,15 @@ namespace Dojo {
 		}
 
 		bool hasCurrentState() {
-			return currentStatePtr != nullptr || currentState != -1;
+			return currentStatePtr != nullptr or currentState != -1;
 		}
 
 		bool hasNextState() {
-			return nextStatePtr != nullptr || nextState != -1;
+			return nextStatePtr != nullptr or nextState != -1;
 		}
 
 		bool hasPendingTransition() {
-			return !mTransitionCompleted;
+			return not mTransitionCompleted;
 		}
 
 		///begin the execution of this state

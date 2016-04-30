@@ -52,7 +52,7 @@ bool Object::isAttachedToScene() const {
 	auto cur = &self;
 
 	//return true if all the chain of parents exists and the last parent is the root
-	while(!cur->isRoot()) {
+	while(not cur->isRoot()) {
 		if(cur->parent.is_none()) {
 			return false;
 		}
@@ -63,7 +63,7 @@ bool Object::isAttachedToScene() const {
 
 Object& Object::_addChild(Unique<Object> o) {
 	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
-	DEBUG_ASSERT(!children.contains(o), "Element already in the vector!");
+	DEBUG_ASSERT(not children.contains(o), "Element already in the vector!");
 
 	auto& child = *o;
 	child.parent = self;
@@ -105,7 +105,7 @@ Unique<Object> Object::removeChild(Object& o) {
 
 bool Object::canDestroy() const {
 	for (auto&& component : components) {
-		if (component && !component->canDestroy()) {
+		if (component and not component->canDestroy()) {
 			return false; //this one can't be destroyed, wait
 		}
 	}
@@ -117,7 +117,7 @@ void Object::collectChilds() {
 	for (size_t i = 0; i < children.size(); ++i) {
 		auto& child = children[i];
 
-		if (child->disposed && child->canDestroy()) {
+		if (child->disposed and child->canDestroy()) {
 			_unregisterChild(*child);
 			children.erase(child);
 
@@ -164,7 +164,7 @@ Vector Object::getWorldPosition(const Vector& localPos) const {
 }
 
 bool Object::isActive() const {
-	return active && !disposed && (parent.is_none() || parent.unwrap().isActive());
+	return active and not disposed and (parent.is_none() or parent.unwrap().isActive());
 }
 
 void Object::reset() {
@@ -250,7 +250,7 @@ void Object::setAllChildrenVisibleHACK(bool visible) {
 }
 
 void Object::dispose() {
-	DEBUG_ASSERT(!disposed, "Already disposed");
+	DEBUG_ASSERT(not disposed, "Already disposed");
 
 	disposed = true;
 
@@ -263,7 +263,7 @@ void Object::dispose() {
 }
 
 void Object::setSize(const Vector& bbSize) {
-	DEBUG_ASSERT(bbSize.x >= 0 && bbSize.y >= 0 && bbSize.z >= 0, "Malformed size (one component was less or equal to 0)");
+	DEBUG_ASSERT(bbSize.x >= 0 and bbSize.y >= 0 and bbSize.z >= 0, "Malformed size (one component was less or equal to 0)");
 
 	size = bbSize;
 	halfSize = size * 0.5f;

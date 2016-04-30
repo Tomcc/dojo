@@ -43,7 +43,7 @@ namespace Dojo {
 		}
 
 		operator bool() const {
-			return task || callback;
+			return task or callback;
 		}
 
 		std::shared_ptr<Status> mStatus;

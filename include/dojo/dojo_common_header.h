@@ -144,6 +144,11 @@ using std::make_shared;
 
 #define self (*this)
 
+//visual studio is non-standard and doesn't work with those
+#ifdef _MSC_VER
+#include <ciso646>
+#endif
+
 //TODO this stuff could be split off in another library?
 #include "UTFString.h"
 #include "dojostring.h"

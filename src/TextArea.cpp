@@ -84,7 +84,7 @@ void TextArea::addText(const utf::string& text) {
 
 		currentLineLength += currentChar.pixelWidth;
 
-		if (c == ' ' || c == '\t') {
+		if (c == ' ' or c == '\t') {
 			lastSpace = characters.size() - 1;
 		}
 
@@ -94,7 +94,7 @@ void TextArea::addText(const utf::string& text) {
 		}
 
 		//lenght eccess? find last whitespace and replace with \n.
-		if (currentLineLength > maxLineLenght && lastSpace) {
+		if (currentLineLength > maxLineLenght and lastSpace) {
 			characters[lastSpace] = font.getCharacter('\n');
 			lastSpace = 0;
 			currentLineLength = 0;
@@ -180,13 +180,12 @@ void TextArea::_destroyLayer(Renderable& r) {
 
 
 void TextArea::_prepare() {
-	//not changed
-	if (!changed) {
+	if (not changed) {
 		return;
 	}
 
 	//no characters to show
-	if (!visibleCharsNumber || getLenght() == 0) {
+	if (visibleCharsNumber == 0 or getLenght() == 0) {
 		return;
 	}
 
@@ -212,7 +211,7 @@ void TextArea::_prepare() {
 	optional_ref<Font::Character> lastRep;
 
 	//either reach the last valid character or the last existing character
-	for (size_t i = 0; i < visibleCharsNumber && i < characters.size(); ++i) {
+	for (size_t i = 0; i < visibleCharsNumber and i < characters.size(); ++i) {
 		auto& rep = characters[i].unwrap();
 
 		//avoid to rendering spaces
@@ -242,7 +241,7 @@ void TextArea::_prepare() {
 			float x = cursorPosition.x + rep.bearingU;
 			float y = cursorPosition.y - rep.bearingV;
 
-			if (doKerning && lastRep.is_some()) {
+			if (doKerning and lastRep.is_some()) {
 				x += font.getKerning(rep, lastRep.unwrap());
 			}
 

@@ -159,7 +159,7 @@ namespace Dojo {
 
 		template<class T>
 		bool has() const {
-			return T::ID < components.size() && components[T::ID];
+			return T::ID < components.size() and components[T::ID];
 		}
 
 		template<class T>

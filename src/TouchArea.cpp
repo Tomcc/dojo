@@ -41,7 +41,7 @@ void TouchArea::_fireOnTouchUsingCurrentTouches() {
 			bool tapped = true;
 
 			for (auto&& t : mTouches) {
-				if (!t.firstFrame) {
+				if (not t.firstFrame) {
 					tapped = false;
 					break;
 				}
@@ -91,9 +91,9 @@ bool TouchArea::isPressed() const {
 
 bool TouchArea::contains2D(const Vector& p) const {
 	return
-		p.x <= worldBB.max.x &&
-		p.x >= worldBB.min.x &&
-		p.y <= worldBB.max.y &&
+		p.x <= worldBB.max.x and
+		p.x >= worldBB.min.x and
+		p.y <= worldBB.max.y and
 		p.y >= worldBB.min.y;
 }
 

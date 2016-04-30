@@ -68,7 +68,7 @@ void RenderState::setTexture(optional_ref<Texture> tex, byte ID /*= 0*/) {
 }
 
 bool RenderState::isBlendingEnabled() const {
-	return blending.isAuto() ? (mTransparency || color.a < 1.f) : (blending.func > 0);
+	return blending.isAuto() ? (mTransparency or color.a < 1.f) : (blending.func > 0);
 }
 
 void RenderState::setBlending(BlendingMode mode) {
@@ -90,13 +90,13 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 	auto prev = lastState.to_raw_ptr();
 
 	bool rebindFormat = false;
-	if( !prev || prev->mesh != mesh || Mesh::gBufferBindingsDirty) {
+	if(not prev or prev->mesh != mesh or Mesh::gBufferBindingsDirty) {
 		//when the mesh changes, the uniforms have to be rebound too
 		rebindFormat = true;
 		mesh.unwrap().bind();
 	}
 
-	if(!prev || prev->mShader != mShader) {
+	if(not prev or prev->mShader != mShader) {
 		rebindFormat = true;
 		mShader.unwrap().bind();
 	}
@@ -110,14 +110,14 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 	for (auto i : range(maxTextureSlots)) {
 		//select current slot and load it, others can remain bound to old stuff with shaders
 		if (auto t = textures[i].to_ref()) {
-			if (!prev || textures[i] != prev->textures[i]) {
+			if (not prev or textures[i] != prev->textures[i]) {
 				t.get().bind(i);
 			}
 		}
 	}
 
 	bool useBlending = isBlendingEnabled();
-	if (!prev || prev->isBlendingEnabled() != useBlending) {
+	if (not prev or prev->isBlendingEnabled() != useBlending) {
 		if (useBlending) {
 			glEnable(GL_BLEND);
 		}
@@ -126,15 +126,15 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 		}
 	}
 
-	if (!prev || prev->blending.src != blending.src || prev->blending.dest != blending.dest) {
+	if (not prev or prev->blending.src != blending.src or prev->blending.dest != blending.dest) {
 		glBlendFunc(blending.src, blending.dest);
 	}
 
-	if (!prev || prev->blending.func != blending.func) {
+	if (not prev or prev->blending.func != blending.func) {
 		glBlendEquation(blending.func);
 	}
 
-	if (!prev || prev->cullMode != cullMode) {
+	if (not prev or prev->cullMode != cullMode) {
 		switch (cullMode) {
 		case CullMode::None:
 			glDisable(GL_CULL_FACE);

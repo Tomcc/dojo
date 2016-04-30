@@ -33,7 +33,7 @@ bool XInputController::hasAxis(Axis a) const {
 void XInputController::poll(float dt) {
 	XINPUT_STATE state;
 
-	if (!mConnected) {
+	if (not mConnected) {
 		mConnectionCheckTimer -= dt;
 
 		if (mConnectionCheckTimer > 0) { //do not spam connection checks - check every 3 s
@@ -48,7 +48,7 @@ void XInputController::poll(float dt) {
 	bool connected = (dwResult == ERROR_SUCCESS);
 
 	if (connected) {
-		if (!mConnected) { //yeeeee we're connected!
+		if (not mConnected) { //yeeeee we're connected!
 			Platform::singleton().getInput().addDevice(self);
 		}
 

@@ -77,7 +77,7 @@ namespace Dojo {
 			float num = (planeOrigin - origin) * n;
 			float den = direction * n;
 
-			if (num == 0 && den == 0) { //no intersections
+			if (num == 0 and den == 0) { //no intersections
 				return false;
 			}
 

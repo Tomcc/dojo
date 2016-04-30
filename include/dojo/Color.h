@@ -77,10 +77,10 @@ namespace Dojo {
 
 		bool isNormal() const {
 			return
-				r >= 0 && r <= 1.f &&
-				g >= 0 && g <= 1.f &&
-				b >= 0 && b <= 1.f &&
-				a >= 0 && a <= 1.f;
+				r >= 0 and r <= 1.f and
+				g >= 0 and g <= 1.f and
+				b >= 0 and b <= 1.f and
+				a >= 0 and a <= 1.f;
 		}
 
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)

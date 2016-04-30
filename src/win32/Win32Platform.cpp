@@ -47,7 +47,7 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 }
 
 #ifndef PUBLISH
-	#define CHECK_WIN32_ERROR(T, MSG ) { if( !(T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
+	#define CHECK_WIN32_ERROR(T, MSG ) { if(not (T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
 #else
 	#define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
@@ -162,7 +162,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 	case WM_LBUTTONDOWN: //left down
 	case WM_RBUTTONDOWN: //right up
 	case WM_MBUTTONDOWN:
-		if (!mouseEventIsGesture) {
+		if (not mouseEventIsGesture) {
 			app.mousePressed(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
 		}
 
@@ -171,7 +171,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 	case WM_LBUTTONUP: //left up
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
-		if (!mouseEventIsGesture) {
+		if (not mouseEventIsGesture) {
 			app.mouseReleased(LOWORD(lparam), HIWORD(lparam), win32messageToMouseButton(message));
 		}
 
@@ -179,7 +179,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		return 0;
 
 	case WM_MOUSEMOVE:
-		if (!mouseEventIsGesture) {
+		if (not mouseEventIsGesture) {
 			app.mouseMoved(LOWORD(lparam), HIWORD(lparam));
 		}
 
@@ -238,7 +238,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 	case WM_TIMER:
 		//the window is currently in live resize, manually update the game!
-		//if( pGame && pGame->isRunning() )
+		//if( pGame and pGame->isRunning() )
 		//	pGame->update();
 
 		return 0;
@@ -251,7 +251,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 	case WM_KILLFOCUS:
 		//if we were fullscreen in OpenGL, we need to reset the original setup
-		/*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
+		/*if( getVideoDriver() and DriverType == ox::video::EDT_OPENGL and getVideoDriver()->isFullscreen() )
 		{
 		    bool success = _changeDisplayMode( false, ox::TDimension() );
 		    //hide window
@@ -263,7 +263,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 	case WM_SETFOCUS:
 		//if we are fullscreen in OpenGL, we need to change the res again
-		/*if( getVideoDriver() && DriverType == ox::video::EDT_OPENGL && getVideoDriver()->isFullscreen() )
+		/*if( getVideoDriver() and DriverType == ox::video::EDT_OPENGL and getVideoDriver()->isFullscreen() )
 		{
 		    bool success = _changeDisplayMode( true, WindowSize );
 		    ShowWindow( hWnd, TRUE );
@@ -277,7 +277,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 //convince NVidia video cards to activate, on notebooks
 extern "C" {
-	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
 Win32Platform::Win32Platform(const Table& configTable) :
@@ -336,7 +336,7 @@ void Win32Platform::_adjustWindow() {
 	MoveWindow(hWindow, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
 	//get the new area and see what happened, get the offset
-	if (!isFullscreen()) {
+	if (not isFullscreen()) {
 		RECT rcClient, rcWind;
 		GetClientRect(hWindow, &rcClient);
 		GetWindowRect(hWindow, &rcWind);
@@ -402,7 +402,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		// test for touch
 		auto value = GetSystemMetrics(SM_DIGITIZER);
 
-		if (value & NID_MULTI_INPUT || value & NID_INTEGRATED_TOUCH) {
+		if (value & NID_MULTI_INPUT or value & NID_INTEGRATED_TOUCH) {
 			RegisterTouchWindow(hWindow, TWF_WANTPALM | TWF_FINETOUCH);
 		}
 	}
@@ -438,17 +438,17 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		return false;
 	}
 
-	if (!SetPixelFormat(hdc, chosenPixelFormat, &pixelFormatDescriptor)) {
+	if (not SetPixelFormat(hdc, chosenPixelFormat, &pixelFormatDescriptor)) {
 		return false;
 	}
 
 	hglrc = wglCreateContext(hdc);
-	if (!hglrc) {
+	if (not hglrc) {
 		FAIL("wglCreateContext");
 	}
 
 	// Make the context current
-	if (!wglMakeCurrent(hdc, hglrc)) {
+	if (not wglMakeCurrent(hdc, hglrc)) {
 		FAIL("Couldn't make the rendering context current");
 	}
 	
@@ -457,7 +457,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	//if we can use OpenGL 3.x, do that and initialize with custom context attributes
 	if(auto wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB")) {
 		//destroy the current context
-		if(!wglMakeCurrent(nullptr, nullptr) || !wglDeleteContext(hglrc)) {
+		if(not wglMakeCurrent(nullptr, nullptr) or not wglDeleteContext(hglrc)) {
 			FAIL("Cannot remove dummy context");
 		}
 
@@ -476,7 +476,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		hglrc = wglCreateContextAttribsARB(hdc, 0, wglAttributes);
 		DEBUG_ASSERT(hglrc, "Cannot create context");
 
-		if(!wglMakeCurrent(hdc, hglrc)) {
+		if(not wglMakeCurrent(hdc, hglrc)) {
 			FAIL("Cannot use this context");
 		}
 	}
@@ -496,7 +496,7 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 	DWORD style = fullscreen ? (WS_POPUP | WS_VISIBLE) : WINDOWMODE_PROPERTIES;
 	SetWindowLong(hWindow, GWL_STYLE, style);
 
-	if (!fullscreen) {
+	if (not fullscreen) {
 		ChangeDisplaySettings(nullptr, 0);
 
 		_adjustWindow(); //reset back
@@ -520,7 +520,7 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 		clientAreaYOffset = 0;
 	}
 
-	ShowCursor(!fullscreen);
+	ShowCursor(not fullscreen);
 }
 
 void Win32Platform::setFullscreen(bool fullscreen) {
@@ -592,10 +592,10 @@ void Win32Platform::initialize(Unique<Game> g) {
 	windowHeight = (uint32_t)windowSize.y;
 
 	//a window can be fullscreen only if the windowSize equals the screenSize, and if it wants to
-	mFullscreen = windowWidth == screenWidth && windowHeight == screenHeight && config.getBool("fullscreen");
+	mFullscreen = windowWidth == screenWidth and windowHeight == screenHeight and config.getBool("fullscreen");
 
 	//just use the game's preferred settings
-	if (!_initializeWindow(game->getName(), windowWidth, windowHeight)) {
+	if (not _initializeWindow(game->getName(), windowWidth, windowHeight)) {
 		return;
 	}
 
@@ -658,7 +658,7 @@ void Win32Platform::prepareThreadContext() {
 	//be nice, wglMakeCurrent just wants you to ask politely and more than once
 	//when used in multithreading context, it will randomly fail once in 7/8 tries, just wait and keep on trying
 	int tries = 0;
-	for (; wglMakeCurrent(hdc, contextHandle) == FALSE && tries < 1000; ++tries) {
+	for (; wglMakeCurrent(hdc, contextHandle) == FALSE and tries < 1000; ++tries) {
 		std::this_thread::yield();
 	}
 
@@ -692,7 +692,7 @@ void Win32Platform::_pollDevices(float dt) {
 	input->poll(dt);
 
 	for (auto&& j : mXInputJoystick) { //poll disconnected pads for connection
-		if (!j->isConnected()) {
+		if (not j->isConnected()) {
 			j->poll(dt);
 		}
 	}
@@ -737,7 +737,7 @@ void Win32Platform::loop() {
 	running = true;
 
 	MSG msg;
-	while (running && game->isRunning()) {
+	while (running and game->isRunning()) {
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) {
 				self._fireTermination();
@@ -752,7 +752,7 @@ void Win32Platform::loop() {
 			//never send a dt lower than the minimum!
 			float dt = std::min(game->getMaximumFrameLength(), (float)timer.getAndReset());
 
-			if (!mFrameSteppingEnabled || (mFrameSteppingEnabled && mFramesToAdvance > 0)) {
+			if (not mFrameSteppingEnabled or (mFrameSteppingEnabled and mFramesToAdvance > 0)) {
 				step(dt);
 
 				if (mFrameSteppingEnabled) {
@@ -820,7 +820,7 @@ void Win32Platform::mouseMoved(int cx, int cy) {
 void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type) {
 	//windows can actually send "released" messages whose "pressed" event was sent to another window
 	//or used to awake the current one - send a fake mousePressed event if this happens!
-	if (!mMousePressed) {
+	if (not mMousePressed) {
 		mousePressed(cx, cy, type);
 	}
 
@@ -839,8 +839,8 @@ void Win32Platform::mouseReleased(int cx, int cy, Touch::Type type) {
 void Win32Platform::setMouseLocked(bool locked) {
 	if (mouseLocked != locked) {
 
-		ShowCursor(!locked);
-		ShowCursor(!locked);
+		ShowCursor(not locked);
+		ShowCursor(not locked);
 
 		mouseLocked = locked;
 	}
@@ -865,7 +865,7 @@ void Win32Platform::keyPressed(int kc) {
 #ifdef _DEBUG
 
 	if ( key == KC_DIVIDE ) {
-		mFrameSteppingEnabled = !mFrameSteppingEnabled;
+		mFrameSteppingEnabled = not mFrameSteppingEnabled;
 	}
 	else if ( mFrameSteppingEnabled ) {
 		if ( key == KC_0 ) {
@@ -925,7 +925,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 	}
 
 	//check that the plugin has reading capabilities and load the file
-	if (!FreeImage_FIFSupportsReading(fif)) {
+	if (not FreeImage_FIFSupportsReading(fif)) {
 		return PixelFormat::Unknown;
 	}
 
@@ -938,7 +938,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 	dib = FreeImage_LoadFromMemory(fif, hmem, 0);
 
 	//if the image failed to load, return failure
-	if (!dib) {
+	if (not dib) {
 		return PixelFormat::Unknown;
 	}
 
@@ -952,7 +952,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 
 	pixelSize = FreeImage_GetBPP(dib) / 8;
 
-	DEBUG_ASSERT( pixelSize == 3 || pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
+	DEBUG_ASSERT( pixelSize == 3 or pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
 
 	uint32_t size = pitch * height;
 	imageData.resize(size);

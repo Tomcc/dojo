@@ -24,7 +24,7 @@ namespace Dojo {
 			}
 
 			bool operator ==(const FakeAxis& other) const {
-				return axis == other.axis && min == other.min && max == other.max;
+				return axis == other.axis and min == other.min and max == other.max;
 			}
 		};
 

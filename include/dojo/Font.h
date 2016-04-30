@@ -109,7 +109,7 @@ namespace Dojo {
 			std::array<Character, FONT_CHARS_PER_PAGE> chars;
 
 			bool _charInPage(uint32_t c) {
-				return c >= firstCharIdx && c < (firstCharIdx + chars.size());
+				return c >= firstCharIdx and c < (firstCharIdx + chars.size());
 			}
 		};
 

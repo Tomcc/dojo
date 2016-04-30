@@ -143,7 +143,7 @@ void InputSystem::_fireMouseMoveEvent(const Vector& currentPos, const Vector& pr
 }
 
 void InputSystem::_fireScrollWheelEvent(float scroll) {
-	if (!enabled) {
+	if (not enabled) {
 		return;
 	}
 

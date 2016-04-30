@@ -50,7 +50,7 @@ const wchar_t* flagForW(Stream::Access request) {
 }
 
 bool File::open(Access accessType) {
-	DEBUG_ASSERT(!isOpen(), "The file was already open");
+	DEBUG_ASSERT(not isOpen(), "The file was already open");
 
 	//open the file
 #ifdef WIN32

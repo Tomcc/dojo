@@ -165,11 +165,11 @@ const void* Shader::_getUniformData(const GlobalUniformData& currentState, const
 		};
 		return &tmpVec;
 	default: { //texture stuff
-		if (builtin >= BU_TEXTURE_0 && builtin <= BU_TEXTURE_N) {
+		if (builtin >= BU_TEXTURE_0 and builtin <= BU_TEXTURE_N) {
 			tempInt[0] = builtin - BU_TEXTURE_0;
 			return &tempInt;
 		}
-		else if (builtin >= BU_TEXTURE_0_DIMENSION && builtin <= BU_TEXTURE_N_DIMENSION) {
+		else if (builtin >= BU_TEXTURE_0_DIMENSION and builtin <= BU_TEXTURE_N_DIMENSION) {
 			auto& t = user.getTexture(builtin - BU_TEXTURE_0_DIMENSION).unwrap();
 			tempInt[0] = t.getWidth();
 			tempInt[1] = t.getHeight();
@@ -292,7 +292,7 @@ void Shader::_storeCachedBinary(const utf::string& path, const Shader::Binary& b
 }
 
 bool Shader::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "cannot reload an already loaded Shader" );
+	DEBUG_ASSERT(not isLoaded(), "cannot reload an already loaded Shader" );
 
 	loaded = false;
 
@@ -332,8 +332,8 @@ bool Shader::onLoad() {
 	if (linked == 0) {
 		//ensure they're loaded
 		for (auto&& program : pProgram) {
-			if (!program.unwrap().isLoaded()) {
-				if (!program.unwrap().onLoad()) { //one program was not loaded, the shader can't work
+			if (not program.unwrap().isLoaded()) {
+				if (not program.unwrap().onLoad()) { //one program was not loaded, the shader can't work
 					return loaded;
 				}
 			}

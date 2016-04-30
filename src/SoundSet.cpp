@@ -32,7 +32,7 @@ void SoundSet::addBuffer(std::unique_ptr<SoundBuffer> b) {
 
 bool SoundSet::onLoad() {
 	for (auto&& b : buffers) {
-		if (!b->isLoaded()) {
+		if (not b->isLoaded()) {
 			b->onLoad();
 		}
 	}

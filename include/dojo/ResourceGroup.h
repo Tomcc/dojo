@@ -238,7 +238,7 @@ namespace Dojo {
 		void _load(std::unordered_map<utf::string, Unique<T>>& map) {
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
-				if (!resourcePair.second->isLoaded()) {
+				if (not resourcePair.second->isLoaded()) {
 					resourcePair.second->onLoad();
 				}
 			}
@@ -254,19 +254,19 @@ namespace Dojo {
 				}
 
 				//delete too?
-				if (!softUnload) {
+				if (not softUnload) {
 					if (logchanges) {
 						DEBUG_MESSAGE("-" + resourcePair.first);
 					}
 				}
-				else if (softUnload && !resourcePair.second->isLoaded()) {
+				else if (softUnload and not resourcePair.second->isLoaded()) {
 					if (logchanges) {
 						DEBUG_MESSAGE("~" + resourcePair.first);
 					}
 				}
 			}
 
-			if (!softUnload) {
+			if (not softUnload) {
 				map.clear();
 			}
 		}

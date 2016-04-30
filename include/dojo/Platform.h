@@ -123,7 +123,7 @@ namespace Dojo {
 		}
 
 		bool isPortrait() {
-			return screenOrientation == DO_PORTRAIT || screenOrientation == DO_PORTRAIT_REVERSE;
+			return screenOrientation == DO_PORTRAIT or screenOrientation == DO_PORTRAIT_REVERSE;
 		}
 
 		///tells if it is running fullscreen

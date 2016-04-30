@@ -45,8 +45,8 @@ namespace Dojo {
 
 		bool isEmpty() const {
 			return
-				min.x >= max.x &&
-				min.y >= max.y &&
+				min.x >= max.x and
+				min.y >= max.y and
 				min.z >= max.z;
 		}
 
@@ -99,8 +99,8 @@ namespace Dojo {
 		}
 
 		bool contains(const Vector& p) const {
-			return max.x >= p.x && max.y >= p.y && max.z >= p.z &&
-							min.x <= p.x && min.y <= p.y && min.z <= p.z;
+			return max.x >= p.x and max.y >= p.y and max.z >= p.z and
+							min.x <= p.x and min.y <= p.y and min.z <= p.z;
 		}
 	};
 }

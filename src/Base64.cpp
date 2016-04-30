@@ -37,7 +37,7 @@ static const std::string base64_chars =
 
 
 static inline bool is_base64(unsigned char c) {
-	return (isalnum(c) || (c == '+') || (c == '-'));
+	return (isalnum(c) or (c == '+') or (c == '-'));
 }
 
 utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int in_len) {
@@ -92,7 +92,7 @@ std::vector<byte> Base64::decode(utf::string const& encoded_string_utf) {
 	unsigned char char_array_4[4], char_array_3[3];
 	std::vector<byte> ret;
 
-	while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
+	while (in_len-- and (encoded_string[in_] != '=') and is_base64(encoded_string[in_])) {
 		char_array_4[i++] = encoded_string[in_]; in_++;
 		if (i == 4) {
 			for (i = 0; i <4; i++)

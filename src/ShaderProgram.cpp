@@ -52,7 +52,7 @@ bool ShaderProgram::_load() {
 
 	loaded = compiled != 0;
 
-	if (!loaded) {
+	if (not loaded) {
 		//grab some info about the error
 		int blen = 0;
 		GLsizei slen = 0;
@@ -81,7 +81,7 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 }
 
 bool ShaderProgram::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "Cannot reload an already loaded program" );
+	DEBUG_ASSERT(not isLoaded(), "Cannot reload an already loaded program" );
 
 	if (getFilePath().not_empty()) { //try loading from file
 		auto file = Platform::singleton().getFile(filePath);

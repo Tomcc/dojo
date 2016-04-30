@@ -159,12 +159,12 @@ namespace Dojo {
 
 		///returns true if no element is NaN or inf
 		bool isValid() const {
-			return !std::isnan(x) && !std::isnan(y) && !std::isnan(z) && !std::isinf(x) && !std::isinf(y) && !std::isinf(z);
+			return not std::isnan(x) and not std::isnan(y) and not std::isnan(z) and not std::isinf(x) and not std::isinf(y) and not std::isinf(z);
 		}
 
 		///returns true when all the components of the vector are 0
 		bool isZero() const {
-			return x == 0.f && y == 0.f && z == 0.f;
+			return x == 0.f and y == 0.f and z == 0.f;
 		}
 
 		///returns the dot product with this vector with only positive components

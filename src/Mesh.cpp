@@ -70,7 +70,7 @@ void Mesh::destroyBuffers() {
 void Mesh::begin(IndexType extimatedVerts /*= 1 */) {
 	//be sure that we aren't already building
 	DEBUG_ASSERT(extimatedVerts > 0, "begin: extimated vertices for this batch must be more than 0");
-	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
+	DEBUG_ASSERT(not isEditing(), "begin: this Mesh is already in Edit mode");
 	DEBUG_ASSERT(indexMaxValue > extimatedVerts, "The index format chosen is too small");
 
 	vertices.clear();
@@ -88,7 +88,7 @@ void Mesh::begin(IndexType extimatedVerts /*= 1 */) {
 }
 
 void Mesh::beginAppend() {
-	DEBUG_ASSERT(!isEditing(), "begin: this Mesh is already in Edit mode");
+	DEBUG_ASSERT(not isEditing(), "begin: this Mesh is already in Edit mode");
 	DEBUG_ASSERT(dynamic, "can't call append() on a static mesh");
 	DEBUG_ASSERT(vertices.size() > 0, "This mesh was never begin'd!");
 
@@ -96,10 +96,10 @@ void Mesh::beginAppend() {
 }
 
 void Mesh::setIndexByteSize(byte bytenumber) {
-	DEBUG_ASSERT(!editing, "setIndexByteSize must be called BEFORE begin!");
+	DEBUG_ASSERT(not editing, "setIndexByteSize must be called BEFORE begin!");
 	DEBUG_ASSERT(
-		bytenumber == 1 ||
-		bytenumber == 2 ||
+		bytenumber == 1 or
+		bytenumber == 2 or
 		bytenumber == 4, "setIndexByteSize: byteNumber must be either 1,2 or 4");
 
 	indexSize = bytenumber;
@@ -123,7 +123,7 @@ void Mesh::setIndexByteSize(byte bytenumber) {
 }
 
 void Mesh::setVertexFieldEnabled(VertexField f) {
-	DEBUG_ASSERT(!editing, "setVertexFieldEnabled must be called BEFORE begin!");
+	DEBUG_ASSERT(not editing, "setVertexFieldEnabled must be called BEFORE begin!");
 
 	_offset(f) = vertexSize;
 	vertexSize += VERTEX_FIELD_SIZES[(byte)f];
@@ -244,7 +244,7 @@ int Mesh::getPrimitiveCount() const {
 }
 
 void Mesh::uv(float u, float v, byte set /*= 0 */) {
-	DEBUG_ASSERT(u <= 1.f && u >= -1.f && v <= 1.f && v >= -1.f, "UV out of range, can't be packed");
+	DEBUG_ASSERT(u <= 1.f and u >= -1.f and v <= 1.f and v >= -1.f, "UV out of range, can't be packed");
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
 	auto ptr = (GLshort*)(currentVertex + _offset(VertexField::UV0, set));
@@ -264,7 +264,7 @@ void Mesh::color(const Color& c) {
 }
 
 void Mesh::normal(const Vector& n) {
-	DEBUG_ASSERT(std::abs(n.x) <= 1.f &&std::abs(n.y) <= 1.f &&std::abs(n.z) <= 1.f, "normal is too long, cannot pack");
+	DEBUG_ASSERT(std::abs(n.x) <= 1.f and std::abs(n.y) <= 1.f and std::abs(n.z) <= 1.f, "normal is too long, cannot pack");
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
 	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Normal)));
@@ -318,7 +318,7 @@ bool Mesh::end() {
 	DEBUG_ASSERT(editing, "Can't call end() before begin()!");
 	editing = false;
 
-	DEBUG_ASSERT(!isLoaded() || dynamic, "Can't update a static mesh");
+	DEBUG_ASSERT(not isLoaded() or dynamic, "Can't update a static mesh");
 
 	//don't load empty meshes
 	if (getVertexCount() == 0) {
@@ -326,7 +326,7 @@ bool Mesh::end() {
 	}
 
 	//create the VBO
-	if (!vertexHandle) {
+	if (not vertexHandle) {
 		glGenBuffers(1, &vertexHandle);
 	}
 
@@ -338,7 +338,7 @@ bool Mesh::end() {
 
 	//create the IBO
 	if (isIndexed()) { //we support unindexed meshes
-		if (!indexHandle) {
+		if (not indexHandle) {
 			glGenBuffers(1, &indexHandle);
 		}
 
@@ -356,7 +356,7 @@ bool Mesh::end() {
 	center = bounds.getCenter();
 	dimensions = bounds.getSize();
 
-	if (!dynamic) { //won't be updated ever again
+	if (not dynamic) { //won't be updated ever again
 		destroyBuffers();
 	}
 
@@ -373,9 +373,9 @@ void Mesh::bind() {
 }
 
 bool Mesh::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "onLoad: Mesh is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "onLoad: Mesh is already loaded" );
 
-	if (!isReloadable()) {
+	if (not isReloadable()) {
 		return false;
 	}
 
@@ -445,7 +445,7 @@ void Mesh::onUnload(bool soft /*= false */) {
 	DEBUG_ASSERT(isLoaded(), "onUnload: Mesh is not loaded");
 
 	//when soft unloading, only unload file-based meshes
-	if (!soft || isReloadable()) {
+	if (not soft or isReloadable()) {
 		glDeleteBuffers(1, &vertexHandle);
 		glDeleteBuffers(1, &indexHandle);
 
@@ -468,7 +468,7 @@ Vector& Mesh::getVertex(int idx) {
 }
 
 void Mesh::setIndex(int idxidx, IndexType idx) {
-	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
+	DEBUG_ASSERT(idxidx >= 0 and idxidx < getIndexCount(), "Index out of bounds");
 
 	switch (indexSize) {
 	case 1:
@@ -487,7 +487,7 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 
 
 Mesh::IndexType Mesh::getIndex(int idxidx) const {
-	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
+	DEBUG_ASSERT(idxidx >= 0 and idxidx < getIndexCount(), "Index out of bounds");
 
 	switch (indexSize) {
 	case 1:
@@ -502,7 +502,7 @@ Mesh::IndexType Mesh::getIndex(int idxidx) const {
 }
 
 void Mesh::eraseIndex(int idxidx) {
-	DEBUG_ASSERT(idxidx >= 0 && idxidx < getIndexCount(), "Index out of bounds");
+	DEBUG_ASSERT(idxidx >= 0 and idxidx < getIndexCount(), "Index out of bounds");
 
 	auto i = indices.begin() + (idxidx * indexSize);
 	indices.erase(i, i + indexSize);
@@ -512,7 +512,7 @@ void Mesh::eraseIndex(int idxidx) {
 
 void Mesh::cutSection(IndexType i1, IndexType i2) {
 	DEBUG_ASSERT(isEditing(), "cutSection: this Mesh is not in Edit mode");
-	DEBUG_ASSERT(i1 < getVertexCount() && i2 <= getVertexCount() && i1 <= i2, "Invalid indices passed");
+	DEBUG_ASSERT(i1 < getVertexCount() and i2 <= getVertexCount() and i1 <= i2, "Invalid indices passed");
 
 	//easy part: cut out the vertex data
 	auto diff = i2 - i1;
@@ -526,7 +526,7 @@ void Mesh::cutSection(IndexType i1, IndexType i2) {
 		for (int i = 0; i < getIndexCount(); ++i) {
 			auto idx = getIndex(i);
 
-			if (idx >= i1 && idx < i2) {
+			if (idx >= i1 and idx < i2) {
 				eraseIndex(i);
 				--i;
 			}
@@ -551,8 +551,8 @@ Unique<Mesh> Mesh::cloneWithSameFormat() const {
 }
 
 Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
-	DEBUG_ASSERT(!vertices.empty(), "This mesh is empty");
-	DEBUG_ASSERT(vertexStart < getVertexCount() && vertexEnd <= getVertexCount() && vertexStart <= vertexEnd, "Indices out of bounds");
+	DEBUG_ASSERT(not vertices.empty(), "This mesh is empty");
+	DEBUG_ASSERT(vertexStart < getVertexCount() and vertexEnd <= getVertexCount() and vertexStart <= vertexEnd, "Indices out of bounds");
 
 	auto c = cloneWithSameFormat();
 
@@ -584,7 +584,7 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 		for (int i = 0; i < getIndexCount(); ++i) {
 			auto idx = getIndex(i);
 
-			if (idx >= vertexStart && idx < vertexEnd) {
+			if (idx >= vertexStart and idx < vertexEnd) {
 				c->index(idx - vertexStart);
 			}
 		}
@@ -596,7 +596,7 @@ Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, co
 
 bool Mesh::supportsShader(const Shader& shader) const {
 	for (auto&& attribute : shader.getAttributes()) {
-		if (!isVertexFieldEnabled(attribute.builtInAttribute))
+		if (not isVertexFieldEnabled(attribute.builtInAttribute))
 			return false;
 	}
 	return true;

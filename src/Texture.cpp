@@ -37,7 +37,7 @@ Texture::~Texture() {
 
 void Texture::bind(uint32_t index) {
 	//create the gl texture if still not created!
-	if (!glhandle) {
+	if (not glhandle) {
 		glGenTextures(1, &glhandle);
 
 		CHECK_GL_ERROR;
@@ -50,7 +50,7 @@ void Texture::bind(uint32_t index) {
 }
 
 void Texture::bindAsRenderTarget(bool depthBuffer) {
-	if (!mFBO) { //create a new RT on the fly at the first request
+	if (not mFBO) { //create a new RT on the fly at the first request
 		bind(0);
 
 		glGenFramebuffers(1, &mFBO);
@@ -139,7 +139,7 @@ bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) 
 	uint32_t destWidth, destHeight;
 
 	//if the platforms supports NPOT, or the dimensions are already POT, direct copy
-	if (isPowerOfTwo() || Platform::singleton().isNPOTEnabled()) {
+	if (isPowerOfTwo() or Platform::singleton().isNPOTEnabled()) {
 		destWidth = width;
 		destHeight = height;
 	}
@@ -149,7 +149,7 @@ bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) 
 	}
 
 	//check if the texture has to be recreated (changed dimensions)
-	if (destWidth != internalWidth || destHeight != internalHeight || oldFormat.internalFormat != formatInfo.internalFormat) {
+	if (destWidth != internalWidth or destHeight != internalHeight or oldFormat.internalFormat != formatInfo.internalFormat) {
 		internalWidth = destWidth;
 		internalHeight = destHeight;
 		internalFormat = formatID;
@@ -209,7 +209,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 }
 
 bool Texture::loadFromFile(const utf::string& path) {
-	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded" );
 
 	int pixelSize;
 	std::vector<byte> imageData;
@@ -217,7 +217,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 
 	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
 
-	if (creator.is_some() && creator.unwrap().disableBilinear) {
+	if (creator.is_some() and creator.unwrap().disableBilinear) {
 		disableBilinearFiltering();
 	}
 	else {
@@ -234,14 +234,14 @@ bool Texture::loadFromFile(const utf::string& path) {
 bool Texture::_setupAtlas() {
 	auto& atlas = parentAtlas.unwrap();
 
-	if (!atlas.isLoaded()) {
+	if (not atlas.isLoaded()) {
 		return (loaded = false);
 	}
 
 	internalWidth = atlas.getInternalWidth();
 	internalHeight = atlas.getInternalHeight();
 
-	DEBUG_ASSERT( width > 0 && height > 0 && internalWidth > 0 && internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)" );
+	DEBUG_ASSERT( width > 0 and height > 0 and internalWidth > 0 and internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)" );
 
 	//copy bind handle
 	glhandle = atlas.glhandle;
@@ -258,7 +258,7 @@ bool Texture::_setupAtlas() {
 }
 
 bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
-	DEBUG_ASSERT( !isLoaded(), "The Texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded" );
 
 	parentAtlas = tex;
 	mTransparency = tex.mTransparency;
@@ -275,7 +275,7 @@ bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
 }
 
 bool Texture::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "The texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The texture is already loaded" );
 
 	//invalidate the OBB
 	OBB.reset();
@@ -294,7 +294,7 @@ bool Texture::onLoad() {
 void Texture::onUnload(bool soft) {
 	DEBUG_ASSERT( isLoaded(), "The Texture is not loaded" );
 
-	if (!soft || isReloadable()) {
+	if (not soft or isReloadable()) {
 		if (OBB) {
 			OBB->onUnload();
 		}
@@ -321,7 +321,7 @@ void Texture::onUnload(bool soft) {
 
 
 void Texture::_rebuildOptimalBillboard() {
-	if (!OBB) {
+	if (not OBB) {
 		OBB = make_unique<Mesh>();
 
 		//build or rebuild the OBB
@@ -350,7 +350,7 @@ void Texture::_rebuildOptimalBillboard() {
 }
 
 Mesh& Texture::getOptimalBillboard() {
-	if (!OBB) {
+	if (not OBB) {
 		_rebuildOptimalBillboard();
 	}
 

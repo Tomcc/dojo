@@ -82,7 +82,7 @@ void Renderable::update(float dt) {
 
 bool Renderable::canBeRendered() const {
 	if (auto m = mesh.to_ref()) {
-		return isVisible() && m.get().isLoaded() && m.get().getVertexCount() > 2;
+		return isVisible() and m.get().isLoaded() and m.get().getVertexCount() > 2;
 	}
 	else {
 		return false;

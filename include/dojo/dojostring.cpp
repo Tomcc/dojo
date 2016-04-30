@@ -3,7 +3,7 @@
 using Dojo::String;
 
 bool String::isNumber(uint32_t c) {
-	return c >= '0' && c <= '9';
+	return c >= '0' and c <= '9';
 }
 
 #ifdef WIN32
@@ -32,3 +32,5 @@ utf::string String::toUTF8(const std::wstring& wstr) {
 	return utf::string{ strTo.data() };
 }
 #endif
+
+

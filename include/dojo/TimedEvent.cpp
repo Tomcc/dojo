@@ -51,11 +51,11 @@ namespace Dojo {
 			EventManager::instance.removeEvent(self);
 
 			//stall until the task is done
-			while (mStatus != AsyncJob::Status::NotRunning && mTargetPool.runOneCallback());
+			while (mStatus != AsyncJob::Status::NotRunning and mTargetPool.runOneCallback());
 		}
 
 		bool isReady(TimePoint now) {
-			return mStatus == AsyncJob::Status::NotRunning && now >= mNextTime;
+			return mStatus == AsyncJob::Status::NotRunning and now >= mNextTime;
 		}
 
 		void run() {

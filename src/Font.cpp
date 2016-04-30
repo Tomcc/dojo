@@ -151,7 +151,7 @@ void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy,
 
 	advance = ((float)metrics.horiAdvance * FONT_PPI) / fw;
 
-	if (page.getFont().generateEdge || page.getFont().generateSurface) { //tesselate ALL the things!
+	if (page.getFont().generateEdge or page.getFont().generateSurface) { //tesselate ALL the things!
 		Timer timer;
 
 		mTesselation = make_unique<Tessellation>();
@@ -163,11 +163,11 @@ void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy,
 		FT_Outline_Decompose(&outline, &funcs, &self);
 
 		//now that everything is loaded & in order, tessellate the mesh
-		if (mTesselation->segments.size() && page.getFont().generateSurface) { //HACK
+		if (mTesselation->segments.size() and page.getFont().generateSurface) { //HACK
 
 			int options = Tessellation::PREPARE_EXTRUSION | Tessellation::GUESS_HOLES;
 
-			if (!page.getFont().generateEdge) {
+			if (not page.getFont().generateEdge) {
 				options |= Tessellation::CLEAR_INPUTS;
 			}
 
@@ -325,7 +325,7 @@ Font::~Font() {
 }
 
 bool Font::onLoad() {
-	DEBUG_ASSERT( !isLoaded(), "onLoad: this font is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "onLoad: this font is already loaded" );
 
 	Table t = Platform::singleton().load(filePath);
 
@@ -356,7 +356,7 @@ bool Font::onLoad() {
 
 	//load existing pages that were trimmed during a previous unload
 	for (auto&& pair : pages) {
-		if (!pair.second->isLoaded()) {
+		if (not pair.second->isLoaded()) {
 			pair.second->onLoad();
 		}
 	}
@@ -371,7 +371,7 @@ void Font::onUnload(bool soft) {
 		}
 	}
 
-	if (!soft) {
+	if (not soft) {
 		pages.clear();
 	}
 
@@ -410,7 +410,7 @@ int Font::getPixelLength(const utf::string& str) {
 		auto& chr = getCharacter(c);
 		l += (int)(chr.advance * chr.pixelWidth);
 
-		if (lastChar.is_some() && isKerningEnabled()) {
+		if (lastChar.is_some() and isKerningEnabled()) {
 			l += (int)(getKerning(chr, lastChar.unwrap()) * fontWidth);
 		}
 

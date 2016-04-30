@@ -26,7 +26,7 @@ namespace Dojo {
 		}
 
 		bool isPowerOfTwo() const {
-			return glm::isPowerOfTwo(width) && glm::isPowerOfTwo(height);
+			return glm::isPowerOfTwo(width) and glm::isPowerOfTwo(height);
 		}
 
 		optional_ref<Texture> getTexture() {

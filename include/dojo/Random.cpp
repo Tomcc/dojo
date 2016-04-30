@@ -281,7 +281,7 @@ double Random::randNorm(const double mean /*= 0.0*/, const double stddev /*= 1.0
 		y = 2.0 * getDouble() - 1.0;
 		r = x * x + y * y;
 	}
-	while (r >= 1.0 || r == 0.0);
+	while (r >= 1.0 or r == 0.0);
 
 	double s = sqrt(-2.0 * log(r) / r);
 	return mean + x * s * stddev;

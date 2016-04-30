@@ -342,3 +342,4 @@ namespace Dojo {
 #ifdef AE_VCPP
 	#pragma warning(pop)
 #endif
+

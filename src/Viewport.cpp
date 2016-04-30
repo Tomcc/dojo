@@ -27,7 +27,7 @@ Viewport::Viewport(
 	mZFar(1000),
 	m2DRect(worldSize2D) {
 	
-	DEBUG_ASSERT(m2DRect.x > 0 && m2DRect.y > 0, "Invalid dimension for 2D");
+	DEBUG_ASSERT(m2DRect.x > 0 and m2DRect.y > 0, "Invalid dimension for 2D");
 
 	setRenderToBackbuffer();
 
@@ -53,7 +53,7 @@ Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
 }
 
 bool Viewport::isVisible(Renderable& s) {
-	return s.isVisible() && isInViewRect(s);
+	return s.isVisible() and isInViewRect(s);
 }
 
 // void Viewport::addFader(RenderLayer::ID layer) {
@@ -88,7 +88,7 @@ void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {
 	//assert some reasonable values
 	DEBUG_ASSERT( zNear > 0, "Z near value cannot be negative or 0" );
 	DEBUG_ASSERT( zNear < zFar, "Z far cannot be less than Z near" );
-	DEBUG_ASSERT( VFOV > 0 && VFOV < 180, "Vertical FOV has to be in the range ]0..180[" );
+	DEBUG_ASSERT( VFOV > 0 and VFOV < 180, "Vertical FOV has to be in the range ]0..180[" );
 
 	mVFOV = VFOV;
 	mZNear = zNear;
