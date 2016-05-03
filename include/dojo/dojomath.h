@@ -163,5 +163,11 @@ namespace Dojo {
 		static T packNormalized(float x, T max = std::numeric_limits<T>::max()) {
 			return (T)std::ceil(x * max);
 		}
+
+		static std::pair<bool, Vector> segmentsIntersect(const Vector& A1, const Vector& A2, const Vector& B1, const Vector& B2);
+		
+		static std::pair<std::vector<Vector>, std::vector<Vector>> cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd);
+	
+		static Vector findCentroid(const std::vector<Vector>& contour);
 	};
 }
