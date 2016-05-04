@@ -276,6 +276,10 @@ Component& Object::_addComponent(Unique<Component> c, int ID) {
 		components.resize(ID + 1); //TODO this is shitty very much, need a better O(1) method of storage
 	}
 
+	if(isAttachedToScene()) {
+		c->onAttach(); //call onAttach immediately because the object is already attached
+	}
+
 	components[ID] = std::move(c);
 	return *components[ID];
 }
