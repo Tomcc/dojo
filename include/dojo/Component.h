@@ -5,6 +5,15 @@
 namespace Dojo {
 	class Object;
 
+	namespace ComponentID {
+		enum Enum {
+			Renderable = 0,
+			SoundListener,
+			Viewport,
+			_count,
+		};
+	}
+
 	class Component {
 	public:
 		Object& object;

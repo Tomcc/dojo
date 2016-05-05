@@ -37,7 +37,7 @@ namespace Dojo {
 	//TODO a Viewport should be a component!
 	class Viewport : public Component {
 	public:
-		static const int ID = 5;
+		static const int ID = ComponentID::Viewport;
 
 		typedef std::vector<RenderLayer::ID> LayerList;
 

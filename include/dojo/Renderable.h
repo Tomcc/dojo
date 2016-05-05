@@ -26,7 +26,7 @@ namespace Dojo {
 		public Component,
 		public RenderState {
 	public:
-		static const int ID = 0;
+		static const int ID = ComponentID::Renderable;
 
 		Vector uvOffset;
 		Vector scale = Vector::One;

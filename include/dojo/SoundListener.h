@@ -7,7 +7,7 @@
 namespace Dojo {
 	class SoundListener : public Component {
 	public:
-		static const int ID = 6;
+		static const int ID = ComponentID::SoundListener;
 
 		SoundListener(Object& parent, float zOffsetFor2D = 0);
 
