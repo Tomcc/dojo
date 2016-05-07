@@ -10,7 +10,7 @@ namespace Dojo {
 	public:
 		const bool isAsync;
 
-		explicit WorkerPool(uint32_t workerCount, bool async = true);
+		explicit WorkerPool(uint32_t workerCount, bool async = true, bool allowMultipleProducers = false);
 		~WorkerPool();
 
 		AsyncJob::StatusPtr queue(AsyncTask task, AsyncCallback callback = {});

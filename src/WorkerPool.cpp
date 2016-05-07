@@ -4,13 +4,13 @@
 
 using namespace Dojo;
 
-WorkerPool::WorkerPool(uint32_t workerCount, bool async) :
+WorkerPool::WorkerPool(uint32_t workerCount, bool async, bool allowMultipleProducers) :
 isAsync(async) {
 	DEBUG_ASSERT(workerCount > 0, "Invalid worker count");
 	DEBUG_ASSERT(async or workerCount == 1, "Either the pool is async, or it should only have one queue");
 
 	while(mWorkers.size() < workerCount) {
-		mWorkers.emplace_back(make_unique<BackgroundWorker>(isAsync));
+		mWorkers.emplace_back(make_unique<BackgroundWorker>(isAsync, allowMultipleProducers));
 	}
 }
 

@@ -91,7 +91,7 @@ Platform::Platform(const Table& configTable) :
 
 	//create thread pools
 	//map the main thread to the thread pool system
-	mPools.push_back(make_unique<WorkerPool>(1, false)); 
+	mPools.push_back(make_unique<WorkerPool>(1, false, true)); 
 
 	//allocate cpus-1 threads
 	//TODO handle asymmetric processors such as BIG.little that should use half the cores

@@ -4,11 +4,12 @@
 
 using namespace Dojo;
 
-BackgroundWorker::BackgroundWorker(bool async) :
+BackgroundWorker::BackgroundWorker(bool async, bool allowMultipleProducers) :
 	mRunning(false),
 	mCompletedQueue(make_unique<SPSCQueue<AsyncJob>>()),
 	mQueue(make_unique<SPSCQueue<AsyncJob>>()),
 	isAsync(async),
+	allowMultipleProducers(allowMultipleProducers),
 	mAvailableTasksSemaphore(0) {
 
 	if (isAsync) {
@@ -82,8 +83,15 @@ void BackgroundWorker::startAsync() {
 }
 
 void BackgroundWorker::queueJob(AsyncJob&& job) {
+	if (not allowMultipleProducers) {
+		mQueueLock.lock();
+	}
 	mQueue->enqueue(std::move(job));
 	mAvailableTasksSemaphore.notifyOne();
+	
+	if(not allowMultipleProducers) {
+		mQueueLock.unlock();
+	}
 }
 
 void BackgroundWorker::stop() {

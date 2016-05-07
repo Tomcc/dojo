@@ -5,6 +5,7 @@
 #include "SPSCQueue.h"
 #include "AsyncJob.h"
 #include "Semaphore.h"
+#include "SpinLock.h"
 
 namespace Dojo {
 	
@@ -16,9 +17,10 @@ namespace Dojo {
 	class BackgroundWorker {
 	public:
 		const bool isAsync;
+		const bool allowMultipleProducers;
 
 		///Creates a new BackgroundWorker
-		explicit BackgroundWorker(bool async);
+		explicit BackgroundWorker(bool async, bool allowMultipleProducers);
 		virtual ~BackgroundWorker();
 
 		///Start the thread and begin running tasks
@@ -51,6 +53,7 @@ namespace Dojo {
 		std::thread mThread;
 		Semaphore mAvailableTasksSemaphore;
 
+		SpinLock mQueueLock;
 		Unique<SPSCQueue<AsyncJob>> mQueue;
 		Unique<SPSCQueue<AsyncJob>> mCompletedQueue;
 
