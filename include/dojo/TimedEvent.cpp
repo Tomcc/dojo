@@ -42,6 +42,7 @@ namespace Dojo {
 			WorkerPool& targetPool) :
 			mInterval(interval),
 			mTargetPool(targetPool),
+			mTask(std::move(task)),
 			mCallback(std::move(callback)) {
 
 			EventManager::instance.registerEvent(self);
