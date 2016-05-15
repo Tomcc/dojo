@@ -48,7 +48,7 @@ namespace Dojo {
 
 			BU_TIME, ///<Time in seconds since the start of the program (float)
 			BU_TARGET_DIMENSION, ///<The dimensions in pixels of the currently bound target (vec2)
-			BU_TARGET_PIXEL ///<The dimension in the UV space of one pixel
+			BU_TARGET_DIMENSION_INV ///<The dimension in the UV space of one pixel
 		};
 
 		///A VertexAttribute represents a "attribute" binding in a vertex shader

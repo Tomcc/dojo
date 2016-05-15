@@ -39,7 +39,7 @@ void Shader::_populateUniformNameMap() {
 	sBuiltiInUniformsNameMap["OBJECT_COLOR"] = BU_OBJECT_COLOR;
 	sBuiltiInUniformsNameMap["TIME"] = BU_TIME;
 	sBuiltiInUniformsNameMap["TARGET_DIMENSION"] = BU_TARGET_DIMENSION;
-	sBuiltiInUniformsNameMap["TARGET_PIXEL"] = BU_TARGET_PIXEL;
+	sBuiltiInUniformsNameMap["TARGET_DIMENSION_INV"] = BU_TARGET_DIMENSION_INV;
 }
 
 void Shader::_populateAttributeNameMap() {
@@ -158,7 +158,7 @@ const void* Shader::_getUniformData(const GlobalUniformData& currentState, const
 	case BU_TARGET_DIMENSION:
 		return &currentState.targetDimension;
 
-	case BU_TARGET_PIXEL:
+	case BU_TARGET_DIMENSION_INV:
 		tmpVec = {
 			1.f / currentState.targetDimension.x,
 			1.f / currentState.targetDimension.y

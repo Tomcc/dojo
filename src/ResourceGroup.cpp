@@ -477,25 +477,29 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 		m->setTriangleMode(PrimitiveMode::TriangleStrip);
-		m->setVertexFields({ VertexField::Position2D, VertexField::UV0, VertexField::Normal });
+		m->setVertexFields({ VertexField::Position2D, VertexField::UV0, VertexField::Normal, VertexField::Color });
 
 		m->begin(4);
 
 		m->vertex({-0.5, -0.5});
 		m->uv(0, 1);
 		m->normal(Vector::UnitZ);
+		m->color(Color::White);
 
 		m->vertex({0.5, -0.5});
 		m->uv(1, 1);
 		m->normal(Vector::UnitZ);
+		m->color(Color::White);
 
 		m->vertex({-0.5, 0.5});
 		m->uv(0, 0);
 		m->normal(Vector::UnitZ);
+		m->color(Color::White);
 
 		m->vertex({0.5, 0.5});
 		m->uv(1, 0);
 		m->normal(Vector::UnitZ);
+		m->color(Color::White);
 
 		m->end();
 
