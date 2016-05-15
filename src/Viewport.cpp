@@ -29,8 +29,6 @@ Viewport::Viewport(
 	
 	DEBUG_ASSERT(m2DRect.x > 0 and m2DRect.y > 0, "Invalid dimension for 2D");
 
-	setRenderToBackbuffer();
-
 	if (VFOV > 0.f) {
 		enableFrustum(VFOV, zNear, zFar);
 	}
@@ -44,8 +42,8 @@ Viewport::~Viewport() {
 Vector Viewport::makeWorldCoordinates(int x, int y) const {
 	//TODO take into account the parent's size too
 	return Vector(
-		mWorldBB.min.x + ((float)x / Platform::singleton().getWindowWidth()) * m2DRect.x,
-		mWorldBB.max.y - ((float)y / Platform::singleton().getWindowHeight()) * m2DRect.y);
+		mWorldBB.min.x + ((float)x / mFramebuffer.getWidth()) * m2DRect.x,
+		mWorldBB.max.y - ((float)y / mFramebuffer.getHeight()) * m2DRect.y);
 }
 
 Vector Viewport::makeWorldCoordinates(const Vector& screenPoint) const {
@@ -71,19 +69,6 @@ bool Viewport::isVisible(Renderable& s) {
 // 	}());
 // }
 
-void Viewport::_setRenderTarget(RenderSurface& surface) {
-	mRT = surface;
-	setTargetSize({ (float)surface.getWidth(), (float)surface.getHeight() });
-}
-
-void Viewport::setRenderTexture(Texture& target) {
-	_setRenderTarget(target);
-}
-
-void Viewport::setRenderToBackbuffer() {
-	_setRenderTarget(Platform::singleton().getRenderer().getBackbuffer());
-}
-
 void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {
 	//assert some reasonable values
 	DEBUG_ASSERT( zNear > 0, "Z near value cannot be negative or 0" );
@@ -98,7 +83,7 @@ void Viewport::enableFrustum(Degrees VFOV, float zNear, float zFar) {
 	//order is - top left, bottom left, bottom right, top right, z is negative because OpenGL is right-handed
 	mFarPlaneSide.z = -zFar;
 	mFarPlaneSide.y = zFar * tanf(((Radians)VFOV) * 0.5f);
-	mFarPlaneSide.x = ((float)mTargetSize.x / (float)mTargetSize.y) * mFarPlaneSide.y;
+	mFarPlaneSide.x = ((float)mFramebuffer.getWidth() / (float)mFramebuffer.getHeight()) * mFarPlaneSide.y;
 
 	mLocalFrustumVertices[0] = Vector(mFarPlaneSide.x, mFarPlaneSide.y, mFarPlaneSide.z);
 	mLocalFrustumVertices[1] = Vector(-mFarPlaneSide.x, mFarPlaneSide.y, mFarPlaneSide.z);
@@ -112,12 +97,13 @@ void Viewport::_updateFrustum() {
 	if (mFrustumDirty) {
 		//compute frustum projection
 		mFrustumTransform = mPerspectiveEyeTransform * glm::perspective(
-				(float)mVFOV,
-				mTargetSize.x / mTargetSize.y,
-				mZNear,
-				mZFar);
+			(float)mVFOV,
+			(float)mFramebuffer.getWidth() / (float)mFramebuffer.getHeight(),
+			mZNear,
+			mZFar
+		);
 
-		if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
+		if (mFramebuffer.isFlipped()) { //flip the projections to flip the image
 			mOrthoTransform[1][1] *= -1;
 		}
 
@@ -251,7 +237,7 @@ void Viewport::_update() {
 				);
 			mWorldBB = object.transformAABB({ -halfSize, halfSize });
 
-			if (getRenderTarget().isFlipped()) { //flip the projections to flip the image
+			if (mFramebuffer.isFlipped()) { //flip the projections to flip the image
 				mOrthoTransform[1][1] *= -1;
 			}
 		}
@@ -260,6 +246,15 @@ void Viewport::_update() {
 
 		mLastWorldTransform = object.getWorldTransform();
 	}
+}
+
+void Dojo::Viewport::makeScreenSize(Vector& dest, int w, int h) const {
+	dest.x = ((float)w / mFramebuffer.getWidth()) * m2DRect.x;// * nativeToScreenRatio;
+	dest.y = ((float)h / mFramebuffer.getHeight()) * m2DRect.y;// * nativeToScreenRatio;
+}
+
+float Dojo::Viewport::getPixelSide() const {
+	return m2DRect.x / mFramebuffer.getWidth();
 }
 
 void Dojo::Viewport::onAttach() {

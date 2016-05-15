@@ -199,6 +199,8 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 
 	//make state changes
 	if (layer.depthCheck) {
+		DEBUG_ASSERT(viewport.getFramebuffer().hasDepth(), "Depth won't work without an attachment");
+
 		glEnable(GL_DEPTH_TEST);
 
 		if (layer.depthClear) {
@@ -222,19 +224,12 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 void Renderer::_renderViewport(Viewport& viewport) {
 	viewport._update();
 
-	if (auto rt = viewport.getRenderTarget().getTexture().to_ref()) {
-		rt.get().bindAsRenderTarget(true);    //TODO guess if this viewport doesn't render 3D layers to save memory?
-		glFrontFace(GL_CW); //invert vertex winding when inverting the view
-		globalUniforms.targetDimension = {
-			(float)rt.get().getWidth(),
-			(float)rt.get().getHeight()
-		};
-	}
-	else {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glFrontFace(GL_CCW); //invert vertex winding when inverting the view
-		globalUniforms.targetDimension = { (float)mBackBuffer.getWidth(), (float)mBackBuffer.getHeight() };
-	}
+	viewport.getFramebuffer().bind();
+
+	globalUniforms.targetDimension = {
+		(float)viewport.getFramebuffer().getWidth(),
+		(float)viewport.getFramebuffer().getHeight()
+	};
 
 	glViewport(0, 0, (GLsizei) globalUniforms.targetDimension.x, (GLsizei)globalUniforms.targetDimension.y);
 

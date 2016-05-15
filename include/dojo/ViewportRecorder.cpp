@@ -42,10 +42,11 @@ void ViewportRecorder::captureFrame() {
 	//TODO get all of these from the currently bound FBO
 	//WARNING do not use on OpenGL ES 2!
 
-	auto& surface = mViewport.unwrap().getRenderTarget();
-	mFormatInfo = TexFormatInfo::getFor(surface.getFormat());
-	mWidth = surface.getWidth();
-	mHeight = surface.getHeight();
+	auto& framebuffer = mViewport.unwrap().getFramebuffer();
+	auto& attachment = framebuffer.getColorAttachment(0);
+	mFormatInfo = TexFormatInfo::getFor(attachment.texture->getFormat());
+	mWidth = framebuffer.getWidth();
+	mHeight = framebuffer.getHeight();
 
 	auto frameSize = mWidth * mHeight * mFormatInfo.internalPixelSize;
 	if (frameSize != mFrameSize) {
@@ -69,16 +70,16 @@ void ViewportRecorder::captureFrame() {
 	mInitializedPBOs = std::max(mInitializedPBOs, mNextPBO + 1); //mark the current PBO as initialized
 	_bindNextPBO();
 
-	if (auto tex = surface.getTexture().to_ref()) {
-		tex.get().bindAsRenderTarget(false);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-	}
-	else {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glReadBuffer(GL_BACK);
-	}
+	framebuffer.bind();
 
-	glReadPixels(0, 0, surface.getWidth(), surface.getHeight(), mFormatInfo.internalFormat, mFormatInfo.internalElementType, nullptr);
+	glReadPixels(
+		0, 0,
+		mWidth, mHeight,
+		mFormatInfo.internalFormat,
+		mFormatInfo.internalElementType,
+		nullptr
+	);
+
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	CHECK_GL_ERROR;
 }

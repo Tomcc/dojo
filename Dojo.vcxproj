@@ -31,6 +31,7 @@
     <ClInclude Include="include\dojo\enum_cast.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />
+    <ClInclude Include="include\dojo\Framebuffer.h" />
     <ClInclude Include="include\dojo\FrameSubmitter.h" />
     <ClInclude Include="include\dojo\GlobalUniformData.h" />
     <ClInclude Include="include\dojo\InputDevice.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />
+    <ClCompile Include="src\Framebuffer.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />

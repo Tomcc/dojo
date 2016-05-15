@@ -18,6 +18,7 @@
 #include "Renderable.h"
 #include "Platform.h"
 #include "Radians.h"
+#include "Framebuffer.h"
 
 namespace Dojo {
 	class Renderer;
@@ -61,12 +62,6 @@ namespace Dojo {
 			mClearColor = color;
 		}
 
-		///sets the texture to be used as rendering target, null means "render to screen"
-		void setRenderTexture(Texture& target);
-
-		///resets the RT to render to the backbuffer
-		void setRenderToBackbuffer();
-
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers(const LayerList& layers);
 
@@ -80,16 +75,7 @@ namespace Dojo {
 		const LayerList& getVisibleLayers() const {
 			return mLayerList;
 		}
-
-		///set the pixel size of the "virtual rendering area"
-		/**
-		all the rendering is then scaled to have the virtual rendering area fit inside the real rendering area.
-		This is useful when fitting a fixed-scale pixel-perfect scene inside a resizable window.
-		*/
-		void setTargetSize(const Vector& size) {
-			mTargetSize = size;
-		}
-
+		
 		const Color& getClearColor() const {
 			return mClearColor;
 		}
@@ -122,10 +108,6 @@ namespace Dojo {
 			return mLocalFrustumVertices;
 		}
 
-		const Vector& getTargetSize() {
-			return mTargetSize;
-		}
-
 		const Matrix& getViewTransform() {
 			return mViewTransform;
 		}
@@ -140,9 +122,8 @@ namespace Dojo {
 			return mEnableClear;
 		}
 
-		///returns the RenderSurface this Viewport draws to
-		RenderSurface& getRenderTarget() {
-			return mRT.unwrap();
+		Framebuffer& getFramebuffer() {
+			return mFramebuffer;
 		}
 
 		///returns the on-screen position of the given world-space vector
@@ -175,17 +156,12 @@ namespace Dojo {
 		Vector makeWorldCoordinates(int x, int y) const;
 
 		///converts the w and h pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, int w, int h) const {
-			dest.x = ((float)w / mTargetSize.x) * m2DRect.x;// * nativeToScreenRatio;
-			dest.y = ((float)h / mTargetSize.y) * m2DRect.y;// * nativeToScreenRatio;
-		}
+		void makeScreenSize(Vector& dest, int w, int h) const;
 
 		///converts the texture pixel sizes in a screen space size
 		void makeScreenSize(Vector& dest, const Texture& tex) const;
 
-		float getPixelSide() const {
-			return m2DRect.x / mTargetSize.x;
-		}
+		float getPixelSide() const;
 
 		void setEyeTransform(const Matrix& t) {
 			mPerspectiveEyeTransform = t;
@@ -198,7 +174,7 @@ namespace Dojo {
 
 	protected:
 
-		Vector mTargetSize, m2DRect;
+		Vector m2DRect;
 
 		bool mEnableClear = true, mFrustumDirty = true;
 
@@ -218,7 +194,7 @@ namespace Dojo {
 		Vector mFarPlaneSide;
 
 		LayerList mLayerList;
-		optional_ref<RenderSurface> mRT;
+		Framebuffer mFramebuffer;
 
 		AABB mWorldBB;
 

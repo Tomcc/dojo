@@ -13,8 +13,7 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	Resource(creator),
 	internalWidth(0),
 	internalHeight(0),
-	glhandle(0),
-	mFBO(GL_NONE) {
+	glhandle(0) {
 	mTexturePart = self; //HACK
 }
 
@@ -22,8 +21,7 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	Resource(creator, path),
 	internalWidth(0),
 	internalHeight(0),
-	glhandle(0),
-	mFBO(GL_NONE) {
+	glhandle(0) {
 	mTexturePart = self; //HACK
 }
 
@@ -47,37 +45,6 @@ void Texture::bind(uint32_t index) {
 
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, glhandle);
-}
-
-void Texture::bindAsRenderTarget(bool depthBuffer) {
-	if (not mFBO) { //create a new RT on the fly at the first request
-		bind(0);
-
-		glGenFramebuffers(1, &mFBO);
-		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-
-		CHECK_GL_ERROR;
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glhandle, 0);
-
-		CHECK_GL_ERROR;
-
-		//create the depth attachment if needed
-		if (depthBuffer) {
-			glGenRenderbuffersEXT(1, &mDepthBuffer);
-			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
-			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, mDepthBuffer);
-		}
-
-		CHECK_GL_ERROR;
-
-		uint32_t status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		DEBUG_ASSERT( status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete" );
-	}
-	else {
-		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-	}
 }
 
 void Texture::enableAnisotropicFiltering(float level) {
@@ -115,6 +82,24 @@ void Texture::disableTiling() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void Dojo::Texture::_addAsAttachment(uint32_t index, uint32_t width, uint32_t height, uint8_t miplevel) {
+	DEBUG_ASSERT(width == getWidth() and height == getHeight(), "Cannot add texture as attachment");
+	DEBUG_ASSERT(miplevel == 0, "Mipmaps aren't supported anymore :(");
+
+	bind(0);
+
+	//TODO use the proper types
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER, 
+		GL_COLOR_ATTACHMENT0 + index,
+		GL_TEXTURE_2D, 
+		glhandle,
+		miplevel
+	);
+
+	CHECK_GL_ERROR;
 }
 
 bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) {
@@ -308,11 +293,6 @@ void Texture::onUnload(bool soft) {
 			glhandle = 0;
 			parentAtlas = {};
 			mTransparency = false;
-
-			if (mFBO) { //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
-				glDeleteFramebuffers(1, &mFBO);
-				mFBO = GL_NONE;
-			}
 		}
 
 		loaded = false;

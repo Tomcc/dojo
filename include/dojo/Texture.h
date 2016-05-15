@@ -59,9 +59,6 @@ namespace Dojo {
 		///internal - binds this texture as the current GL active one
 		virtual void bind(uint32_t index);
 
-		///internal - binds this texture as the current Render Target
-		void bindAsRenderTarget(bool useDepthBuffer);
-
 		void enableBilinearFiltering();
 		void disableBilinearFiltering();
 
@@ -122,6 +119,8 @@ namespace Dojo {
 
 		void _notifyOwnerFrameSet(FrameSet& s);
 
+		void _addAsAttachment(uint32_t index, uint32_t width, uint32_t height, uint8_t miplevel);
+
 	protected:
 
 		bool mTransparency = false;
@@ -134,11 +133,9 @@ namespace Dojo {
 
 		Unique<Mesh> OBB;
 
-		uint32_t glhandle, mDepthBuffer;
+		uint32_t glhandle;
 
 		Vector screenSize;
-
-		uint32_t mFBO;
 
 		///builds the optimal billboard for this texture, used in AnimatedQuads
 		void _rebuildOptimalBillboard();
