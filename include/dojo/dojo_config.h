@@ -52,7 +52,7 @@
 #endif
 
 ///the cap for the textures bound to a single object
-#define DOJO_MAX_TEXTURES 2
+#define DOJO_MAX_TEXTURES 4
 
 ///the cap for the texture coords in a single vertex
 #define DOJO_MAX_TEXTURE_COORDS 2
