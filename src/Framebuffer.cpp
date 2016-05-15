@@ -34,43 +34,54 @@ uint32_t Framebuffer::getHeight() const {
 }
 
 void Framebuffer::bind() {
+
 	if (isBackbuffer()) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glFrontFace(GL_CCW);
-	}
-	else if (!isCreated()) {
-		//create the framebuffer and attach all the stuff
-
-		glGenFramebuffers(1, &mFBO);
-		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-
-		CHECK_GL_ERROR;
-
-		auto width = getWidth();
-		auto height = getHeight();
-		int i = 0;
-		for(auto&& color : mColorAttachments) {
-			color.texture->_addAsAttachment(i, width, height, color.miplevel);
-		}
-
-		if (mHasDepth) {
-			glGenRenderbuffersEXT(1, &mDepthBuffer);
-			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
-			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, mDepthBuffer);
-
-			CHECK_GL_ERROR;
-		}
-
-		auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		DEBUG_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete");
+		glReadBuffer(GL_BACK);
+		GLenum buffer[] = { GL_BACK };
+		glDrawBuffers(1, buffer);
 	}
 	else {
-		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-		glFrontFace(GL_CW); //invert vertex winding when inverting the view
-	}
+		if (!isCreated()) {
+			//create the framebuffer and attach all the stuff
 
-	glReadBuffer(mColorAttachments.empty() ? GL_BACK : GL_COLOR_ATTACHMENT0);
+			glGenFramebuffers(1, &mFBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+
+			CHECK_GL_ERROR;
+
+			auto width = getWidth();
+			auto height = getHeight();
+			uint32_t i = 0;
+			for (auto&& color : mColorAttachments) {
+				color.texture->_addAsAttachment(i, width, height, color.miplevel);
+				mAttachmentList.push_back(GL_COLOR_ATTACHMENT0 + i);
+				++i;
+			}
+
+			if (mHasDepth) {
+				glGenRenderbuffersEXT(1, &mDepthBuffer);
+				glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
+				glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
+				glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, mDepthBuffer);
+
+				CHECK_GL_ERROR;
+			}
+
+			auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+			DEBUG_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "The framebuffer is incomplete");
+		}
+		else {
+			glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+		}
+
+		glFrontFace(GL_CW); //invert vertex winding when inverting the view
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glDrawBuffers(mAttachmentList.size(), mAttachmentList.data());
+
+		CHECK_GL_ERROR;
+	}
 }
 
 Dojo::Framebuffer::~Framebuffer() {

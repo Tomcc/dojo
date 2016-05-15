@@ -14,7 +14,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	internalWidth(0),
 	internalHeight(0),
 	glhandle(0) {
-	mTexturePart = self; //HACK
 }
 
 Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
@@ -22,7 +21,6 @@ Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
 	internalWidth(0),
 	internalHeight(0),
 	glhandle(0) {
-	mTexturePart = self; //HACK
 }
 
 Texture::~Texture() {
@@ -35,13 +33,7 @@ Texture::~Texture() {
 
 void Texture::bind(uint32_t index) {
 	//create the gl texture if still not created!
-	if (not glhandle) {
-		glGenTextures(1, &glhandle);
-
-		CHECK_GL_ERROR;
-
-		DEBUG_ASSERT( glhandle, "OpenGL Error, no texture handle was generated" );
-	}
+	DEBUG_ASSERT(glhandle, "This texture wasn't created yet");
 
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, glhandle);
@@ -114,7 +106,10 @@ bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) 
 
 	DEBUG_ASSERT(formatInfo.isGPUFormat(), "This format can't be loaded on the GPU!");
 
-	bind(0);
+	if(not glhandle) {
+		glGenTextures(1, &glhandle);
+	}
+	glBindTexture(GL_TEXTURE_2D, glhandle);
 
 	//TODO add back manually generated mipmaps
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -195,6 +190,10 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 
 bool Texture::loadFromFile(const utf::string& path) {
 	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded" );
+
+	if (not glhandle) {
+		glGenTextures(1, &glhandle);
+	}
 
 	int pixelSize;
 	std::vector<byte> imageData;

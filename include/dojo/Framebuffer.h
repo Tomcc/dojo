@@ -46,6 +46,7 @@ namespace Dojo {
 
 	protected:
 		std::vector<Attachment> mColorAttachments;
+		std::vector<uint32_t> mAttachmentList;
 		bool mHasDepth = false;
 
 		uint32_t mFBO = 0, mDepthBuffer = 0;
