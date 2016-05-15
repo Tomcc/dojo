@@ -174,10 +174,8 @@ void Viewport::setVisibleLayers(const LayerList& layers) {
 	mLayerList = layers;
 }
 
-void Viewport::setVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max) {
+void Dojo::Viewport::addVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max) {
 	DEBUG_ASSERT(min < max, "Invalid layer range");
-
-	mLayerList.clear();
 
 	for (auto&& i : range(min.value, max.value)) {
 		mLayerList.emplace_back(i);

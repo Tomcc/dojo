@@ -66,7 +66,7 @@ namespace Dojo {
 		void setVisibleLayers(const LayerList& layers);
 
 		///sets which subset of Render Layers this Viewport is able to "see"
-		void setVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max);
+		void addVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max);
 
 		///returns the subset of visible layers that has been set by setVisibleLayers
 		/**
