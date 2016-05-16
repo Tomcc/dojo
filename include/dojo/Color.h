@@ -83,6 +83,10 @@ namespace Dojo {
 				a >= 0 and a <= 1.f;
 		}
 
+		float getBrightness() const {
+			return (r + g + b) / 3.f;
+		}
+
 		///creates a single 32-bit hex value representing the color (will degrade precision in HDR colors)
 		RGBAPixel toRGBA() const {
 			DEBUG_ASSERT(isNormal(), "Cannot convert this color to a 32-bit int as it's out of range.");
