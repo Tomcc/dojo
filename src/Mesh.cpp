@@ -22,10 +22,32 @@ const uint32_t glFeatureStateMap[] = {
 const byte VERTEX_FIELD_SIZES[] = {
 	2 * sizeof(GLfloat), //position 2D
 	3 * sizeof(GLfloat), //position 3D
-	4 * sizeof(GLuint), //color
+	4 * sizeof(GLubyte), //color
 	1 * sizeof(GLuint), //normal
 	2 * sizeof(GLshort), //uv0
 	2 * sizeof(GLshort)
+};
+
+struct VertexFieldInfo {
+	uint32_t type;
+	byte components;
+	bool normalized;
+}
+
+static const vertexFieldInfoMap[] = {
+	{ GL_FLOAT, 2, false },	// 	Position2D,
+	{ GL_FLOAT, 3, false },	// 	Position3D,
+	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
+	{ GL_INT_2_10_10_10_REV, 4, true },	// 	Normal
+
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
 };
 
 bool Mesh::gBufferBindingsDirty = true;
@@ -268,32 +290,11 @@ void Mesh::normal(const Vector& n) {
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
 	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Normal)));
-	val = (Math::packNormalized<int>(n.z, 511) << 20);
+	val = 0;
+	val |= (Math::packNormalized<int>(n.z, 511) << 20);
 	val |= (Math::packNormalized<int>(n.y, 511) << 10);
 	val |= (Math::packNormalized<int>(n.x, 511) << 0);
 }
-
-struct VertexFieldInfo {
-	uint32_t type;
-	byte components;
-	bool normalized;
-}
-
-static const vertexFieldInfoMap[] = {
-	{ GL_FLOAT, 2, false },	// 	Position2D,
-	{ GL_FLOAT, 3, false },	// 	Position3D,
-	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
-	{ GL_INT_2_10_10_10_REV, 4, true },	// 	Normal
-
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-};
 
 void Mesh::bindVertexFormat(const Shader& shader) {
 	for (auto&& attribute : shader.getAttributes()) {
