@@ -8,7 +8,7 @@ public:
 
 	static utf::string getFileName(const utf::string& str);
 
-	static utf::string getDirectory(const utf::string& str);
+	static utf::string getParentDirectory(const utf::string& str);
 
 	static bool isAbsolute(const utf::string& str);
 

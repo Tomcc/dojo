@@ -18,7 +18,7 @@ namespace Dojo {
 		ShaderProgram(optional_ref<ResourceGroup> creator, const utf::string& filePath);
 
 		///"immediate" Resource constructor. When onLoad is called, it will use the utf::string and type to load
-		ShaderProgram(ShaderProgramType type, const std::string& contents);
+		ShaderProgram(ShaderProgramType type, std::string&& contents);
 
 		///returns the usage type of this shader, ie. fragment or vertex shader
 		ShaderProgramType getType() {

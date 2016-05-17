@@ -329,7 +329,7 @@ bool Font::onLoad() {
 
 	Table t = Platform::singleton().load(filePath);
 
-	fontFile = Path::getDirectory(filePath) + '/' + t.getString("truetype");
+	fontFile = Path::getParentDirectory(filePath) + t.getString("truetype");
 	fontWidth = fontHeight = t.getInt("size");
 
 	antialias = t.getBool("antialias");

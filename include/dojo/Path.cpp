@@ -23,7 +23,7 @@ utf::string Path::getFileName(const utf::string& str) {
 	return str.substr(start, str.find_last_of('.'));
 }
 
-utf::string Path::getDirectory(const utf::string& str) {
+utf::string Path::getParentDirectory(const utf::string& str) {
 	auto end = str.find_last_of('/');
 
 	return (end == str.end()) ?

@@ -189,7 +189,7 @@ bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable&
 }
 
 void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
-	if (not layer.elements.size() or not layer.visible) {
+	if (layer.elements.empty() or not layer.visible) {
 		return;
 	}
 

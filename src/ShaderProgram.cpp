@@ -27,15 +27,42 @@ ShaderProgram::ShaderProgram(optional_ref<ResourceGroup> creator, const utf::str
 	}
 }
 
-ShaderProgram::ShaderProgram(ShaderProgramType type, const std::string& contents) :
+ShaderProgram::ShaderProgram(ShaderProgramType type, std::string&& contents) :
 	Resource(),
-	mContentString(contents),
+	mContentString(std::move(contents)),
 	mType(type) {
 	DEBUG_ASSERT(mContentString.size(), "No shader code was defined (empty string)");
 }
 
 bool ShaderProgram::_load() {
 	static const uint32_t typeGLTypeMap[] = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
+
+	loaded = false;
+
+	auto currentDir = Path::getParentDirectory(filePath);
+	while (true) {
+		auto idx = mContentString.find("#include");
+		if (idx == std::string::npos) {
+			break;
+		}
+
+		auto start = mContentString.find('"', idx) + 1;
+		auto end = mContentString.find('"', start);
+		auto path = currentDir + utf::string(mContentString.substr(start, end - start));
+
+		auto file = Platform::singleton().getFile(path);
+
+		if (not file->open(Stream::Access::Read)) {
+			DEBUG_MESSAGE("Cannot include file:\n" + path);
+			return false;
+		}
+
+		auto size = file->getSize();
+		//create enough space in the string
+		mContentString.replace(idx, end - idx + 1, (size_t)size, 'X');
+
+		file->read((byte*)mContentString.data() + idx, size);
+	}
 
 	int compiled, sourceLength = mContentString.size();
 	const char* src = mContentString.c_str();
@@ -64,8 +91,6 @@ bool ShaderProgram::_load() {
 			glGetShaderInfoLog(mGLShader, blen, &slen, (GLchar*)compilerLog.bytes().data());
 			DEBUG_MESSAGE( "Compiler error:\n" + compilerLog );
 		}
-
-		FAIL("A shader program failed to compile!");
 	}
 
 	return loaded;
@@ -99,6 +124,8 @@ bool ShaderProgram::onLoad() {
 	else { //load from the in-memory string
 		loaded = _load();
 	}
+
+	DEBUG_ASSERT(loaded, "A shader program failed to compile!");
 
 	return loaded;
 }

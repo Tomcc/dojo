@@ -639,10 +639,6 @@ namespace utf
 		{
 		}
 
-		_utf8string(std::string&& string) : raw_bytes(std::move(string)) {
-
-		}
-
 		// construct from an unsigned char
 		_utf8string(size_t n, _char32bit c)
 		{
@@ -708,10 +704,21 @@ namespace utf
 		{
 		}
 
+		//move constructor
+		_utf8string(_utf8stringImpl&& str)
+			: raw_bytes(std::move(str.raw_bytes))
+		{
+		}
+
 		/// \brief copy constructor from basic std::string
 		_utf8string(const std::string &instring)
 			: raw_bytes(instring)
 		{
+		}
+
+		_utf8string(std::string&& instring) 
+			: raw_bytes(std::move(instring)) {
+			
 		}
 
 		// destructor

@@ -216,7 +216,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 		zip.getListAllFiles(".", zip_files);
 
 		for (int i = 0; i < zip_files.size(); ++i) {
-			map[Path::getDirectory(zip_files[i])].emplace_back(zip_files[i]);
+			map[Path::getParentDirectory(zip_files[i])].emplace_back(zip_files[i]);
 		}
 
 
