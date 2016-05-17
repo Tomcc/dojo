@@ -28,7 +28,7 @@ utf::string Path::getDirectory(const utf::string& str) {
 
 	return (end == str.end()) ?
 		utf::string{} :
-		str.substr(str.begin(), end);
+		str.substr(str.begin(), end + 1);
 }
 
 bool Path::isAbsolute(const utf::string& str) {
