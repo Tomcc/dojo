@@ -223,7 +223,7 @@ namespace Dojo {
 
 		int vertexCount = 0, indexCount = 0;
 
-		byte vertexFieldOffset[ (int)VertexField::_Count ];
+		std::array<byte, enum_cast(VertexField::_Count)> vertexFieldOffset;
 
 		PrimitiveMode triangleMode = PrimitiveMode::TriangleStrip;
 
@@ -233,10 +233,9 @@ namespace Dojo {
 
 		void _prepareVertex(const Vector& v);
 
-		///returns low level binding informations about a vertex field
-		void _getVertexFieldData(VertexField field, int& outComponents, uint32_t& outComponentsType, bool& outNormalized, void*& outOffset);
-
-		byte& _offset(VertexField f);
-		byte& _offset(VertexField f, int subID);
+		template<class T>
+		T& _field(VertexField field, byte set = 0) {
+			return *(T*)(currentVertex + vertexFieldOffset[enum_cast(field) + set]);
+		}
 	};
 }

@@ -21,6 +21,16 @@ namespace Dojo {
 		static const Radians PI; ///well, pi
 		static const Radians TAU; ///2*pi
 
+		template<class T, std::size_t N>
+		static constexpr size_t array_len(const T(& array)[N]) {
+			return N;
+		}
+
+		template<class T, std::size_t N>
+		static constexpr size_t array_size(const T(& array)[N]) {
+			return N * sizeof(T);
+		}
+
 		///clamps n between max and min
 		template <typename T>
 		static T clamp(T n, T min, T max) {

@@ -10,52 +10,31 @@
 
 using namespace Dojo;
 
-const uint32_t glFeatureStateMap[] = {
-	GL_VERTEX_ARRAY, //VF_POSITION2D,
-	GL_VERTEX_ARRAY, //VF_POSITION3D,
-	GL_COLOR_ARRAY, //VF_COLOR,
-	GL_NORMAL_ARRAY, //VF_NORMAL,
-	GL_TEXTURE_COORD_ARRAY, //VF_UV,
-	GL_TEXTURE_COORD_ARRAY, //VF_UV_1,
-};
-
-const byte VERTEX_FIELD_SIZES[] = {
-	2 * sizeof(GLfloat), //position 2D
-	3 * sizeof(GLfloat), //position 3D
-	4 * sizeof(GLubyte), //color
-	1 * sizeof(GLuint), //normal
-	2 * sizeof(GLshort), //uv0
-	2 * sizeof(GLshort)
-};
-
 struct VertexFieldInfo {
 	uint32_t type;
 	byte components;
 	bool normalized;
+	uint8_t bytes;
 }
 
-static const vertexFieldInfoMap[] = {
-	{ GL_FLOAT, 2, false },	// 	Position2D,
-	{ GL_FLOAT, 3, false },	// 	Position3D,
-	{ GL_UNSIGNED_BYTE, 4, true },	// 	Color,
-	{ GL_INT_2_10_10_10_REV, 4, true },	// 	Normal
+static const VERTEX_FIELD_INFO[enum_cast(VertexField::_Count)] = {
+	{ GL_FLOAT, 2, false, 2 * sizeof(GLfloat) },	// 	Position2D,
+	{ GL_FLOAT, 3, false, 3 * sizeof(GLfloat) },	// 	Position3D,
+	{ GL_UNSIGNED_BYTE, 4, true, 4 * sizeof(GLubyte) },	// 	Color,
+	{ GL_INT_2_10_10_10_REV, 4, true, 1 * sizeof(GLuint) },	// 	Normal
 
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
-	{ GL_SHORT, 2, true },	// 	UV,  //TODO use shorts?
+	{ GL_HALF_FLOAT, 2, false, 2 * sizeof(GLshort) },	// 	UV
+	{ GL_HALF_FLOAT, 2, false, 2 * sizeof(GLshort) },	// 	UV
 };
 
 bool Mesh::gBufferBindingsDirty = true;
 
 Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 	Resource(creator) {
-	//set all fields to zero
-	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
+	//set all fields to max
+	for(auto&& offset : vertexFieldOffset) {
+		offset = 0xff;
+	}
 
 	//default index size is 16
 	setIndexByteSize(sizeof(GLushort));
@@ -63,8 +42,10 @@ Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 
 Mesh::Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
-	//set all fields to zero
-	memset(vertexFieldOffset, 0xff, sizeof(vertexFieldOffset));
+	//set all fields to max
+	for (auto&& offset : vertexFieldOffset) {
+		offset = 0xff;
+	}
 
 	//default index size is 16
 	setIndexByteSize(sizeof(GLushort));
@@ -147,8 +128,8 @@ void Mesh::setIndexByteSize(byte bytenumber) {
 void Mesh::setVertexFieldEnabled(VertexField f) {
 	DEBUG_ASSERT(not editing, "setVertexFieldEnabled must be called BEFORE begin!");
 
-	_offset(f) = vertexSize;
-	vertexSize += VERTEX_FIELD_SIZES[(byte)f];
+	vertexFieldOffset[enum_cast(f)] = vertexSize;
+	vertexSize += VERTEX_FIELD_INFO[enum_cast(f)].bytes;
 }
 
 void Mesh::setVertexFields(const std::initializer_list<VertexField>& fs) {
@@ -205,27 +186,14 @@ Mesh::IndexType Mesh::vertex(const Vector& v) {
 	_prepareVertex(v);
 
 	if (isVertexFieldEnabled(VertexField::Position3D)) {
-		*((Vector*)(currentVertex + _offset(VertexField::Position3D))) = v;
+		_field<glm::vec3>(VertexField::Position3D) = v;
 	}
 	else {
-		auto ptr = (float*)(currentVertex + _offset(VertexField::Position2D));
-
-		ptr[0] = v.x;
-		ptr[1] = v.y;
+		_field<glm::vec2>(VertexField::Position2D) = { v.x, v.y };
 	}
 
 	return getVertexCount() - 1;
 }
-
-byte& Mesh::_offset(VertexField f) {
-	return vertexFieldOffset[(byte)f];
-}
-
-
-byte& Mesh::_offset(VertexField f, int subID) {
-	return vertexFieldOffset[(byte)((int)f + subID)];
-}
-
 
 void Mesh::appendRawVertexData(void* data, IndexType count) {
 	int blobSize = count * vertexSize;
@@ -266,12 +234,9 @@ int Mesh::getPrimitiveCount() const {
 }
 
 void Mesh::uv(float u, float v, byte set /*= 0 */) {
-	DEBUG_ASSERT(u <= 1.f and u >= -1.f and v <= 1.f and v >= -1.f, "UV out of range, can't be packed");
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
-	auto ptr = (GLshort*)(currentVertex + _offset(VertexField::UV0, set));
-	ptr[0] = Math::packNormalized<GLshort>(u);
-	ptr[1] = Math::packNormalized<GLshort>(v);
+	_field<GLuint>(VertexField::UV0, set) = glm::packHalf2x16({ u,v });
 }
 
 void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
@@ -282,14 +247,14 @@ void Mesh::color(const Color& c) {
 	DEBUG_ASSERT(isEditing(), "color: this Mesh is not in Edit mode");
 
 	vertexTransparency |= c.a < 1.f;
-	*((GLuint*)(currentVertex + _offset(VertexField::Color))) = c.toRGBA();
+	_field<GLuint>(VertexField::Color) = c.toRGBA();
 }
 
 void Mesh::normal(const Vector& n) {
 	DEBUG_ASSERT(std::abs(n.x) <= 1.f and std::abs(n.y) <= 1.f and std::abs(n.z) <= 1.f, "normal is too long, cannot pack");
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
-	auto& val = *((GLuint*)(currentVertex + _offset(VertexField::Normal)));
+	auto& val = _field<GLuint>(VertexField::Normal);
 	val = 0;
 	val |= (Math::packNormalized<int>(n.z, 511) << 20);
 	val |= (Math::packNormalized<int>(n.y, 511) << 10);
@@ -300,8 +265,8 @@ void Mesh::bindVertexFormat(const Shader& shader) {
 	for (auto&& attribute : shader.getAttributes()) {
 		DEBUG_ASSERT(isVertexFieldEnabled(attribute.builtInAttribute), "This mesh doesn't provide a required attribute");
 
-		auto offset = (void*)_offset(attribute.builtInAttribute);
-		auto& field = vertexFieldInfoMap[enum_cast(attribute.builtInAttribute)];
+		auto offset = (void*)vertexFieldOffset[enum_cast(attribute.builtInAttribute)];
+		auto& field = VERTEX_FIELD_INFO[enum_cast(attribute.builtInAttribute)];
 
 		glEnableVertexAttribArray(attribute.location);
 		glVertexAttribPointer(
@@ -462,7 +427,8 @@ void Mesh::onUnload(bool soft /*= false */) {
 }
 
 Vector& Mesh::getVertex(int idx) {
-	int offset = isVertexFieldEnabled(VertexField::Position3D) ? _offset(VertexField::Position3D) : _offset(VertexField::Position2D);
+	auto field = isVertexFieldEnabled(VertexField::Position3D) ? VertexField::Position3D : VertexField::Position3D;
+	auto offset = vertexFieldOffset[enum_cast(field)];
 	byte* ptr = (byte*)vertices.data() + (idx * vertexSize) + offset;
 
 	return *(Vector*)ptr;
@@ -546,7 +512,7 @@ Unique<Mesh> Mesh::cloneWithSameFormat() const {
 	c->setIndexByteSize(indexSize);
 	c->setTriangleMode(triangleMode);
 	c->vertexSize = vertexSize;
-	memcpy(c->vertexFieldOffset, vertexFieldOffset, sizeof(vertexFieldOffset));
+	c->vertexFieldOffset = vertexFieldOffset;
 
 	return c;
 }

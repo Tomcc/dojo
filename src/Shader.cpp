@@ -73,7 +73,8 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 	}
 
 	auto elem = sBuiltInAttributeNameMap.find(name);
-	return (elem != sBuiltInAttributeNameMap.end()) ? elem->second : VertexField::None;
+	DEBUG_ASSERT(elem != sBuiltInAttributeNameMap.end(), "Invalid attribute name");
+	return elem != sBuiltInAttributeNameMap.end() ? elem->second : VertexField::None;
 }
 
 Shader::Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
