@@ -300,8 +300,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	cursorPos(Vector::Zero),
 	frameInterval(0),
 	mFramesToAdvance(0),
-	clientAreaYOffset(0),
-	mContextRequestsQueue(make_unique<SPSCQueue<std::function<void()>>>()) {
+	clientAreaYOffset(0) {
 	/*
 	#ifdef _DEBUG
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF |_CRTDBG_LEAK_CHECK_DF );
@@ -657,7 +656,7 @@ void Win32Platform::prepareThreadContext() {
 	auto futureHandle = job->get_future();
 
 	//queue this on the main thread
-	mContextRequestsQueue->enqueue([job] {
+	getMainThreadPool().queue([job] {
 		auto context = wglCreateContext(hdc);
 
 		bool success = wglShareLists(hglrc, context) != 0;
@@ -714,12 +713,6 @@ void Win32Platform::_pollDevices(float dt) {
 
 void Win32Platform::step(float dt) {
 	mStepTimer.reset();
-
-	//check if some other thread requested a new context
-	std::function<void()> task;
-	while (mContextRequestsQueue->try_dequeue(task)) {
-		task();
-	}
 
 	//update input
 	_pollDevices(dt);

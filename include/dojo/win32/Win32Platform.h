@@ -57,8 +57,6 @@ namespace Dojo {
 		void keyPressed(int kc);
 		void keyReleased(int kc);
 
-		void _callbackThread(float frameLength);
-
 		float getFrameInterval() {
 			return frameInterval;
 		}
@@ -72,8 +70,6 @@ namespace Dojo {
 
 		bool dragging;
 		bool mMousePressed;
-
-		Unique<SPSCQueue<std::function<void()>>> mContextRequestsQueue;
 
 		bool _initializeWindow(const utf::string& caption, int w, int h);
 
