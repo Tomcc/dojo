@@ -65,14 +65,6 @@ void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, con
 			err = "GL_INVALID_OPERATION";
 			break;
 
-		case GL_STACK_OVERFLOW:
-			err = "GL_STACK_OVERFLOW";
-			break;
-
-		case GL_STACK_UNDERFLOW:
-			err = "GL_STACK_UNDERFLOW";
-			break;
-
 		case GL_OUT_OF_MEMORY:
 			err = "GL_OUT_OF_MEMORY";
 			break;

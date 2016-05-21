@@ -61,10 +61,10 @@ void Framebuffer::bind() {
 			}
 
 			if (mHasDepth) {
-				glGenRenderbuffersEXT(1, &mDepthBuffer);
-				glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, mDepthBuffer);
-				glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
-				glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, mDepthBuffer);
+				glGenRenderbuffers(1, &mDepthBuffer);
+				glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
 				CHECK_GL_ERROR;
 			}

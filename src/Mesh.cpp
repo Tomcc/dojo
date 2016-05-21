@@ -52,14 +52,6 @@ Mesh::Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
 }
 
 Mesh::~Mesh() {
-#ifndef DOJO_DISABLE_VAOS
-
-	if (vertexArrayDesc) {
-		glDeleteVertexArrays(1, &vertexArrayDesc);
-	}
-
-#endif
-
 	if (loaded) {
 		onUnload();
 	}
@@ -116,12 +108,8 @@ void Mesh::setIndexByteSize(byte bytenumber) {
 		indexMaxValue = 0xffff;
 	}
 	else if (indexSize == 4) {
-#ifdef DOJO_32BIT_INDICES_AVAILABLE
 		indexGLType = GL_UNSIGNED_INT;
 		indexMaxValue = 0xffffffff;
-#else
-		FAIL("32 bit indices are disabled (force enabled defining DOJO_32BIT_INDICES_AVAILABLE)");
-#endif
 	}
 }
 

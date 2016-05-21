@@ -34,6 +34,19 @@ HGLRC hglrc; // handle to OpenGL rendering context
 
 #define WINDOWMODE_PROPERTIES (WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)
 
+static void *getProcAddress(const char *functionName) {
+	void *p = (void *)wglGetProcAddress(functionName);
+	if (p == 0 ||
+		(p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||
+		(p == (void*)-1))
+	{
+		HMODULE module = LoadLibraryA("opengl32.dll");
+		p = (void *)GetProcAddress(module, functionName);
+	}
+
+	return p;
+}
+
 void _debugWin32Error(const char* msg, const char* file_source, int line, const char* function) {
 	DWORD error = GetLastError();
 
@@ -452,8 +465,6 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		FAIL("Couldn't make the rendering context current");
 	}
 	
-	glewInit();
-
 	//if we can use OpenGL 3.x, do that and initialize with custom context attributes
 	if(auto wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB")) {
 		//destroy the current context
@@ -480,6 +491,9 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 			FAIL("Cannot use this context");
 		}
 	}
+
+	auto success = gladLoadGLES2Loader(getProcAddress);
+	DEBUG_ASSERT(success, "Cannot load opengl");
 
 	CHECK_GL_ERROR;
 
@@ -663,8 +677,6 @@ void Win32Platform::prepareThreadContext() {
 	}
 
 	DEBUG_ASSERT( tries < 1000, "Cannot share OpenGL on this thread" );
-
-	glewInit();
 }
 
 void Win32Platform::shutdown() {
@@ -847,12 +859,13 @@ void Win32Platform::setMouseLocked(bool locked) {
 }
 
 void Win32Platform::setVSync(int interval/*=1*/) {
-	if (glewIsExtensionSupported("WGL_EXT_swap_control")) {
+	auto func = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+	if (func == nullptr) {
 		DEBUG_MESSAGE("Warning: \"WGL_EXT_swap_control\" extension not supported on your computer, disabling vsync");
 		return; // Error: WGL_EXT_swap_control extension not supported on your computer.\n");
 	}
 
-	((PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT"))(interval);
+	func(interval);
 }
 
 

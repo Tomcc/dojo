@@ -37,30 +37,11 @@
 	#define NDEBUG  //to be sure!
 #endif
 
-#ifdef PLATFORM_ANDROID
-	#define DOJO_DISABLE_VAOS //a number of Android phones has a faulty VAO implementation
-	#define USING_OPENGLES
-#endif
-
-#ifndef USING_OPENGLES
-	#define DOJO_32BIT_INDICES_AVAILABLE
-	#define DOJO_WIREFRAME_AVAILABLE //WIREFRAME not avaiable on iOS/Android devices
-#endif
-
-#ifndef PLATFORM_ANDROID
-	#define DOJO_ANISOTROPIC_FILTERING_AVAILABLE //anisotropic filtering has to be tested on Android //TODO move this to Platform, maybe make a caps class?
-#endif
-
 ///the cap for the textures bound to a single object
 #define DOJO_MAX_TEXTURES 4
 
 ///the cap for the texture coords in a single vertex
 #define DOJO_MAX_TEXTURE_COORDS 2
-
-//There is VAO experimental support but Valve states that VAOs are slower on all platforms
-//source: https://developer.nvidia.com/sites/default/files/akamai/gamedev/docs/Porting%20Source%20to%20Linux.pdf
-//needs testing, comment to enable
-#define DOJO_DISABLE_VAOS
 
 #define _HAS_AUTO_PTR_ETC 0
 

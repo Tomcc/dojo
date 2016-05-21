@@ -178,10 +178,6 @@ void Renderer::_renderElement(const RenderState& renderState) {
 	}
 
 	lastRenderState = renderState;
-
-#ifndef DOJO_DISABLE_VAOS
-	glBindVertexArray( 0 );
-#endif
 }
 
 bool _cull(const RenderLayer& layer, const Viewport& viewport, const Renderable& r) {
@@ -192,10 +188,6 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 	if (layer.elements.empty() or not layer.visible) {
 		return;
 	}
-
-#ifdef DOJO_WIREFRAME_AVAILABLE
-	glPolygonMode(GL_FRONT_AND_BACK, layer.wireframe ? GL_LINE : GL_FILL);
-#endif
 
 	//make state changes
 	if (layer.depthCheck) {
