@@ -132,6 +132,15 @@ bool ShaderProgram::onLoad() {
 
 Unique<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
+	
+	//place the new header after the version string
+	auto idx = mContentString.find("#version");
+	idx = mContentString.find('\n', idx);
 
-	return make_unique<ShaderProgram>(mType, preprocessorHeader + mContentString);
+	DEBUG_ASSERT(idx != std::string::npos, "A shader program must have a version specification");
+
+	auto combinedString = mContentString;
+	combinedString.insert(idx + 1, preprocessorHeader);
+
+	return make_unique<ShaderProgram>(mType, std::move(combinedString));
 }
