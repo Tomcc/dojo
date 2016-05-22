@@ -48,7 +48,8 @@ namespace Dojo {
 			const Color& clear,
 			Degrees VFOV = 0.0_deg,
 			float zNear = 0.01f,
-			float zFar = 1000.f);
+			float zFar = 1000.f,
+			int renderingOrder = -1);
 
 		virtual ~Viewport();
 
@@ -189,6 +190,7 @@ namespace Dojo {
 		Degrees mVFOV;
 		float mZNear, mZFar;
 		Vector mFarPlaneSide;
+		int mRenderingOrder = -1;
 
 		LayerList mLayerList;
 		Framebuffer mFramebuffer;

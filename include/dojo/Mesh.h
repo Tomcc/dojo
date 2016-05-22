@@ -68,6 +68,10 @@ namespace Dojo {
 		///A dynamic mesh set as dynamic won't clear its CPU cache when loaded, allowing for quick editing
 		void setDynamic(bool d);
 
+		bool isDynamic() const {
+			return dynamic;
+		}
+
 		///Sets the primitive for the rendering of this mesh
 		void setTriangleMode(PrimitiveMode m) {
 			triangleMode = m;

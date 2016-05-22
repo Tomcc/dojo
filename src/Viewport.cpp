@@ -19,14 +19,16 @@ Viewport::Viewport(
 	const Color& clear,
 	Degrees VFOV,
 	float zNear,
-	float zFar) :
+	float zFar,
+	int renderingOrder) :
 	Component(parent),
 	mClearColor(clear),
 	mVFOV(0),
 	mZNear(0.01f),
 	mZFar(1000),
-	m2DRect(worldSize2D) {
-	
+	m2DRect(worldSize2D)
+, mRenderingOrder(renderingOrder) {
+	DEBUG_ASSERT(renderingOrder >= -1, "invalid rendering order");
 	DEBUG_ASSERT(m2DRect.x > 0 and m2DRect.y > 0, "Invalid dimension for 2D");
 
 	if (VFOV > 0.f) {
@@ -254,7 +256,7 @@ float Viewport::getPixelSide() const {
 }
 
 void Viewport::onAttach() {
-	Platform::singleton().getRenderer().addViewport(self);
+	Platform::singleton().getRenderer().addViewport(self, mRenderingOrder);
 }
 
 void Viewport::onDetach() {

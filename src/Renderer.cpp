@@ -114,7 +114,7 @@ void Renderer::clearLayers() {
 }
 
 void Renderer::addViewport(Viewport& v, int index /*= -1*/) {
-	if (index < 0) {
+	if (index < 0) { 
 		viewportList.push_back(&v);
 	}
 	else {
@@ -173,7 +173,6 @@ void Renderer::_renderElement(const RenderState& renderState) {
 		glDrawArrays(mode, 0, m.getVertexCount());
 	}
 	else {
-		DEBUG_ASSERT(m.getIndexCount() > 0, "Rendering an indexed mesh with no indices");
 		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
 	}
 
