@@ -156,10 +156,7 @@ namespace Dojo {
 		Vector makeWorldCoordinates(int x, int y) const;
 
 		///converts the w and h pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, int w, int h) const;
-
-		///converts the texture pixel sizes in a screen space size
-		void makeScreenSize(Vector& dest, const Texture& tex) const;
+		Vector makeScreenSize(uint32_t w, uint32_t h) const;
 
 		float getPixelSide() const;
 

@@ -71,23 +71,23 @@ namespace Dojo {
 		void disableTiling();
 
 		///returns the texture size in the UV space of the parent atlas/padded image
-		const Vector& getUVSize() {
+		const Vector& getUVSize() const {
 			return UVSize;
 		}
 
 		///returns the texture offset in the UV space of the parent atlas/padded image
-		const Vector& getUVOffset() {
+		const Vector& getUVOffset()  const {
 			return UVOffset;
 		}
 
-		int getInternalWidth() {
+		uint32_t getInternalWidth() const {
 			return internalWidth;
 		}
 
-		int getInternalHeight() {
+		uint32_t getInternalHeight()  const {
 			return internalHeight;
 		}
-
+		
 		///Returns a parent atlas Texture if this texture is a "fake" tile atlas
 		optional_ref<Texture> getParentAtlas() {
 			return parentAtlas;
@@ -141,6 +141,6 @@ namespace Dojo {
 		void _rebuildOptimalBillboard();
 
 		bool _setupAtlas();
-		bool _load(int w, int h, PixelFormat formatID, bool initStorage);
+		bool _createStorage(uint32_t w, uint32_t h, PixelFormat formatID);
 	};
 }

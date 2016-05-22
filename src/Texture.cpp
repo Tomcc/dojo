@@ -94,7 +94,7 @@ void Dojo::Texture::_addAsAttachment(uint32_t index, uint32_t width, uint32_t he
 	CHECK_GL_ERROR;
 }
 
-bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) {
+bool Dojo::Texture::_createStorage(uint32_t w, uint32_t h, PixelFormat formatID) {
 	width = w;
 	height = h;
 
@@ -134,40 +134,35 @@ bool Dojo::Texture::_load(int w, int h, PixelFormat formatID, bool initStorage) 
 		internalHeight = destHeight;
 		internalFormat = formatID;
 
-		std::vector<byte> dummyData(
-			initStorage ? internalWidth * internalHeight * formatInfo.sourcePixelSize : 0,
-			0
-		);
+		auto internalSize = internalWidth * internalHeight * formatInfo.sourcePixelSize;
+		DEBUG_ASSERT(internalSize % 4 == 0, "OpenGL implementations choke on non-4-aligned buffers");
 
-		//create an empty GPU mem space
-		glTexImage2D(
+		glTexStorage2D(
 			GL_TEXTURE_2D,
-			0,
+			1, //TODO multiple levels?
 			formatInfo.internalFormat,
 			internalWidth,
-			internalHeight,
-			0,
-			formatInfo.sourceFormat,
-			formatInfo.sourceElementType,
-			initStorage ? dummyData.data() : nullptr);
+			internalHeight
+		);
+
+		CHECK_GL_ERROR;
+
 	}
 
 	UVSize.x = (float)width / (float)internalWidth;
 	UVSize.y = (float)height / (float)internalHeight;
 
-	CHECK_GL_ERROR;
-
 	return loaded = true;
 }
 
 bool Texture::loadEmpty(int width, int height, PixelFormat destFormat) {
-	return _load(width, height, destFormat, true);
+	return _createStorage(width, height, destFormat);
 }
 
 bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
 	DEBUG_ASSERT( imageData, "null image data" );
 
-	_load(width, height, sourceFormat, false);
+	_createStorage(width, height, sourceFormat);
 
 	auto& format = TexFormatInfo::getFor(sourceFormat);
 

@@ -166,15 +166,11 @@ Vector Viewport::getRayDirection(const Vector& screenSpacePos) {
 	return (a - object.getWorldPosition()).normalized();
 }
 
-void Viewport::makeScreenSize(Vector& dest, const Texture& tex) const {
-	makeScreenSize(dest, tex.getWidth(), tex.getHeight());
-}
-
 void Viewport::setVisibleLayers(const LayerList& layers) {
 	mLayerList = layers;
 }
 
-void Dojo::Viewport::addVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max) {
+void Viewport::addVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max) {
 	DEBUG_ASSERT(min < max, "Invalid layer range");
 
 	for (auto&& i : range(min.value, max.value)) {
@@ -246,19 +242,21 @@ void Viewport::_update() {
 	}
 }
 
-void Dojo::Viewport::makeScreenSize(Vector& dest, int w, int h) const {
-	dest.x = ((float)w / mFramebuffer.getWidth()) * m2DRect.x;// * nativeToScreenRatio;
-	dest.y = ((float)h / mFramebuffer.getHeight()) * m2DRect.y;// * nativeToScreenRatio;
+Vector Viewport::makeScreenSize(uint32_t w, uint32_t h) const {
+	return{
+		((float)w / mFramebuffer.getWidth()) * m2DRect.x,
+		((float)h / mFramebuffer.getHeight()) * m2DRect.y
+	};
 }
 
-float Dojo::Viewport::getPixelSide() const {
+float Viewport::getPixelSide() const {
 	return m2DRect.x / mFramebuffer.getWidth();
 }
 
-void Dojo::Viewport::onAttach() {
+void Viewport::onAttach() {
 	Platform::singleton().getRenderer().addViewport(self);
 }
 
-void Dojo::Viewport::onDetach() {
+void Viewport::onDetach() {
 	Platform::singleton().getRenderer().removeViewport(self);
 }

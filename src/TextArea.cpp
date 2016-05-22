@@ -190,7 +190,7 @@ void TextArea::_prepare() {
 	}
 
 	//setup the aspect ratio
-	getGameState().getViewport().unwrap().makeScreenSize(screenSize, font.getFontWidth(), font.getFontHeight());
+	screenSize = getGameState().getViewport().unwrap().makeScreenSize(font.getFontWidth(), font.getFontHeight());
 
 	pixelScale.z = 1;
 	screenSize = Vector::mul(screenSize, pixelScale);

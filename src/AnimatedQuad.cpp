@@ -137,7 +137,8 @@ void AnimatedQuad::_updateScreenSize() {
 	if (pixelPerfect) {
 		DEBUG_ASSERT( getTexture().is_some(), "Pixel perfect AnimatedQuads need a texture to be set" );
 
-		self.getGameState().getViewport().unwrap().makeScreenSize(screenSize, getTexture().unwrap());
+		auto& tex = getTexture().unwrap();
+		auto screenSize = getGameState().getViewport().unwrap().makeScreenSize(tex.getWidth(), tex.getHeight());
 		screenSize.x *= pixelScale.x;
 		screenSize.y *= pixelScale.y;
 	}

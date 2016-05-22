@@ -9,6 +9,8 @@ namespace Dojo {
 		RGBA_8_8_8_8_SRGB,
 		RGB_8_8_8_SRGB,
 		RGBA_16_16_16_16,
+		R_8,
+		A_8, //same as R_8, but counts as transparent
 		Unknown
 	};
 }
