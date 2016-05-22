@@ -75,8 +75,8 @@ void ViewportRecorder::captureFrame() {
 	glReadPixels(
 		0, 0,
 		mWidth, mHeight,
-		mFormatInfo.internalFormat,
-		mFormatInfo.internalElementType,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE, //TODO support more formats? This is all that GLES3 can do
 		nullptr
 	);
 
