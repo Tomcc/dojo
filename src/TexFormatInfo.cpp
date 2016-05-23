@@ -13,6 +13,7 @@ namespace Dojo {
 			{ 3, GL_SRGB8, GL_UNSIGNED_BYTE,				3, GL_RGB, GL_UNSIGNED_BYTE, false },
 			{ 8, GL_RGBA16F, GL_HALF_FLOAT,					16, GL_RGBA, GL_FLOAT, false },
 			{ 1, GL_R8, GL_UNSIGNED_BYTE,					1, GL_RED, GL_UNSIGNED_BYTE, false },
+			{ 2, GL_RG8, GL_UNSIGNED_BYTE,					2, GL_RG, GL_UNSIGNED_BYTE, false },
 			{ 1, GL_R8, GL_UNSIGNED_BYTE,					1, GL_ALPHA, GL_UNSIGNED_BYTE, true },
 			{ 0, 0, 0, 0, 0 },
 		};
