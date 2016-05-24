@@ -35,39 +35,45 @@ namespace Dojo {
 		\param nativeOrientation the orientation on devices which support display rotation
 		\param nativeFrequency the update rate of this game, or how much should a frame last. Default is 1/60 s or the VSync duration if enabled
 		\param maxFrameLength the max frame dt that will be propagated to the game, to avoid integration glitch on long frames
+		\param requireDepthBuffer set to false if the game won't use any perspective/depth sorted layer to use less VRAM
 		*/
-		Game(const utf::string& name, int nativeWidth = 0, int nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f / 60.f, float maxFrameLength = 1.f / 30.f);
+		Game(const utf::string& name, int nativeWidth = 0, int nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f / 60.f, float maxFrameLength = 1.f / 30.f, bool requireDepthBuffer = true);
 
 		virtual ~Game();
 
-		const utf::string& getName() {
+		const utf::string& getName() const {
 			return name;
 		}
 
-		uint32_t getNativeWidth() {
+		uint32_t getNativeWidth() const {
 			return nativeWidth;
 		}
 
-		uint32_t getNativeHeight() {
+		uint32_t getNativeHeight()  const {
 			return nativeHeight;
 		}
 
-		float getNativeFrameLength() {
+		float getNativeFrameLength() const {
 			return mNativeFrameLength;
 		}
 
-		float getMaximumFrameLength() {
+		float getMaximumFrameLength() const {
 			return mMaxFrameLength;
 		}
 
-		Orientation getNativeOrientation() {
+		Orientation getNativeOrientation() const {
 			return nativeOrientation;
+		}
+
+		bool getRequiresDepthBuffer() const {
+			return mRequireDepthBuffer;
 		}
 
 		virtual void onWindowResolutionChanged(int w, int h) {
 
 		}
 
+		
 		bool isRunning() const {
 			return running;
 		}
@@ -80,6 +86,7 @@ namespace Dojo {
 
 		uint32_t nativeWidth, nativeHeight;
 		float mNativeFrameLength, mMaxFrameLength;
+		bool mRequireDepthBuffer;
 
 		Orientation nativeOrientation;
 

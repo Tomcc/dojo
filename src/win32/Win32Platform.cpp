@@ -433,8 +433,8 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
 	pixelFormatDescriptor.cColorBits = 16; //allow 565
 	pixelFormatDescriptor.cAlphaBits = 0;
-	pixelFormatDescriptor.cDepthBits = 16;
-	pixelFormatDescriptor.cStencilBits = 1;
+	pixelFormatDescriptor.cDepthBits = game->getRequiresDepthBuffer() ? 16 : 0;
+	pixelFormatDescriptor.cStencilBits = game->getRequiresDepthBuffer() ? 1 : 0;
 
 
 	int chosenPixelFormat;

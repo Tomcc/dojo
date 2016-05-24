@@ -8,13 +8,14 @@
 
 using namespace Dojo;
 
-Game::Game(const utf::string& gamename, int w, int h, Orientation r, float nativedt, float maximumdt) :
+Game::Game(const utf::string& gamename, int w, int h, Orientation r, float nativedt, float maximumdt, bool requireDepthBuffer) :
 	name(gamename),
 	nativeWidth(w),
 	nativeHeight(h),
 	nativeOrientation(r),
 	mNativeFrameLength(nativedt),
-	mMaxFrameLength(maximumdt) {
+	mMaxFrameLength(maximumdt),
+	mRequireDepthBuffer(requireDepthBuffer) {
 	DEBUG_ASSERT( name.not_empty(), "A Game must have a non-empty name" );
 	DEBUG_ASSERT( w >= 0, "negative width" );
 	DEBUG_ASSERT( h >= 0, "negative height" );
