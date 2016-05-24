@@ -69,6 +69,15 @@ namespace Dojo {
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void addVisibleLayersRange(RenderLayer::ID min, RenderLayer::ID max);
 
+		///If true, all the framebuffers connected to viewports rendered before this one are invalidated once this one is done
+		void setInvalidatePreviousBuffersAfterFrame(bool invalidate) {
+			mInvalidatePreviousViewports = invalidate;
+		}
+
+		bool getInvalidatePreviousViewportsAfterFrame() const {
+			return mInvalidatePreviousViewports;
+		}
+
 		///returns the subset of visible layers that has been set by setVisibleLayers
 		/**
 		by default, the set is empty, which means "all layers"
@@ -191,6 +200,8 @@ namespace Dojo {
 		float mZNear, mZFar;
 		Vector mFarPlaneSide;
 		int mRenderingOrder = -1;
+
+		bool mInvalidatePreviousViewports = false;
 
 		LayerList mLayerList;
 		Framebuffer mFramebuffer;

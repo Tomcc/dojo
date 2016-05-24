@@ -128,9 +128,6 @@ Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation
 	DEBUG_MESSAGE("renderer: " + utf::string((const char*)glGetString(GL_RENDERER)));
 	DEBUG_MESSAGE("version: OpenGL " + utf::string((const char*)glGetString(GL_VERSION)));
 
-	//clean errors (some drivers leave errors on the stack)
-	while (glGetError() != GL_NO_ERROR);
-
 	setInterfaceOrientation(Platform::singleton().getGame().getNativeOrientation());
 
 	//HACK GL core doesn't work without a VAO bound... but ain't nobody got time fo' dat
@@ -359,6 +356,17 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	else { //use the custom layer ordering/visibility
 		for (auto&& layer : viewport.getVisibleLayers()) {
 			_renderLayer(viewport, getLayer(layer));
+		}
+	}
+
+	if(viewport.getInvalidatePreviousViewportsAfterFrame()) {
+		//invalidate all viewports before this one
+		for (auto&& v : viewportList) {
+			if(v == &viewport) {
+				break;
+			}
+
+			v->getFramebuffer().invalidate();
 		}
 	}
 }

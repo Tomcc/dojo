@@ -8,6 +8,12 @@
 
 using namespace Dojo;
 
+Dojo::Framebuffer::~Framebuffer() {
+	if (isCreated()) { //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
+		glDeleteFramebuffers(1, &mFBO);
+	}
+}
+
 void Framebuffer::addColorAttachment(Texture& texture, uint8_t miplevel /*= 0*/) {
 	DEBUG_ASSERT(!isCreated(), "Already configured. Too late");
 	mColorAttachments.emplace_back(Attachment{ &texture, miplevel });
@@ -43,12 +49,11 @@ void Framebuffer::bind() {
 		glDrawBuffers(1, buffer);
 	}
 	else {
-		if (!isCreated()) {
+		if (not isCreated()) {
 			//create the framebuffer and attach all the stuff
 
 			glGenFramebuffers(1, &mFBO);
 			glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-
 
 			auto width = getWidth();
 			auto height = getHeight();
@@ -64,7 +69,7 @@ void Framebuffer::bind() {
 				glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer);
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
-
+				mAttachmentList.push_back(GL_DEPTH_ATTACHMENT);
 			}
 
 			auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -76,13 +81,14 @@ void Framebuffer::bind() {
 
 		glFrontFace(GL_CW); //invert vertex winding when inverting the view
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		glDrawBuffers(mAttachmentList.size(), mAttachmentList.data());
-
+		glDrawBuffers(mAttachmentList.size() - mHasDepth, mAttachmentList.data());
 	}
 }
 
-Dojo::Framebuffer::~Framebuffer() {
-	if (isCreated()) { //fbos are destroyed on unload, the user must care to rebuild their contents after a purge
-		glDeleteFramebuffers(1, &mFBO);
+void Framebuffer::invalidate() {
+	if (not isBackbuffer()) {
+		bind();
+
+		glInvalidateFramebuffer(GL_FRAMEBUFFER, mAttachmentList.size(), mAttachmentList.data());
 	}
 }

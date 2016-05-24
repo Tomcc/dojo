@@ -42,6 +42,8 @@ namespace Dojo {
 			return not isBackbuffer();
 		}
 
+		void invalidate();
+
 		void bind();
 
 	protected:
