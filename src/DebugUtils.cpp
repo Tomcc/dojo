@@ -48,38 +48,6 @@ void Dojo::DEFAULT_ASSERT_HANDLER(const char* desc, const char* arg, const char*
 #endif
 }
 
-void Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
-
-	for (auto g = glGetError(); g != GL_NONE; g = glGetError()) {
-		utf::string err;
-		switch (g) {
-		case GL_INVALID_ENUM:
-			err = "GL_INVALID_ENUM";
-			break;
-
-		case GL_INVALID_VALUE:
-			err = "GL_INVALID_VALUE";
-			break;
-
-		case GL_INVALID_OPERATION:
-			err = "GL_INVALID_OPERATION";
-			break;
-
-		case GL_OUT_OF_MEMORY:
-			err = "GL_OUT_OF_MEMORY";
-			break;
-		};
-		
-		Dojo::gp_assert_handler(
-			("OpenGL encountered an error: " + utf::string(err)).bytes().data(),
-			"error != GL_NO_ERROR",
-			nullptr,
-			line,
-			file_source,
-			function);
-	}
-}
-
 bool Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(const char* file_source, int line, const char* function) {
 	int error = alGetError();
 

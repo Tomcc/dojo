@@ -17,6 +17,101 @@ using namespace Dojo;
 
 GLuint gDefaultVAO = 0;
 
+
+const char* _errorToString(GLenum errorType) {
+	switch (errorType)
+	{
+	case GL_INVALID_ENUM:
+		return "GL_INVALID_ENUM";
+	case GL_INVALID_VALUE:
+		return "GL_INVALID_VALUE";
+	case GL_INVALID_OPERATION:
+		return "GL_INVALID_OPERATION";
+	case GL_OUT_OF_MEMORY:
+		return "GL_OUT_OF_MEMORY";
+	default:
+		return "UNKNOWN ERROR";
+	}
+};
+
+const char* _errorTypeToString(GLenum errorType) {
+	switch (errorType) {
+	case GL_DEBUG_TYPE_ERROR:
+		return "GL_DEBUG_TYPE_ERROR";
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		return "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR";
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		return "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR";
+	case GL_DEBUG_TYPE_PORTABILITY:
+		return "GL_DEBUG_TYPE_PORTABILITY";
+	case GL_DEBUG_TYPE_PERFORMANCE:
+		return "GL_DEBUG_TYPE_PERFORMANCE";
+	case GL_DEBUG_TYPE_OTHER:
+		return "GL_DEBUG_TYPE_POP_GROUP";
+	case GL_DEBUG_TYPE_MARKER:
+		return "GL_DEBUG_TYPE_MARKER";
+	case GL_DEBUG_TYPE_PUSH_GROUP:
+		return "GL_DEBUG_TYPE_PUSH_GROUP";
+	case GL_DEBUG_TYPE_POP_GROUP:
+		return "GL_DEBUG_TYPE_POP_GROUP";
+	default:
+		FAIL("Add this error to this list pls, it's new");
+	}
+}
+
+bool isGLErrorFatal(GLenum errorType) {
+	switch (errorType) {
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+	case GL_DEBUG_TYPE_ERROR:
+	case GL_DEBUG_TYPE_PORTABILITY:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool isGLErrorIgnored(GLenum errorType, GLenum severity) {
+	switch (errorType) {
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+	case GL_DEBUG_TYPE_ERROR:
+	case GL_DEBUG_TYPE_PORTABILITY:
+		return false;			
+	case GL_DEBUG_TYPE_PERFORMANCE:
+	case GL_DEBUG_TYPE_MARKER:
+		return severity == GL_DEBUG_SEVERITY_NOTIFICATION;
+	default:
+		return true;
+	}
+}
+
+
+bool logInfoGLMessages = false;
+
+void APIENTRY GL_DEBUG_CALLBACK(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar *message, 
+	const GLvoid *userParam) {
+
+	if (isGLErrorIgnored(type, severity)) {
+		if (logInfoGLMessages) {
+			Dojo::gp_log->append( utf::string("GL info: ") +  message + "\n");
+		}
+		return;
+	}
+
+	Dojo::gp_log->append(utf::string("OpenGL Error: ") + _errorTypeToString(type) + "\n" + "Message: " + message);
+
+	if (isGLErrorFatal(type)) {
+		FAIL("OpenGL fatal error!");
+	}
+}
+
 Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation) :
 	frameStarted(false),
 	valid(true),
@@ -27,11 +122,11 @@ Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation
 	frameTriCount(0),
 	frameBatchCount(0),
 	submitter(Platform::singleton()) {
-	DEBUG_MESSAGE( "Creating OpenGL context...");
-	DEBUG_MESSAGE ("querying GL info... ");
-	DEBUG_MESSAGE ("vendor: " + utf::string( (const char*)glGetString (GL_VENDOR)));
-	DEBUG_MESSAGE ("renderer: " + utf::string( (const char*)glGetString (GL_RENDERER)));
-	DEBUG_MESSAGE ("version: OpenGL " + utf::string( (const char*)glGetString (GL_VERSION)));
+	DEBUG_MESSAGE("Creating OpenGL context...");
+	DEBUG_MESSAGE("querying GL info... ");
+	DEBUG_MESSAGE("vendor: " + utf::string((const char*)glGetString(GL_VENDOR)));
+	DEBUG_MESSAGE("renderer: " + utf::string((const char*)glGetString(GL_RENDERER)));
+	DEBUG_MESSAGE("version: OpenGL " + utf::string((const char*)glGetString(GL_VERSION)));
 
 	//clean errors (some drivers leave errors on the stack)
 	while (glGetError() != GL_NO_ERROR);
@@ -42,7 +137,25 @@ Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation
 	glGenVertexArrays(1, &gDefaultVAO);
 	glBindVertexArray(gDefaultVAO);
 
-	CHECK_GL_ERROR;
+#ifdef PUBLISH
+	bool shouldLog = false;
+#else
+	bool shouldLog = true;
+#endif
+
+	//let the user decide if they want the logging or not, default to the above
+	if (GLAD_GL_KHR_debug and Platform::singleton().getUserConfiguration().getBool("enable_GL_log", shouldLog)) {
+#ifndef PUBLISH
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
+
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+		//decide if to also log normally ignored messages
+		logInfoGLMessages = Platform::singleton().getUserConfiguration().getBool("verbose_GL_log");
+
+		glDebugMessageCallback(&GL_DEBUG_CALLBACK, nullptr);
+	}
 }
 
 Renderer::~Renderer() {

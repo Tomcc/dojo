@@ -60,9 +60,9 @@ void _debugWin32Error(const char* msg, const char* file_source, int line, const 
 }
 
 #ifndef PUBLISH
-	#define CHECK_WIN32_ERROR(T, MSG ) { if(not (T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
+#define CHECK_WIN32_ERROR(T, MSG ) { if(not (T) ) { _debugWin32Error( MSG, __FILE__, __LINE__, __FUNCTION__ ); }  }
 #else
-	#define CHECK_WIN32_ERROR(T, MSG ) {}
+#define CHECK_WIN32_ERROR(T, MSG ) {}
 #endif
 
 Touch::Type win32messageToMouseButton(UINT message) {
@@ -154,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		PostQuitMessage(0);
 		return 0;
 
-	//enter / exit unfocused state
+		//enter / exit unfocused state
 	case WM_ACTIVATEAPP:
 	case WM_ACTIVATE:
 	case WM_SHOWWINDOW:
@@ -209,7 +209,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 			return 0;
 		}
 
-	//continues after the jump!!
+		//continues after the jump!!
 
 	case WM_KEYDOWN:
 
@@ -217,7 +217,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		case VK_ESCAPE:
 #ifdef _DEBUG //close with ESC automagically
 
-			PostQuitMessage( 0 );
+			PostQuitMessage(0);
 			break;
 #endif
 
@@ -266,11 +266,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		//if we were fullscreen in OpenGL, we need to reset the original setup
 		/*if( getVideoDriver() and DriverType == ox::video::EDT_OPENGL and getVideoDriver()->isFullscreen() )
 		{
-		    bool success = _changeDisplayMode( false, ox::TDimension() );
-		    //hide window
-		    ShowWindow( hWnd, FALSE );
+			bool success = _changeDisplayMode( false, ox::TDimension() );
+			//hide window
+			ShowWindow( hWnd, FALSE );
 
-		    DEBUG_ASSERT( success );
+			DEBUG_ASSERT( success );
 		}*/
 		return 0;
 
@@ -278,9 +278,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 		//if we are fullscreen in OpenGL, we need to change the res again
 		/*if( getVideoDriver() and DriverType == ox::video::EDT_OPENGL and getVideoDriver()->isFullscreen() )
 		{
-		    bool success = _changeDisplayMode( true, WindowSize );
-		    ShowWindow( hWnd, TRUE );
-		    DEBUG_ASSERT( success );
+			bool success = _changeDisplayMode( true, WindowSize );
+			ShowWindow( hWnd, TRUE );
+			DEBUG_ASSERT( success );
 		}*/
 		return 0;
 	}
@@ -343,7 +343,7 @@ void Win32Platform::_adjustWindow() {
 	InvalidateRect(nullptr, nullptr, false);
 
 	SetWindowPos(hWindow, HWND_NOTOPMOST, windowLeft, windowTop, realWidth, realHeight,
-											SWP_SHOWWINDOW);
+		SWP_SHOWWINDOW);
 
 	MoveWindow(hWindow, windowLeft, windowTop, realWidth, realHeight, TRUE);
 
@@ -371,7 +371,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = WndProc;
-	wc.lpszClassName = TEXT("DojoOpenGLWindow") ;
+	wc.lpszClassName = TEXT("DojoOpenGLWindow");
 	wc.lpszMenuName = 0;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
@@ -398,12 +398,12 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	// specify the width and height of the window.
 
 	hWindow = CreateWindowW(L"DojoOpenGLWindow",
-			String::toUTF16(windowCaption).c_str(),
-			dwstyle, //non-resizabile
-			rect.left, rect.top,
-			rect.right - rect.left, rect.bottom - rect.top,
-			nullptr, nullptr,
-			hInstance, nullptr);
+		String::toUTF16(windowCaption).c_str(),
+		dwstyle, //non-resizabile
+		rect.left, rect.top,
+		rect.right - rect.left, rect.bottom - rect.top,
+		nullptr, nullptr,
+		hInstance, nullptr);
 
 	if (hWindow == nullptr) {
 		return false;
@@ -463,11 +463,11 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	if (not wglMakeCurrent(hdc, hglrc)) {
 		FAIL("Couldn't make the rendering context current");
 	}
-	
+
 	//if we can use OpenGL 3.x, do that and initialize with custom context attributes
-	if(auto wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB")) {
+	if (auto wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB")) {
 		//destroy the current context
-		if(not wglMakeCurrent(nullptr, nullptr) or not wglDeleteContext(hglrc)) {
+		if (not wglMakeCurrent(nullptr, nullptr) or not wglDeleteContext(hglrc)) {
 			FAIL("Cannot remove dummy context");
 		}
 
@@ -486,7 +486,7 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 		hglrc = wglCreateContextAttribsARB(hdc, 0, wglAttributes);
 		DEBUG_ASSERT(hglrc, "Cannot create context");
 
-		if(not wglMakeCurrent(hdc, hglrc)) {
+		if (not wglMakeCurrent(hdc, hglrc)) {
 			FAIL("Cannot use this context");
 		}
 	}
@@ -494,7 +494,6 @@ bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, i
 	auto success = gladLoadGLES2Loader(getProcAddress);
 	DEBUG_ASSERT(success, "Cannot load opengl");
 
-	CHECK_GL_ERROR;
 
 	// and show.
 	ShowWindow(hWindow, SW_SHOWNORMAL);
@@ -525,7 +524,7 @@ void Win32Platform::_setFullscreen(bool fullscreen) {
 
 		LONG ret = ChangeDisplaySettings(&dm, CDS_FULLSCREEN);
 
-		CHECK_WIN32_ERROR( ret == DISP_CHANGE_SUCCESSFUL, "while setting fullscreen mode" );
+		CHECK_WIN32_ERROR(ret == DISP_CHANGE_SUCCESSFUL, "while setting fullscreen mode");
 
 		//WARNING MoveWindow can change backbuffer size
 		MoveWindow(hWindow, 0, 0, dm.dmPelsWidth, dm.dmPelsHeight, TRUE);
@@ -585,9 +584,9 @@ void Win32Platform::initialize(Unique<Game> g) {
 	mShaderCachePath = Path::makeCanonical(String::toUTF8(std::wstring(szPath)) + "dojoshadercache");
 	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
-	DEBUG_MESSAGE( "Initializing Dojo Win32" );
+	DEBUG_MESSAGE("Initializing Dojo Win32");
 
-	
+
 	//load settings
 	auto userConfig = Table::loadFromFile(mRootPath + "/config.ds");
 
@@ -645,7 +644,7 @@ void Win32Platform::initialize(Unique<Game> g) {
 
 	//mBackgroundQueue = new BackgroundQueue( config.getInt( "threads", -1) );
 
-	DEBUG_MESSAGE( "---- Game Launched!");
+	DEBUG_MESSAGE("---- Game Launched!");
 
 	//start the game
 	game->begin();
@@ -675,7 +674,7 @@ void Win32Platform::prepareThreadContext() {
 		std::this_thread::yield();
 	}
 
-	DEBUG_ASSERT( tries < 1000, "Cannot share OpenGL on this thread" );
+	DEBUG_ASSERT(tries < 1000, "Cannot share OpenGL on this thread");
 }
 
 void Win32Platform::shutdown() {
@@ -732,7 +731,7 @@ void Win32Platform::step(float dt) {
 }
 
 void Win32Platform::loop() {
-	DEBUG_ASSERT( game, "A game must be specified when starting the main loop" );
+	DEBUG_ASSERT(game, "A game must be specified when starting the main loop");
 
 	frameInterval = game->getNativeFrameLength();
 
@@ -812,7 +811,7 @@ void Win32Platform::mouseMoved(int cx, int cy) {
 	if (realMouseEvent) {
 		if (mouseLocked) { //put the cursor back in the center
 			realMouseEvent = false; //setcursor will cause another mouseMoved event, avoid to trigger a loop!
-			POINT center = {(LONG)windowWidth / 2, (LONG)windowWidth / 2};
+			POINT center = { (LONG)windowWidth / 2, (LONG)windowWidth / 2 };
 			ClientToScreen(hWindow, &center);
 			SetCursorPos(center.x, center.y);
 		}
@@ -870,37 +869,37 @@ void Win32Platform::keyPressed(int kc) {
 
 #ifdef _DEBUG
 
-	if ( key == KC_DIVIDE ) {
+	if (key == KC_DIVIDE) {
 		mFrameSteppingEnabled = not mFrameSteppingEnabled;
 	}
-	else if ( mFrameSteppingEnabled ) {
-		if ( key == KC_0 ) {
+	else if (mFrameSteppingEnabled) {
+		if (key == KC_0) {
 			mFramesToAdvance = 1;
 		}
-		else if ( key == KC_1 )	{
+		else if (key == KC_1) {
 			mFramesToAdvance = 5;
 		}
-		else if ( key == KC_2 )	{
+		else if (key == KC_2) {
 			mFramesToAdvance = 10;
 		}
-		else if ( key == KC_3 )	{
+		else if (key == KC_3) {
 			mFramesToAdvance = 20;
 		}
-		else if ( key == KC_4 )	{
+		else if (key == KC_4) {
 			mFramesToAdvance = 50;
 		}
-		else if ( key == KC_5 )	{
+		else if (key == KC_5) {
 			mFramesToAdvance = 100;
 		}
-		else if ( key == KC_6 )	{
+		else if (key == KC_6) {
 			mFramesToAdvance = 200;
 		}
-		else if ( key == KC_7 )	{
+		else if (key == KC_7) {
 			mFramesToAdvance = 500;
 		}
 	}
 
-	if ( mFramesToAdvance ) { //capture the input
+	if (mFramesToAdvance) { //capture the input
 		return;
 	}
 
@@ -958,7 +957,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 
 	pixelSize = FreeImage_GetBPP(dib) / 8;
 
-	DEBUG_ASSERT( pixelSize == 3 or pixelSize == 4, "Error: Only RGB and RGBA images are supported!" );
+	DEBUG_ASSERT(pixelSize == 3 or pixelSize == 4, "Error: Only RGB and RGBA images are supported!");
 
 	uint32_t size = pitch * height;
 	imageData.resize(size);
@@ -1024,7 +1023,7 @@ void Win32Platform::openWebPage(const utf::string& site) {
 
 //init key map
 void Win32Platform::_initKeyMap() {
-	ZeroMemory( mKeyMap, sizeof( mKeyMap ) );
+	ZeroMemory(mKeyMap, sizeof(mKeyMap));
 
 	mKeyMap[VK_ESCAPE] = KC_ESCAPE;
 	mKeyMap[VK_BACK] = KC_BACK;

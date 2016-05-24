@@ -49,7 +49,6 @@ void Framebuffer::bind() {
 			glGenFramebuffers(1, &mFBO);
 			glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
-			CHECK_GL_ERROR;
 
 			auto width = getWidth();
 			auto height = getHeight();
@@ -66,7 +65,6 @@ void Framebuffer::bind() {
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
-				CHECK_GL_ERROR;
 			}
 
 			auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -80,7 +78,6 @@ void Framebuffer::bind() {
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
 		glDrawBuffers(mAttachmentList.size(), mAttachmentList.data());
 
-		CHECK_GL_ERROR;
 	}
 }
 

@@ -23,7 +23,7 @@ ShaderProgram::ShaderProgram(optional_ref<ResourceGroup> creator, const utf::str
 		mType = ShaderProgramType::FragmentShader;
 	}
 	else {
-		FAIL( "Unsupported shader type" );
+		FAIL("Unsupported shader type");
 	}
 }
 
@@ -35,7 +35,7 @@ ShaderProgram::ShaderProgram(ShaderProgramType type, std::string&& contents) :
 }
 
 bool ShaderProgram::_load() {
-	static const uint32_t typeGLTypeMap[] = {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER};
+	static const uint32_t typeGLTypeMap[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 
 	loaded = false;
 
@@ -73,7 +73,6 @@ bool ShaderProgram::_load() {
 
 	glCompileShader(mGLShader);
 
-	CHECK_GL_ERROR;
 
 	glGetShaderiv(mGLShader, GL_COMPILE_STATUS, &compiled);
 
@@ -89,7 +88,7 @@ bool ShaderProgram::_load() {
 		if (blen > 1) {
 			utf::string compilerLog(blen, 0);
 			glGetShaderInfoLog(mGLShader, blen, &slen, (GLchar*)compilerLog.bytes().data());
-			DEBUG_MESSAGE( "Compiler error:\n" + compilerLog );
+			DEBUG_MESSAGE("Compiler error:\n" + compilerLog);
 		}
 	}
 
@@ -97,7 +96,7 @@ bool ShaderProgram::_load() {
 }
 
 void ShaderProgram::onUnload(bool soft /* = false */) {
-	DEBUG_ASSERT( isLoaded(), "This Shader Program is already unloaded" );
+	DEBUG_ASSERT(isLoaded(), "This Shader Program is already unloaded");
 
 	glDeleteShader(mGLShader);
 	mGLShader = GL_NONE;
@@ -106,7 +105,7 @@ void ShaderProgram::onUnload(bool soft /* = false */) {
 }
 
 bool ShaderProgram::onLoad() {
-	DEBUG_ASSERT(not isLoaded(), "Cannot reload an already loaded program" );
+	DEBUG_ASSERT(not isLoaded(), "Cannot reload an already loaded program");
 
 	if (getFilePath().not_empty()) { //try loading from file
 		auto file = Platform::singleton().getFile(filePath);
@@ -132,7 +131,7 @@ bool ShaderProgram::onLoad() {
 
 Unique<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
-	
+
 	//place the new header after the version string
 	auto idx = mContentString.find("#version");
 	idx = mContentString.find('\n', idx);

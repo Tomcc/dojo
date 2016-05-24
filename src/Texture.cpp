@@ -84,37 +84,35 @@ void Dojo::Texture::_addAsAttachment(uint32_t index, uint32_t width, uint32_t he
 
 	//TODO use the proper types
 	glFramebufferTexture2D(
-		GL_FRAMEBUFFER, 
+		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0 + index,
-		GL_TEXTURE_2D, 
+		GL_TEXTURE_2D,
 		glhandle,
 		miplevel
 	);
 
-	CHECK_GL_ERROR;
 }
 
 bool Dojo::Texture::_createStorage(uint32_t w, uint32_t h, PixelFormat formatID) {
 	width = w;
 	height = h;
 
-	DEBUG_ASSERT( width > 0, "Width must be more than 0" );
-	DEBUG_ASSERT( height > 0, "Height must be more than 0" );
+	DEBUG_ASSERT(width > 0, "Width must be more than 0");
+	DEBUG_ASSERT(height > 0, "Height must be more than 0");
 
 	auto& formatInfo = TexFormatInfo::getFor(formatID);
 	auto& oldFormat = TexFormatInfo::getFor(internalFormat);
 
 	DEBUG_ASSERT(formatInfo.isGPUFormat(), "This format can't be loaded on the GPU!");
 
-	if(not glhandle) {
+	if (not glhandle) {
 		glGenTextures(1, &glhandle);
 	}
 	glBindTexture(GL_TEXTURE_2D, glhandle);
 
 	//TODO add back manually generated mipmaps
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
-	CHECK_GL_ERROR;
+
 
 	uint32_t destWidth, destHeight;
 
@@ -145,7 +143,6 @@ bool Dojo::Texture::_createStorage(uint32_t w, uint32_t h, PixelFormat formatID)
 			internalHeight
 		);
 
-		CHECK_GL_ERROR;
 
 	}
 
@@ -160,17 +157,17 @@ bool Texture::loadEmpty(int width, int height, PixelFormat destFormat) {
 }
 
 bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
-	DEBUG_ASSERT( imageData, "null image data" );
+	DEBUG_ASSERT(imageData, "null image data");
 
 	_createStorage(width, height, sourceFormat);
 
 	auto& format = TexFormatInfo::getFor(sourceFormat);
 
 	mTransparency = false;
-	if(format.hasAlpha) {
+	if (format.hasAlpha) {
 		auto end = imageData + (width * height * 4);
 		for (auto alpha = imageData + 3; alpha < end; alpha += 4) {
-			if ( *alpha < 250 ) {
+			if (*alpha < 250) {
 				mTransparency = true;
 				break;
 			}
@@ -178,13 +175,12 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 	}
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.sourceFormat, format.sourceElementType, imageData);
-	CHECK_GL_ERROR;
 
 	return loaded = true;
 }
 
 bool Texture::loadFromFile(const utf::string& path) {
-	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded");
 
 	if (not glhandle) {
 		glGenTextures(1, &glhandle);
@@ -194,7 +190,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 	std::vector<byte> imageData;
 	auto format = Platform::singleton().loadImageFile(imageData, path, width, height, pixelSize);
 
-	DEBUG_ASSERT_INFO( format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path );
+	DEBUG_ASSERT_INFO(format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path);
 
 	if (creator.is_some() and creator.unwrap().disableBilinear) {
 		disableBilinearFiltering();
@@ -220,7 +216,7 @@ bool Texture::_setupAtlas() {
 	internalWidth = atlas.getInternalWidth();
 	internalHeight = atlas.getInternalHeight();
 
-	DEBUG_ASSERT( width > 0 and height > 0 and internalWidth > 0 and internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)" );
+	DEBUG_ASSERT(width > 0 and height > 0 and internalWidth > 0 and internalHeight > 0, "One or more texture dimensions are invalid (less or equal to 0)");
 
 	//copy bind handle
 	glhandle = atlas.glhandle;
@@ -237,7 +233,7 @@ bool Texture::_setupAtlas() {
 }
 
 bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
-	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded");
 
 	parentAtlas = tex;
 	mTransparency = tex.mTransparency;
@@ -254,7 +250,7 @@ bool Texture::loadFromAtlas(Texture& tex, int x, int y, int sx, int sy) {
 }
 
 bool Texture::onLoad() {
-	DEBUG_ASSERT(not isLoaded(), "The texture is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "The texture is already loaded");
 
 	//invalidate the OBB
 	OBB.reset();
@@ -271,7 +267,7 @@ bool Texture::onLoad() {
 }
 
 void Texture::onUnload(bool soft) {
-	DEBUG_ASSERT( isLoaded(), "The Texture is not loaded" );
+	DEBUG_ASSERT(isLoaded(), "The Texture is not loaded");
 
 	if (not soft or isReloadable()) {
 		if (OBB) {
@@ -279,7 +275,7 @@ void Texture::onUnload(bool soft) {
 		}
 
 		if (parentAtlas.is_none()) { //don't unload parent texture!
-			DEBUG_ASSERT( glhandle, "Tried to unload a texture but the texture handle was invalid" );
+			DEBUG_ASSERT(glhandle, "Tried to unload a texture but the texture handle was invalid");
 			glDeleteTextures(1, &glhandle);
 
 			internalWidth = internalHeight = 0;
@@ -299,26 +295,26 @@ void Texture::_rebuildOptimalBillboard() {
 		OBB = make_unique<Mesh>();
 
 		//build or rebuild the OBB
-		OBB->setVertexFields({VertexField::Position2D, VertexField::UV0});
+		OBB->setVertexFields({ VertexField::Position2D, VertexField::UV0 });
 	}
 
 	OBB->begin(4);
 
-	OBB->vertex({-0.5, -0.5});
+	OBB->vertex({ -0.5, -0.5 });
 	OBB->uv(UVOffset.x,
-			UVOffset.y + UVSize.y);
+		UVOffset.y + UVSize.y);
 
-	OBB->vertex({0.5, -0.5});
+	OBB->vertex({ 0.5, -0.5 });
 	OBB->uv(UVOffset.x + UVSize.x,
-			UVOffset.y + UVSize.y);
+		UVOffset.y + UVSize.y);
 
-	OBB->vertex({-0.5, 0.5});
+	OBB->vertex({ -0.5, 0.5 });
 	OBB->uv(UVOffset.x,
-			UVOffset.y);
+		UVOffset.y);
 
-	OBB->vertex({0.5, 0.5});
+	OBB->vertex({ 0.5, 0.5 });
 	OBB->uv(UVOffset.x + UVSize.x,
-			UVOffset.y);
+		UVOffset.y);
 
 	OBB->end();
 }

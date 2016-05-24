@@ -20,7 +20,7 @@ Shader::NameBuiltInUniformMap Shader::sBuiltiInUniformsNameMap; //TODO implement
 Shader::NameBuiltInAttributeMap Shader::sBuiltInAttributeNameMap; //TODO ^
 
 void Shader::_populateUniformNameMap() {
-	DEBUG_ASSERT( sBuiltiInUniformsNameMap.empty(), "The name-> builtinuniform map should be empty when populating" );
+	DEBUG_ASSERT(sBuiltiInUniformsNameMap.empty(), "The name-> builtinuniform map should be empty when populating");
 
 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		std::string base = "TEXTURE_";
@@ -43,7 +43,7 @@ void Shader::_populateUniformNameMap() {
 }
 
 void Shader::_populateAttributeNameMap() {
-	DEBUG_ASSERT( sBuiltInAttributeNameMap.empty(), "The name-> builtinattribute map should be empty when populating" );
+	DEBUG_ASSERT(sBuiltInAttributeNameMap.empty(), "The name-> builtinattribute map should be empty when populating");
 
 	for (int i = 0; i < DOJO_MAX_TEXTURES; ++i) {
 		std::string base = "TEXCOORD_";
@@ -79,11 +79,11 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 
 Shader::Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
 	Resource(creator, filePath) {
-	memset(pProgram, 0, sizeof( pProgram )); //init to null
+	memset(pProgram, 0, sizeof(pProgram)); //init to null
 }
 
 ShaderProgram& Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
-	static const utf::string typeKeyMap[] = {"vertexShader", "fragmentShader"};
+	static const utf::string typeKeyMap[] = { "vertexShader", "fragmentShader" };
 	auto typeID = (unsigned char)type;
 
 	//check if this program is immediate or not
@@ -91,7 +91,7 @@ ShaderProgram& Shader::_assignProgram(const Table& desc, ShaderProgramType type)
 	auto& keyValue = desc.getString(typeKeyMap[typeID]);
 
 	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
-	
+
 	if (auto program = getCreator().unwrap().getProgram(keyValue).to_ref()) {
 		if (mPreprocessorHeader.size()) { //some preprocessor flags are set - copy the existing program and recompile it
 			mOwnedPrograms.emplace_back(program.get().cloneWithHeader(mPreprocessorHeader));
@@ -116,7 +116,7 @@ void Shader::setUniformCallback(const std::string& name, const UniformCallback& 
 		}
 	}
 
-	DEBUG_MESSAGE( "WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?" );
+	DEBUG_MESSAGE("WARNING: can't find a Shader uniform named \"" + name + "\". Was it optimized away by the compiler?");
 }
 
 static int tempInt[2];
@@ -261,7 +261,6 @@ void Shader::loadUniforms(const GlobalUniformData& currentState, const RenderSta
 		}
 	}
 
-	CHECK_GL_ERROR;
 }
 
 utf::string _getCachedBinaryPath(SHA1& sha) {
@@ -272,11 +271,11 @@ utf::string _getCachedBinaryPath(SHA1& sha) {
 
 Shader::Binary Shader::_getCachedBinary(const utf::string& path) {
 	auto file = Platform::singleton().getFile(path);
-	if(file->open(Stream::Access::Read)) {
+	if (file->open(Stream::Access::Read)) {
 		std::string content((size_t)file->getSize(), 0);
 		file->readToFill(content);
 
-		return{content.substr(4), *(uint32_t*)(content.data()) };
+		return{ content.substr(4), *(uint32_t*)(content.data()) };
 	}
 	return{};
 }
@@ -293,7 +292,7 @@ void Shader::_storeCachedBinary(const utf::string& path, const Shader::Binary& b
 }
 
 bool Shader::onLoad() {
-	DEBUG_ASSERT(not isLoaded(), "cannot reload an already loaded Shader" );
+	DEBUG_ASSERT(not isLoaded(), "cannot reload an already loaded Shader");
 
 	loaded = false;
 
@@ -326,10 +325,9 @@ bool Shader::onLoad() {
 	if (binary) {
 		glProgramBinary(mGLProgram, binary.format, binary.bytes.data(), binary.bytes.length());
 
-		CHECK_GL_ERROR;
 		glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
 	}
-	
+
 	if (linked == 0) {
 		//ensure they're loaded
 		for (auto&& program : pProgram) {
@@ -355,14 +353,13 @@ bool Shader::onLoad() {
 
 		//check if the linking went ok
 		glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
-		
+
 		if (linked) {
 			_storeCachedBinary(cachedPath, obj);
 		}
 	}
 
-	CHECK_GL_ERROR;
-	
+
 	loaded = linked != 0;
 	DEBUG_ASSERT(linked, "Could not link a shader program");
 
@@ -376,7 +373,7 @@ bool Shader::onLoad() {
 		glGetProgramiv(mGLProgram, GL_ACTIVE_UNIFORMS, &elemCount);
 
 		for (auto i : range(elemCount)) {
-			glGetActiveUniform(mGLProgram, i, sizeof( namebuf ), &nameLength, &size, &type, namebuf);
+			glGetActiveUniform(mGLProgram, i, sizeof(namebuf), &nameLength, &size, &type, namebuf);
 			auto loc = glGetUniformLocation(mGLProgram, namebuf);
 
 			if (loc >= 0) { //loc < 0 means that this is a OpenGL-builtin such as gl_WorldViewProjectionMatrix
@@ -402,7 +399,7 @@ bool Shader::onLoad() {
 					loc,
 					size,
 					_getAttributeForName(namebuf)
-					);
+				);
 			}
 		}
 	}
@@ -411,7 +408,7 @@ bool Shader::onLoad() {
 }
 
 void Shader::onUnload(bool soft /* = false */) {
-	DEBUG_ASSERT( isLoaded(), "This shader was already unloaded" );
+	DEBUG_ASSERT(isLoaded(), "This shader was already unloaded");
 
 	//only manage the programs that aren't shared
 	for (auto&& program : mOwnedPrograms) {

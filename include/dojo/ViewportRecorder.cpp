@@ -35,7 +35,7 @@ ViewportRecorder::~ViewportRecorder() {
 }
 
 void ViewportRecorder::captureFrame() {
-	if(mAsyncJobStatus != AsyncJob::Status::NotRunning) {
+	if (mAsyncJobStatus != AsyncJob::Status::NotRunning) {
 		return;
 	}
 
@@ -56,14 +56,13 @@ void ViewportRecorder::captureFrame() {
 	}
 
 	//there are no PBOs, recreate them all
-	if(mPBOs.empty()) {
+	if (mPBOs.empty()) {
 		mPBOs.resize((int)mTotalFrameCount);
 		glGenBuffers(mPBOs.size(), mPBOs.data());
 		for (auto&& pbo : mPBOs) {
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
 			glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
-		}	
-		CHECK_GL_ERROR;
+		}
 	}
 
 	//pick and bind a fresh PBO
@@ -81,7 +80,6 @@ void ViewportRecorder::captureFrame() {
 	);
 
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	CHECK_GL_ERROR;
 }
 
 void ViewportRecorder::_bindNextPBO() {
@@ -91,7 +89,6 @@ void ViewportRecorder::_bindNextPBO() {
 
 void ViewportRecorder::_destroyAllPBOs() {
 	glDeleteBuffers(mPBOs.size(), mPBOs.data());
-	CHECK_GL_ERROR;
 	mNextPBO = 0;
 	mInitializedPBOs = 0;
 	mPBOs.clear();
@@ -116,7 +113,7 @@ std::string getDateString() {
 void ViewportRecorder::makeVideo() {
 	std::vector<byte*> mappedPointers;
 	std::vector<GLuint> mappedPBOs;
-	
+
 	//map all the PBOs at the same time and pass them to a background thread
 	size_t startFrame = mNextPBO % mInitializedPBOs;
 
@@ -128,9 +125,8 @@ void ViewportRecorder::makeVideo() {
 		mappedPointers.push_back(ptr);
 		mappedPBOs.push_back(mPBOs[idx]);
 	}
-	CHECK_GL_ERROR;
 
-	mAsyncJobStatus = Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)] {
+	mAsyncJobStatus = Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)]{
 		auto path = Platform::singleton().getPicturesPath();
 		path += "/" + Platform::singleton().getGame().getName();
 		path += "_" + Path::removeInvalidChars(getDateString());
@@ -176,13 +172,12 @@ void ViewportRecorder::makeVideo() {
 		}
 		FreeImage_CloseMultiBitmap(multi);
 	},
-	[this, pbos = std::move(mappedPBOs)] {
+		[this, pbos = std::move(mappedPBOs)]{
 		//finally, unmap the buffers
-		for(auto&& pbo : pbos) {
+		for (auto&& pbo : pbos) {
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
 			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 		}
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-		CHECK_GL_ERROR;
 	});
 }

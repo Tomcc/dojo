@@ -32,7 +32,7 @@ bool Mesh::gBufferBindingsDirty = true;
 Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 	Resource(creator) {
 	//set all fields to max
-	for(auto&& offset : vertexFieldOffset) {
+	for (auto&& offset : vertexFieldOffset) {
 		offset = 0xff;
 	}
 
@@ -157,7 +157,7 @@ void Mesh::index(IndexType idx) {
 
 
 void Mesh::_prepareVertex(const Vector& v) {
-	DEBUG_ASSERT( isEditing(), "_prepareVertex: this Mesh is not in Edit mode" );
+	DEBUG_ASSERT(isEditing(), "_prepareVertex: this Mesh is not in Edit mode");
 
 	//grow the buffer to the needed size
 	auto curSize = vertices.size();
@@ -265,7 +265,6 @@ void Mesh::bindVertexFormat(const Shader& shader) {
 			vertexSize,
 			offset);
 	}
-	CHECK_GL_ERROR;
 }
 
 bool Mesh::end() {
@@ -288,7 +287,6 @@ bool Mesh::end() {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexHandle);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size(), vertices.data(), usage);
 
-	CHECK_GL_ERROR;
 
 	//create the IBO
 	if (isIndexed()) { //we support unindexed meshes
@@ -299,7 +297,6 @@ bool Mesh::end() {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), usage);
 
-		CHECK_GL_ERROR;
 	}
 
 	loaded = true;
@@ -323,11 +320,10 @@ void Mesh::bind() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, isIndexed() ? indexHandle : 0); //only bind the index buffer if existing (duh)
 
 	gBufferBindingsDirty = false;
-	CHECK_GL_ERROR;
 }
 
 bool Mesh::onLoad() {
-	DEBUG_ASSERT(not isLoaded(), "onLoad: Mesh is already loaded" );
+	DEBUG_ASSERT(not isLoaded(), "onLoad: Mesh is already loaded");
 
 	if (not isReloadable()) {
 		return false;
@@ -336,7 +332,7 @@ bool Mesh::onLoad() {
 	//load binary mesh
 	auto buf = Platform::singleton().loadFileContent(filePath);
 
-	DEBUG_ASSERT_INFO( buf.size() > 0, "onLoad: cannot find or read file", "path = " + filePath );
+	DEBUG_ASSERT_INFO(buf.size() > 0, "onLoad: cannot find or read file", "path = " + filePath);
 
 	byte* ptr = buf.data();
 
@@ -355,15 +351,15 @@ bool Mesh::onLoad() {
 
 	//max and min
 	Vector loadedMax;
-	memcpy(&loadedMax, ptr, sizeof( Vector));
-	ptr += sizeof( Vector);
+	memcpy(&loadedMax, ptr, sizeof(Vector));
+	ptr += sizeof(Vector);
 
 	Vector loadedMin;
-	memcpy(&loadedMin, ptr, sizeof( Vector));
-	ptr += sizeof( Vector);
+	memcpy(&loadedMin, ptr, sizeof(Vector));
+	ptr += sizeof(Vector);
 
 	//vertex count
-	IndexType vc = *((IndexType*) ptr);
+	IndexType vc = *((IndexType*)ptr);
 	ptr += sizeof(IndexType);
 
 	//index count

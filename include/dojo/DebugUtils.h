@@ -40,7 +40,6 @@
 
 	#endif
 
-	#define CHECK_GL_ERROR	Dojo::DEFAULT_CHECK_GL_ERROR_HANDLER(__FILE__,__LINE__, __FUNCTION__ )
 	#define CHECK_AL_ERROR	Dojo::DEFAULT_CHECK_AL_ERROR_HANDLER(__FILE__,__LINE__, __FUNCTION__ )
 
 #else
@@ -55,7 +54,6 @@
 	#define FAIL(MSG) UNREACHABLE_BRANCH
 	#define DEBUG_OUT( T ) {}
 	#define DEBUG_MESSAGE( T ) {}
-	#define CHECK_GL_ERROR {}
 	#define CHECK_AL_ERROR	true
 	#define DEBUG_ASSERT_MAIN_THREAD {}
 
