@@ -2,10 +2,11 @@
 
 namespace Dojo {
 	class Texture;
+	class RenderBuffer;
 
 	class Framebuffer {
 	public:
-		struct Attachment {
+		struct TextureAttachment {
 			Texture* texture;
 			uint8_t miplevel;
 		};
@@ -14,17 +15,15 @@ namespace Dojo {
 
 		void addColorAttachment(Texture& texture, uint8_t miplevel = 0);
 
-		Attachment& getColorAttachment(size_t index) {
+		///enable depth on this framebuffer. Will use the provided buffer if any
+		void addDepthAttachment(std::shared_ptr<RenderBuffer> buffer = nullptr);
+
+		TextureAttachment& getColorAttachment(size_t index) {
 			return mColorAttachments[index];
 		}
-
-		void enableDepthAttachment() {
-			DEBUG_ASSERT(!isCreated(), "Already configured. Too late");
-			mHasDepth = true;
-		}
-
+		
 		bool hasDepth() const {
-			return mHasDepth;
+			return mDepthBuffer != nullptr;
 		}
 
 		bool isCreated() const {
@@ -46,12 +45,18 @@ namespace Dojo {
 
 		void bind();
 
-	protected:
-		std::vector<Attachment> mColorAttachments;
-		std::vector<uint32_t> mAttachmentList;
-		bool mHasDepth = false;
+		std::weak_ptr<RenderBuffer> getDepthBuffer() {
+			return mDepthBuffer;
+		}
 
-		uint32_t mFBO = 0, mDepthBuffer = 0;
+	protected:
+		std::vector<TextureAttachment> mColorAttachments;
+		std::shared_ptr<RenderBuffer> mDepthBuffer;
+
+		std::vector<uint32_t> mAttachmentList;
+		
+		uint32_t mFBO = 0;
+
 	private:
 	};
 }
