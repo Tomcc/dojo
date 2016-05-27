@@ -56,13 +56,19 @@ namespace Dojo {
 		///enable this viewport for frustum culling, setting the frustum values
 		void enableFrustum(Degrees VFOV, float zNear, float zFar);
 
-		///adds a Fader object (fullscreen colored quad) at the given level to the Viewport
-		//void addFader(RenderLayer::ID layer);
-
-		void setClearColor(const Color& color) {
+		void enableClearColor(const Color& color) {
+			mClearColorEnabled = true;
 			mClearColor = color;
 		}
 
+		void enableClearDepth(float depth) {
+			mClearDepth = depth;
+		}
+
+		void disableClearDepth() {
+			mClearDepth = -FLT_MAX;
+		}
+		
 		///sets which subset of Render Layers this Viewport is able to "see"
 		void setVisibleLayers(const LayerList& layers);
 
@@ -88,6 +94,10 @@ namespace Dojo {
 		
 		const Color& getClearColor() const {
 			return mClearColor;
+		}
+
+		float getClearDepth() const {
+			return mClearDepth;
 		}
 
 		Vector get2DExtents() const {
@@ -124,12 +134,12 @@ namespace Dojo {
 
 		const AABB& getGraphicsAABB() const;
 
-		void setClearEnabled(bool enabled) {
-			mEnableClear = enabled;
+		bool getColorClearEnabled() const {
+			return mClearColorEnabled;
 		}
 
-		bool getClearEnabled() const {
-			return mEnableClear;
+		bool getDepthClearEnabled() const {
+			return mClearDepth > -FLT_MAX;
 		}
 
 		Framebuffer& getFramebuffer() {
@@ -183,11 +193,12 @@ namespace Dojo {
 
 		Vector m2DRect;
 
-		bool mEnableClear = true, mFrustumDirty = true;
+		bool mClearColorEnabled = true, mFrustumDirty = true;
 
 		Matrix mLastWorldTransform;
 
 		Color mClearColor;
+		float mClearDepth;
 
 		Matrix mViewTransform, mOrthoTransform, mFrustumTransform, mPerspectiveEyeTransform;
 

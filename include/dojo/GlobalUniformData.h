@@ -5,7 +5,7 @@
 namespace Dojo {
 	class GlobalUniformData {
 	public:
-		Matrix view, projection, worldView, worldViewProjection;
+		Matrix view, projection, world, worldView, worldViewProjection;
 		Vector viewDirection, targetDimension;
 	};
 }

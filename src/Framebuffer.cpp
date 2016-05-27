@@ -11,7 +11,7 @@ namespace Dojo {
 	public:
 		RenderBuffer() {}
 
-		void _init(GLenum pixelFormat, uint32_t width, uint32_t height) {
+		void _initAndBind(GLenum pixelFormat, uint32_t width, uint32_t height) {
 			DEBUG_ASSERT(not isInited(), "Already initialized");
 			DEBUG_ASSERT(width > 0 and height > 0, "Invalid dimensions");
 
@@ -106,10 +106,11 @@ namespace Dojo {
 				if (mDepthBuffer) {
 					if (not mDepthBuffer->isInited()) {
 						//create one
-						mDepthBuffer->_init(GL_DEPTH_COMPONENT16, width, height);
+						mDepthBuffer->_initAndBind(GL_DEPTH_COMPONENT16, width, height);
 					}
 					else {
 						DEBUG_ASSERT(mDepthBuffer->mWidth = width and mDepthBuffer->mHeight == height, "Mismatched dimensions");
+						glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer->handle);
 					}
 					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer->handle);
 					mAttachmentList.push_back(GL_DEPTH_ATTACHMENT);

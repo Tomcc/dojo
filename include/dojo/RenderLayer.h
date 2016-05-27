@@ -19,17 +19,22 @@ namespace Dojo {
 		static const ID InvalidID;
 
 		bool visible = true,
-			 depthCheck = false,
-			 orthographic = true,
-			 depthClear = true,
-			 wireframe = false;
+			depthTest = false,
+			depthWrite = false,
+			orthographic = true;
 
 		void make3D() {
-			depthCheck = true;
-			depthClear = true;
+			depthTest = true;
+			depthWrite = true;
 			orthographic = false;
 		}
+
+		float zOffset = 0.f;
 		
 		SmallSet<Renderable*> elements;
+
+		bool usesDepth() const {
+			return depthWrite or depthTest;
+		}
 	};
 }

@@ -144,6 +144,8 @@ Dojo::Renderer::Renderer(RenderSurface backbuffer, Orientation renderOrientation
 	if (GLAD_GL_KHR_debug and Platform::singleton().getUserConfiguration().getBool("enable_GL_log", shouldLog)) {
 #ifndef PUBLISH
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#else
+		glEnable(GL_DEBUG_OUTPUT);
 #endif
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
@@ -249,7 +251,7 @@ void Renderer::setInterfaceOrientation(Orientation o) {
 	mRenderRotation = glm::mat4_cast(Quaternion(Vector(0, 0, renderRotation)));
 }
 
-void Renderer::_renderElement(const RenderState& renderState) {
+void Dojo::Renderer::_renderElement(const RenderLayer& layer, const RenderState& renderState) {
 	auto& m = renderState.getMesh().unwrap();
 
 	DEBUG_ASSERT( frameStarted, "Tried to render an element but the frame wasn't started" );
@@ -264,7 +266,8 @@ void Renderer::_renderElement(const RenderState& renderState) {
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	globalUniforms.worldView = globalUniforms.view * renderState.getTransform();
+	globalUniforms.world = glm::translate(renderState.getTransform(), { 0.f ,0.f, -layer.zOffset });
+	globalUniforms.worldView = globalUniforms.view * globalUniforms.world;
 	globalUniforms.worldViewProjection = globalUniforms.projection * globalUniforms.worldView;
 	
 	renderState.apply(globalUniforms, lastRenderState);
@@ -298,15 +301,12 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 		return;
 	}
 
-	//make state changes
-	if (layer.depthCheck) {
+	//depth TEST actually is required even just to write...
+	if (layer.usesDepth()) {
 		DEBUG_ASSERT(viewport.getFramebuffer().hasDepth(), "Depth won't work without an attachment");
-
 		glEnable(GL_DEPTH_TEST);
-
-		if (layer.depthClear) {
-			glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		}
+		glDepthMask(layer.depthWrite);
+		glDepthFunc(layer.depthTest ? GL_LESS : GL_ALWAYS);
 	}
 	else {
 		glDisable(GL_DEPTH_TEST);
@@ -317,7 +317,7 @@ void Renderer::_renderLayer(Viewport& viewport, const RenderLayer& layer) {
 
 	for (auto&& r : layer.elements) {
 		if (r->canBeRendered() and _cull(layer, viewport, *r)) {
-			_renderElement(*r);
+			_renderElement(layer, *r);
 		}
 	}
 }
@@ -335,14 +335,26 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	glViewport(0, 0, (GLsizei) globalUniforms.targetDimension.x, (GLsizei)globalUniforms.targetDimension.y);
 
 	//clear the viewport
-	if (viewport.getClearEnabled()) {
+	GLuint clearFlags = 0;
+	if (viewport.getColorClearEnabled()) {
 		glClearColor(
 			viewport.getClearColor().r,
 			viewport.getClearColor().g,
 			viewport.getClearColor().b,
 			viewport.getClearColor().a);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		clearFlags |= GL_COLOR_BUFFER_BIT;
+	}
+	
+	if(viewport.getDepthClearEnabled() && viewport.getFramebuffer().hasDepth()) {
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClearDepthf(viewport.getClearDepth());
+		clearFlags |= GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+	}
+
+	if (clearFlags) {
+		glClear(clearFlags);
 	}
 
 	globalUniforms.view = viewport.getViewTransform();

@@ -35,13 +35,13 @@ RenderState::~RenderState() {
 
 void RenderState::_updateTransparency() {
 	mTransparency = false;
-	for(auto i : range(maxTextureSlots)) {
-		if(auto t = textures[i].to_ref()) {
+	for (auto i : range(maxTextureSlots)) {
+		if (auto t = textures[i].to_ref()) {
 			mTransparency |= t.get().hasTransparency();
 		}
 	}
 
-	if(mesh.is_some()) {
+	if (mesh.is_some()) {
 		mTransparency |= mesh.unwrap().hasVertexTransparency();
 	}
 }
@@ -57,8 +57,8 @@ void RenderState::setTexture(optional_ref<Texture> tex, byte ID /*= 0*/) {
 	textures[ID] = tex;
 
 	//find the new highest slot in use
-	for (maxTextureSlots = byte(textures.size()-1); maxTextureSlots >= 0; --maxTextureSlots) {
-		if(textures[maxTextureSlots].is_some()) {
+	for (maxTextureSlots = byte(textures.size() - 1); maxTextureSlots >= 0; --maxTextureSlots) {
+		if (textures[maxTextureSlots].is_some()) {
 			break;
 		}
 	}
@@ -90,18 +90,18 @@ void RenderState::apply(const GlobalUniformData& currentState, optional_ref<cons
 	auto prev = lastState.to_raw_ptr();
 
 	bool rebindFormat = false;
-	if(not prev or prev->mesh != mesh or Mesh::gBufferBindingsDirty) {
+	if (not prev or prev->mesh != mesh or Mesh::gBufferBindingsDirty) {
 		//when the mesh changes, the uniforms have to be rebound too
 		rebindFormat = true;
 		mesh.unwrap().bind();
 	}
 
-	if(not prev or prev->mShader != mShader) {
+	if (not prev or prev->mShader != mShader) {
 		rebindFormat = true;
 		mShader.unwrap().bind();
 	}
 
-	if(rebindFormat) {
+	if (rebindFormat) {
 		mesh.unwrap().bindVertexFormat(mShader.unwrap());
 	}
 

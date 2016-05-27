@@ -22,7 +22,6 @@ Viewport::Viewport(
 	float zFar,
 	int renderingOrder) :
 	Component(parent),
-	mClearColor(clear),
 	mVFOV(0),
 	mZNear(0.01f),
 	mZFar(1000),
@@ -30,6 +29,9 @@ Viewport::Viewport(
 , mRenderingOrder(renderingOrder) {
 	DEBUG_ASSERT(renderingOrder >= -1, "invalid rendering order");
 	DEBUG_ASSERT(m2DRect.x > 0 and m2DRect.y > 0, "Invalid dimension for 2D");
+
+	enableClearColor(clear);
+	enableClearDepth(1.f);
 
 	if (VFOV > 0.f) {
 		enableFrustum(VFOV, zNear, zFar);
