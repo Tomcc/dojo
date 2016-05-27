@@ -104,13 +104,13 @@ namespace Dojo {
 				}
 
 				if (mDepthBuffer) {
-					if (not mDepthBuffer->isInited()) {
-						//create one
-						mDepthBuffer->_initAndBind(GL_DEPTH_COMPONENT16, width, height);
-					}
-					else {
+					if (mDepthBuffer->isInited()) {
 						DEBUG_ASSERT(mDepthBuffer->mWidth = width and mDepthBuffer->mHeight == height, "Mismatched dimensions");
 						glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer->handle);
+					}
+					else {
+						//create one
+						mDepthBuffer->_initAndBind(GL_DEPTH_COMPONENT16, width, height);
 					}
 					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer->handle);
 					mAttachmentList.push_back(GL_DEPTH_ATTACHMENT);

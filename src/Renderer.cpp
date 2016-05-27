@@ -266,7 +266,9 @@ void Dojo::Renderer::_renderElement(const RenderLayer& layer, const RenderState&
 	++frameBatchCount;
 #endif // !PUBLISH
 
-	globalUniforms.world = glm::translate(renderState.getTransform(), { 0.f ,0.f, -layer.zOffset });
+	globalUniforms.world = renderState.getTransform();
+	globalUniforms.world[3][2] += layer.zOffset;
+
 	globalUniforms.worldView = globalUniforms.view * globalUniforms.world;
 	globalUniforms.worldViewProjection = globalUniforms.projection * globalUniforms.worldView;
 	
@@ -282,11 +284,11 @@ void Dojo::Renderer::_renderElement(const RenderLayer& layer, const RenderState&
 
 	uint32_t mode = glModeMap[(byte)m.getTriangleMode()];
 
-	if (not m.isIndexed()) {
-		glDrawArrays(mode, 0, m.getVertexCount());
+	if (m.isIndexed()) {
+		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr);
 	}
 	else {
-		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr); //on OpenGLES, we have max 65536 indices!!!
+		glDrawArrays(mode, 0, m.getVertexCount());
 	}
 
 	lastRenderState = renderState;
