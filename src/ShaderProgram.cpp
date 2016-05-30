@@ -64,15 +64,17 @@ bool ShaderProgram::_load() {
 		file->read((byte*)mContentString.data() + idx, size);
 	}
 
-	int compiled, sourceLength = mContentString.size();
-	const char* src = mContentString.c_str();
+	//finally, append the version in front
+	auto buildUnit = "#version 100\n" + mContentString;
+
+	int compiled, sourceLength = buildUnit.size();
+	const char* src = buildUnit.c_str();
 
 	mGLShader = glCreateShader(typeGLTypeMap[(byte)mType]);
 
 	glShaderSource(mGLShader, 1, &src, &sourceLength); //load the program source
 
 	glCompileShader(mGLShader);
-
 
 	glGetShaderiv(mGLShader, GL_COMPILE_STATUS, &compiled);
 
@@ -132,14 +134,5 @@ bool ShaderProgram::onLoad() {
 Unique<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
 
-	//place the new header after the version string
-	auto idx = mContentString.find("#version");
-	idx = mContentString.find('\n', idx);
-
-	DEBUG_ASSERT(idx != std::string::npos, "A shader program must have a version specification");
-
-	auto combinedString = mContentString;
-	combinedString.insert(idx + 1, preprocessorHeader);
-
-	return make_unique<ShaderProgram>(mType, std::move(combinedString));
+	return make_unique<ShaderProgram>(mType, preprocessorHeader + mContentString);
 }
