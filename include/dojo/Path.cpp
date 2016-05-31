@@ -3,15 +3,12 @@
 using namespace Dojo;
 
 utf::string Path::getFileExtension(const utf::string& path) {
-	utf::string str;
-
 	auto dot = path.find_last_of('.');
 
 	if (dot != path.end()) {
-		str = path.substr(dot + 1, path.end());
+		return path.substr(dot + 1, path.end());
 	}
-
-	return str;
+	return{};
 }
 
 utf::string Path::getFileName(const utf::string& str) {
@@ -29,6 +26,10 @@ utf::string Path::getParentDirectory(const utf::string& str) {
 	return (end == str.end()) ?
 		utf::string{} :
 		str.substr(str.begin(), end + 1);
+}
+
+utf::string Path::getMetaFilePathFor(const utf::string& file) {
+	return file.substr(file.begin(), file.find_last_of('.')) + ".meta";
 }
 
 bool Path::isAbsolute(const utf::string& str) {

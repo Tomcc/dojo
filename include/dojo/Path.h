@@ -10,6 +10,8 @@ public:
 
 	static utf::string getParentDirectory(const utf::string& str);
 
+	static utf::string getMetaFilePathFor(const utf::string& file);
+
 	static bool isAbsolute(const utf::string& str);
 
 	///replace any "\\" in the path with the canonical / and removes any last /

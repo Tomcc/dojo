@@ -992,8 +992,14 @@ PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, con
 	FreeImage_Unload(dib);
 	FreeImage_CloseMemory(hmem);
 
-	//TODO support more?
-	return pixelSize == 4 ? PixelFormat::RGBA_8_8_8_8_SRGB : PixelFormat::RGB_8_8_8_SRGB;
+	auto meta = load(Path::getMetaFilePathFor(path));
+
+	if (meta.getBool("linear")) {
+		return pixelSize == 4 ? PixelFormat::RGBA_8_8_8_8 : PixelFormat::RGB_8_8_8;
+	}
+	else {
+		return pixelSize == 4 ? PixelFormat::RGBA_8_8_8_8_SRGB : PixelFormat::RGB_8_8_8_SRGB;
+	}
 }
 
 const utf::string& Win32Platform::getAppDataPath() {
