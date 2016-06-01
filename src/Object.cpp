@@ -56,7 +56,7 @@ bool Object::isAttachedToScene() const {
 		if(cur->parent.is_none()) {
 			return false;
 		}
-		cur = &parent.unwrap();
+		cur = &cur->parent.unwrap();
 	}
 	return true;
 }
