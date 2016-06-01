@@ -40,7 +40,7 @@ Viewport::Viewport(
 
 
 Viewport::~Viewport() {
-
+	onDetach(); //make sure to remove ourselves
 }
 
 Vector Viewport::makeWorldCoordinates(int x, int y) const {
@@ -259,8 +259,16 @@ float Viewport::getPixelSide() const {
 
 void Viewport::onAttach() {
 	Platform::singleton().getRenderer().addViewport(self, mRenderingOrder);
+	mRegistered = true;
 }
 
 void Viewport::onDetach() {
-	Platform::singleton().getRenderer().removeViewport(self);
+	if (mRegistered) {
+		Platform::singleton().getRenderer().removeViewport(self);
+		mRegistered = false;
+	}
+}
+
+void Viewport::onDispose() {
+	onDetach();
 }

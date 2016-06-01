@@ -42,6 +42,8 @@ namespace Dojo {
 
 		typedef std::vector<RenderLayer::ID> LayerList;
 
+		bool shouldRender = true;
+
 		Viewport(
 			Object& parent,
 			const Vector& worldSize2D,
@@ -188,12 +190,13 @@ namespace Dojo {
 
 		void onAttach() override;
 		void onDetach() override;
+		void onDispose() override;
 
 	protected:
 
 		Vector m2DRect;
 
-		bool mClearColorEnabled = true, mFrustumDirty = true;
+		bool mClearColorEnabled = true, mFrustumDirty = true, mRegistered = false;
 
 		Matrix mLastWorldTransform;
 
