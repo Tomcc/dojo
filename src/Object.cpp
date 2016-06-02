@@ -260,6 +260,13 @@ void Object::dispose() {
 			c->onDispose();
 		}
 	}
+
+	//call on all children too to let them know they're going to be disposed
+	//they won't be deleted because of this, though, but because
+	//the parent is deleted
+	for(auto&& c : children) {
+		c->dispose();
+	}
 }
 
 void Object::setSize(const Vector& bbSize) {
