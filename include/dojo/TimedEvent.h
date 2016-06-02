@@ -8,6 +8,8 @@ namespace Dojo {
 		friend class EventManager;
 	public:
 		static void runTimedEvents(TimePoint now);
+
+		static void delay(TimePoint t, AsyncTask task);
 		
 		TimedEvent();
 		~TimedEvent();

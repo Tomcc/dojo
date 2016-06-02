@@ -12,6 +12,10 @@ namespace Dojo {
 			mEvents.emplace(&event);
 		}
 
+		void registerSimpleTask(TimePoint t, AsyncTask task) {
+			mSimpleTasks.emplace(t, std::move(task));
+		}
+
 		void removeEvent(TimedEventImpl& event) {
 			auto elem = mEvents.find(&event);
 			DEBUG_ASSERT(elem != mEvents.end(), "Cannot remove an event that wasn't registered");
@@ -22,6 +26,7 @@ namespace Dojo {
 
 	protected:
 		SmallSet<TimedEventImpl*> mEvents;
+		std::multimap<TimePoint, AsyncTask> mSimpleTasks;
 	};
 
 	EventManager EventManager::instance;
@@ -93,11 +98,23 @@ namespace Dojo {
 		EventManager::instance.runTimedEvents(now);
 	}
 
+	void TimedEvent::delay(TimePoint t, AsyncTask task) {
+		EventManager::instance.registerSimpleTask(t, std::move(task));
+	}
+
 	void EventManager::runTimedEvents(TimePoint now) {
 		//run all the events ready to run
 		for (auto&& event : mEvents) {
 			if (event->isReady(now)) {
 				event->run();
+			}
+		}
+
+		if (mSimpleTasks.size()) {
+			auto top = mSimpleTasks.begin();
+			if (now >= top->first) {
+				top->second();
+				mSimpleTasks.erase(top);
 			}
 		}
 	}
