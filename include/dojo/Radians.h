@@ -30,6 +30,10 @@ namespace Dojo {
 			return T(mValue * rhs);
 		}
 
+		T operator/(BASE rhs) const {
+			return T(mValue / rhs);
+		}
+
 	protected:
 		BASE mValue;
 	};
