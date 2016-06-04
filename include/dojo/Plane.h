@@ -55,10 +55,10 @@ namespace Dojo {
 		}
 
 		///tells which side of this plane the AABB lies in. -1 is negative, 0 is on the line, 1 is positive
-		int getSide(const Vector& center, const Vector& halfsize) const {
-			float dist = getDistance(center);
+		int getSide(const AABB& bb) const {
+			float dist = getDistance(bb.getCenter());
 
-			float maxAbsDist = n.absDot(halfsize);
+			float maxAbsDist = n.absDot(bb.getSize() * 0.5f);
 
 			if (dist < -maxAbsDist) {
 				return -1;

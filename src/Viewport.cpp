@@ -186,12 +186,9 @@ bool Viewport::isContainedInFrustum(const Renderable& r) const {
 	if (auto mesh = r.getMesh().to_ref()) {
 		AABB bb = r.getObject().transformAABB(mesh.get().getBounds().scale(r.scale));
 
-		Vector halfSize = (bb.max - bb.min) * 0.5f;
-		Vector worldPos = r.getObject().getWorldPosition();
-
 		//for each plane, check where the AABB is placed
 		for (auto&& i : range(4)) {
-			if (mWorldFrustumPlanes[i].getSide(worldPos, halfSize) < 0) {
+			if (mWorldFrustumPlanes[i].getSide(bb) < 0) {
 				return false;
 			}
 		}
