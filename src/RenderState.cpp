@@ -19,7 +19,9 @@ static const RenderState::GLBlend modeToGLTable[] = {
 	{ GL_DST_COLOR, GL_ZERO, GL_FUNC_ADD }, //multiply
 	{ GL_ONE, GL_ONE, GL_FUNC_ADD }, //add
 	{ GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_FUNC_ADD }, //invert
-	{ GL_ONE, GL_ONE, GL_FUNC_SUBTRACT } //subtract
+	{ GL_ONE, GL_ONE, GL_FUNC_SUBTRACT }, //subtract
+	{ GL_ONE, GL_ONE, GL_MIN }, //min
+	{ GL_ONE, GL_ONE, GL_MAX }, //max
 };
 
 RenderState::RenderState() :

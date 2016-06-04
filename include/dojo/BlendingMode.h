@@ -8,6 +8,8 @@ namespace Dojo {
 		Multiply,
 		Add,
 		Invert,
-		Subtract
+		Subtract,
+		Min, 
+		Max
 	};
 }
