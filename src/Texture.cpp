@@ -156,15 +156,51 @@ bool Texture::loadEmpty(int width, int height, PixelFormat destFormat) {
 	return _createStorage(width, height, destFormat);
 }
 
-bool Texture::loadFromMemory(const byte* imageData, int width, int height, PixelFormat sourceFormat) {
+const byte* convertToGPUFormat(const byte* imageData, uint32_t width, uint32_t height, PixelFormat& inoutFormat, std::vector<byte>& backingBuffer) {
+	if (inoutFormat == PixelFormat::RGBA_8_8_8_8 or inoutFormat == PixelFormat::RGBA_8_8_8_8_SRGB) {
+		return imageData;
+	}
+	else if(inoutFormat == PixelFormat::RGB_8_8_8 or inoutFormat == PixelFormat::RGB_8_8_8_SRGB) {
+		if(inoutFormat == PixelFormat::RGB_8_8_8) {
+			inoutFormat = PixelFormat::RGBA_8_8_8_8;
+		}
+		else if (inoutFormat == PixelFormat::RGB_8_8_8_SRGB) {
+			inoutFormat = PixelFormat::RGBA_8_8_8_8_SRGB;
+		}
+
+		//now allocate enough memory and add alpha
+		backingBuffer.resize(width * height * 4, 255);
+		auto in = imageData;
+		auto end = imageData + width * height * 3;
+		auto out = backingBuffer.data();
+		while (in < end) {
+			out[0] += in[0];
+			out[1] += in[1];
+			out[2] += in[2];
+			in += 3;
+			out += 4;
+		}
+		return backingBuffer.data();
+	}
+	else {
+		FAIL("Format not supported for now...");
+	}
+}
+
+bool Texture::loadFromMemory(const byte* imageData, uint32_t width, uint32_t height, PixelFormat format) {
 	DEBUG_ASSERT(imageData, "null image data");
+	DEBUG_ASSERT(width > 0 and height > 0, "Invalid dimensions");
 
-	_createStorage(width, height, sourceFormat);
+	//if needed, convert the format and the data to something the GPU supports
+	std::vector<byte> conversionBuffer;
+	imageData = convertToGPUFormat(imageData, width, height, format, conversionBuffer);
 
-	auto& format = TexFormatInfo::getFor(sourceFormat);
+	_createStorage(width, height, format);
+
+	auto& formatDesc = TexFormatInfo::getFor(format);
 
 	mTransparency = false;
-	if (format.hasAlpha) {
+	if (formatDesc.hasAlpha) {
 		auto end = imageData + (width * height * 4);
 		for (auto alpha = imageData + 3; alpha < end; alpha += 4) {
 			if (*alpha < 250) {
@@ -174,7 +210,7 @@ bool Texture::loadFromMemory(const byte* imageData, int width, int height, Pixel
 		}
 	}
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format.sourceFormat, format.sourceElementType, imageData);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, formatDesc.sourceFormat, formatDesc.sourceElementType, imageData);
 
 	return loaded = true;
 }
