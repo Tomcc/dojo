@@ -6,11 +6,14 @@ namespace Dojo {
 	public:
 		explicit ring_buffer(size_t maxSize) : m_max_size(maxSize) {
 			m_buffer.reserve(maxSize);
-			m_buffer.shrink_to_fit(); //the C++ standard doesn't say if reserve can overallocate
 		}
 
 		size_t max_size() const {
 			return m_max_size;
+		}
+
+		size_t size() const {
+			return m_buffer.size();
 		}
 
 		auto peek_next() const {
