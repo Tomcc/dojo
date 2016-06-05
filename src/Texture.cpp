@@ -152,7 +152,7 @@ bool Dojo::Texture::_createStorage(uint32_t w, uint32_t h, PixelFormat formatID)
 	return loaded = true;
 }
 
-bool Texture::loadEmpty(int width, int height, PixelFormat destFormat) {
+bool Dojo::Texture::loadEmpty(uint32_t width, uint32_t height, PixelFormat destFormat) {
 	return _createStorage(width, height, destFormat);
 }
 

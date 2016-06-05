@@ -34,7 +34,7 @@ namespace Dojo {
 		virtual ~Texture();
 
 		///loads an empty texture with the given properties
-		bool loadEmpty(int width, int height, PixelFormat destFormat);
+		bool loadEmpty(uint32_t width, uint32_t height, PixelFormat destFormat);
 
 		///loads the texture from a memory area with RGBA8 format
 		bool loadFromMemory(const byte* imageData, uint32_t width, uint32_t height, PixelFormat sourceFormat);
