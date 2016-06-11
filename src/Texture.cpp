@@ -156,7 +156,7 @@ bool Dojo::Texture::loadEmpty(uint32_t width, uint32_t height, PixelFormat destF
 	return _createStorage(width, height, destFormat);
 }
 
-const byte* convertToGPUFormat(const byte* imageData, uint32_t width, uint32_t height, PixelFormat& inoutFormat, std::vector<byte>& backingBuffer) {
+const uint8_t* convertToGPUFormat(const uint8_t* imageData, uint32_t width, uint32_t height, PixelFormat& inoutFormat, std::vector<uint8_t>& backingBuffer) {
 	if (inoutFormat == PixelFormat::RGBA_8_8_8_8 or inoutFormat == PixelFormat::RGBA_8_8_8_8_SRGB) {
 		return imageData;
 	}
@@ -187,12 +187,12 @@ const byte* convertToGPUFormat(const byte* imageData, uint32_t width, uint32_t h
 	}
 }
 
-bool Texture::loadFromMemory(const byte* imageData, uint32_t width, uint32_t height, PixelFormat format) {
+bool Texture::loadFromMemory(const uint8_t* imageData, uint32_t width, uint32_t height, PixelFormat format) {
 	DEBUG_ASSERT(imageData, "null image data");
 	DEBUG_ASSERT(width > 0 and height > 0, "Invalid dimensions");
 
 	//if needed, convert the format and the data to something the GPU supports
-	std::vector<byte> conversionBuffer;
+	std::vector<uint8_t> conversionBuffer;
 	imageData = convertToGPUFormat(imageData, width, height, format, conversionBuffer);
 
 	_createStorage(width, height, format);
@@ -223,7 +223,7 @@ bool Texture::loadFromFile(const utf::string& path) {
 	}
 
 	int pixelSize;
-	std::vector<byte> imageData;
+	std::vector<uint8_t> imageData;
 	auto format = Platform::singleton().loadImageFile(imageData, path, width, height, pixelSize);
 
 	DEBUG_ASSERT_INFO(format != PixelFormat::Unknown, "Cannot load an image file", "path = " + path);

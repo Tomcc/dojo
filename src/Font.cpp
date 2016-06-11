@@ -26,7 +26,7 @@ Tessellation* Font::Character::getTesselation() {
 	return mTesselation.get();
 }
 
-void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
+void Font::_blit(uint8_t* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 	DEBUG_ASSERT( dest, "null destination buffer" );
 	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
@@ -44,7 +44,7 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 		}
 	}
 	else {
-		byte b;
+		uint8_t b;
 
 		for (uint32_t i = 0; i < bitmap->rows; ++i) {
 			rowy = (i + y) * destside;
@@ -61,12 +61,12 @@ void Font::_blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside) {
 	}
 }
 
-void Font::_blitborder(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col) {
+void Font::_blitborder(uint8_t* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col) {
 	DEBUG_ASSERT( dest, "null destination buffer" );
 	DEBUG_ASSERT( bitmap, "Null freetype bitmap" );
 
 	int rowy;
-	byte* ptr;
+	uint8_t* ptr;
 
 	for (uint32_t i = 0; i < bitmap->rows; ++i) {
 		rowy = (i + y) * destside;
@@ -78,10 +78,10 @@ void Font::_blitborder(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside
 			a /= 255.f;
 			float inva = 1.f - a;
 
-			ptr[0] = (byte)(ptr[0] * inva + a * col.r * 255.f);
-			ptr[1] = (byte)(ptr[1] * inva + a * col.g * 255.f);
-			ptr[2] = (byte)(ptr[2] * inva + a * col.b * 255.f);
-			ptr[3] = (byte)(ptr[3] * inva + a * a * 255.f); //the font is really the alpha
+			ptr[0] = (uint8_t)(ptr[0] * inva + a * col.r * 255.f);
+			ptr[1] = (uint8_t)(ptr[1] * inva + a * col.g * 255.f);
+			ptr[2] = (uint8_t)(ptr[2] * inva + a * col.b * 255.f);
+			ptr[3] = (uint8_t)(ptr[3] * inva + a * a * 255.f); //the font is really the alpha
 		}
 	}
 }
@@ -202,7 +202,7 @@ bool Font::Page::onLoad() {
 	int syp2 = npot ? sy : glm::ceilPowerOfTwo(sy);
 
 	int pixelNumber = sxp2 * syp2;
-	std::vector<byte> buf(pixelNumber * 4);
+	std::vector<uint8_t> buf(pixelNumber * 4);
 
 	auto ptr = (unsigned int*)buf.data();
 
@@ -258,7 +258,7 @@ bool Font::Page::onLoad() {
 	//glow?
 	if (font.glowRadius > 0) {
 		unsigned int glowCol = font.glowColor.toRGBA();
-		byte* glowColChannel = (byte*)&glowCol;
+		uint8_t* glowColChannel = (uint8_t*)&glowCol;
 
 		//duplicate the buffer
 		auto glowBuf = buf;
@@ -266,29 +266,29 @@ bool Font::Page::onLoad() {
 		for (int iteration = 0; iteration < font.glowRadius; ++iteration) {
 			for (int i = 1; i < syp2 - 1; ++i) {
 				for (int j = 1; j < sxp2 - 1; ++j) {
-					byte* cur = glowBuf.data() + (j + i * sxp2) * 4;
-					byte* up = glowBuf.data() + (j + (i + 1) * sxp2) * 4;
-					byte* down = glowBuf.data() + (j + (i - 1) * sxp2) * 4;
-					byte* left = glowBuf.data() + (j + 1 + i * sxp2) * 4;
-					byte* right = glowBuf.data() + (j - 1 + i * sxp2) * 4;
+					uint8_t* cur = glowBuf.data() + (j + i * sxp2) * 4;
+					uint8_t* up = glowBuf.data() + (j + (i + 1) * sxp2) * 4;
+					uint8_t* down = glowBuf.data() + (j + (i - 1) * sxp2) * 4;
+					uint8_t* left = glowBuf.data() + (j + 1 + i * sxp2) * 4;
+					uint8_t* right = glowBuf.data() + (j - 1 + i * sxp2) * 4;
 
 					cur[0] = glowColChannel[0];
 					cur[1] = glowColChannel[1];
 					cur[2] = glowColChannel[2];
-					cur[3] = (byte)((float)(up[3] + down[3] + left[3] + right[3]) * 0.25f);
+					cur[3] = (uint8_t)((float)(up[3] + down[3] + left[3] + right[3]) * 0.25f);
 				}
 			}
 		}
 
 		//now alpha-blend the blur over the original buffer
 		for (int i = 0; i < pixelNumber; ++i) {
-			byte* orig = buf.data() + i * 4;
-			byte* glow = glowBuf.data() + i * 4;
+			uint8_t* orig = buf.data() + i * 4;
+			uint8_t* glow = glowBuf.data() + i * 4;
 
 			float s = (float)orig[3] / 255.f; //blend using the alpha in the original buffer
 
 			for (int channel = 0; channel < 4; ++channel) {
-				orig[channel] = (byte)(orig[channel] * s + glow[channel] * (1.f - s));
+				orig[channel] = (uint8_t)(orig[channel] * s + glow[channel] * (1.f - s));
 			}
 		}
 	}

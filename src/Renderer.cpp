@@ -282,7 +282,7 @@ void Dojo::Renderer::_renderElement(const RenderLayer& layer, const RenderState&
 		GL_POINTS
 	};
 
-	uint32_t mode = glModeMap[(byte)m.getTriangleMode()];
+	uint32_t mode = glModeMap[(uint8_t)m.getTriangleMode()];
 
 	if (m.isIndexed()) {
 		glDrawElements(mode, m.getIndexCount(), m.getIndexGLType(), nullptr);

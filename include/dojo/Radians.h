@@ -1,5 +1,7 @@
 #pragma once
 
+#include "dojo_common_header.h"
+
 namespace Dojo {
 	template <class T, typename BASE>
 	class RealNumber {

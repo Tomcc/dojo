@@ -11,7 +11,7 @@ namespace Dojo {
 
 	class RenderLayer {
 	public:
-		struct ID : public PseudoEnumClass<byte> {
+		struct ID : public PseudoEnumClass<uint8_t> {
 			template<typename T>
 			ID(T raw) : PseudoEnumClass(raw) {}
 		};

@@ -215,8 +215,8 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 		std::vector<utf::string> zip_files;
 		zip.getListAllFiles(".", zip_files);
 
-		for (int i = 0; i < zip_files.size(); ++i) {
-			map[Path::getParentDirectory(zip_files[i])].emplace_back(zip_files[i]);
+		for (auto&& zip_file : zip_files) {
+			map[Path::getParentDirectory(zip_file)].emplace_back(zip_file);
 		}
 
 
@@ -294,11 +294,11 @@ void Platform::run(Unique<Game> game) {
 	shutdownPlatform();
 }
 
-std::vector<byte> Platform::loadFileContent(const utf::string& path) {
+std::vector<uint8_t> Platform::loadFileContent(const utf::string& path) {
 	auto file = getFile(path);
 
 	if (file->open(Stream::Access::Read)) {
-		std::vector<byte> buf((size_t)file->getSize());
+		std::vector<uint8_t> buf((size_t)file->getSize());
 
 		file->read(buf.data(), buf.size());
 

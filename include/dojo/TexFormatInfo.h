@@ -1,5 +1,7 @@
 #pragma once
 
+#include "dojo_common_header.h"
+
 #include "PixelFormat.h"
 
 namespace Dojo {

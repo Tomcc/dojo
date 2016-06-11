@@ -40,15 +40,15 @@ namespace Dojo {
 		}
 
 		///gets the nth bit in the mask i
-		static bool getBit(int i, byte n) {
-			DEBUG_ASSERT( n < 32, "getBit: byte number was more than 32" );
+		static bool getBit(int i, uint8_t n) {
+			DEBUG_ASSERT( n < 32, "getBit: uint8_t number was more than 32" );
 
 			return (i >> n) & 0x1;
 		}
 
 		///sets the nth bit of the mask i
 		static int setBit(int i, int n, bool state) {
-			DEBUG_ASSERT( n < 32, "setBit: byte number was more than 32" );
+			DEBUG_ASSERT( n < 32, "setBit: uint8_t number was more than 32" );
 
 			if (state) {
 				return i | (0x1 << n);
@@ -130,12 +130,12 @@ namespace Dojo {
 				segmentsOverlap(maxA.y, minA.y, maxB.y, minB.y);
 		}
 
-		///does a bitwise shift-with-rotation left on the byte n
+		///does a bitwise shift-with-rotation left on the uint8_t n
 		static unsigned char rotateLeft(unsigned char n, unsigned char i) {
 			return (n << i) | (n >> (8 - i));
 		}
 
-		///does a bitwise shift-with-rotation right on the byte n
+		///does a bitwise shift-with-rotation right on the uint8_t n
 		static unsigned char rotateRight(unsigned char n, unsigned char i) {
 			return (n >> i) | (n << (8 - i));
 		}

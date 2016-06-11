@@ -17,7 +17,7 @@ using namespace Dojo;
 size_t _vorbisRead(void* out, size_t size, size_t count, void* userdata) {
 	Stream* source = (Stream*)userdata;
 
-	return (size_t)source->read((byte*)out, size * count);
+	return (size_t)source->read((uint8_t*)out, size * count);
 }
 
 int _vorbisSeek(void* userdata, ogg_int64_t offset, int whence) {

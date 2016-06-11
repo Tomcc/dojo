@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UTFString.h"
+
 namespace Dojo {
 	class String {
 	public:

@@ -12,7 +12,7 @@ using namespace Dojo;
 
 struct VertexFieldInfo {
 	uint32_t type;
-	byte components;
+	uint8_t components;
 	bool normalized;
 	uint8_t bytes;
 }
@@ -90,7 +90,7 @@ void Mesh::beginAppend() {
 	editing = true;
 }
 
-void Mesh::setIndexByteSize(byte bytenumber) {
+void Mesh::setIndexByteSize(uint8_t bytenumber) {
 	DEBUG_ASSERT(not editing, "setIndexByteSize must be called BEFORE begin!");
 	DEBUG_ASSERT(
 		bytenumber == 1 or
@@ -140,7 +140,7 @@ void Mesh::index(IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		*((byte*)(indices.data() + curSize)) = (byte)idx;
+		*((uint8_t*)(indices.data() + curSize)) = (uint8_t)idx;
 		break;
 
 	case 2:
@@ -163,7 +163,7 @@ void Mesh::_prepareVertex(const Vector& v) {
 	auto curSize = vertices.size();
 	vertices.resize(curSize + vertexSize);
 
-	currentVertex = (byte*)vertices.data() + curSize;
+	currentVertex = (uint8_t*)vertices.data() + curSize;
 
 	bounds = bounds.expandToFit(v);
 
@@ -221,13 +221,13 @@ int Mesh::getPrimitiveCount() const {
 	}
 }
 
-void Mesh::uv(float u, float v, byte set /*= 0 */) {
+void Mesh::uv(float u, float v, uint8_t set /*= 0 */) {
 	DEBUG_ASSERT(isEditing(), "uv: this Mesh is not in Edit mode");
 
 	_field<GLuint>(VertexField::UV0, set) = glm::packHalf2x16({ u,v });
 }
 
-void Mesh::uv(const Vector& uv, byte set /* = 0 */) {
+void Mesh::uv(const Vector& uv, uint8_t set /* = 0 */) {
 	self.uv(uv.x, uv.y, set);
 }
 
@@ -334,7 +334,7 @@ bool Mesh::onLoad() {
 
 	DEBUG_ASSERT_INFO(buf.size() > 0, "onLoad: cannot find or read file", "path = " + filePath);
 
-	byte* ptr = buf.data();
+	uint8_t* ptr = buf.data();
 
 	//index size
 	setIndexByteSize(*ptr++);
@@ -413,7 +413,7 @@ void Mesh::onUnload(bool soft /*= false */) {
 Vector& Mesh::getVertex(int idx) {
 	auto field = isVertexFieldEnabled(VertexField::Position3D) ? VertexField::Position3D : VertexField::Position3D;
 	auto offset = vertexFieldOffset[enum_cast(field)];
-	byte* ptr = (byte*)vertices.data() + (idx * vertexSize) + offset;
+	uint8_t* ptr = (uint8_t*)vertices.data() + (idx * vertexSize) + offset;
 
 	return *(Vector*)ptr;
 }
@@ -423,7 +423,7 @@ void Mesh::setIndex(int idxidx, IndexType idx) {
 
 	switch (indexSize) {
 	case 1:
-		((byte*)indices.data())[idxidx] = (byte)idx;
+		((uint8_t*)indices.data())[idxidx] = (uint8_t)idx;
 		return;
 
 	case 2:

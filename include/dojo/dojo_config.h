@@ -43,8 +43,6 @@
 ///the cap for the texture coords in a single vertex
 #define DOJO_MAX_TEXTURE_COORDS 2
 
-#define _HAS_AUTO_PTR_ETC 0
-
 //common enums
 namespace Dojo {
 	enum Orientation {

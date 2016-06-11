@@ -66,7 +66,7 @@ namespace Dojo {
 		/**
 		It can be nullptr, which means that the slot is disabled.
 		*/
-		void setTexture(optional_ref<Texture> tex, byte ID = 0);
+		void setTexture(optional_ref<Texture> tex, uint8_t ID = 0);
 
 		///sets an abstract photoshop-like blending mode
 		void setBlending(BlendingMode mode);
@@ -100,7 +100,7 @@ namespace Dojo {
 		optional_ref<Mesh> mesh;
 		optional_ref<Shader> mShader;
 		std::array<optional_ref<Texture>, DOJO_MAX_TEXTURES> textures;
-		byte maxTextureSlots = 0;
+		uint8_t maxTextureSlots = 0;
 		bool mTransparency = false;
 
 		Matrix mTransform;

@@ -53,13 +53,13 @@ void RenderState::setMesh(Mesh& m) {
 	_updateTransparency();
 }
 
-void RenderState::setTexture(optional_ref<Texture> tex, byte ID /*= 0*/) {
+void RenderState::setTexture(optional_ref<Texture> tex, uint8_t ID /*= 0*/) {
 	DEBUG_ASSERT(ID < textures.size(), "An ID passed to setTexture must be smaller than DOJO_MAX_TEXTURE_UNITS");
 
 	textures[ID] = tex;
 
 	//find the new highest slot in use
-	for (maxTextureSlots = byte(textures.size() - 1); maxTextureSlots >= 0; --maxTextureSlots) {
+	for (maxTextureSlots = uint8_t(textures.size() - 1); maxTextureSlots >= 0; --maxTextureSlots) {
 		if (textures[maxTextureSlots].is_some()) {
 			break;
 		}

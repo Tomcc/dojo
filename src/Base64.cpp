@@ -25,10 +25,10 @@ Rene' Nyffenegger rene.nyffenegger@adp-gmbh.ch
 
 */
 
-using namespace Dojo;
-
 #include "base64.h"
 #include <iostream>
+
+using namespace Dojo;
 
 static const std::string base64_chars =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -83,14 +83,14 @@ utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int
 
 }
 
-std::vector<byte> Base64::decode(utf::string const& encoded_string_utf) {
+std::vector<uint8_t> Base64::decode(utf::string const& encoded_string_utf) {
 	auto& encoded_string = encoded_string_utf.bytes();
 	int in_len = encoded_string.size();
 	int i = 0;
 	int j = 0;
 	int in_ = 0;
 	unsigned char char_array_4[4], char_array_3[3];
-	std::vector<byte> ret;
+	std::vector<uint8_t> ret;
 
 	while (in_len-- and (encoded_string[in_] != '=') and is_base64(encoded_string[in_])) {
 		char_array_4[i++] = encoded_string[in_]; in_++;

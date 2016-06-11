@@ -3,12 +3,12 @@
 
 using namespace Dojo;
 
-InputDevice::InputDevice(Type type, int ID, byte buttonNumber, byte axisNumber) :
+InputDevice::InputDevice(Type type, int ID, uint8_t buttonNumber, uint8_t axisNumber) :
 	mID(ID),
 	mButtonNumber(buttonNumber),
 	mAxisNumber(axisNumber),
 	type(type) {
-	for (byte i = 0; i < mAxisNumber; ++i) {
+	for (uint8_t i = 0; i < mAxisNumber; ++i) {
 		mAxis.emplace_back(0.f);
 		mDeadZone.emplace_back(0.f);
 	}

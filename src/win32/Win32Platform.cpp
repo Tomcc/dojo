@@ -549,7 +549,7 @@ void Win32Platform::setFullscreen(bool fullscreen) {
 	save(config, "config");
 }
 
-TCHAR szPath[MAX_PATH];
+wchar_t szPath[MAX_PATH];
 
 utf::string getSystemFolderPath(DWORD folderID) {
 	SHGetFolderPathW(
@@ -912,7 +912,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-PixelFormat Win32Platform::loadImageFile(std::vector<Dojo::byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+PixelFormat Win32Platform::loadImageFile(std::vector<uint8_t>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = nullptr;
 

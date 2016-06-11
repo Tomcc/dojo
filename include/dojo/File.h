@@ -22,9 +22,9 @@ namespace Dojo {
 
 		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET);
 
-		virtual int64_t read(byte* buf, int64_t number);
+		virtual int64_t read(uint8_t* buf, int64_t number);
 
-		virtual void write(byte* buf, int size);
+		virtual void write(uint8_t* buf, int size);
 
 		virtual void close();
 

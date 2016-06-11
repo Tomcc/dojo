@@ -147,8 +147,8 @@ void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
 	Platform::singleton().getFilePathsForType("font", subdirectory, paths);
 
 	///just add a Font for any .ttf file found
-	for (int i = 0; i < paths.size(); ++i) {
-		name = Path::getFileName(paths[i]);
+	for (auto&& path : paths) {
+		name = Path::getFileName(path);
 
 		//skip wrong versions
 		if (Path::getVersion(name) != version) {
@@ -157,7 +157,7 @@ void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
 
 		name = Path::removeTags(name);
 
-		addFont(make_unique<Font>(self, paths[i]), name);
+		addFont(make_unique<Font>(self, path), name);
 	}
 }
 
@@ -167,10 +167,10 @@ void ResourceGroup::addMeshes(const utf::string& subdirectory) {
 
 	Platform::singleton().getFilePathsForType("mesh", subdirectory, paths);
 
-	for (int i = 0; i < paths.size(); ++i) {
-		name = Path::getFileName(paths[i]);
+	for (auto&& path : paths) {
+		name = Path::getFileName(path);
 
-		addMesh(make_unique<Mesh>(self, paths[i]), name);
+		addMesh(make_unique<Mesh>(self, path), name);
 	}
 }
 
@@ -183,8 +183,8 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 
 	Platform::singleton().getFilePathsForType("ogg", subdirectory, paths);
 
-	for (int i = 0; i < paths.size(); ++i) {
-		name = Path::getFileName(paths[i]);
+	for (auto&& path : paths) {
+		name = Path::getFileName(path);
 
 		if (lastName.empty() or not Path::arePathsInSequence(lastName, name)) {
 			//create a new set
@@ -193,7 +193,7 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 		}
 
 		//create a new buffer
-		currentSet->addBuffer(make_unique<SoundBuffer>(self, paths[i]));
+		currentSet->addBuffer(make_unique<SoundBuffer>(self, path));
 
 		lastName = name;
 	}
@@ -204,7 +204,7 @@ void ResourceGroup::addTables(const utf::string& folder) {
 
 	Platform::singleton().getFilePathsForType("ds", folder, paths);
 		
-	for (int i = 0; i < paths.size(); ++i)
+	for (size_t i = 0u; i < paths.size(); ++i)
 		addTable(
 			Path::getFileName(paths[i]),
 			make_unique<Table>(self, paths[i])
@@ -536,7 +536,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -641,7 +641,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -669,7 +669,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -697,7 +697,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -724,7 +724,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -751,7 +751,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 
@@ -778,7 +778,7 @@ void ResourceGroup::addPrefabMeshes() {
 	{
 		auto m = make_unique<Mesh>(self);
 
-		m->setIndexByteSize(1); //byte indices
+		m->setIndexByteSize(1); //uint8_t indices
 		m->setTriangleMode(PrimitiveMode::TriangleList);
 		m->setVertexFields({ VertexField::Position3D, VertexField::Normal, VertexField::UV0 });
 

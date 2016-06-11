@@ -211,7 +211,7 @@ namespace Dojo {
 
 		PageMap pages;
 
-		static void _blit(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside);
-		static void _blitborder(byte* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col);
+		static void _blit(uint8_t* dest, FT_Bitmap* bitmap, int x, int y, int destside);
+		static void _blitborder(uint8_t* dest, FT_Bitmap* bitmap, int x, int y, int destside, const Color& col);
 	};
 }

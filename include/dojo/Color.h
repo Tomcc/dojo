@@ -23,7 +23,7 @@ namespace Dojo {
 		static const Color Red, Green, Blue, Black, White, Gray, Yellow, Cyan, Purple, Zero;
 
 		static Color fromARGB(uint32_t pixel) {
-			byte* ch = (byte*)&pixel;
+			uint8_t* ch = (uint8_t*)&pixel;
 			return{
 				ch[2] / 255.f,
 				ch[1] / 255.f,
@@ -33,7 +33,7 @@ namespace Dojo {
 		}
 
 		static Color fromRGB(uint32_t RGB) {
-			byte* ch = (byte*)&RGB;
+			uint8_t* ch = (uint8_t*)&RGB;
 			return{
 				ch[2] / 255.f,
 				ch[1] / 255.f,
@@ -68,7 +68,7 @@ namespace Dojo {
 
 		///creates from a single A8R8G8B8 32-bit value
 
-		void set(byte r, byte g, byte b, byte a = 255) {
+		void set(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
 			self.r = (float)r / 255.f;
 			self.g = (float)g / 255.f;
 			self.b = (float)b / 255.f;
@@ -92,12 +92,12 @@ namespace Dojo {
 			DEBUG_ASSERT(isNormal(), "Cannot convert this color to a 32-bit int as it's out of range.");
 
 			RGBAPixel p;
-			byte* ch = (byte*)&p;
+			uint8_t* ch = (uint8_t*)&p;
 
-			ch[0] = Math::packNormalized<byte>(r);
-			ch[1] = Math::packNormalized<byte>(g);
-			ch[2] = Math::packNormalized<byte>(b);
-			ch[3] = Math::packNormalized<byte>(a);
+			ch[0] = Math::packNormalized<uint8_t>(r);
+			ch[1] = Math::packNormalized<uint8_t>(g);
+			ch[2] = Math::packNormalized<uint8_t>(b);
+			ch[3] = Math::packNormalized<uint8_t>(a);
 
 			return p;
 		}

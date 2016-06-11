@@ -49,7 +49,7 @@ void Shader::_populateAttributeNameMap() {
 		std::string base = "TEXCOORD_";
 		base += '0' + (char)i;
 
-		sBuiltInAttributeNameMap[base] = (VertexField)((byte)VertexField::UV0 + i);
+		sBuiltInAttributeNameMap[base] = (VertexField)((uint8_t)VertexField::UV0 + i);
 	}
 
 	sBuiltInAttributeNameMap["POSITION"] = VertexField::Position3D;

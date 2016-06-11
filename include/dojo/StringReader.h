@@ -36,7 +36,7 @@ namespace Dojo {
 
 		void skipWhiteSpace();
 
-		byte getHexValue(uint32_t c);
+		uint8_t getHexValue(uint32_t c);
 
 		utf::string::const_iterator getCurrentIndex() const;
 

@@ -21,7 +21,7 @@ namespace Dojo {
 	protected:
 
 		FaceMap faceMap;
-		std::vector<std::vector<byte>> ownedBuffers;
+		std::vector<std::vector<uint8_t>> ownedBuffers;
 
 		FT_Library freeType;
 

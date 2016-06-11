@@ -70,10 +70,10 @@ namespace utf
 	/// \brief Generates a UTF8 encoding
 	/// This function generates a UTF-8 encoding from a 32 bit UCS-4 character.
 	/// This is being provided as a static method so it can be used with normal std::string objects
-	/// default_order is true when the byte order matches the system
+	/// default_order is true when the uint8_t order matches the system
 	inline void GetUTF8Encoding(_char32bit in_char, utf8_encoding &out_encoding, size_t &out_size, bool default_order = true)
 	{
-		// check the order byte order and reorder if neccessary
+		// check the order uint8_t order and reorder if neccessary
 		if (default_order == false)
 		{
 			in_char = ((in_char & 0x000000ff) << 24) + ((in_char & 0x0000ff00) << 8) + ((in_char & 0x00ff0000) >> 8) + ((in_char & 0xff000000) >> 24);
@@ -81,20 +81,20 @@ namespace utf
 
 		if (in_char < 0x80)
 		{
-			// 1 byte encoding
+			// 1 uint8_t encoding
 			out_encoding[0] = (char)in_char;
 			out_size = 1;
 		}
 		else if (in_char < 0x800)
 		{
-			// 2 byte encoding
+			// 2 uint8_t encoding
 			out_encoding[0] = 0xC0 + (_uchar8bit)((in_char & 0x7C0) >> 6);
 			out_encoding[1] = 0x80 + (_uchar8bit)(in_char & 0x3F);
 			out_size = 2;
 		}
 		else if (in_char < 0x10000)
 		{
-			// 3 byte encoding
+			// 3 uint8_t encoding
 			out_encoding[0] = 0xE0 + (_uchar8bit)((in_char & 0xF000) >> 12);
 			out_encoding[1] = 0x80 + (_uchar8bit)((in_char & 0xFC0) >> 6);
 			out_encoding[2] = 0x80 + (_uchar8bit)(in_char & 0x3F);
@@ -102,7 +102,7 @@ namespace utf
 		}
 		else
 		{
-			// 4 byte encoding
+			// 4 uint8_t encoding
 			out_encoding[0] = 0xF8 + (_uchar8bit)((in_char & 0x1C0000) >> 18);
 			out_encoding[1] = 0x80 + (_uchar8bit)((in_char & 0x3F000) >> 12);
 			out_encoding[2] = 0x80 + (_uchar8bit)((in_char & 0xFC0) >> 6);
@@ -114,10 +114,10 @@ namespace utf
 	/// \brief Generates a UTF8 encoding
 	/// This function generates a UTF-8 encoding from a 16 bit UCS-2 character.
 	/// This is being provided as a static method so it can be used with normal std::string objects
-	/// default_order is true when the byte order matches the system
+	/// default_order is true when the uint8_t order matches the system
 	inline void GetUTF8Encoding(_char16bit in_char, utf8_encoding &out_encoding, size_t &out_size, bool default_order = true)
 	{
-		// check the order byte order and reorder if neccessary
+		// check the order uint8_t order and reorder if neccessary
 		if (default_order == false)
 		{
 			in_char = ((in_char & 0x00ff) << 8) + ((in_char & 0xff00) >> 8);
@@ -230,10 +230,10 @@ namespace utf
 		// first empty the string
 		if (!appendToOut) out.clear();
 
-		bool default_order = true; // the string uses the same byte order as the system
+		bool default_order = true; // the string uses the same uint8_t order as the system
 		int start = 0; // index of the first real character in the string
 
-					   // check for byte order mark
+					   // check for uint8_t order mark
 		if (instring[0] == 0xfffe)
 		{
 			default_order = false;
@@ -241,7 +241,7 @@ namespace utf
 		}
 		else if (instring[0] == 0xfeff)
 		{
-			// jump past the byte order mark
+			// jump past the uint8_t order mark
 			++start;
 		}
 
@@ -269,10 +269,10 @@ namespace utf
 	template <typename char_type>
 	inline void MakeUTF8StringImpl(const char_type* instring, _uchar8bit *out)
 	{
-		bool default_order = true; // the string uses the same byte order as the system
+		bool default_order = true; // the string uses the same uint8_t order as the system
 		int start = 0; // index of the first real character in the string
 
-					   // check for byte order mark
+					   // check for uint8_t order mark
 		if (instring[0] == 0xfffe)
 		{
 			default_order = false;
@@ -280,7 +280,7 @@ namespace utf
 		}
 		else if (instring[0] == 0xfeff)
 		{
-			// jump past the byte order mark
+			// jump past the uint8_t order mark
 			++start;
 		}
 

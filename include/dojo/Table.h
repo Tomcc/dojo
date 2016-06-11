@@ -45,7 +45,7 @@ namespace Dojo {
 		public:
 			static const Data Empty;
 
-			std::vector<byte> buf;
+			std::vector<uint8_t> buf;
 
 			template<class T>
 			static Data fromRaw(const T* ptr, size_t count) {

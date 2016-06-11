@@ -144,8 +144,8 @@ AABB Object::transformAABB(const AABB& local) const {
 
 	Vector vertex;
 
-	for (byte i = 0; i < 8; ++i) {
-		for (byte j = 0; j < 3; ++j) {
+	for (uint8_t i = 0; i < 8; ++i) {
+		for (uint8_t j = 0; j < 3; ++j) {
 			vertex[j] = Math::getBit(i, j) ? local.max[j] : local.min[j];
 		}
 

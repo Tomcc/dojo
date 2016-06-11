@@ -1,6 +1,8 @@
 #ifndef ZIPARCHIVE_H
 #define ZIPARCHIVE_H
 
+#include "dojo_common_header.h"
+
 #include "dojostring.h"
 #include <string>
 #include <vector>

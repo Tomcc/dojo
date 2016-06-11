@@ -159,7 +159,7 @@ namespace Dojo {
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
 		void run(Unique<Game> game);
 
-		virtual PixelFormat loadImageFile(std::vector<byte>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
+		virtual PixelFormat loadImageFile(std::vector<uint8_t>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
 
 		void addApplicationListener(ApplicationListener& f);
 
@@ -202,7 +202,7 @@ namespace Dojo {
 		std::unique_ptr<FileStream> getFile(const utf::string& path);
 
 		///loads the whole file allocating a new buffer
-		std::vector<byte> loadFileContent(const utf::string& path);
+		std::vector<uint8_t> loadFileContent(const utf::string& path);
 
 		///discovers all the files with an extension in a folder
 		/**\param type type extension, es "png"

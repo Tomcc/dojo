@@ -72,13 +72,13 @@ namespace {
 		g_wcl.style = CS_OWNDC;
 		g_wcl.lpfnWndProc = DummyGLWndProc;
 		g_wcl.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
-		g_wcl.lpszClassName = L"DummyGLWindowClass";
+		g_wcl.lpszClassName = "DummyGLWindowClass";
 
 		if (not RegisterClassEx(&g_wcl)) {
 			return false;
 		}
 
-		g_hWnd = CreateWindow(g_wcl.lpszClassName, L"", WS_OVERLAPPEDWINDOW,
+		g_hWnd = CreateWindow(g_wcl.lpszClassName, "", WS_OVERLAPPEDWINDOW,
 									0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
 
 		if (not g_hWnd) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "dojo_common_header.h"
+
 #include <string>
 
 namespace Dojo {
@@ -17,6 +19,6 @@ namespace Dojo {
 			return fromBytes((const unsigned char*)&obj, sizeof(T));
 		}
 
-		static std::vector<byte> decode(utf::string const& s);
+		static std::vector<uint8_t> decode(utf::string const& s);
 	};
 }

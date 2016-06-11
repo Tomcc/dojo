@@ -61,7 +61,7 @@ bool ShaderProgram::_load() {
 		//create enough space in the string
 		mContentString.replace(idx, end - idx + 1, (size_t)size, 'X');
 
-		file->read((byte*)mContentString.data() + idx, size);
+		file->read((uint8_t*)mContentString.data() + idx, size);
 	}
 
 	//finally, append the version in front
@@ -70,7 +70,7 @@ bool ShaderProgram::_load() {
 	int compiled, sourceLength = buildUnit.size();
 	const char* src = buildUnit.c_str();
 
-	mGLShader = glCreateShader(typeGLTypeMap[(byte)mType]);
+	mGLShader = glCreateShader(typeGLTypeMap[(uint8_t)mType]);
 
 	glShaderSource(mGLShader, 1, &src, &sourceLength); //load the program source
 
@@ -116,7 +116,7 @@ bool ShaderProgram::onLoad() {
 			auto size = file->getSize();
 			mContentString.resize((size_t)size);
 
-			file->read((byte*)mContentString.data(), size);
+			file->read((uint8_t*)mContentString.data(), size);
 			file->close(); //close as soon as possible to release the file if there's an error
 
 			loaded = _load(); //load from the temp buffer

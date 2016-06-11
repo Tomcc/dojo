@@ -36,7 +36,7 @@ namespace Dojo {
 		const Type type;
 
 		///Creates a new InputDevice of the given type, bound to the ID slot, supporting "buttonNumber" buttons and "axisNumber" axes
-		InputDevice(Type type, int ID, byte buttonNumber, byte axisNumber);
+		InputDevice(Type type, int ID, uint8_t buttonNumber, uint8_t axisNumber);
 
 		virtual ~InputDevice() {
 		}
@@ -94,7 +94,7 @@ namespace Dojo {
 		typedef std::unordered_map<KeyCode, bool, std::hash<int>> KeyPressedMap;
 		typedef std::vector<float> FloatList;
 
-		byte mAxisNumber, mButtonNumber;
+		uint8_t mAxisNumber, mButtonNumber;
 
 		ListenerList pListeners;
 

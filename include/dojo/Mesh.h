@@ -57,7 +57,7 @@ namespace Dojo {
 		/**
 			MUST be called only before the first begin ever!
 		*/
-		void setIndexByteSize(byte bytenumber);
+		void setIndexByteSize(uint8_t bytenumber);
 
 		///enables a new VertexField
 		void setVertexFieldEnabled(VertexField f);
@@ -118,10 +118,10 @@ namespace Dojo {
 		IndexType vertex(const Vector& v);
 
 		///sets the uv of the given UV set
-		void uv(float u, float v, byte set = 0);
+		void uv(float u, float v, uint8_t set = 0);
 
 		///sets the uv of the given UV set
-		void uv(const Vector& uv, byte set = 0);
+		void uv(const Vector& uv, uint8_t set = 0);
 
 		///sets the color of the current vertex
 		void color(const Color& c);
@@ -213,21 +213,21 @@ namespace Dojo {
 		Vector center, dimensions;
 		AABB bounds;
 
-		byte vertexSize = 0;
-		byte* currentVertex = nullptr;
-		std::vector<byte> vertices;
+		uint8_t vertexSize = 0;
+		uint8_t* currentVertex = nullptr;
+		std::vector<uint8_t> vertices;
 
-		byte indexSize = 0;
+		uint8_t indexSize = 0;
 		IndexType indexMaxValue = 0;
 		uint32_t indexGLType = 0;
-		std::vector<byte> indices;//indices have varying size
+		std::vector<uint8_t> indices;//indices have varying size
 
 		uint32_t vertexArrayDesc = 0;
 		uint32_t vertexHandle = 0, indexHandle = 0;
 
 		int vertexCount = 0, indexCount = 0;
 
-		std::array<byte, enum_cast(VertexField::_Count)> vertexFieldOffset;
+		std::array<uint8_t, enum_cast(VertexField::_Count)> vertexFieldOffset;
 
 		PrimitiveMode triangleMode = PrimitiveMode::TriangleStrip;
 
@@ -238,7 +238,7 @@ namespace Dojo {
 		void _prepareVertex(const Vector& v);
 
 		template<class T>
-		T& _field(VertexField field, byte set = 0) {
+		T& _field(VertexField field, uint8_t set = 0) {
 			return *(T*)(currentVertex + vertexFieldOffset[enum_cast(field) + set]);
 		}
 	};
