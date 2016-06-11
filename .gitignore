@@ -9,3 +9,15 @@ dojo.xccheckout
 Publish/
 
 *.vcxproj.user
+CMakeFiles/*
+.vs/Project/*
+*.vcxproj.*
+*.vcxproj
+*.VC.db
+*.VC.opendb
+*.sln
+*.dir/*
+*.ipch
+Win32/*
+Dojo_CXX_cotire.cmake
+CMakeCache.txt
