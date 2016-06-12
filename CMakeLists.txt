@@ -2,23 +2,44 @@ cmake_minimum_required(VERSION 2.8)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
 include(cotire)
+include(CheckCXXCompilerFlag)
 
 include_directories("include/dojo")
-include_directories("include/dojo/win32")
 include_directories("dependencies/include")
 
 if (WIN32)
+    include_directories("include/dojo/win32")
+    
     # prevent definition of min and max macros through inclusion of Windows.h
     add_definitions("-DNOMINMAX")
     add_definitions("-DWIN32_LEAN_AND_MEAN")
+    add_definitions ("/WX")
+else() 
+    CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
+
+    if(COMPILER_SUPPORTS_CXX14)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    else()
+        message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support. Please use a different C++ compiler.")
+    endif()
+
+    add_definitions ("-Wno-reorder")
+    add_definitions ("-Werror")
 endif()
 
-file(GLOB dojo_SRC
+file(GLOB common_src
 	"include/dojo/*.h"
-	"include/dojo/win32/*.h"
     "src/*.cpp"
-    "src/win32/*.cpp"
 )
+
+if (WIN32) 
+    file(GLOB common_src
+        "include/dojo/win32/*.h"
+        "src/win32/*.cpp"
+    )
+endif()
+
+set(dojo_SRC ${common_src} ${platform_src})
 
 add_library(Dojo ${dojo_SRC})
 

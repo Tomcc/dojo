@@ -227,7 +227,7 @@ namespace Dojo {
 
 		int vertexCount = 0, indexCount = 0;
 
-		std::array<uint8_t, enum_cast(VertexField::_Count)> vertexFieldOffset;
+		std::array<uintptr_t, enum_cast(VertexField::_Count)> vertexFieldOffset;
 
 		PrimitiveMode triangleMode = PrimitiveMode::TriangleStrip;
 

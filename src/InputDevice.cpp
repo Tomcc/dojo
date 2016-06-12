@@ -89,7 +89,7 @@ void InputDevice::_notifyButtonState(KeyCode key, bool pressed) {
 
 void InputDevice::_notifyAxis(Axis a, float state) {
 	//apply the dead zone
-	if (abs(state) < mDeadZone[a]) {
+	if (std::abs(state) < mDeadZone[a]) {
 		state = 0;
 	}
 

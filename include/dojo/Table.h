@@ -87,7 +87,7 @@ namespace Dojo {
 
 			template<typename T>
 			T& getAs() {
-				//DEBUG_ASSERT(type == field_type_for<T>(), "type mismatch while reading from a Table Entry");
+				//DEBUG_ASSERT(type == Table::field_type_for<T>(), "type mismatch while reading from a Table Entry");
 				return *(T*)getRawValue();
 			}
 
@@ -174,27 +174,7 @@ namespace Dojo {
 
 		template<typename T>
 		void set(const utf::string& key, T value) {
-			set(key, field_type_for<T>(), std::move(value));
-		}
-
-		//specialization magic
-
-		template<>
-		void set<Color>(const utf::string& key, Color value) {
-			set(key, Vector(value.r, value.g, value.b));
-		}
-		template<>
-		void set<int>(const utf::string& key, int value) {
-			set(key, (float)value);
-		}
-		template<>
-		void set<bool>(const utf::string& key, bool value) {
-			set(key, value ? 1.f : 0.f);
-		}
-
-		template<>
-		void set<Quaternion>(const utf::string& key, Quaternion value) {
-			set(key, Vector(glm::eulerAngles(value)));
+			set(key, Table::field_type_for<T>(), std::move(value));
 		}
 
 		///creates a new nested table named key
@@ -243,7 +223,7 @@ namespace Dojo {
 		template<typename T>
 		const T& get(const utf::string& key, const T& defaultValue) const {
 			auto e = get(key);
-			if(e and e->type == field_type_for<T>()) {
+			if(e and e->type == Table::field_type_for<T>()) {
 				return e->getAs<T>();
 			}
 			return defaultValue;
@@ -366,59 +346,83 @@ namespace Dojo {
 			return map.end();
 		}
 
-		//specializations to get reflected types out of types
-
-		template<> struct field_type_for < float > {
-			operator FieldType() const {
-				return FieldType::Float;
-			}
-		};
-		template<> struct field_type_for < bool > {
-			operator FieldType() const {
-				return FieldType::Float;
-			}
-		};
-		template<> struct field_type_for < int > {
-			operator FieldType() const {
-				return FieldType::Float;
-			}
-		};
-		template<> struct field_type_for < unsigned int > {
-			operator FieldType() const {
-				return FieldType::Float;
-			}
-		};
-		template<> struct field_type_for < utf::string > {
-			operator FieldType() const {
-				return FieldType::String;
-			}
-		};
-		template<> struct field_type_for < Data > {
-			operator FieldType() const {
-				return FieldType::RawData;
-			}
-		};
-		template<> struct field_type_for < Vector > {
-			operator FieldType() const {
-				return FieldType::Vector;
-			}
-		};
-		template<> struct field_type_for < Table > {
-			operator FieldType() const {
-				return FieldType::ChildTable;
-			}
-		};
-
-		template<> struct field_type_for < int64_t > {
-			operator FieldType() const {
-				return FieldType::Int64;
-			}
-		};
-
 	protected:
 
 		EntryMap map;
 
 		int unnamedMembers;
 	};
+    
+    
+    //specialization magic
+    
+    template<>
+    void Table::set<Color>(const utf::string& key, Color value) {
+        set(key, Vector(value.r, value.g, value.b));
+    }
+    template<>
+    void Table::set<int>(const utf::string& key, int value) {
+        set(key, (float)value);
+    }
+    template<>
+    void Table::set<bool>(const utf::string& key, bool value) {
+        set(key, value ? 1.f : 0.f);
+    }
+    
+    template<>
+    void Table::set<Quaternion>(const utf::string& key, Quaternion value) {
+        set(key, Vector(glm::eulerAngles(value)));
+    }
+    
+    
+    //specializations to get reflected types out of types
+    
+    template<> struct Table::field_type_for < float > {
+        operator FieldType() const {
+            return FieldType::Float;
+        }
+    };
+    template<> struct Table::field_type_for < bool > {
+        operator FieldType() const {
+            return FieldType::Float;
+        }
+    };
+    template<> struct Table::field_type_for < int > {
+        operator FieldType() const {
+            return FieldType::Float;
+        }
+    };
+    template<> struct Table::field_type_for < unsigned int > {
+        operator FieldType() const {
+            return FieldType::Float;
+        }
+    };
+    template<> struct Table::field_type_for < utf::string > {
+        operator FieldType() const {
+            return FieldType::String;
+        }
+    };
+    template<> struct Table::field_type_for < Table::Data > {
+        operator FieldType() const {
+            return FieldType::RawData;
+        }
+    };
+    template<> struct Table::field_type_for < Vector > {
+        operator FieldType() const {
+            return FieldType::Vector;
+        }
+    };
+    template<> struct Table::field_type_for < Table > {
+        operator FieldType() const {
+            return FieldType::ChildTable;
+        }
+    };
+    
+    template<> struct Table::field_type_for < int64_t > {
+        operator FieldType() const {
+            return FieldType::Int64;
+        }
+    };
+
+
 }

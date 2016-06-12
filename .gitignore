@@ -21,3 +21,8 @@ CMakeFiles/*
 Win32/*
 Dojo_CXX_cotire.cmake
 CMakeCache.txt
+cmake_install.cmake
+CMakeScripts
+*.build/*
+*.xcodeproj/*
+cotire

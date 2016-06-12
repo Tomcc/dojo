@@ -58,7 +58,7 @@ int InputSystem::_getExistingTouchID(const Vector& point, Touch::Type type) {
 	int nearest = -1;
 
 	for (size_t i = 0; i < mTouchList.size(); ++i) {
-		if (type != type) {
+		if (mTouchList[i]->type != type) {
 			continue;
 		}
 

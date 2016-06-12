@@ -43,7 +43,7 @@
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "glm/glm/gtc/round.hpp"
 #include "glm/glm/gtc/packing.hpp"
-#include "glm/glm/gtx/bit.hpp""
+#include "glm/glm/gtx/bit.hpp"
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif

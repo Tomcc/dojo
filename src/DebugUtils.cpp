@@ -5,7 +5,10 @@
 #include "dojo_common_header.h"
 #include "dojo_gl_header.h"
 #include "dojo_al_header.h"
-#include "dojo_win_header.h"
+
+#ifdef PLATFORM_WIN32
+    #include "dojo_win_header.h"
+#endif
 
 //let's assume that the thread who has main() remains the main thread
 const std::thread::id gDebugMainThreadID = std::this_thread::get_id();

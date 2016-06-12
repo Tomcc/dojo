@@ -14,19 +14,19 @@ namespace Dojo {
 
 		virtual bool open(Access accessType) override;
 
-		virtual int64_t getSize();
+        virtual int64_t getSize() override;
 
-		virtual Access getAccess();
+		virtual Access getAccess() override;
 
-		virtual int64_t getCurrentPosition();
+		virtual int64_t getCurrentPosition() override;
 
-		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET);
+		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET) override;
 
-		virtual int64_t read(uint8_t* buf, int64_t number);
+		virtual int64_t read(uint8_t* buf, int64_t number) override;
 
-		virtual void write(uint8_t* buf, int size);
+		virtual void write(uint8_t* buf, int size) override;
 
-		virtual void close();
+		virtual void close() override;
 
 		///creates a new File* to read the underlying file. Does not copy reading status
 		virtual Unique<Stream> copy() const override;

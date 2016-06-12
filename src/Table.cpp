@@ -1,12 +1,12 @@
 #include "Table.h"
 #include "Platform.h"
 #include "FileStream.h"
-#include "..\include\dojo\Base64.h"
+#include "Base64.h"
 
 using namespace Dojo;
 
 const Table Table::Empty;
-const Table::Data Table::Data::Empty;
+const Table::Data Table::Data::Empty{};
 
 Table Table::loadFromFile(const utf::string& path) {
 	DEBUG_ASSERT( path.not_empty(), "Tried to load a Table from an empty path string" );

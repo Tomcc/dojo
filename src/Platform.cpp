@@ -17,7 +17,7 @@
 	#include "win32/Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
-	#include "OSXPlatform.h"
+	//#include "OSXPlatform.h"
 
 #elif defined( PLATFORM_IOS )
 	#include "IOSPlatform.h"
@@ -38,6 +38,7 @@
 #include "LogListener.h"
 #include "TimedEvent.h"
 #include "Random.h"
+#include "InputSystem.h"
 
 using namespace Dojo;
 
@@ -48,7 +49,8 @@ Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 	gSingletonPtr = make_unique<Win32Platform>(config);
 
 #elif defined( PLATFORM_OSX )
-	gSingletonPtr = make_unique<OSXPlatform>(config);
+    DEBUG_TODO;
+    //gSingletonPtr = make_unique<OSXPlatform>(config);
 
 #elif defined( PLATFORM_IOS )
 	gSingletonPtr = make_unique<IOSPlatform>(config);

@@ -173,7 +173,7 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 	else {
 		float divergence = dest * n;
 
-		if (abs(divergence) < 0.6) {
+		if (std::abs(divergence) < 0.6) {
 			//create a new vertex with the new normal
 			int newIndex = extrusionContourVertices.size();
 			extrusionContourVertices.emplace_back(ExtrusionVertex(vert.position, n));
