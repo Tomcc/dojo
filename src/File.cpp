@@ -49,7 +49,6 @@ const auto flagFor(Stream::Access request) {
 
 	case Stream::Access::ReadWrite:
 		return STRING_LITERAL("wb+");
-
 	default:
 		FAIL("Invalid access");
 	}
