@@ -1,9 +1,7 @@
-#include "stdafx.h"
-
-#include <random>
-
 #include "Random.h"
 #include "dojomath.h"
+
+#include <random>
 
 using namespace Dojo;
 

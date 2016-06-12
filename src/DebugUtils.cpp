@@ -3,7 +3,7 @@
 #include "Log.h"
 
 #include "dojo_common_header.h"
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 #include "dojo_al_header.h"
 
 #ifdef PLATFORM_WIN32

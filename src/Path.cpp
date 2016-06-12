@@ -153,7 +153,7 @@ utf::string Path::removeInvalidChars(const utf::string& str) {
 	}
 	return path;
 #else
-	DEBUG_TODO;
+	FAIL("Not implemented yet");
 #endif
 }
 

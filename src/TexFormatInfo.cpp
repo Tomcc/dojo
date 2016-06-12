@@ -1,6 +1,6 @@
 #include "TexFormatInfo.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 namespace Dojo {
 	const Dojo::TexFormatInfo& TexFormatInfo::getFor(PixelFormat format) {

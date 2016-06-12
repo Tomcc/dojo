@@ -7,7 +7,7 @@
 #include "Shader.h"
 #include "range.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 using namespace Dojo;
 

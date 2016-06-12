@@ -1,7 +1,7 @@
 #include "Tessellation.h"
 #include "dojomath.h"
 #include "Timer.h"
-#include "triangle.h"
+#include "triangle_wrapper.h"
 
 using namespace Dojo;
 

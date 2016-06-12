@@ -4,7 +4,7 @@
 #include "FileStream.h"
 #include "Path.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 using namespace Dojo;
 

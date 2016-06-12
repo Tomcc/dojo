@@ -14,7 +14,7 @@
 #include "dojo_win_header.h"
 #include "win32/WGL_ARB_multisample.h"
 #include "win32/XInputController.h"
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 #include <FreeImage.h>
 #include <GL/wglext.h>

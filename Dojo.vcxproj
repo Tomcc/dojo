@@ -17,25 +17,36 @@
   <ItemGroup>
     <ClInclude Include="include\dojo\AABB.h" />
     <ClInclude Include="include\dojo\AnimatedQuad.h" />
+    <ClInclude Include="include\dojo\ApplicationListener.h" />
     <ClInclude Include="include\dojo\AStar.h" />
     <ClInclude Include="include\dojo\AsyncJob.h" />
+    <ClInclude Include="include\dojo\atomicops.h" />
     <ClInclude Include="include\dojo\BackgroundWorker.h" />
     <ClInclude Include="include\dojo\Base64.h" />
     <ClInclude Include="include\dojo\BlendingMode.h" />
+    <ClInclude Include="include\dojo\Color.h" />
     <ClInclude Include="include\dojo\Component.h" />
     <ClInclude Include="include\dojo\DebugUtils.h" />
+    <ClInclude Include="include\dojo\dojomath.h" />
     <ClInclude Include="include\dojo\dojostring.h" />
     <ClInclude Include="include\dojo\dojo_al_header.h" />
-    <ClInclude Include="include\dojo\dojo_gl_header.h" />
+    <ClInclude Include="include\dojo\dojo_common_header.h" />
+    <ClInclude Include="include\dojo\dojo_config.h" />
     <ClInclude Include="include\dojo\dojo_win_header.h" />
     <ClInclude Include="include\dojo\enum_cast.h" />
     <ClInclude Include="include\dojo\File.h" />
     <ClInclude Include="include\dojo\FileStream.h" />
+    <ClInclude Include="include\dojo\Font.h" />
+    <ClInclude Include="include\dojo\FontSystem.h" />
     <ClInclude Include="include\dojo\Framebuffer.h" />
+    <ClInclude Include="include\dojo\FrameSet.h" />
     <ClInclude Include="include\dojo\FrameSubmitter.h" />
+    <ClInclude Include="include\dojo\Game.h" />
+    <ClInclude Include="include\dojo\GameState.h" />
     <ClInclude Include="include\dojo\GlobalUniformData.h" />
     <ClInclude Include="include\dojo\InputDevice.h" />
     <ClInclude Include="include\dojo\InputDeviceListener.h" />
+    <ClInclude Include="include\dojo\InputSystem.h" />
     <ClInclude Include="include\dojo\InputSystemListener.h" />
     <ClInclude Include="include\dojo\IteratedNoise.h" />
     <ClInclude Include="include\dojo\Keyboard.h" />
@@ -44,124 +55,108 @@
     <ClInclude Include="include\dojo\LogEntry.h" />
     <ClInclude Include="include\dojo\LogListener.h" />
     <ClInclude Include="include\dojo\MemoryInputStream.h" />
+    <ClInclude Include="include\dojo\Mesh.h" />
     <ClInclude Include="include\dojo\MPSCQueue.h" />
+    <ClInclude Include="include\dojo\Noise.h" />
+    <ClInclude Include="include\dojo\Object.h" />
     <ClInclude Include="include\dojo\optional_ref.h" />
     <ClInclude Include="include\dojo\Oscillator.h" />
     <ClInclude Include="include\dojo\Path.h" />
-    <ClInclude Include="include\dojo\RenderSurface.h" />
-    <ClInclude Include="include\dojo\Semaphore.h" />
-    <ClInclude Include="include\dojo\SoundListener.h" />
-    <ClInclude Include="include\dojo\SpinLock.h" />
-    <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\PixelFormat.h" />
-    <ClInclude Include="include\dojo\PolyTextArea.h" />
-    <ClInclude Include="include\dojo\PseudoEnum.h" />
-    <ClInclude Include="include\dojo\Radians.h" />
-    <ClInclude Include="include\dojo\range.h" />
-    <ClInclude Include="include\dojo\TexFormatInfo.h" />
-    <ClInclude Include="include\dojo\TinySHA1.h" />
-    <ClInclude Include="include\dojo\ViewportRecorder.h" />
-    <ClInclude Include="include\dojo\RenderLayer.h" />
-    <ClInclude Include="include\dojo\Resource.h" />
-    <ClInclude Include="include\dojo\Color.h" />
-    <ClInclude Include="include\dojo\dojomath.h" />
-    <ClInclude Include="include\dojo\dojo_common_header.h" />
-    <ClInclude Include="include\dojo\dojo_config.h" />
-    <ClInclude Include="include\dojo\ApplicationListener.h" />
-    <ClInclude Include="include\dojo\Font.h" />
-    <ClInclude Include="include\dojo\FontSystem.h" />
-    <ClInclude Include="include\dojo\FrameSet.h" />
-    <ClInclude Include="include\dojo\Game.h" />
-    <ClInclude Include="include\dojo\GameState.h" />
-    <ClInclude Include="include\dojo\InputSystem.h" />
-    <ClInclude Include="include\dojo\Mesh.h" />
-    <ClInclude Include="include\dojo\Noise.h" />
-    <ClInclude Include="include\dojo\Object.h" />
     <ClInclude Include="include\dojo\Plane.h" />
     <ClInclude Include="include\dojo\Platform.h" />
+    <ClInclude Include="include\dojo\PolyTextArea.h" />
+    <ClInclude Include="include\dojo\PrimitiveMode.h" />
+    <ClInclude Include="include\dojo\PseudoEnum.h" />
+    <ClInclude Include="include\dojo\Radians.h" />
     <ClInclude Include="include\dojo\Random.h" />
-    <ClInclude Include="include\dojo\Renderer.h" />
+    <ClInclude Include="include\dojo\range.h" />
     <ClInclude Include="include\dojo\Renderable.h" />
+    <ClInclude Include="include\dojo\Renderer.h" />
+    <ClInclude Include="include\dojo\RenderLayer.h" />
     <ClInclude Include="include\dojo\RenderState.h" />
+    <ClInclude Include="include\dojo\RenderSurface.h" />
+    <ClInclude Include="include\dojo\Resource.h" />
     <ClInclude Include="include\dojo\ResourceGroup.h" />
     <ClInclude Include="include\dojo\ring_buffer.h" />
+    <ClInclude Include="include\dojo\Semaphore.h" />
     <ClInclude Include="include\dojo\Shader.h" />
     <ClInclude Include="include\dojo\ShaderProgram.h" />
     <ClInclude Include="include\dojo\ShaderProgramType.h" />
     <ClInclude Include="include\dojo\SmallSet.h" />
     <ClInclude Include="include\dojo\SoundBuffer.h" />
+    <ClInclude Include="include\dojo\SoundListener.h" />
     <ClInclude Include="include\dojo\SoundManager.h" />
     <ClInclude Include="include\dojo\SoundSet.h" />
     <ClInclude Include="include\dojo\SoundSource.h" />
+    <ClInclude Include="include\dojo\SpinLock.h" />
     <ClInclude Include="include\dojo\Sprite.h" />
+    <ClInclude Include="include\dojo\SPSCQueue.h" />
     <ClInclude Include="include\dojo\StateInterface.h" />
     <ClInclude Include="include\dojo\Stream.h" />
     <ClInclude Include="include\dojo\StringReader.h" />
     <ClInclude Include="include\dojo\Table.h" />
     <ClInclude Include="include\dojo\Tessellation.h" />
+    <ClInclude Include="include\dojo\TexFormatInfo.h" />
     <ClInclude Include="include\dojo\TextArea.h" />
     <ClInclude Include="include\dojo\Texture.h" />
     <ClInclude Include="include\dojo\TimedEvent.h" />
     <ClInclude Include="include\dojo\Timer.h" />
+    <ClInclude Include="include\dojo\TinySHA1.h" />
     <ClInclude Include="include\dojo\Touch.h" />
     <ClInclude Include="include\dojo\TouchArea.h" />
-    <ClInclude Include="include\dojo\PrimitiveMode.h" />
     <ClInclude Include="include\dojo\UTFString.h" />
     <ClInclude Include="include\dojo\Vector.h" />
     <ClInclude Include="include\dojo\VertexField.h" />
     <ClInclude Include="include\dojo\Viewport.h" />
+    <ClInclude Include="include\dojo\ViewportRecorder.h" />
     <ClInclude Include="include\dojo\win32\WGL_ARB_multisample.h" />
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
     <ClInclude Include="include\dojo\win32\XInputController.h" />
     <ClInclude Include="include\dojo\WorkerPool.h" />
-    <ClInclude Include="src\triangle.h" />
+    <ClInclude Include="src\ScratchSpace.h" />
+    <ClInclude Include="src\triangle_wrapper.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\dojo\AABB.cpp" />
-    <ClCompile Include="include\dojo\Component.cpp" />
-    <ClCompile Include="include\dojo\dojostring.cpp" />
-    <ClCompile Include="include\dojo\dojo_gl_header.cpp" />
-    <ClCompile Include="include\dojo\File.cpp" />
-    <ClCompile Include="include\dojo\FileStream.cpp" />
-    <ClCompile Include="include\dojo\FontSystem.cpp" />
-    <ClCompile Include="include\dojo\InputSystemListener.cpp" />
-    <ClCompile Include="include\dojo\IteratedNoise.cpp" />
-    <ClCompile Include="include\dojo\Keyboard.cpp" />
-    <ClCompile Include="include\dojo\LogListener.cpp" />
-    <ClCompile Include="include\dojo\MemoryInputStream.cpp" />
-    <ClCompile Include="include\dojo\Path.cpp" />
-    <ClCompile Include="include\dojo\Random.cpp" />
-    <ClCompile Include="include\dojo\ViewportRecorder.cpp" />
-    <ClCompile Include="include\dojo\RenderLayer.cpp" />
-    <ClCompile Include="include\dojo\Stream.cpp" />
-    <ClCompile Include="include\dojo\StringReader.cpp" />
-    <ClCompile Include="include\dojo\TimedEvent.cpp" />
-    <ClCompile Include="include\dojo\win32\XInputController.cpp" />
+    <ClCompile Include="dojo_gl_header.cpp" />
+    <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BackgroundWorker.cpp" />
     <ClCompile Include="src\Base64.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\DebugUtils.cpp" />
+    <ClCompile Include="src\dojostring.cpp" />
+    <ClCompile Include="src\File.cpp" />
+    <ClCompile Include="src\FileStream.cpp" />
     <ClCompile Include="src\Font.cpp" />
+    <ClCompile Include="src\FontSystem.cpp" />
     <ClCompile Include="src\Framebuffer.cpp" />
     <ClCompile Include="src\FrameSet.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\InputDevice.cpp" />
     <ClCompile Include="src\InputSystem.cpp" />
+    <ClCompile Include="src\InputSystemListener.cpp" />
+    <ClCompile Include="src\IteratedNoise.cpp" />
+    <ClCompile Include="src\Keyboard.cpp" />
     <ClCompile Include="src\Log.cpp" />
+    <ClCompile Include="src\LogListener.cpp" />
     <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\MemoryInputStream.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Noise.cpp" />
     <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\Path.cpp" />
     <ClCompile Include="src\Platform.cpp" />
     <ClCompile Include="src\PolyTextArea.cpp" />
     <ClCompile Include="src\Radians.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\Random.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\RenderLayer.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
     <ClCompile Include="src\RenderSurface.cpp" />
     <ClCompile Include="src\ResourceGroup.cpp" />
@@ -175,29 +170,30 @@
     <ClCompile Include="src\SoundSource.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\StateInterface.cpp" />
+    <ClCompile Include="src\Stream.cpp" />
     <ClCompile Include="src\String.cpp" />
+    <ClCompile Include="src\StringReader.cpp" />
     <ClCompile Include="src\Table.cpp" />
     <ClCompile Include="src\Tessellation.cpp" />
     <ClCompile Include="src\TexFormatInfo.cpp" />
     <ClCompile Include="src\TextArea.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TimedEvent.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\TouchArea.cpp" />
     <ClCompile Include="src\Vector.cpp" />
     <ClCompile Include="src\Viewport.cpp" />
-    <ClCompile Include="src\win32\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\win32\WGL_ARB_multisample.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\ViewportRecorder.cpp" />
+    <ClCompile Include="src\win32\WGL_ARB_multisample.cpp" />
     <ClCompile Include="src\win32\Win32Platform.cpp" />
+    <ClCompile Include="src\win32\XInputController.cpp" />
     <ClCompile Include="src\WorkerPool.cpp" />
     <ClCompile Include="src\ZipArchive.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>Dojo</ProjectName>
@@ -262,7 +258,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;include/dojo;dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -294,7 +290,7 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.;include/dojo;dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -332,7 +328,7 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.;include/dojo;dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;PUBLISH;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;PUBLISH;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>

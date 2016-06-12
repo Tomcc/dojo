@@ -33,16 +33,22 @@ int64_t File::getSize() {
 	return mSize;
 }
 
-const wchar_t* flagForW(Stream::Access request) {
+#ifdef WIN32
+#define STRING_LITERAL(STR) L##STR
+#else
+#define STRING_LITERAL(STR) STR
+#endif
+
+const auto flagFor(Stream::Access request) {
 	switch (request) {
 	case Stream::Access::Read:
-		return L"rb";
+		return STRING_LITERAL("rb");
 
 	case Stream::Access::WriteOnly:
-		return L"wb";
+		return STRING_LITERAL("wb");
 
 	case Stream::Access::ReadWrite:
-		return L"wb+";
+		return STRING_LITERAL("wb+");
 
 	default:
 		FAIL("Invalid access");
@@ -54,9 +60,9 @@ bool File::open(Access accessType) {
 
 	//open the file
 #ifdef WIN32
-	_wfopen_s(&mFile, String::toUTF16(mPath).c_str(), flagForW(accessType));
+	_wfopen_s(&mFile, String::toUTF16(mPath).c_str(), flagFor(accessType));
 #else
-	mFile = fopen(mPath.c_str(), mWrite ? "wb" : "rb");
+	mFile = fopen(mPath.bytes().c_str(), flagFor(accessType));
 #endif
 
 	if (mFile) {
@@ -86,14 +92,14 @@ int File::seek(int64_t offset, int64_t fromWhere /*= SEEK_SET*/) {
 	return fseek(mFile, (size_t)offset, (int)fromWhere);
 }
 
-int64_t File::read(byte* buf, int64_t number) {
+int64_t File::read(uint8_t* buf, int64_t number) {
 	DEBUG_ASSERT(isReadable(), "The file must be open and readable");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
 	return fread(buf, 1, (size_t)number, mFile);
 }
 
-void File::write(byte* buf, int size) {
+void File::write(uint8_t* buf, int size) {
 	DEBUG_ASSERT(isWriteable(), "The file must be open and write enabled");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 

@@ -161,10 +161,10 @@ namespace utf
 		auto utf8data = (const _uchar8bit*)s_utf8data;
 		// increments the iterator by one
 		// result in undefined behavior (crashes) if already at the end 
-		if (*utf8data < 0x80) ++utf8data;
-		else if (*utf8data < 0xE0)	utf8data += 2;		// 2 bytes
-		else if (*utf8data < 0xF0) utf8data += 3;		// 3 bytes
-		else utf8data += 4;		// 4 bytes
+		if (*utf8data < 0x80) ++s_utf8data;
+		else if (*utf8data < 0xE0)	s_utf8data += 2;		// 2 bytes
+		else if (*utf8data < 0xF0) s_utf8data += 3;		// 3 bytes
+		else s_utf8data += 4;		// 4 bytes
 	}
 
 	// decrements a pointer to a UTF-8 encoded string to the previous character

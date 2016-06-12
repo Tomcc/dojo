@@ -25,10 +25,10 @@
 #include <cstring>
 #include "win32/WGL_ARB_multisample.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 namespace {
-	WNDCLASSEX g_wcl;
+	WNDCLASSEXW g_wcl;
 	HWND g_hWnd;
 	HDC g_hDC;
 	HGLRC g_hRC;
@@ -72,13 +72,13 @@ namespace {
 		g_wcl.style = CS_OWNDC;
 		g_wcl.lpfnWndProc = DummyGLWndProc;
 		g_wcl.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
-		g_wcl.lpszClassName = "DummyGLWindowClass";
+		g_wcl.lpszClassName = L"DummyGLWindowClass";
 
-		if (not RegisterClassEx(&g_wcl)) {
+		if (not RegisterClassExW(&g_wcl)) {
 			return false;
 		}
 
-		g_hWnd = CreateWindow(g_wcl.lpszClassName, "", WS_OVERLAPPEDWINDOW,
+		g_hWnd = CreateWindowW(g_wcl.lpszClassName, L"", WS_OVERLAPPEDWINDOW,
 									0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
 
 		if (not g_hWnd) {
@@ -292,7 +292,7 @@ namespace {
 			}
 		}
 
-		UnregisterClass(g_wcl.lpszClassName, g_wcl.hInstance);
+		UnregisterClassW(g_wcl.lpszClassName, g_wcl.hInstance);
 	}
 
 	bool ExtensionSupported(const char* pszExtensionName) {

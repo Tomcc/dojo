@@ -7,7 +7,7 @@
 #include "Renderer.h"
 #include "Texture.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 #include "range.h"
 #include "TinySHA1.h"
 #include "Base64.h"

@@ -1,6 +1,6 @@
 #include "ViewportRecorder.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 #include "Platform.h"
 #include "Renderer.h"
 #include "range.h"
@@ -111,7 +111,7 @@ std::string getDateString() {
 #pragma warning(pop)
 
 void ViewportRecorder::makeVideo() {
-	std::vector<byte*> mappedPointers;
+	std::vector<uint8_t*> mappedPointers;
 	std::vector<GLuint> mappedPBOs;
 
 	//map all the PBOs at the same time and pass them to a background thread
@@ -121,7 +121,7 @@ void ViewportRecorder::makeVideo() {
 		auto idx = (startFrame + i) % mInitializedPBOs;
 
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBOs[idx]);
-		auto ptr = (byte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
+		auto ptr = (uint8_t*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mFrameSize, GL_MAP_READ_BIT);
 		mappedPointers.push_back(ptr);
 		mappedPBOs.push_back(mPBOs[idx]);
 	}

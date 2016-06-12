@@ -2,7 +2,7 @@
 
 using namespace Dojo;
 
-MemoryInputStream::MemoryInputStream(byte* mem, int size) :
+MemoryInputStream::MemoryInputStream(uint8_t* mem, int size) :
 	pMem(mem),
 	mSize(size),
 	mPosition(0) {
@@ -10,7 +10,7 @@ MemoryInputStream::MemoryInputStream(byte* mem, int size) :
 	DEBUG_ASSERT(size > 0, "the size must be a valid");
 }
 
-int64_t Dojo::MemoryInputStream::read(byte* buf, int64_t number) {
+int64_t Dojo::MemoryInputStream::read(uint8_t* buf, int64_t number) {
 	if (mPosition < 0 or mPosition >= mSize) { //invalid position, cannot read
 		return 0;
 	}

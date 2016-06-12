@@ -357,20 +357,20 @@ namespace Dojo {
     //specialization magic
     
     template<>
-    void Table::set<Color>(const utf::string& key, Color value) {
+    inline void Table::set<Color>(const utf::string& key, Color value) {
         set(key, Vector(value.r, value.g, value.b));
     }
     template<>
-    void Table::set<int>(const utf::string& key, int value) {
+	inline void Table::set<int>(const utf::string& key, int value) {
         set(key, (float)value);
     }
     template<>
-    void Table::set<bool>(const utf::string& key, bool value) {
+	inline void Table::set<bool>(const utf::string& key, bool value) {
         set(key, value ? 1.f : 0.f);
     }
     
     template<>
-    void Table::set<Quaternion>(const utf::string& key, Quaternion value) {
+	inline void Table::set<Quaternion>(const utf::string& key, Quaternion value) {
         set(key, Vector(glm::eulerAngles(value)));
     }
     

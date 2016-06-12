@@ -52,12 +52,12 @@ void StringReader::skipWhiteSpace() {
 	back(); //put back first non whitespace char
 }
 
-byte StringReader::getHexValue(uint32_t c) {
+uint8_t StringReader::getHexValue(uint32_t c) {
 	if (isNumber(c)) {
-		return (byte)(c - '0');
+		return (uint8_t)(c - '0');
 	}
 	else if (isHex(c)) {
-		return 10 + (byte)(c - 'a');
+		return 10 + (uint8_t)(c - 'a');
 	}
 	else {
 		FAIL("The value is not an hex number");

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
+project("Dojo")
+
 option(IWYU "IWYU" OFF)
 
 include(CheckCXXCompilerFlag)
@@ -34,7 +36,7 @@ file(GLOB common_src
 )
 
 if (WIN32) 
-    file(GLOB common_src
+    file(GLOB platform_src
         "include/dojo/win32/*.h"
         "src/win32/*.cpp"
     )

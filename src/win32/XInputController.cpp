@@ -1,4 +1,4 @@
-#include "XInputController.h"
+#include "win32/XInputController.h"
 
 #include "dojomath.h"
 #include "InputSystem.h"

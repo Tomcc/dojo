@@ -1,6 +1,6 @@
 #include "Framebuffer.h"
 
-#include "dojo_gl_header.h"
+#include <glad/glad.h>
 
 #include "Texture.h"
 #include "Platform.h"
