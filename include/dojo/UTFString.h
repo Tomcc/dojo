@@ -39,6 +39,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <cstdint>
+#include <cstddef>
+#include <limits>
 
 namespace utf
 {

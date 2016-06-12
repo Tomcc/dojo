@@ -101,12 +101,16 @@ void ViewportRecorder::_destroyAllPBOs() {
 #pragma warning( disable : 4996 )
 
 std::string getDateString() {
+#if defined(__GNUC__) && __GNUC__ < 5 //put_time isn't available
+	FAIL("Not supported on GCC 4");
+#else
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
 	std::stringstream ss;
 	ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
 	return ss.str();
+#endif
 }
 #pragma warning(pop)
 

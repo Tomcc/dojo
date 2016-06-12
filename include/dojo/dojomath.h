@@ -78,7 +78,7 @@ namespace Dojo {
 
 		///converts float to int by flooring
 		static int floorInt(float f) {
-			return (int)std::floorf(f);
+			return (int)std::floor(f);
 		}
 
 		static float lerp(float to, float from, float s) {

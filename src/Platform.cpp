@@ -17,16 +17,16 @@
 	#include "win32/Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
-	//#include "OSXPlatform.h"
+	//TODO fix this #include "OSXPlatform.h"
 
 #elif defined( PLATFORM_IOS )
-	#include "IOSPlatform.h"
+	//TODO fix this #include "IOSPlatform.h"
 
 #elif defined( PLATFORM_LINUX )
-	#include "linux/LinuxPlatform.h"
+	//TODO fix this #include "linux/LinuxPlatform.h"
 
 #elif defined( PLATFORM_ANDROID )
-	#include "android/AndroidPlatform.h"
+	//TODO fix this #include "android/AndroidPlatform.h"
 
 #endif
 
@@ -53,14 +53,17 @@ Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
     //gSingletonPtr = make_unique<OSXPlatform>(config);
 
 #elif defined( PLATFORM_IOS )
-	gSingletonPtr = make_unique<IOSPlatform>(config);
+    DEBUG_TODO;
+	//gSingletonPtr = make_unique<IOSPlatform>(config);
 
 #elif defined( PLATFORM_LINUX )
-	gSingletonPtr = make_unique<LinuxPlatform>(config);
+	DEBUG_TODO;
+	//gSingletonPtr = make_unique<LinuxPlatform>(config);
 
 #elif defined( PLATFORM_ANDROID )
-	android_main(nullptr); //HACK
-	gSingletonPtr = make_unique<AndroidPlatform>(config);
+    DEBUG_TODO;
+	// android_main(nullptr); //HACK
+	// gSingletonPtr = make_unique<AndroidPlatform>(config);
 
 #endif
 	return *gSingletonPtr;

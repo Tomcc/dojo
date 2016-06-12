@@ -55,6 +55,8 @@ if (IWYU)
     set_property(TARGET Dojo PROPERTY CXX_INCLUDE_WHAT_YOU_USE "${iwyu_path}")
 else()
     include(cotire)
+
+    set(ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros")
     
     set_target_properties(Dojo PROPERTIES
         COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}"

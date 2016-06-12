@@ -25,7 +25,7 @@ Rene' Nyffenegger rene.nyffenegger@adp-gmbh.ch
 
 */
 
-#include "base64.h"
+#include "Base64.h"
 #include <iostream>
 
 using namespace Dojo;
