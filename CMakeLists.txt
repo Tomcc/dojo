@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
-include(cotire)
+option(IWYU "IWYU" OFF)
+
 include(CheckCXXCompilerFlag)
 
 include_directories("include/dojo")
@@ -43,9 +44,20 @@ set(dojo_SRC ${common_src} ${platform_src})
 
 add_library(Dojo ${dojo_SRC})
 
-set_target_properties(Dojo PROPERTIES
-    COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}"
-    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/dependencies"
-    COTIRE_ADD_UNITY_BUILD FALSE)
+if (IWYU)
+    find_program(iwyu_path NAMES include-what-you-use iwyu)
+    if(NOT iwyu_path)
+      message(FATAL_ERROR "Could not find the program include-what-you-use")
+    endif()
 
-cotire(Dojo)
+    set_property(TARGET Dojo PROPERTY CXX_INCLUDE_WHAT_YOU_USE "${iwyu_path}")
+else()
+    include(cotire)
+    
+    set_target_properties(Dojo PROPERTIES
+        COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}"
+        COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/dependencies"
+        COTIRE_ADD_UNITY_BUILD FALSE)
+
+    cotire(Dojo)
+endif()
