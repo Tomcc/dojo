@@ -114,7 +114,6 @@
     <ClInclude Include="include\dojo\win32\Win32Platform.h" />
     <ClInclude Include="include\dojo\win32\XInputController.h" />
     <ClInclude Include="include\dojo\WorkerPool.h" />
-    <ClInclude Include="src\ScratchSpace.h" />
     <ClInclude Include="src\triangle_wrapper.h" />
     <ClInclude Include="src\ZipArchive.h" />
     <ClInclude Include="stdafx.h" />
