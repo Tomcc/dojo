@@ -18,7 +18,6 @@ namespace Dojo {
 	///Noise is a Perlin Noise utility implementation
 	class Noise {
 	public:
-
 		///Creates a Noise object drawing numbers from the given Random generator
 		/**
 		this allows to use the same random to obtain the same Perlin distribution */
@@ -51,18 +50,21 @@ namespace Dojo {
 		}
 
 		///returns the Perlin noise at x,y,z, scaled down to 0..1 range
-		float filternoise(float x, float y, float z, float scale) {
-			return 0.5f * (1.0f + perlinNoise(x / scale, y / scale, z / scale));
+		float normalizedNoise(float x, float y, float z, float scale) {
+			//the natural range of perlin noise is +-sqrt(DIMENSIONS)/2
+			//source: https://eev.ee/blog/2016/05/29/perlin-noise/
+			constexpr auto RANGE = 1.7320508075688772935274463415059f;
+			return 0.5f * (RANGE + perlinNoise(x / scale, y / scale, z / scale));
 		}
 
 		///returns the Perlin noise at x,y, scaled down to 0..1 range
-		float filternoise(float x, float y, float scale) {
-			return filternoise(x, y, scale, scale);
+		float normalizedNoise(float x, float y, float scale) {
+			return normalizedNoise(x, y, scale, scale);
 		}
 
 		///returns the Perlin noise at x, scaled down to 0..1 range
-		float filternoise(float x, float scale) {
-			return filternoise(x, x, x, scale);
+		float normalizedNoise(float x, float scale) {
+			return normalizedNoise(x, x, x, scale);
 		}
 
 	protected:

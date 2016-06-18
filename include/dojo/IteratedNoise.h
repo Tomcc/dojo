@@ -10,18 +10,18 @@ namespace Dojo {
 		struct Iteration {
 			typedef std::vector<Iteration> List;
 
-			float width, height;
+			float scale, weight;
 		};
 
-		Noise& base;
+		Noise& mBase;
 
 		IteratedNoise(Noise& noise, const Iteration::List& levels);
 
 		float noise(float x, float y) const;
 
 	protected:
-
-		Iteration::List levels;
+		float mTotalWeight = 0.f;
+		Iteration::List mLevels;
 	private:
 	};
 }
