@@ -17,6 +17,7 @@ namespace Dojo {
 
 		IteratedNoise(Noise& noise, const Iteration::List& levels);
 
+		float noise(float x) const;
 		float noise(float x, float y) const;
 
 	protected:

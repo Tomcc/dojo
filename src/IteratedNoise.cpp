@@ -11,6 +11,16 @@ IteratedNoise::IteratedNoise(Noise& noise, const Iteration::List& levels) :
 	}
 }
 
+float IteratedNoise::noise(float x) const {
+	float f = 0;
+
+	for (auto&& level : mLevels) {
+		f += mBase.normalizedNoise(x, level.scale) * (level.weight / mTotalWeight);
+	}
+
+	return f;
+}
+
 float IteratedNoise::noise(float x, float y) const {
 	float f = 0;
 
