@@ -102,7 +102,7 @@ namespace Dojo {
 
 		virtual void onUnload(bool soft = false);
 
-	protected:
+	private:
 		struct Binary {
 			std::string bytes;
 			uint32_t format;

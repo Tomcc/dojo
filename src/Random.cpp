@@ -8,8 +8,9 @@ using namespace Dojo;
 Random Random::instance;
 
 Random::BigSeed Random::makeBigRandomSeed() {
+	static std::random_device random;
+
 	BigSeed bigSeed;
-	std::random_device random;
 	for (auto& bits : bigSeed) {
 		bits = random();
 	}
@@ -17,7 +18,8 @@ Random::BigSeed Random::makeBigRandomSeed() {
 }
 
 RandomSeed Random::makeRandomSeed() {
-	std::random_device random;
+	static std::random_device random;
+
 	RandomSeed seed = random();
 	return (seed << 32) | random();
 }

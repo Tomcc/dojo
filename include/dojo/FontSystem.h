@@ -18,7 +18,7 @@ namespace Dojo {
 
 		FT_Stroker getStroker(float width);
 
-	protected:
+	private:
 
 		FaceMap faceMap;
 		std::vector<std::vector<uint8_t>> ownedBuffers;

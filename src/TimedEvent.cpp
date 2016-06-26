@@ -24,7 +24,7 @@ namespace Dojo {
 
 		void runTimedEvents(TimePoint now);
 
-	protected:
+	private:
 		SmallSet<TimedEventImpl*> mEvents;
 		std::multimap<TimePoint, AsyncTask> mSimpleTasks;
 	};

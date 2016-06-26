@@ -54,7 +54,7 @@ namespace Dojo {
 
 			virtual void onUnload(bool soft = false) override;
 
-		protected:
+		private:
 
 			SoundBuffer& pParent;
 			int64_t mStartPosition, mUncompressedSize;
@@ -108,7 +108,7 @@ namespace Dojo {
 		*/
 		Chunk& getChunk(int n, bool loadAsync = false);
 
-	protected:
+	private:
 
 		uint32_t size;
 		float mDuration;

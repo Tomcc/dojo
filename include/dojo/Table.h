@@ -346,7 +346,7 @@ namespace Dojo {
 			return map.end();
 		}
 
-	protected:
+	private:
 
 		EntryMap map;
 

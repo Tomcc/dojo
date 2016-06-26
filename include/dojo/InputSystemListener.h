@@ -48,7 +48,7 @@ namespace Dojo {
 			source = src;
 		}
 
-	protected:
+	private:
 
 		optional_ref<InputSystem> source;
 	};

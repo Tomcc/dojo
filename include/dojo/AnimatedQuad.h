@@ -81,7 +81,7 @@ namespace Dojo {
 			///advances the animation of dt seconds; usually this needs to be called each frame
 			void advance(float dt);
 
-		protected:
+		private:
 
 			Texture* currentFrame;
 

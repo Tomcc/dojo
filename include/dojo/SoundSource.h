@@ -118,7 +118,7 @@ namespace Dojo {
 
 		void _reset();
 
-	protected:
+	private:
 
 		typedef std::queue<SoundBuffer::Chunk*> ChunkQueue;
 

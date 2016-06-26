@@ -36,8 +36,8 @@ HGLRC hglrc; // handle to OpenGL rendering context
 
 static void *getProcAddress(const char *functionName) {
 	void *p = (void *)wglGetProcAddress(functionName);
-	if (p == 0 ||
-		(p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||
+	if (p == 0 or
+		(p == (void*)0x1) or (p == (void*)0x2) or (p == (void*)0x3) or
 		(p == (void*)-1))
 	{
 		HMODULE module = LoadLibraryA("opengl32.dll");

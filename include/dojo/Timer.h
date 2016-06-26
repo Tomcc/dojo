@@ -79,7 +79,7 @@ namespace Dojo {
 			return mPeriod != 0;
 		}
 
-	protected:
+	private:
 		double eventTime, mPeriod;
 
 	};

@@ -86,7 +86,7 @@ namespace Dojo {
 		void _fireShakeEvent();
 		void _fireAccelerationEvent(const Vector& accel, float roll);
 
-	protected:
+	private:
 
 		bool enabled;
 

@@ -17,17 +17,6 @@ namespace Dojo {
 	class Resource {
 	public:
 
-		///Resource::DataProvider is a virtual interface for resource loading
-		/**
-		It allows non-file-baseed resources to be unloaded and reloaded on the fly
-		*/
-		class DataProvider {
-		public:
-
-			///onLoad is called when a registered resource needs to be loaded
-			virtual void onLoad(Resource*) = 0;
-		};
-
 		Resource(optional_ref<ResourceGroup> group = {}) :
 			creator(group),
 			loaded(false),
@@ -41,14 +30,6 @@ namespace Dojo {
 			size(0),
 			filePath(path) {
 			DEBUG_ASSERT( path.not_empty(), "The file path is empty" );
-		}
-
-		Resource(optional_ref<ResourceGroup> group, DataProvider& source) :
-			creator(group),
-			loaded(false),
-			size(0),
-			pDataProvider(source) {
-
 		}
 
 		virtual ~Resource() {
@@ -75,26 +56,17 @@ namespace Dojo {
 			return filePath;
 		}
 
-		optional_ref<DataProvider> getDataProvider() {
-			return pDataProvider;
-		}
-
-		bool isFiledBased() {
+		bool isReloadable() {
 			return filePath.not_empty();
 		}
 
-		bool isReloadable() {
-			return isFiledBased() or getDataProvider().is_some();
-		}
-
 	protected:
+		bool loaded;
 
 		optional_ref<ResourceGroup> creator;
 
-		bool loaded;
 		int size;
 
 		utf::string filePath;
-		optional_ref<DataProvider> pDataProvider;
 	};
 }

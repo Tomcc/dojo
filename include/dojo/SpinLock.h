@@ -17,7 +17,7 @@ namespace Dojo {
 			mLock.clear(std::memory_order_release);
 		}
 
-	protected:
+	private:
 		std::atomic_flag mLock;
 	};
 }

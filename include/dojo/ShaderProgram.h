@@ -39,7 +39,7 @@ namespace Dojo {
 		virtual bool onLoad();
 		virtual void onUnload(bool soft = false);
 
-	protected:
+	private:
 
 		std::string mContentString;
 

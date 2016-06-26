@@ -51,7 +51,7 @@ namespace Dojo {
 			return mAnimationIdx;
 		}
 
-	protected:
+	private:
 		AnimationList animations;
 
 		int mAnimationIdx;

@@ -60,7 +60,7 @@ namespace Dojo {
 			///returns the triangle tesselation of this character
 			Tessellation* getTesselation();
 
-		protected:
+		private:
 
 			Unique<Tessellation> mTesselation;
 		};
@@ -100,7 +100,7 @@ namespace Dojo {
 				return font;
 			}
 
-		protected:
+		private:
 
 			Font& font;
 			Unique<Texture> texture;
@@ -189,7 +189,7 @@ namespace Dojo {
 		///forces the loading of the given pages without waiting for lazy-loading
 		void preloadPages(const char pages[], int n);
 
-	protected:
+	private:
 
 		utf::string fontFile;
 

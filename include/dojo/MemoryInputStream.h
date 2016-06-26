@@ -26,7 +26,7 @@ namespace Dojo {
 		///goes to the given position
 		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET);
 
-	protected:
+	private:
 
 		uint8_t* pMem;
 		int64_t mSize;

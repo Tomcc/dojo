@@ -11,7 +11,7 @@ namespace Dojo {
 		void wait();
 		void notifyOne();
 
-	protected:
+	private:
 		std::mutex mConditionMutex;
 		std::atomic<uint32_t> mCount;
 		std::condition_variable mCondition;

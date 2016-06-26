@@ -172,7 +172,7 @@ namespace Dojo {
 
 		void tessellate(int flags, int maxIndices = 1000);
 
-	protected:
+	private:
 
 		bool _raycastSegmentAlongX(const Segment& segment, const Position& startPosition);
 

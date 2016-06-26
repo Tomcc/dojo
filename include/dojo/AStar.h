@@ -64,7 +64,7 @@ namespace Dojo {
 			return mTotalLength;
 		}
 
-	protected:
+	private:
 
 		float mTotalLength;
 

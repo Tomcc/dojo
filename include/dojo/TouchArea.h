@@ -47,7 +47,7 @@ namespace Dojo {
 			virtual void onTouchAreaReleased(TouchArea& area) {
 			}
 
-		protected:
+		private:
 		};
 
 		///creates a new "free touch area" with the given parameters
@@ -88,7 +88,7 @@ namespace Dojo {
 
 		void _incrementTouches(const Touch& touch);
 
-	protected:
+	private:
 		bool mPressed, top = false;
 		int mLayer;
 

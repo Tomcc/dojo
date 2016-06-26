@@ -214,7 +214,7 @@ namespace Dojo {
 			return frameSets.end();
 		}
 
-	protected:
+	private:
 
 		utf::string locale, fallbackLocale;
 		bool finalized;

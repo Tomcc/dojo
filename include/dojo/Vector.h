@@ -289,7 +289,7 @@ namespace Dojo {
 			return{ z, z, z };
 		}
 
-	protected:
+	private:
 	};
 }
 

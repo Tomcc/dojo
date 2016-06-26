@@ -51,7 +51,7 @@ namespace Dojo {
 			return mDepthBuffer;
 		}
 
-	protected:
+	private:
 		std::vector<TextureAttachment> mColorAttachments;
 		std::shared_ptr<RenderBuffer> mDepthBuffer;
 

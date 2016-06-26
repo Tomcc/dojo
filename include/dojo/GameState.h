@@ -82,7 +82,7 @@ namespace Dojo {
 
 		virtual void end() override;
 
-	protected:
+	private:
 
 		typedef std::vector<TouchArea*> TouchAreaList;
 

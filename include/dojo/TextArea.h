@@ -126,7 +126,7 @@ namespace Dojo {
 
 		virtual void update(float dt) override;
 
-	protected:
+	private:
 
 		typedef SmallSet<Unique<Renderable>> LayerList;
 		typedef SmallSet<optional_ref<Font::Character>> CharacterList;

@@ -170,6 +170,6 @@ namespace Dojo {
 			};
 		};
 
-	protected:
+	private:
 	};
 }

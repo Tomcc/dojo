@@ -16,7 +16,7 @@ namespace Dojo {
 		virtual void onAttach() override;
 		virtual void onDetach() override;
 
-	protected:
+	private:
 		float mZOffset;
 	};
 }

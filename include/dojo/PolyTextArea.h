@@ -46,7 +46,7 @@ namespace Dojo {
 
 		virtual void update(float dt) override;
 
-	protected:
+	private:
 
 		utf::string mContent;
 

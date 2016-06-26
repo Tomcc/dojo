@@ -192,7 +192,7 @@ namespace Dojo {
 		void onDetach() override;
 		void onDispose() override;
 
-	protected:
+	private:
 
 		Vector m2DRect;
 

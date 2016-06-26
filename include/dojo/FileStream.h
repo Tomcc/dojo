@@ -37,6 +37,5 @@ namespace Dojo {
 	protected:
 
 		utf::string mPath;
-	private:
 	};
 }

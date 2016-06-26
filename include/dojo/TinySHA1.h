@@ -137,7 +137,7 @@ namespace Dojo
 			return digest;
 		}
 
-	protected:
+	private:
 		void processBlock() {
 			uint32_t w[80];
 			for (size_t i = 0; i < 16; i++) {

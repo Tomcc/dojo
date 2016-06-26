@@ -69,7 +69,7 @@ namespace Dojo {
 			return ptr != ref.ptr;
 		}
 
-	protected:
+	private:
 		T* ptr;
 	};
 }

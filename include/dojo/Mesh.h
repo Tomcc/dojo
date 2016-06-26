@@ -209,7 +209,7 @@ namespace Dojo {
 		///creates a new mesh from a slice of this one
 		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::Zero) const;
 
-	protected:
+	private:
 		Vector center, dimensions;
 		AABB bounds;
 

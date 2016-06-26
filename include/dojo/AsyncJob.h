@@ -26,7 +26,7 @@ namespace Dojo {
 				return Status::NotRunning;
 			}
 
-		protected:
+		private:
 			//TODO implement faster
 			std::weak_ptr<Status> mStatusPtr;
 		};
@@ -47,7 +47,7 @@ namespace Dojo {
 		}
 
 		std::shared_ptr<Status> mStatus;
-	protected:
+	private:
 	};
 }
 

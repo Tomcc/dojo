@@ -31,7 +31,7 @@ namespace Dojo {
 		///creates a new File* to read the underlying file. Does not copy reading status
 		virtual Unique<Stream> copy() const override;
 
-	protected:
+	private:
 
 		FILE* mFile;
 		int64_t mSize;

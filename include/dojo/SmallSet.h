@@ -126,7 +126,7 @@ namespace Dojo {
 			c.clear();
 		}
 
-	protected:
+	private:
 
 		std::vector<T> c;
 	private:

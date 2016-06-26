@@ -23,7 +23,7 @@ namespace Dojo {
 
 		void makeVideo();
 
-	protected:
+	private:
 		optional_ref<Viewport> mViewport;
 
 		uint32_t mFrameSize = 0;

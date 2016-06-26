@@ -20,7 +20,7 @@ namespace Dojo {
 
 		virtual bool hasAxis(Axis a) const override;
 
-	protected:
+	private:
 
 		bool mConnected;
 		float mConnectionCheckTimer;

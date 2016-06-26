@@ -82,7 +82,7 @@ namespace Dojo {
 			running = false;
 		}
 
-	protected:
+	private:
 
 		uint32_t nativeWidth, nativeHeight;
 		float mNativeFrameLength, mMaxFrameLength;

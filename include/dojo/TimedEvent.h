@@ -29,7 +29,7 @@ namespace Dojo {
 			optional_ref<WorkerPool> targetPool = {}
 		);
 
-	protected:
+	private:
 		
 		Unique<TimedEventImpl> mImpl;
 	};

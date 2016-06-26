@@ -24,7 +24,7 @@ namespace Dojo {
 			return mQueue.try_dequeue(result);
 		}
 
-	protected:
+	private:
 
 		SpinLock mSpinLock;
 		SPSCQueue<T, MAX_BLOCK_SIZE> mQueue;

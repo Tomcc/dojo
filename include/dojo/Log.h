@@ -46,7 +46,7 @@ namespace Dojo {
 			return mOutput.end();
 		}
 
-	protected:
+	private:
 
 		SmallSet<LogListener*> pListeners;
 		LogQueue mOutput;

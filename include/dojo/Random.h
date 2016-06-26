@@ -38,7 +38,7 @@ namespace Dojo {
 
 		typedef std::array<uint32_t, N> BigSeed;
 
-	protected:
+	private:
 		enum { M = 397 }; // period parameter
 
 		uint32_t state[N]; // internal state
@@ -155,7 +155,7 @@ namespace Dojo {
 
 		Random& operator=(const Random& o);
 
-	protected:
+	private:
 		void initialize(RandomSeed oneSeed);
 		void reload();
 

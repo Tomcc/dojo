@@ -67,7 +67,7 @@ namespace Dojo {
 			return normalizedNoise(x, x, x, scale);
 		}
 
-	protected:
+	private:
 
 		int p[512];
 

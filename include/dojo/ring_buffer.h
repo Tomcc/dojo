@@ -43,7 +43,7 @@ namespace Dojo {
 			m_write_idx = (m_write_idx + 1) % max_size();
 		}
 
-	protected:
+	private:
 		std::vector<T> m_buffer;
 		size_t m_write_idx = 0;
 		size_t m_max_size;

@@ -44,7 +44,7 @@ namespace Dojo {
 
 		virtual bool hasAxis(Axis a) const override;
 
-	protected:
+	private:
 
 		FakeAxes mFakeAxes;
 	private:

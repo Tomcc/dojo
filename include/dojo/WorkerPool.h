@@ -18,7 +18,7 @@ namespace Dojo {
 		void sync();
 
 		bool runOneCallback();
-	protected:
+	private:
 		uint32_t mNextWorker = 0;
 		std::vector<Unique<BackgroundWorker>> mWorkers;
 	private:

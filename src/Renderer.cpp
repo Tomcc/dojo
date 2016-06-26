@@ -348,7 +348,7 @@ void Renderer::_renderViewport(Viewport& viewport) {
 		clearFlags |= GL_COLOR_BUFFER_BIT;
 	}
 	
-	if(viewport.getDepthClearEnabled() && viewport.getFramebuffer().hasDepth()) {
+	if(viewport.getDepthClearEnabled() and viewport.getFramebuffer().hasDepth()) {
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glClearDepthf(viewport.getClearDepth());

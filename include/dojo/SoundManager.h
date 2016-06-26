@@ -103,7 +103,7 @@ namespace Dojo {
 		void _setSoundListener(SoundListener& listener);
 		void _notifySoundListenerDetached(SoundListener& listener);
 
-	protected:
+	private:
 
 		enum FadeState {
 			FS_NONE,

@@ -104,7 +104,7 @@ namespace Dojo {
 		///returns the Frame Index of this Texture if it belongs to the FS, or -1 if not
 		int getFrameIndex(Texture& frame) const;
 
-	protected:
+	private:
 		float mPreferredAnimationTime;
 
 		TextureList frames;

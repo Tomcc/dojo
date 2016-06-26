@@ -37,7 +37,7 @@ namespace Dojo {
 
 		void addBuffer(std::unique_ptr<SoundBuffer> b);
 
-	protected:
+	private:
 
 		utf::string name;
 

@@ -98,7 +98,7 @@ namespace Dojo {
 
 		void endFrame();
 
-	protected:
+	private:
 
 		bool valid;
 

@@ -54,7 +54,7 @@ namespace Dojo {
 			return mString;
 		}
 
-	protected:
+	private:
 		const utf::string mString;
 
 		utf::string::const_iterator mIdx;

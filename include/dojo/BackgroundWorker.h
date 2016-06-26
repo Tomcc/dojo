@@ -47,7 +47,7 @@ namespace Dojo {
 
 		bool _runOneCallback();
 		bool _runAllCallbacks();
-	protected:
+	private:
 
 		std::atomic<bool> mRunning;
 		std::thread mThread;

@@ -20,7 +20,7 @@ namespace Dojo {
 		float noise(float x) const;
 		float noise(float x, float y) const;
 
-	protected:
+	private:
 		float mTotalWeight = 0.f;
 		Iteration::List mLevels;
 	private:
