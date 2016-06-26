@@ -311,7 +311,7 @@ bool Shader::onLoad() {
 
 	auto sha = SHA1{};
 
-	//grab all types
+	//assign all programs and make an hash of all source code
 	for (int i = 0; i < (int)ShaderProgramType::_Count; ++i) {
 		auto& source = _assignProgram(desc, (ShaderProgramType)i).getSourceString();
 		sha.processBytes(source.data(), source.length());
@@ -412,7 +412,9 @@ void Shader::onUnload(bool soft /* = false */) {
 
 	//only manage the programs that aren't shared
 	for (auto&& program : mOwnedPrograms) {
-		program->onUnload(false);
+		if (program->isLoaded()) {
+			program->onUnload(false);
+		}
 	}
 
 	mOwnedPrograms.clear();

@@ -21,7 +21,7 @@ BackgroundWorker::BackgroundWorker(bool async, bool allowMultipleProducers) :
 }
 
 BackgroundWorker::~BackgroundWorker() {
-	if (mRunning) {
+	if (mRunning and isAsync) {
 		stop();
 	}
 }
@@ -95,7 +95,11 @@ void BackgroundWorker::queueJob(AsyncJob&& job) {
 }
 
 void BackgroundWorker::stop() {
+	DEBUG_ASSERT(isAsync, "Cannot stop a synchronous worker");
+
 	if (mRunning) {
+		DEBUG_ASSERT(mThread.joinable(), "The thread is not running even if the Worker thinks it is");
+
 		mRunning = false;
 
 		//wake up the thread so it can kill itself (muahah)
