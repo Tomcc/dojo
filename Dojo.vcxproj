@@ -146,7 +146,6 @@
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\MemoryInputStream.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Noise.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Path.cpp" />
     <ClCompile Include="src\Platform.cpp" />
@@ -162,6 +161,7 @@
     <ClCompile Include="src\Semaphore.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
+    <ClCompile Include="src\Noise.cpp" />
     <ClCompile Include="src\SoundBuffer.cpp" />
     <ClCompile Include="src\SoundListener.cpp" />
     <ClCompile Include="src\SoundManager.cpp" />

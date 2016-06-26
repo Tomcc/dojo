@@ -147,13 +147,17 @@ namespace Dojo {
 		/// Re-seeding functions with same behavior as initializers
 		void seed(RandomSeed s);
 		void seed(const BigSeed& seed);
-		void seed();
 
 		/// Saving and loading generator state
 		void save(uint32_t* saveArray) const; // to array of size SAVE
 		void load(uint32_t* const loadArray); // from such array
 
 		Random& operator=(const Random& o);
+
+		///func-style iterator for compatibility with STL
+		int operator()(int max) {
+			return getInt(0, max);
+		}
 
 	private:
 		void initialize(RandomSeed oneSeed);

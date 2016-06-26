@@ -1,78 +1,110 @@
-//
-//  Noiser.h
-//  dojo
-//
-//  Created by Tommaso Checchi on 7/4/11.
-//  Copyright 2011 none. All rights reserved.
-//
-
+/**
+ * @file    SimplexNoise.h
+ * @brief   A Perlin Simplex Noise C++ Implementation (1D, 2D, 3D, 4D).
+ *
+ * Copyright (c) 2014-2015 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ *
+ * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
+ * or copy at http://opensource.org/licenses/MIT)
+ */
 #pragma once
 
-#include "dojo_common_header.h"
-
-#include "dojomath.h"
+#include <cstddef>  // size_t
 
 namespace Dojo {
+
 	class Random;
 
-	///Noise is a Perlin Noise utility implementation
+	/**
+	 * @brief A Perlin Simplex Noise C++ Implementation (1D, 2D, 3D, 4D).
+	 */
 	class Noise {
 	public:
-		///Creates a Noise object drawing numbers from the given Random generator
+
 		/**
-		this allows to use the same random to obtain the same Perlin distribution */
-		explicit Noise(Random& r);
+		* Constructor of to initialize a fractal noise summation
+		*
+		* @param[in] random the random used to generate the unique permutation
+		* @param[in] frequency    Frequency ("width") of the first octave of noise (default to 1.0)
+		* @param[in] amplitude    Amplitude ("height") of the first octave of noise (default to 1.0)
+		* @param[in] lacunarity   Lacunarity specifies the frequency multiplier between successive octaves (default to 2.0).
+		* @param[in] persistence  Persistence is the loss of amplitude between successive octaves (usually 1/lacunarity)
+		*/
+		explicit Noise(
+			Random& random,
+			float frequency = 1.0f,
+			float amplitude = 1.0f,
+			float lacunarity = 2.0f,
+			float persistence = 0.5f);
 
-		///Creates a Noise object drawing numbers from a new random number generator
-		explicit Noise(RandomSeed seedInt);
-
-		///creates a new noise object initialized with the default seeding method
-		Noise();
-
-		void seed(Random& r);
-
-		///returns the Perlin noise at point x,y,z
-		float perlinNoise(float x, float y, float z);
-
-		///returns the Perlin noise at position x,y,z with an octave given by "scale"
 		/**
-		a bigger scale will generate bigger Perlin features */
-		float noise(float x, float y, float z, float scale) {
-			return 0.5f * scale * perlinNoise(x / scale, y / scale, z / scale);
+		* Constructor of to initialize a fractal noise summation
+		*
+		* @param[in] seed used to generate the unique permutation
+		* @param[in] frequency    Frequency ("width") of the first octave of noise (default to 1.0)
+		* @param[in] amplitude    Amplitude ("height") of the first octave of noise (default to 1.0)
+		* @param[in] lacunarity   Lacunarity specifies the frequency multiplier between successive octaves (default to 2.0).
+		* @param[in] persistence  Persistence is the loss of amplitude between successive octaves (usually 1/lacunarity)
+		*/
+		explicit Noise(
+			RandomSeed seed,
+			float frequency = 1.0f,
+			float amplitude = 1.0f,
+			float lacunarity = 2.0f,
+			float persistence = 0.5f);
+
+		// 1D Perlin simplex noise
+		float noise(float x) const;
+		// 2D Perlin simplex noise
+		float noise(float x, float y) const;
+		// 3D Perlin simplex noise
+		float noise(float x, float y, float z) const;
+
+		// 1D noise between 0 and 1
+		float normalizedNoise(float x) const {
+			return (noise(x) + 1.f) * 0.5f;
 		}
 
-		///returns the Perlin noise at position x,y with an octave given by "scale"
-		/**
-		a bigger scale will generate bigger Perlin features;
-		z is used to return different "planes" at different scales, generating completely different 2D slices at each scale.*/
-		float noise(float x, float y, float scale) {
-			return noise(x, y, scale, scale);
+		// 2D noise between 0 and 1
+		float normalizedNoise(float x, float y) const {
+			return (noise(x, y) + 1.f) * 0.5f;
 		}
 
-		///returns the Perlin noise at x,y,z, scaled down to 0..1 range
-		float normalizedNoise(float x, float y, float z, float scale) {
-			//the natural range of perlin noise is +-sqrt(DIMENSIONS)/2
-			//source: https://eev.ee/blog/2016/05/29/perlin-noise/
-			constexpr auto RANGE = 1.7320508075688772935274463415059f;
-			return 0.5f * (RANGE + perlinNoise(x / scale, y / scale, z / scale));
-		}
-
-		///returns the Perlin noise at x,y, scaled down to 0..1 range
-		float normalizedNoise(float x, float y, float scale) {
-			return normalizedNoise(x, y, scale, scale);
-		}
-
-		///returns the Perlin noise at x, scaled down to 0..1 range
-		float normalizedNoise(float x, float scale) {
-			return normalizedNoise(x, x, x, scale);
-		}
+		// Fractal/Fractional Brownian Motion (fBm) noise summation
+		float fractal(size_t octaves, float x) const;
+		float fractal(size_t octaves, float x, float y) const;
 
 	private:
+		// Parameters of Fractional Brownian Motion (fBm) : sum of N "octaves" of noise
+		float mFrequency;   ///< Frequency ("width") of the first octave of noise (default to 1.0)
+		float mAmplitude;   ///< Amplitude ("height") of the first octave of noise (default to 1.0)
+		float mLacunarity;  ///< Lacunarity specifies the frequency multiplier between successive octaves (default to 2.0).
+		float mPersistence; ///< Persistence is the loss of amplitude between successive octaves (usually 1/lacunarity)
 
-		int p[512];
+		std::array<uint8_t, 256> perm;
 
-		float fade(float t);
-		float lerp(float t, float a, float b);
-		float grad(int hash, float x, float y, float z);
+		/**
+		* Helper function to hash an integer using the above permutation table
+		*
+		*  This inline function costs around 1ns, and is called N+1 times for a noise of N dimension.
+		*
+		*  Using a real hash function would be better to improve the "repeatability of 256" of the above permutation table,
+		* but fast integer Hash functions uses more time and have bad random properties.
+		*
+		* @param[in] i Integer value to hash
+		*
+		* @return 8-bits hashed value
+		*/
+
+		inline uint8_t hash(int32_t i) const {
+			return perm[static_cast<uint8_t>(i)];
+		}
+
+		void _init(
+			Random& random,
+			float frequency,
+			float amplitude,
+			float lacunarity,
+			float persistence);
 	};
 }
