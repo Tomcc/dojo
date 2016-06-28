@@ -15,20 +15,12 @@ namespace Dojo {
 		typedef typename Container::const_iterator const_iterator;
 
 		template <class E>
-		static typename std::vector<E>::const_iterator find(const SmallSet<E>& c, const E& elem) {
-			auto itr = c.begin();
-
-			for (; itr != c.end(); ++itr) {
-				if (*itr == elem) {
-					return itr;
-				}
-			}
-
-			return c.end();
+		static auto find(const SmallSet<E>& c, const E& elem) {
+			return std::find(c.c.begin(), c.c.end(), elem);
 		}
 
 		template <class PTR, class E>
-		static typename std::vector<PTR>::const_iterator find(const SmallSet<PTR>& c, const E& elem) {
+		static auto find(const SmallSet<PTR>& c, const E& elem) {
 			auto itr = c.begin();
 
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
@@ -37,20 +29,12 @@ namespace Dojo {
 		}
 
 		template <class E>
-		static typename std::vector<E>::iterator find(SmallSet<E>& c, const E& elem) {
-			auto itr = c.begin();
-
-			for (; itr != c.end(); ++itr) {
-				if (*itr == elem) {
-					return itr;
-				}
-			}
-
-			return c.end();
+		static auto find(SmallSet<E>& c, const E& elem) {
+			return std::find(c.c.begin(), c.c.end(), elem);
 		}
 
 		template <class E>
-		static typename std::vector<std::unique_ptr<E>>::iterator find(SmallSet<std::unique_ptr<E>>& c, const E& elem) {
+		static auto find(SmallSet<std::unique_ptr<E>>& c, const E& elem) {
 			auto itr = c.begin();
 
 			for (; itr != c.end() && itr->get() != &elem; ++itr);
