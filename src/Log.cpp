@@ -5,8 +5,8 @@
 
 using namespace Dojo;
 
-void Log::_append(const utf::string& message, LogEntry::Level level) {
-	mOutput.emplace_back(LogEntry(message, level));
+void Dojo::Log::_append(utf::string_view message, LogEntry::Level level) {
+	mOutput.emplace_back(LogEntry(message.to_str(), level));
 
 	if (mOutput.size() == mMaxLines) {
 		mOutput.erase(mOutput.begin());
@@ -16,7 +16,7 @@ void Log::_append(const utf::string& message, LogEntry::Level level) {
 }
 
 ///appends another message to the log, with an optional severity level
-void Log::append(const utf::string& message, LogEntry::Level level) {
+void Dojo::Log::append(utf::string_view message, LogEntry::Level level /*= LogEntry::EL_WARNING*/) {
 	std::lock_guard<std::mutex> lock(mAppendMutex);
 
 	_append(message, level);

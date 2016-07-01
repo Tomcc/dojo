@@ -22,7 +22,7 @@ namespace Dojo {
 		}
 
 		///appends another message to the log, with an optional severity level
-		void append(const utf::string& message, LogEntry::Level level = LogEntry::EL_WARNING);
+		void append(utf::string_view message, LogEntry::Level level = LogEntry::EL_WARNING);
 
 		///adds a listener that will receive events from this Log
 		void addListener(LogListener& l) {
@@ -53,7 +53,7 @@ namespace Dojo {
 		uint32_t mMaxLines;
 		std::mutex mAppendMutex;
 
-		void _append(const utf::string& message, LogEntry::Level level);
+		void _append(utf::string_view message, LogEntry::Level level);
 
 		void _fireOnLogUpdated(const LogEntry& e);
 	};

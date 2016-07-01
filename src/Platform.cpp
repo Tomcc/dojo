@@ -161,7 +161,7 @@ utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath
 	do {
 		next = relPath.find_first_of('/', prev + 1);
 
-		utf::string currentFolder = relPath.substr(prev, next);
+		auto currentFolder = utf::string_view(prev, next);
 
 		//for each possibile zip extension, search a zip named like that
 		bool found = false;
@@ -248,7 +248,7 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 			//add all the files with the needed extension
 			for (utf::string filePath : folderItr->second) {
 				if (Path::getFileExtension(filePath) == type) {
-					out.emplace_back(zipPath + "/" + filePath);
+					out.emplace_back(zipPath + '/' + filePath);
 				}
 			}
 		}

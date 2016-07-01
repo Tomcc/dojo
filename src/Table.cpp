@@ -11,7 +11,7 @@ const Table::Data Table::Data::Empty{};
 Table Table::loadFromFile(utf::string_view path) {
 	DEBUG_ASSERT( path.not_empty(), "Tried to load a Table from an empty path string" );
 
-	auto file = Platform::singleton().getFile(path);
+	auto file = Platform::singleton().getFile(path.to_str());
 
 	Table dest;
 
@@ -54,7 +54,7 @@ void Table::serialize(utf::string& buf, utf::string_view indent) const {
 		auto& e = *itr->second;
 
 		if (indent.not_empty()) {
-			buf += indent.to_str();
+			buf += indent;
 		}
 
 		//write name and equal only if not anonymous and if not managed later
@@ -209,7 +209,7 @@ void Table::deserialize(StringReader& buf) {
 			}
 			else if (not isName(c)) {
 				state = ParseState::NameEnd;
-				curName = buf.getString().substr(nameStart, idx);
+				curName = { nameStart, idx };
 			}
 
 			break;
@@ -399,8 +399,8 @@ Table* Table::getParentTable(utf::string_view key, utf::string& realKey) const {
 		return (Table*)this;
 	}
 
-	auto partialKey = key.substr(dotIdx + 1, key.end());
-	auto childName = key.substr(key.begin(), dotIdx);
+	auto partialKey = utf::string_view(dotIdx + 1, key.end());
+	auto childName = utf::string_view(key.begin(), dotIdx);
 	auto& child = getTable(childName);
 
 	return child.getParentTable(partialKey, realKey);

@@ -69,6 +69,8 @@ namespace utf
 	typedef _char32bit character;
 	typedef _uchar8bit utf8_encoding[4];
 
+	class string_view;
+
 	/// \brief Generates a UTF8 encoding
 	/// This function generates a UTF-8 encoding from a 32 bit UCS-4 character.
 	/// This is being provided as a static method so it can be used with normal std::string objects
@@ -328,10 +330,10 @@ namespace utf
 		MakeUTF8StringImpl(instring_UCS4, out, appendToOut);
 	}
 
-	inline size_t GetNumCharactersInUTF8String(const _char8bit *utf8data)
+	inline size_t GetNumCharactersInUTF8String(const _char8bit *utf8data, const  _char8bit* end)
 	{
 		size_t count = 0;
-		while (*utf8data != 0)
+		while (*utf8data != 0 && utf8data != end)
 		{
 			++count;
 			IncToNextCharacter(utf8data);
@@ -626,7 +628,7 @@ namespace utf
 
 		// build from a c string
 		// undefined (ie crashes) if str is NULL
-		_utf8string(const _char8bit *str)
+		explicit _utf8string(const _char8bit *str)
 			: raw_bytes(str)
 		{
 		}
@@ -638,7 +640,7 @@ namespace utf
 
 		// build from a c string
 		// undefined (ie crashes) if str is NULL
-		_utf8string(const _uchar8bit *str)
+		explicit _utf8string(const _uchar8bit *str)
 			: _utf8string((const _char8bit*)str)
 		{
 		}
@@ -766,7 +768,7 @@ namespace utf
 		// synonomous with length()
 		size_type size() const
 		{
-			return GetNumCharactersInUTF8String(raw_bytes.c_str());
+			return GetNumCharactersInUTF8String(raw_bytes.c_str(), nullptr);
 		}
 
 		// returns the size of the string in characters
@@ -1062,6 +1064,13 @@ namespace utf
 			return (*this);
 		}
 
+		_utf8stringImpl& operator+= (string_view str);
+
+		_utf8stringImpl& append(const char* str, size_t n) {
+			raw_bytes.append(str, n);
+			return (*this);
+		}
+
 		_utf8stringImpl &assign(const _char8bit *str)
 		{
 			raw_bytes.assign(str);
@@ -1229,49 +1238,6 @@ namespace utf
 			}
 		}
 
-		// comparison operators ---------------------------------------------------------------------------
-		bool operator == (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes == other.raw_bytes;
-		}
-
-		bool operator != (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes != other.raw_bytes;
-		}
-
-		bool operator < (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes < other.raw_bytes;
-		}
-
-		bool operator > (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes > other.raw_bytes;
-		}
-
-		bool operator <= (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes <= other.raw_bytes;
-		}
-
-		bool operator >= (const _utf8stringImpl &other) const
-		{
-			// just compare pointers
-			// the programmer is responsible for making both iterators are for the same set of data
-			return raw_bytes >= other.raw_bytes;
-		}
-
 		static const size_type npos = std::numeric_limits<size_type>::max();
 	};
 
@@ -1312,36 +1278,14 @@ namespace utf
 	}
 
 	typedef _utf8string<> string;
-	template<class Alloc>
-	_utf8string<Alloc> operator+ (_utf8string<Alloc>&&      lhs, const _utf8string<Alloc>& rhs) { 
-		return lhs += rhs; //reuse lhs' memory
-	}
+
 	template<class Alloc>
 	_utf8string<Alloc> operator+ (const _utf8string<Alloc>& lhs, _utf8string<Alloc>&&      rhs) { 
 		auto copy = lhs;
 		copy += rhs;
 		return copy;
 	}
-	template<class Alloc>
-	_utf8string<Alloc> operator+ (const _utf8string<Alloc>& lhs, const char*   rhs) { 
-		auto copy = lhs;
-		copy += rhs;
-		return copy;
-	}
-	template<class Alloc>
-	_utf8string<Alloc> operator+ (_utf8string<Alloc>&&      lhs, const char*   rhs) { 
-		return lhs += rhs; //reuse lhs' memory
-	}
-	template<class Alloc>
-	_utf8string<Alloc> operator+ (const char*   lhs, const _utf8string<Alloc>& rhs) { 
-		_utf8string<Alloc> copy = lhs;
-		copy += rhs;
-		return copy;
-	}
-	template<class Alloc>
-	_utf8string<Alloc> operator+ (const char*   lhs, _utf8string<Alloc>&&      rhs) { 
-		return _utf8string<Alloc>(lhs) + rhs;
-	}
+
 	template<class Alloc>
 	_utf8string<Alloc> operator+ (const _utf8string<Alloc>& lhs, char          rhs) { 
 		auto copy = lhs;
@@ -1349,25 +1293,25 @@ namespace utf
 		return copy;
 	}
 	template<class Alloc>
-	_utf8string<Alloc> operator+ (_utf8string<Alloc>&&      lhs, char          rhs) { 
+	_utf8string<Alloc> operator+ (_utf8string<Alloc>&& lhs, char          rhs) { 
 		return std::move(lhs += rhs);
 	}
 
 	template<class Alloc>
-	_utf8string<Alloc> operator+ (char          lhs, const _utf8string<Alloc>& rhs) { 
+	_utf8string<Alloc> operator+ (char     lhs, const _utf8string<Alloc>& rhs) { 
 		_utf8string<Alloc> copy = lhs;
 		copy += rhs;
 		return copy;
 	}
 	template<class Alloc>
-	_utf8string<Alloc> operator+ (char          lhs, _utf8string<Alloc>&&      rhs) { 
+	_utf8string<Alloc> operator+ (char     lhs, _utf8string<Alloc>&&      rhs) { 
 		string copy = lhs;
 		copy += rhs;
 		return copy;
 	}
 
 	template<class Alloc>
-	_utf8string<Alloc> operator+ (_utf8string<Alloc>&&      lhs, _utf8string<Alloc>&&      rhs) {
+	_utf8string<Alloc> operator+ (_utf8string<Alloc>&& lhs, _utf8string<Alloc>&&      rhs) {
 		return lhs += rhs; //reuse lhs' memory
 	}
 
@@ -1382,36 +1326,57 @@ namespace utf
 		}
 
 	public:
-		typedef string::iterator iterator;
 		typedef string::const_iterator const_iterator;
 
 		constexpr string_view(const char* str) : 
-			mPtr(str),
+			mBegin(str),
 			mEnd(str + static_strlen(str)) {}
 
-		string_view();
-		string_view(const utf::string&);
+		string_view() : mBegin(nullptr), mEnd(nullptr) {}
 
-		const_iterator begin();
-		const_iterator end();
+		string_view(const utf::string& str)
+			: mBegin(str.bytes().data())
+			, mEnd(str.bytes().data() + str.bytes().length()) {
 
-		utf::string to_str();
+		}
 
-		bool empty() const;
-		bool not_empty() const;
+		string_view(const_iterator begin, const_iterator end) :
+			mBegin(begin.get_ptr()),
+			mEnd(end.get_ptr()) {
+
+		}
+
+		const_iterator begin() const {
+			return const_iterator(mBegin);
+		}
+		const_iterator end() const {
+			return const_iterator(mEnd);
+		}
+
+		utf::string to_str() const {
+			return string(mBegin, mEnd - mBegin);
+		}
+
+		bool empty() const {
+			return mEnd == mBegin;
+		}
+		bool not_empty() const {
+			return not empty();
+		}
 		
-		size_t length() const;
+		///This is the UTF8 lenght!
+		size_t length() const {
+			return GetNumCharactersInUTF8String(mBegin, mEnd);
+		}
 
-		string::value_type front() const;
+		string::value_type front() const {
+			return *begin();
+		}
 
-		bool operator == (const string_view &other) const;
-		bool operator != (const string_view &other) const;
-		bool operator < (const string_view &other) const;
-		bool operator > (const string_view &other) const;
-		bool operator <= (const string_view &other) const;
-		bool operator >= (const string_view &other) const;
-
-		string_view substr(const_iterator pos, const_iterator end) const;
+		//note that this is a legacy method. You don't need to use this, just construct a new view directly
+		string_view substr(const_iterator pos, const_iterator end) const {
+			return{ pos, end };
+		}
 
 		const_iterator find(const string_view& str, const_iterator pos = {}) const;
 		const_iterator rfind(const string_view& str, const_iterator pos = {}) const;
@@ -1423,12 +1388,16 @@ namespace utf
 		bool starts_with(const string_view& string) const;
 		bool ends_with(const string_view& string) const;
 
-		const char* data() const;
-		char* data();
-		size_t byte_size() const;
+		const char* data() const {
+			return mBegin;
+		}
+
+		size_t byte_size() const {
+			return mEnd - mBegin;
+		}
 
 	private:
-		const char* mPtr, *mEnd;
+		const char* mBegin, *mEnd;
 	};
 
 	// overload stream insertion so we can write to streams
@@ -1455,25 +1424,55 @@ namespace utf
 		return is;
 	}
 
-	// we can define this operator for all possible types such as char, const char *, etc,
-	// but this is not neccessary. Because those constructors were provided, the compiler will be
-	// able to build a const utf::string_view for those types and then call this overloaded operator.
-	// if performance becomes an issue, the additional variations to this operator can be created
-	utf::string operator + (const utf::string_view& lhs, const utf::string_view& rhs);
+	//yes, this is incorrect for unicode. However, this is mostly used for std::map so speed is most important
+	//unicode sorting is expensive and should only be done when needed
+	inline bool operator< (const utf::string_view& lhs, const utf::string_view& rhs) {
+		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) < 0;
+	}
+	inline bool operator> (const utf::string_view& lhs, const utf::string_view& rhs) {
+		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) > 0;
+	}
+	inline bool operator== (const utf::string_view& lhs, const utf::string_view& rhs) {
+		if(lhs.byte_size() != rhs.byte_size()) {
+			return false;
+		}
+		return strncmp(lhs.data(), rhs.data(), lhs.byte_size()) == 0;
+	}
 
-	utf::string operator+ (const utf::string_view&&      lhs, const utf::string_view& rhs);
+	inline bool operator != (const utf::string_view& lhs, const utf::string_view& rhs)
+	{
+		return !(lhs == rhs);
+	}
 
-	utf::string operator+ (const utf::string_view& lhs, const utf::string_view&&      rhs);
-	utf::string operator+ (const utf::string_view& lhs, const char*   rhs);
-	utf::string operator+ (const utf::string_view&&      lhs, const char*   rhs);
-	utf::string operator+ (const char*   lhs, const utf::string_view& rhs);
-	utf::string operator+ (const char*   lhs, const utf::string_view&&      rhs);
-	utf::string operator+ (const utf::string_view& lhs, char          rhs);
-	utf::string operator+ (const utf::string_view&&      lhs, char          rhs);
-	utf::string operator+ (char          lhs, const utf::string_view& rhs);
-	utf::string operator+ (char          lhs, const utf::string_view&&      rhs);
+	inline bool operator <= (const utf::string_view& lhs, const utf::string_view& rhs) {
+		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) <= 0;
+	}
 
-	utf::string operator+ (const utf::string_view&&      lhs, const utf::string_view&&      rhs);
+	inline bool operator >= (const utf::string_view& lhs, const utf::string_view& rhs) {
+		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) >= 0;
+	}
+
+	template <class Alloc /*= std::allocator<_uchar8bit>*/>
+	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::operator+=(string_view str) {
+		return append(str.data(), str.byte_size());
+	}
+
+	inline utf::string operator+ (utf::string&& lhs, const utf::string_view&      rhs) {
+		lhs += rhs;
+		return std::move(lhs);
+	}
+
+	inline utf::string operator+ (const utf::string_view& lhs, const utf::string_view&      rhs) {
+		return lhs.to_str() + rhs;
+	}
+
+	inline utf::string operator+ (const utf::string_view& lhs, char rhs) {
+		return lhs.to_str() + rhs;
+	}
+
+	inline utf::string operator+ (char lhs, const utf::string_view& rhs) {
+		return string(lhs) + rhs;
+	}
 }
 
 namespace std {

@@ -16,11 +16,18 @@ namespace Dojo {
 		using is_transparent = std::true_type;
 
 		// standard comparison (between two instances of utf::string)
-		bool operator()(const utf::string& lhs, const utf::string& rhs) const;
+		bool operator()(const utf::string& lhs, const utf::string& rhs) const {
+			return lhs < rhs;
+		}
 
 		// Same thing with utf::string_view
-		bool operator()(const utf::string_view& lhs, const utf::string& rhs) const;
-		bool operator()(const utf::string& lhs, const utf::string_view& rhs) const;
+		bool operator()(const utf::string_view& lhs, const utf::string& rhs) const {
+			return lhs < rhs;
+		}
+
+		bool operator()(const utf::string& lhs, const utf::string_view& rhs) const {
+			return lhs < rhs;
+		}
 	};
 
 
@@ -260,8 +267,17 @@ namespace Dojo {
 			return get(key, defaultValue);
 		}
 
-		utf::string_view getString(utf::string_view key, utf::string_view defaultValue = String::Empty) const {
-			return get(key, defaultValue);
+		//TODO convert everything to just return a string view without copying defaultValue
+		const utf::string& getString(utf::string_view key, utf::string_view defaultValue = {}) const {
+			static utf::string TODO;
+			auto e = get(key);
+			if (e and e->type == FieldType::String) {
+				TODO = e->getAs<utf::string>();
+			}
+			else {
+				TODO = defaultValue.to_str();
+			}
+			return TODO;
 		}
 
 		const Vector& getVector(utf::string_view key, const Vector& defaultValue = Vector::Zero) const  {
@@ -422,12 +438,12 @@ namespace Dojo {
         operator FieldType() const {
             return FieldType::Float;
         }
-    };
-    template<> struct Table::field_type_for < utf::string > {
-        operator FieldType() const {
-            return FieldType::String;
-        }
-    };
+	};
+	template<> struct Table::field_type_for < utf::string > {
+		operator FieldType() const {
+			return FieldType::String;
+		}
+	};
     template<> struct Table::field_type_for < Table::Data > {
         operator FieldType() const {
             return FieldType::RawData;
