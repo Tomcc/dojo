@@ -8,7 +8,7 @@ using namespace Dojo;
 const Table Table::Empty;
 const Table::Data Table::Data::Empty{};
 
-Table Table::loadFromFile(const utf::string& path) {
+Table Table::loadFromFile(utf::string_view path) {
 	DEBUG_ASSERT( path.not_empty(), "Tried to load a Table from an empty path string" );
 
 	auto file = Platform::singleton().getFile(path);
@@ -41,7 +41,7 @@ bool Table::onLoad() {
 	return (loaded = not isEmpty());
 }
 
-void Table::serialize(utf::string& buf, const utf::string& indent) const {
+void Table::serialize(utf::string& buf, utf::string_view indent) const {
 	using namespace std;
 
 	Data* data;
@@ -53,8 +53,8 @@ void Table::serialize(utf::string& buf, const utf::string& indent) const {
 	for (; itr != map.end(); ++itr) {
 		auto& e = *itr->second;
 
-		if (indent.size()) {
-			buf += indent;
+		if (indent.not_empty()) {
+			buf += indent.to_str();
 		}
 
 		//write name and equal only if not anonymous and if not managed later
@@ -154,7 +154,7 @@ void Table::deserialize(StringReader& buf) {
 	ParseState state = ParseState::Table;
 	ParseTarget target = ParseTarget::Undefined;
 
-	utf::string curName, str;
+	utf::string_view curName;
 	float number;
 	Vector vec;
 	Data data;
@@ -342,7 +342,7 @@ void Table::deserialize(StringReader& buf) {
 		if (target != ParseTarget::Undefined) { //read something
 			state = ParseState::Table;
 			target = ParseTarget::Undefined;
-			curName.clear();
+			curName = {};
 		}
 	}
 }
@@ -366,8 +366,8 @@ Table::Table(const Table& t) :
 	}
 }
 
-Table::Table(optional_ref<ResourceGroup> creator, const utf::string& path) :
-	Resource(creator, path),
+Table::Table(optional_ref<ResourceGroup> creator, utf::string_view path) :
+	Resource(creator, path.to_str()),
 	unnamedMembers(0) {
 
 }
@@ -390,30 +390,30 @@ void Table::onUnload(bool soft /*= false */) {
 	}
 }
 
-Table* Table::getParentTable(const utf::string& key, utf::string& realKey) const {
+Table* Table::getParentTable(utf::string_view key, utf::string& realKey) const {
 	auto dotIdx = key.begin();
 	for (; dotIdx != key.end() and *dotIdx != '.'; ++dotIdx);
 
 	if (dotIdx == key.end()) {
-		realKey = key;
+		realKey = key.to_str();
 		return (Table*)this;
 	}
 
-	utf::string partialKey = key.substr(dotIdx + 1, key.end());
-	utf::string childName = key.substr(key.begin(), dotIdx);
+	auto partialKey = key.substr(dotIdx + 1, key.end());
+	auto childName = key.substr(key.begin(), dotIdx);
 	auto& child = getTable(childName);
 
 	return child.getParentTable(partialKey, realKey);
 }
 
-Table& Table::createTable(const utf::string& key /*= utf::string::EMPTY */) {
+Table& Table::createTable(utf::string_view key /*= utf::string::EMPTY */) {
 	utf::string name;
 
-	if (key.size() == 0) {
+	if (key.empty()) {
 		name = autoname();
 	}
 	else {
-		name = key;
+		name = key.to_str();
 	}
 
 	set(name, Table());
@@ -451,14 +451,14 @@ void Table::inherit(Table* t) {
 	}
 }
 
-bool Table::exists(const utf::string& key) const {
-	DEBUG_ASSERT(key.size(), "exists: key is empty");
+bool Table::exists(utf::string_view key) const {
+	DEBUG_ASSERT(key.not_empty(), "exists: key is empty");
 
 	return map.find(key) != map.end();
 }
 
-bool Table::existsAs(const utf::string& key, FieldType t) const {
-	EntryMap::const_iterator itr = map.find(key);
+bool Table::existsAs(utf::string_view key, FieldType t) const {
+	auto itr = map.find(key);
 
 	if (itr != map.end()) {
 		return itr->second->type == t;
@@ -467,7 +467,7 @@ bool Table::existsAs(const utf::string& key, FieldType t) const {
 	return false;
 }
 
-Table::Entry* Table::get(const utf::string& key) const {
+Table::Entry* Table::get(utf::string_view key) const {
 	utf::string actualKey;
 	const Table* container = getParentTable(key, actualKey);
 
@@ -490,8 +490,11 @@ utf::string Table::autoMemberName(int idx) const {
 	return '_' + utf::to_string(idx);
 }
 
-void Table::remove(const utf::string& key) {
-	map.erase(key);
+void Table::remove(utf::string_view key) {
+	auto elem = map.find(key);
+	if (elem != map.end()) {
+		map.erase(elem);
+	}
 }
 
 void Table::remove(int idx) {

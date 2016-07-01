@@ -1375,6 +1375,105 @@ namespace utf
 	string to_string(T t) {
 		return std::to_string(t);
 	}
+
+	class string_view {
+		static int constexpr static_strlen(const char* str) {
+			return *str ? 1 + static_strlen(str + 1) : 0;
+		}
+
+	public:
+		typedef string::iterator iterator;
+		typedef string::const_iterator const_iterator;
+
+		constexpr string_view(const char* str) : 
+			mPtr(str),
+			mEnd(str + static_strlen(str)) {}
+
+		string_view();
+		string_view(const utf::string&);
+
+		const_iterator begin();
+		const_iterator end();
+
+		utf::string to_str();
+
+		bool empty() const;
+		bool not_empty() const;
+		
+		size_t length() const;
+
+		string::value_type front() const;
+
+		bool operator == (const string_view &other) const;
+		bool operator != (const string_view &other) const;
+		bool operator < (const string_view &other) const;
+		bool operator > (const string_view &other) const;
+		bool operator <= (const string_view &other) const;
+		bool operator >= (const string_view &other) const;
+
+		string_view substr(const_iterator pos, const_iterator end) const;
+
+		const_iterator find(const string_view& str, const_iterator pos = {}) const;
+		const_iterator rfind(const string_view& str, const_iterator pos = {}) const;
+		const_iterator find_first_of(const string_view& str, const_iterator pos = {}) const;
+		const_iterator find_last_of(const string_view& str, const_iterator pos = {}) const;
+		const_iterator find_first_not_of(const string_view& str, const_iterator pos = {}) const;
+		const_iterator find_last_not_of(const string_view& str, const_iterator pos = {}) const;
+
+		bool starts_with(const string_view& string) const;
+		bool ends_with(const string_view& string) const;
+
+		const char* data() const;
+		char* data();
+		size_t byte_size() const;
+
+	private:
+		const char* mPtr, *mEnd;
+	};
+
+	// overload stream insertion so we can write to streams
+	template <class Alloc>
+	std::ostream& operator<<(std::ostream& os, const utf::string_view& string)
+	{
+		// use from basic string
+		// must cast to char otherwise stream will think it's a number
+		os << (const char *)string.c_str();
+
+		return os;
+	}
+
+	// overload stream extraction so we can write to streams
+	template <class Alloc>
+	std::istream& operator >> (std::istream& is, const utf::string_view& string)
+	{
+		// for now just use std::string because istream as defined can not read unsigned char
+		std::string in;
+		is >> in;
+
+		string = in;
+
+		return is;
+	}
+
+	// we can define this operator for all possible types such as char, const char *, etc,
+	// but this is not neccessary. Because those constructors were provided, the compiler will be
+	// able to build a const utf::string_view for those types and then call this overloaded operator.
+	// if performance becomes an issue, the additional variations to this operator can be created
+	utf::string operator + (const utf::string_view& lhs, const utf::string_view& rhs);
+
+	utf::string operator+ (const utf::string_view&&      lhs, const utf::string_view& rhs);
+
+	utf::string operator+ (const utf::string_view& lhs, const utf::string_view&&      rhs);
+	utf::string operator+ (const utf::string_view& lhs, const char*   rhs);
+	utf::string operator+ (const utf::string_view&&      lhs, const char*   rhs);
+	utf::string operator+ (const char*   lhs, const utf::string_view& rhs);
+	utf::string operator+ (const char*   lhs, const utf::string_view&&      rhs);
+	utf::string operator+ (const utf::string_view& lhs, char          rhs);
+	utf::string operator+ (const utf::string_view&&      lhs, char          rhs);
+	utf::string operator+ (char          lhs, const utf::string_view& rhs);
+	utf::string operator+ (char          lhs, const utf::string_view&&      rhs);
+
+	utf::string operator+ (const utf::string_view&&      lhs, const utf::string_view&&      rhs);
 }
 
 namespace std {
