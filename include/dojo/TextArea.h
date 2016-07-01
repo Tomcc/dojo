@@ -35,7 +35,7 @@ namespace Dojo {
 		*/
 		TextArea(Object& l,
 			RenderLayer::ID layer,
-			const utf::string& fontSetName,
+			utf::string_view fontSetName,
 			bool center = false,
 			const Vector& bounds = Vector::One);
 
@@ -84,7 +84,7 @@ namespace Dojo {
 		void clearText();
 
 		///adds text to this TextArea
-		void addText(const utf::string& text);
+		void addText(utf::string_view text);
 
 		///adds a number to this TextArea
 		void addText(int n, char paddingChar = 0, int digits = 0);
@@ -106,7 +106,7 @@ namespace Dojo {
 		}
 
 		///returns the text content in utf::string format
-		const utf::string& getContent() {
+		utf::string_view getContent() {
 			return content;
 		}
 

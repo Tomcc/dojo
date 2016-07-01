@@ -67,7 +67,7 @@ namespace Dojo {
 		typedef std::vector<std::unique_ptr<Chunk>> ChunkList;
 
 		///Creates a new file-loaded SoundBuffer in the given resourcegroup, for the given file path
-		SoundBuffer(optional_ref<ResourceGroup> creator, const utf::string& path);
+		SoundBuffer(optional_ref<ResourceGroup> creator, utf::string_view path);
 
 		~SoundBuffer();
 

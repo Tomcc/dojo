@@ -34,7 +34,7 @@ void AnimatedQuad::Animation::setup(FrameSet& set, float tpf) {
 	}
 }
 
-AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::string& shader, const utf::string& immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
+AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, utf::string_view shader, utf::string_view immediateAnim /*= String::Empty*/, float timePerFrame /*= 0.0f*/) :
 	Renderable(
 		parent,
 		layer,
@@ -68,7 +68,7 @@ AnimatedQuad::AnimatedQuad(Object& parent, RenderLayer::ID layer, const utf::str
 	}
 }
 
-void AnimatedQuad::immediateAnimation(const utf::string& name, float timePerFrame) {
+void AnimatedQuad::immediateAnimation(utf::string_view name, float timePerFrame) {
 	immediateAnimation(self.getGameState().getFrameSet(name).unwrap(), timePerFrame);
 }
 

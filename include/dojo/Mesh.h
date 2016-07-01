@@ -46,7 +46,7 @@ namespace Dojo {
 		explicit Mesh(optional_ref<ResourceGroup> creator = {});
 
 		///Creates a new Mesh bound to the file at filePath
-		Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath);
+		Mesh(optional_ref<ResourceGroup> creator, utf::string_view filePath);
 
 		virtual ~Mesh();
 

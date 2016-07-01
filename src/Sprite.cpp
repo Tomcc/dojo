@@ -6,7 +6,7 @@
 
 using namespace Dojo;
 
-Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, const utf::string& shaderName, const utf::string& defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
+Dojo::Sprite::Sprite(Object& parent, RenderLayer::ID layer, utf::string_view shaderName, utf::string_view defaultAnimName /*= String::Empty*/, float timePerFrame /*= -1*/, bool pixelPerfect /*= true*/) :
 	AnimatedQuad(parent, layer, shaderName),
 	mAnimationIdx(-1) {
 	self.pixelPerfect = pixelPerfect;
@@ -51,7 +51,7 @@ int Sprite::registerAnimation(FrameSet& set, float timePerFrame /*= -1 */) {
 	return animations.size() - 1;
 }
 
-int Sprite::registerAnimation(const utf::string& base, float timePerFrame) {
+int Sprite::registerAnimation(utf::string_view base, float timePerFrame) {
 	auto set = getGameState().getFrameSet(base);
 	return registerAnimation(set.unwrap(), timePerFrame);
 }

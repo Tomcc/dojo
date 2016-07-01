@@ -10,7 +10,7 @@ namespace Dojo {
 		static bool isNumber(uint32_t c);
 
 #ifdef WIN32
-		static std::wstring toUTF16(const utf::string& str);
+		static std::wstring toUTF16(utf::string_view str);
 
 		static utf::string toUTF8(const std::wstring& wstr);
 #endif

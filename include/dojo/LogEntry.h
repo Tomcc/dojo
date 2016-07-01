@@ -18,8 +18,8 @@ namespace Dojo {
 		utf::string text;
 		Level level;
 
-		LogEntry(const utf::string& msg, Level lvl) :
-			text(msg),
+		LogEntry(utf::string_view msg, Level lvl) :
+			text(msg.copy()),
 			level(lvl) {
 			timestamp = time(nullptr);
 		}

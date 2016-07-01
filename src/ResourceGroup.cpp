@@ -36,10 +36,10 @@ ResourceGroup::~ResourceGroup() {
 	unloadResources(false);
 }
 
-void ResourceGroup::addLocalizedFolder(const utf::string& basefolder, int version) {
+void ResourceGroup::addLocalizedFolder(utf::string_view basefolder, int version) {
 	utf::string lid = Path::makeCanonical(basefolder);
 
-	utf::string localeDirPath = lid + '/' + locale;
+	utf::string localeDirPath = lid + locale;
 
 	//check if the folder exists or fallback to the default one
 	Poco::File localeDir(localeDirPath.bytes());
@@ -52,7 +52,7 @@ void ResourceGroup::addLocalizedFolder(const utf::string& basefolder, int versio
 	}
 }
 
-Table& ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
+Table& ResourceGroup::addTable(utf::string_view name, Unique<Table> t) {
 	DEBUG_ASSERT(not name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified" );
 
@@ -60,15 +60,15 @@ Table& ResourceGroup::addTable(const utf::string& name, Unique<Table> t) {
 		DEBUG_MESSAGE( "+" + name + "\t\t table" );
 	}
 
-	return *(tables[name] = std::move(t));
+	return *(tables[name.copy()] = std::move(t));
 }
 
-void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
+void ResourceGroup::addSets(utf::string_view subdirectory, int version) {
 	DEBUG_ASSERT( subdirectory.not_empty(), "addSets: folder path is empty" );
 	DEBUG_ASSERT( version >= 0, "addSets: negative versions are invalid" );
 
 	std::vector<utf::string> paths;
-	utf::string name, lastName;
+	utf::string_view name, lastName;
 
 	FrameSet* currentSet = nullptr;
 
@@ -85,7 +85,7 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 		}
 
 		if (lastName.empty() or not Path::arePathsInSequence(lastName, name)) {
-			utf::string setPrefix = Path::removeTags(name);
+			auto setPrefix = Path::removeTags(name);
 
 			//create a new set
 			currentSet = &addFrameSet(make_unique<FrameSet>(self), setPrefix);
@@ -136,12 +136,12 @@ void ResourceGroup::addSets(const utf::string& subdirectory, int version) {
 	}
 }
 
-void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
+void ResourceGroup::addFonts(utf::string_view subdirectory, int version) {
 	//add all the sets in the given folder
 	DEBUG_ASSERT( subdirectory.not_empty(), "addFonts: folder path is empty" );
 	DEBUG_ASSERT( version >= 0, "addFonts: negative versions are invalid" );
 
-	utf::string name;
+	utf::string_view name;
 	std::vector<utf::string> paths;
 
 	Platform::singleton().getFilePathsForType("font", subdirectory, paths);
@@ -161,23 +161,22 @@ void ResourceGroup::addFonts(const utf::string& subdirectory, int version) {
 	}
 }
 
-void ResourceGroup::addMeshes(const utf::string& subdirectory) {
+void ResourceGroup::addMeshes(utf::string_view subdirectory) {
 	std::vector<utf::string> paths;
-	utf::string name;
 
 	Platform::singleton().getFilePathsForType("mesh", subdirectory, paths);
 
 	for (auto&& path : paths) {
-		name = Path::getFileName(path);
+		auto name = Path::getFileName(path);
 
 		addMesh(make_unique<Mesh>(self, path), name);
 	}
 }
 
-void ResourceGroup::addSounds(const utf::string& subdirectory) {
+void ResourceGroup::addSounds(utf::string_view subdirectory) {
 	//ask all the sound files to the main bundle
 	std::vector<utf::string> paths;
-	utf::string name, lastName;
+	utf::string_view name, lastName;
 
 	SoundSet* currentSet = nullptr;
 
@@ -188,7 +187,7 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 
 		if (lastName.empty() or not Path::arePathsInSequence(lastName, name)) {
 			//create a new set
-			utf::string setPrefix = Path::removeTags(name);
+			auto setPrefix = Path::removeTags(name);
 			currentSet = &addSoundSet(make_unique<SoundSet>(self, setPrefix), setPrefix);
 		}
 
@@ -199,7 +198,7 @@ void ResourceGroup::addSounds(const utf::string& subdirectory) {
 	}
 }
 
-void ResourceGroup::addTables(const utf::string& folder) {
+void ResourceGroup::addTables(utf::string_view folder) {
 	std::vector<utf::string> paths;
 
 	Platform::singleton().getFilePathsForType("ds", folder, paths);
@@ -211,25 +210,25 @@ void ResourceGroup::addTables(const utf::string& folder) {
 			);
 }
 
-void ResourceGroup::addPrograms(const utf::string& folder) {
+void ResourceGroup::addPrograms(utf::string_view folder) {
 	std::vector<utf::string> paths;
 
 	Platform::singleton().getFilePathsForType(ShaderProgram::vertexExtension, folder, paths);
 	Platform::singleton().getFilePathsForType(ShaderProgram::fragmentExtension, folder, paths);
 
 	for (auto&& path : paths) {
-		utf::string name = Path::getFileName(path);
+		auto name = Path::getFileName(path);
 		addProgram(make_unique<ShaderProgram>(self, path), name);
 	}
 }
 
-void ResourceGroup::addShaders(const utf::string& folder) {
+void ResourceGroup::addShaders(utf::string_view folder) {
 	std::vector<utf::string> paths;
 
 	Platform::singleton().getFilePathsForType("material", folder, paths);
 
 	for (auto&& path : paths) {
-		utf::string name = Path::getFileName(path);
+		auto name = Path::getFileName(path);
 		addShader(make_unique<Shader>(self, path), name);
 	}
 }
@@ -284,7 +283,7 @@ void ResourceGroup::softUnloadResources(bool recursive) {
 		}
 }
 
-void ResourceGroup::addFolderSimple(const utf::string& folder, int version) {
+void ResourceGroup::addFolderSimple(utf::string_view folder, int version) {
 	if (logchanges) {
 		DEBUG_MESSAGE("[" + folder + "]");
 	}
@@ -298,7 +297,7 @@ void ResourceGroup::addFolderSimple(const utf::string& folder, int version) {
 	addShaders(folder);
 }
 
-FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::string& name) {
+FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getFrameSet(name).is_none(), "A FrameSet with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -307,10 +306,10 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, const utf::strin
 		DEBUG_MESSAGE("+" + name + "\t\t set");
 	}
 
-	return *(frameSets[name] = std::move(resource));
+	return *(frameSets[name.copy()] = std::move(resource));
 }
 
-Texture& ResourceGroup::addTexture(Unique<Texture> texture, const utf::string& name) {
+Texture& ResourceGroup::addTexture(Unique<Texture> texture, utf::string_view name) {
 	auto frameset = make_unique<FrameSet>(self);
 	auto& ref = *texture;
 	frameset->addTexture(std::move(texture));
@@ -320,7 +319,7 @@ Texture& ResourceGroup::addTexture(Unique<Texture> texture, const utf::string& n
 }
 
 
-Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
+Font& ResourceGroup::addFont(Unique<Font> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -329,10 +328,10 @@ Font& ResourceGroup::addFont(Unique<Font> resource, const utf::string& name) {
 		DEBUG_MESSAGE("+" + name + "\t\t font");
 	}
 
-	return *(fonts[name] = std::move(resource));
+	return *(fonts[name.copy()] = std::move(resource));
 }
 
-Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
+Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getMesh(name).is_none(), "A Mesh with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -341,10 +340,10 @@ Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, const utf::string& name) {
 		DEBUG_MESSAGE("+" + name + "\t\t mesh");
 	}
 
-	return *(meshes[name] = std::move(resource));
+	return *(meshes[name.copy()] = std::move(resource));
 }
 
-SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::string& name) {
+SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getSound(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -353,10 +352,10 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, const utf::strin
 		DEBUG_MESSAGE("+" + name + "\t\t sound");
 	}
 
-	return *(sounds[name] = std::move(resource));
+	return *(sounds[name.copy()] = std::move(resource));
 }
 
-Shader& ResourceGroup::addShader(Unique<Shader> resource, const utf::string& name) {
+Shader& ResourceGroup::addShader(Unique<Shader> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getShader(name).is_none(), "A Shader with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -365,10 +364,10 @@ Shader& ResourceGroup::addShader(Unique<Shader> resource, const utf::string& nam
 		DEBUG_MESSAGE("+" + name + "\t\t shader");
 	}
 
-	return *(shaders[name] = std::move(resource));
+	return *(shaders[name.copy()] = std::move(resource));
 }
 
-ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, const utf::string& name) {
+ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getProgram(name).is_none(), "A ShaderProgram with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -377,7 +376,7 @@ ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, const u
 		DEBUG_MESSAGE("+" + name + "\t\t shader program");
 	}
 
-	return *(programs[name] = std::move(resource));
+	return *(programs[name.copy()] = std::move(resource));
 }
 
 void ResourceGroup::addSubgroup(ResourceGroup& g) {
@@ -392,78 +391,78 @@ void ResourceGroup::removeAllSubgroups() {
 	subs.clear();
 }
 
-void ResourceGroup::removeFrameSet(const utf::string& name) {
-	frameSets.erase(name);
+void ResourceGroup::removeFrameSet(utf::string_view name) {
+	frameSets.erase(frameSets.find(name));
 }
 
-void ResourceGroup::removeFont(const utf::string& name) {
-	fonts.erase(name);
+void ResourceGroup::removeFont(utf::string_view name) {
+	fonts.erase(fonts.find(name));
 }
 
-void ResourceGroup::removeMesh(const utf::string& name) {
-	meshes.erase(name);
+void ResourceGroup::removeMesh(utf::string_view name) {
+	meshes.erase(meshes.find(name));
 }
 
-void ResourceGroup::removeSound(const utf::string& name) {
-	sounds.erase(name);
+void ResourceGroup::removeSound(utf::string_view name) {
+	sounds.erase(sounds.find(name));
 }
 
-void ResourceGroup::removeTable(const utf::string& name) {
-	tables.erase(name);
+void ResourceGroup::removeTable(utf::string_view name) {
+	tables.erase(tables.find(name));
 }
 
 FrameSet& ResourceGroup::getEmptyFrameSet() const {
 	return *emptyFrameSet;
 }
 
-optional_ref<FrameSet> ResourceGroup::getFrameSet(const utf::string& name) const {
+optional_ref<FrameSet> ResourceGroup::getFrameSet(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "getFrameSet: empty name provided");
 
 	return find<FrameSet>(name, ResourceType::FrameSet);
 }
 
-optional_ref<Texture> ResourceGroup::getTexture(const utf::string& name) const {
+optional_ref<Texture> ResourceGroup::getTexture(utf::string_view name) const {
 	if (auto s = getFrameSet(name).to_ref()) {
 		return s.get().getFrame(0);
 	} 
 	return{};
 }
 
-optional_ref<Font> ResourceGroup::getFont(const utf::string& name) const {
+optional_ref<Font> ResourceGroup::getFont(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Font>(name, ResourceType::Font);
 }
 
-optional_ref<Mesh> ResourceGroup::getMesh(const utf::string& name) const {
+optional_ref<Mesh> ResourceGroup::getMesh(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Mesh>(name, ResourceType::Mesh);
 }
 
-optional_ref<SoundSet> ResourceGroup::getSound(const utf::string& name) const {
+optional_ref<SoundSet> ResourceGroup::getSound(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<SoundSet>(name, ResourceType::SoundSet);
 }
 
-optional_ref<Table> ResourceGroup::getTable(const utf::string& name) const {
+optional_ref<Table> ResourceGroup::getTable(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Table>(name, ResourceType::Table);
 }
 
-optional_ref<Shader> ResourceGroup::getShader(const utf::string& name) const {
+optional_ref<Shader> ResourceGroup::getShader(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<Shader>(name, ResourceType::Material);
 }
 
-optional_ref<ShaderProgram> ResourceGroup::getProgram(const utf::string& name) const {
+optional_ref<ShaderProgram> ResourceGroup::getProgram(utf::string_view name) const {
 	DEBUG_ASSERT(name.not_empty(), "empty name provided");
 	return find<ShaderProgram>(name, ResourceType::ShaderProgram);
 }
 
-const utf::string& ResourceGroup::getLocale() const {
+utf::string_view ResourceGroup::getLocale() const {
 	return locale;
 }
 
-void ResourceGroup::addFolder(const utf::string& folder, int version /*= 0*/) {
+void ResourceGroup::addFolder(utf::string_view folder, int version /*= 0*/) {
 	addFolderSimple(folder, version);
 
 	//localized loading

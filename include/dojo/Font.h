@@ -120,7 +120,7 @@ namespace Dojo {
 		\param creator the ResourceGroup which created this Resource
 		\path the path to the .font definition file
 		*/
-		Font(optional_ref<ResourceGroup> creator, const utf::string& path);
+		Font(optional_ref<ResourceGroup> creator, utf::string_view path);
 
 		virtual ~Font();
 
@@ -159,7 +159,7 @@ namespace Dojo {
 		}
 
 		///returns the length in pixel for the given string
-		int getPixelLength(const utf::string& s);
+		int getPixelLength(utf::string_view s);
 
 		int getCharIndex(Character& c);
 

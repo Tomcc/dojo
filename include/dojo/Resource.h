@@ -24,11 +24,11 @@ namespace Dojo {
 
 		}
 
-		Resource(optional_ref<ResourceGroup> group, const utf::string& path) :
+		Resource(optional_ref<ResourceGroup> group, utf::string_view path) :
 			creator(group),
 			loaded(false),
 			size(0),
-			filePath(path) {
+			filePath(path.copy()) {
 			DEBUG_ASSERT( path.not_empty(), "The file path is empty" );
 		}
 
@@ -52,7 +52,7 @@ namespace Dojo {
 			return creator;
 		}
 
-		const utf::string& getFilePath() {
+		utf::string_view getFilePath() {
 			return filePath;
 		}
 

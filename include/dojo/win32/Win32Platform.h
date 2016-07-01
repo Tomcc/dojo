@@ -36,15 +36,15 @@ namespace Dojo {
 		virtual void step(float dt);
 		virtual void loop();
 
-		virtual PixelFormat loadImageFile(std::vector<uint8_t>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize);
+		virtual PixelFormat loadImageFile(std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize);
 
-		virtual const utf::string& getAppDataPath() override;
-		virtual const utf::string& getResourcesPath() override;
-		virtual const utf::string& getRootPath() override;
-		virtual const utf::string& getPicturesPath() override;
-		virtual const utf::string& getShaderCachePath() override;
+		virtual utf::string_view getAppDataPath() override;
+		virtual utf::string_view getResourcesPath() override;
+		virtual utf::string_view getRootPath() override;
+		virtual utf::string_view getPicturesPath() override;
+		virtual utf::string_view getShaderCachePath() override;
 
-		virtual void openWebPage(const utf::string& site);
+		virtual void openWebPage(utf::string_view site);
 
 		virtual void setMouseLocked(bool locked) override;
 
@@ -71,7 +71,7 @@ namespace Dojo {
 		bool dragging;
 		bool mMousePressed;
 
-		bool _initializeWindow(const utf::string& caption, int w, int h);
+		bool _initializeWindow(utf::string_view caption, int w, int h);
 
 	private:
 

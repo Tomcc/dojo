@@ -6,7 +6,7 @@
 using namespace Dojo;
 
 void Dojo::Log::_append(utf::string_view message, LogEntry::Level level) {
-	mOutput.emplace_back(LogEntry(message.to_str(), level));
+	mOutput.emplace_back(LogEntry(message.copy(), level));
 
 	if (mOutput.size() == mMaxLines) {
 		mOutput.erase(mOutput.begin());

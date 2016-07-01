@@ -8,13 +8,13 @@
 
 using namespace Dojo;
 
-const utf::string ShaderProgram::fragmentExtension = "fragment", ShaderProgram::vertexExtension = "vertex";
+const utf::string_view ShaderProgram::fragmentExtension = "fragment", ShaderProgram::vertexExtension = "vertex";
 
 ///"real file" Resource constructor. When onLoad is called, it will use filePath to load its contents
-ShaderProgram::ShaderProgram(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
+ShaderProgram::ShaderProgram(optional_ref<ResourceGroup> creator, utf::string_view filePath) :
 	Resource(creator, filePath) {
 	//guess the type from the extension
-	utf::string ext = Path::getFileExtension(filePath);
+	auto ext = Path::getFileExtension(filePath);
 
 	if (ext == vertexExtension) {
 		mType = ShaderProgramType::VertexShader;

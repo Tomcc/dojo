@@ -26,7 +26,7 @@ void FrameSet::setPreferredAnimationTime(float t) {
 void FrameSet::setAtlas(const Table& atlasTable, ResourceGroup& atlasTextureProvider) {
 	DEBUG_ASSERT(not isLoaded(), "setAtlas: this FrameSet is already loaded and can't be reset as an atlas" );
 
-	utf::string atlasName = atlasTable.getString("texture");
+	auto atlasName = atlasTable.getString("texture");
 	auto atlasSet = atlasTextureProvider.getFrameSet(atlasName);
 
 	auto& atlas = atlasSet.unwrap().getFrame(0);

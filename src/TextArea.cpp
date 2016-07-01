@@ -11,11 +11,11 @@ using namespace Dojo;
 
 TextArea::TextArea(Object& l,
 	RenderLayer::ID layer,
-	const utf::string& fontSetName,
+	utf::string_view fontSetName,
 	bool center /*= false*/,
 	const Vector& bounds /*= Vector::One*/) :
 	Renderable(l, layer),
-	fontName(fontSetName),
+	fontName(fontSetName.copy()),
 	interline(0.2f),
 	maxLineLenght(0xfffffff),
 	centered(center),
@@ -74,7 +74,7 @@ void TextArea::setMaxLineLength(int l) {
 	maxLineLenght = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
 }
 
-void TextArea::addText(const utf::string& text) {
+void TextArea::addText(utf::string_view text) {
 	content += text;
 
 	//parse and setup characters

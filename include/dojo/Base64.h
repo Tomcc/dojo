@@ -19,6 +19,6 @@ namespace Dojo {
 			return fromBytes((const unsigned char*)&obj, sizeof(T));
 		}
 
-		static std::vector<uint8_t> decode(utf::string const& s);
+		static std::vector<uint8_t> decode(utf::string_view s);
 	};
 }

@@ -9,7 +9,7 @@ namespace Dojo {
 	class File : public FileStream {
 	public:
 
-		File(const utf::string& path);
+		File(utf::string_view path);
 		virtual ~File();
 
 		virtual bool open(Access accessType) override;

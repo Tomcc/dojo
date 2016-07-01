@@ -93,7 +93,7 @@ ALuint SoundBuffer::Chunk::getOpenALBuffer() {
 
 ///////////////////////////////////////
 
-SoundBuffer::SoundBuffer(optional_ref<ResourceGroup> creator, const utf::string& path) :
+SoundBuffer::SoundBuffer(optional_ref<ResourceGroup> creator, utf::string_view path) :
 	Resource(creator, path),
 	size(0),
 	mDuration(0) {
@@ -107,9 +107,9 @@ SoundBuffer::~SoundBuffer() {
 bool SoundBuffer::onLoad() {
 	DEBUG_ASSERT( isLoaded() == false, "The SoundBuffer is already loaded" );
 
-	utf::string ext = Path::getFileExtension(filePath);
+	auto ext = Path::getFileExtension(filePath);
 
-	DEBUG_ASSERT( ext == utf::string( "ogg" ), "Sound file extension is not ogg" );
+	DEBUG_ASSERT( ext == "ogg", "Sound file extension is not ogg" );
 
 	_loadOggFromFile();
 

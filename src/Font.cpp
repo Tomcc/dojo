@@ -315,7 +315,7 @@ void Font::Page::onUnload(bool soft /*= false */) {
 
 /// --------------------------------------------------------------------------------
 
-Font::Font(optional_ref<ResourceGroup> creator, const utf::string& path) :
+Font::Font(optional_ref<ResourceGroup> creator, utf::string_view path) :
 	Resource(creator, path) {
 
 }
@@ -401,7 +401,7 @@ void Font::_prepareFace() {
 		fontHeight);
 }
 
-int Font::getPixelLength(const utf::string& str) {
+int Font::getPixelLength(utf::string_view str) {
 	int l = 0;
 
 	auto lastChar = optional_ref<Character>();

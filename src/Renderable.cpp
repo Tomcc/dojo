@@ -24,7 +24,7 @@ Renderable::Renderable(Object& parent, RenderLayer::ID layer, Mesh& m, Shader& s
 	DEBUG_ASSERT(mesh.unwrap().supportsShader(mShader.unwrap()), "cannot use this mesh with this shader");
 }
 
-Renderable::Renderable(Object& parent, RenderLayer::ID layer, const utf::string& meshName, const utf::string& shaderName) :
+Renderable::Renderable(Object& parent, RenderLayer::ID layer, utf::string_view meshName, utf::string_view shaderName) :
 	Renderable(
 		parent,
 		layer, 

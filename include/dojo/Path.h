@@ -4,37 +4,37 @@
 
 class Path {
 public:
-	static utf::string getFileExtension(const utf::string& path);
+	static utf::string_view getFileExtension(utf::string_view path);
 
-	static utf::string getFileName(const utf::string& str);
+	static utf::string_view getFileName(utf::string_view str);
 
-	static utf::string getParentDirectory(const utf::string& str);
+	static utf::string_view getParentDirectory(utf::string_view str);
 
-	static utf::string getMetaFilePathFor(const utf::string& file);
+	static utf::string getMetaFilePathFor(utf::string_view file);
 
-	static bool isAbsolute(const utf::string& str);
+	static bool isAbsolute(utf::string_view str);
 
 	///replace any "\\" in the path with the canonical / and removes any last /
-	static utf::string makeCanonical(const utf::string& path, bool isFile = false);
+	static utf::string makeCanonical(utf::string_view path, bool isFile = false);
 
-	static bool hasExtension(const utf::string& ext, const utf::string& nameOrPath);
+	static bool hasExtension(utf::string_view ext, utf::string_view nameOrPath);
 
-	static utf::string::const_iterator getTagIdx(const utf::string& str);
+	static utf::string::const_iterator getTagIdx(utf::string_view str);
 
-	static utf::string::const_iterator getVersionIdx(const utf::string& str);
+	static utf::string::const_iterator getVersionIdx(utf::string_view str);
 
 	///returns the version of the given name, or 0 if not found
-	static int getVersion(const utf::string& str);
+	static int getVersion(utf::string_view str);
 
-	static int getTag(const utf::string& str);
+	static int getTag(utf::string_view str);
 
 	///removes extra info appended to file name: "filename_3@2" -> "filename"
-	static utf::string removeTags(const utf::string& str);
+	static utf::string_view removeTags(utf::string_view str);
 
-	static utf::string removeVersion(const utf::string& str);
+	static utf::string_view removeVersion(utf::string_view str);
 
-	static utf::string removeInvalidChars(const utf::string& str);
+	static utf::string removeInvalidChars(utf::string_view str);
 
-	static bool arePathsInSequence(const utf::string& first, const utf::string& second);
+	static bool arePathsInSequence(utf::string_view first, utf::string_view second);
 };
 

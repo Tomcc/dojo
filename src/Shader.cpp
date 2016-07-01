@@ -77,18 +77,22 @@ VertexField Shader::_getAttributeForName(const std::string& name) {
 	return elem != sBuiltInAttributeNameMap.end() ? elem->second : VertexField::None;
 }
 
-Shader::Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
+Shader::Shader(optional_ref<ResourceGroup> creator, utf::string_view filePath) :
 	Resource(creator, filePath) {
 	memset(pProgram, 0, sizeof(pProgram)); //init to null
 }
 
 ShaderProgram& Shader::_assignProgram(const Table& desc, ShaderProgramType type) {
-	static const utf::string typeKeyMap[] = { "vertexShader", "fragmentShader" };
+	static const utf::string_view typeKeyMap[] = { 
+		"vertexShader", 
+		"fragmentShader"
+	};
+
 	auto typeID = (unsigned char)type;
 
 	//check if this program is immediate or not
 	//it is file-based if the resource can be found in the current RG
-	auto& keyValue = desc.getString(typeKeyMap[typeID]);
+	auto keyValue = desc.getString(typeKeyMap[typeID]);
 
 	DEBUG_ASSERT_INFO(keyValue.not_empty(), "No shader found in .shader file", "type = " + typeKeyMap[typeID]);
 
@@ -103,7 +107,9 @@ ShaderProgram& Shader::_assignProgram(const Table& desc, ShaderProgramType type)
 		return (pProgram[typeID] = program.get()).unwrap();
 	}
 	else {
-		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, mPreprocessorHeader + keyValue.bytes()));
+		auto unit = mPreprocessorHeader;
+		unit.append(keyValue.data(), keyValue.byte_size());
+		mOwnedPrograms.emplace_back(make_unique<ShaderProgram>(type, std::move(unit)));
 		return (pProgram[typeID] = *mOwnedPrograms.back()).unwrap();
 	}
 }
@@ -269,7 +275,7 @@ utf::string _getCachedBinaryPath(SHA1& sha) {
 	return Platform::singleton().getShaderCachePath() + "/" + Path::removeInvalidChars(Base64::fromBytes(sha.getDigestBytes(digest), sizeof(digest)));
 }
 
-Shader::Binary Shader::_getCachedBinary(const utf::string& path) {
+Shader::Binary Shader::_getCachedBinary(utf::string_view path) {
 	auto file = Platform::singleton().getFile(path);
 	if (file->open(Stream::Access::Read)) {
 		std::string content((size_t)file->getSize(), 0);
@@ -284,7 +290,7 @@ std::string Shader::Binary::toString() const {
 	return std::string((char*)&format, 4) + bytes;
 }
 
-void Shader::_storeCachedBinary(const utf::string& path, const Shader::Binary& binary) const {
+void Shader::_storeCachedBinary(utf::string_view path, const Shader::Binary& binary) const {
 	auto file = Platform::singleton().getFile(path);
 	if (file->open(Stream::Access::WriteOnly)) {
 		file->write(binary.toString());

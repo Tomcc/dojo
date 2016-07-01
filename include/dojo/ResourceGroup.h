@@ -49,13 +49,13 @@ namespace Dojo {
 		//various resource properties TODO: refactor
 		bool disableBilinear, disableMipmaps, disableTiling, logchanges = true;
 
-		typedef std::unordered_map<utf::string, Unique<FrameSet>> FrameSetMap;
-		typedef std::unordered_map<utf::string, Unique<Font>> FontMap;
-		typedef std::unordered_map<utf::string, Unique<Mesh>> MeshMap;
-		typedef std::unordered_map<utf::string, Unique<SoundSet>> SoundMap;
-		typedef std::unordered_map<utf::string, Unique<Table>> TableMap;
-		typedef std::unordered_map<utf::string, Unique<Shader>> ShaderMap;
-		typedef std::unordered_map<utf::string, Unique<ShaderProgram>> ProgramMap;
+		typedef std::map<utf::string, Unique<FrameSet>, utf::str_less> FrameSetMap;
+		typedef std::map<utf::string, Unique<Font>, utf::str_less> FontMap;
+		typedef std::map<utf::string, Unique<Mesh>, utf::str_less> MeshMap;
+		typedef std::map<utf::string, Unique<SoundSet>, utf::str_less> SoundMap;
+		typedef std::map<utf::string, Unique<Table>, utf::str_less> TableMap;
+		typedef std::map<utf::string, Unique<Shader>, utf::str_less> ShaderMap;
+		typedef std::map<utf::string, Unique<ShaderProgram>, utf::str_less> ProgramMap;
 		typedef SmallSet<ResourceGroup*> SubgroupList;
 
 		///Create a new empty ResourceGroup
@@ -67,23 +67,23 @@ namespace Dojo {
 		/**
 		A locale is a subfolder with the given name, selectively loaded when a locale is provided
 		*/
-		void setLocale(const utf::string& locID, const utf::string& fallbackLocaleID) {
+		void setLocale(utf::string_view locID, utf::string_view fallbackLocaleID) {
 			DEBUG_ASSERT( locID.not_empty(), "setLocale: the locale was an empty string" );
 			DEBUG_ASSERT( fallbackLocaleID.not_empty(), "setLocale: the fallback locale was an empty string" );
 
-			locale = locID;
-			fallbackLocale = fallbackLocaleID;
+			locale = locID.copy();
+			fallbackLocale = fallbackLocaleID.copy();
 		}
 
 		///returns the map containing the required resource type
 		template <class R>
-		std::unordered_map<utf::string, R*>& getResourceMap(ResourceType r) const {
-			return *(std::unordered_map<utf::string, R*>*)mapArray[enum_cast(r)];
+		std::map<utf::string, R*, utf::str_less>& getResourceMap(ResourceType r) const {
+			return *(std::map<utf::string, R*, utf::str_less>*)mapArray[enum_cast(r)];
 		}
 
 		///finds a named resource of type R
 		template <class R>
-		optional_ref<R> find(const utf::string& name, ResourceType r) const {
+		optional_ref<R> find(utf::string_view name, ResourceType r) const {
 			auto& map = getResourceMap<R>(r);
 			auto itr = map.find(name);
 
@@ -101,22 +101,22 @@ namespace Dojo {
 			return{};
 		}
 
-		FrameSet& addFrameSet(Unique<FrameSet> resource, const utf::string& name);
-		Texture& addTexture(Unique<Texture> texture, const utf::string& name);
+		FrameSet& addFrameSet(Unique<FrameSet> resource, utf::string_view name);
+		Texture& addTexture(Unique<Texture> texture, utf::string_view name);
 
-		Font& addFont(Unique<Font> resource, const utf::string& name);
+		Font& addFont(Unique<Font> resource, utf::string_view name);
 
-		Mesh& addMesh(Unique<Mesh> resource, const utf::string& name);
+		Mesh& addMesh(Unique<Mesh> resource, utf::string_view name);
 
-		SoundSet& addSoundSet(Unique<SoundSet> resource, const utf::string& name);
+		SoundSet& addSoundSet(Unique<SoundSet> resource, utf::string_view name);
 
-		Table& addTable(const utf::string& name, Unique<Table> t);
+		Table& addTable(utf::string_view name, Unique<Table> t);
 
 		///adds an existing Shader to this group
-		Shader& addShader(Unique<Shader> resource, const utf::string& name);
+		Shader& addShader(Unique<Shader> resource, utf::string_view name);
 
 		///adds an existing ShaderProgram to this group
-		ShaderProgram& addProgram(Unique<ShaderProgram> resource, const utf::string& name);
+		ShaderProgram& addProgram(Unique<ShaderProgram> resource, utf::string_view name);
 
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		void addSubgroup(ResourceGroup& g);
@@ -127,25 +127,25 @@ namespace Dojo {
 		///removes all of the registered subgrops from this ResourceGroup
 		void removeAllSubgroups();
 
-		void removeFrameSet(const utf::string& name);
-		void removeFont(const utf::string& name);
-		void removeMesh(const utf::string& name);
-		void removeSound(const utf::string& name);
-		void removeTable(const utf::string& name);
+		void removeFrameSet(utf::string_view name);
+		void removeFont(utf::string_view name);
+		void removeMesh(utf::string_view name);
+		void removeSound(utf::string_view name);
+		void removeTable(utf::string_view name);
 
 		///returns a dummy empty FrameSet
 		FrameSet& getEmptyFrameSet() const;
-		optional_ref<FrameSet> getFrameSet(const utf::string& name) const;
-		optional_ref<Texture> getTexture(const utf::string& name) const;
-		optional_ref<Font> getFont(const utf::string& name) const;
-		optional_ref<Mesh> getMesh(const utf::string& name) const;
-		optional_ref<SoundSet> getSound(const utf::string& name) const;
-		optional_ref<Table> getTable(const utf::string& name) const;
-		optional_ref<Shader> getShader(const utf::string& name) const;
-		optional_ref<ShaderProgram> getProgram(const utf::string& name) const;
+		optional_ref<FrameSet> getFrameSet(utf::string_view name) const;
+		optional_ref<Texture> getTexture(utf::string_view name) const;
+		optional_ref<Font> getFont(utf::string_view name) const;
+		optional_ref<Mesh> getMesh(utf::string_view name) const;
+		optional_ref<SoundSet> getSound(utf::string_view name) const;
+		optional_ref<Table> getTable(utf::string_view name) const;
+		optional_ref<Shader> getShader(utf::string_view name) const;
+		optional_ref<ShaderProgram> getProgram(utf::string_view name) const;
 
 		///return the locale of this ResourceGroup, eg: en, it, de, se
-		const utf::string& getLocale() const;
+		utf::string_view getLocale() const;
 
 		///returns if this group is finalized, meaning that its loading is finished
 		/**\remark useful for loading subgroups in the background! */
@@ -161,21 +161,21 @@ namespace Dojo {
 		///add all the Sets in a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addSets(const utf::string& folder, int version = 0);
+		void addSets(utf::string_view folder, int version = 0);
 		///add all the Fonts in a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addFonts(const utf::string& folder, int version = 0);
+		void addFonts(utf::string_view folder, int version = 0);
 		///add all the Meshes in a folder
-		void addMeshes(const utf::string& folder);
+		void addMeshes(utf::string_view folder);
 		///add all the Sounds in a folder
-		void addSounds(const utf::string& folder);
+		void addSounds(utf::string_view folder);
 		///add all the Tables in a folder
-		void addTables(const utf::string& folder);
+		void addTables(utf::string_view folder);
 		///add all the Shaders (.dsh) in a folder
-		void addShaders(const utf::string& folder);
+		void addShaders(utf::string_view folder);
 		///add all the ShaderPrograms (.vsh, .psh, ...) in a folder
-		void addPrograms(const utf::string& folder);
+		void addPrograms(utf::string_view folder);
 
 		///adds the prefab meshes, like quads, cubes, skyboxes...
 		void addPrefabMeshes();
@@ -183,14 +183,14 @@ namespace Dojo {
 		///adds all the file inside a folder
 		/**\param version the version of the assets to be loaded, eg ninja@0.png or ninja@1.png
 		\remark all the assets without a version are by default version 0*/
-		void addFolderSimple(const utf::string& folder, int version = 0);
+		void addFolderSimple(utf::string_view folder, int version = 0);
 		///adds a localization folder located in baseFolder, choosing it using the current locale
 		/**
 		for example, "base/en" if en; "base/it" if it, etc */
-		void addLocalizedFolder(const utf::string& basefolder, int version = 0);
+		void addLocalizedFolder(utf::string_view basefolder, int version = 0);
 
 		///adds all the resources and the localized resources in a folder
-		void addFolder(const utf::string& folder, int version = 0);
+		void addFolder(utf::string_view folder, int version = 0);
 
 		///asserts that this group will not load more resources in the future, useful for task-based loading
 		void finalize() {
@@ -235,7 +235,7 @@ namespace Dojo {
 
 		///load all unloaded registered resources
 		template <class T>
-		void _load(std::unordered_map<utf::string, Unique<T>>& map) {
+		void _load(std::map<utf::string, Unique<T>, utf::str_less>& map) {
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (not resourcePair.second->isLoaded()) {
@@ -245,7 +245,7 @@ namespace Dojo {
 		}
 
 		template <class T>
-		void _unload(std::unordered_map<utf::string, Unique<T>>& map, bool softUnload) {
+		void _unload(std::map<utf::string, Unique<T>, utf::str_less>& map, bool softUnload) {
 			//unload all the resources
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory

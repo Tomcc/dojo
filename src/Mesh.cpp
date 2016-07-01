@@ -40,7 +40,7 @@ Mesh::Mesh(optional_ref<ResourceGroup> creator /*= nullptr */) :
 	setIndexByteSize(sizeof(GLushort));
 }
 
-Mesh::Mesh(optional_ref<ResourceGroup> creator, const utf::string& filePath) :
+Mesh::Mesh(optional_ref<ResourceGroup> creator, utf::string_view filePath) :
 	Resource(creator, filePath) {
 	//set all fields to max
 	for (auto&& offset : vertexFieldOffset) {

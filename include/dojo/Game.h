@@ -37,11 +37,11 @@ namespace Dojo {
 		\param maxFrameLength the max frame dt that will be propagated to the game, to avoid integration glitch on long frames
 		\param requireDepthBuffer set to false if the game won't use any perspective/depth sorted layer to use less VRAM
 		*/
-		Game(const utf::string& name, int nativeWidth = 0, int nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f / 60.f, float maxFrameLength = 1.f / 30.f, bool requireDepthBuffer = true);
+		Game(utf::string_view name, int nativeWidth = 0, int nativeHeight = 0, Orientation nativeOrientation = DO_LANDSCAPE_RIGHT, float nativeFrequency = 1.f / 60.f, float maxFrameLength = 1.f / 30.f, bool requireDepthBuffer = true);
 
 		virtual ~Game();
 
-		const utf::string& getName() const {
+		utf::string_view getName() const {
 			return name;
 		}
 

@@ -131,7 +131,7 @@ void ViewportRecorder::makeVideo() {
 	}
 
 	mAsyncJobStatus = Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)]{
-		auto path = Platform::singleton().getPicturesPath();
+		auto path = Platform::singleton().getPicturesPath().copy();
 		path += "/" + Platform::singleton().getGame().getName();
 		path += "_" + Path::removeInvalidChars(getDateString());
 		path += ".gif";

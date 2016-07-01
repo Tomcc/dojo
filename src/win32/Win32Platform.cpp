@@ -307,7 +307,7 @@ Win32Platform::Win32Platform(const Table& configTable) :
 	#endif
 	*/
 	//TODO detect locale code
-	locale = "en";
+	locale += "en";
 
 	SetProcessDPIAware();
 
@@ -358,7 +358,7 @@ void Win32Platform::_adjustWindow() {
 
 }
 
-bool Win32Platform::_initializeWindow(const utf::string& windowCaption, int w, int h) {
+bool Win32Platform::_initializeWindow(utf::string_view windowCaption, int w, int h) {
 	DEBUG_MESSAGE("Creating " + utf::to_string(w) + "x" + utf::to_string(h) + " window");
 
 	hInstance = (HINSTANCE)GetModuleHandle(nullptr);
@@ -912,7 +912,7 @@ void Win32Platform::keyReleased(int kc) {
 	mKeyboard._notifyButtonState(mKeyMap[kc], false);
 }
 
-PixelFormat Win32Platform::loadImageFile(std::vector<uint8_t>& imageData, const utf::string& path, uint32_t& width, uint32_t& height, int& pixelSize) {
+PixelFormat Win32Platform::loadImageFile(std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize) {
 	//pointer to the image, once loaded
 	FIBITMAP* dib = nullptr;
 
@@ -1002,28 +1002,28 @@ PixelFormat Win32Platform::loadImageFile(std::vector<uint8_t>& imageData, const 
 	}
 }
 
-const utf::string& Win32Platform::getAppDataPath() {
+utf::string_view Win32Platform::getAppDataPath() {
 	return mAppDataPath;
 }
 
-const utf::string& Win32Platform::getRootPath() {
+utf::string_view Win32Platform::getRootPath() {
 	return mRootPath;
 }
 
-const utf::string& Win32Platform::getResourcesPath() {
+utf::string_view Win32Platform::getResourcesPath() {
 	return getRootPath(); //on windows, it is the same
 }
 
-const utf::string& Win32Platform::getPicturesPath() {
+utf::string_view Win32Platform::getPicturesPath() {
 	static auto picturesPath = getSystemFolderPath(CSIDL_MYPICTURES);
 	return picturesPath;
 }
 
-const utf::string& Win32Platform::getShaderCachePath() {
+utf::string_view Win32Platform::getShaderCachePath() {
 	return mShaderCachePath;
 }
 
-void Win32Platform::openWebPage(const utf::string& site) {
+void Win32Platform::openWebPage(utf::string_view site) {
 	ShellExecuteW(hWindow, L"open", String::toUTF16(site).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 

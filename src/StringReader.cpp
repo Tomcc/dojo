@@ -64,7 +64,7 @@ uint8_t StringReader::getHexValue(uint32_t c) {
 	}
 }
 
-bool StringReader::startsWith(const utf::string& str) const {
+bool StringReader::startsWith(utf::string_view str) const {
 	auto idx = mIdx;
 	for(auto&& c : str) {
 		if (idx == getString().end() or *idx != c) {
@@ -79,12 +79,12 @@ utf::string::const_iterator StringReader::getCurrentIndex() const {
 	return mIdx;
 }
 
-utf::string StringReader::readString() {
+utf::string_view Dojo::StringReader::readString() {
 	auto start = mIdx;
 	while (get() != '"');
 
 	auto end = mIdx;
-	return getString().substr(start, --end);
+	return{ start, --end };
 }
 
 unsigned int StringReader::readHex() {

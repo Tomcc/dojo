@@ -72,7 +72,7 @@ namespace Dojo {
 		};
 
 		///Creates a new Shader from a file path
-		Shader(optional_ref<ResourceGroup> creator, const utf::string& filePath);
+		Shader(optional_ref<ResourceGroup> creator, utf::string_view filePath);
 
 		///Assigns this data source (Binder) to the Uniform with the given name
 		/**
@@ -166,9 +166,9 @@ namespace Dojo {
 
 		const void* _getUniformData(const GlobalUniformData& currentState, const Uniform& uniform, const RenderState& user);
 
-		Binary _getCachedBinary(const utf::string& path);
+		Binary _getCachedBinary(utf::string_view path);
 
-		void _storeCachedBinary(const utf::string& path, const Shader::Binary& binary) const;
+		void _storeCachedBinary(utf::string_view path, const Shader::Binary& binary) const;
 	private:
 	};
 }

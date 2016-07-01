@@ -8,13 +8,13 @@ namespace Dojo {
 	class FontSystem {
 	public:
 
-		typedef std::unordered_map<utf::string, FT_Face> FaceMap;
+		typedef std::map<utf::string, FT_Face, utf::str_less> FaceMap;
 
 		FontSystem();
 
 		virtual ~FontSystem();
 
-		FT_Face getFace(const utf::string& fileName);
+		FT_Face getFace(utf::string_view fileName);
 
 		FT_Stroker getStroker(float width);
 
@@ -25,7 +25,7 @@ namespace Dojo {
 
 		FT_Library freeType;
 
-		FT_Face _createFaceForFile(const utf::string& fileName);
+		FT_Face _createFaceForFile(utf::string_view fileName);
 
 	private:
 	};

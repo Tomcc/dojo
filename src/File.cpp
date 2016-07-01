@@ -8,7 +8,7 @@
 using Dojo::File;
 using Dojo::Stream;
 
-File::File(const utf::string& path) :
+File::File(utf::string_view path) :
 	FileStream(path),
 	mAccess(Access::BadFile),
 	mFile(nullptr),

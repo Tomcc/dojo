@@ -11,7 +11,7 @@ const Table::Data Table::Data::Empty{};
 Table Table::loadFromFile(utf::string_view path) {
 	DEBUG_ASSERT( path.not_empty(), "Tried to load a Table from an empty path string" );
 
-	auto file = Platform::singleton().getFile(path.to_str());
+	auto file = Platform::singleton().getFile(path);
 
 	Table dest;
 
@@ -21,7 +21,7 @@ Table Table::loadFromFile(utf::string_view path) {
 
 		file->readToFill(buf);
 
-		StringReader reader(buf);
+		StringReader reader(utf::string(std::move(buf)));
 		dest.deserialize(reader);
 	}
 
@@ -367,7 +367,7 @@ Table::Table(const Table& t) :
 }
 
 Table::Table(optional_ref<ResourceGroup> creator, utf::string_view path) :
-	Resource(creator, path.to_str()),
+	Resource(creator, path.copy()),
 	unnamedMembers(0) {
 
 }
@@ -395,7 +395,7 @@ Table* Table::getParentTable(utf::string_view key, utf::string& realKey) const {
 	for (; dotIdx != key.end() and *dotIdx != '.'; ++dotIdx);
 
 	if (dotIdx == key.end()) {
-		realKey = key.to_str();
+		realKey = key.copy();
 		return (Table*)this;
 	}
 
@@ -413,7 +413,7 @@ Table& Table::createTable(utf::string_view key /*= utf::string::EMPTY */) {
 		name = autoname();
 	}
 	else {
-		name = key.to_str();
+		name = key.copy();
 	}
 
 	set(name, Table());

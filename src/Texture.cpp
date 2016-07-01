@@ -16,7 +16,7 @@ Texture::Texture(optional_ref<ResourceGroup> creator) :
 	glhandle(0) {
 }
 
-Texture::Texture(optional_ref<ResourceGroup> creator, const utf::string& path) :
+Texture::Texture(optional_ref<ResourceGroup> creator, utf::string_view path) :
 	Resource(creator, path),
 	internalWidth(0),
 	internalHeight(0),
@@ -215,7 +215,7 @@ bool Texture::loadFromMemory(const uint8_t* imageData, uint32_t width, uint32_t 
 	return loaded = true;
 }
 
-bool Texture::loadFromFile(const utf::string& path) {
+bool Texture::loadFromFile(utf::string_view path) {
 	DEBUG_ASSERT(not isLoaded(), "The Texture is already loaded");
 
 	if (not glhandle) {

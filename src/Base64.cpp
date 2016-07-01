@@ -79,13 +79,12 @@ utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int
 
 	}
 
-	return ret;
-
+	return utf::string(std::move(ret));
 }
 
-std::vector<uint8_t> Base64::decode(utf::string const& encoded_string_utf) {
-	auto& encoded_string = encoded_string_utf.bytes();
-	int in_len = encoded_string.size();
+std::vector<uint8_t> Dojo::Base64::decode(utf::string_view s) {
+	auto encoded_string = s.data();
+	int in_len = s.byte_size();
 	int i = 0;
 	int j = 0;
 	int in_ = 0;

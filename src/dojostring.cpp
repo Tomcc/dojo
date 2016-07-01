@@ -9,14 +9,14 @@ bool String::isNumber(uint32_t c) {
 #ifdef WIN32
 #include "dojo_win_header.h"
 
-std::wstring String::toUTF16(const utf::string& str) {
+std::wstring String::toUTF16(utf::string_view str) {
 	if (str.empty()) {
 		return std::wstring();
 	}
 
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.bytes().data(), (int)str.bytes().length(), nullptr, 0);
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.byte_size(), nullptr, 0);
 	std::wstring wstrTo(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.bytes().data(), (int)str.bytes().size(), &wstrTo[0], size_needed);
+	MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.byte_size(), &wstrTo[0], size_needed);
 	return wstrTo;
 }
 

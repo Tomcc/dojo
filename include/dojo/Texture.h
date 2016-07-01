@@ -29,7 +29,7 @@ namespace Dojo {
 		Texture(optional_ref<ResourceGroup> creator = {});
 
 		///Create a empty new texture that will be loaded from path
-		Texture(optional_ref<ResourceGroup> creator, const utf::string& path);
+		Texture(optional_ref<ResourceGroup> creator, utf::string_view path);
 
 		virtual ~Texture();
 
@@ -40,7 +40,7 @@ namespace Dojo {
 		bool loadFromMemory(const uint8_t* imageData, uint32_t width, uint32_t height, PixelFormat sourceFormat);
 
 		///loads the texture from the image pointed by the filename
-		bool loadFromFile(const utf::string& path);
+		bool loadFromFile(utf::string_view path);
 
 		///loads the texture from the given area in a Texture Atlas, without duplicating data
 		/**

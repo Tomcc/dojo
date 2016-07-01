@@ -18,7 +18,7 @@ namespace Dojo {
 		\param write open the file for writing, create if necessary
 		this WILL NOT open the file for i/o, remember to use open()
 		*/
-		FileStream(const utf::string& path);
+		FileStream(utf::string_view path);
 
 		virtual ~FileStream();
 

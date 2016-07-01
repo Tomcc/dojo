@@ -11,26 +11,6 @@
 namespace Dojo {
 	class Entry;
 
-	struct Comparator
-	{
-		using is_transparent = std::true_type;
-
-		// standard comparison (between two instances of utf::string)
-		bool operator()(const utf::string& lhs, const utf::string& rhs) const {
-			return lhs < rhs;
-		}
-
-		// Same thing with utf::string_view
-		bool operator()(const utf::string_view& lhs, const utf::string& rhs) const {
-			return lhs < rhs;
-		}
-
-		bool operator()(const utf::string& lhs, const utf::string_view& rhs) const {
-			return lhs < rhs;
-		}
-	};
-
-
 	///Table is the internal representation of the Dojo Script data definition format
 	/**
 	a Table is a multi-typed Dictionary of Strings and Values, where a value can be one of float, Vector, utf::string, Color, Raw Data and Table itself.
@@ -140,7 +120,7 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::map<utf::string, Unique<Entry>, Comparator> EntryMap;
+		typedef std::map<utf::string, Unique<Entry>, utf::str_less> EntryMap;
 
 		static const Table Empty;
 
@@ -191,7 +171,7 @@ namespace Dojo {
 				where->second = std::move(ptr);
 			}
 			else {
-				map.emplace(key.to_str(), std::move(ptr));
+				map.emplace(key.copy(), std::move(ptr));
 			}
 		}
 
@@ -268,16 +248,8 @@ namespace Dojo {
 		}
 
 		//TODO convert everything to just return a string view without copying defaultValue
-		const utf::string& getString(utf::string_view key, utf::string_view defaultValue = {}) const {
-			static utf::string TODO;
-			auto e = get(key);
-			if (e and e->type == FieldType::String) {
-				TODO = e->getAs<utf::string>();
-			}
-			else {
-				TODO = defaultValue.to_str();
-			}
-			return TODO;
+		utf::string_view getString(utf::string_view key, utf::string_view defaultValue = {}) const {
+			return get(key, defaultValue);
 		}
 
 		const Vector& getVector(utf::string_view key, const Vector& defaultValue = Vector::Zero) const  {
@@ -439,7 +411,7 @@ namespace Dojo {
             return FieldType::Float;
         }
 	};
-	template<> struct Table::field_type_for < utf::string > {
+	template<> struct Table::field_type_for < utf::string_view > {
 		operator FieldType() const {
 			return FieldType::String;
 		}

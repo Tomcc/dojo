@@ -2,41 +2,42 @@
 
 using namespace Dojo;
 
-utf::string Path::getFileExtension(const utf::string& path) {
+utf::string_view Path::getFileExtension(utf::string_view path) {
 	auto dot = path.find_last_of('.');
 
 	if (dot != path.end()) {
-		return path.substr(dot + 1, path.end());
+		return{ dot + 1, path.end() };
 	}
 	return{};
 }
 
-utf::string Path::getFileName(const utf::string& str) {
+utf::string_view Path::getFileName(utf::string_view str) {
 	auto start = str.find_last_of('/') + 1;
 	if (start == str.end()) {
 		start = str.begin();
 	}
 
-	return str.substr(start, str.find_last_of('.'));
+	return {start, str.find_last_of('.')};
 }
 
-utf::string Path::getParentDirectory(const utf::string& str) {
+utf::string_view Path::getParentDirectory(utf::string_view str) {
 	auto end = str.find_last_of('/');
 
-	return (end == str.end()) ?
-		utf::string{} :
-		str.substr(str.begin(), end + 1);
+	if(end == str.end()) {
+		return{};
+	}
+	return{ str.begin(), end + 1 };
 }
 
-utf::string Path::getMetaFilePathFor(const utf::string& file) {
-	return file.substr(file.begin(), file.find_last_of('.')) + ".meta";
+utf::string Path::getMetaFilePathFor(utf::string_view file) {
+	return utf::string_view{ file.begin(), file.find_last_of('.') } + ".meta";
 }
 
-bool Path::isAbsolute(const utf::string& str) {
+bool Path::isAbsolute(utf::string_view str) {
 	return *(str.begin()+1) == ':' or str.front() == '/';
 }
 
-utf::string Path::makeCanonical(const utf::string& path, bool isFile /*= false*/) {
+utf::string Path::makeCanonical(utf::string_view path, bool isFile /*= false*/) {
 	utf::string canonical;
 	bool endsWithSlash = false;
 	for (auto&& c : path) {
@@ -57,11 +58,11 @@ utf::string Path::makeCanonical(const utf::string& path, bool isFile /*= false*/
 	return canonical;
 }
 
-bool Path::hasExtension(const utf::string& ext, const utf::string& nameOrPath) {
+bool Path::hasExtension(utf::string_view ext, utf::string_view nameOrPath) {
 	return nameOrPath.ends_with(ext);
 }
 
-utf::string::const_iterator Path::getTagIdx(const utf::string& str) {
+utf::string::const_iterator Path::getTagIdx(utf::string_view str) {
 	DEBUG_ASSERT(str.not_empty(), "Cannot find a tag in an empty string");
 
 	auto tagIdx = --getVersionIdx(str); //get version idx
@@ -80,7 +81,7 @@ utf::string::const_iterator Path::getTagIdx(const utf::string& str) {
 	return str.end();
 }
 
-utf::string::const_iterator Path::getVersionIdx(const utf::string& str) {
+utf::string::const_iterator Path::getVersionIdx(utf::string_view str) {
 	auto idx = str.rbegin();
 
 	for (; idx != str.rend() and not String::isNumber(*idx); ++idx);
@@ -93,7 +94,7 @@ utf::string::const_iterator Path::getVersionIdx(const utf::string& str) {
 	}
 }
 
-int Path::getVersion(const utf::string& str) {
+int Path::getVersion(utf::string_view str) {
 	auto vidx = getVersionIdx(str);
 
 	if (vidx != str.end()) {
@@ -102,19 +103,24 @@ int Path::getVersion(const utf::string& str) {
 	return 0;
 }
 
-int Path::getTag(const utf::string& str) {
+int Path::getTag(utf::string_view str) {
 	auto tidx = getTagIdx(str);
 	auto end = getVersionIdx(str);
 
 	if (tidx != str.end()) {
-		return std::stoi(str.substr(tidx + 1, end).bytes());
+		auto endp = end.get_ptr();
+		return std::strtol(
+			(tidx + 1).get_ptr(),
+			(char**)&endp,
+			10
+		);
 	}
 	else {
 		return -1;    //no tag
 	}
 }
 
-utf::string Path::removeTags(const utf::string& str) {
+utf::string_view Path::removeTags(utf::string_view str) {
 	auto tidx = getTagIdx(str);
 
 	//if a tag is found, just remove everything after
@@ -131,7 +137,7 @@ utf::string Path::removeTags(const utf::string& str) {
 	return str;
 }
 
-utf::string Path::removeVersion(const utf::string& str) {
+utf::string_view Path::removeVersion(utf::string_view str) {
 	auto vidx = getVersionIdx(str);
 
 	if (vidx != str.end()) { //else remove just the version
@@ -141,7 +147,7 @@ utf::string Path::removeVersion(const utf::string& str) {
 	return str;
 }
 
-utf::string Path::removeInvalidChars(const utf::string& str) {
+utf::string Path::removeInvalidChars(utf::string_view str) {
 #ifdef WIN32
 	static const std::vector<utf::character> invalidChars = { ':', '\\', '/' }; //TODO more invalid chars
 
@@ -157,7 +163,7 @@ utf::string Path::removeInvalidChars(const utf::string& str) {
 #endif
 }
 
-bool Path::arePathsInSequence(const utf::string& first, const utf::string& second) {
+bool Path::arePathsInSequence(utf::string_view first, utf::string_view second) {
 	//get number postfixes
 	int t1 = getTag(first);
 	int t2 = getTag(second);

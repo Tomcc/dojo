@@ -13,8 +13,8 @@ FontSystem::~FontSystem() {
 	FT_Done_FreeType(freeType);
 }
 
-FT_Face FontSystem::getFace(const utf::string& fileName) {
-	FaceMap::iterator where = faceMap.find(fileName);
+FT_Face FontSystem::getFace(utf::string_view fileName) {
+	auto where = faceMap.find(fileName);
 	return where != faceMap.end() ? where->second : _createFaceForFile(fileName);
 }
 
@@ -31,13 +31,13 @@ FT_Stroker FontSystem::getStroker(float width) {
 	return s;
 }
 
-FT_Face FontSystem::_createFaceForFile(const utf::string& fileName) {
+FT_Face FontSystem::_createFaceForFile(utf::string_view fileName) {
 	auto buf = Platform::singleton().loadFileContent(fileName);
 
 	//create new face from memory - loading from memory is needed for zip loading
 	FT_Face face;
 	int err = FT_New_Memory_Face(freeType, (FT_Byte*)buf.data(), buf.size(), 0, &face);
-	faceMap[fileName] = face;
+	faceMap.emplace(fileName.copy(), face);
 	ownedBuffers.emplace_back(std::move(buf)); //keep the memory
 
 	DEBUG_ASSERT_INFO(err == 0, "FreeType could not load a Font file", "path = " + fileName);

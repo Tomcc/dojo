@@ -34,8 +34,8 @@ namespace Dojo {
 		///writes the given buffer to the stream
 		virtual void write(uint8_t* buf, int size);
 
-		void write(const utf::string& buf) {
-			write((uint8_t*)buf.bytes().data(), (int)buf.bytes().size());
+		void write(utf::string_view buf) {
+			write((uint8_t*)buf.data(), (int)buf.byte_size());
 		}
 
 		///returns the total bytes in the stream, -1 if this stream has no end

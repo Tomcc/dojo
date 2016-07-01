@@ -138,7 +138,7 @@ void Platform::_runASyncTasks(float elapsedTime) {
 	}
 }
 
-utf::string::const_iterator Platform::_findZipExtension(const utf::string& path) {
+utf::string::const_iterator Platform::_findZipExtension(utf::string_view path) {
 	for (auto&& ext : mZipExtensions) {
 		auto idx = path.find(ext);
 
@@ -150,7 +150,7 @@ utf::string::const_iterator Platform::_findZipExtension(const utf::string& path)
 	return path.end();
 }
 
-utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath) {
+utf::string Platform::_replaceFoldersWithExistingZips(utf::string_view relPath) {
 	//find the root (on windows it is not the first character)
 	
 	auto next = utf::string::const_iterator{};
@@ -166,7 +166,7 @@ utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath
 		//for each possibile zip extension, search a zip named like that
 		bool found = false;
 
-		for (const utf::string& ext : mZipExtensions) {
+		for (utf::string_view ext : mZipExtensions) {
 			utf::string partialFolder = res + currentFolder + ext;
 
 			//check if partialFolder exists as a zip file
@@ -191,20 +191,20 @@ utf::string Platform::_replaceFoldersWithExistingZips(const utf::string& relPath
 	return res;
 }
 
-const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path, utf::string& zipPath, utf::string& remainder) {
+const Dojo::Platform::ZipFoldersMap& Dojo::Platform::_getZipFileMap(utf::string_view path, utf::string_view& zipPath, utf::string_view& remainder) {
 	//find the innermost zip
 	auto idx = _findZipExtension(path);
 
 	zipPath = path.substr(path.begin(), idx);
 
 	if (idx != path.end()) {
-		remainder = path.substr(idx + 1, path.end());
+		remainder = {idx + 1, path.end()};
 	}
 	else {
-		remainder = String::Empty;
+		remainder = {};
 	}
 
-	DEBUG_ASSERT( remainder.find( ".zip" ) == remainder.cend(), "Error: nested zips are not supported!" );
+	DEBUG_ASSERT( remainder.find( ".zip" ) == remainder.end(), "Error: nested zips are not supported!" );
 
 	//has this zip been already loaded?
 	ZipFileMapping::const_iterator elem = mZipFileMaps.find(zipPath);
@@ -213,7 +213,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 		return elem->second;
 	}
 	else {
-		mZipFileMaps[zipPath] = ZipFoldersMap();
+		mZipFileMaps.emplace(zipPath.copy(), ZipFoldersMap());
 		ZipFoldersMap& map = mZipFileMaps.find(zipPath)->second;
 
 		ZipArchive zip(zipPath);
@@ -221,7 +221,17 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 		zip.getListAllFiles(".", zip_files);
 
 		for (auto&& zip_file : zip_files) {
-			map[Path::getParentDirectory(zip_file)].emplace_back(zip_file);
+			auto parentPath = Path::getParentDirectory(zip_file);
+			auto parent = map.find(parentPath);
+			if (parent == map.end()) {
+				map.emplace(
+					parentPath.copy(),
+					PathList{std::move(zip_file)}
+				);
+			}
+			else {
+				parent->second.emplace_back(std::move(zip_file));
+			}
 		}
 
 
@@ -229,7 +239,7 @@ const Platform::ZipFoldersMap& Platform::_getZipFileMap(const utf::string& path,
 	}
 }
 
-void Platform::getFilePathsForType(const utf::string& type, const utf::string& wpath, std::vector<utf::string>& out) {
+void Platform::getFilePathsForType(utf::string_view type, utf::string_view wpath, std::vector<utf::string>& out) {
 	//check if any part of the path has been replaced by a zip file, so that we're in fact in a zip file
 	utf::string absPath = getResourcesPath() + _replaceFoldersWithExistingZips(wpath) + '/';
 
@@ -238,7 +248,7 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 	if (idx != absPath.cend()) { //there's at least one zip in the path
 		//now, get the file/folder mapping in memory for the zip
 		//it is cached because parsing the header from disk each time is TOO SLOW
-		utf::string zipInternalPath, zipPath;
+		utf::string_view zipInternalPath, zipPath;
 		const ZipFoldersMap& map = _getZipFileMap(absPath, zipPath, zipInternalPath);
 
 		//do we have a folder named "zipInternalPath"?
@@ -248,7 +258,8 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 			//add all the files with the needed extension
 			for (utf::string filePath : folderItr->second) {
 				if (Path::getFileExtension(filePath) == type) {
-					out.emplace_back(zipPath + '/' + filePath);
+					utf::string path = zipPath + '/' + filePath;
+					out.emplace_back(path);
 				}
 			}
 		}
@@ -258,12 +269,10 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 			Poco::DirectoryIterator itr(absPath.bytes());
 			Poco::DirectoryIterator end;
 
-			utf::string extension = type;
-
 			while (itr != end) {
 				utf::string path(itr->path().data());
 
-				if (Path::getFileExtension(path) == extension) {
+				if (Path::getFileExtension(path) == type) {
 					out.emplace_back(Path::makeCanonical(path, true));
 				}
 
@@ -275,7 +284,7 @@ void Platform::getFilePathsForType(const utf::string& type, const utf::string& w
 	}
 }
 
-std::unique_ptr<FileStream> Platform::getFile(const utf::string& path) {
+std::unique_ptr<FileStream> Platform::getFile(utf::string_view path) {
 	using namespace std;
 
 	auto internalZipPathIdx = _findZipExtension(path);
@@ -299,7 +308,7 @@ void Platform::run(Unique<Game> game) {
 	shutdownPlatform();
 }
 
-std::vector<uint8_t> Platform::loadFileContent(const utf::string& path) {
+std::vector<uint8_t> Platform::loadFileContent(utf::string_view path) {
 	auto file = getFile(path);
 
 	if (file->open(Stream::Access::Read)) {
@@ -312,11 +321,11 @@ std::vector<uint8_t> Platform::loadFileContent(const utf::string& path) {
 	return{};
 }
 
-utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
+utf::string Platform::_getTablePath(utf::string_view absPathOrName) {
 	DEBUG_ASSERT(absPathOrName.not_empty(), "Cannot get a path for an unnamed table");
 
 	if (Path::isAbsolute(absPathOrName)) {
-		return absPathOrName;
+		return absPathOrName.copy();
 	}
 	else { //look for this file inside the prefs
 
@@ -324,14 +333,14 @@ utf::string Platform::_getTablePath(const utf::string& absPathOrName) {
 	}
 }
 
-Table Platform::load(const utf::string& absPathOrName) {
+Table Platform::load(utf::string_view absPathOrName) {
 	utf::string buf;
 	utf::string path = _getTablePath(absPathOrName);
 
 	return Table::loadFromFile(path);
 }
 
-void Platform::save(const Table& src, const utf::string& absPathOrName) {
+void Platform::save(const Table& src, utf::string_view absPathOrName) {
 	utf::string buf;
 
 	src.serialize(buf);

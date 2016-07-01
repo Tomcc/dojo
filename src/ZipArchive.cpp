@@ -69,7 +69,7 @@ ZipArchive::ZipArchive(): zip_file(nullptr) {
 }
 
 //
-ZipArchive::ZipArchive(const utf::string& path) {
+ZipArchive::ZipArchive(utf::string_view path) {
 	open(path);
 }
 
@@ -79,8 +79,8 @@ ZipArchive::~ZipArchive() {
 }
 
 //open zip file
-bool ZipArchive::open(const utf::string& path) {
-	zip_file = zzip_opendir_ext_io(path.bytes().data(), ZZIP_CASELESS | ZZIP_ONLYZIP, 0, 0);
+bool ZipArchive::open(utf::string_view path) {
+	zip_file = zzip_opendir_ext_io(path.copy().bytes().data(), ZZIP_CASELESS | ZZIP_ONLYZIP, 0, 0);
 	return zip_file != nullptr;
 }
 
@@ -94,7 +94,7 @@ void ZipArchive::close() {
 }
 
 //open file
-Unique<ZipFile> Dojo::ZipArchive::openFile(const utf::string& path, const utf::string& mode) {
+Unique<ZipFile> Dojo::ZipArchive::openFile(utf::string_view path, utf::string_view mode) {
 	if (zip_file != nullptr) {
 		zzip_rewinddir(zip_file);
 		int mode_flags = ZZIP_CASELESS;
@@ -113,7 +113,7 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const utf::string& path, const utf::s
 			}
 		}
 
-		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.bytes().data(), mode_flags);
+		ZZIP_FILE* file_out = zzip_file_open(zip_file, path.copy().bytes().data(), mode_flags);
 
 		if (file_out != nullptr) {
 			return make_unique<ZipFile>(file_out);
@@ -124,7 +124,7 @@ Unique<ZipFile> Dojo::ZipArchive::openFile(const utf::string& path, const utf::s
 }
 
 //open paths info
-void ZipArchive::getList(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getList(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -158,7 +158,7 @@ void ZipArchive::getList(const utf::string& inPath, std::vector<utf::string>& ou
 	}
 }
 
-void ZipArchive::getListAll(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getListAll(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -178,7 +178,7 @@ void ZipArchive::getListAll(const utf::string& inPath, std::vector<utf::string>&
 	}
 }
 
-void ZipArchive::getListFiles(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getListFiles(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -214,7 +214,7 @@ void ZipArchive::getListFiles(const utf::string& inPath, std::vector<utf::string
 	}
 }
 
-void ZipArchive::getListAllFiles(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getListAllFiles(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -236,7 +236,7 @@ void ZipArchive::getListAllFiles(const utf::string& inPath, std::vector<utf::str
 	}
 }
 
-void ZipArchive::getListSubDirectories(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getListSubDirectories(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -272,7 +272,7 @@ void ZipArchive::getListSubDirectories(const utf::string& inPath, std::vector<ut
 	}
 }
 
-void ZipArchive::getListAllSubDirectories(const utf::string& inPath, std::vector<utf::string>& out) {
+void ZipArchive::getListAllSubDirectories(utf::string_view inPath, std::vector<utf::string>& out) {
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
@@ -294,7 +294,7 @@ void ZipArchive::getListAllSubDirectories(const utf::string& inPath, std::vector
 	}
 }
 
-utf::string ZipArchive::makeValidPath(const utf::string& path) {
+utf::string ZipArchive::makeValidPath(utf::string_view path) {
 	DEBUG_DEPRECATED; //this is pretty bad
 	return{};
 

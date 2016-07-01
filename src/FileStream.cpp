@@ -2,8 +2,8 @@
 
 using namespace Dojo;
 
-FileStream::FileStream(const utf::string& path) :
-	mPath(path) {
+FileStream::FileStream(utf::string_view path) :
+	mPath(path.copy()) {
 	DEBUG_ASSERT(path.not_empty(), "File path cannot be empty");
 }
 

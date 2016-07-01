@@ -8,8 +8,8 @@
 
 using namespace Dojo;
 
-Game::Game(const utf::string& gamename, int w, int h, Orientation r, float nativedt, float maximumdt, bool requireDepthBuffer) :
-	name(gamename),
+Game::Game(utf::string_view gamename, int w, int h, Orientation r, float nativedt, float maximumdt, bool requireDepthBuffer) :
+	name(gamename.copy()),
 	nativeWidth(w),
 	nativeHeight(h),
 	nativeOrientation(r),

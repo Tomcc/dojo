@@ -14,7 +14,7 @@ namespace Dojo {
 		///returns a new unicode character or 0 if the stream ended
 		utf::character get();
 
-		bool startsWith(const utf::string& str) const;
+		bool startsWith(utf::string_view str) const;
 
 		void back();
 
@@ -45,12 +45,12 @@ namespace Dojo {
 
 		float readFloat();
 
-		utf::string readString();
+		utf::string_view readString();
 
 		///reads n raw bytes from the file
 		void readBytes(void* dest, int sizeBytes);
 
-		const utf::string& getString() const {
+		utf::string_view getString() const {
 			return mString;
 		}
 
