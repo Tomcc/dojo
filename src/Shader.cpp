@@ -272,7 +272,9 @@ void Shader::loadUniforms(const GlobalUniformData& currentState, const RenderSta
 utf::string _getCachedBinaryPath(SHA1& sha) {
 	//decide the filename of the binary
 	SHA1::digest8_t digest;
-	return Platform::singleton().getShaderCachePath() + "/" + Path::removeInvalidChars(Base64::fromBytes(sha.getDigestBytes(digest), sizeof(digest)));
+	auto digestStr = Base64::fromBytes(sha.getDigestBytes(digest), sizeof(digest));
+	Path::removeInvalidChars(digestStr);
+	return Platform::singleton().getShaderCachePath() + digestStr;
 }
 
 Shader::Binary Shader::_getCachedBinary(utf::string_view path) {

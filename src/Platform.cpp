@@ -159,7 +159,7 @@ utf::string Platform::_replaceFoldersWithExistingZips(utf::string_view relPath) 
 	utf::string res;
 
 	do {
-		next = relPath.find_first_of('/', prev + 1);
+		next = relPath.find("/", prev + 1);
 
 		auto currentFolder = utf::string_view(prev, next);
 

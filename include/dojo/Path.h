@@ -33,7 +33,7 @@ public:
 
 	static utf::string_view removeVersion(utf::string_view str);
 
-	static utf::string removeInvalidChars(utf::string_view str);
+	static void removeInvalidChars(utf::string& path);
 
 	static bool arePathsInSequence(utf::string_view first, utf::string_view second);
 };

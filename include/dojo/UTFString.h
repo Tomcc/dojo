@@ -41,6 +41,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <limits>
+#include <algorithm>
 
 namespace utf
 {
@@ -424,6 +425,10 @@ namespace utf
 
 				return copy;
 			}
+
+			TBaseIterator forward() const {
+				return forward_iterator;
+			} 
 
 			bool operator == (const value_reverse_iterator &other) const
 			{
@@ -845,28 +850,6 @@ namespace utf
 			return !empty();
 		}
 
-		bool starts_with(const _utf8stringImpl& string) const {
-			if (string.bytes().size() > raw_bytes.size() || string.empty()) {
-				return false;
-			}
-
-			return strncmp(
-				string.raw_bytes.data(),
-				raw_bytes.data(), 
-				string.raw_bytes.size()) == 0;
-		}
-
-		bool ends_with(const _utf8stringImpl& string) const {
-			if (string.bytes().size() > raw_bytes.size() || string.empty()) {
-				return false;
-			}
-
-			return strncmp(
-				string.raw_bytes.data(), 
-				raw_bytes.data() + (raw_bytes.length() - string.raw_bytes.length()),
-				string.raw_bytes.size()) == 0;
-		}
-
 		void shrink_to_fit()
 		{
 			raw_bytes.shrink_to_fit();
@@ -956,76 +939,6 @@ namespace utf
 			return raw_bytes.get_allocator();
 		}
 
-		const_iterator find(const _utf8stringImpl& str, const_iterator pos = {}) const
-		{
-			//TODO rewrite using std::string find, avoid linear search in GetCharPtrFromBufferPosition
-			size_type real_pos = get_byte_position( pos.get_ptr() ? pos : begin());
-			size_type found_pos = raw_bytes.find(str.raw_bytes, real_pos);
-
-			// return the character position
-			return found_pos == std::string::npos ? 
-				end() :
-				const_iterator(GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos));
-		}
-
-		const_iterator rfind(const _utf8stringImpl& str, const_iterator pos = {}) const
-		{
-			size_type real_pos = get_byte_position(pos.get_ptr() ? pos : begin());
-			size_type found_pos = raw_bytes.rfind(str.raw_bytes, real_pos);
-
-			// return the character position
-			return found_pos == std::string::npos ?
-				end() :
-				const_iterator(GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos));
-		}
-
-		const_iterator find_first_of(const _utf8stringImpl& str, const_iterator pos = {}) const
-		{
-			size_type real_pos = get_byte_position(pos.get_ptr() ? pos : begin());
-			size_type found_pos = raw_bytes.find_first_of(str.raw_bytes, real_pos);
-
-			// return the character position
-			return found_pos == std::string::npos ?
-				end() :
-				const_iterator(GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos));
-		}
-
-		const_iterator find_last_of(const _utf8stringImpl& str, const_iterator pos = {}) const
-		{
-			if (pos == const_iterator{}) {
-				pos = str.end();
-			}
-			size_type found_pos = raw_bytes.find_last_of(str.raw_bytes, get_byte_position(pos));
-
-			// return the character position
-			return found_pos == std::string::npos ?
-				end() :
-				const_iterator(GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos));
-		}
-
-		const_iterator find_first_not_of(const _utf8stringImpl& str, const_iterator pos = {}) const
-		{
-			size_type real_pos = get_byte_position(pos.get_ptr() ? pos : begin());
-			size_type found_pos = raw_bytes.find(str.raw_bytes, real_pos);
-
-			// return the character position
-			return found_pos == std::string::npos ?
-				end() :
-				const_iterator(GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos));
-		}
-
-		const_iterator find_last_not_of(const _utf8stringImpl& str, const_iterator pos = {}) const;
-// 		{
-// 			size_type real_pos;//
-// 			if (pos == npos) real_pos = pos;
-// 			else real_pos = GetBufferPosition(raw_bytes.c_str(), pos);
-// 
-// 			size_type found_pos = raw_bytes.find_last_not_of(str.raw_bytes, real_pos);
-// 
-// 			// return the character position
-// 			return GetCharPtrFromBufferPosition(raw_bytes.c_str(), found_pos);
-// 		}
-
 		const std::string& bytes() const {
 			return raw_bytes;
 		}
@@ -1064,12 +977,18 @@ namespace utf
 			return (*this);
 		}
 
-		_utf8stringImpl& operator+= (_char8bit str) {
-			raw_bytes += str;
+		_utf8stringImpl& operator+= (_char8bit c8) {
+			raw_bytes += c8;
 			return (*this);
 		}
 
-		_utf8stringImpl& operator+= (_char32bit str);
+		_utf8stringImpl& operator+= (_char32bit c32) {
+			utf8_encoding encoding;
+			size_t size;
+			GetUTF8Encoding(c32, encoding, size);
+			raw_bytes.append((const char*)encoding, size);
+			return (*this);
+		}
 
 		_utf8stringImpl& operator+= (string_view str);
 
@@ -1134,14 +1053,17 @@ namespace utf
 			// just use resize to do the work
 			resize(length() - 1);
 		}
-
+		
 		size_t get_byte_position(const_iterator pos) const {
+			return pos.get_ptr() - raw_bytes.data();
+		}
+		size_t get_byte_position(iterator pos) const {
 			return pos.get_ptr() - raw_bytes.data();
 		}
 
 		// inserts str right before character at position pos
-		_utf8stringImpl& insert(const_iterator pos, string_view str);
-		_utf8stringImpl& insert(const_iterator pos, _char8bit str);
+		_utf8stringImpl& insert(iterator pos, string_view str);
+		_utf8stringImpl& insert(iterator pos, _char8bit str);
 
 // 		_utf8stringImpl& insert(size_type pos, const _utf8stringImpl& str, size_type subpos, size_type sublen)
 // 		{
@@ -1151,25 +1073,22 @@ namespace utf
 // 			return insert(pos, temp);
 // 		}
 
-		_utf8stringImpl& erase(const_iterator pos, size_type len = npos);
-// 		{
-// 			size_type real_pos = get_byte_position(pos);
-// 
-// 			if (len == npos) raw_bytes.erase(real_pos, len);
-// 			else
-// 			{
-// 				size_type end_pos = pos + len;
-// 				if (end_pos > size()) end_pos = size() - pos;
-// 
-// 				size_type real_end_pos = GetBufferPosition(raw_bytes.c_str(), end_pos);
-// 
-// 				raw_bytes.erase(real_pos, real_end_pos - real_pos);
-// 			}
-// 
-// 			return (*this);
-// 		}
+		_utf8stringImpl& erase(iterator pos, size_type len = npos) {
+			auto real_pos = get_byte_position(pos);
 
-		_utf8stringImpl& replace(const_iterator pos, size_type len, const _utf8stringImpl& str);
+			if (len == npos) {
+				raw_bytes.erase(real_pos, len);
+			}
+			else {
+				auto real_end_pos = get_byte_position(pos + len);
+
+				raw_bytes.erase(real_pos, real_end_pos - real_pos);
+			}
+
+			return (*this);
+		}
+
+		_utf8stringImpl& replace(iterator pos, size_type len, const _utf8stringImpl& str);
 //		{
 // 			// make copy so exceptions won't change string
 // 			_utf8stringImpl temp_copy((*this));
@@ -1244,14 +1163,14 @@ namespace utf
 	};
 
 	template <class Alloc >
-	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(const_iterator pos, string_view str) {
+	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(iterator pos, string_view str) {
 		raw_bytes.insert(get_byte_position(pos), str.data(), str.byte_size());
 
 		return (*this);
 	}
 
 	template <class Alloc >
-	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(const_iterator pos, _char8bit c) {
+	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(iterator pos, _char8bit c) {
 		raw_bytes.insert(get_byte_position(pos), c);
 
 		return (*this);
@@ -1353,8 +1272,12 @@ namespace utf
 			return const_iterator(mEnd);
 		}
 
-		string::const_reverse_iterator rbegin() const;
-		string::const_reverse_iterator rend() const;
+		auto rbegin() const {
+			return string::const_reverse_iterator(end());
+		}
+		auto rend() const {
+			return string::const_reverse_iterator(begin());
+		}
 
 		utf::string copy() const {
 			if(empty()) {
@@ -1383,23 +1306,89 @@ namespace utf
 		string_view substr(const_iterator pos, const_iterator end) const {
 			return{ pos, end };
 		}
+		
+		size_t get_byte_position(const_iterator pos) const {
+			return pos.get_ptr() - mBegin;
+		}
 
-		const_iterator find(const string_view& str, const_iterator pos = {}) const;
-		const_iterator rfind(const string_view& str, const_iterator pos = {}) const;
-		const_iterator find_first_of(const string_view& str, const_iterator pos = {}) const;
-		const_iterator find_last_of(const string_view& str, const_iterator pos = {}) const;
+		const_iterator find(const string_view& str, const_iterator pos = {}) const {
+			return std::search(
+				pos != const_iterator() ? pos : begin(),
+				end(), 
+				str.begin(), 
+				str.end());
+		}
+
+		const_iterator rfind(const string_view& str, const_iterator pos = {}) const {
+			return std::find_end(
+				pos != const_iterator() ? pos : begin(),
+				end(),
+				str.begin(),
+				str.end());
+		}
+
+		const_iterator find_first_of(const string_view& str, const_iterator pos = {}) const {
+			return std::find_first_of(
+				pos != const_iterator() ? pos : begin(),
+				end(),
+				str.begin(),
+				str.end());
+		}
+
+		const_iterator find_last_of(const string_view& str, string::const_iterator pos = {}) const {
+			return std::find_first_of(
+				pos != const_iterator() ? pos : rbegin(),
+				rend(),
+				str.begin(),
+				str.end()).forward();
+		}
+
+		const_iterator find_last_of(_char8bit c, string::const_iterator pos = {}) const {
+			return std::find(
+				pos != const_iterator() ? pos : rbegin(),
+				rend(),
+				c).forward();
+		}
+
 		const_iterator find_first_not_of(const string_view& str, const_iterator pos = {}) const;
+// 		{
+// 			return std::search(
+// 				pos != const_iterator() ? pos : begin(),
+// 				end(),
+// 				str.begin(),
+// 				str.end());
+// 		}
+
 		const_iterator find_last_not_of(const string_view& str, const_iterator pos = {}) const;
-		const_iterator find(int c, const_iterator pos = {}) const;
-		const_iterator rfind(int c, const_iterator pos = {}) const;
-		const_iterator find_first_of(int c, const_iterator pos = {}) const;
-		const_iterator find_last_of(int c, const_iterator pos = {}) const;
-		const_iterator find_first_not_of(int c, const_iterator pos = {}) const;
-		const_iterator find_last_not_of(int c, const_iterator pos = {}) const;
+// 		{
+// 			return std::search(
+// 				pos != const_iterator() ? pos : begin(),
+// 				end(),
+// 				str.begin(),
+// 				str.end());
+// 		}
 
+		bool starts_with(const string_view& string) const {
+			if (string.byte_size() > byte_size() || string.empty()) {
+				return false;
+			}
 
-		bool starts_with(const string_view& string) const;
-		bool ends_with(const string_view& string) const;
+			return strncmp(
+				string.data(),
+				data(),
+				string.byte_size()) == 0;
+		}
+
+		bool ends_with(const string_view& string) const {
+			if (string.byte_size() > byte_size() || string.empty()) {
+				return false;
+			}
+
+			return strncmp(
+				string.data(),
+				data() + (byte_size() - byte_size()),
+				string.byte_size()) == 0;
+		}
 
 		const char* data() const {
 			return mBegin;
@@ -1437,32 +1426,45 @@ namespace utf
 		return is;
 	}
 
+	static int str_compare(const utf::string_view& lhs, const utf::string_view& rhs) {
+		auto left_size = lhs.byte_size();
+		auto right_size = rhs.byte_size();
+		auto cmp = strncmp(lhs.data(), rhs.data(), std::min(left_size, right_size));
+		if(cmp != 0) {
+			return cmp;
+		}
+
+		if (left_size < right_size) {
+			return (-1);
+		}
+		if (left_size > right_size) {
+			return (1);
+		}
+		return 0;
+	}
+
 	//yes, this is incorrect for unicode. However, this is mostly used for std::map so speed is most important
 	//unicode sorting is expensive and should only be done when needed
 	inline bool operator< (const utf::string_view& lhs, const utf::string_view& rhs) {
-		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) < 0;
+		return str_compare(lhs, rhs) < 0;
 	}
 	inline bool operator> (const utf::string_view& lhs, const utf::string_view& rhs) {
-		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) > 0;
+		return str_compare(lhs, rhs) > 0;
 	}
 	inline bool operator== (const utf::string_view& lhs, const utf::string_view& rhs) {
-		if(lhs.byte_size() != rhs.byte_size()) {
-			return false;
-		}
-		return strncmp(lhs.data(), rhs.data(), lhs.byte_size()) == 0;
+		return str_compare(lhs, rhs) == 0;
 	}
 
-	inline bool operator != (const utf::string_view& lhs, const utf::string_view& rhs)
-	{
+	inline bool operator != (const utf::string_view& lhs, const utf::string_view& rhs) {
 		return !(lhs == rhs);
 	}
 
 	inline bool operator <= (const utf::string_view& lhs, const utf::string_view& rhs) {
-		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) <= 0;
+		return str_compare(lhs, rhs) <= 0;
 	}
 
 	inline bool operator >= (const utf::string_view& lhs, const utf::string_view& rhs) {
-		return strncmp(lhs.data(), rhs.data(), std::min(lhs.byte_size(), rhs.byte_size())) >= 0;
+		return str_compare(lhs, rhs) >= 0;
 	}
 
 	template <class Alloc >

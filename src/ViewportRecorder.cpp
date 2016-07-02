@@ -131,9 +131,12 @@ void ViewportRecorder::makeVideo() {
 	}
 
 	mAsyncJobStatus = Platform::singleton().getBackgroundPool().queue([this, pointers = std::move(mappedPointers)]{
+		auto dateString = utf::string(getDateString());
+		Path::removeInvalidChars(dateString);
+
 		auto path = Platform::singleton().getPicturesPath().copy();
 		path += "/" + Platform::singleton().getGame().getName();
-		path += "_" + Path::removeInvalidChars(getDateString());
+		path += "_" + dateString;
 		path += ".gif";
 
 		FIMULTIBITMAP *multi = FreeImage_OpenMultiBitmap(FIF_GIF, path.bytes().data(), TRUE, FALSE);

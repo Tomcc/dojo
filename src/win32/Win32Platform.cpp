@@ -570,7 +570,9 @@ void Win32Platform::initialize(Unique<Game> g) {
 	game = std::move(g);
 
 	//init appdata folder
-	mAppDataPath = getSystemFolderPath(CSIDL_APPDATA) + Path::removeInvalidChars(game->getName()) + '/';
+	auto cleanName = game->getName().copy();
+	Path::removeInvalidChars(cleanName);
+	mAppDataPath = getSystemFolderPath(CSIDL_APPDATA) + cleanName + '/';
 	//create the appdata user folder
 	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 

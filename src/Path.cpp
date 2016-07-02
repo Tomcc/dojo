@@ -147,20 +147,22 @@ utf::string_view Path::removeVersion(utf::string_view str) {
 	return str;
 }
 
-utf::string Path::removeInvalidChars(utf::string_view str) {
+void Path::removeInvalidChars(utf::string& path) {
 #ifdef WIN32
 	static const std::vector<utf::character> invalidChars = { ':', '\\', '/' }; //TODO more invalid chars
-
-	utf::string path;
-	for (auto&& c : str) {
-		if (std::find(invalidChars.begin(), invalidChars.end(), c) == invalidChars.end()) { 
-			path += c;
-		}
-	}
-	return path;
 #else
 	FAIL("Not implemented yet");
 #endif
+	auto itr = path.begin();
+	auto end = path.end();
+	for(; itr != end;) {
+		if (std::find(invalidChars.begin(), invalidChars.end(), *itr) != invalidChars.end()) { 
+			path.erase(itr);
+		}
+		else {
+			++itr;
+		}
+	}
 }
 
 bool Path::arePathsInSequence(utf::string_view first, utf::string_view second) {
