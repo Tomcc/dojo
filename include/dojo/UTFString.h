@@ -427,7 +427,8 @@ namespace utf
 			}
 
 			TBaseIterator forward() const {
-				return forward_iterator;
+				auto fi = forward_iterator;
+				return --fi;
 			} 
 
 			bool operator == (const value_reverse_iterator &other) const
@@ -1238,18 +1239,28 @@ namespace utf
 	}
 
 	class string_view {
-		static int constexpr static_strlen(const char* str) {
-			return *str ? 1 + static_strlen(str + 1) : 0;
-		}
-
+	
 	public:
 		typedef string::const_iterator const_iterator;
 
-		constexpr string_view(const char* str) : 
-			mBegin(str),
-			mEnd(str + static_strlen(str)) {}
+#ifndef _MSC_VER //there is a codegen bug that will cause an excessive length to be found when the constexpr fires
+		//remove this ifdef when it's fixed
+		constexpr static const char* find_end(const char* str) {
+			return *str ? find_end(str + 1) : str;
+		}
 
-		string_view() : mBegin(nullptr), mEnd(nullptr) {}
+		constexpr string_view(const char* str) :
+			mBegin(str),
+			mEnd(find_end(str)) {
+		}
+#else
+		string_view(const char* str) :
+			mBegin(str),
+			mEnd(str + strlen(str)) {
+		}
+#endif
+
+		constexpr string_view() : mBegin(nullptr), mEnd(nullptr) {}
 
 		string_view(const std::string& str)
 			: mBegin(str.data())
@@ -1280,9 +1291,6 @@ namespace utf
 		}
 
 		utf::string copy() const {
-			if(empty()) {
-				return{};
-			}
 			return string(mBegin, mEnd - mBegin);
 		}
 

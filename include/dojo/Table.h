@@ -165,8 +165,9 @@ namespace Dojo {
 				key = tmp;
 			}
 
-			auto ptr = make_unique<TypedEntry<T>>(type, std::move(value));
+			//TODO it's not needed to allocate a new node if one already exists & has the correct type
 			auto where = map.find(key);
+			auto ptr = make_unique<TypedEntry<T>>(type, std::move(value));
 			if(where != map.end()) {
 				where->second = std::move(ptr);
 			}
@@ -233,11 +234,11 @@ namespace Dojo {
 		///generic get
 		Entry* get(utf::string_view key) const;
 
-		template<typename T>
+		template<typename T, typename V = T>
 		const T& get(utf::string_view key, const T& defaultValue) const {
 			auto e = get(key);
 			if(e and e->type == Table::field_type_for<T>()) {
-				return e->getAs<T>();
+				return e->getAs<V>();
 			}
 			return defaultValue;
 		}
@@ -247,9 +248,12 @@ namespace Dojo {
 			return get(key, defaultValue);
 		}
 
-		//TODO convert everything to just return a string view without copying defaultValue
 		utf::string_view getString(utf::string_view key, utf::string_view defaultValue = {}) const {
-			return get(key, defaultValue);
+			auto e = get(key);
+			if (e and e->type == FieldType::String) {
+				return e->getAs<utf::string>();
+			}
+			return defaultValue;
 		}
 
 		const Vector& getVector(utf::string_view key, const Vector& defaultValue = Vector::Zero) const  {
@@ -387,6 +391,14 @@ namespace Dojo {
 	inline void Table::set<Quaternion>(utf::string_view key, Quaternion value) {
         set(key, Vector(glm::eulerAngles(value)));
     }
+
+	template<>
+	inline void Table::set<utf::string_view>(utf::string_view key, utf::string_view value) {
+		//copy the value here, anyway we got to store it
+		//TODO it would be better to do it when storing, because that would spare an
+		//allocation if the value is already there
+		set<utf::string>(key, value.copy());
+	}
     
     
     //specializations to get reflected types out of types
@@ -412,6 +424,11 @@ namespace Dojo {
         }
 	};
 	template<> struct Table::field_type_for < utf::string_view > {
+		operator FieldType() const {
+			return FieldType::String;
+		}
+	};
+	template<> struct Table::field_type_for < utf::string > {
 		operator FieldType() const {
 			return FieldType::String;
 		}

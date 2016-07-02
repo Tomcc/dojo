@@ -270,7 +270,7 @@ void Platform::getFilePathsForType(utf::string_view type, utf::string_view wpath
 			Poco::DirectoryIterator end;
 
 			while (itr != end) {
-				utf::string path(itr->path().data());
+				auto path = utf::string_view(itr->path().data());
 
 				if (Path::getFileExtension(path) == type) {
 					out.emplace_back(Path::makeCanonical(path, true));
