@@ -213,9 +213,6 @@ void ResourceGroup::addTables(utf::string_view folder) {
 void ResourceGroup::addPrograms(utf::string_view folder) {
 	std::vector<utf::string> paths;
 
-	auto d = ShaderProgram::vertexExtension.byte_size();
-	UNUSED(d);
-
 	Platform::singleton().getFilePathsForType(ShaderProgram::vertexExtension, folder, paths);
 	Platform::singleton().getFilePathsForType(ShaderProgram::fragmentExtension, folder, paths);
 
