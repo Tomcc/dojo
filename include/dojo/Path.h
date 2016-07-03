@@ -36,5 +36,8 @@ public:
 	static void removeInvalidChars(utf::string& path);
 
 	static bool arePathsInSequence(utf::string_view first, utf::string_view second);
+
+	static bool isFolder(utf::string_view path);
+	static bool isFile(utf::string_view path);
 };
 

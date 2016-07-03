@@ -1,5 +1,8 @@
 #include "Path.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 using namespace Dojo;
 
 utf::string_view Path::getFileExtension(utf::string_view path) {
@@ -171,4 +174,22 @@ bool Path::arePathsInSequence(utf::string_view first, utf::string_view second) {
 	int t2 = getTag(second);
 
 	return t1 >= 0 and t2 >= 0 and t1 + 1 == t2;
+}
+
+bool Path::isFolder(utf::string_view path) {
+	struct stat info;
+
+	auto zeroterminated = path.copy();
+	auto cstr = zeroterminated.bytes().c_str();
+
+	return stat(cstr, &info) == 0 and (info.st_mode & S_IFDIR);
+}
+
+bool Path::isFile(utf::string_view path) {
+	struct stat info;
+
+	auto zeroterminated = path.copy();
+	auto cstr = zeroterminated.bytes().c_str();
+
+	return stat(cstr, &info) == 0 and not (info.st_mode & S_IFDIR);
 }

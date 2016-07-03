@@ -1,7 +1,8 @@
 #include "Platform.h"
-//private:
+
+#include <tinydir.h>
+
 #include "ZipArchive.h"
-//
 #include "File.h"
 #include "dojomath.h"
 #include "ApplicationListener.h"
@@ -33,8 +34,6 @@
 #include "StringReader.h"
 #include "Game.h"
 
-#include <Poco/DirectoryIterator.h>
-#include <Poco/Exception.h>
 #include "LogListener.h"
 #include "TimedEvent.h"
 #include "Random.h"
@@ -166,13 +165,11 @@ utf::string Platform::_replaceFoldersWithExistingZips(utf::string_view relPath) 
 		//for each possibile zip extension, search a zip named like that
 		bool found = false;
 
-		for (utf::string_view ext : mZipExtensions) {
+		for (auto&& ext : mZipExtensions) {
 			utf::string partialFolder = res + currentFolder + ext;
 
 			//check if partialFolder exists as a zip file
-			Poco::File zipFile(partialFolder.bytes());
-
-			if (zipFile.exists() and zipFile.isFile()) {
+			if(Path::isFile(partialFolder)) {
 				res = partialFolder;
 				found = true;
 				break;
@@ -265,18 +262,24 @@ void Platform::getFilePathsForType(utf::string_view type, utf::string_view wpath
 		}
 	}
 	else {
-		try {
-			Poco::DirectoryIterator itr(absPath.bytes());
-			Poco::DirectoryIterator end;
+		tinydir_dir dir;
+		tinydir_open(&dir, absPath.bytes().data());
 
-			for (; itr != end; ++itr) {
-				if (Path::getFileExtension(itr->path()) == type) {
-					out.emplace_back(Path::makeCanonical(itr->path(), true));
-				}
+		while (dir.has_next)
+		{
+			tinydir_file file;
+			tinydir_readfile(&dir, &file);
+
+			auto fullPath = utf::string_view(file.path);
+
+			if (not file.is_dir and Path::getFileExtension(fullPath) == type) {
+				out.emplace_back(Path::makeCanonical(fullPath, true));
 			}
+
+			tinydir_next(&dir);
 		}
-		catch (...) {
-		}
+
+		tinydir_close(&dir);
 	}
 }
 

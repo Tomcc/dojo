@@ -9,7 +9,6 @@
 #include "SoundSet.h"
 #include "SoundBuffer.h"
 
-#include <Poco/File.h>
 #include "Texture.h"
 #include "Path.h"
 
@@ -42,9 +41,7 @@ void ResourceGroup::addLocalizedFolder(utf::string_view basefolder, int version)
 	utf::string localeDirPath = lid + locale;
 
 	//check if the folder exists or fallback to the default one
-	Poco::File localeDir(localeDirPath.bytes());
-
-	if (localeDir.exists()) {
+	if (Path::isFolder(localeDirPath)) {
 		addFolderSimple(localeDirPath, version);
 	}
 	else {
