@@ -264,13 +264,14 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BrowseInformation>true</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -295,7 +296,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -309,6 +310,7 @@
       <AdditionalOptions>/Zo %(AdditionalOptions)</AdditionalOptions>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -333,7 +335,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -346,6 +348,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4458;4503</DisableSpecificWarnings>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>zziplib.lib;xinput.lib;OpenGL32.lib;FreeImage.lib;OpenAL32.lib;freetype.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
