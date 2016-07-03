@@ -1295,10 +1295,10 @@ namespace utf
 		}
 
 		bool empty() const {
-			return mEnd == mBegin;
+			return mBegin == mEnd;
 		}
 		bool not_empty() const {
-			return not empty();
+			return mBegin != mEnd;
 		}
 		
 		///This is the UTF8 lenght!
