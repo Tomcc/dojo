@@ -21,6 +21,7 @@
 #include <dojo/InputDeviceListener.h>
 #include <dojo/IteratedNoise.h>
 #include <dojo/Keyboard.h>
+#include <dojo/KeyCode.h>
 #include <dojo/Log.h>
 #include <dojo/Mesh.h>
 #include <dojo/MPSCQueue.h>

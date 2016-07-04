@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UTFString.h"
+
 namespace Dojo {
 	enum KeyCode {
 		KC_UNASSIGNED = 0x00,
@@ -193,4 +195,7 @@ namespace Dojo {
 
 		KC_KEY_COUNT
 	};
+
+	extern KeyCode getKeyCodeForString(utf::string_view name);
+
 }

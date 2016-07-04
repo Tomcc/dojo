@@ -98,9 +98,6 @@
 
 #include "DebugUtils.h"
 
-//keycode.h is a plain enum
-#include "KeyCode.h"
-
 //some STL glue
 template< typename T >
 using Unique = std::unique_ptr < T >;

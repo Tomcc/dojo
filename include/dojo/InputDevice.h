@@ -2,6 +2,8 @@
 
 #include "dojo_common_header.h"
 
+#include "KeyCode.h"
+
 namespace Dojo {
 	class InputDeviceListener;
 
