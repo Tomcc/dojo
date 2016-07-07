@@ -17,7 +17,7 @@ TextArea::TextArea(Object& l,
 	Renderable(l, layer),
 	fontName(fontSetName.copy()),
 	interline(0.2f),
-	maxLineLenght(0xfffffff),
+	maxLineLength(0xfffffff),
 	centered(center),
 	pixelScale(1, 1),
 	currentLineLength(0),
@@ -71,7 +71,7 @@ void TextArea::clearText() {
 
 void TextArea::setMaxLineLength(int l) {
 	//HACK PAZZESCOH
-	maxLineLenght = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
+	maxLineLength = (int)(l * ((float)getGameState().getGame().getNativeWidth() / (float)640));
 }
 
 void TextArea::addText(utf::string_view text) {
@@ -94,7 +94,7 @@ void TextArea::addText(utf::string_view text) {
 		}
 
 		//lenght eccess? find last whitespace and replace with \n.
-		if (currentLineLength > maxLineLenght and lastSpace) {
+		if (currentLineLength > maxLineLength and lastSpace) {
 			characters[lastSpace] = font.getCharacter('\n');
 			lastSpace = 0;
 			currentLineLength = 0;
@@ -141,7 +141,7 @@ Renderable& TextArea::_enableLayer(Texture& tex) {
 	layer.setVisible(true);
 	layer.setTexture(tex);
 
-	layer.getMesh().unwrap().begin(getLenght() * 2);
+	layer.getMesh().unwrap().begin(getLength() * 2);
 
 	//move it to the busy layer
 	busyLayers.emplace(std::move(*freeLayers.begin()));
@@ -185,7 +185,7 @@ void TextArea::_prepare() {
 	}
 
 	//no characters to show
-	if (visibleCharsNumber == 0 or getLenght() == 0) {
+	if (visibleCharsNumber == 0 or getLength() == 0) {
 		return;
 	}
 

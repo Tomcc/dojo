@@ -101,7 +101,7 @@ namespace Dojo {
 		}
 
 		///returns the number of added chars
-		int getLenght() {
+		int getLength() {
 			return characters.size();
 		}
 
@@ -135,7 +135,7 @@ namespace Dojo {
 
 		utf::string fontName;
 		float spaceWidth, interline, charSpacing;
-		int maxLineLenght;
+		int maxLineLength;
 		bool centered;
 
 		int currentLineLength, lastSpace;
