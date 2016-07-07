@@ -39,9 +39,6 @@ TextArea::TextArea(Object& l,
 
 TextArea::~TextArea() {
 	clearText();
-
-	mesh.unwrap(); //This isn't renderable by itself
-
 	_destroyLayers();
 }
 
@@ -174,8 +171,18 @@ void TextArea::_destroyLayer(Renderable& r) {
 
 	Platform::singleton().getRenderer().removeRenderable(r);
 
-	busyLayers.erase(LayerList::find(busyLayers, r));
-	freeLayers.erase(LayerList::find(freeLayers, r));
+	{
+		auto elem = LayerList::find(busyLayers, r);
+		if (elem != busyLayers.end()) {
+			busyLayers.erase(elem);
+		}
+	}
+	{
+		auto elem = LayerList::find(freeLayers, r);
+		if (elem != freeLayers.end()) {
+			freeLayers.erase(elem);
+		}
+	}
 }
 
 
@@ -333,7 +340,7 @@ Unique<Mesh> TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), getLayer(), *meshPool.back(), getGameState().getShader("textured").unwrap());
+	auto r = make_unique<Renderable>(getGameState(), getLayerID(), *meshPool.back(), getGameState().getShader("textured").unwrap());
 	r->scale = scale;
 	r->setVisible(false);
 

@@ -20,7 +20,7 @@ TouchArea::TouchArea(Renderable& r, Listener& l) :
 	listener(l),
 	mPressed(false),
 	mTouches(0),
-	mLayer(r.getLayer()) {
+	mLayer(r.getLayerID()) {
 
 	getGameState().addTouchArea(self);
 }

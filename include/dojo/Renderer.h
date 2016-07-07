@@ -119,7 +119,7 @@ namespace Dojo {
 
 		Matrix mRenderRotation;
 
-		void _updateRenderables(const LayerList& layers, float dt);
+		void _updateRenderables(LayerList& layers, float dt);
 
 		///renders a single element using the given viewport
 		void _renderElement(const RenderLayer& layer, const RenderState& renderState);

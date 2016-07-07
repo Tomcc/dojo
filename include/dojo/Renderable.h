@@ -55,7 +55,7 @@ namespace Dojo {
 		void stopFade();
 
 		///returns the ID of the Render::Layer this object is assigned to
-		RenderLayer::ID getLayer() const {
+		RenderLayer::ID getLayerID() const {
 			return layer;
 		}
 

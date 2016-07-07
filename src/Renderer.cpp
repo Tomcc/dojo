@@ -183,19 +183,22 @@ void Renderer::addRenderable(Renderable& s) {
 	DEBUG_ASSERT_MAIN_THREAD;
 
 	//get the needed layer
-	RenderLayer& layer = getLayer(s.getLayer());
+	RenderLayer& layer = getLayer(s.getLayerID());
 
 	DEBUG_ASSERT(layer.elements.contains(&s) == false, "This object is already registered!");
 
 	//append at the end
 	layer.elements.emplace(&s);
+	layer.elementsChangedThisFrame |= true;
 }
 
 void Renderer::removeRenderable(Renderable& s) {
 	DEBUG_ASSERT_MAIN_THREAD;
 
-	if (hasLayer(s.getLayer())) {
-		getLayer(s.getLayer()).elements.erase(&s);
+	if (hasLayer(s.getLayerID())) {
+		auto& layer = getLayer(s.getLayerID());
+		layer.elements.erase(&s);
+		layer.elementsChangedThisFrame |= true;
 	}
 
 	if(lastRenderState == s) {
@@ -385,13 +388,21 @@ void Renderer::_renderViewport(Viewport& viewport) {
 	}
 }
 
-void Renderer::_updateRenderables(const LayerList& layers, float dt) {
+void Dojo::Renderer::_updateRenderables(LayerList& layers, float dt) {
 	for (auto&& layer : layers) {
-		for (auto&& r : layer.elements) {
-			if ((r->getObject().isActive() and r->isVisible()) or r->getGraphicsAABB().isEmpty()) {
-				r->update(dt);
+		do {
+			//repeat the update on the whole layer if any element is added or removed
+			//TODO this isn't risky but very inefficient, find another way!
+			layer.elementsChangedThisFrame = false;
+			for (auto&& r : layer.elements) {
+				if ((r->getObject().isActive() and r->isVisible()) or r->getGraphicsAABB().isEmpty()) {
+					r->update(dt);
+					if (layer.elementsChangedThisFrame) {
+						break;
+					}
+				}
 			}
-		}
+		} while (layer.elementsChangedThisFrame);
 	}
 }
 

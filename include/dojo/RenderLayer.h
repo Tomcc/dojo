@@ -32,6 +32,7 @@ namespace Dojo {
 		float zOffset = 0.f;
 		
 		SmallSet<Renderable*> elements;
+		bool elementsChangedThisFrame = false;
 
 		bool usesDepth() const {
 			return depthWrite or depthTest;
