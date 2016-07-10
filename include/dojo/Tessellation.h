@@ -30,8 +30,16 @@ namespace Dojo {
 
 			}
 
+			Position() : Position(.0, .0) {}
+
 			Vector toVec() {
 				return Vector((float)x, (float)y);
+			}
+
+			Position& operator += (const Position& other) {
+				x += other.x;
+				y += other.y;
+				return self;
 			}
 		};
 
