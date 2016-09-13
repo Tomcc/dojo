@@ -91,7 +91,5 @@ namespace Dojo {
 		Game& game;
 
 		optional_ref<Viewport> camera;
-
-		float timeElapsed;
 	};
 }

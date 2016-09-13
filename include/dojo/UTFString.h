@@ -1162,14 +1162,7 @@ namespace utf
 
 		static const size_type npos = std::numeric_limits<size_type>::max();
 	};
-
-	template <class Alloc >
-	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(iterator pos, string_view str) {
-		raw_bytes.insert(get_byte_position(pos), str.data(), str.byte_size());
-
-		return (*this);
-	}
-
+    
 	template <class Alloc >
 	utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(iterator pos, _char8bit c) {
 		raw_bytes.insert(get_byte_position(pos), c);
@@ -1409,6 +1402,13 @@ namespace utf
 	private:
 		const char* mBegin, *mEnd;
 	};
+    
+    template <class Alloc >
+    utf::_utf8string<Alloc>& utf::_utf8string<Alloc>::insert(iterator pos, string_view str) {
+        raw_bytes.insert(get_byte_position(pos), str.data(), str.byte_size());
+        
+        return (*this);
+    }
 
 	// overload stream insertion so we can write to streams
 	template <class Alloc>
@@ -1416,20 +1416,20 @@ namespace utf
 	{
 		// use from basic string
 		// must cast to char otherwise stream will think it's a number
-		os << (const char *)string.c_str();
+		os << (const char *)string.data();
 
 		return os;
 	}
 
 	// overload stream extraction so we can write to streams
 	template <class Alloc>
-	std::istream& operator >> (std::istream& is, const utf::string_view& string)
+	std::istream& operator >> (std::istream& is, utf::string& string)
 	{
 		// for now just use std::string because istream as defined can not read unsigned char
 		std::string in;
 		is >> in;
 
-		string = in;
+        string.insert(string.end(), in);
 
 		return is;
 	}

@@ -104,7 +104,7 @@ namespace Dojo {
 
 			Font& font;
 			Unique<Texture> texture;
-			uint32_t index, firstCharIdx;
+			uint32_t firstCharIdx;
 
 			std::array<Character, FONT_CHARS_PER_PAGE> chars;
 

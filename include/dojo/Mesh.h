@@ -222,7 +222,6 @@ namespace Dojo {
 		uint32_t indexGLType = 0;
 		std::vector<uint8_t> indices;//indices have varying size
 
-		uint32_t vertexArrayDesc = 0;
 		uint32_t vertexHandle = 0, indexHandle = 0;
 
 		int vertexCount = 0, indexCount = 0;

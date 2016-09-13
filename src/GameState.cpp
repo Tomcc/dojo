@@ -14,8 +14,7 @@ using namespace Dojo;
 GameState::GameState(Game& parentGame) :
 	Object(self, Vector::Zero, Vector::One),
 	ResourceGroup(),
-	game(parentGame),
-	timeElapsed(0) {
+	game(parentGame) {
 	gameState = self; //useful to pass a GameState around as an Object
 }
 

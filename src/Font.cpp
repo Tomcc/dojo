@@ -181,7 +181,6 @@ void Font::Character::init(Page& page, uint32_t c, int x, int y, int sx, int sy,
 
 Font::Page::Page(Font& font, int index) :
 	Resource(),
-	index(index),
 	firstCharIdx(index * FONT_CHARS_PER_PAGE),
 	font(font),
 	texture(make_unique<Texture>()) {

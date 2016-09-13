@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include "dojo_common_header.h"
+
 #include <cstddef>  // size_t
 
 namespace Dojo {

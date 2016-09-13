@@ -152,9 +152,9 @@ utf::string_view Path::removeVersion(utf::string_view str) {
 
 void Path::removeInvalidChars(utf::string& path) {
 #ifdef WIN32
-	static const std::vector<utf::character> invalidChars = { ':', '\\', '/' }; //TODO more invalid chars
+	static const std::vector<utf::character> invalidChars = { ':', '\\', '/' }; //TODO more invalid chars?
 #else
-	FAIL("Not implemented yet");
+    static const std::vector<utf::character> invalidChars = { '/' }; //TODO more invalid chars?
 #endif
 	auto itr = path.begin();
 	auto end = path.end();
