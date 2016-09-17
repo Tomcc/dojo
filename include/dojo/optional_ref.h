@@ -40,6 +40,10 @@ namespace Dojo {
 			return *ptr;
 		}
 
+		T& unwrap_or(T& default_val) const  {
+			return ptr ? *ptr : default_val;
+		}
+
 		reference_wrapper<T> to_ref() const {
 			if (ptr) {
 				return *ptr;
