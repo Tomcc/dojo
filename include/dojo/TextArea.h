@@ -37,7 +37,8 @@ namespace Dojo {
 			RenderLayer::ID layer,
 			utf::string_view fontSetName,
 			bool center = false,
-			const Vector& bounds = Vector::One);
+			const Vector& bounds = Vector::One,
+			optional_ref<Shader> customMaterial = {});
 
 		virtual ~TextArea();
 
@@ -154,6 +155,8 @@ namespace Dojo {
 		int actualCharacters = 0;
 
 		std::vector<Unique<Mesh>> meshPool;
+
+		Shader& mMaterial;
 
 		void _prepare();
 

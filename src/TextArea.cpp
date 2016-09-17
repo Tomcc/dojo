@@ -13,7 +13,9 @@ TextArea::TextArea(Object& l,
 	RenderLayer::ID layer,
 	utf::string_view fontSetName,
 	bool center /*= false*/,
-	const Vector& bounds /*= Vector::One*/) :
+	const Vector& bounds /*= Vector::One*/,
+	optional_ref<Shader> customMaterial
+	) :
 	Renderable(l, layer),
 	fontName(fontSetName.copy()),
 	interline(0.2f),
@@ -23,7 +25,8 @@ TextArea::TextArea(Object& l,
 	currentLineLength(0),
 	lastSpace(0),
 	visibleCharsNumber(0xfffffff),
-	font(getGameState().getFont(fontName).unwrap()) {
+	font(getGameState().getFont(fontName).unwrap()),
+	mMaterial(customMaterial.unwrap_or(getGameState().getShader("textured").unwrap())) {
 
 	l.setSize(bounds); //TODO HMM
 
@@ -340,7 +343,7 @@ Unique<Mesh> TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), getLayerID(), *meshPool.back(), getGameState().getShader("textured").unwrap());
+	auto r = make_unique<Renderable>(getGameState(), getLayerID(), *meshPool.back(), mMaterial);
 	r->scale = scale;
 	r->setVisible(false);
 
