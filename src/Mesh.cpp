@@ -75,8 +75,7 @@ void Mesh::begin(IndexType extimatedVerts /*= 1 */) {
 	vertexCount = indexCount = 0;
 	currentVertex = nullptr;
 
-	bounds.max = Vector::Min;
-	bounds.min = Vector::Max;
+	bounds = AABB::Invalid;
 	vertexTransparency = false;
 
 	editing = true;

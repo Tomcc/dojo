@@ -70,12 +70,16 @@ void Renderable::update(float dt) {
 
 		advanceFade(dt);
 
-		if (trans != mTransform) {
+		auto& meshBounds = m.get().getBounds();
+		if (trans != mTransform or meshBounds != mLastMeshBB) {
 			AABB bounds = m.get().getBounds();
 			bounds.max = Vector::mul(bounds.max, scale);
 			bounds.min = Vector::mul(bounds.min, scale);
+
+			//TODO this caching is really fiddly and 6 floats just for it is hmmm
 			mWorldBB = object.transformAABB(bounds);
 			mTransform = trans;
+			mLastMeshBB = meshBounds;
 		}
 	}
 }

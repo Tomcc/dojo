@@ -97,6 +97,6 @@ namespace Dojo {
 		Color fadeStartColor;
 		Color fadeEndColor;
 
-		AABB mWorldBB;
+		AABB mWorldBB, mLastMeshBB;
 	};
 }
