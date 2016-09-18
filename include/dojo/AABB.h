@@ -102,5 +102,13 @@ namespace Dojo {
 			return max.x >= p.x and max.y >= p.y and max.z >= p.z and
 							min.x <= p.x and min.y <= p.y and min.z <= p.z;
 		}
+
+		bool operator==(const AABB& bb) const {
+			return max == bb.max and min == bb.min;
+		}
+
+		bool operator!=(const AABB& bb) const {
+			return not (self == bb);
+		}
 	};
 }
