@@ -343,7 +343,7 @@ Unique<Mesh> TextArea::_createMesh() {
 void TextArea::_pushLayer() {
 	meshPool.emplace_back(_createMesh());
 
-	auto r = make_unique<Renderable>(getGameState(), getLayerID(), *meshPool.back(), mMaterial);
+	auto r = make_unique<Renderable>(getObject(), getLayerID(), *meshPool.back(), mMaterial);
 	r->scale = scale;
 	r->setVisible(false);
 
