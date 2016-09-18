@@ -114,6 +114,11 @@ namespace Dojo {
 	using TimePoint = std::chrono::high_resolution_clock::time_point;
 	using Duration = std::chrono::high_resolution_clock::duration;
 
+	template<typename D>
+	inline double durationToSeconds(const D& duration) {
+		return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
+	}
+
 }
 
 using std::make_unique;
