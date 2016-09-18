@@ -57,7 +57,7 @@ namespace Dojo {
 		 */
 		void setState(std::shared_ptr<StateInterface> child);
 
-		int getCurrentState() {
+		int getCurrentState() const {
 			return currentState;
 		}
 
