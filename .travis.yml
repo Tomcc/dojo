@@ -1,0 +1,29 @@
+sudo: required
+dist: xenial
+
+install: sudo apt-get install libopenal-dev libfreetype6-dev libfreeimage-dev
+
+# Enable C++ support
+language: cpp
+
+matrix:
+  include:
+    - compiler: clang
+      os: linux
+#    - compiler: clang
+#      os: osx
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+            - g++-5
+      script:
+        - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+        - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
+        - cmake . && make -j4
+        
+script:
+  - cmake . && make -j4
