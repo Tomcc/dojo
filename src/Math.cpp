@@ -34,6 +34,14 @@ std::pair<bool, Vector> Math::segmentsIntersect(const Vector& A1, const Vector& 
 	return{ false, Vector::Max }; // No collision
 }
 
+Vector Math::segmentNormal2D(const Vector& begin, const Vector& end) {
+	auto dir = (end - begin).normalized();
+	return{
+		dir.y,
+		dir.x
+	};
+}
+
 std::pair<std::vector<Vector>, std::vector<Vector>> Dojo::Math::cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd)
 {
 	//find the two segments that intersect
