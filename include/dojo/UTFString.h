@@ -227,6 +227,7 @@ namespace utf
 
 			++string;
 		}
+		return min_size;
 	}
 
 	// use a template method because the 16bit and 32 bit implementations are identical

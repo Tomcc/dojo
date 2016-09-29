@@ -245,8 +245,6 @@ bool SoundBuffer::_loadOgg(Stream& source) {
 
 	OggVorbis_File file;
 	vorbis_info* info;
-	ALenum format;
-	ogg_int64_t uncompressedSize;
 
 	int error = ov_open_callbacks(&source, &file, nullptr, 0, VORBIS_CALLBACKS);
 
@@ -255,11 +253,8 @@ bool SoundBuffer::_loadOgg(Stream& source) {
 	info = ov_info(&file, -1);
 
 	int wordSize = 2;
-	format = (info->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-
+	
 	ogg_int64_t totalPCM = ov_pcm_total(&file, -1);
-
-	uncompressedSize = totalPCM * wordSize * info->channels;
 
 	//find the number of chunks that we want
 	int chunkN = 1;
