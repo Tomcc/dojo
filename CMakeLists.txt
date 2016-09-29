@@ -65,9 +65,8 @@ else()
     set(ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros")
     
     set_target_properties(Dojo PROPERTIES
-        COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}"
-        COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/dependencies"
-        COTIRE_ADD_UNITY_BUILD FALSE)
+        COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}/src;${CMAKE_SOURCE_DIR}/include;"
+    )
 
     cotire(Dojo)
 endif()
