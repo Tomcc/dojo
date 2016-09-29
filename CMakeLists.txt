@@ -30,6 +30,8 @@ else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     endif()
 
+    add_definitions ("-Wall")
+    add_definitions ("-Wno-unknown-pragmas")
     add_definitions ("-Wno-reorder")
     add_definitions ("-Werror")
 endif()

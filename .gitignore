@@ -26,3 +26,5 @@ CMakeScripts
 *.build/*
 *.xcodeproj/*
 cotire
+Makefile
+*.a
