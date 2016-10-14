@@ -180,6 +180,6 @@ namespace Dojo {
 
 		static std::pair<std::vector<Vector>, std::vector<Vector>> cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd);
 
-		static Vector findCentroid(const std::vector<Vector>& contour);
+		static Vector findCentroid(vec_view<Vector> contour);
 	};
 }

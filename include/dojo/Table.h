@@ -48,24 +48,20 @@ namespace Dojo {
 			std::vector<uint8_t> buf;
 
 			template<class T>
-			static Data fromRaw(const T* ptr, size_t count) {
+			static Data fromBytes(vec_view<T> vec) {
 				Data data;
-				data.buf.resize(count * sizeof(T));
-				memcpy(data.buf.data(), ptr, data.buf.size());
+				data.buf.resize(vec.byte_size());
+				memcpy(data.buf.data(), vec.data(), vec.byte_size());
 				return data;
 			}
 
 			template<class T>
-			static Data fromVec(const std::vector<T>& vec) {
-				return fromRaw(vec.data(), vec.size());
-			}
-
-			template<class T>
-			std::vector<T> toVec() const {
+			vec_view<T> asVec() const {
 				DEBUG_ASSERT(buf.size() % sizeof(T) == 0, "Invalid cast");
-				std::vector<T> res(buf.size() / sizeof(T));
-				memcpy(res.data(), buf.data(), buf.size());
-				return res;
+				return{
+					reinterpret_cast<const T*>(buf.data()),
+					reinterpret_cast<const T*>(buf.data() + buf.size())
+				};
 			}
 
 		};

@@ -18,7 +18,7 @@ namespace Dojo {
 			return{ Vector::min(A,B), Vector::max(A,B) };
 		}
 
-		static AABB fromPoints(const std::vector<Vector>& points) {
+		static AABB fromPoints(vec_view<Vector> points) {
 			Vector min = Vector::Max, max = Vector::Min;
 			for (auto&& point : points) {
 				min = Vector::min(min, point);

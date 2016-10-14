@@ -72,7 +72,6 @@ namespace Dojo {
 		bool operator != (const optional_ref<T>& ref) const {
 			return ptr != ref.ptr;
 		}
-
 	private:
 		T* ptr;
 	};

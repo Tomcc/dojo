@@ -156,3 +156,4 @@ using std::make_shared;
 
 #include "enum_cast.h"
 #include "optional_ref.h"
+#include "vec_view.h"

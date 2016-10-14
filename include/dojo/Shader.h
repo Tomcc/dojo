@@ -90,7 +90,7 @@ namespace Dojo {
 			return mGLProgram;
 		}
 
-		const std::vector<VertexAttribute>& getAttributes() const {
+		vec_view<VertexAttribute> getAttributes() const {
 			return mAttributes;
 		}
 

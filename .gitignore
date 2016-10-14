@@ -28,3 +28,6 @@ CMakeScripts
 cotire
 Makefile
 *.a
+
+.ninja*
+*.ninja

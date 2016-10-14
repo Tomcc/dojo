@@ -85,7 +85,7 @@ void Table::serialize(utf::string& buf, utf::string_view indent) const {
 
 		case FieldType::RawData:
 			data = (Data*)e.getRawValue();
-			buf += "raw\"" + Base64::fromVec(data->buf) + '"';
+			buf += "raw\"" + Base64::fromVec<uint8_t>(data->buf) + '"';
 
 			break;
 

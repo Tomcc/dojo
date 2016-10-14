@@ -8,7 +8,7 @@ const Radians Math::HALF_PI(1.5707963267948966192313216916398f);
 const Radians Math::PI(3.14159265f);
 const Radians Math::TAU(6.2831853071796f);
 
-Vector Math::findCentroid(const std::vector<Vector>& contour) {
+Vector Math::findCentroid(vec_view<Vector> contour) {
 	Vector center;
 	for (auto&& p : contour) {
 		center += p;

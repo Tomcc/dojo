@@ -107,6 +107,7 @@
     <ClInclude Include="include\dojo\TouchArea.h" />
     <ClInclude Include="include\dojo\UTFString.h" />
     <ClInclude Include="include\dojo\Vector.h" />
+    <ClInclude Include="include\dojo\vec_view.h" />
     <ClInclude Include="include\dojo\VertexField.h" />
     <ClInclude Include="include\dojo\Viewport.h" />
     <ClInclude Include="include\dojo\ViewportRecorder.h" />
