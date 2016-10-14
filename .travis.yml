@@ -27,3 +27,6 @@ matrix:
         
 script:
   - cmake . && make -j4
+
+notifications:
+  slack: the-scavenger:MaUf3XX2GIwzjPMFYfWgAk68
