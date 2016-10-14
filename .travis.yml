@@ -30,3 +30,4 @@ script:
 
 notifications:
   slack: the-scavenger:MaUf3XX2GIwzjPMFYfWgAk68
+  email: false
