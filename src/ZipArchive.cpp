@@ -60,7 +60,10 @@ void ZipFile::rewind() {
 
 //write to file
 size_t ZipFile::write(const void* ptr, size_t size, size_t count) {
-	return zzip_write(file, ptr, size * count) / size;
+	//return zzip_write(file, ptr, size * count) / size;
+    
+    DEBUG_TODO; //write isn't implemented...
+    return 0;
 }
 
 
