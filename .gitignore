@@ -31,3 +31,4 @@ Makefile
 
 .ninja*
 *.ninja
+*.cmake
