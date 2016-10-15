@@ -39,6 +39,8 @@ endif()
 file(GLOB common_src
 	"include/dojo/*.h"
     "src/*.cpp"
+    "dependencies/include/glad/glad.h"
+    "dependencies/include/glad/glad.c"
 )
 
 if (WIN32) 

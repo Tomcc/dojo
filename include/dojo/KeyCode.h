@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UTFString.h"
+#include "dojo_common_header.h"
 
 namespace Dojo {
 	enum KeyCode {

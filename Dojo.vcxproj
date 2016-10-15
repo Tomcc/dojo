@@ -121,7 +121,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dojo_gl_header.cpp" />
-    <ClCompile Include="include\dojo\KeyCode.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\AnimatedQuad.cpp" />
     <ClCompile Include="src\AStar.cpp" />
@@ -143,6 +142,7 @@
     <ClCompile Include="src\InputSystemListener.cpp" />
     <ClCompile Include="src\IteratedNoise.cpp" />
     <ClCompile Include="src\Keyboard.cpp" />
+    <ClCompile Include="src\KeyCode.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\LogListener.cpp" />
     <ClCompile Include="src\Math.cpp" />
