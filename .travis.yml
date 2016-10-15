@@ -1,7 +1,7 @@
 sudo: required
 dist: xenial
 
-install: sudo apt-get install libopenal-dev libfreetype6-dev libfreeimage-dev
+install: sudo apt-get install libopenal-dev libfreetype6-dev libfreeimage-dev libogg-dev libvorbis-dev libzzip-dev
 
 # Enable C++ support
 language: cpp
