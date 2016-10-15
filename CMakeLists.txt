@@ -54,6 +54,22 @@ set(dojo_SRC ${common_src} ${platform_src})
 
 add_library(Dojo ${dojo_SRC})
 
+if(WIN32)
+
+else()
+
+    find_library(FREEIMAGE freeimage)
+    find_library(OGG ogg)   
+    find_library(VORBIS vorbis)    
+    find_library(VORBISFILE vorbisfile)
+    find_library(ZZIP zzip)
+    find_library(FREETYPE freetype)
+    find_library(OPENAL openal)   
+
+    target_link_libraries(Dojo ${FREETYPE} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL})
+
+endif()
+
 if (IWYU)
     find_program(iwyu_path NAMES include-what-you-use iwyu)
     if(NOT iwyu_path)
