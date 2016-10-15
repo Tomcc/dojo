@@ -28,6 +28,7 @@
 #include <dojo/Noise.h>
 #include <dojo/Object.h>
 #include <dojo/Oscillator.h>
+#include <dojo/optional_ref.h>
 #include <dojo/Plane.h>
 #include <dojo/Platform.h>
 #include <dojo/PolyTextArea.h>
@@ -54,6 +55,7 @@
 #include <dojo/TimedEvent.h>
 #include <dojo/Timer.h>
 #include <dojo/TouchArea.h>
+#include <dojo/vec_view.h>
 #include <dojo/Vector.h>
 #include <dojo/Viewport.h>
 #include <dojo/WorkerPool.h>
