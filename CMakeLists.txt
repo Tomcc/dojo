@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 project("Dojo")
 
@@ -67,7 +67,7 @@ else()
     set(ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros")
     
     set_target_properties(Dojo PROPERTIES
-        COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_SOURCE_DIR}/src;${CMAKE_SOURCE_DIR}/include;"
+        COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src;${CMAKE_CURRENT_SOURCE_DIR}/include;"
     )
 
     cotire(Dojo)
