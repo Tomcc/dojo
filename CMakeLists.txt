@@ -7,8 +7,8 @@ option(IWYU "IWYU" OFF)
 
 include(CheckCXXCompilerFlag)
 
-include_directories("include/dojo")
-include_directories("dependencies/include")
+include (AddDojoIncludes.txt)
+include_directories("include/dojo") #private include
 
 if (WIN32)
     include_directories("include/dojo/win32")
@@ -63,10 +63,9 @@ else()
     find_library(VORBIS vorbis)    
     find_library(VORBISFILE vorbisfile)
     find_library(ZZIP zzip)
-    find_library(FREETYPE freetype)
     find_library(OPENAL openal)   
 
-    target_link_libraries(Dojo ${FREETYPE} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL})
+    target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY})
 
 endif()
 

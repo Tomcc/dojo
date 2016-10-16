@@ -1,0 +1,13 @@
+
+INCLUDE(FindOpenAL)
+INCLUDE(FindFreetype)
+
+include_directories(
+  "${OPENAL_INCLUDE_DIR}"
+  "${FREETYPE_INCLUDE_DIRS}"
+  "${CMAKE_CURRENT_LIST_DIR}/dependencies/include"
+  "${CMAKE_CURRENT_LIST_DIR}/include"
+)
+
+#add this to add /usr/local/include to XCode, it needs some help as usual
+include_directories(${CMAKE_INSTALL_PREFIX}/include)

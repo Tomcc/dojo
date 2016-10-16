@@ -160,7 +160,7 @@ AABB Object::transformAABB(const AABB& local) const {
 
 Vector Object::getWorldPosition(const Vector& localPos) const {
 	glm::vec4 pos = getWorldTransform() * glm::vec4(localPos.x, localPos.y, localPos.z, 1.0f);
-	return (Vector&)pos;
+	return {pos.x, pos.y, pos.z};
 }
 
 bool Object::isActive() const {
@@ -179,14 +179,14 @@ Vector Object::getLocalPosition(const Vector& worldPos) const {
 	glm::vec4 p(worldPos, 1);
 	p = glm::inverse(getWorldTransform()) * p;
 
-	return (Vector&)p;
+	return {p.x, p.y, p.z};
 }
 
 Vector Object::getWorldDirection(const Vector& dir3 /*= Vector::UNIT_Z*/) const {
 	glm::vec4 dir(dir3, 0);
 	dir = getWorldTransform() * dir;
 
-	return (Vector&)dir;
+	return {dir.x, dir.y, dir.z};
 }
 
 Vector Object::getLocalDirection(const Vector& worldDir) {

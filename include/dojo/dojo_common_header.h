@@ -62,26 +62,15 @@
 		#include <crtdbg.h>
 
 	#endif
-
 #elif defined( PLATFORM_OSX )
-	#include <OpenAL/al.h>
-	#include <OpenAL/alc.h>
 
 #elif defined( PLATFORM_LINUX )
-	#include <AL/al.h>
-	#include <AL/alc.h>
 	#include <signal.h>
 	#include <stdint.h>
-
-#elif defined( PLATFORM_IOS )
-	#include <OpenAL/al.h>
-	#include <OpenAL/alc.h>
 
 #elif defined( PLATFORM_ANDROID )
 
 	#include <stdint.h>
-	#include <AL/al.h>
-	#include <AL/alc.h>
 	#include "android/AndroidGLExtern.h"
 	#include <android/log.h>
 	#include <android/native_activity.h>

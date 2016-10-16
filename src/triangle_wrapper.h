@@ -12,6 +12,7 @@
 #else
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wsign-compare"
+	#pragma GCC diagnostic ignored "-Wstrict-overflow"
 	#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
