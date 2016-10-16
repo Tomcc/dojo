@@ -2,18 +2,18 @@
 // Copyright (c) 2006-2008 dhpoware. All Rights Reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
+// copy of this software && associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
 // the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
+// and/or sell copies of the Software, && to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in
+// The above copyright notice && this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// FITNESS FOR A PARTICULAR PURPOSE && NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
@@ -39,7 +39,7 @@ namespace {
 		case WM_CREATE:
 			g_hDC = GetDC(hWnd);
 
-			if (not g_hDC) {
+			if (!g_hDC) {
 				return -1;
 			}
 
@@ -74,14 +74,14 @@ namespace {
 		g_wcl.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
 		g_wcl.lpszClassName = L"DummyGLWindowClass";
 
-		if (not RegisterClassExW(&g_wcl)) {
+		if (!RegisterClassExW(&g_wcl)) {
 			return false;
 		}
 
 		g_hWnd = CreateWindowW(g_wcl.lpszClassName, L"", WS_OVERLAPPEDWINDOW,
 									0, 0, 0, 0, 0, 0, g_wcl.hInstance, 0);
 
-		if (not g_hWnd) {
+		if (!g_hWnd) {
 			return false;
 		}
 
@@ -97,17 +97,17 @@ namespace {
 
 		int pf = ChoosePixelFormat(g_hDC, &pfd);
 
-		if (not SetPixelFormat(g_hDC, pf, &pfd)) {
+		if (!SetPixelFormat(g_hDC, pf, &pfd)) {
 			return false;
 		}
 
 		g_hRC = wglCreateContext(g_hDC);
 
-		if (not g_hRC) {
+		if (!g_hRC) {
 			return false;
 		}
 
-		if (not wglMakeCurrent(g_hDC, g_hRC)) {
+		if (!wglMakeCurrent(g_hDC, g_hRC)) {
 			return false;
 		}
 
@@ -150,7 +150,7 @@ namespace {
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
 					&returnedPixelFormat, &numFormats);
 
-			if (bStatus == TRUE and numFormats) {
+			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
 				break;
 			}
@@ -185,7 +185,7 @@ namespace {
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
 					&returnedPixelFormat, &numFormats);
 
-			if (bStatus == TRUE and numFormats) {
+			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
 				break;
 			}
@@ -241,7 +241,7 @@ namespace {
 			bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
 					&returnedPixelFormat, &numFormats);
 
-			if (bStatus == TRUE and numFormats) {
+			if (bStatus == TRUE && numFormats) {
 				pf = returnedPixelFormat;
 				break;
 			}
@@ -271,7 +271,7 @@ namespace {
 		BOOL bStatus = wglChoosePixelFormatARB(g_hDC, attributes, 0, 1,
 				&returnedPixelFormat, &numFormats);
 
-		if (bStatus == TRUE and numFormats) {
+		if (bStatus == TRUE && numFormats) {
 			pf = returnedPixelFormat;
 		}
 		else {
@@ -299,11 +299,11 @@ namespace {
 		static const char* pszGLExtensions = 0;
 		static const char* pszWGLExtensions = 0;
 
-		if (not pszGLExtensions) {
+		if (!pszGLExtensions) {
 			pszGLExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 		}
 
-		if (not pszWGLExtensions) {
+		if (!pszWGLExtensions) {
 			// WGL_ARB_extensions_string.
 
 			typedef const char* (WINAPI * PFNWGLGETEXTENSIONSSTRINGARBPROC)(HDC);
@@ -317,8 +317,8 @@ namespace {
 			}
 		}
 
-		if (not strstr(pszGLExtensions, pszExtensionName)) {
-			if (not strstr(pszWGLExtensions, pszExtensionName)) {
+		if (!strstr(pszGLExtensions, pszExtensionName)) {
+			if (!strstr(pszWGLExtensions, pszExtensionName)) {
 				return false;
 			}
 		}
@@ -330,12 +330,12 @@ namespace {
 void ChooseBestAntiAliasingPixelFormat(int& pf) {
 	pf = 0;
 
-	if (not CreateDummyGLWindow()) {
+	if (!CreateDummyGLWindow()) {
 		DestroyDummyGLWindow();
 		return;
 	}
 
-	if (ExtensionSupported("GL_NV_multisample_coverage") and
+	if (ExtensionSupported("GL_NV_multisample_coverage")  &&
 			ExtensionSupported("WGL_NV_multisample_coverage")) {
 		ChooseBestCSAAPixelFormat(pf);
 	}
@@ -349,12 +349,12 @@ void ChooseBestAntiAliasingPixelFormat(int& pf) {
 void ChooseAntiAliasingPixelFormat(int& pf, int samples) {
 	pf = 0;
 
-	if (not CreateDummyGLWindow()) {
+	if (!CreateDummyGLWindow()) {
 		DestroyDummyGLWindow();
 		return;
 	}
 
-	if (ExtensionSupported("GL_NV_multisample_coverage") and
+	if (ExtensionSupported("GL_NV_multisample_coverage")  &&
 			ExtensionSupported("WGL_NV_multisample_coverage")) {
 		ChooseCSAAPixelFormat(pf, samples);
 	}
@@ -375,7 +375,7 @@ BOOL wglGetPixelFormatAttribivARB(HDC hdc, int iPixelFormat, int iLayerPlane, UI
 	typedef BOOL (WINAPI * PFNWGLGETPIXELFORMATATTRIBIVARBPROC)(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, int* piValues);
 	static PFNWGLGETPIXELFORMATATTRIBIVARBPROC pfnGetPixelFormatAttribivARB = 0;
 
-	if (not pfnGetPixelFormatAttribivARB) {
+	if (!pfnGetPixelFormatAttribivARB) {
 		pfnGetPixelFormatAttribivARB = reinterpret_cast<PFNWGLGETPIXELFORMATATTRIBIVARBPROC>(wglGetProcAddress("wglGetPixelFormatAttribivARB"));
 		assert(pfnGetPixelFormatAttribivARB != 0);
 	}
@@ -387,7 +387,7 @@ BOOL wglGetPixelFormatAttribfvARB(HDC hdc, int iPixelFormat, int iLayerPlane, UI
 	typedef BOOL (WINAPI * PFNWGLGETPIXELFORMATATTRIBFVARBPROC)(HDC hdc, int iPixelFormat, int iLayerPlane, UINT nAttributes, const int* piAttributes, FLOAT * pfValues);
 	static PFNWGLGETPIXELFORMATATTRIBFVARBPROC pfnGetPixelFormatAttribfvARB = 0;
 
-	if (not pfnGetPixelFormatAttribfvARB) {
+	if (!pfnGetPixelFormatAttribfvARB) {
 		pfnGetPixelFormatAttribfvARB = reinterpret_cast<PFNWGLGETPIXELFORMATATTRIBFVARBPROC>(wglGetProcAddress("wglGetPixelFormatAttribfvARB"));
 		assert(pfnGetPixelFormatAttribfvARB != 0);
 	}
@@ -399,7 +399,7 @@ BOOL wglChoosePixelFormatARB(HDC hdc, const int* piAttribIList, const FLOAT* pfA
 	typedef BOOL (WINAPI * PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc, const int* piAttribIList, const FLOAT * pfAttribFList, UINT nMaxFormats, int* piFormats, UINT * nNumFormats);
 	static PFNWGLCHOOSEPIXELFORMATARBPROC pfnChoosePixelFormatARB = 0;
 
-	if (not pfnChoosePixelFormatARB) {
+	if (!pfnChoosePixelFormatARB) {
 		pfnChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
 		assert(pfnChoosePixelFormatARB != 0);
 	}

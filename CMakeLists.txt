@@ -83,6 +83,7 @@ else()
     
     set_target_properties(Dojo PROPERTIES
         COTIRE_PREFIX_HEADER_IGNORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src;${CMAKE_CURRENT_SOURCE_DIR}/include;"
+        COTIRE_ADD_UNITY_BUILD FALSE
     )
 
     cotire(Dojo)

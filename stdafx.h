@@ -2,6 +2,7 @@
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
+#ifdef __cplusplus
 #if defined(_MSC_VER) || defined( __linux ) //if using VC++ or gcc
 
 
@@ -9,6 +10,8 @@
 #define dojo_stdafx_h__
 
 #include "dojo_common_header.h"
+
+#endif
 
 #endif
 

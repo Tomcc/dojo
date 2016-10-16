@@ -1,5 +1,5 @@
 #include "dojostring.h"
-
+#include "dojo_common_header.h"
 using Dojo::String;
 
 bool String::isNumber(uint32_t c) {
