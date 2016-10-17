@@ -1,6 +1,6 @@
 #include "ViewportRecorder.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include "Platform.h"
 #include "Renderer.h"
 #include "range.h"

@@ -8,14 +8,14 @@ namespace Dojo {
 		typedef T type;
 
 		// construct/copy/destroy
-		reference_wrapper(T& ref) noexcept : ptr(std::addressof(ref)) {}
-		reference_wrapper() noexcept : ptr(nullptr) {}
+		reference_wrapper(T& ref) : ptr(std::addressof(ref)) {}
+		reference_wrapper() : ptr(nullptr) {}
 		reference_wrapper(T&&) = delete;
-		reference_wrapper(const reference_wrapper&) noexcept = default;
+		reference_wrapper(const reference_wrapper&) = default;
 
 		// access
-		operator T& () const noexcept { return *ptr; }
-		T& get() const noexcept { return *ptr; } //TODO remove and use C++17's operator dot here
+		operator T& () const { return *ptr; }
+		T& get() const { return *ptr; } //TODO remove and use C++17's operator dot here
 
 		operator bool() const {
 			return ptr != nullptr;

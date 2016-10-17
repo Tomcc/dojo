@@ -5,7 +5,7 @@
 #include "Mesh.h"
 #include "TexFormatInfo.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 using namespace Dojo;
 

@@ -14,7 +14,7 @@
 #include "dojo_win_header.h"
 #include "win32/WGL_ARB_multisample.h"
 #include "win32/XInputController.h"
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 #include <FreeImage.h>
 #include <GL/wglext.h>
@@ -577,10 +577,8 @@ void Win32Platform::initialize(Unique<Game> g) {
 	CreateDirectoryW(String::toUTF16(mAppDataPath).c_str(), nullptr);
 
 	//get root path
-	GetModuleFileNameW(nullptr, szPath, MAX_PATH);
-	auto rootPathW = std::wstring(szPath);
-	rootPathW.resize(rootPathW.find_last_of(L"\\/"));
-	mRootPath = Path::makeCanonical(String::toUTF8(rootPathW));
+	GetCurrentDirectoryW(MAX_PATH, szPath);
+	mRootPath = Path::makeCanonical(String::toUTF8(szPath));
 
 	GetTempPathW(MAX_PATH, szPath);
 	mShaderCachePath = Path::makeCanonical(String::toUTF8(std::wstring(szPath)) + "dojoshadercache");
