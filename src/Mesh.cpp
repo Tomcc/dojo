@@ -6,7 +6,7 @@
 #include "PrimitiveMode.h"
 #include "enum_cast.h"
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 using namespace Dojo;
 

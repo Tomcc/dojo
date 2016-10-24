@@ -17,7 +17,7 @@ file(GLOB common_src
     "include/dojo/*.h"
     "include/dojo/glad/*.h"
     "src/*.cpp"
-    "src/glad/*"
+    "dependencies/include/glad/*"
 )
 
 if (WIN32) 

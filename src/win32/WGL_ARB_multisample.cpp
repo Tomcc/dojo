@@ -25,7 +25,7 @@
 #include <cstring>
 #include "win32/WGL_ARB_multisample.h"
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 namespace {
 	WNDCLASSEXW g_wcl;
