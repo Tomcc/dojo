@@ -13,7 +13,9 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <AppKit/NSOpenGLView.h>
 
+#include "KeyCode.h"
 #include "InputSystem.h"
+#include "InputDevice.h"
 
 namespace Dojo {
 	class Platform;

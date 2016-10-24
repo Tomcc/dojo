@@ -6,7 +6,7 @@
 //  Copyright 2011 none. All rights reserved.
 //
 
-#include "OSXPlatform.h"
+#include "apple/OSX/OSXPlatform.h"
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <AppKit/NSImage.h>
@@ -19,28 +19,46 @@
 #import <Foundation/NSURL.h>
 
 #include "Game.h"
-#include "Utils.h"
+// BTT needs to be removed?
+//#include "Utils.h"
 #include "Table.h"
 #include "FontSystem.h"
 #include "SoundManager.h"
-#include "BackgroundQueue.h"
+// BTT needs to be removed?
+//#include "BackgroundQueue.h"
+
+#include <FreeImage.h>
+
+#undef self
 
 using namespace Dojo;
 
 OSXPlatform::OSXPlatform( const Table& config ) :
-ApplePlatform( config )
+    ApplePlatform( config ),
+    dragging(false),
+    mMousePressed(false),
+    cursorPos(Vector::Zero),
+    frameInterval(0),
+    mFramesToAdvance(0),
+    clientAreaYOffset(0)
 {
+    // ApplePlatform inits the NSAutoreleasePool and sets the locale to "en"
+
+
+
     screenWidth = [[NSScreen mainScreen] frame].size.width;
     screenHeight = [[NSScreen mainScreen] frame].size.height;
     screenOrientation = DO_LANDSCAPE_LEFT; //always
+
+    _initKeyMap();
 }
 
 
 void OSXPlatform::initialize( Game* g )
 {
-    game = g;
-	DEBUG_ASSERT( game, "A non-null Game implementation must be provided to initialize" );
-	
+    DEBUG_ASSERT( g, "The game implementation cannot be null in initialize()" );
+    game = std::move(g);
+
 	[NSApplication sharedApplication];
 	
     pool = [[NSAutoreleasePool alloc] init];
@@ -134,9 +152,9 @@ void OSXPlatform::initialize( Game* g )
 	[window setReleasedWhenClosed:false];
 	    
 	NSOpenGLPixelFormat* pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
-		
-    view = [[CustomOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ]; 
-	
+
+    view = [[CustomOpenGLView alloc ]initWithFrame: frame pixelFormat: pixelformat ];
+
     [window setContentView: view];
 	[window makeFirstResponder: view];
 	
@@ -206,12 +224,13 @@ void OSXPlatform::present()
 }
 
 void OSXPlatform::loop()
-{		
+{
+    frameTimer.reset();
 	// start animation timer
 	NSTimer* timer = [NSTimer 	timerWithTimeInterval:( game->getNativeFrameLength() )
-								target:view 
-								selector:@selector(stepCallback:) 
-								userInfo:nil 
+								target:view
+								selector:@selector(stepCallback:)
+								userInfo:nil
 								repeats:YES];
 	
 	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
@@ -230,6 +249,18 @@ void OSXPlatform::loop()
 void OSXPlatform::setFullscreen(bool f)
 {
     DEBUG_TODO;
+    if(f == mFullscreen)
+    {
+        return;
+    }
+
+    _setFullScreen(f);
+
+    mFullscreen = f;
+
+    //store the new settings into config.ds
+    config.set("fullscreen", mFullscreen);
+    save(config, "config");
 }
 
 void OSXPlatform::openWebPage( const String& site )
@@ -237,4 +268,13 @@ void OSXPlatform::openWebPage( const String& site )
 	NSURL* url = [NSURL URLWithString: site.toNSString() ];
 	
 	[[NSWorkspace sharedWorkspace] openURL: url ];
+}
+
+bool OSXPlatform::isNPOTEnabled()
+{
+    return true;
+}
+
+//init key map
+void OSXPlatform::_initKeyMap() {
 }

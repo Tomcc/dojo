@@ -9,7 +9,6 @@
 #include "ApplePlatform.h"
 
 #import <CoreFoundation/CoreFoundation.h>
-#import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/NSLocale.h>
 #import <Foundation/NSURL.h>
 #import <Foundation/NSFileManager.h>
@@ -21,15 +20,14 @@
 #endif
 
 #include "Timer.h"
-#include "Render.h"
+#include "Renderer.h"
 #include "SoundManager.h"
 #include "InputSystem.h"
 #include "Game.h"
-#include "Utils.h"
 #include "Table.h"
 #include "dojostring.h"
 #include "StringReader.h"
-#include "BackgroundQueue.h"
+#include "Path.h"
 
 using namespace Dojo;
 using namespace std;
@@ -40,9 +38,9 @@ Platform( config )
     pool = [[NSAutoreleasePool alloc] init];
 
 	if( [[NSLocale preferredLanguages] count ] )
-		locale = String( [[NSLocale preferredLanguages ] objectAtIndex:0] );
+        locale += [[[NSLocale preferredLanguages ] objectAtIndex:0] UTF8String];
 	else
-		locale = "en";
+		locale += "en";
 }
 
 ApplePlatform::~ApplePlatform()
@@ -53,70 +51,78 @@ ApplePlatform::~ApplePlatform()
 void ApplePlatform::step( float dt )
 {
     frameTimer.reset();
-	
+
 	//clamp to max dt to avoid crazy behaviour
-	dt = Math::min( dt, game->getMaximumFrameLength() );
-    
-    mBackgroundQueue->fireCompletedCallbacks();
-	
-    input->poll( dt );
-	
+	dt = Math::clamp( dt, game->getNativeFrameLength(), game->getMaximumFrameLength() );
+
+//    mBackgroundQueue->fireCompletedCallbacks();
+
+    input->poll(dt);
+
     game->loop(dt);
-    
+
     sound->update(dt);
+
+    render->renderFrame(dt);
     
-    render->render();
+    float elapsedTime = frameTimer.getElapsedTime();
+    
+    _runASyncTasks(elapsedTime);
+    realFrameTime = elapsedTime;
+    
+    render->endFrame();
 }
 
-GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize )
+PixelFormat ApplePlatform::loadImageFile( std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize)
 {
     width = height = 0;
     
-	NSURL* url = [NSURL fileURLWithPath: path.toNSString() ];
-	
+    NSString *nsPath = [NSString stringWithUTF8String:path.data()];
+	NSURL* url = [NSURL fileURLWithPath: nsPath ];
+
 	CGDataProviderRef prov = CGDataProviderCreateWithURL( (CFURLRef)url );
-	
+
 	if( prov == nil )
-		return 0;
-	
+        return PixelFormat::Unknown;
+
 	CGImageRef CGImage;
-    
-    String ext = Utils::getFileExtension( path );
-    
-    if( ext == String( "png" ) )
+
+    utf::string_view ext = Path::getFileExtension( path );
+
+    if( ext == "png" )
         CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
-    else if( ext == String( "jpg" ) )
+    else if( ext == "jpg" )
         CGImage = CGImageCreateWithJPEGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
     else
     {
         DEBUG_TODO;
     }
-    
+
     pixelSize = (int)CGImageGetBitsPerPixel( CGImage ) / 8;
     bool alphaChannel = pixelSize == 4;
-    
+
 	width = (int)CGImageGetWidth(CGImage);
 	height = (int)CGImageGetHeight(CGImage);
-	
+
 	int pitch = pixelSize * width;
 	int size = pitch * height;
-	
+
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
 	bufptr = malloc( size );
 	memset( bufptr, 0, size );
-    
+
     CFDataRef data = CGDataProviderCopyData(CGImageGetDataProvider(CGImage));
     const unsigned char * buffer =  CFDataGetBytePtr(data);
     memcpy( bufptr, buffer, size );
-		
+
 	//free everything
-	//CGContextRelease(context);	
+	//CGContextRelease(context);
 	CGColorSpaceRelease( colorSpace );
-    
+
 	CGDataProviderRelease( prov );
 	CGImageRelease( CGImage );
-    
+
 #ifdef PLATFORM_IOS
     if( alphaChannel ) //depremultiply the alpha dammit
     {
@@ -135,17 +141,18 @@ GLenum ApplePlatform::loadImageFile( void*& bufptr, const String& path, int& wid
 }
 
 void ApplePlatform::_createApplicationDirectory()
-{			
+{
 	//check if the directory exists, if not existing create it!
-	NSFileManager *fileManager= [NSFileManager defaultManager]; 
-	if(![ fileManager fileExistsAtPath:getAppDataPath().toNSString() ])
+	NSFileManager *fileManager= [NSFileManager defaultManager];
+    NSString* utfDataPath = [NSString stringWithUTF8String:getAppDataPath().data()];
+	if(![ fileManager fileExistsAtPath: utfDataPath ])
 	{
-		bool success = [fileManager 
-						createDirectoryAtPath:getAppDataPath().toNSString()
-						withIntermediateDirectories:YES 
-						attributes:nil 
+		bool success = [fileManager
+						createDirectoryAtPath:utfDataPath
+						withIntermediateDirectories:YES
+						attributes:nil
 						error:NULL];
-		
+
 		DEBUG_ASSERT( success, "Cannot create the user data directory" );
-	}	
+	}
 }

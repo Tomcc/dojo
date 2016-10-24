@@ -6,7 +6,7 @@
 //  Copyright 2011 none. All rights reserved.
 //
 
-#import "CustomOpenGLView.h"
+#import "apple/OSX/CustomOpenGLView.h"
 
 #import <AppKit/NSApplication.h>
 

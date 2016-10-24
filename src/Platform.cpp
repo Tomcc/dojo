@@ -18,7 +18,7 @@
 	#include "win32/Win32Platform.h"
 
 #elif defined( PLATFORM_OSX )
-	//TODO fix this #include "OSXPlatform.h"
+    #include "apple/OSX/OSXPlatform.h"
 
 #elif defined( PLATFORM_IOS )
 	//TODO fix this #include "IOSPlatform.h"
@@ -49,7 +49,7 @@ Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 
 #elif defined( PLATFORM_OSX )
     DEBUG_TODO;
-    //gSingletonPtr = make_unique<OSXPlatform>(config);
+    gSingletonPtr = make_unique<OSXPlatform>(config);
 
 #elif defined( PLATFORM_IOS )
     DEBUG_TODO;

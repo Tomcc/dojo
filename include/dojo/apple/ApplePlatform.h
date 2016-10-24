@@ -19,6 +19,8 @@
 
 #include "Timer.h"
 
+#undef self
+
 namespace Dojo {
 
 #ifndef __OBJC__
@@ -33,9 +35,9 @@ namespace Dojo {
 
 		virtual ~ApplePlatform();
 
-		virtual void step( float dt );
+		virtual void step( float dt ) override;
 
-		virtual GLenum loadImageFile( void*& bufptr, const String& path, int& width, int& height, int& pixelSize );
+		virtual PixelFormat loadImageFile(std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize) override;
 
 	protected:
 
@@ -52,7 +54,7 @@ namespace Dojo {
 		NSAutoreleasePool* pool;
 
 
-		GLenum loadImageContent( void*& bufptr, const String& path, int& width, int& height, CGImageType type, bool correctPremult );
+		PixelFormat loadImageContent( void*& bufptr, const String& path, int& width, int& height, CGImageType type, bool correctPremult );
 	};
 }
 
