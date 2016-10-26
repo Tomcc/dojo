@@ -25,7 +25,7 @@ namespace Dojo {
 		}
 		
 		bool hasDepth() const {
-			return mDepthBuffer != nullptr;
+			return mDepthBuffer != nullptr or isBackbuffer();
 		}
 
 		bool isCreated() const {

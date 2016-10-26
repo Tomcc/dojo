@@ -58,7 +58,7 @@ public:
 
 	vec_view() : vec_view(nullptr, nullptr) {}
 
-	vec_view(const std::vector<T>& vec) : vec_view(vec.data(), &vec.back() + 1) {}
+	vec_view(const std::vector<T>& vec) : vec_view(vec.data(), vec.data() + vec.size()) {}
 	vec_view(const std::initializer_list<T>& list) : vec_view(&(*list.begin()), &(*list.end())) {}
 
 	template<size_t SIZE>

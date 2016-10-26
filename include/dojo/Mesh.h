@@ -179,7 +179,7 @@ namespace Dojo {
 		}
 
 		bool isVertexFieldEnabled(VertexField f) const {
-			return vertexFieldOffset[(unsigned char)f] != 0xff;
+			return vertexFieldOffset[enum_cast(f)] != 0xff;
 		}
 
 		IndexType getVertexCount() const {

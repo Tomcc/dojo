@@ -223,7 +223,5 @@ namespace Dojo {
 		AABB mWorldBB;
 
 		void _updateFrustum();
-
-		void _setRenderTarget(RenderSurface& surface);
 	};
 }
