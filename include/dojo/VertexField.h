@@ -8,6 +8,7 @@ namespace Dojo {
 		Position3D,
 		Color,
 		Normal,
+		Tangent,
 
 		UV0,
 		UVMax = UV0 + DOJO_MAX_TEXTURE_COORDS - 1,

@@ -72,6 +72,7 @@ void ResourceGroup::addSets(utf::string_view subdirectory, int version) {
 	//find pngs and jpgs
 	Platform::singleton().getFilePathsForType("png", subdirectory, paths);
 	Platform::singleton().getFilePathsForType("jpg", subdirectory, paths);
+	Platform::singleton().getFilePathsForType("dds", subdirectory, paths);
 
 	for(auto&& path : paths) {
 		name = Path::getFileName(path);

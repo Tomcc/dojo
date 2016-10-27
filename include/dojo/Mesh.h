@@ -129,6 +129,9 @@ namespace Dojo {
 		///adds a vertex at the given position
 		void normal(const Vector& n);
 
+		///adds a tangent at the given position
+		void tangent(const Vector& n);
+
 		///appends a raw blob of vertices to the vertex array
 		void appendRawVertexData(void* data, IndexType vertexCount);
 

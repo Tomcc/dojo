@@ -55,6 +55,7 @@ void Shader::_populateAttributeNameMap() {
 	sBuiltInAttributeNameMap["POSITION"] = VertexField::Position3D;
 	sBuiltInAttributeNameMap["POSITION_2D"] = VertexField::Position2D;
 	sBuiltInAttributeNameMap["NORMAL"] = VertexField::Normal;
+	sBuiltInAttributeNameMap["TANGENT"] = VertexField::Tangent;
 	sBuiltInAttributeNameMap["COLOR"] = VertexField::Color;
 }
 

@@ -22,6 +22,7 @@ static const VERTEX_FIELD_INFO[enum_cast(VertexField::_Count)] = {
 	{ GL_FLOAT, 3, false, 3 * sizeof(GLfloat) },	// 	Position3D,
 	{ GL_UNSIGNED_BYTE, 4, true, 4 * sizeof(GLubyte) },	// 	Color,
 	{ GL_INT_2_10_10_10_REV, 4, true, 1 * sizeof(GLuint) },	// 	Normal
+	{ GL_INT_2_10_10_10_REV, 4, true, 1 * sizeof(GLuint) },	// 	Tangent
 
 	{ GL_HALF_FLOAT, 2, false, 2 * sizeof(GLshort) },	// 	UV
 	{ GL_HALF_FLOAT, 2, false, 2 * sizeof(GLshort) },	// 	UV
@@ -242,6 +243,17 @@ void Mesh::normal(const Vector& n) {
 	DEBUG_ASSERT(isEditing(), "normal: this Mesh is not in Edit mode");
 
 	auto& val = _field<GLuint>(VertexField::Normal);
+	val = 0;
+	val |= (Math::packNormalized<int>(n.z, 511) << 20);
+	val |= (Math::packNormalized<int>(n.y, 511) << 10);
+	val |= (Math::packNormalized<int>(n.x, 511) << 0);
+}
+
+void Mesh::tangent(const Vector& n) {
+	DEBUG_ASSERT(std::abs(n.x) <= 1.f and std::abs(n.y) <= 1.f and std::abs(n.z) <= 1.f, "tangent is too long, cannot pack");
+	DEBUG_ASSERT(isEditing(), "tangent: this Mesh is not in Edit mode");
+
+	auto& val = _field<GLuint>(VertexField::Tangent);
 	val = 0;
 	val |= (Math::packNormalized<int>(n.z, 511) << 20);
 	val |= (Math::packNormalized<int>(n.y, 511) << 10);
