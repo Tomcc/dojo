@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "../dojo_common_header.h"
-
 #include "../Platform.h"
+
+#undef self 
 
 #ifdef __OBJC__
 	#import <Foundation/NSAutoreleasePool.h>
@@ -19,7 +19,7 @@
 
 #include "Timer.h"
 
-#undef self
+#include "../dojo_common_header.h"
 
 namespace Dojo {
 

@@ -64,19 +64,19 @@ void ApplePlatform::step( float dt )
     sound->update(dt);
 
     render->renderFrame(dt);
-    
+
     float elapsedTime = frameTimer.getElapsedTime();
-    
+
     _runASyncTasks(elapsedTime);
     realFrameTime = elapsedTime;
-    
+
     render->endFrame();
 }
 
 PixelFormat ApplePlatform::loadImageFile( std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize)
 {
     width = height = 0;
-    
+
     NSString *nsPath = [NSString stringWithUTF8String:path.data()];
 	NSURL* url = [NSURL fileURLWithPath: nsPath ];
 
@@ -91,14 +91,17 @@ PixelFormat ApplePlatform::loadImageFile( std::vector<uint8_t>& imageData, utf::
 
     if( ext == "png" )
         CGImage = CGImageCreateWithPNGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
-    else if( ext == "jpg" )
+    else if( ext == "jpg" or ext == "jpeg" )
         CGImage = CGImageCreateWithJPEGDataProvider( prov, NULL, true, kCGRenderingIntentDefault );
     else
     {
-        DEBUG_TODO;
+        return PixelFormat::Unknown;
     }
 
     pixelSize = (int)CGImageGetBitsPerPixel( CGImage ) / 8;
+
+    DEBUG_ASSERT(pixelSize == 3 or pixelSize == 4, "Only RGB or RGBA images are supported!");
+
     bool alphaChannel = pixelSize == 4;
 
 	width = (int)CGImageGetWidth(CGImage);
@@ -109,12 +112,15 @@ PixelFormat ApplePlatform::loadImageFile( std::vector<uint8_t>& imageData, utf::
 
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
-	bufptr = malloc( size );
-	memset( bufptr, 0, size );
+//	TODO REMOVE bufptr = malloc( size );
+//	TODO REMOVE memset( bufptr, 0, size );
 
     CFDataRef data = CGDataProviderCopyData(CGImageGetDataProvider(CGImage));
-    const unsigned char * buffer =  CFDataGetBytePtr(data);
-    memcpy( bufptr, buffer, size );
+    const UInt8 *buffer =  CFDataGetBytePtr(data);
+    
+    imageData.insert(imageData.end(), &buffer[0], &buffer[size]);
+    
+//   TODO REMOVE memcpy( bufptr, buffer, size );
 
 	//free everything
 	//CGContextRelease(context);
@@ -137,7 +143,15 @@ PixelFormat ApplePlatform::loadImageFile( std::vector<uint8_t>& imageData, utf::
         }
     }
 #endif
-	return alphaChannel ? GL_RGBA : GL_RGB;
+
+    auto meta = load(Path::getMetaFilePathFor(path));
+
+    if(meta.getBool("linear"))
+    {
+        return alphaChannel ? PixelFormat::RGBA_8_8_8_8 : PixelFormat::RGB_8_8_8;
+    }else{
+        return alphaChannel ? PixelFormat::RGBA_8_8_8_8_SRGB : PixelFormat::RGB_8_8_8_SRGB;
+    }
 }
 
 void ApplePlatform::_createApplicationDirectory()

@@ -24,6 +24,7 @@
 #include "Table.h"
 #include "FontSystem.h"
 #include "SoundManager.h"
+#include "RenderSurface.h"
 // BTT needs to be removed?
 //#include "BackgroundQueue.h"
 
@@ -42,9 +43,7 @@ OSXPlatform::OSXPlatform( const Table& config ) :
     mFramesToAdvance(0),
     clientAreaYOffset(0)
 {
-    // ApplePlatform inits the NSAutoreleasePool and sets the locale to "en"
-
-
+    /* ApplePlatform inits the NSAutoreleasePool and sets the locale to "en" */
 
     screenWidth = [[NSScreen mainScreen] frame].size.width;
     screenHeight = [[NSScreen mainScreen] frame].size.height;
@@ -57,6 +56,7 @@ OSXPlatform::OSXPlatform( const Table& config ) :
 void OSXPlatform::initialize( Game* g )
 {
     DEBUG_ASSERT( g, "The game implementation cannot be null in initialize()" );
+
     game = std::move(g);
 
 	[NSApplication sharedApplication];
@@ -88,9 +88,8 @@ void OSXPlatform::initialize( Game* g )
     }
     
     //override the config or load it from file
-    Table userConfig;
-    load( &userConfig, getAppDataPath() + "/config.ds" );
-    
+    Table userConfig = Table::loadFromFile(getAppDataPath() + "/config.ds");
+
     config.inherit( &userConfig ); //merge the table loaded from file and override with hardcoded directives
     
     //get the right screen
@@ -117,9 +116,9 @@ void OSXPlatform::initialize( Game* g )
     //auto-choose dimensions?
     if( windowWidth == 0 )  windowWidth = screenWidth;
     if( windowHeight == 0 ) windowHeight = screenHeight;
-    
-    //TODO read fullscreen
-    
+
+    mFullscreen = (windowWidth == screenWidth) and (windowHeight == screenHeight) and config.getBool("fullscreen");
+
     NSRect frame;
     frame.origin.x = 0;
     frame.origin.y = 0;
@@ -127,7 +126,7 @@ void OSXPlatform::initialize( Game* g )
     frame.size.height = windowHeight;
 	
     NSOpenGLPixelFormatAttribute attributes [] = {
-        NSOpenGLPFAWindow,
+//        NSOpenGLPFAWindow, TODO Remove -- deprecated from 10.9
         NSOpenGLPFADoubleBuffer,	// double buffered
         NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
 		
@@ -138,9 +137,9 @@ void OSXPlatform::initialize( Game* g )
 		
         (NSOpenGLPixelFormatAttribute)nil
     };
-    
-    NSUInteger style = config.getBool("noTitleBar") ? (NSBorderlessWindowMask) : (NSTitledWindowMask | NSMiniaturizableWindowMask | NSClosableWindowMask);
-	
+
+    NSUInteger style = config.getBool("noTitleBar") ? (NSWindowStyleMaskBorderless) : (NSWindowStyleMaskTitled | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskClosable);
+
     //create the window
 	window = [[NSWindow alloc]
               initWithContentRect: frame
@@ -161,27 +160,36 @@ void OSXPlatform::initialize( Game* g )
 	[window makeKeyAndOrderFront:nil];
 	
     //create render
-    render = new Render( frame.size.width, frame.size.height, screenOrientation );
-	
+    render = make_unique<Renderer>(
+        RenderSurface
+        {
+            windowWidth,
+            windowHeight,
+            PixelFormat::RGBA_8_8_8_8
+        },
+        DO_LANDSCAPE_LEFT
+    );
+
 	//enable MSAA?
 	if( config.getInt( "MSAA" ) )
-		glEnable(GL_MULTISAMPLE);
-    
-    //create the background task queue
-    int userThreadOverride = config.getNumber( "threads", -1 );
-    mBackgroundQueue = new BackgroundQueue( userThreadOverride );
-    
+		glEnable(GL_MULTISAMPLE_ARB);
+
+//    int userThreadOverride = config.getNumber( "threads", -1 );
+//    mBackgroundQueue = new BackgroundQueue( userThreadOverride );
+
     //create soundmanager
-    sound = new SoundManager();
-	
+    sound = make_unique<SoundManager>();
+
     //create input and the keyboard system object
-    input = new InputSystem();
-    
+    input = make_unique<InputSystem>();
+
 	//fonts
-	fonts = new FontSystem();
-	
+	fonts = make_unique<FontSystem>();
+
 	[view setPlatform:this];
-        
+
+    DEBUG_MESSAGE("---- Launching game!");
+
     //launch the game
     game->begin();
 }
@@ -194,9 +202,9 @@ OSXPlatform::~OSXPlatform()
 void OSXPlatform::shutdown()
 {    
 	game->end();
-	
-	delete game;
-	
+
+//	delete game; TODO Remove since it's now moved
+
     delete render;
     delete sound;
     delete input;

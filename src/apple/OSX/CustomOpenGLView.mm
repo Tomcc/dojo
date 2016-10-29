@@ -23,12 +23,12 @@ using namespace Dojo;
 - (void)setPlatform:(Dojo::Platform*)targetPlatform
 {    
 	DEBUG_ASSERT(targetPlatform, "The platform can't be null" );
-	DEBUG_ASSERT(targetPlatform->getInput(), "The input system can't be null" );
+	DEBUG_ASSERT(&targetPlatform->getInput(), "The input system can't be null" );
 		
 	platform = targetPlatform;
-	input = platform->getInput();
-    keyboard = new Keyboard();
-    input->addDevice( keyboard );
+	input = &platform->getInput();
+    keyboard = make_unique<keyboard>();
+    input->addDevice( *keyboard );
 		
 	time = CFAbsoluteTimeGetCurrent();
 	
@@ -184,33 +184,34 @@ using namespace Dojo;
 - (void)mouseDown: (NSEvent *)theEvent
 {
     lastMousePos = [theEvent locationInWindow];    
-	input->_fireTouchBeginEvent( Vector( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y ) );
+	input->_fireTouchBeginEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ) );
 }
 
 - (void)mouseDragged: (NSEvent *)theEvent
 {
 	NSPoint loc = [theEvent locationInWindow]; 
     
-    Vector last( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y );
-    Vector cur( loc.x, platform->getGame()->getNativeHeight() - loc.y );
+    Vector last( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y );
+    Vector cur( loc.x, platform->getGame().getNativeHeight() - loc.y );
     
     lastMousePos = loc;
     
 	input->_fireTouchMoveEvent( last, cur );
 }
 
-- (void)mouseUp: (NSEvent *)theEvent
+- (voi
+   d)mouseUp: (NSEvent *)theEvent
 {
 	lastMousePos = [theEvent locationInWindow];    
-	input->_fireTouchEndEvent( Vector( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y ) );
+	input->_fireTouchEndEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ) );
 }
 
 - (void)mouseMoved: (NSEvent *)theEvent
 {
 	NSPoint loc = [theEvent locationInWindow]; 
     
-    Vector last( lastMousePos.x, platform->getGame()->getNativeHeight() - lastMousePos.y );
-    Vector cur( loc.x, platform->getGame()->getNativeHeight() - loc.y );
+    Vector last( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y );
+    Vector cur( loc.x, platform->getGame().getNativeHeight() - loc.y );
     
     lastMousePos = loc;
     
@@ -269,12 +270,13 @@ using namespace Dojo;
 #define LEFT_MODIFIER (1<<8) //this was found disassembling modifier flags and is apparently true
 
     unsigned int mask = [theEvent modifierFlags];
-    keyboard->_notifyButtonState( KC_LSHIFT, mask & NSShiftKeyMask && (mask & LEFT_MODIFIER) );
-    keyboard->_notifyButtonState( KC_RSHIFT, mask & NSShiftKeyMask && (mask & LEFT_MODIFIER) == 0 );
-    keyboard->_notifyButtonState( KC_LEFT_ALT, mask & NSAlternateKeyMask && (mask & LEFT_MODIFIER) );
-    keyboard->_notifyButtonState( KC_RIGHT_ALT, mask & NSAlternateKeyMask && (mask & LEFT_MODIFIER) == 0 );
-    keyboard->_notifyButtonState( KC_LCONTROL, mask & NSControlKeyMask && (mask & LEFT_MODIFIER) );
-    keyboard->_notifyButtonState( KC_RCONTROL, mask & NSControlKeyMask && (mask & LEFT_MODIFIER) == 0 );
+    keyboard->_notifyButtonState( KC_LSHIFT, mask & NSEventModifierFlagShift
+                                 && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RSHIFT, mask & NSEventModifierFlagShift && (mask & LEFT_MODIFIER) == 0 );
+    keyboard->_notifyButtonState( KC_LEFT_ALT, mask & NSEventModifierFlagOption && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RIGHT_ALT, mask & NSEventModifierFlagOption && (mask & LEFT_MODIFIER) == 0 );
+    keyboard->_notifyButtonState( KC_LCONTROL, mask & NSEventModifierFlagControl && (mask & LEFT_MODIFIER) );
+    keyboard->_notifyButtonState( KC_RCONTROL, mask & NSEventModifierFlagControl && (mask & LEFT_MODIFIER) == 0 );
 }
 
 - (void)dealloc

@@ -8,21 +8,18 @@
 
 #pragma once
 
+#ifdef __OBJC__
+    // On OSX Obj-C files self cannot be macro-defined otherwise compliation breaks
+    #undef self
+    #import <AppKit/NSOpenGLView.h>
+    #import <AppKit/NSWindow.h>
+    #import "CustomOpenGLView.h"
+#endif
+
 #include <dojo_common_header.h>
-
-// On OSX Obj-C files self cannot be macro-defined otherwise compliation breaks
-#undef self
-
 #include "apple/ApplePlatform.h"
 #include "Keyboard.h"
 #include "Touch.h"
-
-#ifdef __OBJC__
-	#import <AppKit/NSOpenGLView.h>
-	#import <AppKit/NSWindow.h>
-
-	#import "CustomOpenGLView.h"
-#endif
 
 namespace Dojo {
 
