@@ -18,8 +18,6 @@
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSURL.h>
 
-#include <OpenGL/gl.h>
-
 #include "Game.h"
 // BTT needs to be removed?
 //#include "Utils.h"
@@ -27,6 +25,7 @@
 #include "FontSystem.h"
 #include "SoundManager.h"
 #include "RenderSurface.h"
+#include "glad/glad.h"
 // BTT needs to be removed?
 //#include "BackgroundQueue.h"
 
@@ -259,9 +258,40 @@ void OSXPlatform::loop()
 	[[NSApplication sharedApplication] run];
 }
 
+void OSXPlatform::step(float dt)
+{
+    mStepTimer.reset();
+    
+    // update input
+    _pollDevices(dt);
+    
+    game->loop(dt);
+    
+    sound->update(dt);
+    
+    render->renderFrame(dt);
+    
+    float elapsed = (float)mStepTimer.getElapsedTime();
+    _runASyncTasks(elapsed);
+    //take the time before swapBuffers because on some implementations it is blocking
+    realFrameTime = elapsed;
+    
+    render->endFrame(); //present the frame
+}
+
+void OSXPlatform::submitFrame()
+{
+    [[view openGLContext] flushBuffer];
+}
+
+PixelFormat OSXPlatform::loadImageFile(std::vector<uint8_t> &imageData, utf::string_view path, uint32_t &width, uint32_t &height, int &pixelSize)
+{
+    return ApplePlatform::loadImageFile(imageData, path, width, height, pixelSize);
+}
+
 void OSXPlatform::setFullscreen(bool f)
 {
-    DEBUG_TODO;
+
     if(f == mFullscreen)
     {
         return;
@@ -274,6 +304,48 @@ void OSXPlatform::setFullscreen(bool f)
     //store the new settings into config.ds
     config.set("fullscreen", mFullscreen);
     save(config, "config");
+}
+
+void OSXPlatform::_setFullScreen(bool fullscreen)
+{
+    NSWindowCollectionBehavior behavior = [window collectionBehavior];
+
+    if( not fullscreen){
+        behavior ^= NSWindowCollectionBehaviorFullScreenPrimary;
+    }else{
+        behavior |= NSWindowCollectionBehaviorFullScreenPrimary;
+    }
+    
+    [window setCollectionBehavior:behavior];
+
+}
+
+void OSXPlatform::_pollDevices(float dt)
+{
+    input->poll(dt);
+    
+    DEBUG_TODO
+}
+
+void OSXPlatform::setMouseLocked(bool locked)
+{
+    if(mouseLocked != locked)
+    {
+//        ShowCursor(not locked);
+//        ShowCursor(not locked);
+        
+        mouseLocked = locked;
+    }
+}
+
+utf::string_view OSXPlatform::getPicturesPath() {
+    DEBUG_TODO
+    return mPicturesPath;
+}
+
+utf::string_view OSXPlatform::getShaderCachePath()
+{
+    return mShaderCachePath;
 }
 
 void OSXPlatform::openWebPage( const utf::string_view site )
