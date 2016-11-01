@@ -18,6 +18,8 @@
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSURL.h>
 
+#include <OpenGL/gl.h>
+
 #include "Game.h"
 // BTT needs to be removed?
 //#include "Utils.h"
@@ -28,9 +30,12 @@
 // BTT needs to be removed?
 //#include "BackgroundQueue.h"
 
-#include <FreeImage.h>
-
 #undef self
+
+#ifndef GL_MULTISAMPLE
+// Avoid inclusion of Windows Header
+    #define GL_MULTISAMPLE  0x809D
+#endif
 
 using namespace Dojo;
 
@@ -53,23 +58,22 @@ OSXPlatform::OSXPlatform( const Table& config ) :
 }
 
 
-void OSXPlatform::initialize( Game* g )
+void OSXPlatform::initialize( Unique<Game> g )
 {
     DEBUG_ASSERT( g, "The game implementation cannot be null in initialize()" );
 
-    game = std::move(g);
+    game = move(g);
 
 	[NSApplication sharedApplication];
 	
     pool = [[NSAutoreleasePool alloc] init];
 	
     //store relevant paths
-    mRootPath = [[NSBundle mainBundle] bundlePath];
-    mResourcesPath = [[NSBundle mainBundle] resourcePath];
+    mRootPath = [[[NSBundle mainBundle] bundlePath] UTF8String];
+    mResourcesPath = [[[NSBundle mainBundle] resourcePath] UTF8String];
     
     NSArray* nspaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-	mAppDataPath = [nspaths objectAtIndex:0];
-    mAppDataPath += "/" + game->getName();
+    mAppDataPath = [[NSString stringWithFormat:@"%@%s%s", [nspaths objectAtIndex:0], "/", game->getName().data()] UTF8String];
     
 	_createApplicationDirectory();
     
@@ -135,7 +139,7 @@ void OSXPlatform::initialize( Game* g )
 		NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)config.getInt( "MSAA" ),
 		NSOpenGLPFANoRecovery,
 		
-        (NSOpenGLPixelFormatAttribute)nil
+        /*(NSOpenGLPixelFormatAttribute)*/0
     };
 
     NSUInteger style = config.getBool("noTitleBar") ? (NSWindowStyleMaskBorderless) : (NSWindowStyleMaskTitled | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskClosable);
@@ -172,7 +176,7 @@ void OSXPlatform::initialize( Game* g )
 
 	//enable MSAA?
 	if( config.getInt( "MSAA" ) )
-		glEnable(GL_MULTISAMPLE_ARB);
+		glEnable(GL_MULTISAMPLE);
 
 //    int userThreadOverride = config.getNumber( "threads", -1 );
 //    mBackgroundQueue = new BackgroundQueue( userThreadOverride );
@@ -204,11 +208,12 @@ void OSXPlatform::shutdown()
 	game->end();
 
 //	delete game; TODO Remove since it's now moved
-
+/* No more delete with smart ptrs
     delete render;
     delete sound;
     delete input;
 	delete fonts;
+ */
 }
 
 void OSXPlatform::prepareThreadContext()
@@ -271,9 +276,9 @@ void OSXPlatform::setFullscreen(bool f)
     save(config, "config");
 }
 
-void OSXPlatform::openWebPage( const String& site )
+void OSXPlatform::openWebPage( const utf::string_view site )
 {
-	NSURL* url = [NSURL URLWithString: site.toNSString() ];
+	NSURL* url = [NSURL URLWithString: [NSString stringWithUTF8String:site.data()]];
 	
 	[[NSWorkspace sharedWorkspace] openURL: url ];
 }

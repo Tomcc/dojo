@@ -14,7 +14,8 @@
 #include "Vector.h"
 #include "Game.h"
 #include "Keyboard.h"
-
+#include "Touch.h"
+#undef self
 
 using namespace Dojo;
 
@@ -27,7 +28,7 @@ using namespace Dojo;
 		
 	platform = targetPlatform;
 	input = &platform->getInput();
-    keyboard = make_unique<keyboard>();
+    keyboard = make_unique<Keyboard>();
     input->addDevice( *keyboard );
 		
 	time = CFAbsoluteTimeGetCurrent();
@@ -165,8 +166,8 @@ using namespace Dojo;
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    input->removeDevice( keyboard );
-    delete keyboard;
+    input->removeDevice( *keyboard );
+//    delete keyboard;
     
 	//shutdown the app and let the Platform continue
 	[[NSApplication sharedApplication] stop:self];
@@ -184,7 +185,7 @@ using namespace Dojo;
 - (void)mouseDown: (NSEvent *)theEvent
 {
     lastMousePos = [theEvent locationInWindow];    
-	input->_fireTouchBeginEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ) );
+    input->_fireTouchBeginEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ), Touch::Type::LeftClick);
 }
 
 - (void)mouseDragged: (NSEvent *)theEvent
@@ -196,14 +197,13 @@ using namespace Dojo;
     
     lastMousePos = loc;
     
-	input->_fireTouchMoveEvent( last, cur );
+	input->_fireTouchMoveEvent( last, cur, Touch::Type::LeftClick);
 }
 
-- (voi
-   d)mouseUp: (NSEvent *)theEvent
+- (void)mouseUp: (NSEvent *)theEvent
 {
 	lastMousePos = [theEvent locationInWindow];    
-	input->_fireTouchEndEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ) );
+	input->_fireTouchEndEvent( Vector( lastMousePos.x, platform->getGame().getNativeHeight() - lastMousePos.y ), Touch::Type::LeftClick);
 }
 
 - (void)mouseMoved: (NSEvent *)theEvent

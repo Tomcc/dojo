@@ -5,10 +5,10 @@
 #include "Log.h"
 #include "PixelFormat.h"
 #include "FrameSubmitter.h"
+#include "Renderer.h"
 
 namespace Dojo {
 	class SoundManager;
-	class Renderer;
 	class InputSystem;
 	class FontSystem;
 	class Game;

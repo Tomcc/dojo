@@ -27,7 +27,7 @@ namespace Dojo {
 	CFAbsoluteTime time;
 
 	Dojo::InputSystem* input;
-	Dojo::InputDevice* keyboard;
+    std::unique_ptr<Dojo::InputDevice> keyboard;
 
 	Dojo::KeyCode keymap[0x80];
 

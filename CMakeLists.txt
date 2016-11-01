@@ -94,8 +94,10 @@ else()
     find_library(VORBISFILE vorbisfile)
     find_library(ZZIP zzip)
     find_library(OPENAL openal)
+    find_library(COREFOUNDATION CoreFoundation)
+    find_library(COREGRAPHICS CoreGraphics)
 
-    target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY})
+    target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY} ${COREFOUNDATION} ${COREGRAPHICS})
 endif()
 
 if (IWYU)
