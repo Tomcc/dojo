@@ -17,6 +17,7 @@
 #import <AppKit/NSMenu.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSURL.h>
+#import <dlfcn.h>
 
 #include "Game.h"
 // BTT needs to be removed?
@@ -37,6 +38,37 @@
 #endif
 
 using namespace Dojo;
+
+// Handle to the dynlib
+void *glLibrary;
+//Path to GL on macOS
+const char *gLibPath = "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL";
+
+void load_gl()
+{
+    glLibrary = dlopen(gLibPath, RTLD_LAZY);
+    
+    DEBUG_ASSERT(glLibrary, "load_gl: The OpenGL library could not be initialized!");
+    // const char* error = dlerror()
+    // TODO error handling
+}
+
+void unload_gl()
+{
+    if(glLibrary)
+    {
+        DEBUG_ASSERT(dlclose(glLibrary), "unload_gl: There was a problem closing the glLibrary!");
+        glLibrary = NULL;
+    }
+}
+
+void *GLGetProcAddress(const char* functionName)
+{
+    DEBUG_ASSERT(functionName, "GLGetProcAddress: function name cannot be null!");
+    DEBUG_ASSERT(glLibrary != NULL, "GLGetProcAddress: glLibrary is NULL and thus not yet loaded!");
+    
+    return dlsym(glLibrary, functionName);
+}
 
 OSXPlatform::OSXPlatform( const Table& config ) :
     ApplePlatform( config ),
@@ -129,15 +161,13 @@ void OSXPlatform::initialize( Unique<Game> g )
     frame.size.height = windowHeight;
 	
     NSOpenGLPixelFormatAttribute attributes [] = {
-//        NSOpenGLPFAWindow, TODO Remove -- deprecated from 10.9
         NSOpenGLPFADoubleBuffer,	// double buffered
-        NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
-		
-		//msaa
+        NSOpenGLPFADepthSize,
+        (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
 		NSOpenGLPFASampleBuffers, 1,
-		NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)config.getInt( "MSAA" ),
+		NSOpenGLPFASamples,
+        (NSOpenGLPixelFormatAttribute)config.getInt( "MSAA" ),
 		NSOpenGLPFANoRecovery,
-		
         /*(NSOpenGLPixelFormatAttribute)*/0
     };
 
@@ -162,6 +192,14 @@ void OSXPlatform::initialize( Unique<Game> g )
 	
 	[window makeKeyAndOrderFront:nil];
 	
+    NSOpenGLContext* context = [NSOpenGLContext currentContext];
+    [context makeCurrentContext];
+    
+    load_gl();
+    
+    auto success = gladLoadGLES2Loader(GLGetProcAddress);
+    DEBUG_ASSERT(success, "Cannot load OpenGL!");
+    
     //create render
     render = make_unique<Renderer>(
         RenderSurface
@@ -213,6 +251,8 @@ void OSXPlatform::shutdown()
     delete input;
 	delete fonts;
  */
+    
+    unload_gl();
 }
 
 void OSXPlatform::prepareThreadContext()

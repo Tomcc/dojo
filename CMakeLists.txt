@@ -97,8 +97,9 @@ else()
     find_library(COREFOUNDATION CoreFoundation)
     find_library(COREGRAPHICS CoreGraphics)
     find_library(APPKIT AppKit)
+    find_library(OPENGL OpenGL)
 
-    target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY} ${COREFOUNDATION} ${COREGRAPHICS} ${APPKIT})
+    target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY} ${COREFOUNDATION} ${COREGRAPHICS} ${APPKIT} ${OPENGL})
 endif()
 
 if (IWYU)

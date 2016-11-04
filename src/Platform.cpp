@@ -48,7 +48,6 @@ Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 	gSingletonPtr = make_unique<Win32Platform>(config);
 
 #elif defined( PLATFORM_OSX )
-    DEBUG_TODO;
     gSingletonPtr = make_unique<OSXPlatform>(config);
 
 #elif defined( PLATFORM_IOS )
