@@ -39,35 +39,11 @@
 
 using namespace Dojo;
 
-// Handle to the dynlib
-void *glLibrary;
-//Path to GL on macOS
-const char *gLibPath = "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL";
-
-void load_gl()
-{
-    glLibrary = dlopen(gLibPath, RTLD_LAZY);
-    
-    DEBUG_ASSERT(glLibrary, "load_gl: The OpenGL library could not be initialized!");
-    // const char* error = dlerror()
-    // TODO error handling
-}
-
-void unload_gl()
-{
-    if(glLibrary)
-    {
-        DEBUG_ASSERT(dlclose(glLibrary), "unload_gl: There was a problem closing the glLibrary!");
-        glLibrary = NULL;
-    }
-}
-
 void *GLGetProcAddress(const char* functionName)
 {
     DEBUG_ASSERT(functionName, "GLGetProcAddress: function name cannot be null!");
-    DEBUG_ASSERT(glLibrary != NULL, "GLGetProcAddress: glLibrary is NULL and thus not yet loaded!");
     
-    return dlsym(glLibrary, functionName);
+    return dlsym(RTLD_DEFAULT, functionName);
 }
 
 OSXPlatform::OSXPlatform( const Table& config ) :
@@ -161,6 +137,7 @@ void OSXPlatform::initialize( Unique<Game> g )
     frame.size.height = windowHeight;
 	
     NSOpenGLPixelFormatAttribute attributes [] = {
+        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion4_1Core,
         NSOpenGLPFADoubleBuffer,	// double buffered
         NSOpenGLPFADepthSize,
         (NSOpenGLPixelFormatAttribute)16, // 16 bit depth buffer
@@ -194,8 +171,6 @@ void OSXPlatform::initialize( Unique<Game> g )
 	
     NSOpenGLContext* context = [NSOpenGLContext currentContext];
     [context makeCurrentContext];
-    
-    load_gl();
     
     auto success = gladLoadGLES2Loader(GLGetProcAddress);
     DEBUG_ASSERT(success, "Cannot load OpenGL!");
@@ -251,8 +226,6 @@ void OSXPlatform::shutdown()
     delete input;
 	delete fonts;
  */
-    
-    unload_gl();
 }
 
 void OSXPlatform::prepareThreadContext()
