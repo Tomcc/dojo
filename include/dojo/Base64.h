@@ -7,7 +7,7 @@
 namespace Dojo {
 	class Base64 {
 	public:
-		static utf::string fromBytes(unsigned char const*, unsigned int len);
+		static utf::string fromBytes(unsigned char const*, size_t len);
 
 		template<typename T>
 		static utf::string fromVec(vec_view<T> vec) {

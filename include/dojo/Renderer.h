@@ -61,7 +61,7 @@ namespace Dojo {
 
 		bool hasLayer(RenderLayer::ID layerID);
 
-		int getLayerCount() const {
+		size_t getLayerCount() const {
 			return layers.size();
 		}
 

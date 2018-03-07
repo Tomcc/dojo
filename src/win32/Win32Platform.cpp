@@ -92,7 +92,7 @@ LRESULT OnTouch(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 
 	auto& app = (Win32Platform&)Platform::singleton();
 
-	if (GetTouchInputInfo((HTOUCHINPUT)lParam, inputs.size(), inputs.data(), sizeof(TOUCHINPUT))) {
+	if (GetTouchInputInfo((HTOUCHINPUT)lParam, static_cast<UINT>(inputs.size()), inputs.data(), sizeof(TOUCHINPUT))) {
 		for (UINT i = 0; i < inputs.size(); i++) {
 			auto& ti = inputs[i];
 			POINT ptInput = {
@@ -223,7 +223,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 
 		default:
 
-			app.keyPressed(wparam);
+			app.keyPressed(static_cast<int>(wparam));
 			break;
 		}
 
@@ -232,7 +232,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) 
 	case WM_SYSKEYUP: //needed to catch ALT separately
 	case WM_KEYUP:
 
-		app.keyReleased(wparam);
+		app.keyReleased(static_cast<int>(wparam));
 		return 0;
 
 	case WM_CHAR:
@@ -940,7 +940,7 @@ PixelFormat Win32Platform::loadImageFile(std::vector<uint8_t>& imageData, utf::s
 	auto buf = loadFileContent(path);
 
 	// attach the binary data to a memory stream
-	FIMEMORY* hmem = FreeImage_OpenMemory(buf.data(), buf.size());
+	FIMEMORY* hmem = FreeImage_OpenMemory(buf.data(), static_cast<DWORD>(buf.size()));
 
 	// load an image from the memory stream
 	dib = FreeImage_LoadFromMemory(fif, hmem, 0);

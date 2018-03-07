@@ -99,13 +99,13 @@ void FrameSet::addTexture(Unique<Texture> t) {
 }
 
 Texture& FrameSet::getRandomFrame() {
-	return *frames.at(Random::instance.getInt(frames.size()));
+	return *frames.at(Random::instance.getInt(static_cast<uint32_t>(frames.size())));
 }
 
 int FrameSet::getFrameIndex(Texture& frame) const {
 	for (size_t i = 0; i < frames.size(); ++i) {
 		if (frames[i] == &frame) {
-			return i;
+			return static_cast<int>(i);
 		}
 	}
 

@@ -131,7 +131,7 @@ namespace Dojo {
 		uint32_t source;
 		int playState;
 
-		int mCurrentChunkID, mQueuedChunks;
+		size_t mCurrentChunkID, mQueuedChunks;
 		optional_ref<SoundBuffer::Chunk> mFrontChunk, mBackChunk;
 
 		SoundState state;

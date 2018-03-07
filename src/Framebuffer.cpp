@@ -125,7 +125,7 @@ namespace Dojo {
 
 			glFrontFace(GL_CW); //invert vertex winding when inverting the view
 			glReadBuffer(GL_COLOR_ATTACHMENT0);
-			glDrawBuffers(mAttachmentList.size() - hasDepth(), mAttachmentList.data());
+			glDrawBuffers(static_cast<GLsizei>(mAttachmentList.size() - hasDepth()), mAttachmentList.data());
 		}
 	}
 
@@ -133,7 +133,7 @@ namespace Dojo {
 		if (not isBackbuffer()) {
 			bind();
 
-			glInvalidateFramebuffer(GL_FRAMEBUFFER, mAttachmentList.size(), mAttachmentList.data());
+			glInvalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(mAttachmentList.size()), mAttachmentList.data());
 		}
 	}
 }

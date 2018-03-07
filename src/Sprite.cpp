@@ -34,7 +34,7 @@ void Sprite::reset() {
 	}
 }
 
-int Sprite::registerAnimation(FrameSet& set, float timePerFrame /*= -1 */) {
+size_t Sprite::registerAnimation(FrameSet& set, float timePerFrame /*= -1 */) {
 	if (timePerFrame < 0) {
 		timePerFrame = set.getPreferredAnimationTime();
 	}
@@ -51,15 +51,14 @@ int Sprite::registerAnimation(FrameSet& set, float timePerFrame /*= -1 */) {
 	return animations.size() - 1;
 }
 
-int Sprite::registerAnimation(utf::string_view base, float timePerFrame) {
+size_t Sprite::registerAnimation(utf::string_view base, float timePerFrame) {
 	auto set = getGameState().getFrameSet(base);
 	return registerAnimation(set.unwrap(), timePerFrame);
 }
 
-void Sprite::setAnimation(int i) {
+void Sprite::setAnimation(size_t i) {
 	mAnimationIdx = i;
 
-	DEBUG_ASSERT(mAnimationIdx >= 0, "negative animation index");
 	DEBUG_ASSERT((int)animations.size() > mAnimationIdx, "OOB animation index");
 
 	if (auto a = animation.to_ref()) {

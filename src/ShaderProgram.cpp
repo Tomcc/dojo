@@ -68,7 +68,7 @@ bool ShaderProgram::_load() {
 	//finally, append the version in front
 	auto buildUnit = "#version 100\n" + mContentString;
 
-	int compiled, sourceLength = buildUnit.size();
+	GLint compiled, sourceLength = static_cast<GLint>(buildUnit.size());
 	const char* src = buildUnit.c_str();
 
 	mGLShader = glCreateShader(typeGLTypeMap[(uint8_t)mType]);

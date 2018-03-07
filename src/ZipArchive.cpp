@@ -131,8 +131,8 @@ void ZipArchive::getList(utf::string_view inPath, std::vector<utf::string>& out)
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		auto size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -143,7 +143,7 @@ void ZipArchive::getList(utf::string_view inPath, std::vector<utf::string>& out)
 				//is not a sub sub directory?
 				bool isnotasubsubdir = true;
 
-				for (int c = size - 2; size_path <= c; --c) {
+				for (size_t c = size - 2; size_path <= c; --c) {
 					if (dirp->d_name[c] == '/') {
 						isnotasubsubdir = false;
 						break;
@@ -165,8 +165,8 @@ void ZipArchive::getListAll(utf::string_view inPath, std::vector<utf::string>& o
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		size_t size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -185,8 +185,8 @@ void ZipArchive::getListFiles(utf::string_view inPath, std::vector<utf::string>&
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		size_t size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -198,7 +198,7 @@ void ZipArchive::getListFiles(utf::string_view inPath, std::vector<utf::string>&
 					//is not in sub sub directory?
 					bool isnotasubsubdir = true;
 
-					for (int c = size - 2; size_path <= c; --c) {
+					for (size_t c = size - 2; size_path <= c; --c) {
 						if (dirp->d_name[c] == '/') {
 							isnotasubsubdir = false;
 							break;
@@ -221,8 +221,8 @@ void ZipArchive::getListAllFiles(utf::string_view inPath, std::vector<utf::strin
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		size_t size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -243,8 +243,8 @@ void ZipArchive::getListSubDirectories(utf::string_view inPath, std::vector<utf:
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		size_t size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);
@@ -256,7 +256,7 @@ void ZipArchive::getListSubDirectories(utf::string_view inPath, std::vector<utf:
 					//is not a sub sub directory?
 					bool isnotasubsubdir = true;
 
-					for (int c = size - 2; size_path <= c; --c) {
+					for (size_t c = size - 2; size_path <= c; --c) {
 						if (dirp->d_name[c] == '/') {
 							isnotasubsubdir = false;
 							break;
@@ -279,8 +279,8 @@ void ZipArchive::getListAllSubDirectories(utf::string_view inPath, std::vector<u
 	if (zip_file != nullptr) {
 		auto path = makeValidPath(inPath);
 		ZZIP_DIRENT* dirp;
-		int size = 0;
-		int size_path = path.length();
+		size_t size = 0;
+		size_t size_path = path.length();
 
 		while ((dirp = zzip_readdir(zip_file)) != nullptr) {
 			size = strlen(dirp->d_name);

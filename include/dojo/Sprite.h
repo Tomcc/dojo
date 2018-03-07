@@ -38,22 +38,22 @@ namespace Dojo {
 		/**
 		If timePerFrame is not specified, the animation tries to use the frameset's preferred
 		*/
-		int registerAnimation(FrameSet& set, float timePerFrame = -1);
+		size_t registerAnimation(FrameSet& set, float timePerFrame = -1);
 
 		///registers an animation using the FrameSet named base
-		int registerAnimation(utf::string_view base, float timePerFrame = -1);
+		size_t registerAnimation(utf::string_view base, float timePerFrame = -1);
 
 		///sets the animation at the given index
-		void setAnimation(int i);
+		void setAnimation(size_t i);
 
 		///returns the current animation Index
-		int getAnimationIndex() {
+		size_t getAnimationIndex() {
 			return mAnimationIdx;
 		}
 
 	private:
 		AnimationList animations;
 
-		int mAnimationIdx;
+		size_t mAnimationIdx;
 	};
 }

@@ -58,7 +58,7 @@ void ViewportRecorder::captureFrame() {
 	//there are no PBOs, recreate them all
 	if (mPBOs.empty()) {
 		mPBOs.resize((int)mTotalFrameCount);
-		glGenBuffers(mPBOs.size(), mPBOs.data());
+		glGenBuffers(static_cast<GLsizei>(mPBOs.size()), mPBOs.data());
 		for (auto&& pbo : mPBOs) {
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
 			glBufferData(GL_PIXEL_PACK_BUFFER, mFrameSize, 0, GL_DYNAMIC_READ);
@@ -88,7 +88,7 @@ void ViewportRecorder::_bindNextPBO() {
 }
 
 void ViewportRecorder::_destroyAllPBOs() {
-	glDeleteBuffers(mPBOs.size(), mPBOs.data());
+	glDeleteBuffers(static_cast<GLsizei>(mPBOs.size()), mPBOs.data());
 	mNextPBO = 0;
 	mInitializedPBOs = 0;
 	mPBOs.clear();

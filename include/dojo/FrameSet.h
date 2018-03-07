@@ -97,7 +97,7 @@ namespace Dojo {
 		}
 
 		///returns how many Textures this FrameSet contains
-		int getFrameNumber() {
+		size_t getFrameNumber() {
 			return frames.size();
 		}
 

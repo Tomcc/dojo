@@ -155,8 +155,17 @@ namespace Dojo {
 		Random& operator=(const Random& o);
 
 		///func-style iterator for compatibility with STL
-		int operator()(int max) {
-			return getInt(0, max);
+		using result_type = uint32_t;
+		static constexpr result_type max() {
+			return std::numeric_limits<result_type>::max();
+		}
+
+		static constexpr result_type min() {
+			return std::numeric_limits<result_type>::min();
+		}
+
+		result_type operator()() {
+			return getInt();
 		}
 
 	private:

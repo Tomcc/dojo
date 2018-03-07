@@ -27,7 +27,7 @@ namespace Dojo {
 		///returns a random buffer (-1) or the one at index i
 		SoundBuffer& getBuffer(int i = -1);
 
-		int getResourceNb() {
+		size_t getResourceNb() {
 			return buffers.size();
 		}
 

@@ -45,7 +45,7 @@ TextArea::~TextArea() {
 	_destroyLayers();
 }
 
-void TextArea::setVisibleCharacters(uint32_t n) {
+void TextArea::setVisibleCharacters(size_t n) {
 	if (n != visibleCharsNumber) {
 		visibleCharsNumber = n;
 
@@ -141,7 +141,7 @@ Renderable& TextArea::_enableLayer(Texture& tex) {
 	layer.setVisible(true);
 	layer.setTexture(tex);
 
-	layer.getMesh().unwrap().begin(getLength() * 2);
+	layer.getMesh().unwrap().begin(static_cast<Mesh::IndexType>(getLength() * 2));
 
 	//move it to the busy layer
 	busyLayers.emplace(std::move(*freeLayers.begin()));

@@ -16,9 +16,9 @@ Tessellation::Tessellation() {
 
 }
 
-void Tessellation::mergePoints(int i1, int i2) {
+void Tessellation::mergePoints(Index i1, Index i2) {
 	//remove i2 from the list by swapping it to the back and popping it
-	int removedIdx = positions.size() - 1;
+	Index removedIdx = static_cast<Index>(positions.size() - 1);
 	std::swap(positions[i2], positions.back());
 	positions.pop_back();
 
@@ -42,7 +42,7 @@ void Tessellation::mergePoints(int i1, int i2) {
 }
 
 void Tessellation::addSegment(const Vector& p) {
-	int idx = positions.size() - 1;
+	auto idx = static_cast<Index>(positions.size() - 1);
 	positions.emplace_back(p);
 
 	//add indices to the point
@@ -108,7 +108,7 @@ void Tessellation::mergeDuplicatePoints(float resolution /*= 0.1*/) {
 	indexGrid.clear(); 
 	indexGrid.resize(w * h, -1);
 
-	for (size_t i = 0; i < positions.size(); ++i) {
+	for (Index i = 0; i < static_cast<Index>(positions.size()); ++i) {
 		auto& p = positions[i];
 		int x = (int)(((p.x - min.x) / (max.x - min.x)) * (w - 1));
 		int y = (int)(((p.y - min.y) / (max.y - min.y)) * (h - 1));
@@ -127,9 +127,9 @@ void Tessellation::mergeDuplicatePoints(float resolution /*= 0.1*/) {
 	}
 }
 
-int Tessellation::_assignToIncompleteContour(int start, int end) {
+Tessellation::Index Tessellation::_assignToIncompleteContour(Index start, Index end) {
 	//look for an incomplete contour (still open) that ends with start
-	for (size_t i = 0; i < contours.size(); ++i) {
+	for (Index i = 0; i < static_cast<Index>(contours.size()); ++i) {
 		auto& cont = contours[i];
 
 		if (not cont.closed and cont.indices.back() == start) {
@@ -142,7 +142,7 @@ int Tessellation::_assignToIncompleteContour(int start, int end) {
 	contours.resize(contours.size() + 1);
 	contours.back()._addSegment(start, end);
 
-	return contours.size() - 1;
+	return static_cast<Index>(contours.size() - 1);
 }
 
 bool Tessellation::_raycastSegmentAlongX(const Segment& segment, const Position& startPosition) {
@@ -175,7 +175,7 @@ void Tessellation::_assignNormal(const Vector& n, Segment& s, int i, std::vector
 
 		if (std::abs(divergence) < 0.6) {
 			//create a new vertex with the new normal
-			int newIndex = extrusionContourVertices.size();
+			auto newIndex = static_cast<Index>(extrusionContourVertices.size());
 			extrusionContourVertices.emplace_back(ExtrusionVertex(vert.position, n));
 
 			//create a new "degenerate" segment between the two new vertices
@@ -327,16 +327,16 @@ void Tessellation::tessellate(int flags, int maxIndices) {
 	in.numberofregions = 0;
 
 	//fill the points
-	in.numberofpoints = positions.size();
+	in.numberofpoints = static_cast<int>(positions.size());
 	in.pointlist = (REAL*)positions.data();
 
 	//fill in the edges
-	in.numberofsegments = segments.size();
+	in.numberofsegments = static_cast<int>(segments.size());
 	in.segmentlist = (int*)segments.data();
 	in.segmentmarkerlist = nullptr;
 
 	//fill in the holes
-	in.numberofholes = holes.size();
+	in.numberofholes = static_cast<int>(holes.size());
 	in.holelist = (REAL*)holes.data();
 
 	//resize the indices to a "reasonable" max size //TODO find what is "reasonable"!

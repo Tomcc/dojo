@@ -121,7 +121,7 @@ void Platform::_runASyncTasks(float elapsedTime) {
 //TODO try to predict if the next task will kill the frame
 
 	bool runAnything = false;
-	size_t startFrom = Random::instance.getInt(mAllPools.size());
+	size_t startFrom = Random::instance.getInt(static_cast<uint32_t>(mAllPools.size()));
 	size_t i = 0;
 	while(timer.getElapsedTime() < availableTime) {
 		runAnything |= mAllPools[(startFrom + i) % mAllPools.size()]->runOneCallback();

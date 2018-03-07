@@ -66,7 +66,7 @@ void SoundSource::play(float volume) {
 			//set global parameters
 			alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
 
-			int chunkNumber = b.getChunkNumber();
+			auto chunkNumber = b.getChunkNumber();
 
 			mFrontChunk = b.getChunk(0);
 			ALuint alBuffer = mFrontChunk.unwrap().getOpenALBuffer();

@@ -80,7 +80,7 @@ namespace Dojo {
 		}
 
 		///returns the number of chunks that compose this sound
-		int getChunkNumber() {
+		size_t getChunkNumber() const {
 			return mChunks.size();
 		}
 

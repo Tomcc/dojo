@@ -175,7 +175,7 @@ float StringReader::readFloat() {
 	return sign * res;
 }
 
-void StringReader::readBytes(void* dest, int sizeBytes) {
+void StringReader::readBytes(void* dest, size_t sizeBytes) {
 
 	auto startIdx = mIdx;
 

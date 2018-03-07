@@ -93,7 +93,7 @@ namespace Dojo {
 		ListenerList listeners;
 
 		TouchList mTouchList;
-		size_t mAssignedTouches = 0;
+		int mAssignedTouches = 0;
 
 		DeviceList mDeviceList;
 

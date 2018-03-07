@@ -185,7 +185,7 @@ Mesh::IndexType Mesh::vertex(const Vector& v) {
 
 void Mesh::appendRawVertexData(void* data, IndexType count) {
 	int blobSize = count * vertexSize;
-	int oldSize = vertices.size();
+	auto oldSize = vertices.size();
 
 	vertices.resize(oldSize + blobSize);
 

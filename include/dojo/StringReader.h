@@ -48,7 +48,7 @@ namespace Dojo {
 		utf::string_view readString();
 
 		///reads n raw bytes from the file
-		void readBytes(void* dest, int sizeBytes);
+		void readBytes(void* dest, size_t sizeBytes);
 
 		utf::string_view getString() const {
 			return mString;

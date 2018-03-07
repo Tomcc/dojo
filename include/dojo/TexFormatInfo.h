@@ -6,10 +6,10 @@
 
 namespace Dojo {
 	struct TexFormatInfo {
-		size_t internalPixelSize;
+		int internalPixelSize;
 		uint32_t internalFormat, internalElementType;
 		
-		size_t sourcePixelSize;
+		int sourcePixelSize;
 		uint32_t sourceFormat, sourceElementType;
 
 		bool hasAlpha;

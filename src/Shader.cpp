@@ -332,7 +332,7 @@ bool Shader::onLoad() {
 
 	auto binary = _getCachedBinary(cachedPath);
 	if (binary) {
-		glProgramBinary(mGLProgram, binary.format, binary.bytes.data(), binary.bytes.length());
+		glProgramBinary(mGLProgram, binary.format, binary.bytes.data(), static_cast<GLsizei>(binary.bytes.length()));
 
 		glGetProgramiv(mGLProgram, GL_LINK_STATUS, &linked);
 	}

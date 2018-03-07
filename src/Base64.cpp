@@ -40,7 +40,7 @@ static inline bool is_base64(unsigned char c) {
 	return (isalnum(c) or (c == '+') or (c == '-'));
 }
 
-utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int in_len) {
+utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, size_t in_len) {
 	std::string ret;
 	int i = 0;
 	int j = 0;
@@ -84,7 +84,7 @@ utf::string Base64::fromBytes(unsigned char const* bytes_to_encode, unsigned int
 
 std::vector<uint8_t> Dojo::Base64::decode(utf::string_view s) {
 	auto encoded_string = s.data();
-	int in_len = s.byte_size();
+	auto in_len = s.byte_size();
 	int i = 0;
 	int j = 0;
 	int in_ = 0;

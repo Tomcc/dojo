@@ -36,7 +36,7 @@ FT_Face FontSystem::_createFaceForFile(utf::string_view fileName) {
 
 	//create new face from memory - loading from memory is needed for zip loading
 	FT_Face face;
-	int err = FT_New_Memory_Face(freeType, (FT_Byte*)buf.data(), buf.size(), 0, &face);
+	auto err = FT_New_Memory_Face(freeType, (FT_Byte*)buf.data(), static_cast<FT_Long>(buf.size()), 0, &face);
 	faceMap.emplace(fileName.copy(), face);
 	ownedBuffers.emplace_back(std::move(buf)); //keep the memory
 

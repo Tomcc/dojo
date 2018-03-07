@@ -16,7 +16,7 @@ SoundBuffer& SoundSet::getBuffer(int i /*= -1 */) {
 
 	if (i < 0) {
 		if (buffers.size() > 1) {
-			i = Random::instance.getInt(buffers.size());
+			i = Random::instance.getInt(static_cast<uint32_t>(buffers.size()));
 		}
 		else {
 			i = 0;

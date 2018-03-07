@@ -46,7 +46,7 @@ namespace Dojo {
 		/**
 		n can be higher than the current character count; all the characters will be shown
 		*/
-		void setVisibleCharacters(uint32_t n);
+		void setVisibleCharacters(size_t n);
 
 		///increments by 1 the number of visibile characters
 		void showNextChar() {
@@ -77,7 +77,7 @@ namespace Dojo {
 		}
 
 		///returns the number of characters that are currently shown
-		int getVisibleCharacters() {
+		size_t getVisibleCharacters() const {
 			return visibleCharsNumber;
 		}
 
@@ -102,7 +102,7 @@ namespace Dojo {
 		}
 
 		///returns the number of added chars
-		int getLength() {
+		size_t getLength() const {
 			return characters.size();
 		}
 
@@ -136,17 +136,17 @@ namespace Dojo {
 
 		utf::string fontName;
 		float spaceWidth, interline, charSpacing;
-		int maxLineLength;
+		size_t maxLineLength;
 		bool centered;
 
-		int currentLineLength, lastSpace;
+		size_t currentLineLength, lastSpace;
 
 		Font& font;
 
 		CharacterList characters;
 		bool changed;
 
-		uint32_t visibleCharsNumber;
+		size_t visibleCharsNumber;
 
 		Vector cursorPosition, screenSize, lastScale;
 		AABB mLayersBound;

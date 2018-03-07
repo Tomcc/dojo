@@ -109,7 +109,7 @@ void Dojo::Noise::_init(Random& random, float frequency, float amplitude, float 
 		perm[i] = (uint8_t)i;
 	}
 
-	std::random_shuffle(perm.begin(), perm.end(), random);
+	std::shuffle(perm.begin(), perm.end(), random);
 }
 
 Dojo::Noise::Noise(Random& random, float frequency /*= 1.0f*/, float amplitude /*= 1.0f*/, float lacunarity /*= 2.0f*/, float persistence /*= 0.5f*/) {

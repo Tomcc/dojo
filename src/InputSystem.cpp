@@ -65,7 +65,7 @@ int InputSystem::_getExistingTouchID(const Vector& point, Touch::Type type) {
 		float d = mTouchList[i]->point.distance(point);
 
 		if (d < minDist) {
-			nearest = i;
+			nearest = static_cast<int>(i);
 			minDist = d;
 		}
 	}

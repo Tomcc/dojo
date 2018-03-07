@@ -126,7 +126,7 @@ void Random::seed(const BigSeed& seed) {
 	initialize(19650218UL);
 	int i = 1;
 	uint32_t j = 0;
-	int k = (N > seed.size() ? N : seed.size());
+	auto k = (N > seed.size() ? N : seed.size());
 
 	for (; k; --k) {
 		state[i] =

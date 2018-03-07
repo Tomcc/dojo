@@ -78,7 +78,7 @@ namespace Dojo {
 			}
 		}
 
-		T& operator[](int idx) {
+		T& operator[](size_t idx) {
 			return c[idx];
 		}
 

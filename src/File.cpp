@@ -88,7 +88,7 @@ int File::seek(int64_t offset, int64_t fromWhere /*= SEEK_SET*/) {
 	DEBUG_ASSERT(isOpen(), "The file must be open");
 	DEBUG_ASSERT(mFile, "The C file is invalid");
 
-	return fseek(mFile, (size_t)offset, (int)fromWhere);
+	return fseek(mFile, (long)offset, (int)fromWhere);
 }
 
 int64_t File::read(uint8_t* buf, int64_t number) {

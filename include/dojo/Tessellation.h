@@ -15,6 +15,8 @@ namespace Dojo {
 	class Tessellation {
 	public:
 
+		using Index = int; //must be int because it's what Triangle understands
+
 		struct Position {
 			double x, y;
 
@@ -44,28 +46,26 @@ namespace Dojo {
 		};
 
 		struct Segment {
-			int i1, i2;
+			Index i1, i2;
 
 			Segment() : i1(0), i2(0) {
 
 			}
 
-			Segment(int a, int b) :
+			Segment(Index a, Index b) :
 				i1(a),
 				i2(b) {
-				DEBUG_ASSERT( a >= 0, "Invalid negative index" );
-				DEBUG_ASSERT( b >= 0, "Invalid negative index" );
 				DEBUG_ASSERT( a != b, "A segment can't start and end at the same vertex" );
 			}
 
-			int& operator[](int i) {
+			Index& operator[](size_t i) {
 				return i == 0 ? i1 : i2;
 			}
 		};
 
 		///a Loop defines a closed circuit of segments using their start and end index-indices
 		struct Contour {
-			std::vector<int> indices;
+			std::vector<Index> indices;
 
 			int parity;
 			bool closed;
@@ -77,16 +77,12 @@ namespace Dojo {
 			}
 
 			///returns the nth segment of the contour - it is unbounded, so oob locations are wrapped into the contour
-			int operator[](int n) {
-				while (n < 0) {
-					n += indices.size();
-				}
-
+			Index operator[](size_t n) {
 				return indices[n % indices.size()];
 			}
 
 			///adds a segment to this contour, marks it as closed if end == start
-			void _addSegment(int start, int end) {
+			void _addSegment(Index start, Index end) {
 				indices.emplace_back(start);
 				indices.emplace_back(end);
 
@@ -154,7 +150,7 @@ namespace Dojo {
 		}
 
 		///removes i2 from the point list and rearranges all the indices to point to i1
-		void mergePoints(int i1, int i2);
+		void mergePoints(Index i1, Index i2);
 
 		///merges all the points that share the same position
 		/**
@@ -184,7 +180,7 @@ namespace Dojo {
 
 		bool _raycastSegmentAlongX(const Segment& segment, const Position& startPosition);
 
-		int _assignToIncompleteContour(int start, int end);
+		Index _assignToIncompleteContour(Index start, Index end);
 
 		void _assignNormal(const Vector& n, Segment& s, int i, SegmentList& additionalSegmentsBuffer);
 
