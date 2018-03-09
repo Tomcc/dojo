@@ -494,9 +494,6 @@ bool Win32Platform::_initializeWindow(utf::string_view windowCaption, int w, int
 	auto success = gladLoadGLES2Loader(getProcAddress);
 	DEBUG_ASSERT(success, "Cannot load opengl");
 
-	//make sure the backbuffer is SRGB - this is platform dependent so it needs to be done here
-	//TODO check if the extension is there
-	glEnable(0x8DB9);
 
 	// and show.
 	ShowWindow(hWindow, SW_SHOWNORMAL);
