@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
-project("Dojo")
-
 option(IWYU "IWYU" OFF)
+option(BUILD_DOJO2D "Build Dojo2D project" OFF)
+
+if (BUILD_DOJO2D)
+    add_subdirectory("dojo2D")
+endif()
+
+project("Dojo")
 
 include (AddDojoIncludes.cmake)
 include (MSVCSetup.cmake)
