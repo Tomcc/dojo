@@ -49,13 +49,13 @@ namespace Dojo {
 		//various resource properties TODO: refactor
 		bool disableBilinear, disableMipmaps, disableTiling, logchanges = true;
 
-		typedef std::map<utf::string, Unique<FrameSet>, utf::str_less> FrameSetMap;
-		typedef std::map<utf::string, Unique<Font>, utf::str_less> FontMap;
-		typedef std::map<utf::string, Unique<Mesh>, utf::str_less> MeshMap;
-		typedef std::map<utf::string, Unique<SoundSet>, utf::str_less> SoundMap;
-		typedef std::map<utf::string, Unique<Table>, utf::str_less> TableMap;
-		typedef std::map<utf::string, Unique<Shader>, utf::str_less> ShaderMap;
-		typedef std::map<utf::string, Unique<ShaderProgram>, utf::str_less> ProgramMap;
+		typedef std::map<utf::string, std::unique_ptr<FrameSet>, utf::str_less> FrameSetMap;
+		typedef std::map<utf::string, std::unique_ptr<Font>, utf::str_less> FontMap;
+		typedef std::map<utf::string, std::unique_ptr<Mesh>, utf::str_less> MeshMap;
+		typedef std::map<utf::string, std::unique_ptr<SoundSet>, utf::str_less> SoundMap;
+		typedef std::map<utf::string, std::unique_ptr<Table>, utf::str_less> TableMap;
+		typedef std::map<utf::string, std::unique_ptr<Shader>, utf::str_less> ShaderMap;
+		typedef std::map<utf::string, std::unique_ptr<ShaderProgram>, utf::str_less> ProgramMap;
 		typedef SmallSet<ResourceGroup*> SubgroupList;
 
 		///Create a new empty ResourceGroup
@@ -101,22 +101,22 @@ namespace Dojo {
 			return{};
 		}
 
-		FrameSet& addFrameSet(Unique<FrameSet> resource, utf::string_view name);
-		Texture& addTexture(Unique<Texture> texture, utf::string_view name);
+		FrameSet& addFrameSet(std::unique_ptr<FrameSet> resource, utf::string_view name);
+		Texture& addTexture(std::unique_ptr<Texture> texture, utf::string_view name);
 
-		Font& addFont(Unique<Font> resource, utf::string_view name);
+		Font& addFont(std::unique_ptr<Font> resource, utf::string_view name);
 
-		Mesh& addMesh(Unique<Mesh> resource, utf::string_view name);
+		Mesh& addMesh(std::unique_ptr<Mesh> resource, utf::string_view name);
 
-		SoundSet& addSoundSet(Unique<SoundSet> resource, utf::string_view name);
+		SoundSet& addSoundSet(std::unique_ptr<SoundSet> resource, utf::string_view name);
 
-		Table& addTable(utf::string_view name, Unique<Table> t);
+		Table& addTable(utf::string_view name, std::unique_ptr<Table> t);
 
 		///adds an existing Shader to this group
-		Shader& addShader(Unique<Shader> resource, utf::string_view name);
+		Shader& addShader(std::unique_ptr<Shader> resource, utf::string_view name);
 
 		///adds an existing ShaderProgram to this group
-		ShaderProgram& addProgram(Unique<ShaderProgram> resource, utf::string_view name);
+		ShaderProgram& addProgram(std::unique_ptr<ShaderProgram> resource, utf::string_view name);
 
 		///adds a ResourceGroup as an additional subgroup where to look for Resources
 		void addSubgroup(ResourceGroup& g);
@@ -219,7 +219,7 @@ namespace Dojo {
 		utf::string locale, fallbackLocale;
 		bool finalized;
 
-		Unique<FrameSet> emptyFrameSet;
+		std::unique_ptr<FrameSet> emptyFrameSet;
 
 		FrameSetMap frameSets;
 		FontMap fonts;
@@ -235,7 +235,7 @@ namespace Dojo {
 
 		///load all unloaded registered resources
 		template <class T>
-		void _load(std::map<utf::string, Unique<T>, utf::str_less>& map) {
+		void _load(std::map<utf::string, std::unique_ptr<T>, utf::str_less>& map) {
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory
 				if (not resourcePair.second->isLoaded()) {
@@ -245,7 +245,7 @@ namespace Dojo {
 		}
 
 		template <class T>
-		void _unload(std::map<utf::string, Unique<T>, utf::str_less>& map, bool softUnload) {
+		void _unload(std::map<utf::string, std::unique_ptr<T>, utf::str_less>& map, bool softUnload) {
 			//unload all the resources
 			for (auto&& resourcePair : map) {
 				//unload either if reloadable or if we're purging memory

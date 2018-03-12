@@ -207,10 +207,10 @@ namespace Dojo {
 		bool supportsShader(const Shader& shader) const;
 
 		///Creates a new empty mesh with the same format of this one
-		Unique<Mesh> cloneWithSameFormat() const;
+		std::unique_ptr<Mesh> cloneWithSameFormat() const;
 
 		///creates a new mesh from a slice of this one
-		Unique<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::Zero) const;
+		std::unique_ptr<Mesh> cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& offset = Vector::Zero) const;
 
 	private:
 		Vector center, dimensions;

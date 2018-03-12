@@ -54,7 +54,7 @@ namespace Phys {
 		std::unique_ptr<ForceField> mForceField;
 
 		//use this to notify the bodypart the shared ptr it's stored in
-		void _notifySharedPtr(Shared<BodyPart>& me) {
+		void _notifySharedPtr(std::shared_ptr<BodyPart>& me) {
 			mSelfWeakPtr = me;
 		}
 	};

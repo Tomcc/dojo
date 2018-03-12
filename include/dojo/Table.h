@@ -87,7 +87,7 @@ namespace Dojo {
 				return *(T*)getRawValue();
 			}
 
-			virtual Unique<Entry> clone() = 0;
+			virtual std::unique_ptr<Entry> clone() = 0;
 		};
 
 		template <class T>
@@ -111,12 +111,12 @@ namespace Dojo {
 				return &value;
 			}
 
-			virtual Unique<Entry> clone() override {
+			virtual std::unique_ptr<Entry> clone() override {
 				return make_unique<TypedEntry<T>>(type, value);
 			}
 		};
 
-		typedef std::map<utf::string, Unique<Entry>, utf::str_less> EntryMap;
+		typedef std::map<utf::string, std::unique_ptr<Entry>, utf::str_less> EntryMap;
 
 		static const Table Empty;
 

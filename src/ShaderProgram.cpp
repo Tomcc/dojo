@@ -132,7 +132,7 @@ bool ShaderProgram::onLoad() {
 	return loaded;
 }
 
-Unique<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
+std::unique_ptr<ShaderProgram> ShaderProgram::cloneWithHeader(const std::string& preprocessorHeader) {
 	DEBUG_ASSERT(preprocessorHeader.size(), "The preprocessor header can't be empty");
 
 	return make_unique<ShaderProgram>(mType, preprocessorHeader + mContentString);

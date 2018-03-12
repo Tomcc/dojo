@@ -61,7 +61,7 @@ bool Object::isAttachedToScene() const {
 	return true;
 }
 
-Object& Object::_addChild(Unique<Object> o) {
+Object& Object::_addChild(std::unique_ptr<Object> o) {
 	DEBUG_ASSERT(o->parent.is_none(), "The child you want to attach already has a parent");
 	DEBUG_ASSERT(not children.contains(o), "Element already in the vector!");
 
@@ -90,7 +90,7 @@ void Object::_unregisterChild(Object& child) {
 	child.parent = {};
 }
 
-Unique<Object> Object::removeChild(Object& o) {
+std::unique_ptr<Object> Object::removeChild(Object& o) {
 	DEBUG_ASSERT( hasChilds(), "This Object has no childs" );
 
 	auto elem = ChildList::find(children, o);
@@ -276,7 +276,7 @@ void Object::setSize(const Vector& bbSize) {
 	halfSize = size * 0.5f;
 }
 
-Component& Object::_addComponent(Unique<Component> c, int ID) {
+Component& Object::_addComponent(std::unique_ptr<Component> c, int ID) {
 	DEBUG_ASSERT(parent.is_none(), "The object has been already added to the scene");
 
 	if (ID >= (int)components.size()) {

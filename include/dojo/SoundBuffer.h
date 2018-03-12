@@ -115,7 +115,7 @@ namespace Dojo {
 
 		ChunkList mChunks;
 		optional_ref<Stream> mSource;
-		Unique<FileStream> mFile; //this unique ptr keeps ownership of the file accessor when the src is a file
+		std::unique_ptr<FileStream> mFile; //this unique ptr keeps ownership of the file accessor when the src is a file
 
 		bool _loadOgg(Stream& source);
 		bool _loadOggFromFile();

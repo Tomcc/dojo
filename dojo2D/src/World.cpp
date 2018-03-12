@@ -41,8 +41,8 @@ void World::deactivateAllBodies() {
 	}
 }
 
-Unique<World> World::createSimulationClone() {
-	auto clone = Unique<World>(new World()); //HACK must use new because make_unique doesn't see the private ctor
+std::unique_ptr<World> World::createSimulationClone() {
+	auto clone = std::unique_ptr<World>(new World()); //HACK must use new because make_unique doesn't see the private ctor
 
 	memcpy(clone->mCollideMode, mCollideMode, sizeof(mCollideMode));
 	clone->mDefaultLinearDamping = mDefaultLinearDamping;
@@ -95,7 +95,7 @@ void Phys::World::simulateToInactivity(float timeStep, uint32_t velocityIteratio
 // 	}
 }
 
-void World::mergeWorld(Unique<World> other) {
+void World::mergeWorld(std::unique_ptr<World> other) {
 	DEBUG_ASSERT(other, "Cannot merge a null world");
 
 	//place all bodies from the other world into this one with their fixtures and all
@@ -592,7 +592,7 @@ void World::playCollisionSound(const DeferredCollision& collision, const BodyPar
 	}
 }
 
-Joint& World::addJoint(Unique<Joint> joint) {
+Joint& World::addJoint(std::unique_ptr<Joint> joint) {
 	auto& ref = *joint;
 	asyncCommand([this, &ref] {
 		ref._init(self);
@@ -665,7 +665,7 @@ void World::update(float dt) {
 
 void World::removeJoint(Joint& joint) {
 	asyncCommand([this, &joint] {
-		auto elem = Dojo::SmallSet<Unique<Joint>>::find(mJoints, joint);
+		auto elem = Dojo::SmallSet<std::unique_ptr<Joint>>::find(mJoints, joint);
 		DEBUG_ASSERT(elem != mJoints.end(), "Cannot remove joint as it's already removed");
 
 		auto ptr = std::move(*elem);

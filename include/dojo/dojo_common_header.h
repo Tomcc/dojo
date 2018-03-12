@@ -87,13 +87,6 @@
 
 #include "DebugUtils.h"
 
-//some STL glue
-template< typename T >
-using Unique = std::unique_ptr < T >;
-
-template<typename T>
-using Shared = std::shared_ptr < T >;
-
 namespace Dojo {
 	typedef int64_t RandomSeed;
 

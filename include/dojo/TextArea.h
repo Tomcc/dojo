@@ -129,7 +129,7 @@ namespace Dojo {
 
 	private:
 
-		typedef SmallSet<Unique<Renderable>> LayerList;
+		typedef SmallSet<std::unique_ptr<Renderable>> LayerList;
 		typedef SmallSet<optional_ref<Font::Character>> CharacterList;
 
 		utf::string content;
@@ -154,7 +154,7 @@ namespace Dojo {
 		LayerList busyLayers, freeLayers;
 		int actualCharacters = 0;
 
-		std::vector<Unique<Mesh>> meshPool;
+		std::vector<std::unique_ptr<Mesh>> meshPool;
 
 		Shader& mMaterial;
 
@@ -163,7 +163,7 @@ namespace Dojo {
 		void _centerLastLine(int startingAt, float size);
 
 		///create a mesh to be used for text
-		Unique<Mesh> _createMesh();
+		std::unique_ptr<Mesh> _createMesh();
 
 		///create a Layer that uses the given Page
 		void _pushLayer();

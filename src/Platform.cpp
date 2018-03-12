@@ -41,7 +41,7 @@
 
 using namespace Dojo;
 
-Unique<Platform> Platform::gSingletonPtr;
+std::unique_ptr<Platform> Platform::gSingletonPtr;
 
 Platform& Platform::create(const Table& config /*= Table::EMPTY_TABLE */) {
 #if defined (PLATFORM_WIN32)
@@ -299,7 +299,7 @@ std::unique_ptr<FileStream> Platform::getFile(utf::string_view path) {
 	}
 }
 
-void Platform::run(Unique<Game> game) {
+void Platform::run(std::unique_ptr<Game> game) {
 	initialize(std::move(game));
 
 	loop();

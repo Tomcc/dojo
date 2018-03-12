@@ -29,7 +29,7 @@ namespace Dojo {
 		virtual void close() override;
 
 		///creates a new File* to read the underlying file. Does not copy reading status
-		virtual Unique<Stream> copy() const override;
+		virtual std::unique_ptr<Stream> copy() const override;
 
 	private:
 

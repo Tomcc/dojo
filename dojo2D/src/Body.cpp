@@ -48,14 +48,14 @@ Body::~Body() {
 
 }
 
-Phys::BodyPart& Phys::Body::_addShape(Shared<b2Shape> shape, const Material& material, Group group, BodyPartType type) {
+Phys::BodyPart& Phys::Body::_addShape(std::shared_ptr<b2Shape> shape, const Material& material, Group group, BodyPartType type) {
 	if(group == Group::None) {
 		group = mDefaultGroup;
 	}
 
 	auto elem = mParts.emplace(make_shared<BodyPart>(self, material, group, type));
 	
-	//TODO make the pointer Unique when at some point MSVC won't try to copy the lambda
+	//TODO make the pointer std::unique_ptr when at some point MSVC won't try to copy the lambda
 	auto& part = **elem;
 	part._notifySharedPtr(*elem);
 
@@ -81,14 +81,14 @@ Phys::BodyPart& Phys::Body::_addShape(Shared<b2Shape> shape, const Material& mat
 }
 
 void Body::removePart(BodyPart& part) {
-	auto elem = Dojo::SmallSet<Shared<BodyPart>>::find(mParts, part);
+	auto elem = Dojo::SmallSet<std::shared_ptr<BodyPart>>::find(mParts, part);
 	DEBUG_ASSERT(elem != mParts.end(), "Part already removed");
 
 	//remove the part from the parts known to this thread, give it to a lambda
-	//TODO make the pointer Unique when at some point MSVC won't try to copy the lambda
+	//TODO make the pointer std::unique_ptr when at some point MSVC won't try to copy the lambda
 	//auto temp = std::move(*elem);
 
-	Shared<BodyPart> temp = std::move(*elem);
+	std::shared_ptr<BodyPart> temp = std::move(*elem);
 	mParts.erase(elem);
 	getWorld().asyncCommand([this, part = std::move(temp)] {
 		mBody.unwrap().DestroyFixture(&part->getFixture());
@@ -187,12 +187,12 @@ void Body::destroyPhysics() {
 	});
 }
 
-void Body::onDestroy(Unique<Component> myself) {
+void Body::onDestroy(std::unique_ptr<Component> myself) {
 	if(mBody.is_some()) {
 		destroyPhysics(); //it's safe to call this even if it was already happening because of onDispose()
 
 		//assign it to a task so that it can survive until it's destroyed
-		getWorld().asyncCommand([owned = Shared<Component>(std::move(myself))]() mutable {
+		getWorld().asyncCommand([owned = std::shared_ptr<Component>(std::move(myself))]() mutable {
 			owned = {};
 		});
 	}

@@ -51,7 +51,7 @@ namespace Dojo {
 		utf::string mContent;
 
 		bool mCentered;
-		Unique<Mesh> mMesh;
+		std::unique_ptr<Mesh> mMesh;
 		Font* pFont;
 
 		RenderingType mRendering;

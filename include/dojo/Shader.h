@@ -160,7 +160,7 @@ namespace Dojo {
 		uint32_t mGLProgram;
 
 		optional_ref<ShaderProgram> pProgram[ (uint8_t)ShaderProgramType::_Count ];
-		std::vector<Unique<ShaderProgram>> mOwnedPrograms;
+		std::vector<std::unique_ptr<ShaderProgram>> mOwnedPrograms;
 
 		ShaderProgram& _assignProgram(const Table& desc, ShaderProgramType type);
 

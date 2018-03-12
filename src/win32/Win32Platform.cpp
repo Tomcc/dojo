@@ -563,7 +563,7 @@ utf::string getSystemFolderPath(DWORD folderID) {
 	return Path::makeCanonical(String::toUTF8(path));
 }
 
-void Win32Platform::initialize(Unique<Game> g) {
+void Win32Platform::initialize(std::unique_ptr<Game> g) {
 
 	DEBUG_ASSERT(g, "The Game implementation passed to initialize() can't be null");
 

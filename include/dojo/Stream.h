@@ -48,7 +48,7 @@ namespace Dojo {
 		virtual int64_t getCurrentPosition() = 0;
 
 		///creates a new unopened Stream that points to the same underlying data, useful for concurrent reads in multithreading.
-		virtual Unique<Stream> copy() const;
+		virtual std::unique_ptr<Stream> copy() const;
 
 		///goes to the given position
 		virtual int seek(int64_t offset, int64_t fromWhere = SEEK_SET) = 0;

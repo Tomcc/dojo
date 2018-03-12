@@ -19,7 +19,7 @@ namespace Dojo {
 		Win32Platform(const Table& config);
 		virtual ~Win32Platform();
 
-		virtual void initialize(Unique<Game> g);
+		virtual void initialize(std::unique_ptr<Game> g);
 		virtual void shutdown();
 
 		void prepareThreadContext();
@@ -87,7 +87,7 @@ namespace Dojo {
 		Keyboard mKeyboard;
 		int clientAreaYOffset;
 
-		Unique<XInputController> mXInputJoystick[ 4 ];
+		std::unique_ptr<XInputController> mXInputJoystick[ 4 ];
 
 		Timer mStepTimer;
 

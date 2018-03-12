@@ -62,7 +62,7 @@ namespace Dojo {
 
 		private:
 
-			Unique<Tessellation> mTesselation;
+			std::unique_ptr<Tessellation> mTesselation;
 		};
 
 		///A Page is a single texture which contains FONT_PAGE_SIDE^2 Characters in Unicode
@@ -103,7 +103,7 @@ namespace Dojo {
 		private:
 
 			Font& font;
-			Unique<Texture> texture;
+			std::unique_ptr<Texture> texture;
 			uint32_t firstCharIdx;
 
 			std::array<Character, FONT_CHARS_PER_PAGE> chars;
@@ -113,7 +113,7 @@ namespace Dojo {
 			}
 		};
 
-		typedef std::unordered_map<int, Unique<Page>> PageMap;
+		typedef std::unordered_map<int, std::unique_ptr<Page>> PageMap;
 
 		///A Font represents a single .font file, and is bound to a .ttf TrueType font definition
 		/**

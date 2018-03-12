@@ -34,7 +34,7 @@ namespace Dojo {
 		}
 
 		///creates a new ShaderProgram using the source of this one, concatenated with the given preprocessor header
-		Unique<ShaderProgram> cloneWithHeader(const std::string& preprocessorHeader);
+		std::unique_ptr<ShaderProgram> cloneWithHeader(const std::string& preprocessorHeader);
 
 		virtual bool onLoad();
 		virtual void onUnload(bool soft = false);

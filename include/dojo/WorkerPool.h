@@ -20,7 +20,7 @@ namespace Dojo {
 		bool runOneCallback();
 	private:
 		uint32_t mNextWorker = 0;
-		std::vector<Unique<BackgroundWorker>> mWorkers;
+		std::vector<std::unique_ptr<BackgroundWorker>> mWorkers;
 	private:
 	};
 }

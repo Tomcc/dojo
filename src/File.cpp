@@ -114,7 +114,7 @@ void File::close() {
 	mAccess = Access::BadFile;
 }
 
-Unique<Stream> File::copy() const {
+std::unique_ptr<Stream> File::copy() const {
 	return make_unique<File>(mPath);
 }
 

@@ -119,14 +119,14 @@ namespace Phys {
 			return mWorld.unwrap();
 		}
 
-		const Dojo::SmallSet<Shared<BodyPart>>& getParts() const {
+		const Dojo::SmallSet<std::shared_ptr<BodyPart>>& getParts() const {
 			return mParts;
 		}
 
 		float getMinimumDistanceTo(const Vector& pos) const;
 
 		void onAttach() override;
-		void onDestroy(Unique<Component> myself) override;
+		void onDestroy(std::unique_ptr<Component> myself) override;
 		void onDispose() override;
 
 		bool isPushable() const;
@@ -149,10 +149,10 @@ namespace Phys {
 		bool mStaticShape = false;
 		bool mAutoActivate;
 
-		Dojo::SmallSet<Shared<BodyPart>> mParts;
+		Dojo::SmallSet<std::shared_ptr<BodyPart>> mParts;
 		Dojo::SmallSet<Joint*> mJoints;
 
-		BodyPart& _addShape(Shared<b2Shape> shape, const Material& material, Group group, BodyPartType type);
+		BodyPart& _addShape(std::shared_ptr<b2Shape> shape, const Material& material, Group group, BodyPartType type);
 
 		b2Body& _waitForBody() const;
 	private:

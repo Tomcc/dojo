@@ -35,7 +35,7 @@ namespace Dojo {
 	class Object {
 	public:
 
-		typedef SmallSet<Unique<Object>> ChildList;
+		typedef SmallSet<std::unique_ptr<Object>> ChildList;
 
 		Vector position, speed;
 
@@ -150,12 +150,12 @@ namespace Dojo {
 
 		///adds a child
 		template <class T>
-		T& addChild(Unique<T> o) {
+		T& addChild(std::unique_ptr<T> o) {
 			return (T&)_addChild(std::move(o));
 		}
 
 		///removes a child if existing and gives it back to the caller
-		Unique<Object> removeChild(Object& o);
+		std::unique_ptr<Object> removeChild(Object& o);
 
 		template<class T>
 		bool has() const {
@@ -179,10 +179,10 @@ namespace Dojo {
 
 		void updateChilds(float dt);
 
-		Component& _addComponent(Unique<Component> c, int ID);
+		Component& _addComponent(std::unique_ptr<Component> c, int ID);
 
 		template<class T>
-		T& addComponent(Unique<T> c) {
+		T& addComponent(std::unique_ptr<T> c) {
 			return (T&)_addComponent(std::move(c), T::ID);
 		}
 
@@ -203,7 +203,7 @@ namespace Dojo {
 
 		optional_ref<GameState> gameState;
 
-		std::vector<Unique<Component>> components; //TODO not a vector pls
+		std::vector<std::unique_ptr<Component>> components; //TODO not a vector pls
 
 		Vector size, halfSize;
 
@@ -217,7 +217,7 @@ namespace Dojo {
 		ChildList children;
 
 		void _addChildEvent(Object& child);
-		Object& _addChild(Unique<Object> o);
+		Object& _addChild(std::unique_ptr<Object> o);
 
 		void _unregisterChild(Object& child);
 

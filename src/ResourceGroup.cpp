@@ -49,7 +49,7 @@ void ResourceGroup::addLocalizedFolder(utf::string_view basefolder, int version)
 	}
 }
 
-Table& ResourceGroup::addTable(utf::string_view name, Unique<Table> t) {
+Table& ResourceGroup::addTable(utf::string_view name, std::unique_ptr<Table> t) {
 	DEBUG_ASSERT(not name.empty(), "addTable: a table with this name was already added" );
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified" );
 
@@ -295,7 +295,7 @@ void ResourceGroup::addFolderSimple(utf::string_view folder, int version) {
 	addShaders(folder);
 }
 
-FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, utf::string_view name) {
+FrameSet& ResourceGroup::addFrameSet(std::unique_ptr<FrameSet> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getFrameSet(name).is_none(), "A FrameSet with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -307,7 +307,7 @@ FrameSet& ResourceGroup::addFrameSet(Unique<FrameSet> resource, utf::string_view
 	return *(frameSets[name.copy()] = std::move(resource));
 }
 
-Texture& ResourceGroup::addTexture(Unique<Texture> texture, utf::string_view name) {
+Texture& ResourceGroup::addTexture(std::unique_ptr<Texture> texture, utf::string_view name) {
 	auto frameset = make_unique<FrameSet>(self);
 	auto& ref = *texture;
 	frameset->addTexture(std::move(texture));
@@ -317,7 +317,7 @@ Texture& ResourceGroup::addTexture(Unique<Texture> texture, utf::string_view nam
 }
 
 
-Font& ResourceGroup::addFont(Unique<Font> resource, utf::string_view name) {
+Font& ResourceGroup::addFont(std::unique_ptr<Font> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getFont(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -329,7 +329,7 @@ Font& ResourceGroup::addFont(Unique<Font> resource, utf::string_view name) {
 	return *(fonts[name.copy()] = std::move(resource));
 }
 
-Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, utf::string_view name) {
+Mesh& ResourceGroup::addMesh(std::unique_ptr<Mesh> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getMesh(name).is_none(), "A Mesh with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -341,7 +341,7 @@ Mesh& ResourceGroup::addMesh(Unique<Mesh> resource, utf::string_view name) {
 	return *(meshes[name.copy()] = std::move(resource));
 }
 
-SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, utf::string_view name) {
+SoundSet& ResourceGroup::addSoundSet(std::unique_ptr<SoundSet> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getSound(name).is_none(), "A Sound with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -353,7 +353,7 @@ SoundSet& ResourceGroup::addSoundSet(Unique<SoundSet> resource, utf::string_view
 	return *(sounds[name.copy()] = std::move(resource));
 }
 
-Shader& ResourceGroup::addShader(Unique<Shader> resource, utf::string_view name) {
+Shader& ResourceGroup::addShader(std::unique_ptr<Shader> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getShader(name).is_none(), "A Shader with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");
@@ -365,7 +365,7 @@ Shader& ResourceGroup::addShader(Unique<Shader> resource, utf::string_view name)
 	return *(shaders[name.copy()] = std::move(resource));
 }
 
-ShaderProgram& ResourceGroup::addProgram(Unique<ShaderProgram> resource, utf::string_view name) {
+ShaderProgram& ResourceGroup::addProgram(std::unique_ptr<ShaderProgram> resource, utf::string_view name) {
 	DEBUG_ASSERT_INFO(getProgram(name).is_none(), "A ShaderProgram with this name already exists", "name = " + name);
 	DEBUG_ASSERT(not finalized, "This ResourceGroup can't be modified");
 	DEBUG_ASSERT(resource, "Invalid resource passed!");

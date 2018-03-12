@@ -29,7 +29,7 @@ namespace Phys {
 	protected:
 
 		bool mEnabled = true;
-		Unique<Dojo::Mesh> mMesh;
+		std::unique_ptr<Dojo::Mesh> mMesh;
 
 		std::vector<b2Vec2> mCircleBuffer;
 

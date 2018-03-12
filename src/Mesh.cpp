@@ -501,7 +501,7 @@ void Mesh::cutSection(IndexType i1, IndexType i2) {
 	//TODO recompute max and min
 }
 
-Unique<Mesh> Mesh::cloneWithSameFormat() const {
+std::unique_ptr<Mesh> Mesh::cloneWithSameFormat() const {
 	auto c = make_unique<Mesh>();
 
 	c->setIndexByteSize(indexSize);
@@ -512,7 +512,7 @@ Unique<Mesh> Mesh::cloneWithSameFormat() const {
 	return c;
 }
 
-Unique<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
+std::unique_ptr<Mesh> Mesh::cloneFromSlice(IndexType vertexStart, IndexType vertexEnd, const Vector& translation /*= Vector::ZERO*/) const {
 	DEBUG_ASSERT(not vertices.empty(), "This mesh is empty");
 	DEBUG_ASSERT(vertexStart < getVertexCount() and vertexEnd <= getVertexCount() and vertexStart <= vertexEnd, "Indices out of bounds");
 

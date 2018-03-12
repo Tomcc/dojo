@@ -97,7 +97,7 @@ void ZipArchive::close() {
 }
 
 //open file
-Unique<ZipFile> Dojo::ZipArchive::openFile(utf::string_view path, utf::string_view mode) {
+std::unique_ptr<ZipFile> Dojo::ZipArchive::openFile(utf::string_view path, utf::string_view mode) {
 	if (zip_file != nullptr) {
 		zzip_rewinddir(zip_file);
 		int mode_flags = ZZIP_CASELESS;

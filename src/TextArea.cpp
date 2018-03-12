@@ -331,7 +331,7 @@ void TextArea::_centerLastLine(int startingAt, float size) {
 }
 
 ///create a mesh to be used for text
-Unique<Mesh> TextArea::_createMesh() {
+std::unique_ptr<Mesh> TextArea::_createMesh() {
 	auto mesh = make_unique<Mesh>();
 	mesh->setDynamic(true);
 	mesh->setVertexFields({VertexField::Position2D, VertexField::UV0});

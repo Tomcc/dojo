@@ -8,7 +8,7 @@
 using namespace Dojo;
 using namespace Phys;
 
-Unique<Dojo::Mesh> _makeMesh() {
+std::unique_ptr<Dojo::Mesh> _makeMesh() {
 	//TODO move to ParticleSystemRenderer
 	auto mesh = make_unique<Mesh>();
 

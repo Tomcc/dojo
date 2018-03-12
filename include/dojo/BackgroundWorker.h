@@ -54,8 +54,8 @@ namespace Dojo {
 		Semaphore mAvailableTasksSemaphore;
 
 		SpinLock mQueueLock;
-		Unique<SPSCQueue<AsyncJob>> mQueue;
-		Unique<SPSCQueue<AsyncJob>> mCompletedQueue;
+		std::unique_ptr<SPSCQueue<AsyncJob>> mQueue;
+		std::unique_ptr<SPSCQueue<AsyncJob>> mCompletedQueue;
 
 		AsyncJob _waitForNextTask();
 

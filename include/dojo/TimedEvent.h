@@ -31,7 +31,7 @@ namespace Dojo {
 
 	private:
 		
-		Unique<TimedEventImpl> mImpl;
+		std::unique_ptr<TimedEventImpl> mImpl;
 	};
 }
 

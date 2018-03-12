@@ -131,7 +131,7 @@ namespace Dojo {
 		optional_ref<FrameSet> ownerFrameSet;
 		int mAtlasOriginX, mAtlasOriginY;
 
-		Unique<Mesh> OBB;
+		std::unique_ptr<Mesh> OBB;
 
 		uint32_t glhandle;
 

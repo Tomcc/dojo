@@ -53,7 +53,7 @@ namespace Dojo {
 		//close zip file
 		void close();
 		//open file
-		Unique<ZipFile> openFile(utf::string_view path, utf::string_view mode);
+		std::unique_ptr<ZipFile> openFile(utf::string_view path, utf::string_view mode);
 		//paths and files in zip
 		void getList(utf::string_view path, std::vector<utf::string>& out);
 		void getListFiles(utf::string_view path, std::vector<utf::string>& out);

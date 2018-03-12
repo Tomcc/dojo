@@ -124,7 +124,7 @@ namespace Phys {
 		void addBody(Body& body);
 		void removeBody(Body& body);
 
-		Joint& addJoint(Unique<Joint> joint);
+		Joint& addJoint(std::unique_ptr<Joint> joint);
 		void removeJoint(Joint& joint);
 
 		void addParticleSystem(ParticleSystem& ps);
@@ -144,10 +144,10 @@ namespace Phys {
 
 		void deactivateAllBodies();
 
-		Unique<World> createSimulationClone();
+		std::unique_ptr<World> createSimulationClone();
 		void simulateToInactivity(float timeStep, uint32_t velocityIterations, uint32_t positionIterations, uint32_t particleIterations, const Dojo::AABB& insideBounds, uint32_t maxSteps = UINT_MAX);
 
-		void mergeWorld(Unique<World> other);
+		void mergeWorld(std::unique_ptr<World> other);
 
 		bool shouldCreateBodiesAsActive() const {
 			return mBodiesStartActive;
@@ -185,15 +185,15 @@ namespace Phys {
 
 		Dojo::SmallSet<WorldListener*> mListeners;
 
-		Unique<b2World> mBox2D;
+		std::unique_ptr<b2World> mBox2D;
 
-		Unique<Dojo::MPSCQueue<Job>> mCommands;
-		Unique<Dojo::SPSCQueue<Command>> mCallbacks;
-		Unique<Dojo::SPSCQueue<DeferredCollision>> mDeferredCollisions;
-		Unique<Dojo::SPSCQueue<DeferredSensorCollision>> mDeferredSensorCollisions;
+		std::unique_ptr<Dojo::MPSCQueue<Job>> mCommands;
+		std::unique_ptr<Dojo::SPSCQueue<Command>> mCallbacks;
+		std::unique_ptr<Dojo::SPSCQueue<DeferredCollision>> mDeferredCollisions;
+		std::unique_ptr<Dojo::SPSCQueue<DeferredSensorCollision>> mDeferredSensorCollisions;
 
 		Dojo::SmallSet<Body*> mBodies;
-		Dojo::SmallSet<Unique<Joint>> mJoints;
+		Dojo::SmallSet<std::unique_ptr<Joint>> mJoints;
 		Dojo::SmallSet<ParticleSystem*> mParticleSystems;
 
 		static const int GROUP_COUNT = 256; //HACK
@@ -204,7 +204,7 @@ namespace Phys {
 
 		std::unordered_set<BodyPart*> mActiveForceFields;
 
-		Unique<DebugDrawMeshBuilder> mDebugMeshBuilder;
+		std::unique_ptr<DebugDrawMeshBuilder> mDebugMeshBuilder;
 
 		float _closestRecentlyPlayedSound(const Vector& point);	
 		void _beginFieldContact(BodyPart& partA, BodyPart& partB);

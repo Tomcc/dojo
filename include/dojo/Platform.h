@@ -140,7 +140,7 @@ namespace Dojo {
 		}
 
 		///initializes the platform and calls Game::onBegin()
-		virtual void initialize(Unique<Game> g) = 0;
+		virtual void initialize(std::unique_ptr<Game> g) = 0;
 
 		///shuts down the Platform and calls Game::onEnd()
 		virtual void shutdown() = 0;
@@ -157,7 +157,7 @@ namespace Dojo {
 		virtual void loop() = 0;
 
 		///all-in-one method which initializes, loop()s and terminates the Platform with the given game!
-		void run(Unique<Game> game);
+		void run(std::unique_ptr<Game> game);
 
 		virtual PixelFormat loadImageFile(std::vector<uint8_t>& imageData, utf::string_view path, uint32_t& width, uint32_t& height, int& pixelSize) = 0;
 
@@ -247,7 +247,7 @@ namespace Dojo {
 		typedef std::map<utf::string, PathList, utf::str_less> ZipFoldersMap;
 		typedef std::map<utf::string, ZipFoldersMap, utf::str_less> ZipFileMapping;
 
-		static Unique<Platform> gSingletonPtr;
+		static std::unique_ptr<Platform> gSingletonPtr;
 
 		uint32_t screenWidth, screenHeight, windowWidth, windowHeight;
 		Orientation screenOrientation;
@@ -258,19 +258,19 @@ namespace Dojo {
 
 		bool running, mFullscreen, mFrameSteppingEnabled;
 
-		Unique<Game> game;
+		std::unique_ptr<Game> game;
 
-		Unique<SoundManager> sound;
-		Unique<Renderer> render;
-		Unique<InputSystem> input;
-		Unique<FontSystem> fonts;
+		std::unique_ptr<SoundManager> sound;
+		std::unique_ptr<Renderer> render;
+		std::unique_ptr<InputSystem> input;
+		std::unique_ptr<FontSystem> fonts;
 
 		float realFrameTime;
 		
 		std::unique_ptr<Log> mLog;
 		std::unique_ptr<LogListener> mLogWriter;
 
-		std::vector<Unique<WorkerPool>> mPools;
+		std::vector<std::unique_ptr<WorkerPool>> mPools;
 		SmallSet<WorkerPool*> mAllPools;
 
 		SmallSet<ApplicationListener*> focusListeners;
