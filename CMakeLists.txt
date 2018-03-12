@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 option(IWYU "IWYU" OFF)
@@ -62,6 +62,9 @@ else()
 
     target_link_libraries(Dojo ${FREETYPE_LIBRARIES} ${FREEIMAGE} ${OGG} ${VORBIS} ${VORBISFILE} ${ZZIP} ${OPENAL_LIBRARY})
 endif()
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+
 
 if (IWYU)
     find_program(iwyu_path NAMES include-what-you-use iwyu)
