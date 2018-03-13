@@ -42,7 +42,7 @@ Vector Math::segmentNormal2D(const Vector& begin, const Vector& end) {
 	};
 }
 
-std::pair<std::vector<Vector>, std::vector<Vector>> Dojo::Math::cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd)
+std::array<std::vector<Vector>, 2> Dojo::Math::cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd)
 {
 	//find the two segments that intersect
 	std::vector<std::pair<size_t, Vector>> intersects;
@@ -59,7 +59,7 @@ std::pair<std::vector<Vector>, std::vector<Vector>> Dojo::Math::cutConvexShape(s
 	
 	//invalid, no or one intersection
 	if(intersects.size() < 2) {
-		return{ {}, {} };
+		return {};
 	}
 	DEBUG_ASSERT(intersects.size() == 2, "A convex intersects a segment exactly 2 times");
 

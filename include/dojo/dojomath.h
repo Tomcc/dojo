@@ -178,7 +178,7 @@ namespace Dojo {
 
 		static Vector segmentNormal2D(const Vector& begin, const Vector& end);
 
-		static std::pair<std::vector<Vector>, std::vector<Vector>> cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd);
+		static std::array<std::vector<Vector>, 2> cutConvexShape(std::vector<Vector>& shape, const Vector& cutSegmentStart, const Vector& cutSegmentEnd);
 
 		static Vector findCentroid(vec_view<Vector> contour);
 	};
